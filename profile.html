@@ -2,8 +2,8 @@
 <html lang="en">
 <head>
     <link rel="icon" href="https://tournyx.in/favicon.ico" sizes="any">
-<link rel="icon" href="https://tournyx.in/favicon.png" type="image/png" sizes="192x192">
-<link rel="apple-touch-icon" href="https://tournyx.in/apple-touch-icon.png">
+    <link rel="icon" href="https://tournyx.in/favicon.png" type="image/png" sizes="192x192">
+    <link rel="apple-touch-icon" href="https://tournyx.in/apple-touch-icon.png">
 
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
@@ -297,9 +297,9 @@
         .sch-remove:active { transform: scale(0.8); }
 
         /* --- PERFECT CROPPER MODAL (CIRCLE FOR AVATAR) --- */
-        .cropper-modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 9999; display: none; flex-direction: column; align-items: center; justify-content: center; backdrop-filter: blur(15px); }
+        .cropper-modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #000; z-index: 9999; display: none; flex-direction: column; align-items: center; justify-content: center;}
         .cropper-modal.active { display: flex; }
-        .cropper-container-wrapper { width: 90%; max-width: 800px; height: 60vh; background: #000; border: 2px solid var(--accent-cyan); border-radius: 12px; overflow: hidden; margin-bottom: 20px; box-shadow: 0 0 30px rgba(0,242,255,0.2); display: flex; align-items: center; justify-content: center;}
+        .cropper-container-wrapper { width: 90%; max-width: 800px; height: 60vh; background: #000; overflow: hidden; margin-bottom: 20px; display: flex; align-items: center; justify-content: center;}
         .cropper-container-wrapper img { display: block; max-width: 100%; max-height: 100%; }
         .cropper-actions { display: flex; gap: 15px; width: 90%; max-width: 800px; }
         .cropper-btn { flex: 1; padding: 15px; border-radius: 10px; font-family: var(--font-head); font-weight: bold; cursor: pointer; text-transform: uppercase; transition: 0.3s; border: none; font-size: 1.1rem; }
@@ -790,9 +790,26 @@
             </div>
             
             <div class="fs-content">
-                <!-- STEP 1: CHOOSE METHOD -->
-                <div id="passStep1">
-                    <p style="color:#aaa; font-size:0.9rem; margin-bottom:20px; line-height:1.5;">To change your password, please select an OTP verification method to confirm your identity.</p>
+                <!-- STEP 0: CURRENT & NEW PASSWORD -->
+                <div id="passStep0">
+                    <p style="color:#aaa; font-size:0.9rem; margin-bottom:20px; line-height:1.5;">Change your password directly or use OTP if you forgot it.</p>
+                    
+                    <label class="form-label">Current Password</label>
+                    <input type="password" id="inpCurrentPass" class="form-control" placeholder="Enter current password" style="margin-bottom: 20px;">
+                    
+                    <label class="form-label">New Password</label>
+                    <input type="password" id="inpDirectNewPass" class="form-control" placeholder="At least 6 characters" style="margin-bottom: 25px;">
+
+                    <button class="save-btn" id="btnDirectSavePass" onclick="submitDirectPasswordChange()">Update Password</button>
+
+                    <div style="text-align:center; margin-top:15px;">
+                        <span style="color:var(--accent-cyan); font-size:0.9rem; cursor:pointer; font-family:var(--font-head); text-transform:uppercase;" onclick="showPassOtpOptions()">Forgot Password?</span>
+                    </div>
+                </div>
+
+                <!-- STEP 1: CHOOSE OTP METHOD -->
+                <div id="passStep1" style="display:none;">
+                    <p style="color:#aaa; font-size:0.9rem; margin-bottom:20px; line-height:1.5;">To change your password via recovery, select an OTP verification method to confirm your identity.</p>
                     
                     <div class="action-card" onclick="showToast('SMS OTP is Coming Soon!', true); triggerHaptic();" style="border-color: rgba(255,255,255,0.1); opacity:0.7;">
                         <div class="action-text">
@@ -1011,6 +1028,25 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.js"></script>
 
     <script>
+        // --- ADDED: Animation Engine for numbers ---
+        function animateValue(id, start, end, duration) {
+            const obj = document.getElementById(id);
+            if(!obj) return;
+            let startTimestamp = null;
+            const step = (timestamp) => {
+                if (!startTimestamp) startTimestamp = timestamp;
+                const progress = Math.min((timestamp - startTimestamp) / duration, 1);
+                const current = Math.floor(progress * (end - start) + start);
+                obj.innerHTML = current.toLocaleString();
+                if (progress < 1) {
+                    window.requestAnimationFrame(step);
+                } else {
+                    obj.innerHTML = end.toLocaleString ? end.toLocaleString() : end;
+                }
+            };
+            window.requestAnimationFrame(step);
+        }
+
         const canvas = document.getElementById('particles-canvas');
         const ctx = canvas.getContext('2d');
         canvas.width = window.innerWidth; canvas.height = window.innerHeight;
@@ -1060,6 +1096,32 @@
         let isGuestMode = false;
         
         const urlParams = new URLSearchParams(window.location.search);
+
+        // --- NEW: Live Profile Sync Background Engine (Updates every 2 seconds) ---
+        setInterval(() => {
+            if (!isGuestMode && userData && userData.email) {
+                fetch(API_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'text/plain' },
+                    body: JSON.stringify({ action: 'sync_user', email: userData.email.trim().toLowerCase() })
+                })
+                .then(res => res.json())
+                .then(data => {
+                    if (data.status === "success") {
+                        // Silently merge without triggering toasts
+                        userData.points = safeParseNum(data.data.points, userData.points || 0);
+                        let liveBalance = data.data.earnings !== undefined ? data.data.earnings : (data.data.rupees !== undefined ? data.data.rupees : userData.earnings);
+                        userData.rupees = safeParseNum(liveBalance, userData.rupees || 0);
+                        userData.earnings = safeParseNum(liveBalance, userData.earnings || 0);
+                        userData.wins = safeParseNum(data.data.wins, userData.wins || 0);
+                        userData.hosted = safeParseNum(data.data.hosted, userData.hosted || 0);
+                        
+                        localStorage.setItem('tournyx_user', JSON.stringify(userData));
+                        renderUserInfo(userData, false); // Update UI passively without animations resetting
+                    }
+                }).catch(e => {});
+            }
+        }, 2000);
 
         // --- CHECK APP VERIFICATION REDIRECT ---
         document.addEventListener("DOMContentLoaded", () => {
@@ -1183,7 +1245,7 @@
                 const res = await fetch(API_URL, {
                     method: 'POST',
                     headers: { 'Content-Type': 'text/plain' },
-                    body: JSON.stringify({ action: 'sync_user', email: userData.email })
+                    body: JSON.stringify({ action: 'sync_user', email: userData.email.trim().toLowerCase() })
                 });
                 const data = await res.json();
                 
@@ -1225,7 +1287,7 @@
             // 2. Fetch True "Matches Played" based on completed status
             fetch(API_URL, {
                 method: 'POST', headers: { 'Content-Type': 'text/plain' },
-                body: JSON.stringify({ action: 'get_my_matches', email: userData.email })
+                body: JSON.stringify({ action: 'get_my_matches', email: userData.email.trim().toLowerCase() })
             }).then(res => res.json()).then(data => {
                 if(data.status === 'success' && data.data) {
                     let completedMatches = data.data.filter(m => {
@@ -1272,6 +1334,7 @@
                 let hostedCount = parseInt(data.hosted) || 0;
                 let earnings = parseInt(data.earnings) || 0; 
                 let successRate = hostedCount > 0 ? Math.min(100, 85 + (hostedCount * 1.5)).toFixed(1) : 0; 
+                let winRate = mCount > 0 ? ((wCount / mCount) * 100).toFixed(1) : 0;
 
                 if(doAnimate) {
                     animateValue('valMatches', 0, mCount, 1000);
@@ -1279,7 +1342,8 @@
                     animateValue('valPoints', 0, pts, 1200);
                     animateValue('valHosted', 0, hostedCount, 1000);
                     animateValue('valEarnings', 0, earnings, 1200);
-                    animateValue('valSuccessRate', 0, successRate, 1000);
+                    document.getElementById('valSuccessRate').innerHTML = successRate; // decimal
+                    document.getElementById('valWinRate').innerText = winRate;
                 } else {
                     document.getElementById('valMatches').innerHTML = mCount;
                     document.getElementById('valWins').innerHTML = wCount;
@@ -1287,11 +1351,9 @@
                     document.getElementById('valHosted').innerHTML = hostedCount;
                     document.getElementById('valEarnings').innerHTML = earnings.toLocaleString();
                     document.getElementById('valSuccessRate').innerHTML = successRate;
+                    document.getElementById('valWinRate').innerText = winRate;
                 }
                 
-                let winRate = mCount > 0 ? ((wCount / mCount) * 100).toFixed(1) : 0;
-                document.getElementById('valWinRate').innerText = winRate;
-
                 let starsHTML = ""; let ratingNum = 0.0;
                 if(hostedCount > 0) {
                     ratingNum = Math.min(5.0, 3.5 + (hostedCount * 0.15)).toFixed(1);
@@ -1468,7 +1530,7 @@
                 headers: { 'Content-Type': 'text/plain' },
                 body: JSON.stringify({ 
                     action: 'claim_milestone', 
-                    email: userData.email, 
+                    email: userData.email.trim().toLowerCase(), 
                     rupees: rupeesToAdd,
                     points: pointsToAdd,
                     ms_id: msId
@@ -1485,7 +1547,7 @@
 
             fetch(API_URL, {
                 method: 'POST', headers: { 'Content-Type': 'text/plain' },
-                body: JSON.stringify({ action: 'get_my_matches', email: userData.email })
+                body: JSON.stringify({ action: 'get_my_matches', email: userData.email.trim().toLowerCase() })
             })
             .then(res => res.json())
             .then(data => {
@@ -1865,7 +1927,8 @@
                     aspectRatio: currentUploadState.aspectRatio,
                     viewMode: 1,
                     autoCropArea: 1,
-                    background: false,
+                    background: false, // Ensures completely dark background 
+                    modal: true, 
                     responsive: true
                 });
             };
@@ -1899,7 +1962,7 @@
             if(currentUploadState.isCircle) {
                 fetch(API_URL, {
                     method: 'POST', headers: { 'Content-Type': 'text/plain' },
-                    body: JSON.stringify({ action: 'update_profile', email: userData.email, avatar: compressedBase64 })
+                    body: JSON.stringify({ action: 'update_profile', email: userData.email.trim().toLowerCase(), avatar: compressedBase64 })
                 }).then(res => res.json()).then(data => {
                     if(data.status === 'success') {
                         document.getElementById('userAvatar').src = compressedBase64;
@@ -1976,7 +2039,7 @@
             const payload = {
                 action: 'edit_tournament',
                 id: document.getElementById('editTourneyId').value,
-                email: userData.email, 
+                email: userData.email.trim().toLowerCase(), 
                 title: document.getElementById('editTourneyTitle').value,
                 banner: document.getElementById('editTourneyBannerStr').value,
                 
@@ -2030,7 +2093,7 @@
 
             fetch(API_URL, {
                 method: 'POST', headers: { 'Content-Type': 'text/plain' },
-                body: JSON.stringify({ action: 'delete_tournament', id: editId, email: userData.email })
+                body: JSON.stringify({ action: 'delete_tournament', id: editId, email: userData.email.trim().toLowerCase() })
             }).then(() => {
                 showToast("Tournament Deleted!");
                 closeManageModal();
@@ -2074,7 +2137,7 @@
 
             fetch(API_URL, {
                 method: 'POST', headers: { 'Content-Type': 'text/plain' },
-                body: JSON.stringify({ action: 'update_profile', email: userData.email, ...updates })
+                body: JSON.stringify({ action: 'update_profile', email: userData.email.trim().toLowerCase(), ...updates })
             }).then(res => res.json()).then(data => {
                 if(data.status === 'success') {
                     const merged = { ...userData, ...updates };
@@ -2111,7 +2174,7 @@
             
             fetch(API_URL, {
                 method: 'POST', headers: { 'Content-Type': 'text/plain' },
-                body: JSON.stringify({ action: 'send_otp', email: userData.email })
+                body: JSON.stringify({ action: 'send_otp', email: userData.email.trim().toLowerCase() })
             }).then(res => res.json()).then(data => {
                 if(data.status === 'success') {
                     document.getElementById('emailStep1').style.display = 'none';
@@ -2133,7 +2196,7 @@
             
             fetch(API_URL, {
                 method: 'POST', headers: { 'Content-Type': 'text/plain' },
-                body: JSON.stringify({ action: 'verify_otp', email: userData.email, otp: otpCode })
+                body: JSON.stringify({ action: 'verify_otp', email: userData.email.trim().toLowerCase(), otp: otpCode })
             }).then(res => res.json()).then(data => {
                 if(data.status === 'success') {
                     document.getElementById('emailStep2').style.display = 'none';
@@ -2157,7 +2220,7 @@
 
             fetch(API_URL, {
                 method: 'POST', headers: { 'Content-Type': 'text/plain' },
-                body: JSON.stringify({ action: 'update_account_email', old_email: userData.email, new_email: targetNewEmail })
+                body: JSON.stringify({ action: 'update_account_email', old_email: userData.email.trim().toLowerCase(), new_email: targetNewEmail })
             }).then(res => res.json()).then(data => {
                 if(data.status === 'success') {
                     document.getElementById('emailStep3').style.display = 'none';
@@ -2179,13 +2242,49 @@
         // --- LIVE PASSWORD CHANGE FLOW ---
         function openPassModal() {
             document.getElementById('passModal').classList.add('active');
-            document.getElementById('passStep1').style.display = 'block';
+            document.getElementById('passStep0').style.display = 'block';
+            document.getElementById('passStep1').style.display = 'none';
             document.getElementById('passStep2').style.display = 'none';
             document.getElementById('passStep3').style.display = 'none';
+        }
+
+        function showPassOtpOptions() {
+            document.getElementById('passStep0').style.display = 'none';
+            document.getElementById('passStep1').style.display = 'block';
         }
         
         function closePassModal() { document.getElementById('passModal').classList.remove('active'); }
 
+        // --- Submitting Direct Password Change ---
+        function submitDirectPasswordChange() {
+            const currentPass = document.getElementById('inpCurrentPass').value;
+            const newPass = document.getElementById('inpDirectNewPass').value;
+            
+            if(!currentPass || !newPass || newPass.length < 6) { 
+                showToast("Please enter valid passwords (min 6 chars)", true); 
+                return; 
+            }
+
+            const btn = document.getElementById('btnDirectSavePass');
+            btn.innerHTML = "<i class='fa-solid fa-spinner fa-spin'></i> Updating..."; 
+            btn.disabled = true;
+
+            fetch(API_URL, {
+                method: 'POST', headers: { 'Content-Type': 'text/plain' },
+                body: JSON.stringify({ action: 'change_password_with_current', email: userData.email.trim().toLowerCase(), current_pass: currentPass, new_pass: newPass })
+            }).then(res => res.json()).then(data => {
+                if(data.status === 'success') {
+                    showToast("Password updated securely!");
+                    closePassModal();
+                } else {
+                    showToast("Incorrect current password.", true);
+                }
+                btn.innerText = "Update Password"; btn.disabled = false;
+            }).catch(() => { showToast("Network error.", true); btn.innerText = "Update Password"; btn.disabled = false; });
+        }
+
+
+        // --- Forgotten Password OTP Flow ---
         function sendPassOtpEmail() {
             const btn = document.getElementById('btnSendPassOtpEmail');
             btn.style.opacity = '0.5';
@@ -2193,7 +2292,7 @@
             
             fetch(API_URL, {
                 method: 'POST', headers: { 'Content-Type': 'text/plain' },
-                body: JSON.stringify({ action: 'send_otp', email: userData.email })
+                body: JSON.stringify({ action: 'send_otp', email: userData.email.trim().toLowerCase() })
             }).then(res => res.json()).then(data => {
                 if(data.status === 'success') {
                     document.getElementById('passStep1').style.display = 'none';
@@ -2215,7 +2314,7 @@
 
             fetch(API_URL, {
                 method: 'POST', headers: { 'Content-Type': 'text/plain' },
-                body: JSON.stringify({ action: 'verify_otp', email: userData.email, otp: otpCode })
+                body: JSON.stringify({ action: 'verify_otp', email: userData.email.trim().toLowerCase(), otp: otpCode })
             }).then(res => res.json()).then(data => {
                 if(data.status === 'success') {
                     document.getElementById('passStep2').style.display = 'none';
@@ -2240,7 +2339,7 @@
 
             fetch(API_URL, {
                 method: 'POST', headers: { 'Content-Type': 'text/plain' },
-                body: JSON.stringify({ action: 'force_change_password', email: userData.email, new_pass: p1 })
+                body: JSON.stringify({ action: 'force_change_password', email: userData.email.trim().toLowerCase(), new_pass: p1 })
             }).then(res => res.json()).then(data => {
                 if(data.status === 'success') {
                     showToast("Password updated securely!");
