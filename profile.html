@@ -321,6 +321,25 @@
     </style>
     
     <script>
+        // --- ADDED: Animation Engine for numbers ---
+        function animateValue(id, start, end, duration) {
+            const obj = document.getElementById(id);
+            if(!obj) return;
+            let startTimestamp = null;
+            const step = (timestamp) => {
+                if (!startTimestamp) startTimestamp = timestamp;
+                const progress = Math.min((timestamp - startTimestamp) / duration, 1);
+                const current = Math.floor(progress * (end - start) + start);
+                obj.innerHTML = current.toLocaleString();
+                if (progress < 1) {
+                    window.requestAnimationFrame(step);
+                } else {
+                    obj.innerHTML = end.toLocaleString ? end.toLocaleString() : end;
+                }
+            };
+            window.requestAnimationFrame(step);
+        }
+
         const THEMES = [
             {cyan: '#00f2ff', purple: '#bd00ff'},
             {cyan: '#00ff7f', purple: '#00b09b'},
@@ -873,7 +892,7 @@
                 <i class="fa-solid fa-xmark close-modal" onclick="closeQrModal(); triggerHaptic();"></i>
             </div>
             <div class="qr-box">
-                <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https://tournyx.in/profile.html?user=guest" id="dynamicQrImg" alt="QR Code">
+                <img src="" id="dynamicQrImg" alt="QR Code" style="width:150px; height:150px; object-fit:contain;">
             </div>
             <div style="font-family:var(--font-head); font-size:1.4rem; color:white; margin-bottom:5px;" id="qrName">Player</div>
             <div style="color:var(--accent-cyan); font-size:1rem; margin-bottom:25px;" id="qrIgn">IGN</div>
@@ -1028,7 +1047,62 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.js"></script>
 
     <script>
-        // --- ADDED: Animation Engine for numbers ---
+        // --- ADDED: Missing Functions to fix UI freezes ---
+        function forceDeepSync() {
+            const btn = document.getElementById('manualSyncBtn');
+            btn.classList.add('fa-spin');
+            initProfile(true).then(() => {
+                setTimeout(() => btn.classList.remove('fa-spin'), 1000);
+            });
+        }
+
+        function openQrModal() {
+            if(isGuestMode) { showToast("Login to view QR", true); return; }
+            document.getElementById('qrModal').classList.add('active');
+            let encodedEmail = btoa(userData.email);
+            document.getElementById('dynamicQrImg').src = `https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https://tournyx.in/profile.html?user=${encodedEmail}`;
+            document.getElementById('qrName').innerText = userData.username;
+            document.getElementById('qrIgn').innerText = userData.ign || "IGN Not Set";
+        }
+        
+        function closeQrModal() { 
+            document.getElementById('qrModal').classList.remove('active'); 
+        }
+
+        function shareOrgProfile() {
+            if(isGuestMode) { showToast("Login to share profile", true); return; }
+            let encodedEmail = btoa(userData.email);
+            let url = `https://tournyx.in/profile.html?user=${encodedEmail}`;
+            let msg = `Check out my Organizer Profile on Tournyx and join my upcoming tournaments! 🎮\n${url}`;
+            
+            if (navigator.share) {
+                navigator.share({ title: `${userData.username}'s Tournyx Profile`, text: msg }).catch(() => showToast("Share cancelled"));
+            } else {
+                navigator.clipboard.writeText(msg).then(() => showToast("Profile Link Copied to Clipboard!"));
+            }
+        }
+
+        function cycleThemeColor() {
+            let tIndex = parseInt(localStorage.getItem('tournyx_theme_index')) || 0;
+            tIndex = (tIndex + 1) % THEMES.length;
+            localStorage.setItem('tournyx_theme_index', tIndex);
+            applyGlobalTheme();
+            showToast("App Accent Color Updated!");
+        }
+
+        function copyIgn() {
+            let ign = document.getElementById('userIgn').innerText;
+            if(ign && ign !== "Tap to set IGN" && ign !== "Loading...") {
+                navigator.clipboard.writeText(ign).then(() => showToast("IGN Copied!"));
+            }
+        }
+
+        function copySupportId() {
+            let supportId = userData.email || "Guest";
+            navigator.clipboard.writeText(supportId).then(() => showToast("Support ID Copied!"));
+        }
+
+        // --- Animation Engine for numbers ---
         function animateValue(id, start, end, duration) {
             const obj = document.getElementById(id);
             if(!obj) return;
@@ -1097,7 +1171,7 @@
         
         const urlParams = new URLSearchParams(window.location.search);
 
-        // --- NEW: Live Profile Sync Background Engine (Updates every 2 seconds) ---
+        // --- NEW: Live Profile Sync Background Engine (Updates exactly every 5 seconds) ---
         setInterval(() => {
             if (!isGuestMode && userData && userData.email) {
                 fetch(API_URL, {
@@ -1121,7 +1195,7 @@
                     }
                 }).catch(e => {});
             }
-        }, 2000);
+        }, 5000);
 
         // --- CHECK APP VERIFICATION REDIRECT ---
         document.addEventListener("DOMContentLoaded", () => {
@@ -1193,7 +1267,6 @@
             setTimeout(() => t.className = "", 3000);
         }
 
-        // THE MISSING FUNCTION THAT BROKE EVERYTHING:
         function formatImageUrl(url) {
             if (!url) return '';
             if (url.startsWith('data:image')) return url;
@@ -1388,9 +1461,7 @@
 
                 updateMilestones(data, doAnimate);
 
-                if(data.role === 'organizer' && !document.getElementById('btnOrg').classList.contains('active')) {
-                    switchRole('organizer');
-                }
+                // Auto-switch back to organizer removed. User now manually controls this tab completely.
             } catch(e) {
                 console.error("Render User Info error:", e);
             }
