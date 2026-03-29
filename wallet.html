@@ -9,14 +9,6 @@
     <meta name="keywords" content="Tournyx wallet, esports payment, free fire tournament entry, gaming wallet, secure UPI payments, instant withdrawal esports">
     <meta name="author" content="Tournyx Esports">
     <meta name="robots" content="index, follow">
-    <meta name="google-site-verification" content="ADD_YOUR_GOOGLE_SEARCH_CONSOLE_TAG_HERE" />
-    <link rel="canonical" href="https://tournyx.in/wallet.html" />
-    
-    <meta property="og:title" content="Wallet - Tournyx Esports">
-    <meta property="og:description" content="Manage your esports wallet securely. Add funds and withdraw winnings instantly.">
-    <meta property="og:type" content="website">
-    <meta property="og:url" content="https://tournyx.in/wallet.html">
-    <meta property="og:image" content="https://tournyx.in/favicon.png">
     
     <link rel="icon" href="https://tournyx.in/favicon.ico" sizes="any">
     <link rel="icon" href="https://tournyx.in/favicon.png" type="image/png" sizes="192x192">
@@ -77,9 +69,21 @@
         @keyframes slideUpGlow { 0% { opacity: 0; transform: translateY(30px); } 100% { opacity: 1; transform: translateY(0); } }
         .delay-1 { animation-delay: 0.1s; } .delay-2 { animation-delay: 0.2s; } .delay-3 { animation-delay: 0.3s; } .delay-4 { animation-delay: 0.4s; }
 
-        /* --- INITIAL PAGE LOADER --- */
-        #mainLoader { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--primary-bg); z-index: 99999; display: flex; flex-direction: column; align-items: center; justify-content: center; transition: opacity 0.5s ease, visibility 0.5s; backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); }
-        #mainLoader.hidden { opacity: 0; visibility: hidden; pointer-events: none; }
+        /* --- SKELETON SHIMMER LOADER --- */
+        .skeleton-box { 
+            background: linear-gradient(90deg, rgba(255,255,255,0.03) 25%, rgba(255,255,255,0.08) 50%, rgba(255,255,255,0.03) 75%); 
+            background-size: 200% 100%; animation: shimmer 1.5s infinite linear; border-radius: 8px; 
+        }
+        @keyframes shimmer { 0% { background-position: -200% 0; } 100% { background-position: 200% 0; } }
+        
+        #skeletonLoader { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--primary-bg); z-index: 990; padding: calc(85px + env(safe-area-inset-top)) 15px 15px; transition: opacity 0.5s, visibility 0.5s; backdrop-filter: blur(10px); }
+        #skeletonLoader.hidden { opacity: 0; visibility: hidden; pointer-events: none; }
+        .skel-wrapper { max-width: 800px; margin: 0 auto; width: 100%; }
+        .skel-card { width: 100%; height: 210px; border-radius: 20px; margin-bottom: 20px; }
+        .skel-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 25px; }
+        .skel-btn { height: 90px; border-radius: 15px; }
+        .skel-list { display: flex; flex-direction: column; gap: 12px; }
+        .skel-item { height: 75px; border-radius: 15px; }
 
         /* --- RESPONSIVE HEADER --- */
         .top-header { 
@@ -97,7 +101,6 @@
         .app-title { font-family: var(--font-head); font-size: 1.15rem; font-weight: 700; background: var(--accent-gradient); -webkit-background-clip: text; -webkit-text-fill-color: transparent; letter-spacing: 0px; white-space: normal; line-height: 1.1; word-break: break-word; text-transform: uppercase; margin:0;}
         .header-greeting { font-size: 0.85rem; color: #aaa; margin-bottom: 2px; display: flex; align-items: center; }
         
-        /* DESKTOP NAVIGATION */
         .desktop-nav { display: none; gap: 20px; align-items: center; }
         .desktop-nav a { color: var(--text-muted); text-decoration: none; font-family: var(--font-head); font-size: 0.95rem; font-weight: bold; text-transform: uppercase; transition: 0.3s; letter-spacing: 1px; }
         .desktop-nav a:hover, .desktop-nav a.active { color: var(--accent-cyan); text-shadow: 0 0 10px rgba(0,242,255,0.4); }
@@ -106,22 +109,9 @@
         .header-profile-img { width: 35px; height: 35px; border-radius: 50%; border: 2px solid var(--accent-cyan); object-fit: cover; cursor: pointer; box-shadow: 0 0 10px rgba(0,242,255,0.4); transition: 0.3s; flex-shrink: 0; background:#000; }
         .header-profile-img:active { transform:scale(0.9); border-color:var(--accent-cyan);}
 
-        /* TOP BAR SUPPORT ICON */
-        .support-pulse-icon {
-            color: var(--accent-cyan);
-            font-size: 1.25rem;
-            cursor: pointer;
-            margin-right: 5px;
-            animation: ringGlow 2s infinite;
-            transition: 0.3s;
-            padding: 5px;
-        }
+        .support-pulse-icon { color: var(--accent-cyan); font-size: 1.25rem; cursor: pointer; margin-right: 5px; animation: ringGlow 2s infinite; transition: 0.3s; padding: 5px; }
         .support-pulse-icon:active { transform: scale(0.9); }
-        @keyframes ringGlow {
-            0% { filter: drop-shadow(0 0 0 rgba(0,242,255,0.7)); transform: scale(1); }
-            50% { filter: drop-shadow(0 0 12px rgba(0,242,255,0.9)); transform: scale(1.05); }
-            100% { filter: drop-shadow(0 0 0 rgba(0,242,255,0)); transform: scale(1); }
-        }
+        @keyframes ringGlow { 0% { filter: drop-shadow(0 0 0 rgba(0,242,255,0.7)); transform: scale(1); } 50% { filter: drop-shadow(0 0 12px rgba(0,242,255,0.9)); transform: scale(1.05); } 100% { filter: drop-shadow(0 0 0 rgba(0,242,255,0)); transform: scale(1); } }
 
         .container { padding: 15px; margin-top: 0; }
 
@@ -172,8 +162,9 @@
         
         .txn-info { display: flex; flex-direction: column; min-width: 0; width: 100%; }
         .txn-info h4 { font-family: var(--font-head); font-size: 0.95rem; color: white; margin-bottom: 3px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; width: 100%; display: block; }
-        .txn-info p { font-size: 0.75rem; color: #888; display:flex; gap:5px; align-items:center;}
+        .txn-info p { font-size: 0.75rem; color: #888; display:flex; flex-wrap: wrap; gap:5px; align-items:center; line-height: 1.2;}
         .cat-tag { font-size: 0.6rem; padding: 2px 6px; border-radius: 5px; background:rgba(255,255,255,0.05); text-transform:uppercase; border: 1px solid rgba(255,255,255,0.1);}
+        .credited-msg { font-size: 0.7rem; color: var(--accent-green); font-weight: bold; background: rgba(0,255,127,0.1); padding: 2px 6px; border-radius: 4px; display: inline-block; margin-top: 3px; }
         
         .txn-right { text-align: right; flex-shrink: 0; display: flex; flex-direction: column; align-items: flex-end; min-width: 75px; }
         .in-out-label { font-size: 0.65rem; text-transform: uppercase; font-family: var(--font-head); font-weight: bold; padding: 2px 6px; border-radius: 4px; margin-bottom: 3px; letter-spacing: 1px; }
@@ -227,6 +218,7 @@
         .amt-input:focus { border-color: var(--accent-purple); box-shadow: 0 0 15px rgba(189,0,255,0.3), inset 0 0 10px rgba(0,0,0,0.5); background: rgba(0,0,0,0.8);}
         @keyframes shake { 0%,100%{transform:translateX(0);} 20%,60%{transform:translateX(-10px);} 40%,80%{transform:translateX(10px);} }
         .input-error { border-color: var(--accent-red) !important; animation: shake 0.4s both; }
+        .fee-disclaimer { text-align: center; color: var(--accent-cyan); font-size: 0.75rem; margin-top: -5px; margin-bottom: 15px; font-weight: bold; }
 
         .quick-amt-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-bottom: 25px; }
         .quick-amt-btn { background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08); color: #ccc; padding: 12px 0; text-align: center; border-radius: 10px; font-family: var(--font-head); font-weight: bold; cursor: pointer; transition: 0.3s; position: relative;}
@@ -308,9 +300,22 @@
     <div class="bg-gradient"></div>
     <canvas id="particles-canvas"></canvas>
 
-    <div id="mainLoader">
-        <i class="fa-solid fa-circle-notch fa-spin" style="font-size:3.5rem; color:var(--accent-cyan); margin-bottom:20px;"></i>
-        <div style="font-family:var(--font-head); color:white; letter-spacing:2px; font-weight:bold; text-transform:uppercase;">Syncing Secure Ledger...</div>
+    <!-- NEW PROFESSIONAL SKELETON LOADER -->
+    <div id="skeletonLoader">
+        <div class="skel-wrapper">
+            <div class="skeleton-box skel-card"></div>
+            <div class="skel-grid">
+                <div class="skeleton-box skel-btn"></div>
+                <div class="skeleton-box skel-btn"></div>
+                <div class="skeleton-box skel-btn"></div>
+            </div>
+            <div class="skel-list">
+                <div class="skeleton-box skel-item"></div>
+                <div class="skeleton-box skel-item"></div>
+                <div class="skeleton-box skel-item"></div>
+                <div class="skeleton-box skel-item"></div>
+            </div>
+        </div>
     </div>
 
     <header class="top-header">
@@ -445,6 +450,7 @@
                         <div class="amt-currency">Rs.</div>
                         <input type="number" id="addAmtInput" class="amt-input" placeholder="0" oninput="updateQR()">
                     </div>
+                    <div class="fee-disclaimer" id="feeDisclaimerBox" style="display:none;"></div>
 
                     <div class="quick-amt-grid" id="quickAmtGrid">
                         </div>
@@ -566,7 +572,7 @@
     <div class="app-footer">
         © 2026 TOURNYX. All rights reserved.<br>
         <div class="footer-made-with">made with ⚡ for gamers worldwide</div>
-        <div style="margin-top: 15px; font-size: 0.85rem; color: #888; font-family: var(--font-head); letter-spacing: 1px;">
+        <div style="margin-top: 15px; font-size: 0.85rem; color: #888; font-family: var(--font-head); letter-spacing: 2px;">
             Powered by <span style="font-weight: 900; background: var(--accent-gradient); -webkit-background-clip: text; -webkit-text-fill-color: transparent; letter-spacing: 2px;">QUVA</span>
         </div>
     </div>
@@ -682,10 +688,10 @@
             }
             
             if(!isGuest) {
-                syncLiveTransactions().finally(() => { document.getElementById('mainLoader').classList.add('hidden'); });
+                syncLiveTransactions().finally(() => { document.getElementById('skeletonLoader').classList.add('hidden'); });
                 setInterval(() => syncLiveTransactions(), 5000); 
             } else {
-                setTimeout(() => document.getElementById('mainLoader').classList.add('hidden'), 800);
+                setTimeout(() => document.getElementById('skeletonLoader').classList.add('hidden'), 800);
             }
             
             selectServer(1);
@@ -776,14 +782,37 @@
             updateQR();
         }
 
+        // --- GATEWAY FEE CALCULATOR ---
+        function getGatewayFee(amt) {
+            if(amt <= 100) return 0.52;
+            if(amt <= 1000) return 1.66;
+            if(amt <= 5000) return 3.54;
+            if(amt <= 10000) return 5.82;
+            return 0;
+        }
+
         function updateQR() {
-            let amt = parseInt(document.getElementById('addAmtInput').value);
+            let baseAmt = parseInt(document.getElementById('addAmtInput').value);
             let qrBox = document.getElementById('qrContainer');
-            if(isNaN(amt) || amt < 10) { if(/Android|iPhone/i.test(navigator.userAgent)) qrBox.classList.remove('active'); return; }
+            let feeBox = document.getElementById('feeDisclaimerBox');
+            
+            if(isNaN(baseAmt) || baseAmt < 10) { 
+                feeBox.style.display = "none";
+                if(/Android|iPhone/i.test(navigator.userAgent)) qrBox.classList.remove('active'); 
+                return; 
+            }
+            
+            let fee = getGatewayFee(baseAmt);
+            let totalAmt = (baseAmt + fee).toFixed(2);
+            
+            feeBox.style.display = "block";
+            feeBox.innerHTML = `Includes ₹${fee} Bank Gateway Fee (Total: ₹${totalAmt})`;
+            
             qrBox.classList.add('active');
-            document.getElementById('qrAmtText').innerText = `Rs. ${amt}`;
+            document.getElementById('qrAmtText').innerText = `Rs. ${totalAmt}`;
+            
             let realUpiId = REAL_SERVER_UPIS[currentServer];
-            let upiLink = `upi://pay?pa=${realUpiId}&pn=Tournyx%20Esports&am=${amt}&cu=INR`;
+            let upiLink = `upi://pay?pa=${realUpiId}&pn=Tournyx%20Esports&am=${totalAmt}&cu=INR`;
             document.getElementById('dynamicQR').src = `https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=${encodeURIComponent(upiLink)}`;
         }
         
@@ -793,17 +822,21 @@
         }
         
         function openUPIApp() {
-            let amt = parseInt(document.getElementById('addAmtInput').value);
-            if(isNaN(amt) || amt < 10) { triggerError('addAmtInput'); showToast("Enter minimum Rs 10", true); return; }
+            let baseAmt = parseInt(document.getElementById('addAmtInput').value);
+            if(isNaN(baseAmt) || baseAmt < 10) { triggerError('addAmtInput'); showToast("Enter minimum Rs 10", true); return; }
+            
+            let fee = getGatewayFee(baseAmt);
+            let totalAmt = (baseAmt + fee).toFixed(2);
+            
             let realUpiId = REAL_SERVER_UPIS[currentServer];
-            window.location.href = `upi://pay?pa=${realUpiId}&pn=Tournyx%20Esports&am=${amt}&cu=INR`;
+            window.location.href = `upi://pay?pa=${realUpiId}&pn=Tournyx%20Esports&am=${totalAmt}&cu=INR`;
         }
         function copyUPI() { navigator.clipboard.writeText(REAL_SERVER_UPIS[currentServer]).then(()=>showToast("Official UPI ID Copied!")); triggerHaptic(); }
 
         function submitStrictUTR() {
-            let amt = parseInt(document.getElementById('addAmtInput').value);
+            let baseAmt = parseInt(document.getElementById('addAmtInput').value);
             let utr = document.getElementById('utrInput').value.trim();
-            if(isNaN(amt) || amt < 10) { triggerError('addAmtInput'); showToast("Invalid Amount", true); return; }
+            if(isNaN(baseAmt) || baseAmt < 10) { triggerError('addAmtInput'); showToast("Invalid Amount", true); return; }
             if(!/^\d{12}$/.test(utr)) { triggerError('utrInput'); showToast("UTR must be exactly 12 digits.", true); return; }
             
             closeAddMoney();
@@ -818,12 +851,13 @@
                 scanner.classList.remove('active'); showToast("Pending bank confirmation. Will be added shortly.");
                 
                 let bonusAmt = 0;
-                if(isFirstDepositEligible) { let offer = FIRST_DEPOSIT_OFFERS.find(o => o.amt === amt); if(offer) bonusAmt = offer.bonus; }
+                if(isFirstDepositEligible) { let offer = FIRST_DEPOSIT_OFFERS.find(o => o.amt === baseAmt); if(offer) bonusAmt = offer.bonus; }
 
                 let txns = JSON.parse(localStorage.getItem('tournyx_txns')) || [];
                 let dateStr = new Date().toLocaleString('en-US', { month:'short', day:'2-digit', year:'numeric', hour:'numeric', minute:'2-digit', hour12:true });
                 
-                let newTxn = { id: "TXN" + utr.substring(6), title: "Wallet Top-up (UPI)", amount: amt, type: "Credit", status: "Pending", category: "Deposit", date: dateStr };
+                // We record the BASE amount to their wallet, ignoring the gateway fee
+                let newTxn = { id: "TXN" + utr.substring(6), title: "Wallet Top-up (UPI)", amount: baseAmt, type: "Credit", status: "Pending", category: "Deposit", date: dateStr };
                 txns.unshift(newTxn);
 
                 if(bonusAmt > 0) {
@@ -833,7 +867,7 @@
                 
                 localStorage.setItem('tournyx_txns', JSON.stringify(txns)); renderTransactions(); checkFirstDeposit(txns);
                 
-                fetch(API_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify({ action: "submit_utr", email: currentUser.email, amount: amt, utr: utr }) });
+                fetch(API_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify({ action: "submit_utr", email: currentUser.email, amount: baseAmt, utr: utr }) });
                 if(bonusAmt > 0) { fetch(API_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify({ action: "claim_offer", email: currentUser.email, offerName: "First Deposit Bonus Setup", reward: bonusAmt }) }); }
             }, 8500);
         }
@@ -945,6 +979,13 @@
             if(isPending) { iconClass = "icon-debit"; mainIcon = "fa-clock"; }
             if(isFailed) { mainIcon = "fa-xmark"; iconClass = "icon-debit"; }
 
+            // --- Organizer Display Logic ---
+            let extraMsg = "";
+            if (isCredit && cat === "Entry Fee") {
+                let pName = t.player_name || t.from_user || t.title.split("from")[1] || "Player";
+                extraMsg = `<span class="credited-msg"><i class="fa-solid fa-arrow-turn-down"></i> Credited from ${pName.trim()}</span>`;
+            }
+
             let amtClass = isCredit ? "amt-credit" : "amt-debit";
             let statusColor = isSuccess ? "var(--accent-green)" : (isFailed ? "var(--accent-red)" : "#ff9900");
             let inOutLabel = isCredit ? `<div class="in-out-label in-label">MONEY IN</div>` : `<div class="in-out-label out-label">MONEY OUT</div>`;
@@ -957,7 +998,7 @@
                         <div class="txn-icon ${iconClass}"><i class="fa-solid ${mainIcon}"></i></div>
                         <div class="txn-info">
                             <h4>${t.title}</h4>
-                            <p><span class="cat-tag"><i class="fa-solid ${catIcon}"></i> ${cat}</span> ${displayDate}</p>
+                            <p><span class="cat-tag"><i class="fa-solid ${catIcon}"></i> ${cat}</span> ${displayDate} ${extraMsg}</p>
                         </div>
                     </div>
                     <div class="txn-right">
@@ -986,6 +1027,7 @@
             else if (titleLower.includes("prize")) catStr = `<i class="fa-solid fa-trophy"></i> Prize Won`;
             else if (titleLower.includes("withdraw")) catStr = `<i class="fa-solid fa-money-bill-transfer"></i> Payout`;
             else if (titleLower.includes("support") || titleLower.includes("issue")) catStr = `<i class="fa-solid fa-headset"></i> Support`;
+            else if (titleLower.includes("entry")) catStr = `<i class="fa-solid fa-gamepad"></i> Entry Fee`;
             
             let mainIcon = isFailed ? "fa-xmark" : (isPending ? "fa-clock" : (isCredit ? "fa-check" : "fa-arrow-up"));
             let iconEl = document.getElementById('rcptIcon');
