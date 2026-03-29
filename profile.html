@@ -618,8 +618,8 @@
             <div class="setting-arrow"><i class="fa-regular fa-copy"></i></div>
         </div>
 
-        <div class="setting-item" onclick="window.open('https://discord.com', '_blank'); triggerHaptic();">
-            <div class="setting-icon"><i class="fa-brands fa-discord"></i></div>
+        <div class="setting-item" onclick="window.location.href='help.html'; triggerHaptic();">
+            <div class="setting-icon"><i class="fa-solid fa-headset"></i></div>
             <div class="setting-name">Help & Support</div>
             <div class="setting-arrow"><i class="fa-solid fa-chevron-right"></i></div>
         </div>
@@ -1098,8 +1098,17 @@
         }
 
         function copySupportId() {
-            let supportId = userData.email || "Guest";
-            navigator.clipboard.writeText(supportId).then(() => showToast("Support ID Copied!"));
+            if(isGuestMode || !userData.email) { 
+                showToast("Login to view Support ID", true); 
+                return; 
+            }
+            // Generates a clean, unique alphanumeric ID based on the user's email
+            let cleanString = btoa(userData.email).replace(/[^a-zA-Z0-9]/g, '');
+            let supportId = "TX-" + cleanString.substring(0, 10).toUpperCase();
+            
+            navigator.clipboard.writeText(supportId).then(() => {
+                showToast("Support ID Copied!");
+            });
         }
 
         // --- Animation Engine for numbers ---
@@ -1969,7 +1978,6 @@
             isCircle: false
         };
 
-        // --- AVATAR CROPPER FIX ---
         function initCropper(event, previewId, base64Id, aspectRatio, isCircle = false) {
             const file = event.target.files[0];
             if (!file) return;
@@ -1998,7 +2006,7 @@
                     aspectRatio: currentUploadState.aspectRatio,
                     viewMode: 1,
                     autoCropArea: 1,
-                    background: false, // Ensures completely dark background 
+                    background: false, 
                     modal: true, 
                     responsive: true
                 });
@@ -2021,7 +2029,6 @@
                 fillColor: currentUploadState.isCircle ? 'transparent' : '#000'
             });
 
-            // Avatars need transparency if circular
             const format = currentUploadState.isCircle ? 'image/png' : 'image/jpeg';
             const quality = currentUploadState.isCircle ? undefined : 0.8;
             const compressedBase64 = canvas.toDataURL(format, quality);
@@ -2029,7 +2036,6 @@
             cancelCrop();
             showToast("Compressing and generating secure link...");
 
-            // If it's an Avatar upload, just save directly using base64
             if(currentUploadState.isCircle) {
                 fetch(API_URL, {
                     method: 'POST', headers: { 'Content-Type': 'text/plain' },
@@ -2047,7 +2053,6 @@
                 return;
             }
 
-            // If it's the Banner Upload, send to IMGBB
             let previewImg = document.getElementById(currentUploadState.previewId);
             previewImg.src = compressedBase64;
             previewImg.classList.add('has-image');
@@ -2252,10 +2257,10 @@
                     document.getElementById('emailStep2').style.display = 'block';
                     showToast("OTP sent to your old email.");
                 } else {
-                    showToast("Failed to send OTP.", true);
+                    showToast(data.message || "Failed to send OTP.", true);
                 }
                 btn.innerHTML = 'Send OTP'; btn.disabled = false;
-            }).catch(() => { showToast("Network error.", true); btn.innerHTML = 'Send OTP'; btn.disabled = false; });
+            }).catch((err) => { showToast(err.message || "Network error.", true); btn.innerHTML = 'Send OTP'; btn.disabled = false; });
         }
 
         function verifyOldOtp() {
@@ -2274,10 +2279,10 @@
                     document.getElementById('emailStep3').style.display = 'block';
                     showToast("Account Verified. Enter new email.");
                 } else {
-                    showToast("Invalid OTP code.", true);
+                    showToast(data.message || "Invalid OTP code.", true);
                 }
                 btn.innerHTML = 'Verify Account'; btn.disabled = false;
-            }).catch(() => { showToast("Network error.", true); btn.innerHTML = 'Verify Account'; btn.disabled = false; });
+            }).catch((err) => { showToast(err.message || "Network error.", true); btn.innerHTML = 'Verify Account'; btn.disabled = false; });
         }
 
         function sendNewEmailLink() {
@@ -2301,9 +2306,9 @@
                     localStorage.setItem('tournyx_user', JSON.stringify(userData));
                 } else {
                     showToast(data.message || "Email already in use.", true);
-                    btn.innerHTML = 'Update Email'; btn.disabled = false;
+                    btn.innerHTML = 'Send Verification Link'; btn.disabled = false;
                 }
-            }).catch(() => { showToast("Network error.", true); btn.innerHTML = 'Update Email'; btn.disabled = false; });
+            }).catch((err) => { showToast(err.message || "Network error.", true); btn.innerHTML = 'Send Verification Link'; btn.disabled = false; });
         }
 
         function simulateExternalLinkReturn() {
@@ -2348,10 +2353,10 @@
                     showToast("Password updated securely!");
                     closePassModal();
                 } else {
-                    showToast("Incorrect current password.", true);
+                    showToast(data.message || "Incorrect current password.", true);
                 }
                 btn.innerText = "Update Password"; btn.disabled = false;
-            }).catch(() => { showToast("Network error.", true); btn.innerText = "Update Password"; btn.disabled = false; });
+            }).catch((err) => { showToast(err.message || "Network error.", true); btn.innerText = "Update Password"; btn.disabled = false; });
         }
 
 
@@ -2370,10 +2375,10 @@
                     document.getElementById('passStep2').style.display = 'block';
                     showToast("Security Code sent to your email!");
                 } else {
-                    showToast("Failed to send code.", true);
+                    showToast(data.message || "Failed to send code.", true);
                 }
                 btn.style.opacity = '1'; btn.style.pointerEvents = 'auto';
-            }).catch(() => { showToast("Network error.", true); btn.style.opacity = '1'; btn.style.pointerEvents = 'auto'; });
+            }).catch((err) => { showToast(err.message || "Network error.", true); btn.style.opacity = '1'; btn.style.pointerEvents = 'auto'; });
         }
 
         function verifyPassOtp() {
@@ -2391,10 +2396,10 @@
                     document.getElementById('passStep2').style.display = 'none';
                     document.getElementById('passStep3').style.display = 'block';
                 } else {
-                    showToast("Invalid OTP code.", true);
+                    showToast(data.message || "Invalid OTP code.", true);
                 }
                 btn.innerHTML = 'Verify Identity'; btn.disabled = false;
-            }).catch(() => { showToast("Network error.", true); btn.innerHTML = 'Verify Identity'; btn.disabled = false; });
+            }).catch((err) => { showToast(err.message || "Network error.", true); btn.innerHTML = 'Verify Identity'; btn.disabled = false; });
         }
 
         function submitFinalPasswordChange() {
@@ -2416,10 +2421,10 @@
                     showToast("Password updated securely!");
                     closePassModal();
                 } else {
-                    showToast("Failed to update password.", true);
+                    showToast(data.message || "Failed to update password.", true);
                 }
                 btn.innerText = "Update Password"; btn.disabled = false;
-            }).catch(() => { showToast("Network error.", true); btn.innerText = "Update Password"; btn.disabled = false; });
+            }).catch((err) => { showToast(err.message || "Network error.", true); btn.innerText = "Update Password"; btn.disabled = false; });
         }
 
         function logout() {
