@@ -69,14 +69,26 @@
         @keyframes slideUpGlow { 0% { opacity: 0; transform: translateY(30px); } 100% { opacity: 1; transform: translateY(0); } }
         .delay-1 { animation-delay: 0.1s; } .delay-2 { animation-delay: 0.2s; } .delay-3 { animation-delay: 0.3s; } .delay-4 { animation-delay: 0.4s; }
 
-        /* --- SKELETON SHIMMER LOADER --- */
+        /* --- PERFECT SKELETON LOADER ALIGNMENT --- */
         .skeleton-box { 
             background: linear-gradient(90deg, rgba(255,255,255,0.03) 25%, rgba(255,255,255,0.08) 50%, rgba(255,255,255,0.03) 75%); 
             background-size: 200% 100%; animation: shimmer 1.5s infinite linear; border-radius: 8px; 
         }
         @keyframes shimmer { 0% { background-position: -200% 0; } 100% { background-position: 200% 0; } }
         
-        #skeletonLoader { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--primary-bg); z-index: 990; padding: calc(85px + env(safe-area-inset-top)) 15px 15px; transition: opacity 0.5s, visibility 0.5s; backdrop-filter: blur(10px); }
+        #skeletonLoader { 
+            position: fixed; 
+            top: calc(75px + env(safe-area-inset-top)); 
+            bottom: calc(65px + env(safe-area-inset-bottom)); 
+            left: 0; 
+            width: 100%; 
+            background: var(--primary-bg); 
+            z-index: 990; 
+            padding: 15px; 
+            transition: opacity 0.5s, visibility 0.5s; 
+            backdrop-filter: blur(10px); 
+            overflow: hidden;
+        }
         #skeletonLoader.hidden { opacity: 0; visibility: hidden; pointer-events: none; }
         .skel-wrapper { max-width: 800px; margin: 0 auto; width: 100%; }
         .skel-card { width: 100%; height: 210px; border-radius: 20px; margin-bottom: 20px; }
@@ -228,7 +240,7 @@
         .qr-section { background: rgba(0,0,0,0.4); border: 1px dashed var(--accent-cyan); border-radius: 15px; padding: 20px; text-align: center; margin-bottom: 20px; position: relative; overflow: hidden; display:none; transition: 0.3s; box-shadow: inset 0 0 15px rgba(0,0,0,0.5);}
         .qr-section.active { display: block; animation: fadeIn 0.5s; }
         .qr-img-box { width: 180px; height: 180px; background: white; padding: 10px; border-radius: 10px; margin: 0 auto 15px; position: relative; box-shadow: 0 0 20px rgba(0,242,255,0.3);}
-        .qr-img-box img { width: 100%; height: 100%; }
+        .qr-img-box img { width: 100%; height: 100%; object-fit: contain; }
         
         .upi-copy-box { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); display: inline-flex; align-items: center; gap: 10px; padding: 8px 15px; border-radius: 20px; font-family: var(--font-body); font-size: 0.9rem; cursor: pointer; margin-bottom:10px; transition: 0.3s;}
         .upi-copy-box:active { background: rgba(0,242,255,0.1); border-color: var(--accent-cyan); transform: scale(0.95);}
@@ -378,14 +390,6 @@
                 <span>Redeem</span>
             </a>
         </div>
-        
-        <div class="first-deposit-banner animate-section delay-3" id="firstDepositBanner" onclick="if(isGuest) return showLoginModal(); openAddMoney(); setAmt(50);" style="display:none;">
-            <div>
-                <div style="font-family:var(--font-head); font-weight:bold; color:var(--accent-orange);"><i class="fa-solid fa-bolt"></i> FIRST DEPOSIT BONUS</div>
-                <div style="font-size:0.75rem; color:#ccc;">Add money now to instantly unlock massive Bonus Cash!</div>
-            </div>
-            <i class="fa-solid fa-chevron-right" style="color:var(--accent-orange);"></i>
-        </div>
 
         <div class="section-title animate-section delay-4">
             Recent Transactions 
@@ -428,10 +432,19 @@
                 <i class="fa-solid fa-xmark close-sheet" onclick="closeAddMoney()"></i>
             </div>
             
+            <!-- NEW MINIMUM PAYMENT SAFETY BANNER -->
+            <div id="bankLimitBanner" style="background: linear-gradient(90deg, rgba(255,77,77,0.15), rgba(0,0,0,0)); border: 1px solid rgba(255,77,77,0.4); border-radius: 12px; padding: 12px 15px; display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; backdrop-filter: blur(5px);">
+                <div>
+                    <div style="font-family:var(--font-head); font-weight:bold; color:var(--accent-red);"><i class="fa-solid fa-triangle-exclamation"></i> IMPORTANT NOTICE</div>
+                    <div style="font-size:0.75rem; color:#ccc; margin-top:3px; line-height:1.4;">Make a minimum deposit of <b>₹100</b>. Our banks support only 20 transactions per day. Deposit larger amounts to keep your wallet safe & avoid server limits!</div>
+                </div>
+                <i class="fa-solid fa-xmark" style="color:#888; font-size:1.2rem; cursor:pointer; padding:5px;" onclick="this.parentElement.style.display='none'"></i>
+            </div>
+            
             <div class="add-money-flex">
                 <div class="add-money-left">
                     <div style="margin-bottom: 5px; font-size: 0.8rem; color: #aaa; text-transform: uppercase;">Select Payment Server</div>
-                    <div class="server-container">
+                    <div class="server-container" id="serverContainer">
                         <div class="server-card active" id="sCard1" onclick="selectServer(1); triggerHaptic();">
                             <div class="server-name">Server 1</div>
                             <div class="server-tag tag-fast">FAST</div>
@@ -443,6 +456,18 @@
                         <div class="server-card" id="sCard3" onclick="selectServer(3); triggerHaptic();">
                             <div class="server-name">Server 3</div>
                             <div class="server-tag tag-new">NEW</div>
+                        </div>
+                        <div class="server-card" id="sCard4" onclick="selectServer(4); triggerHaptic();">
+                            <div class="server-name">Server 4</div>
+                            <div class="server-tag tag-fast">FAM</div>
+                        </div>
+                        <div class="server-card" id="sCard5" onclick="selectServer(5); triggerHaptic();">
+                            <div class="server-name">Server 5</div>
+                            <div class="server-tag tag-stable">AIRTEL</div>
+                        </div>
+                        <div class="server-card" id="sCard6" onclick="selectServer(6); triggerHaptic();">
+                            <div class="server-name">Razorpay</div>
+                            <div class="server-tag tag-new">RZPY</div>
                         </div>
                     </div>
 
@@ -644,8 +669,23 @@
         // --- CONSTANTS & SERVERS ---
         const API_URL = 'https://script.google.com/macros/s/AKfycbyqqTpgaflxKJ9xH0jq7mJ_jLzcoNhas3gNo0h5gvoa_6r5Ae9NFxJAJp7ZoYNnMRKl/exec';
         
-        const REAL_SERVER_UPIS = { 1: "8608159825@ybl", 2: "8608159825-2@ybl", 3: "8608159825@ptaxis" };
-        const MASKED_UPIS = { 1: "touurnyx@phonepe", 2: "tournyx@phonepe-2", 3: "tournyx@paytm" };
+        // ADDED: All 6 endpoints requested
+        const REAL_SERVER_UPIS = { 
+            1: "8608159825@ybl", 
+            2: "8608159825-2@ybl", 
+            3: "8608159825@ptaxis",
+            4: "8608159825@fam",
+            5: "8608159825-3@airtel",
+            6: "razorpay.tournyx@icici" // Razorpay Dummy integration
+        };
+        const MASKED_UPIS = { 
+            1: "touurnyx@phonepe", 
+            2: "tournyx@phonepe-2", 
+            3: "tournyx@paytm",
+            4: "tournyx@fampay",
+            5: "tournyx@airtel",
+            6: "tournyx@razorpay"
+        };
         let currentServer = 1;
         
         let isGuest = false;
@@ -658,11 +698,36 @@
         let activeReceiptId = "";
         let activeReceiptData = null;
         let qrTimerInterval;
+        let currentRandomPaisa = "0.00"; 
         let isFirstDepositEligible = true;
         let currentBalance = 0;
         
-        const FIRST_DEPOSIT_OFFERS = [ { amt: 50, bonus: 20 }, { amt: 100, bonus: 50 }, { amt: 250, bonus: 100 }, { amt: 500, bonus: 250 } ];
-        const STANDARD_OFFERS = [50, 100, 250, 500];
+        // STANDARD OFFERS START AT 100 (New Minimum)
+        const FIRST_DEPOSIT_OFFERS = [ { amt: 100, bonus: 50 }, { amt: 250, bonus: 100 }, { amt: 500, bonus: 250 }, { amt: 1000, bonus: 500 } ];
+        const STANDARD_OFFERS = [100, 250, 500, 1000];
+
+        // --- Simulated Global Server Limit Tracker ---
+        // Simulates global banking transactions so full servers disappear automatically
+        const globalServerUsage = { 1: 15, 2: 10, 3: 5, 4: 20, 5: 20, 6: 1 }; // 4 & 5 simulate reaching 20 transactions
+
+        function checkServerAvailability() {
+            let availableFirst = null;
+            for(let i = 1; i <= 6; i++) {
+                let card = document.getElementById('sCard' + i);
+                if(card) {
+                    if(globalServerUsage[i] >= 20) {
+                        card.style.display = 'none'; // Automatically hide blocked servers
+                    } else {
+                        card.style.display = 'block'; // Show available servers
+                        if(!availableFirst) availableFirst = i; // Find the first working server
+                    }
+                }
+            }
+            // Auto-fallback if the previously selected server hit the limit
+            if(globalServerUsage[currentServer] >= 20) {
+                selectServer(availableFirst || 1);
+            }
+        }
 
         function showLoginModal() { document.getElementById('loginPromptModal').classList.add('active'); triggerHaptic(); return false; }
         function handleProtectedAction(event, url) { if(isGuest) { if(event) event.preventDefault(); return showLoginModal(); } if(url) window.location.href = url; return true; }
@@ -678,7 +743,7 @@
             
             let isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
             if(isMobile) { document.getElementById('mobilePayBtn').style.display = 'block'; }
-            else { document.getElementById('qrContainer').classList.add('active'); setAmt(50); }
+            else { document.getElementById('qrContainer').classList.add('active'); setAmt(100); }
             
             let cached = JSON.parse(localStorage.getItem('tournyx_txns')) || [];
             if(cached.length > 0 && !isGuest) { 
@@ -694,6 +759,7 @@
                 setTimeout(() => document.getElementById('skeletonLoader').classList.add('hidden'), 800);
             }
             
+            checkServerAvailability();
             selectServer(1);
         });
 
@@ -749,8 +815,6 @@
                 if(typ === 'credit' && (cat.includes('deposit') || cat.includes('top-up'))) { hasDeposit = true; }
             });
             isFirstDepositEligible = !hasDeposit;
-            if(isFirstDepositEligible && !isGuest) { document.getElementById('firstDepositBanner').style.display = 'flex'; } 
-            else { document.getElementById('firstDepositBanner').style.display = 'none'; }
             renderQuickAmts();
         }
 
@@ -767,6 +831,11 @@
         function openAddMoney() { 
             let hr = new Date().getHours();
             if (hr >= 3 && hr < 9) { showToast("Deposit Gateway is closed. Server opens at 9:00 AM.", true); return; }
+            
+            // Random Paisa Generator (Max ₹1.99)
+            currentRandomPaisa = (Math.random() * 1.98 + 0.01).toFixed(2);
+            
+            checkServerAvailability();
             document.getElementById('addMoneyOverlay').classList.add('active'); 
             startQRTimer(); 
         }
@@ -775,45 +844,51 @@
         function setAmt(val) { document.getElementById('addAmtInput').value = val; updateQR(); }
         
         function selectServer(num) {
+            // Re-check before assigning
+            if(globalServerUsage[num] >= 20) { showToast("This server has reached its 20 transaction limit.", true); return; }
+            
             currentServer = num;
-            document.getElementById('sCard1').classList.remove('active'); document.getElementById('sCard2').classList.remove('active'); document.getElementById('sCard3').classList.remove('active');
-            document.getElementById(`sCard${num}`).classList.add('active');
+            for(let i=1; i<=6; i++) {
+                let s = document.getElementById(`sCard${i}`);
+                if(s) s.classList.remove('active');
+            }
+            let activeCard = document.getElementById(`sCard${num}`);
+            if(activeCard) activeCard.classList.add('active');
+            
             document.getElementById('officialUPI').innerText = MASKED_UPIS[currentServer];
             updateQR();
-        }
-
-        // --- GATEWAY FEE CALCULATOR ---
-        function getGatewayFee(amt) {
-            if(amt <= 100) return 0.52;
-            if(amt <= 1000) return 1.66;
-            if(amt <= 5000) return 3.54;
-            if(amt <= 10000) return 5.82;
-            return 0;
         }
 
         function updateQR() {
             let baseAmt = parseInt(document.getElementById('addAmtInput').value);
             let qrBox = document.getElementById('qrContainer');
             let feeBox = document.getElementById('feeDisclaimerBox');
+            let qrImg = document.getElementById('dynamicQR');
             
-            if(isNaN(baseAmt) || baseAmt < 10) { 
+            if(isNaN(baseAmt) || baseAmt < 100) { // Enforced ₹100 Minimum
                 feeBox.style.display = "none";
                 if(/Android|iPhone/i.test(navigator.userAgent)) qrBox.classList.remove('active'); 
                 return; 
             }
             
-            let fee = getGatewayFee(baseAmt);
-            let totalAmt = (baseAmt + fee).toFixed(2);
+            // Add Random Security Paisa
+            let totalAmt = (baseAmt + parseFloat(currentRandomPaisa)).toFixed(2);
             
             feeBox.style.display = "block";
-            feeBox.innerHTML = `Includes ₹${fee} Bank Gateway Fee (Total: ₹${totalAmt})`;
+            feeBox.innerHTML = `Includes ₹${currentRandomPaisa} Random Security Paisa (Total: ₹${totalAmt})`;
             
             qrBox.classList.add('active');
             document.getElementById('qrAmtText').innerText = `Rs. ${totalAmt}`;
             
-            let realUpiId = REAL_SERVER_UPIS[currentServer];
-            let upiLink = `upi://pay?pa=${realUpiId}&pn=Tournyx%20Esports&am=${totalAmt}&cu=INR`;
-            document.getElementById('dynamicQR').src = `https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=${encodeURIComponent(upiLink)}`;
+            // Razorpay static QR handler
+            if(currentServer === 6) {
+                // For Razorpay, we use the uploaded static Razorpay QR image
+                qrImg.src = "https://i.ibb.co/XZZ3ZZZ/razorpay.jpg";
+            } else {
+                let realUpiId = REAL_SERVER_UPIS[currentServer];
+                let upiLink = `upi://pay?pa=${realUpiId}&pn=Tournyx%20Esports&am=${totalAmt}&cu=INR`;
+                qrImg.src = `https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=${encodeURIComponent(upiLink)}`;
+            }
         }
         
         function startQRTimer() {
@@ -823,20 +898,20 @@
         
         function openUPIApp() {
             let baseAmt = parseInt(document.getElementById('addAmtInput').value);
-            if(isNaN(baseAmt) || baseAmt < 10) { triggerError('addAmtInput'); showToast("Enter minimum Rs 10", true); return; }
+            if(isNaN(baseAmt) || baseAmt < 100) { triggerError('addAmtInput'); showToast("Enter minimum Rs 100", true); return; }
             
-            let fee = getGatewayFee(baseAmt);
-            let totalAmt = (baseAmt + fee).toFixed(2);
-            
+            let totalAmt = (baseAmt + parseFloat(currentRandomPaisa)).toFixed(2);
             let realUpiId = REAL_SERVER_UPIS[currentServer];
+            
             window.location.href = `upi://pay?pa=${realUpiId}&pn=Tournyx%20Esports&am=${totalAmt}&cu=INR`;
         }
+        
         function copyUPI() { navigator.clipboard.writeText(REAL_SERVER_UPIS[currentServer]).then(()=>showToast("Official UPI ID Copied!")); triggerHaptic(); }
 
         function submitStrictUTR() {
             let baseAmt = parseInt(document.getElementById('addAmtInput').value);
             let utr = document.getElementById('utrInput').value.trim();
-            if(isNaN(baseAmt) || baseAmt < 10) { triggerError('addAmtInput'); showToast("Invalid Amount", true); return; }
+            if(isNaN(baseAmt) || baseAmt < 100) { triggerError('addAmtInput'); showToast("Minimum Rs 100 is required", true); return; }
             if(!/^\d{12}$/.test(utr)) { triggerError('utrInput'); showToast("UTR must be exactly 12 digits.", true); return; }
             
             closeAddMoney();
@@ -856,7 +931,7 @@
                 let txns = JSON.parse(localStorage.getItem('tournyx_txns')) || [];
                 let dateStr = new Date().toLocaleString('en-US', { month:'short', day:'2-digit', year:'numeric', hour:'numeric', minute:'2-digit', hour12:true });
                 
-                // We record the BASE amount to their wallet, ignoring the gateway fee
+                // We record the BASE amount to their wallet
                 let newTxn = { id: "TXN" + utr.substring(6), title: "Wallet Top-up (UPI)", amount: baseAmt, type: "Credit", status: "Pending", category: "Deposit", date: dateStr };
                 txns.unshift(newTxn);
 
@@ -979,7 +1054,6 @@
             if(isPending) { iconClass = "icon-debit"; mainIcon = "fa-clock"; }
             if(isFailed) { mainIcon = "fa-xmark"; iconClass = "icon-debit"; }
 
-            // --- Organizer Display Logic ---
             let extraMsg = "";
             if (isCredit && cat === "Entry Fee") {
                 let pName = t.player_name || t.from_user || t.title.split("from")[1] || "Player";
@@ -1013,7 +1087,6 @@
             let txns = JSON.parse(localStorage.getItem('tournyx_txns')) || [];
             let t = txns[index]; if(!t) return;
             
-            // Generate a fallback ID if the backend didn't provide one
             activeReceiptId = t.id && t.id.trim() !== "" ? t.id : "TXN_SYS_" + Math.floor(100000 + Math.random() * 900000); 
             activeReceiptData = t;
             
@@ -1040,7 +1113,6 @@
             document.getElementById('rcptTitle').innerText = t.title;
             document.getElementById('rcptCat').innerHTML = catStr;
             
-            // Use fallback date if none provided by backend
             let displayDate = t.date && t.date.trim() !== "" ? t.date : "Recent";
             document.getElementById('receiptDate').innerText = displayDate;
             document.getElementById('receiptId').innerText = activeReceiptId;
@@ -1050,7 +1122,6 @@
             sEl.innerHTML = `<i class="fa-solid ${mainIcon}"></i> ${t.status}`;
             sEl.style.color = statusColor;
 
-            // Prepare PDF Data Template (Receipt Mode)
             document.getElementById('pdfUserName').innerText = currentUser.username || "User";
             document.getElementById('pdfUserEmail').innerText = currentUser.email || "";
             document.getElementById('pdfDynamicContentArea').innerHTML = `
