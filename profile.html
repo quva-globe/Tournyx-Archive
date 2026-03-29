@@ -193,13 +193,12 @@
         .setting-arrow { color: #555; font-size: 1rem; transition: 0.3s; }
         .setting-item:hover .setting-arrow { color: var(--accent-cyan); transform: translateX(5px); }
 
-        /* --- GLASSMORPHISM MODALS (FIXED OVERFLOW & PADDING) --- */
+        /* --- GLASSMORPHISM MODALS (FIXED OVERFLOW) --- */
         .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); z-index: 5000; display: none; align-items: flex-end; justify-content: center; backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); opacity: 0; transition: 0.4s; }
         .modal-overlay.active { display: flex; opacity: 1; }
         .modal-card { width: 100%; max-width: 800px; background: rgba(10,5,20,0.95); border-radius: 25px 25px 0 0; border-top: 1px solid var(--card-border); border-left: 1px solid rgba(255,255,255,0.05); border-right: 1px solid rgba(255,255,255,0.05); transform: translateY(100%); transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); max-height: 90vh; overflow-y: auto; box-shadow: 0 -10px 40px rgba(0,0,0,0.8); backdrop-filter: blur(20px);}
         .modal-overlay.active .modal-card { transform: translateY(0); }
         
-        /* Fixed Full Screen Modals to respect safe area */
         .full-screen-modal .modal-card { height: 95vh; max-height: 95vh; padding: max(25px, env(safe-area-inset-top)) 20px 0; display: flex; flex-direction: column;}
         .fs-content { flex: 1; overflow-y: auto; padding-bottom: 20px; padding-right: 5px; }
         .fs-content::-webkit-scrollbar { display: none !important; }
@@ -296,7 +295,7 @@
         .sch-remove { position: absolute; top: -10px; right: -10px; background: var(--accent-red); color: white; width: 24px; height: 24px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; font-size: 0.7rem; box-shadow: 0 2px 5px rgba(0,0,0,0.5); z-index: 5; transition: 0.3s; }
         .sch-remove:active { transform: scale(0.8); }
 
-        /* --- PERFECT CROPPER MODAL (CIRCLE FOR AVATAR) --- */
+        /* --- PERFECT CROPPER MODAL (CIRCLE CROP ADDED) --- */
         .cropper-modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 9999; display: none; flex-direction: column; align-items: center; justify-content: center; backdrop-filter: blur(15px); }
         .cropper-modal.active { display: flex; }
         .cropper-container-wrapper { width: 90%; max-width: 800px; height: 60vh; background: #000; border: 2px solid var(--accent-cyan); border-radius: 12px; overflow: hidden; margin-bottom: 20px; box-shadow: 0 0 30px rgba(0,242,255,0.2); display: flex; align-items: center; justify-content: center;}
@@ -308,13 +307,12 @@
         .btn-crop-confirm { background: var(--accent-gradient); color: white; box-shadow: 0 5px 15px rgba(189,0,255,0.4); }
         .btn-crop-confirm:active { transform: scale(0.95); }
         
-        /* Forces circle crop box visually when enabled */
         .cropper-modal.is-circle .cropper-view-box,
         .cropper-modal.is-circle .cropper-face {
             border-radius: 50%;
         }
 
-        /* --- EMAIL / PASSWORD FLOW CUSTOM STYLES --- */
+        /* --- OTP STYLES --- */
         .otp-input-group { display: flex; gap: 10px; margin-bottom: 20px; justify-content: center; }
         .otp-box { width: 50px; height: 60px; background: rgba(0,0,0,0.5); border: 1px solid var(--card-border); border-radius: 12px; color: white; font-family: var(--font-head); font-size: 1.5rem; text-align: center; box-shadow: inset 0 0 10px rgba(0,0,0,0.5); transition: 0.3s; outline: none; }
         .otp-box:focus { border-color: var(--accent-cyan); box-shadow: 0 0 15px rgba(0,242,255,0.3), inset 0 0 5px rgba(0,0,0,0.5); }
@@ -716,7 +714,7 @@
         </div>
     </div>
 
-    <!-- NEW SMART EMAIL CHANGE FLOW -->
+    <!-- EMAIL CHANGE FLOW (OTP & LINK) -->
     <div class="modal-overlay full-screen-modal" id="emailChangeModal" style="z-index: 5010;">
         <div class="modal-card">
             <div class="modal-header">
@@ -725,13 +723,11 @@
             </div>
             
             <div class="fs-content">
-                <!-- STEP 1: VERIFY OLD EMAIL -->
                 <div id="emailStep1">
                     <p style="color:#aaa; font-size:0.9rem; margin-bottom:20px; line-height:1.5;">For your security, we need to verify your identity. Click below to send an OTP to your current registered email: <b style="color:white;" id="displayOldEmail">...</b></p>
                     <button class="save-btn" onclick="sendOldEmailOtp()" id="btnSendOldOtp">Send OTP</button>
                 </div>
 
-                <!-- STEP 2: ENTER OLD OTP -->
                 <div id="emailStep2" style="display:none; text-align:center;">
                     <p style="color:#aaa; font-size:0.9rem; margin-bottom:15px;">Enter the 4-digit code sent to your old email.</p>
                     <div class="otp-input-group">
@@ -743,7 +739,6 @@
                     <button class="save-btn" onclick="verifyOldOtp()" id="btnVerifyOldOtp">Verify Account</button>
                 </div>
 
-                <!-- STEP 3: ENTER NEW EMAIL -->
                 <div id="emailStep3" style="display:none;">
                     <p style="color:var(--accent-green); font-size:0.9rem; margin-bottom:20px;"><i class="fa-solid fa-check-circle"></i> Identity Verified! Enter your new email address below.</p>
                     <label class="form-label">New Email Address</label>
@@ -751,7 +746,6 @@
                     <button class="save-btn" onclick="sendNewEmailLink()" id="btnSendNewLink">Send Verification Link</button>
                 </div>
 
-                <!-- STEP 4: LINK SENT CONFIRMATION -->
                 <div id="emailStep4" style="display:none; text-align:center; padding-top:20px;">
                     <i class="fa-regular fa-envelope-open" style="font-size:4rem; color:var(--accent-cyan); margin-bottom:20px; filter:drop-shadow(0 0 15px var(--accent-cyan));"></i>
                     <h3 style="font-family:var(--font-head); color:white; margin-bottom:10px;">Verification Sent!</h3>
@@ -762,35 +756,15 @@
         </div>
     </div>
 
-    <!-- MATCH STATUS MODAL -->
-    <div class="modal-overlay full-screen-modal" id="matchStatusModal">
-        <div class="modal-card">
-            <div class="modal-header" style="margin-bottom: 10px;">
-                <div class="modal-title"><i class="fa-solid fa-list-check" style="color:var(--accent-green);"></i> Match Status</div>
-                <i class="fa-solid fa-xmark close-modal" onclick="closeMatchStatusModal(); triggerHaptic();"></i>
-            </div>
-            
-            <div class="org-list-header" style="border:none; padding-top:0; padding-right:15px; padding-left:5px;">
-                <span>Recent History</span>
-                <i class="fa-solid fa-rotate-right" id="refreshMatchesBtn" style="color:var(--accent-cyan); font-size:1.1rem; cursor:pointer; padding:5px; transition:0.3s;" onclick="fetchMyMatchStatus(); triggerHaptic();"></i>
-            </div>
-            
-            <div class="fs-content" id="playerMatchList">
-                <div style="text-align:center; padding:30px 20px; color:#888; font-size:0.95rem;"><i class="fa-solid fa-spinner fa-spin" style="color:var(--accent-purple); font-size:1.5rem; margin-bottom:10px; display:block;"></i> Fetching matches by email...</div>
-            </div>
-        </div>
-    </div>
-
-    <!-- NEW SECURITY & PASSWORD MODAL -->
+    <!-- PASSWORD MODAL (SMS / EMAIL OTP) -->
     <div class="modal-overlay full-screen-modal" id="passModal">
-        <div class="modal-card">
-            <div class="modal-header">
+        <div class="modal-card" style="display: flex; flex-direction: column;">
+            <div class="modal-header" style="flex-shrink: 0;">
                 <div class="modal-title"><i class="fa-solid fa-shield-halved" style="color:var(--accent-orange);"></i> Security Center</div>
                 <i class="fa-solid fa-xmark close-modal" onclick="closePassModal(); triggerHaptic();"></i>
             </div>
             
             <div class="fs-content">
-                <!-- STEP 1: CHOOSE METHOD -->
                 <div id="passStep1">
                     <p style="color:#aaa; font-size:0.9rem; margin-bottom:20px; line-height:1.5;">To change your password, please select an OTP verification method to confirm your identity.</p>
                     
@@ -811,7 +785,6 @@
                     </div>
                 </div>
 
-                <!-- STEP 2: ENTER EMAIL OTP -->
                 <div id="passStep2" style="display:none; text-align:center;">
                     <p style="color:#aaa; font-size:0.9rem; margin-bottom:15px;">Enter the 4-digit code sent to your email.</p>
                     <div class="otp-input-group">
@@ -823,7 +796,6 @@
                     <button class="save-btn" onclick="verifyPassOtp()" id="btnVerifyPassOtp">Verify Identity</button>
                 </div>
 
-                <!-- STEP 3: CREATE NEW PASSWORD -->
                 <div id="passStep3" style="display:none;">
                     <p style="color:var(--accent-green); font-size:0.9rem; margin-bottom:20px;"><i class="fa-solid fa-check-circle"></i> Identity Verified! You may now set a new password.</p>
                     
@@ -835,6 +807,25 @@
 
                     <button class="save-btn" id="btnFinalSavePass" onclick="submitFinalPasswordChange()">Update Password</button>
                 </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- MATCH STATUS MODAL -->
+    <div class="modal-overlay full-screen-modal" id="matchStatusModal">
+        <div class="modal-card">
+            <div class="modal-header" style="margin-bottom: 10px;">
+                <div class="modal-title"><i class="fa-solid fa-list-check" style="color:var(--accent-green);"></i> Match Status</div>
+                <i class="fa-solid fa-xmark close-modal" onclick="closeMatchStatusModal(); triggerHaptic();"></i>
+            </div>
+            
+            <div class="org-list-header" style="border:none; padding-top:0; padding-right:15px; padding-left:5px;">
+                <span>Recent History</span>
+                <i class="fa-solid fa-rotate-right" id="refreshMatchesBtn" style="color:var(--accent-cyan); font-size:1.1rem; cursor:pointer; padding:5px; transition:0.3s;" onclick="fetchMyMatchStatus(); triggerHaptic();"></i>
+            </div>
+            
+            <div class="fs-content" id="playerMatchList">
+                <div style="text-align:center; padding:30px 20px; color:#888; font-size:0.95rem;"><i class="fa-solid fa-spinner fa-spin" style="color:var(--accent-purple); font-size:1.5rem; margin-bottom:10px; display:block;"></i> Fetching matches by email...</div>
             </div>
         </div>
     </div>
@@ -1131,7 +1122,6 @@
             setTimeout(() => t.className = "", 3000);
         }
 
-        // THE MISSING FUNCTION THAT BROKE EVERYTHING:
         function formatImageUrl(url) {
             if (!url) return '';
             if (url.startsWith('data:image')) return url;
@@ -1178,7 +1168,7 @@
 
             if(isGuestMode) return;
 
-            // 1. Fetch Profile Data
+            // 1. Fetch Profile Data (Text/Plain for CORS bypass)
             try {
                 const res = await fetch(API_URL, {
                     method: 'POST',
@@ -1236,8 +1226,9 @@
                     userData.matches = completedMatches;
                     localStorage.setItem('tournyx_user', JSON.stringify(userData));
                     
-                    document.getElementById('valMatches').innerHTML = completedMatches;
-                    updateMilestones(userData, true); // Trigger the bar update with accurate data
+                    let valM = document.getElementById('valMatches');
+                    if (valM) valM.innerHTML = completedMatches;
+                    updateMilestones(userData, true); 
                 }
                 
                 renderUserInfo(userData, true); 
@@ -1281,7 +1272,8 @@
                     animateValue('valEarnings', 0, earnings, 1200);
                     animateValue('valSuccessRate', 0, successRate, 1000);
                 } else {
-                    document.getElementById('valMatches').innerHTML = mCount;
+                    let valM = document.getElementById('valMatches');
+                    if(valM) valM.innerHTML = mCount;
                     document.getElementById('valWins').innerHTML = wCount;
                     document.getElementById('valPoints').innerHTML = pts.toLocaleString();
                     document.getElementById('valHosted').innerHTML = hostedCount;
