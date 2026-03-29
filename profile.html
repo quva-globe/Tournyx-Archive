@@ -2047,9 +2047,13 @@
                         localStorage.setItem('tournyx_user', JSON.stringify(userData));
                         showToast("Avatar Updated Successfully!");
                     } else {
-                        showToast("Failed to update avatar.", true);
+                        let errMsg = data.message || data.error || data.msg || data.data || "Failed to update avatar.";
+                        if (typeof errMsg === 'object') errMsg = JSON.stringify(errMsg);
+                        showToast(errMsg, true);
                     }
-                }).catch(()=> showToast("Network Error", true));
+                }).catch((err)=> {
+                    showToast(err.message || "Network Error", true);
+                });
                 return;
             }
 
@@ -2223,11 +2227,13 @@
                     closeEditModal(); 
                     showToast("Profile Updated Successfully!");
                 } else {
-                    showToast("Failed to save profile.", true);
+                    let errMsg = data.message || data.error || data.msg || data.data || "Failed to save profile.";
+                    if (typeof errMsg === 'object') errMsg = JSON.stringify(errMsg);
+                    showToast(errMsg, true);
                 }
                 btn.innerText = "Save Changes"; btn.disabled = false;
-            }).catch(() => {
-                showToast("Network Error.", true);
+            }).catch((err) => {
+                showToast(err.message || "Network Error.", true);
                 btn.innerText = "Save Changes"; btn.disabled = false;
             });
         }
@@ -2257,7 +2263,9 @@
                     document.getElementById('emailStep2').style.display = 'block';
                     showToast("OTP sent to your old email.");
                 } else {
-                    showToast(data.message || "Failed to send OTP.", true);
+                    let errMsg = data.message || data.error || data.msg || data.data || "Failed to send OTP.";
+                    if (typeof errMsg === 'object') errMsg = JSON.stringify(errMsg);
+                    showToast(errMsg, true);
                 }
                 btn.innerHTML = 'Send OTP'; btn.disabled = false;
             }).catch((err) => { showToast(err.message || "Network error.", true); btn.innerHTML = 'Send OTP'; btn.disabled = false; });
@@ -2279,7 +2287,9 @@
                     document.getElementById('emailStep3').style.display = 'block';
                     showToast("Account Verified. Enter new email.");
                 } else {
-                    showToast(data.message || "Invalid OTP code.", true);
+                    let errMsg = data.message || data.error || data.msg || data.data || "Invalid OTP code.";
+                    if (typeof errMsg === 'object') errMsg = JSON.stringify(errMsg);
+                    showToast(errMsg, true);
                 }
                 btn.innerHTML = 'Verify Account'; btn.disabled = false;
             }).catch((err) => { showToast(err.message || "Network error.", true); btn.innerHTML = 'Verify Account'; btn.disabled = false; });
@@ -2305,7 +2315,9 @@
                     userData.email = targetNewEmail;
                     localStorage.setItem('tournyx_user', JSON.stringify(userData));
                 } else {
-                    showToast(data.message || "Email already in use.", true);
+                    let errMsg = data.message || data.error || data.msg || data.data || "Email already in use.";
+                    if (typeof errMsg === 'object') errMsg = JSON.stringify(errMsg);
+                    showToast(errMsg, true);
                     btn.innerHTML = 'Send Verification Link'; btn.disabled = false;
                 }
             }).catch((err) => { showToast(err.message || "Network error.", true); btn.innerHTML = 'Send Verification Link'; btn.disabled = false; });
@@ -2353,7 +2365,9 @@
                     showToast("Password updated securely!");
                     closePassModal();
                 } else {
-                    showToast(data.message || "Incorrect current password.", true);
+                    let errMsg = data.message || data.error || data.msg || data.data || "Incorrect current password.";
+                    if (typeof errMsg === 'object') errMsg = JSON.stringify(errMsg);
+                    showToast(errMsg, true);
                 }
                 btn.innerText = "Update Password"; btn.disabled = false;
             }).catch((err) => { showToast(err.message || "Network error.", true); btn.innerText = "Update Password"; btn.disabled = false; });
@@ -2375,7 +2389,9 @@
                     document.getElementById('passStep2').style.display = 'block';
                     showToast("Security Code sent to your email!");
                 } else {
-                    showToast(data.message || "Failed to send code.", true);
+                    let errMsg = data.message || data.error || data.msg || data.data || "Failed to send code.";
+                    if (typeof errMsg === 'object') errMsg = JSON.stringify(errMsg);
+                    showToast(errMsg, true);
                 }
                 btn.style.opacity = '1'; btn.style.pointerEvents = 'auto';
             }).catch((err) => { showToast(err.message || "Network error.", true); btn.style.opacity = '1'; btn.style.pointerEvents = 'auto'; });
@@ -2396,7 +2412,9 @@
                     document.getElementById('passStep2').style.display = 'none';
                     document.getElementById('passStep3').style.display = 'block';
                 } else {
-                    showToast(data.message || "Invalid OTP code.", true);
+                    let errMsg = data.message || data.error || data.msg || data.data || "Invalid OTP code.";
+                    if (typeof errMsg === 'object') errMsg = JSON.stringify(errMsg);
+                    showToast(errMsg, true);
                 }
                 btn.innerHTML = 'Verify Identity'; btn.disabled = false;
             }).catch((err) => { showToast(err.message || "Network error.", true); btn.innerHTML = 'Verify Identity'; btn.disabled = false; });
@@ -2421,7 +2439,9 @@
                     showToast("Password updated securely!");
                     closePassModal();
                 } else {
-                    showToast(data.message || "Failed to update password.", true);
+                    let errMsg = data.message || data.error || data.msg || data.data || "Failed to update password.";
+                    if (typeof errMsg === 'object') errMsg = JSON.stringify(errMsg);
+                    showToast(errMsg, true);
                 }
                 btn.innerText = "Update Password"; btn.disabled = false;
             }).catch((err) => { showToast(err.message || "Network error.", true); btn.innerText = "Update Password"; btn.disabled = false; });
