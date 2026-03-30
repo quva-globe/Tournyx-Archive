@@ -222,7 +222,6 @@
         .server-tag { font-size: 0.6rem; font-weight: bold; padding: 2px 6px; border-radius: 4px; display: inline-block; letter-spacing: 1px; }
         .tag-fast { background: var(--accent-green); color: black; }
         .tag-stable { background: var(--accent-cyan); color: black; }
-        .tag-new { background: var(--accent-purple); color: white; }
 
         .amt-input-wrapper { position: relative; margin-bottom: 15px; }
         .amt-currency { position: absolute; left: 20px; top: 50%; transform: translateY(-50%); font-family: var(--font-head); font-size: 1.5rem; color: white; font-weight: bold; }
@@ -230,8 +229,7 @@
         .amt-input:focus { border-color: var(--accent-purple); box-shadow: 0 0 15px rgba(189,0,255,0.3), inset 0 0 10px rgba(0,0,0,0.5); background: rgba(0,0,0,0.8);}
         @keyframes shake { 0%,100%{transform:translateX(0);} 20%,60%{transform:translateX(-10px);} 40%,80%{transform:translateX(10px);} }
         .input-error { border-color: var(--accent-red) !important; animation: shake 0.4s both; }
-        .fee-disclaimer { text-align: center; color: var(--accent-cyan); font-size: 0.75rem; margin-top: -5px; margin-bottom: 15px; font-weight: bold; }
-
+        
         .quick-amt-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-bottom: 25px; }
         .quick-amt-btn { background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08); color: #ccc; padding: 12px 0; text-align: center; border-radius: 10px; font-family: var(--font-head); font-weight: bold; cursor: pointer; transition: 0.3s; position: relative;}
         .quick-amt-btn:active { background: rgba(189,0,255,0.2); border-color: var(--accent-purple); color: white; transform:scale(0.95);}
@@ -436,7 +434,7 @@
             <div id="bankLimitBanner" style="background: linear-gradient(90deg, rgba(255,77,77,0.15), rgba(0,0,0,0)); border: 1px solid rgba(255,77,77,0.4); border-radius: 12px; padding: 12px 15px; display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; backdrop-filter: blur(5px);">
                 <div>
                     <div style="font-family:var(--font-head); font-weight:bold; color:var(--accent-red);"><i class="fa-solid fa-triangle-exclamation"></i> IMPORTANT NOTICE</div>
-                    <div style="font-size:0.75rem; color:#ccc; margin-top:3px; line-height:1.4;">Make a minimum deposit of <b>₹100</b>. Our banks support only 20 transactions per day. Deposit larger amounts to keep your wallet safe & avoid server limits!</div>
+                    <div style="font-size:0.75rem; color:#ccc; margin-top:3px; line-height:1.4;">Make a minimum deposit of <b>₹50</b>. Our banks support only 25 transactions per day. Deposit larger amounts to keep your wallet safe & avoid server limits!</div>
                 </div>
                 <i class="fa-solid fa-xmark" style="color:#888; font-size:1.2rem; cursor:pointer; padding:5px;" onclick="this.parentElement.style.display='none'"></i>
             </div>
@@ -461,21 +459,12 @@
                             <div class="server-name">Server 4</div>
                             <div class="server-tag tag-fast">FAM</div>
                         </div>
-                        <div class="server-card" id="sCard5" onclick="selectServer(5); triggerHaptic();">
-                            <div class="server-name">Server 5</div>
-                            <div class="server-tag tag-stable">AIRTEL</div>
-                        </div>
-                        <div class="server-card" id="sCard6" onclick="selectServer(6); triggerHaptic();">
-                            <div class="server-name">Razorpay</div>
-                            <div class="server-tag tag-new">RZPY</div>
-                        </div>
                     </div>
 
                     <div class="amt-input-wrapper">
                         <div class="amt-currency">Rs.</div>
                         <input type="number" id="addAmtInput" class="amt-input" placeholder="0" oninput="updateQR()">
                     </div>
-                    <div class="fee-disclaimer" id="feeDisclaimerBox" style="display:none;"></div>
 
                     <div class="quick-amt-grid" id="quickAmtGrid">
                         </div>
@@ -669,22 +658,18 @@
         // --- CONSTANTS & SERVERS ---
         const API_URL = 'https://script.google.com/macros/s/AKfycbyqqTpgaflxKJ9xH0jq7mJ_jLzcoNhas3gNo0h5gvoa_6r5Ae9NFxJAJp7ZoYNnMRKl/exec';
         
-        // ADDED: All 6 endpoints requested
+        // ADDED: Reduced to exact 4 endpoints requested
         const REAL_SERVER_UPIS = { 
             1: "8608159825@ybl", 
             2: "8608159825-2@ybl", 
             3: "8608159825@ptaxis",
-            4: "8608159825@fam",
-            5: "8608159825-3@airtel",
-            6: "razorpay.tournyx@icici" // Razorpay Dummy integration
+            4: "8608159825@fam"
         };
         const MASKED_UPIS = { 
             1: "touurnyx@phonepe", 
             2: "tournyx@phonepe-2", 
             3: "tournyx@paytm",
-            4: "tournyx@fampay",
-            5: "tournyx@airtel",
-            6: "tournyx@razorpay"
+            4: "tournyx@fampay"
         };
         let currentServer = 1;
         
@@ -702,20 +687,20 @@
         let isFirstDepositEligible = true;
         let currentBalance = 0;
         
-        // STANDARD OFFERS START AT 100 (New Minimum)
-        const FIRST_DEPOSIT_OFFERS = [ { amt: 100, bonus: 50 }, { amt: 250, bonus: 100 }, { amt: 500, bonus: 250 }, { amt: 1000, bonus: 500 } ];
-        const STANDARD_OFFERS = [100, 250, 500, 1000];
+        // STANDARD OFFERS START AT 50 (New Minimum)
+        const FIRST_DEPOSIT_OFFERS = [ { amt: 50, bonus: 20 }, { amt: 100, bonus: 50 }, { amt: 250, bonus: 100 }, { amt: 500, bonus: 250 } ];
+        const STANDARD_OFFERS = [50, 100, 250, 500];
 
         // --- Simulated Global Server Limit Tracker ---
         // Simulates global banking transactions so full servers disappear automatically
-        const globalServerUsage = { 1: 15, 2: 10, 3: 5, 4: 20, 5: 20, 6: 1 }; // 4 & 5 simulate reaching 20 transactions
+        const globalServerUsage = { 1: 15, 2: 10, 3: 5, 4: 20 }; 
 
         function checkServerAvailability() {
             let availableFirst = null;
-            for(let i = 1; i <= 6; i++) {
+            for(let i = 1; i <= 4; i++) {
                 let card = document.getElementById('sCard' + i);
                 if(card) {
-                    if(globalServerUsage[i] >= 20) {
+                    if(globalServerUsage[i] >= 25) { // Updated to 25 limit
                         card.style.display = 'none'; // Automatically hide blocked servers
                     } else {
                         card.style.display = 'block'; // Show available servers
@@ -724,7 +709,7 @@
                 }
             }
             // Auto-fallback if the previously selected server hit the limit
-            if(globalServerUsage[currentServer] >= 20) {
+            if(globalServerUsage[currentServer] >= 25) {
                 selectServer(availableFirst || 1);
             }
         }
@@ -743,7 +728,7 @@
             
             let isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
             if(isMobile) { document.getElementById('mobilePayBtn').style.display = 'block'; }
-            else { document.getElementById('qrContainer').classList.add('active'); setAmt(100); }
+            else { document.getElementById('qrContainer').classList.add('active'); setAmt(50); }
             
             let cached = JSON.parse(localStorage.getItem('tournyx_txns')) || [];
             if(cached.length > 0 && !isGuest) { 
@@ -832,7 +817,7 @@
             let hr = new Date().getHours();
             if (hr >= 3 && hr < 9) { showToast("Deposit Gateway is closed. Server opens at 9:00 AM.", true); return; }
             
-            // Random Paisa Generator (Max ₹1.99)
+            // Random Paisa Generator (Max ₹1.99) - Background Anti-bot ID only
             currentRandomPaisa = (Math.random() * 1.98 + 0.01).toFixed(2);
             
             checkServerAvailability();
@@ -844,11 +829,11 @@
         function setAmt(val) { document.getElementById('addAmtInput').value = val; updateQR(); }
         
         function selectServer(num) {
-            // Re-check before assigning
-            if(globalServerUsage[num] >= 20) { showToast("This server has reached its 20 transaction limit.", true); return; }
+            // Re-check before assigning - Updated to 25 Limit
+            if(globalServerUsage[num] >= 25) { showToast("This server has reached its 25 transaction limit.", true); return; }
             
             currentServer = num;
-            for(let i=1; i<=6; i++) {
+            for(let i=1; i<=4; i++) {
                 let s = document.getElementById(`sCard${i}`);
                 if(s) s.classList.remove('active');
             }
@@ -862,33 +847,24 @@
         function updateQR() {
             let baseAmt = parseInt(document.getElementById('addAmtInput').value);
             let qrBox = document.getElementById('qrContainer');
-            let feeBox = document.getElementById('feeDisclaimerBox');
             let qrImg = document.getElementById('dynamicQR');
             
-            if(isNaN(baseAmt) || baseAmt < 100) { // Enforced ₹100 Minimum
-                feeBox.style.display = "none";
+            if(isNaN(baseAmt) || baseAmt < 50) { // Enforced ₹50 Minimum
                 if(/Android|iPhone/i.test(navigator.userAgent)) qrBox.classList.remove('active'); 
                 return; 
             }
             
-            // Add Random Security Paisa
+            // Add Random Security Paisa in BACKEND ONLY
             let totalAmt = (baseAmt + parseFloat(currentRandomPaisa)).toFixed(2);
             
-            feeBox.style.display = "block";
-            feeBox.innerHTML = `Includes ₹${currentRandomPaisa} Random Security Paisa (Total: ₹${totalAmt})`;
-            
             qrBox.classList.add('active');
-            document.getElementById('qrAmtText').innerText = `Rs. ${totalAmt}`;
             
-            // Razorpay static QR handler
-            if(currentServer === 6) {
-                // For Razorpay, we use the uploaded static Razorpay QR image
-                qrImg.src = "img.bb";
-            } else {
-                let realUpiId = REAL_SERVER_UPIS[currentServer];
-                let upiLink = `upi://pay?pa=${realUpiId}&pn=Tournyx%20Esports&am=${totalAmt}&cu=INR`;
-                qrImg.src = `https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=${encodeURIComponent(upiLink)}`;
-            }
+            // UI shows clean, integer base amount to the user
+            document.getElementById('qrAmtText').innerText = `Rs. ${baseAmt}`;
+            
+            let realUpiId = REAL_SERVER_UPIS[currentServer];
+            let upiLink = `upi://pay?pa=${realUpiId}&pn=Tournyx%20Esports&am=${totalAmt}&cu=INR`;
+            qrImg.src = `https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=${encodeURIComponent(upiLink)}`;
         }
         
         function startQRTimer() {
@@ -898,7 +874,7 @@
         
         function openUPIApp() {
             let baseAmt = parseInt(document.getElementById('addAmtInput').value);
-            if(isNaN(baseAmt) || baseAmt < 100) { triggerError('addAmtInput'); showToast("Enter minimum Rs 100", true); return; }
+            if(isNaN(baseAmt) || baseAmt < 50) { triggerError('addAmtInput'); showToast("Enter minimum Rs 50", true); return; }
             
             let totalAmt = (baseAmt + parseFloat(currentRandomPaisa)).toFixed(2);
             let realUpiId = REAL_SERVER_UPIS[currentServer];
@@ -911,7 +887,7 @@
         function submitStrictUTR() {
             let baseAmt = parseInt(document.getElementById('addAmtInput').value);
             let utr = document.getElementById('utrInput').value.trim();
-            if(isNaN(baseAmt) || baseAmt < 100) { triggerError('addAmtInput'); showToast("Minimum Rs 100 is required", true); return; }
+            if(isNaN(baseAmt) || baseAmt < 50) { triggerError('addAmtInput'); showToast("Minimum Rs 50 is required", true); return; }
             if(!/^\d{12}$/.test(utr)) { triggerError('utrInput'); showToast("UTR must be exactly 12 digits.", true); return; }
             
             closeAddMoney();
