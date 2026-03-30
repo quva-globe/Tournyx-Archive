@@ -375,12 +375,13 @@
             <div class="section-content">
                 <div class="row">
                     <div class="col">
-                        <label class="input-label">Entry Fee (Rs.)</label>
-                        <input type="number" name="entry_fee" id="inpFee" class="form-control" placeholder="0 for Free" value="0" onkeyup="updateCalc()">
+                        <label class="input-label">Entry Fee (TX Passes)</label>
+                        <input type="number" name="entry_fee" id="inpFee" class="form-control" placeholder="e.g. 1, 2, 5" value="0" onkeyup="updateCalc()">
+                        <div style="font-size: 0.75rem; color: var(--accent-cyan); margin-top: 5px; font-weight: bold;">1 Pass = ₹10</div>
                         <div class="preset-row">
                             <span class="preset-badge" onclick="applyPreset('inpFee', 0)">Free</span>
-                            <span class="preset-badge" onclick="applyPreset('inpFee', 50)">50</span>
-                            <span class="preset-badge" onclick="applyPreset('inpFee', 100)">100</span>
+                            <span class="preset-badge" onclick="applyPreset('inpFee', 1)">1 Pass</span>
+                            <span class="preset-badge" onclick="applyPreset('inpFee', 5)">5 Passes</span>
                         </div>
                     </div>
                     <div class="col">
@@ -656,11 +657,12 @@
 
         // --- 4. CALCULATORS & VALIDATORS ---
         function updateCalc() {
-            let feeRs = parseInt(document.getElementById('inpFee').value) || 0;
+            let feeTickets = parseInt(document.getElementById('inpFee').value) || 0;
             let feePts = parseInt(document.getElementById('inpFeePts').value) || 0;
             let slots = parseInt(document.querySelector('input[name="slots"]').value) || 0;
             
-            let revRs = feeRs * slots;
+            // Convert tickets to Rupees (1 Pass = 10 Rs) for Revenue calculation
+            let revRs = (feeTickets * 10) * slots;
             let revPts = feePts * slots;
             
             let calcRsEl = document.getElementById('calcRev');
