@@ -56,6 +56,34 @@
         /* DESKTOP RESPONSIVE TOP PADDING */
         body { background-color: var(--primary-bg); color: white; font-family: var(--font-body); padding-bottom: calc(90px + env(safe-area-inset-bottom)); padding-top: calc(75px + env(safe-area-inset-top)); overflow-x: hidden; }
 
+        /* --- TOURNYX TX COMPOSITE TICKET ICON --- */
+        .tx-ticket-composite {
+            position: relative;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .tx-ticket-composite i {
+            font-size: inherit;
+            transition: inherit;
+        }
+        .tx-ticket-composite .tx-text {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -46%);
+            font-family: var(--font-head);
+            font-size: 0.38em; 
+            font-weight: 900;
+            color: var(--primary-bg) !important;
+            -webkit-text-fill-color: var(--primary-bg) !important;
+            letter-spacing: -0.5px;
+            pointer-events: none;
+            z-index: 2;
+            transition: 0.3s;
+            font-style: normal !important;
+        }
+
         /* --- RESPONSIVE WRAPPER --- */
         .stats-row, .tabs-wrapper, .match-list, .app-footer, .top-header .header-wrapper { max-width: 1000px; margin-left: auto !important; margin-right: auto !important; width: 100%; }
 
@@ -219,10 +247,17 @@
         .bottom-nav { position: fixed; bottom: 0; left: 0; width: 100%; height: calc(65px + env(safe-area-inset-bottom)); background: rgba(5, 2, 12, 0.75); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); display: flex; justify-content: space-between; align-items: flex-start; padding: 10px 2px env(safe-area-inset-bottom); border-top: 1px solid rgba(255,255,255,0.05); z-index: 1000; box-shadow: 0 -10px 30px rgba(0,0,0,0.5); transform: translateZ(0);}
         .nav-item { display: flex; flex-direction: column; align-items: center; justify-content: flex-start; color: #666; text-decoration: none; font-size: 0.6rem; font-family: var(--font-head); font-weight: bold; flex: 1; transition: 0.3s; position: relative; padding: 0 2px; text-align: center;}
         .nav-item span { margin-top: 4px; transition: 0.3s; letter-spacing: -0.3px;}
-        .nav-item i { font-size: 1.2rem; transition: 0.3s; }
+        
+        .nav-item i, .nav-item .tx-icon, .nav-item .tx-ticket-composite { font-size: 1.2rem; transition: 0.3s; color: #666; background: none; -webkit-text-fill-color: #666; filter: none; font-style: normal; }
         .nav-item.active { color: var(--accent-cyan); }
-        .nav-item.active i { transform: translateY(-4px); color: var(--accent-cyan); filter: drop-shadow(0 0 10px var(--accent-cyan)); }
+        
+        /* Specific fix for composite to move together */
+        .nav-item.active .tx-ticket-composite { transform: translateY(-4px); }
+        .nav-item.active i, .nav-item.active .tx-icon, .nav-item.active .tx-ticket-composite i { transform: translateY(-4px); background: linear-gradient(135deg, var(--accent-purple), var(--accent-cyan)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; filter: drop-shadow(0 0 10px var(--accent-cyan)); font-style: normal; }
+        .nav-item.active .tx-ticket-composite i { transform: translateY(0); } /* Reset inner transform */
+        
         .nav-item.active span { transform: translateY(2px); color: white; text-shadow: 0 0 5px rgba(255,255,255,0.5);}
+        
         .fab-slot { flex: 1.2; display: flex; justify-content: center; position: relative; height: 100%; align-items: center; }
         .floating-plus { position: absolute; top: -25px; left: 50%; transform: translateX(-50%); width: 54px; height: 54px; background: linear-gradient(135deg, var(--accent-cyan), var(--accent-purple)); border-radius: 50%; display: flex; align-items: center; justify-content: center; border: 4px solid var(--primary-bg); box-shadow: 0 10px 25px rgba(189,0,255,0.4); color: #fff; font-size: 1.6rem; cursor: pointer; transition: 0.3s; z-index: 10; }
         .floating-plus:hover { transform: translateX(-50%) scale(1.1) rotate(90deg); box-shadow: 0 15px 35px rgba(0,242,255,0.6); }
@@ -364,9 +399,12 @@
             <i class="fa-solid fa-shield-halved"></i>
             <span>Clan</span>
         </a>
-        <a class="nav-item" href="wallet.html">
-            <i class="fa-solid fa-wallet"></i>
-            <span>Wallet</span>
+        <a class="nav-item" href="tickets.html">
+            <div class="tx-ticket-composite">
+                <i class="fa-solid fa-ticket"></i>
+                <b class="tx-text">TX</b>
+            </div>
+            <span>Tickets</span>
         </a>
         <a class="nav-item" href="profile.html">
             <i class="fa-solid fa-user"></i>
@@ -755,7 +793,7 @@
                 // DYNAMIC ROOM/REFUND AREA
                 let roomBoxHtml = '';
                 if (isLeaved) {
-                    let refundMsg = match.isRefundSuccess ? "Your entry fee has been successfully refunded to your wallet." : "Your refund is currently processing and will be added to your wallet soon.";
+                    let refundMsg = match.isRefundSuccess ? "Your Passes have been successfully refunded to your wallet." : "Your refund is currently processing and will be added to your wallet soon.";
                     let refundIcon = match.isRefundSuccess ? '<i class="fa-solid fa-check-circle" style="color:var(--accent-green); font-size:2rem; margin-bottom:10px;"></i>' : '<i class="fa-solid fa-clock-rotate-left fa-spin-pulse" style="color:var(--accent-orange); font-size:2rem; margin-bottom:10px;"></i>';
                     roomBoxHtml = `
                         <div class="room-box-container" style="flex-direction:column; text-align:center; padding: 20px; box-shadow:none; border:1px dashed var(--card-border);">
@@ -825,7 +863,7 @@
             event.stopPropagation();
             triggerHaptic();
 
-            if(confirm('WARNING: Are you sure you want to withdraw from ' + tournamentName + '? If you paid an entry fee, the money will be refunded to your wallet in 1-3 working days.')) {
+            if(confirm('WARNING: Are you sure you want to withdraw from ' + tournamentName + '? If you paid an entry fee, the Passes will be refunded to your wallet in 1-3 working days.')) {
                 executeUnjoin(tournamentName, matchId);
             }
         }
