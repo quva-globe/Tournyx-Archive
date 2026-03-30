@@ -69,7 +69,7 @@
         *::-webkit-scrollbar { display: none !important; width: 0 !important; height: 0 !important; background: transparent !important; -webkit-appearance: none !important; }
         
         /* TOP GAP PERFECTLY FIXED */
-        body { background-color: var(--primary-bg); color: white; font-family: var(--font-body); padding-bottom: calc(90px + env(safe-area-inset-bottom)); padding-top: calc(55px + env(safe-area-inset-top)); overflow-x: hidden; }
+        body { background-color: var(--primary-bg); color: white; font-family: var(--font-body); padding-bottom: calc(90px + env(safe-area-bottom)); padding-top: calc(55px + env(safe-area-inset-top)); overflow-x: hidden; }
 
         /* --- TOURNYX TX COMPOSITE TICKET ICON --- */
         .tx-ticket-composite {
@@ -78,13 +78,17 @@
             align-items: center;
             justify-content: center;
         }
+        .tx-ticket-composite i {
+            font-size: inherit;
+            transition: inherit;
+        }
         .tx-ticket-composite .tx-text {
             position: absolute;
             top: 50%;
             left: 50%;
-            transform: translate(-50%, -50%);
+            transform: translate(-50%, -46%);
             font-family: var(--font-head);
-            font-size: 0.42em; /* Scales perfectly inside the ticket */
+            font-size: 0.38em; 
             font-weight: 900;
             color: var(--primary-bg) !important;
             -webkit-text-fill-color: var(--primary-bg) !important;
@@ -92,6 +96,7 @@
             pointer-events: none;
             z-index: 2;
             transition: 0.3s;
+            font-style: normal !important;
         }
 
         /* --- RESPONSIVE WRAPPER (WIDER DESKTOP) --- */
@@ -222,13 +227,17 @@
         .join-btn-card:hover { box-shadow: 0 0 20px rgba(0,242,255,0.6); background: var(--accent-cyan); color: #000; }
         @keyframes shine { 0% { left: -100%; } 20% { left: 200%; } 100% { left: 200%; } }
 
-        /* --- SKELETON LOADER --- */
+        /* --- SKELETON LOADER (FIXED TO MATCH CARD SHAPE) --- */
         .skeleton-wrapper { padding: 0; display: flex; flex-direction: column; gap: 20px; width: 100%; }
-        .skeleton { background: linear-gradient(90deg, #110822 25%, #1a0a3a 50%, #110822 75%); background-size: 200% 100%; animation: shimmer 1.5s infinite linear; }
-        .s-card { background: var(--secondary-bg); border-radius: 15px; overflow: hidden; border: 1px solid var(--card-border); }
-        .s-banner { height: 160px; width: 100%; }
+        .skeleton { background: linear-gradient(90deg, #110822 25%, #1a0a3a 50%, #110822 75%); background-size: 200% 100%; animation: shimmer 1.5s infinite linear; border-radius: 8px;}
+        @keyframes shimmer { 0% { background-position: -200% 0; } 100% { background-position: 200% 0; } }
+        
+        .s-card { background: var(--secondary-bg); border-radius: 15px; overflow: hidden; border: 1px solid var(--card-border); display: flex; flex-direction: column; }
+        .s-banner { height: 160px; width: 100%; border-radius: 0; }
         .s-content { padding: 15px; display: flex; flex-direction: column; gap: 12px; }
-        .s-line { height: 15px; border-radius: 8px; width: 80%; }
+        .s-line { height: 15px; width: 100%; }
+        .s-line.short { width: 60%; }
+        .s-btn-area { display: flex; justify-content: space-between; margin-top: 10px; border-top: 1px solid rgba(255,255,255,0.05); padding-top: 15px; }
 
         /* --- BOTTOM SHEETS --- */
         .bottom-sheet-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 5000; display: none; opacity: 0; transition: 0.3s; backdrop-filter: blur(5px); }
@@ -249,7 +258,7 @@
         .fee-tag { padding: 8px 15px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 20px; font-size: 0.85rem; font-family: var(--font-head); color: #ccc; cursor: pointer; transition: 0.3s; display: flex; align-items: center; justify-content: center; white-space: nowrap; text-align: center;}
         .fee-tag.active { background: rgba(0,242,255,0.15); border-color: var(--accent-cyan); color: var(--accent-cyan); box-shadow: 0 0 10px rgba(0,242,255,0.3); transform: scale(1.05); }
 
-        /* --- FULL SCREEN DETAIL MODAL (DESKTOP RESPONSIVE) --- */
+        /* --- FULL SCREEN DETAIL MODAL --- */
         .detail-modal { 
             position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
             z-index: 3000; 
@@ -275,7 +284,6 @@
         
         .live-viewer-bubble { position: absolute; top: 180px; right: 15px; background: rgba(0,0,0,0.8); border: 1px solid rgb(var(--dynamic-t-color)); color: white; font-family: var(--font-head); font-size: 0.75rem; padding: 6px 12px; border-radius: 20px; display: flex; align-items: center; gap: 6px; box-shadow: 0 0 15px rgba(var(--dynamic-t-color), 0.3); backdrop-filter: blur(5px); z-index: 5;}
         .live-viewer-bubble .dot { width: 6px; height: 6px; background: rgb(var(--dynamic-t-color)); border-radius: 50%; animation: pulseBlue 1s infinite alternate; }
-        @keyframes pulseBlue { from { opacity:0.3; transform:scale(0.8);} to {opacity:1; transform:scale(1.2);} }
 
         .dm-nav { display: flex; gap: 20px; padding: 15px; border-bottom: 1px solid var(--card-border); overflow-x: auto; background: var(--primary-bg); position: sticky; top: 0; z-index: 5; flex-shrink: 0; }
         .dm-nav-item { display: flex; align-items: center; gap: 6px; font-family: var(--font-head); font-size: 0.9rem; color: #888; cursor: pointer; white-space: nowrap; padding-bottom: 8px; border-bottom: 2px solid transparent; transition: 0.3s; text-transform: uppercase; font-weight: bold;}
@@ -284,20 +292,18 @@
 
         .dm-tab-content { display: none; padding: 20px 15px; animation: fadeIn 0.4s; }
         .dm-tab-content.active { display: block; }
-        @keyframes fadeIn { from { opacity: 0; transform:translateY(10px);} to { opacity: 1; transform:translateY(0);} }
-
+        
         .esports-badge { padding: 4px 8px; border-radius: 6px; font-size: 0.7rem; font-family: var(--font-head); font-weight: bold; margin-right: 5px; margin-bottom: 5px; display: inline-flex; align-items: center; gap: 4px; text-transform: uppercase; border: 1px solid rgba(255,255,255,0.2); background: rgba(0,0,0,0.5); }
         .b-fast { color: var(--accent-orange); border-color: var(--accent-orange); }
         .b-free { color: var(--accent-green); border-color: var(--accent-green); }
 
-        /* --- GLASSMORPHISM SECTIONS --- */
         .dm-stat-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 25px; }
-        .stat-box { background: rgba(255, 255, 255, 0.03); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border: 1px solid rgba(var(--dynamic-t-color), 0.15); padding: 15px; border-radius: 12px; display: flex; flex-direction: column; align-items: center; text-align: center; box-shadow: 0 10px 30px rgba(var(--dynamic-t-color), 0.05); }
+        .stat-box { background: rgba(255, 255, 255, 0.03); backdrop-filter: blur(20px); border: 1px solid rgba(var(--dynamic-t-color), 0.15); padding: 15px; border-radius: 12px; display: flex; flex-direction: column; align-items: center; text-align: center; box-shadow: 0 10px 30px rgba(var(--dynamic-t-color), 0.05); }
         .stat-box i { font-size: 1.5rem; margin-bottom: 8px; color: var(--accent-purple); text-shadow: 0 0 10px rgba(189,0,255,0.4); }
         .stat-box .val { font-family: var(--font-head); font-size: 1.1rem; font-weight: bold; color: white; text-shadow: 0 0 5px rgba(255,255,255,0.3); text-align: center; width: 100%; }
         .stat-box .lbl { font-size: 0.7rem; color: #888; text-transform: uppercase; letter-spacing: 1px; margin-top: 5px; }
 
-        .dm-section { background: rgba(255, 255, 255, 0.03); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border: 1px solid rgba(var(--dynamic-t-color), 0.15); border-radius: 15px; padding: 20px; margin-bottom: 20px; box-shadow: 0 10px 30px rgba(var(--dynamic-t-color), 0.05); }
+        .dm-section { background: rgba(255, 255, 255, 0.03); backdrop-filter: blur(20px); border: 1px solid rgba(var(--dynamic-t-color), 0.15); border-radius: 15px; padding: 20px; margin-bottom: 20px; box-shadow: 0 10px 30px rgba(var(--dynamic-t-color), 0.05); }
         
         .dm-sec-title { font-family: var(--font-head); font-size: 1.3rem; font-weight: 900; margin-bottom: 18px; color: rgb(var(--dynamic-t-color)); display: flex; align-items: center; gap: 10px; text-shadow: 0 0 15px rgba(var(--dynamic-t-color), 0.4); text-transform: uppercase; letter-spacing: 1px;}
         .dm-sec-title i { font-size: 1.4rem; color: white; background: rgba(var(--dynamic-t-color), 0.2); padding: 8px; border-radius: 8px; box-shadow: 0 0 10px rgba(var(--dynamic-t-color), 0.3);}
@@ -309,7 +315,6 @@
         .tl-val { font-family: var(--font-body); font-size: 0.95rem; color: white; white-space: normal; }
         .tl-status { background: rgba(0,255,127,0.1); color: var(--accent-green); padding: 4px 10px; border-radius: 20px; font-size: 0.7rem; font-weight: bold; border: 1px solid var(--accent-green); text-transform: uppercase; white-space: nowrap; }
 
-        /* --- TIMELINE SCHEDULE CSS --- */
         .schedule-timeline { position: relative; padding-left: 20px; margin-top: 15px; }
         .schedule-timeline::before { content: ''; position: absolute; left: 0; top: 10px; bottom: 10px; width: 2px; background: rgba(255,255,255,0.1); }
         .st-block { position: relative; margin-bottom: 20px; background: rgba(255,255,255,0.03); border: 1px solid rgba(var(--dynamic-t-color), 0.15); border-radius: 12px; padding: 15px; transition: 0.3s; cursor: pointer; overflow: hidden; backdrop-filter: blur(10px); }
@@ -333,7 +338,7 @@
         .st-timer-text { font-family: var(--font-head); font-size: 1.4rem; font-weight: bold; color: white; letter-spacing: 1px; text-shadow: 0 0 10px rgba(255,255,255,0.2); }
 
         /* PRIZE ANIMATIONS */
-        .prize-card { position: relative; overflow: hidden; background: rgba(255, 255, 255, 0.05); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 12px; padding: 15px; margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1); transition: transform 0.3s; cursor: pointer; }
+        .prize-card { position: relative; overflow: hidden; background: rgba(255, 255, 255, 0.05); backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 12px; padding: 15px; margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1); transition: transform 0.3s; cursor: pointer; }
         .prize-card:hover { transform: scale(1.03) translateY(-3px); }
         .prize-card.gold { border-color: rgba(255, 215, 0, 0.4); background: rgba(255, 215, 0, 0.08); }
         .prize-card.silver { border-color: rgba(192, 192, 192, 0.4); background: rgba(192, 192, 192, 0.08); }
@@ -351,7 +356,7 @@
         .prize-mega .pc-val { color: #FFD700; text-shadow: 0 0 10px rgba(255,215,0,0.8); font-size: 1.3rem; }
         @keyframes megaPulse { 0% { transform: scale(1); box-shadow: 0 0 20px rgba(255,215,0,0.4); } 100% { transform: scale(1.02); box-shadow: 0 0 40px rgba(255,215,0,0.8); } }
 
-        .clan-item { display: flex; flex-direction: column; align-items: flex-start; gap: 12px; background: rgba(255, 255, 255, 0.03); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.08); padding: 12px; border-radius: 12px; margin-bottom: 10px; transition: 0.3s; cursor: pointer; box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1); }
+        .clan-item { display: flex; flex-direction: column; align-items: flex-start; gap: 12px; background: rgba(255, 255, 255, 0.03); backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.08); padding: 12px; border-radius: 12px; margin-bottom: 10px; transition: 0.3s; cursor: pointer; box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1); }
         .clan-item.my-clan { border: 1px solid var(--accent-cyan); background: rgba(0,242,255,0.1); box-shadow: 0 0 10px rgba(0,242,255,0.2); }
         .clan-item-header { display: flex; align-items: center; width: 100%; gap: 12px; }
         .clan-item-icon { width: 35px; height: 35px; border-radius: 8px; background: rgba(0,242,255,0.1); color: var(--accent-cyan); display: flex; align-items: center; justify-content: center; font-size: 1.1rem; overflow: hidden; }
@@ -362,7 +367,6 @@
         .tournyx-ad-slot { min-height: 90px; margin: 20px 0; border-radius: 15px; background: rgba(255,255,255,0.02); border: 1px dashed rgba(var(--dynamic-t-color, 255,255,255), 0.3); display:flex; align-items:center; justify-content:center; overflow:hidden; backdrop-filter: blur(10px); position: relative; }
         .tournyx-ad-slot::after { content: 'SPONSORED'; position: absolute; bottom: 5px; right: 10px; font-size: 0.5rem; color: #666; font-family: var(--font-head); pointer-events: none;}
 
-        /* CROSSHAIR ANIMATION FOR SECURE SLOT */
         .crosshair-target { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%) scale(5); opacity: 0; color: var(--accent-cyan); font-size: 8rem; z-index: 10000; pointer-events: none; text-shadow: 0 0 20px rgba(0,242,255,0.8);}
         .crosshair-target.active { animation: targetLock 1.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; }
         @keyframes targetLock {
@@ -372,7 +376,6 @@
             100% { transform: translate(-50%, -50%) scale(1) rotate(0deg); opacity: 0; }
         }
 
-        /* eSPORTS SECURE LOADER (PROFESSIONAL FADE & LOGO NO SHAKE) */
         #securePaymentLoader { display:none; position:fixed; top:0; left:0; width:100%; height:100%; z-index:9999; background: rgba(5, 2, 12, 0.95); backdrop-filter:blur(15px); flex-direction:column; align-items:center; justify-content:center; opacity: 0; transition: opacity 0.5s ease;}
         #securePaymentLoader.active { opacity: 1; }
         .cycle-logos { position: relative; width: 130px; height: 130px; margin-bottom: 25px; }
@@ -387,11 +390,9 @@
         .cyber-bar-container { width: 260px; height: 10px; background: rgba(255,255,255,0.1); border: 1px solid rgba(0,242,255,0.3); border-radius: 8px; margin-top: 15px; overflow: hidden; box-shadow: inset 0 0 10px rgba(0,0,0,0.5); }
         .cyber-bar-fill { height: 100%; width: 0%; background: var(--accent-cyan); box-shadow: 0 0 15px var(--accent-cyan); transition: width 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), background 0.4s; }
 
-        /* ORGANIZER'S OTHER TOURNAMENTS SLIDER */
         .org-other-card { min-width: 280px; max-width: 280px; background: rgba(255,255,255,0.03); backdrop-filter: blur(15px); border: 1px solid rgba(var(--dynamic-t-color, 255,255,255), 0.2); border-radius: 12px; overflow: hidden; cursor: pointer; transition: 0.3s; flex-shrink: 0; }
         .org-other-card:active { transform: scale(0.96); }
 
-        /* LOCKED FOOTER & MASTER BUTTON */
         .locked-footer { background: rgba(7, 3, 17, 0.95); backdrop-filter: blur(10px); padding: 15px 15px calc(15px + env(safe-area-inset-bottom)); border-top: 1px solid rgba(var(--dynamic-t-color), 0.2); display: flex; gap: 10px; flex-shrink: 0; box-shadow: 0 -5px 20px rgba(0,0,0,0.5); z-index: 50; transition: border-color 0.4s ease;}
         .btn-primary { flex: 1; background: var(--accent-gradient); color: white; border: none; padding: 14px; border-radius: 12px; font-family: var(--font-head); font-weight: bold; font-size: 1rem; cursor: pointer; box-shadow: 0 5px 15px rgba(189,0,255,0.4); text-transform: uppercase; transition: 0.3s; display:flex; align-items:center; justify-content:center; gap:8px;}
         .btn-primary:active { transform: scale(0.98); }
@@ -404,7 +405,7 @@
 
         /* REGISTRATION & PAYMENT OVERLAYS */
         #payFeeRupees, #payFeePts { font-weight: bold; font-family: var(--font-head); font-size: 1.1rem; }
-        #payFeeRupees { color: var(--accent-orange); }
+        #payFeeRupees { color: var(--accent-cyan); }
         #payFeePts { color: var(--accent-cyan); }
         .bal-display { font-size: 0.8rem; color: #888; margin-top: 5px; }
         
@@ -433,22 +434,24 @@
         .bottom-nav { position: fixed; bottom: 0; left: 0; width: 100%; height: calc(65px + env(safe-area-inset-bottom)); background: rgba(5, 2, 12, 0.75); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); display: flex; justify-content: space-between; align-items: flex-start; padding: 10px 2px env(safe-area-inset-bottom); border-top: 1px solid rgba(255,255,255,0.05); z-index: 1000; box-shadow: 0 -10px 30px rgba(0,0,0,0.5); transform: translateZ(0);}
         .nav-item { display: flex; flex-direction: column; align-items: center; justify-content: flex-start; color: #666; text-decoration: none; font-size: 0.6rem; font-family: var(--font-head); font-weight: bold; flex: 1; transition: 0.3s; position: relative; padding: 0 2px; text-align: center;}
         .nav-item span { margin-top: 4px; transition: 0.3s; letter-spacing: -0.3px;}
-        .nav-item i { font-size: 1.2rem; transition: 0.3s; color: #666; background: none; -webkit-text-fill-color: #666; filter: none; font-style: normal; }
+        .nav-item i, .nav-item .tx-icon, .nav-item .tx-ticket-composite { font-size: 1.2rem; transition: 0.3s; color: #666; background: none; -webkit-text-fill-color: #666; filter: none; font-style: normal; }
         .nav-item.active { color: var(--accent-cyan); }
-        .nav-item.active i { transform: translateY(-4px); background: linear-gradient(135deg, var(--accent-purple), var(--accent-cyan)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; filter: drop-shadow(0 0 10px var(--accent-cyan)); font-style: normal;}
         
+        .nav-item.active .tx-ticket-composite { transform: translateY(-4px); }
+        .nav-item.active i, .nav-item.active .tx-icon, .nav-item.active .tx-ticket-composite i { transform: translateY(-4px); background: linear-gradient(135deg, var(--accent-purple), var(--accent-cyan)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; filter: drop-shadow(0 0 10px var(--accent-cyan)); font-style: normal;}
+        .nav-item.active .tx-ticket-composite i { transform: translateY(0); }
+        
+        .nav-item.active span { transform: translateY(2px); color: white; text-shadow: 0 0 5px rgba(255,255,255,0.5);}
         .fab-slot { flex: 1.2; display: flex; justify-content: center; position: relative; height: 100%; align-items: center; }
         .floating-plus { position: absolute; top: -25px; left: 50%; transform: translateX(-50%); width: 54px; height: 54px; background: linear-gradient(135deg, var(--accent-cyan), var(--accent-purple)); border-radius: 50%; display: flex; align-items: center; justify-content: center; border: 4px solid var(--primary-bg); box-shadow: 0 10px 25px rgba(189,0,255,0.4); color: #fff; font-size: 1.6rem; cursor: pointer; transition: 0.3s; z-index: 10; }
         .floating-plus:hover { transform: translateX(-50%) scale(1.1) rotate(90deg); box-shadow: 0 15px 35px rgba(0,242,255,0.6); }
 
-        /* PERFECT DESKTOP FULL WIDTH FIX & CENTERED MODALS */
         @media (min-width: 850px) {
             .tourney-card { flex: 0 0 calc(50% - 10px); }
             .tourney-list { flex-direction: row; flex-wrap: wrap; gap: 20px; }
             .bottom-nav { display: none !important; }
             body { padding-bottom: 0; }
             
-            /* DESKTOP RESPONSIVE DETAIL MODAL & SHARE PAGE */
             .detail-modal { align-items: center; justify-content: center; background: rgba(0,0,0,0.85) !important; backdrop-filter: blur(10px); }
             .dm-container { width: 800px !important; height: 90vh !important; background: var(--primary-bg); border-radius: 20px; box-shadow: 0 10px 50px rgba(0,0,0,0.8); border: 1px solid rgba(var(--dynamic-t-color), 0.3); }
             .dm-header { border-radius: 20px 20px 0 0; }
@@ -460,17 +463,14 @@
             .single-page-mode .dm-header { border-radius: 0; }
             .single-page-mode .locked-footer { border-radius: 0; position: fixed; }
 
-            /* CENTER BOTTOM SHEETS FOR DESKTOP */
             .bottom-sheet-overlay { align-items: center; justify-content: center; }
             .bottom-sheet { border-radius: 20px; max-width: 500px; transform: scale(0.9); opacity: 0; transition: all 0.3s ease; }
             .bottom-sheet-overlay.active .bottom-sheet { transform: scale(1); opacity: 1; }
         }
 
-        /* MEDIAN DETECTOR */
         .median-active .top-header { display: none !important; }
         .median-active { padding-top: 15px !important; }
         
-        /* --- PERFECT SINGLE PAGE SHARE MODE --- */
         .single-page-mode .top-header, .single-page-mode .search-row, .single-page-mode .game-scroll, .single-page-mode .tourney-list, .single-page-mode .bottom-nav, .single-page-mode .app-footer, .single-page-mode .floating-plus { display: none !important; }
         .single-page-mode body { padding: 0 !important; background: var(--primary-bg); }
         .single-page-mode .detail-modal { position: fixed !important; transform: none !important; transition: none !important; height: 100vh !important; width: 100vw !important; top: 0 !important; left: 0 !important; opacity: 1 !important;}
@@ -478,10 +478,8 @@
         .single-page-mode .guest-banner { position: fixed; top: 0; width: 100%; z-index: 9999; }
         .single-page-mode .dm-header { margin-top: 40px; } 
 
-        /* Share Page Initial Loader */
         #shareLoader { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--primary-bg); z-index: 99999; align-items: center; justify-content: center; flex-direction: column; transition: opacity 0.4s; }
 
-        /* GUEST LOGIN POPUP */
         .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); z-index: 5000; display: none; align-items: center; justify-content: center; backdrop-filter: blur(5px); }
         .modal-overlay.active { display: flex; animation: popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
         @keyframes popIn { from{transform:scale(0.9); opacity:0;} to{transform:scale(1); opacity:1;} }
@@ -548,8 +546,8 @@
 
     <div class="tourney-list" id="tournamentContainer">
         <div id="contentLoader" class="skeleton-wrapper">
-            <div class="s-card"><div class="s-banner skeleton"></div><div class="s-content"><div class="s-line skeleton"></div><div class="s-line short skeleton"></div></div></div>
-            <div class="s-card"><div class="s-banner skeleton"></div><div class="s-content"><div class="s-line skeleton"></div><div class="s-line short skeleton"></div></div></div>
+            <div class="s-card"><div class="s-banner skeleton"></div><div class="s-content"><div class="s-line skeleton"></div><div class="s-line short skeleton"></div><div class="s-btn-area"><div class="s-line short skeleton"></div><div class="s-line short skeleton"></div></div></div></div>
+            <div class="s-card"><div class="s-banner skeleton"></div><div class="s-content"><div class="s-line skeleton"></div><div class="s-line short skeleton"></div><div class="s-btn-area"><div class="s-line short skeleton"></div><div class="s-line short skeleton"></div></div></div></div>
         </div>
     </div>
 
@@ -1357,8 +1355,8 @@
             const feed = document.getElementById('tournamentContainer');
             feed.innerHTML = `
                 <div id="contentLoader" class="skeleton-wrapper">
-                    <div class="s-card"><div class="s-banner skeleton"></div><div class="s-content"><div class="s-line skeleton"></div><div class="s-line short skeleton"></div></div></div>
-                    <div class="s-card"><div class="s-banner skeleton"></div><div class="s-content"><div class="s-line skeleton"></div><div class="s-line short skeleton"></div></div></div>
+                    <div class="s-card"><div class="s-banner skeleton"></div><div class="s-content"><div class="s-line skeleton"></div><div class="s-line short skeleton"></div><div class="s-btn-area"><div class="s-line short skeleton"></div><div class="s-line short skeleton"></div></div></div></div>
+                    <div class="s-card"><div class="s-banner skeleton"></div><div class="s-content"><div class="s-line skeleton"></div><div class="s-line short skeleton"></div><div class="s-btn-area"><div class="s-line short skeleton"></div><div class="s-line short skeleton"></div></div></div></div>
                 </div>`;
             loadLiveTournaments(null); 
         }
@@ -1470,7 +1468,7 @@
                                 <div class="t-details-grid">
                                     <div class="t-detail-item"><i class="fa-solid fa-gamepad"></i> <span>${t.game || "Esports"} (${t.format || "Any"})</span></div>
                                     <div class="t-detail-item"><i class="fa-solid fa-calendar-day"></i> <span>${formatDateTime(t.date).split(',')[0]}</span></div>
-                                    <div class="t-detail-item"><i class="fa-solid fa-ticket"></i> <span style="color:${entryTxt === "Free" ? '#00ff7f' : '#ffd700'}; font-weight:bold;">Entry: ${entryTxt}</span></div>
+                                    <div class="t-detail-item"><i class="fa-solid fa-ticket"></i> <span style="color:${entryTxt === "Free" ? '#00ff7f' : '#ffd700'}; font-weight:bold; display:flex; align-items:center; gap:5px;">Entry: ${entryTxt}</span></div>
                                     
                                     <div class="t-detail-item slot-tracker" style="grid-column: 1 / -1; flex-direction:column; align-items:flex-start; gap:4px; margin-top: 5px;">
                                         <div style="display:flex; justify-content:space-between; width:100%; align-items:center;">
@@ -1618,7 +1616,7 @@
                             <div class="t-details-grid">
                                 <div class="t-detail-item"><i class="fa-solid fa-gamepad"></i> <span>${t.game || "Esports"} (${t.format || "Any"})</span></div>
                                 <div class="t-detail-item"><i class="fa-solid fa-calendar-day"></i> <span>${formatDateTime(t.date).split(',')[0]}</span></div>
-                                <div class="t-detail-item"><i class="fa-solid fa-ticket"></i> <span style="color:${entryTxt === "Free" ? '#00ff7f' : '#ffd700'}; font-weight:bold;">Entry: ${entryTxt}</span></div>
+                                <div class="t-detail-item"><i class="fa-solid fa-ticket"></i> <span style="color:${entryTxt === "Free" ? '#00ff7f' : '#ffd700'}; font-weight:bold; display:flex; align-items:center; gap:5px;">Entry: ${entryTxt}</span></div>
                                 
                                 <div class="t-detail-item slot-tracker" style="grid-column: 1 / -1; flex-direction:column; align-items:flex-start; gap:4px; margin-top: 5px;">
                                     <div style="display:flex; justify-content:space-between; width:100%; align-items:center;">
@@ -2239,6 +2237,7 @@
             triggerSecureLoader(pendingRegistrationData.clanName, method === 'tickets' ? (cost * 10) : cost, method);
         }
 
+        // --- PROFESSIONAL REGISTRATION LOADER ---
         function triggerSecureLoader(clanName, cost, method) {
             let loaderOverlay = document.getElementById('securePaymentLoader');
             loaderOverlay.style.display = 'flex';
