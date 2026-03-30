@@ -75,6 +75,34 @@
             vertical-align: middle;
         }
 
+        /* --- TOURNYX TX COMPOSITE TICKET ICON --- */
+        .tx-ticket-composite {
+            position: relative;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .tx-ticket-composite i {
+            font-size: inherit;
+            transition: inherit;
+        }
+        .tx-ticket-composite .tx-text {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -46%);
+            font-family: var(--font-head);
+            font-size: 0.38em; 
+            font-weight: 900;
+            color: var(--primary-bg) !important;
+            -webkit-text-fill-color: var(--primary-bg) !important;
+            letter-spacing: -0.5px;
+            pointer-events: none;
+            z-index: 2;
+            transition: 0.3s;
+            font-style: normal !important;
+        }
+
         .container, .app-footer, .top-header .header-wrapper { max-width: 800px; margin-left: auto !important; margin-right: auto !important; width: 100%; }
 
         #particles-canvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; pointer-events: none; transform: translateZ(0); }
@@ -280,9 +308,15 @@
         .bottom-nav { position: fixed; bottom: 0; left: 0; width: 100%; height: calc(65px + env(safe-area-inset-bottom)); background: rgba(7, 3, 17, 0.92); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); display: flex; justify-content: space-between; align-items: flex-start; padding: 10px 2px env(safe-area-inset-bottom); border-top: 1px solid rgba(255,255,255,0.05); z-index: 1000; box-shadow: 0 -10px 30px rgba(0,0,0,0.5); transform: translateZ(0);}
         .nav-item { display: flex; flex-direction: column; align-items: center; justify-content: flex-start; color: #666; text-decoration: none; font-size: 0.6rem; font-family: var(--font-head); font-weight: bold; flex: 1; transition: 0.3s; position: relative; padding: 0 2px; text-align: center;}
         .nav-item span { margin-top: 4px; transition: 0.3s; letter-spacing: -0.3px;}
-        .nav-item i, .nav-item .tx-icon { font-size: 1.2rem; transition: 0.3s; color: #666; background: none; -webkit-text-fill-color: #666; filter: none; font-style: normal; }
+        
+        .nav-item i, .nav-item .tx-icon, .nav-item .tx-ticket-composite { font-size: 1.2rem; transition: 0.3s; color: #666; background: none; -webkit-text-fill-color: #666; filter: none; font-style: normal; }
         .nav-item.active { color: var(--accent-cyan); }
-        .nav-item.active i, .nav-item.active .tx-icon { transform: translateY(-4px); background: linear-gradient(135deg, var(--accent-purple), var(--accent-cyan)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; filter: drop-shadow(0 0 10px var(--accent-cyan)); font-style: italic;}
+        
+        /* Specific fix for composite to move together */
+        .nav-item.active .tx-ticket-composite { transform: translateY(-4px); }
+        .nav-item.active i, .nav-item.active .tx-icon, .nav-item.active .tx-ticket-composite i { transform: translateY(-4px); background: linear-gradient(135deg, var(--accent-purple), var(--accent-cyan)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; filter: drop-shadow(0 0 10px var(--accent-cyan)); font-style: normal; }
+        .nav-item.active .tx-ticket-composite i { transform: translateY(0); } /* Reset inner transform */
+        
         .nav-item.active span { transform: translateY(2px); color: white; text-shadow: 0 0 5px rgba(255,255,255,0.5);}
         
         .fab-slot { flex: 1.2; display: flex; justify-content: center; position: relative; height: 100%; align-items: center; }
@@ -303,6 +337,7 @@
                 <div class="skeleton-box skel-btn"></div>
             </div>
             <div class="skel-list">
+                <div class="skeleton-box skel-item"></div>
                 <div class="skeleton-box skel-item"></div>
                 <div class="skeleton-box skel-item"></div>
                 <div class="skeleton-box skel-item"></div>
@@ -339,7 +374,7 @@
         <div class="wallet-card animate-section delay-1">
             <div class="vip-badge" id="vipBadge"><span class="tx-icon" style="font-size: 0.9em; filter:none; color:black; -webkit-text-fill-color:black;">TX</span> STANDARD</div>
             <div class="balance-label">
-                <span>Total Available Passes <i class="fa-solid fa-eye" id="eyeIcon" onclick="if(isGuest) return showLoginModal(); togglePrivacy(); triggerHaptic();" style="margin-left:8px; cursor: pointer; color:#888;"></i></span>
+                <span>Total Available Pass <i class="fa-solid fa-eye" id="eyeIcon" onclick="if(isGuest) return showLoginModal(); togglePrivacy(); triggerHaptic();" style="margin-left:8px; cursor: pointer; color:#888;"></i></span>
             </div>
             <div class="balance-amount" id="balanceWrapper">
                 <span class="tx-icon" style="font-size: 1.1em; margin-right: 8px;">TX</span> <span id="displayTickets">0</span>
@@ -366,7 +401,7 @@
         <div class="quick-actions animate-section delay-2">
             <div class="action-btn btn-add" onclick="if(isGuest) return showLoginModal(); openAddMoney(); triggerHaptic();">
                 <span class="tx-icon" style="font-size: 2rem;">TX</span>
-                <span>Buy Passes</span>
+                <span>Buy Pass</span>
             </div>
             <a href="redeem.html" class="action-btn btn-redeem" onclick="return handleProtectedAction(event, 'redeem.html')">
                 <i class="fa-solid fa-qrcode" style="filter:drop-shadow(0 0 5px var(--accent-cyan));"></i>
@@ -409,7 +444,7 @@
     <div class="bottom-sheet-overlay" id="addMoneyOverlay">
         <div class="bottom-sheet">
             <div class="sheet-header">
-                <div class="sheet-title"><span class="tx-icon" style="color:var(--accent-cyan); font-size:1.4rem;">TX</span> Secure Passes</div>
+                <div class="sheet-title"><span class="tx-icon" style="color:var(--accent-cyan); font-size:1.4rem;">TX</span> Secure Pass</div>
                 <i class="fa-solid fa-xmark close-sheet" onclick="closeAddMoney()"></i>
             </div>
             
@@ -432,7 +467,7 @@
 
                     <div class="amt-input-wrapper">
                         <div class="amt-currency"><span class="tx-icon">TX</span></div>
-                        <input type="number" id="addAmtInput" class="amt-input" placeholder="Number of Passes" oninput="updateQR()">
+                        <input type="number" id="addAmtInput" class="amt-input" placeholder="No. of Pass" oninput="updateQR()">
                     </div>
                     
                     <div style="font-size:0.75rem; color:#aaa; text-align:center; margin-top:-5px; margin-bottom:15px; font-weight:bold;">1 Tournyx Pass = ₹10</div>
@@ -446,7 +481,7 @@
 
                     <div style="background:rgba(0,0,0,0.4); border:1px solid rgba(255,255,255,0.08); padding:20px; border-radius:15px; margin-top:20px;">
                         <div style="font-family:var(--font-head); color:white; margin-bottom:10px; font-size:1.1rem;"><i class="fa-solid fa-shield-halved" style="color:var(--accent-cyan);"></i> Verify Purchase</div>
-                        <p style="font-size:0.8rem; color:#aaa; margin-bottom:15px;">After paying via App or QR, paste the 12-digit UTR below to securely claim your passes.</p>
+                        <p style="font-size:0.8rem; color:#aaa; margin-bottom:15px;">After paying via App or QR, paste the 12-digit UTR below to securely claim your pass.</p>
                         <input type="number" id="utrInput" placeholder="Enter 12-digit UTR" class="utr-input-field">
                         <button class="pay-btn" style="background: transparent; border: 1px solid var(--accent-green); color: var(--accent-green); box-shadow:none; margin-bottom:15px;" onclick="submitStrictUTR(); triggerHaptic();">Verify UTR <i class="fa-solid fa-check-double"></i></button>
                     </div>
@@ -477,7 +512,7 @@
             </div>
             <div id="supportStep1">
                 <p style="color: #ccc; font-size: 0.95rem; margin-bottom: 20px; text-align:center;">Hi! I'm the Tournyx AI. What do you need help with?</p>
-                <div class="support-option-btn" onclick="supportProceed('Ticket Delivery Issue'); triggerHaptic();">Purchased Passes not delivered <i class="fa-solid fa-chevron-right" style="color:var(--accent-cyan)"></i></div>
+                <div class="support-option-btn" onclick="supportProceed('Ticket Delivery Issue'); triggerHaptic();">Purchased Pass not delivered <i class="fa-solid fa-chevron-right" style="color:var(--accent-cyan)"></i></div>
                 <div class="support-option-btn" onclick="supportProceed('Match Entry Issue'); triggerHaptic();">Could not enter match <i class="fa-solid fa-chevron-right" style="color:var(--accent-cyan)"></i></div>
                 <div class="support-option-btn" onclick="supportProceed('Other'); triggerHaptic();">Other inquiries <i class="fa-solid fa-chevron-right" style="color:var(--accent-cyan)"></i></div>
             </div>
@@ -517,7 +552,7 @@
             </div>
             <div id="receiptContent">
                 <div class="rcpt-icon" id="rcptIcon"></div>
-                <div class="rcpt-amt" id="rcptAmt">0 Passes</div>
+                <div class="rcpt-amt" id="rcptAmt">0 Pass</div>
                 <div class="rcpt-title" id="rcptTitle">Digital Purchase</div>
                 <div class="rcpt-row"><span class="rcpt-lbl">Status</span><span class="rcpt-val" id="rcptStatusVal"></span></div>
                 <div class="rcpt-row"><span class="rcpt-lbl">Category</span><span class="rcpt-val" id="rcptCat"><span class="tx-icon" style="font-size:0.9rem;">TX</span> Pass Purchase</span></div>
@@ -551,7 +586,13 @@
         <a class="nav-item" href="matches.html"><i class="fa-solid fa-trophy"></i><span>Matches</span></a>
         <div class="fab-slot"><div class="floating-plus" onclick="if(handleProtectedAction(event)){window.location.href='tournament.html'}"><i class="fa-solid fa-plus"></i></div></div>
         <a class="nav-item" href="clans.html"><i class="fa-solid fa-shield-halved"></i><span>Clan</span></a>
-        <a class="nav-item active" href="tickets.html"><span class="tx-icon">TX</span><span>Tickets</span></a>
+        <a class="nav-item active" href="tickets.html">
+            <div class="tx-ticket-composite">
+                <i class="fa-solid fa-ticket"></i>
+                <b class="tx-text">TX</b>
+            </div>
+            <span>Tickets</span>
+        </a>
         <a class="nav-item" href="profile.html"><i class="fa-solid fa-user"></i><span>Profile</span></a>
     </nav>
 
@@ -695,7 +736,7 @@
         function renderInventory(totalTickets) {
             const inv = document.getElementById('ticketInventoryList');
             if(totalTickets <= 0) {
-                inv.innerHTML = `<div style="text-align:center; padding: 20px; color:#888; font-size:0.9rem; background:rgba(0,0,0,0.3); border-radius:12px; border:1px dashed rgba(255,255,255,0.1);">No Passes Available.<br><span style="color:var(--accent-cyan);">Buy passes to enter tournaments!</span></div>`;
+                inv.innerHTML = `<div style="text-align:center; padding: 20px; color:#888; font-size:0.9rem; background:rgba(0,0,0,0.3); border-radius:12px; border:1px dashed rgba(255,255,255,0.1);">0 Pass Available.<br><span style="color:var(--accent-cyan);">Buy pass to enter tournaments!</span></div>`;
                 return;
             }
 
@@ -720,9 +761,17 @@
             }
 
             let html = '';
+            
+            const genId = (str) => {
+                let h = 0; 
+                for(let i=0; i<str.length; i++) h = Math.imul(31, h) + str.charCodeAt(i) | 0;
+                return Math.abs(h).toString().substring(0, 4).padEnd(4, '0');
+            };
+
             const buildTicketHTML = (game, count, imgUrl, prefix) => {
                 if(count <= 0) return '';
-                let tid = `TKT-${prefix}-${Math.floor(Math.random()*9000 + 1000)}`;
+                let safeName = currentUser.email || currentUser.username || "guest";
+                let tid = `TKT-${prefix}-${genId(safeName + game)}`;
                 return `
                     <div class="tournyx-ticket">
                         <div class="tkt-tournyx-stamp">TOURNYX SECURE</div>
@@ -747,7 +796,7 @@
         function renderQuickAmts() {
             const grid = document.getElementById('quickAmtGrid');
             grid.innerHTML = "";
-            TICKET_OFFERS.forEach(amt => { grid.innerHTML += `<div class="quick-amt-btn" onclick="setAmt(${amt}); triggerHaptic();">+${amt} Passes</div>`; });
+            TICKET_OFFERS.forEach(amt => { grid.innerHTML += `<div class="quick-amt-btn" onclick="setAmt(${amt}); triggerHaptic();">+${amt} Pass</div>`; });
         }
 
         function openAddMoney() { 
@@ -830,7 +879,7 @@
                 let gamePrefix = selectedGameName === "Free Fire" ? "FF" : "BGM";
                 let uniqueTktId = `TKT-${gamePrefix}-${utr.substring(6)}`;
                 
-                let newTxn = { id: uniqueTktId, title: `Bought ${ticketCount} ${selectedGameName} TX Passes`, amount: baseAmt, type: "Credit", status: "Pending", category: "Purchase", date: dateStr };
+                let newTxn = { id: uniqueTktId, title: `Bought ${ticketCount} ${selectedGameName} Pass`, amount: baseAmt, type: "Credit", status: "Pending", category: "Purchase", date: dateStr };
                 txns.unshift(newTxn);
                 
                 localStorage.setItem('tournyx_txns', JSON.stringify(txns)); renderTransactions(); updateWalletDisplay();
@@ -958,7 +1007,7 @@
             iconEl.innerHTML = `<i class="fa-solid ${mainIcon}"></i>`;
             iconEl.className = `rcpt-icon ${isPending ? 'icon-debit' : (isCredit ? 'icon-credit' : 'icon-debit')}`;
             
-            document.getElementById('rcptAmt').innerHTML = t.amount > 0 ? `${isCredit?'+':'-'} ${ticketVal} Passes` : `Review Pending`;
+            document.getElementById('rcptAmt').innerHTML = t.amount > 0 ? `${isCredit?'+':'-'} ${ticketVal} Pass` : `Review Pending`;
             document.getElementById('rcptAmt').className = `rcpt-amt ${isCredit ? 'amt-credit' : 'amt-debit'}`;
             document.getElementById('rcptTitle').innerText = t.title;
             
@@ -993,7 +1042,7 @@
                     </tr>
                     <tr>
                         <td style="padding:25px 0; color:#ffffff; font-size:20px; font-weight:bold;">Total Quantity</td>
-                        <td style="padding:25px 0; text-align:right; font-size:26px; font-weight:bold; color:${isCredit ? "#00ff7f" : "#ff4d4d"};">${t.amount > 0 ? `${isCredit?'+':'-'} ${ticketVal} Passes` : `0`}</td>
+                        <td style="padding:25px 0; text-align:right; font-size:26px; font-weight:bold; color:${isCredit ? "#00ff7f" : "#ff4d4d"};">${t.amount > 0 ? `${isCredit?'+':'-'} ${ticketVal} Pass` : `0`}</td>
                     </tr>
                 </table>
             `;
@@ -1046,7 +1095,7 @@
                         <td style="padding:12px; font-family:monospace; color:#fff;">${t.id || "SYS_TXN"}</td>
                         <td style="padding:12px; color:#fff;">${t.title}</td>
                         <td style="padding:12px; font-weight:bold; color:${statusCol};">${t.status}</td>
-                        <td style="padding:12px; text-align:right; font-weight:bold; color:${amtCol};">${isCredit?'+':'-'} ${ticketVal} Passes</td>
+                        <td style="padding:12px; text-align:right; font-weight:bold; color:${amtCol};">${isCredit?'+':'-'} ${ticketVal} Pass</td>
                     </tr>
                 `;
             });
