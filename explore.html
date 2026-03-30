@@ -69,7 +69,30 @@
         *::-webkit-scrollbar { display: none !important; width: 0 !important; height: 0 !important; background: transparent !important; -webkit-appearance: none !important; }
         
         /* TOP GAP PERFECTLY FIXED */
-        body { background-color: var(--primary-bg); color: white; font-family: var(--font-body); padding-bottom: calc(90px + env(safe-area-bottom)); padding-top: calc(55px + env(safe-area-inset-top)); overflow-x: hidden; }
+        body { background-color: var(--primary-bg); color: white; font-family: var(--font-body); padding-bottom: calc(90px + env(safe-area-inset-bottom)); padding-top: calc(55px + env(safe-area-inset-top)); overflow-x: hidden; }
+
+        /* --- TOURNYX TX COMPOSITE TICKET ICON --- */
+        .tx-ticket-composite {
+            position: relative;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .tx-ticket-composite .tx-text {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-family: var(--font-head);
+            font-size: 0.42em; /* Scales perfectly inside the ticket */
+            font-weight: 900;
+            color: var(--primary-bg) !important;
+            -webkit-text-fill-color: var(--primary-bg) !important;
+            letter-spacing: -0.5px;
+            pointer-events: none;
+            z-index: 2;
+            transition: 0.3s;
+        }
 
         /* --- RESPONSIVE WRAPPER (WIDER DESKTOP) --- */
         .search-row, .game-scroll, .tourney-list, .app-footer, .top-header .header-wrapper { max-width: 1200px; margin-left: auto !important; margin-right: auto !important; width: 100%; }
@@ -161,7 +184,6 @@
         .t-banner-wrapper::after { content: ''; position: absolute; bottom: 0; left: 0; width: 100%; height: 60px; background: linear-gradient(to bottom, transparent, var(--card-bg)); z-index: 1; }
         .t-banner-img { width: 100%; height: 100%; object-fit: cover; opacity: 0.85; transition: 0.5s; }
         
-        /* RESTORED MEDIUM SIZED TAGS */
         .t-status-badge { position: absolute; top: 12px; left: 12px; background: rgba(0,0,0,0.85); color: var(--accent-cyan); font-family: var(--font-head); font-size: 0.7rem; font-weight: bold; padding: 5px 10px; border-radius: 10px; border: 1px solid var(--accent-cyan); display: flex; align-items: center; gap: 5px; backdrop-filter: blur(5px); z-index: 2; letter-spacing: 0.5px;}
         .pulse-dot { width: 6px; height: 6px; background: var(--accent-green); border-radius: 50%; box-shadow: 0 0 8px var(--accent-green); animation: pulseBlue 1s infinite alternate; }
         
@@ -203,7 +225,6 @@
         /* --- SKELETON LOADER --- */
         .skeleton-wrapper { padding: 0; display: flex; flex-direction: column; gap: 20px; width: 100%; }
         .skeleton { background: linear-gradient(90deg, #110822 25%, #1a0a3a 50%, #110822 75%); background-size: 200% 100%; animation: shimmer 1.5s infinite linear; }
-        @keyframes shimmer { 0% { background-position: -200% 0; } 100% { background-position: 200% 0; } }
         .s-card { background: var(--secondary-bg); border-radius: 15px; overflow: hidden; border: 1px solid var(--card-border); }
         .s-banner { height: 160px; width: 100%; }
         .s-content { padding: 15px; display: flex; flex-direction: column; gap: 12px; }
@@ -235,7 +256,7 @@
             transform: translateY(100%); 
             transition: transform 0.5s cubic-bezier(0.2, 0.8, 0.2, 1), opacity 0.4s;
             display: flex; flex-direction: column; overflow: hidden; opacity: 0;
-            --dynamic-t-color: 0, 242, 255; /* Default Cyan */
+            --dynamic-t-color: 0, 242, 255;
         }
         .detail-modal.active { transform: translateY(0); opacity: 1; }
         
@@ -256,7 +277,6 @@
         .live-viewer-bubble .dot { width: 6px; height: 6px; background: rgb(var(--dynamic-t-color)); border-radius: 50%; animation: pulseBlue 1s infinite alternate; }
         @keyframes pulseBlue { from { opacity:0.3; transform:scale(0.8);} to {opacity:1; transform:scale(1.2);} }
 
-        /* ATTRACTIVE TABS */
         .dm-nav { display: flex; gap: 20px; padding: 15px; border-bottom: 1px solid var(--card-border); overflow-x: auto; background: var(--primary-bg); position: sticky; top: 0; z-index: 5; flex-shrink: 0; }
         .dm-nav-item { display: flex; align-items: center; gap: 6px; font-family: var(--font-head); font-size: 0.9rem; color: #888; cursor: pointer; white-space: nowrap; padding-bottom: 8px; border-bottom: 2px solid transparent; transition: 0.3s; text-transform: uppercase; font-weight: bold;}
         .dm-nav-item i { font-size: 1.1rem; }
@@ -279,7 +299,6 @@
 
         .dm-section { background: rgba(255, 255, 255, 0.03); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border: 1px solid rgba(var(--dynamic-t-color), 0.15); border-radius: 15px; padding: 20px; margin-bottom: 20px; box-shadow: 0 10px 30px rgba(var(--dynamic-t-color), 0.05); }
         
-        /* NEW ATTRACTIVE HEADERS */
         .dm-sec-title { font-family: var(--font-head); font-size: 1.3rem; font-weight: 900; margin-bottom: 18px; color: rgb(var(--dynamic-t-color)); display: flex; align-items: center; gap: 10px; text-shadow: 0 0 15px rgba(var(--dynamic-t-color), 0.4); text-transform: uppercase; letter-spacing: 1px;}
         .dm-sec-title i { font-size: 1.4rem; color: white; background: rgba(var(--dynamic-t-color), 0.2); padding: 8px; border-radius: 8px; box-shadow: 0 0 10px rgba(var(--dynamic-t-color), 0.3);}
         
@@ -414,10 +433,10 @@
         .bottom-nav { position: fixed; bottom: 0; left: 0; width: 100%; height: calc(65px + env(safe-area-inset-bottom)); background: rgba(5, 2, 12, 0.75); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); display: flex; justify-content: space-between; align-items: flex-start; padding: 10px 2px env(safe-area-inset-bottom); border-top: 1px solid rgba(255,255,255,0.05); z-index: 1000; box-shadow: 0 -10px 30px rgba(0,0,0,0.5); transform: translateZ(0);}
         .nav-item { display: flex; flex-direction: column; align-items: center; justify-content: flex-start; color: #666; text-decoration: none; font-size: 0.6rem; font-family: var(--font-head); font-weight: bold; flex: 1; transition: 0.3s; position: relative; padding: 0 2px; text-align: center;}
         .nav-item span { margin-top: 4px; transition: 0.3s; letter-spacing: -0.3px;}
-        .nav-item i { font-size: 1.2rem; transition: 0.3s; }
+        .nav-item i { font-size: 1.2rem; transition: 0.3s; color: #666; background: none; -webkit-text-fill-color: #666; filter: none; font-style: normal; }
         .nav-item.active { color: var(--accent-cyan); }
-        .nav-item.active i { transform: translateY(-4px); color: var(--accent-cyan); filter: drop-shadow(0 0 10px var(--accent-cyan)); }
-        .nav-item.active span { transform: translateY(2px); color: white; text-shadow: 0 0 5px rgba(255,255,255,0.5);}
+        .nav-item.active i { transform: translateY(-4px); background: linear-gradient(135deg, var(--accent-purple), var(--accent-cyan)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; filter: drop-shadow(0 0 10px var(--accent-cyan)); font-style: normal;}
+        
         .fab-slot { flex: 1.2; display: flex; justify-content: center; position: relative; height: 100%; align-items: center; }
         .floating-plus { position: absolute; top: -25px; left: 50%; transform: translateX(-50%); width: 54px; height: 54px; background: linear-gradient(135deg, var(--accent-cyan), var(--accent-purple)); border-radius: 50%; display: flex; align-items: center; justify-content: center; border: 4px solid var(--primary-bg); box-shadow: 0 10px 25px rgba(189,0,255,0.4); color: #fff; font-size: 1.6rem; cursor: pointer; transition: 0.3s; z-index: 10; }
         .floating-plus:hover { transform: translateX(-50%) scale(1.1) rotate(90deg); box-shadow: 0 15px 35px rgba(0,242,255,0.6); }
@@ -570,14 +589,14 @@
                 </div>
             </div>
 
-            <label class="form-label" style="margin-top:15px;">Entry Fee Requirements</label>
+            <label class="form-label" style="margin-top:15px;">Entry Requirement</label>
             <div class="fee-tags" id="feeFilterTags">
                 <div class="fee-tag active" onclick="setFeeFilter('All', this)">All</div>
                 <div class="fee-tag" onclick="setFeeFilter('Free', this)">Free</div>
-                <div class="fee-tag" onclick="setFeeFilter('10', this)">₹10</div>
-                <div class="fee-tag" onclick="setFeeFilter('20', this)">₹20</div>
-                <div class="fee-tag" onclick="setFeeFilter('50-100', this)">₹50 - ₹100</div>
-                <div class="fee-tag" onclick="setFeeFilter('200+', this)">₹200+</div>
+                <div class="fee-tag" onclick="setFeeFilter('1TX', this)">1 Pass</div>
+                <div class="fee-tag" onclick="setFeeFilter('2TX', this)">2 Passes</div>
+                <div class="fee-tag" onclick="setFeeFilter('5TX-10TX', this)">5 - 10 Passes</div>
+                <div class="fee-tag" onclick="setFeeFilter('20TX+', this)">20+ Passes</div>
                 <div class="fee-tag" onclick="setFeeFilter('Points', this)"><i class="fa-solid fa-coins" style="color:var(--accent-cyan)"></i> Points Only</div>
             </div>
 
@@ -810,29 +829,34 @@
     <div class="bottom-sheet-overlay" id="paymentOverlay">
         <div class="bottom-sheet">
             <div class="sheet-header">
-                <div class="sheet-title"><i class="fa-solid fa-money-bill-wave"></i> Select Payment Method</div>
+                <div class="sheet-title"><i class="fa-solid fa-ticket-simple"></i> Select Entry Method</div>
                 <i class="fa-solid fa-xmark close-sheet" onclick="closePaymentModal()"></i>
             </div>
             
             <div style="margin-bottom: 20px; color: #ccc; font-size: 0.9rem; text-align: center;" id="paymentHeaderChoice"></div>
             
-            <div class="reg-option" id="payOptRupees" onclick="confirmPayment('rupees')">
+            <div class="reg-option" id="payOptRupees">
                 <div class="ro-left">
-                    <div class="ro-icon" style="background:rgba(255,153,0,0.1); color:var(--accent-orange); border-color:rgba(255,153,0,0.2);"><i class="fa-solid fa-wallet"></i></div>
+                    <div class="ro-icon" style="background:rgba(189,0,255,0.1); color:var(--accent-purple); border-color:rgba(189,0,255,0.2);">
+                        <div class="tx-ticket-composite" style="font-size:1.1rem;">
+                            <i class="fa-solid fa-ticket"></i>
+                            <b class="tx-text">TX</b>
+                        </div>
+                    </div>
                     <div>
-                        <div class="ro-title">Pay with Rupees</div>
-                        <div class="bal-display">Bal: <span id="balRupees" style="color:var(--accent-orange); font-weight:bold;">0</span> Rs.</div>
+                        <div class="ro-title">Use Game Passes</div>
+                        <div class="bal-display">Available: <span id="balRupees" style="color:var(--accent-cyan); font-weight:bold;">0 Passes</span></div>
                     </div>
                 </div>
-                <i class="fa-solid fa-arrow-right icon-arrow" style="color:var(--accent-orange);"></i>
+                <i class="fa-solid fa-arrow-right icon-arrow" style="color:var(--accent-cyan);"></i>
             </div>
             
-            <div class="reg-option" id="payOptPts" onclick="confirmPayment('points')">
+            <div class="reg-option" id="payOptPts">
                 <div class="ro-left">
                     <div class="ro-icon" style="background:rgba(0,242,255,0.1); color:var(--accent-cyan); border-color:rgba(0,242,255,0.2);"><i class="fa-solid fa-coins"></i></div>
                     <div>
                         <div class="ro-title">Pay with Points</div>
-                        <div class="bal-display">Bal: <span id="balPts" style="color:var(--accent-cyan); font-weight:bold;">0</span> PTS</div>
+                        <div class="bal-display">Available: <span id="balPts" style="color:var(--accent-cyan); font-weight:bold;">0</span> PTS</div>
                     </div>
                 </div>
                 <i class="fa-solid fa-arrow-right icon-arrow" style="color:var(--accent-cyan);"></i>
@@ -841,7 +865,7 @@
         </div>
     </div>
 
-    <!-- eSPORTS SECURE LOADER (PROFESSIONAL FADE & LOGO) -->
+    <!-- eSPORTS SECURE LOADER -->
     <div id="securePaymentLoader">
         <div class="cycle-logos" id="regAnimLogoBox">
             <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEg_20wCR-WBMpQmw3vxcYUf-vxIO1PYDJoQN_Sid3UDjA9tf0cuX0eH40jbzHoJad4cxbnjhPjqfCw1Z5V1LhgN9zFuIQC0fJjecTy3D9PFu5WjR2H1wHwTD1bUGnXY_NiApWn5gMs6velcQngSzKoP1yHzX0cVsFSUFM8zIefcbiPayY7680Kz0V0ZAAE/s1264/1000093706.png">
@@ -936,9 +960,12 @@
             <i class="fa-solid fa-shield-halved"></i>
             <span>Clan</span>
         </a>
-        <a class="nav-item" href="wallet.html">
-            <i class="fa-solid fa-wallet"></i>
-            <span>Wallet</span>
+        <a class="nav-item" href="tickets.html">
+            <div class="tx-ticket-composite">
+                <i class="fa-solid fa-ticket"></i>
+                <b class="tx-text">TX</b>
+            </div>
+            <span>Tickets</span>
         </a>
         <a class="nav-item" href="profile.html">
             <i class="fa-solid fa-user"></i>
@@ -1248,11 +1275,14 @@
         function getSmartEntryText(feeRs, feePts) {
             let r = parseInt(feeRs);
             let p = parseInt(feePts);
-            let hasR = !isNaN(r) && r > 0;
+            let t = !isNaN(r) && r > 0 ? Math.ceil(r / 10) : 0;
+            let hasT = t > 0;
             let hasP = !isNaN(p) && p > 0;
             
-            if(hasR && hasP) return `${r} Rs OR ${p} PTS`;
-            if(hasR) return `${r} Rs`;
+            let txIconHtml = `<div class="tx-ticket-composite" style="font-size:0.95em; margin:0 2px; vertical-align:middle;"><i class="fa-solid fa-ticket"></i><b class="tx-text">TX</b></div>`;
+            
+            if(hasT && hasP) return `${t} ${txIconHtml} OR ${p} PTS`;
+            if(hasT) return `${t} ${txIconHtml}`;
             if(hasP) return `${p} PTS Only`;
             return "Free";
         }
@@ -1490,7 +1520,6 @@
                     document.querySelectorAll('.dm-tab-content').forEach(content => content.classList.remove('active'));
                     document.getElementById(this.getAttribute('data-tab')).classList.add('active');
                     
-                    // Native AdSense Injection triggers securely when tab switches
                     try {
                         Array.from(document.querySelectorAll('.adsbygoogle')).forEach(ad => {
                             if(ad.innerHTML === '') {
@@ -1518,7 +1547,6 @@
 
                 let tIdSafe = String(t.id || t.title).trim();
                 
-                // PERFECT ORGANIZER FETCH (Case Insensitive Match on Both Email & Username)
                 let currentOrgEmail = String(t.org_email || t.email || t.org_username || "").toLowerCase().trim();
                 let targetOrgId = String(orgId).toLowerCase().trim();
                 
@@ -1619,7 +1647,6 @@
             const t = JSON.parse(decodeURIComponent(tDataEncoded));
             activeTournament = t; 
 
-            // Rewrite Metadata for Deep Linking
             document.title = t.title + " - Tournyx";
             const metaTitle = document.querySelector('meta[property="og:title"]');
             if (metaTitle) metaTitle.setAttribute("content", t.title + " on Tournyx");
@@ -1654,7 +1681,6 @@
             let hostedCount = t.org_hosted_count ? parseInt(t.org_hosted_count) : Math.max(localTournamentsData.filter(x => x.org_username === orgId || x.email === orgId).length, 1);
             document.getElementById('dtOrgStats').innerHTML = `<i class="fa-solid fa-star"></i> Hosted: ${hostedCount} Match${hostedCount > 1 ? 'es' : ''}`;
 
-            // ADVANCED AVATAR FETCH (Col F Backup)
             let orgEmail = t.org_email || t.email || orgId;
             fetch(API_URL + "?action=get_avatar&username=" + encodeURIComponent(orgId) + "&email=" + encodeURIComponent(orgEmail))
             .then(res => res.json())
@@ -1671,7 +1697,7 @@
             }).catch(e => console.log(e));
 
             document.getElementById('dtPrize').innerText = getPrizeText(t.prize, t.prize_pts);
-            document.getElementById('dtFee').innerText = getSmartEntryText(t.fee, t.fee_pts);
+            document.getElementById('dtFee').innerHTML = getSmartEntryText(t.fee, t.fee_pts);
             document.getElementById('dtGame').innerText = t.game || "N/A";
             document.getElementById('dtFormat').innerText = t.format || "N/A";
             document.getElementById('dtPlatformText').innerText = t.platform || "Mobile";
@@ -1933,7 +1959,7 @@
                 if (clansData.status === 'success' && clansData.data) {
                     clansData.data.forEach(c => {
                         let cName = c.name || c.Tag || c.tag || c[1];
-                        let rawLogo = c.logo || c.Logo || c[4]; // Accurately points to Col E
+                        let rawLogo = c.logo || c.Logo || c[4];
                         if (cName && rawLogo) clanMap[String(cName).toLowerCase().trim()] = rawLogo;
                     });
                 }
@@ -1941,24 +1967,17 @@
                 let isSolo = activeTournament.format && activeTournament.format.toLowerCase().includes('solo');
 
                 if(data.status === 'success' && data.data) {
-                    
-                    // 1. SMART FILTER: Remove explicit 'Leaved' entries (if backend provides it)
                     let validTeams = data.data.filter(team => {
                         return !Object.values(team).some(v => String(v).toLowerCase().includes('leaved') || String(v).toLowerCase() === 'leave');
                     });
 
-                    // 2. BULLETPROOF DEDUPLICATION: Prevents double rendering if user rejoined
                     let uniqueTeamsMap = new Map();
                     validTeams.forEach(team => {
                         let teamIdentifier = String(team.clan || team.username).toLowerCase().trim();
-                        // This overwrites duplicates, guaranteeing only 1 entry per player/clan
                         uniqueTeamsMap.set(teamIdentifier, team); 
                     });
                     
-                    // Convert the deduplicated Map back to an Array
                     let activeTeams = Array.from(uniqueTeamsMap.values());
-
-                    // Update slot count accurately based on unique players
                     document.getElementById('dtRegistrations').innerText = `${activeTeams.length}/${activeTournament.slots || 48}`;
                     
                     if(activeTeams.length > 0) {
@@ -1985,7 +2004,6 @@
                                     </div>
                                 `;
 
-                                // Fetch real avatar from Users Col F
                                 fetch(API_URL + "?action=get_avatar&username=" + safePlayerName)
                                     .then(r => r.json()).then(d => {
                                         if(d.status === 'success' && (d.data || d.avatar)) {
@@ -2134,25 +2152,52 @@
 
             const clanName = document.getElementById('formSelectClan').value;
             let rawFeeRupees = parseInt(activeTournament.fee) || 0;
+            let reqTickets = Math.ceil(rawFeeRupees / 10);
             let rawFeePts = parseInt(activeTournament.fee_pts) || 0; 
             
-            if (rawFeeRupees > 0 || rawFeePts > 0) {
+            if (reqTickets > 0 || rawFeePts > 0) {
                 closeRegistrationFlow();
                 pendingRegistrationData = { clanName: clanName };
                 
                 let user = JSON.parse(localStorage.getItem('tournyx_user')) || {};
                 let currentRupees = parseInt(user.rupees) || 0;
+                let totalTickets = Math.floor(currentRupees / 10);
                 let currentPoints = parseInt(user.points) || 0;
                 
+                // GAME TICKET CHECK LOGIC
+                let txns = JSON.parse(localStorage.getItem('tournyx_txns')) || [];
+                let ffCount = 0; let bgmiCount = 0;
+                txns.forEach(txn => {
+                    if(txn.type === "Credit" && txn.category === "Purchase" && (txn.status === "Success" || txn.status === "Pending")) {
+                        let count = Math.floor(txn.amount / 10);
+                        if(txn.title.includes("Free Fire")) ffCount += count;
+                        else if(txn.title.includes("BGMI")) bgmiCount += count;
+                    }
+                });
+
+                let identified = ffCount + bgmiCount;
+                let uniDisplay = 0, ffDisplay = 0, bgmiDisplay = 0;
+                if (identified === 0) { uniDisplay = totalTickets; }
+                else {
+                    ffDisplay = Math.round((ffCount / identified) * totalTickets);
+                    bgmiDisplay = totalTickets - ffDisplay;
+                }
+
+                let gameName = (activeTournament.game || "").toLowerCase();
+                let availableSpecific = uniDisplay;
+                if (gameName.includes('free fire')) availableSpecific += ffDisplay;
+                else if (gameName.includes('bgmi')) availableSpecific += bgmiDisplay;
+                else availableSpecific = totalTickets;
+
                 let headerTxt = "";
                 let pRup = document.getElementById('payOptRupees');
                 let pPts = document.getElementById('payOptPts');
                 
-                if(rawFeeRupees > 0 && rawFeePts > 0) {
-                    headerTxt = `Entry Fee: <span id="payFeeRupees">${rawFeeRupees} Rs</span> OR <span id="payFeePts">${rawFeePts} PTS</span>`;
+                if(reqTickets > 0 && rawFeePts > 0) {
+                    headerTxt = `Entry Fee: <span id="payFeeRupees">${reqTickets} TX Passes</span> OR <span id="payFeePts">${rawFeePts} PTS</span>`;
                     pRup.style.display = 'flex'; pPts.style.display = 'flex';
-                } else if(rawFeeRupees > 0) {
-                    headerTxt = `Entry Fee: <span id="payFeeRupees">${rawFeeRupees} Rs</span>`;
+                } else if(reqTickets > 0) {
+                    headerTxt = `Entry Fee: <span id="payFeeRupees">${reqTickets} TX Passes</span>`;
                     pRup.style.display = 'flex'; pPts.style.display = 'none';
                 } else {
                     headerTxt = `Entry Fee: <span id="payFeePts">${rawFeePts} PTS</span>`;
@@ -2160,8 +2205,12 @@
                 }
                 
                 document.getElementById('paymentHeaderChoice').innerHTML = headerTxt;
-                document.getElementById('balRupees').innerText = currentRupees;
+                document.getElementById('balRupees').innerText = availableSpecific + " Passes";
                 document.getElementById('balPts').innerText = currentPoints;
+
+                pRup.onclick = function() { confirmPayment('tickets', reqTickets, availableSpecific); };
+                pPts.onclick = function() { confirmPayment('points', rawFeePts, currentPoints); };
+
                 document.getElementById('paymentOverlay').classList.add('active');
             } else {
                 triggerSecureLoader(clanName, 0, 'free');
@@ -2169,35 +2218,31 @@
         }
         function closePaymentModal() { triggerHaptic(); document.getElementById('paymentOverlay').classList.remove('active'); }
 
-        function confirmPayment(method) {
+        function confirmPayment(method, cost, available) {
             triggerHaptic();
-            const t = activeTournament;
+            
+            if (available < cost) {
+                showToast(method === 'tickets' ? "Insufficient Passes! Get more tickets." : "Insufficient Points!", true);
+                if(method === 'tickets') {
+                    setTimeout(() => { window.location.href = "tickets.html"; }, 1500);
+                }
+                return;
+            }
+
             let user = JSON.parse(localStorage.getItem('tournyx_user')) || {};
             
-            let rFee = parseInt(t.fee) || 0;
-            let pFee = parseInt(t.fee_pts) || 0;
-            
-            let uRupees = parseInt(user.rupees) || 0;
-            let uPoints = parseInt(user.points) || 0;
-
-            if(method === 'rupees' && uRupees >= rFee) { user.rupees = uRupees - rFee; } 
-            else if (method === 'points' && uPoints >= pFee) { user.points = uPoints - pFee; } 
-            else { 
-                showToast("Insufficient Balance! Add funds to Wallet.", true); 
-                setTimeout(() => { window.location.href = "wallet.html"; }, 1500);
-                return; 
-            }
+            if (method === 'tickets') { user.rupees = (parseInt(user.rupees) || 0) - (cost * 10); } 
+            else if (method === 'points') { user.points = (parseInt(user.points) || 0) - cost; } 
 
             localStorage.setItem('tournyx_user', JSON.stringify(user));
             closePaymentModal();
-            triggerSecureLoader(pendingRegistrationData.clanName, method==='rupees'?rFee:pFee, method);
+            triggerSecureLoader(pendingRegistrationData.clanName, method === 'tickets' ? (cost * 10) : cost, method);
         }
 
-        // --- NEW PROFESSIONAL REGISTRATION LOADER ---
         function triggerSecureLoader(clanName, cost, method) {
             let loaderOverlay = document.getElementById('securePaymentLoader');
             loaderOverlay.style.display = 'flex';
-            setTimeout(() => loaderOverlay.classList.add('active'), 50); // Fade in
+            setTimeout(() => loaderOverlay.classList.add('active'), 50); 
             
             let txt = document.getElementById('loaderTxt');
             let head = document.getElementById('loaderTxtHead');
@@ -2243,7 +2288,7 @@
                     let txns = JSON.parse(localStorage.getItem('tournyx_txns')) || [];
                     let dateStr = new Date().toLocaleString('en-US', { month:'short', day:'2-digit', year:'numeric', hour:'numeric', minute:'2-digit', hour12:true });
                     let newTxn = { 
-                        id: "TXN-" + Math.floor(Math.random() * 1000000), 
+                        id: "ENTRY-" + Math.floor(Math.random() * 1000000), 
                         title: "Joined: " + (t.title || "Tournament"), 
                         amount: cost, 
                         type: "Debit", 
@@ -2257,13 +2302,12 @@
                 
                 userLiveMatches.push({ tournament_title: t.title, match_id: t.id || t.title });
                 
-                // --- INTENSE eSPORTS CONFIRMATION SEQUENCE (NO SHAKE) ---
                 playGunshotSound();
                 
                 bar.style.width = "100%"; 
                 bar.style.background = "#00ff7f";
                 logoBox.style.filter = "drop-shadow(0 0 40px #00ff7f)";
-                logoBox.style.transform = "scale(1.15)"; // Pop effect on logo
+                logoBox.style.transform = "scale(1.15)"; 
                 head.innerText = "BATTLE READY"; 
                 txt.innerText = "Slot Secured. GLHF!"; 
                 txt.style.color = "#00ff7f";
@@ -2271,11 +2315,11 @@
                 setTimeout(() => {
                     let loaderOverlay = document.getElementById('securePaymentLoader');
                     loaderOverlay.classList.remove('active');
-                    setTimeout(() => loaderOverlay.style.display = 'none', 500); // Fade out
+                    setTimeout(() => loaderOverlay.style.display = 'none', 500); 
                     
-                    logoBox.style.transform = "scale(1)"; // reset
+                    logoBox.style.transform = "scale(1)"; 
                     closeRegistrationFlow();
-                    showToast(cost > 0 ? "Payment successful! Welcome to the Arena." : "Registration Confirmed! GLHF.");
+                    showToast(cost > 0 ? "Entry successful! Welcome to the Arena." : "Registration Confirmed! GLHF.");
                     
                     let btn = document.getElementById('masterJoinBtn');
                     btn.innerHTML = "<i class='fa-solid fa-check'></i> ALREADY JOINED";
@@ -2450,13 +2494,14 @@
                 if (search && !card.querySelector('.t-title').innerText.toLowerCase().includes(search)) show = false;
                 
                 let feeR = parseInt(card.dataset.feeRs) || 0;
+                let feeT = Math.ceil(feeR / 10);
                 let feeP = parseInt(card.dataset.feePts) || 0;
                 
-                if (activeFeeFilter === 'Free' && (feeR > 0 || feeP > 0)) show = false;
-                if (activeFeeFilter === '10' && feeR !== 10) show = false;
-                if (activeFeeFilter === '20' && feeR !== 20) show = false;
-                if (activeFeeFilter === '50-100' && (feeR < 50 || feeR > 100)) show = false;
-                if (activeFeeFilter === '200+' && feeR < 200) show = false;
+                if (activeFeeFilter === 'Free' && (feeT > 0 || feeP > 0)) show = false;
+                if (activeFeeFilter === '1TX' && feeT !== 1) show = false;
+                if (activeFeeFilter === '2TX' && feeT !== 2) show = false;
+                if (activeFeeFilter === '5TX-10TX' && (feeT < 5 || feeT > 10)) show = false;
+                if (activeFeeFilter === '20TX+' && feeT < 20) show = false;
                 if (activeFeeFilter === 'Points' && feeP === 0) show = false;
 
                 card.style.display = show ? 'block' : 'none';
