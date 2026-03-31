@@ -38,9 +38,10 @@
             background-color: var(--primary-bg); color: white; font-family: var(--font-body);
             padding-bottom: calc(90px + env(safe-area-inset-bottom)); overflow-x: hidden;
             padding-top: calc(75px + env(safe-area-inset-top)); 
+            width: 100vw;
         }
 
-        .tier-container, .role-switch-container, .dashboard-section, .settings-list, .app-footer, .profile-header, .top-status-bar {
+        .tier-container, .role-switch-container, .dashboard-section, .settings-list, .app-footer, .profile-header, .top-status-bar, .common-withdraw-section {
             max-width: 800px; margin-left: auto !important; margin-right: auto !important; width: 100%;
         }
         
@@ -135,15 +136,15 @@
         .avatar-container:active { transform: scale(0.95); }
         .edit-avatar-btn { position: absolute; bottom: 5px; right: 0px; width: 30px; height: 30px; background: var(--accent-gradient); border-radius: 50%; color: white; display: flex; align-items: center; justify-content: center; font-size: 0.8rem; border: 2px solid var(--primary-bg); box-shadow: 0 0 10px rgba(189,0,255,0.5); z-index: 3;}
         
-        .user-info { flex: 1; min-width: 0; }
+        .user-info { flex: 1; min-width: 0; overflow: hidden; }
         .user-info h2 { font-family: var(--font-head); font-size: 1.15rem; margin-bottom: 5px; text-shadow: 0 0 10px rgba(255,255,255,0.2); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; display: flex; align-items: center; gap: 5px;}
         .ai-greeting { font-size: 0.8rem; color: var(--accent-cyan); font-family: var(--font-body); display: block; line-height: 1; margin-bottom: 2px;}
 
-        .user-ign { color: var(--accent-cyan); font-size: 0.85rem; font-weight: bold; cursor: pointer; background: rgba(0,242,255,0.05); padding: 5px 12px; border-radius: 8px; display: inline-flex; align-items: center; gap: 8px; border: 1px solid rgba(0,242,255,0.2); transition: 0.3s; will-change: transform; backdrop-filter: blur(5px);}
+        .user-ign { color: var(--accent-cyan); font-size: 0.85rem; font-weight: bold; cursor: pointer; background: rgba(0,242,255,0.05); padding: 5px 12px; border-radius: 8px; display: inline-flex; align-items: center; gap: 8px; border: 1px solid rgba(0,242,255,0.2); transition: 0.3s; will-change: transform; backdrop-filter: blur(5px); max-width: 100%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;}
         .user-ign:active { background: var(--accent-cyan); color: black; transform: scale(0.95);}
         
         .user-extras { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; margin-top: 8px; font-size: 0.75rem; color: #a0a0b0; font-family: var(--font-head);}
-        .game-tag { background: rgba(255,255,255,0.05); padding: 3px 8px; border-radius: 5px; border: 1px solid rgba(255,255,255,0.05); }
+        .game-tag { background: rgba(255,255,255,0.05); padding: 3px 8px; border-radius: 5px; border: 1px solid rgba(255,255,255,0.05); max-width: 100%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;}
         .yt-link { color: #ff0000; font-size: 1rem; cursor: pointer; transition: 0.3s;}
         .yt-link:hover { filter: drop-shadow(0 0 5px #ff0000); }
 
@@ -162,16 +163,19 @@
         .role-btn.active { color: white; text-shadow: 0 0 5px rgba(255,255,255,0.5); }
         .role-slider { position: absolute; top: 6px; left: 6px; width: calc(50% - 6px); height: calc(100% - 12px); background: var(--accent-gradient); border-radius: 10px; transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); z-index: 1; box-shadow: 0 0 20px rgba(189,0,255,0.5); will-change: transform, left, background;}
 
+        /* --- UNIFIED WITHDRAW SECTION --- */
+        .common-withdraw-section { padding: 0 20px; margin-bottom: 25px; }
+
         .dashboard-section { padding: 0 20px; display: none; animation: slideInUp 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
         .dashboard-section.active { display: block; }
         @keyframes slideInUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
 
         .milestone-box { background: linear-gradient(145deg, rgba(0,242,255,0.05), rgba(189,0,255,0.05)); border: 1px solid var(--card-border); border-radius: 18px; padding: 20px; margin-bottom: 25px; position: relative; overflow: hidden; box-shadow: 0 5px 20px rgba(0,0,0,0.4); cursor: pointer; transition: transform 0.2s; backdrop-filter: blur(10px);}
         .milestone-box:active { transform: scale(0.98); }
-        .ms-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; font-family: var(--font-head); }
-        .ms-header h4 { font-size: 1.05rem; color: white; display: flex; align-items: center; gap: 8px; text-shadow: 0 0 5px rgba(255,255,255,0.3);}
+        .ms-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; font-family: var(--font-head); flex-wrap: wrap; gap: 5px; }
+        .ms-header h4 { font-size: 1.05rem; color: white; display: flex; align-items: center; gap: 8px; text-shadow: 0 0 5px rgba(255,255,255,0.3); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 100%;}
         
-        .ms-fee-badge { background: rgba(0,242,255,0.1); border: 1px solid var(--accent-cyan); color: var(--accent-cyan); padding: 4px 10px; border-radius: 8px; font-size: 0.8rem; font-weight: bold; box-shadow: 0 0 10px rgba(0,242,255,0.2); cursor: pointer; transition: 0.3s; will-change: transform;}
+        .ms-fee-badge { background: rgba(0,242,255,0.1); border: 1px solid var(--accent-cyan); color: var(--accent-cyan); padding: 4px 10px; border-radius: 8px; font-size: 0.8rem; font-weight: bold; box-shadow: 0 0 10px rgba(0,242,255,0.2); cursor: pointer; transition: 0.3s; will-change: transform; flex-shrink: 0;}
         .ms-fee-badge:hover { background: var(--accent-cyan); color: black; transform: scale(1.05); }
         .ms-fee-badge.elite { background: rgba(255,215,0,0.1); border-color: #FFD700; color: #FFD700; box-shadow: 0 0 10px rgba(255,215,0,0.3); }
         .ms-fee-badge.elite:hover { background: #FFD700; color: black; }
@@ -182,15 +186,16 @@
         .ms-footer { display: flex; justify-content: space-between; font-size: 0.8rem; color: #a0a0b0; font-family: var(--font-head); font-weight: bold; text-transform: uppercase;}
 
         .stats-row { display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; margin-bottom: 25px; perspective: 1000px;}
-        .stat-card { background: var(--card-bg); backdrop-filter: blur(10px); border: 1px solid var(--card-border); padding: 20px 15px; border-radius: 18px; text-align: center; box-shadow: 0 10px 25px rgba(0,0,0,0.3); transition: transform 0.1s ease-out, border-color 0.3s; will-change: transform; transform-style: preserve-3d; overflow: hidden;}
+        .stat-card { background: var(--card-bg); backdrop-filter: blur(10px); border: 1px solid var(--card-border); padding: 20px 10px; border-radius: 18px; text-align: center; box-shadow: 0 10px 25px rgba(0,0,0,0.3); transition: transform 0.1s ease-out, border-color 0.3s; will-change: transform; transform-style: preserve-3d; overflow: hidden;}
         .stat-card:active { transform: scale(0.95) !important; border-color: var(--accent-cyan); }
         .stat-card-inner { transform: translateZ(20px); } 
         .stat-val { font-family: var(--font-head); font-size: 1.8rem; display: flex; justify-content: center; margin-bottom: 5px; font-weight: bold; text-shadow: 0 0 15px rgba(255,255,255,0.2); }
         .stat-label { font-size: 0.8rem; color: #888; text-transform: uppercase; font-weight: bold; letter-spacing: 0.5px; }
         
-        .action-card { background: linear-gradient(135deg, rgba(0,242,255,0.05), rgba(0,0,0,0)); border: 1px solid rgba(0,242,255,0.2); border-radius: 18px; padding: 25px 20px; display: flex; align-items: center; justify-content: space-between; margin-bottom: 15px; cursor: pointer; text-decoration: none; color: white; transition: 0.3s; box-shadow: 0 5px 20px rgba(0,0,0,0.3); will-change: transform; backdrop-filter: blur(10px);}
+        .action-card { background: linear-gradient(135deg, rgba(0,242,255,0.05), rgba(0,0,0,0)); border: 1px solid rgba(0,242,255,0.2); border-radius: 18px; padding: 25px 20px; display: flex; align-items: center; justify-content: space-between; margin-bottom: 15px; cursor: pointer; text-decoration: none; color: white; transition: 0.3s; box-shadow: 0 5px 20px rgba(0,0,0,0.3); will-change: transform; backdrop-filter: blur(10px); gap: 15px;}
         .action-card:active { transform: scale(0.98); border-color: var(--accent-cyan); box-shadow: 0 10px 30px rgba(0,242,255,0.2);}
-        .action-text h4 { font-family: var(--font-head); font-size: 1.15rem; margin-bottom: 5px; text-shadow: 0 0 5px rgba(255,255,255,0.2);}
+        .action-text { flex: 1; min-width: 0;}
+        .action-text h4 { font-family: var(--font-head); font-size: 1.15rem; margin-bottom: 5px; text-shadow: 0 0 5px rgba(255,255,255,0.2); white-space: nowrap; overflow: hidden; text-overflow: ellipsis;}
         .action-text p { font-size: 0.85rem; color: #888; line-height: 1.4;}
         .action-icon { font-size: 1.8rem; color: var(--accent-cyan); background: rgba(0,242,255,0.1); width: 55px; height: 55px; border-radius: 50%; display: flex; align-items: center; justify-content: center; box-shadow: 0 0 20px rgba(0,242,255,0.3); flex-shrink: 0; border: 1px solid rgba(0,242,255,0.2);}
         
@@ -221,19 +226,19 @@
         .resolve-header { font-family: var(--font-head); font-size: 1.2rem; color: #FFD700; margin-bottom: 10px; display: flex; align-items: center; gap: 10px;}
         .team-resolve-item { display: flex; justify-content: space-between; align-items: center; background: rgba(0,0,0,0.5); border: 1px solid rgba(255,255,255,0.1); padding: 12px 15px; border-radius: 10px; margin-bottom: 8px; transition: 0.3s; }
         .team-resolve-item:hover { border-color: #FFD700; background: rgba(255,215,0,0.05); }
-        .team-r-name { font-family: var(--font-head); font-weight: bold; font-size: 1rem; color: white; }
-        .declare-btn { background: linear-gradient(90deg, #FFD700, #FFA500); border: none; color: black; font-family: var(--font-head); font-weight: bold; font-size: 0.8rem; padding: 6px 12px; border-radius: 8px; cursor: pointer; box-shadow: 0 0 10px rgba(255,215,0,0.4); text-transform: uppercase; transition: 0.3s; }
+        .team-r-name { font-family: var(--font-head); font-weight: bold; font-size: 1rem; color: white; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 50%; }
+        .declare-btn { background: linear-gradient(90deg, #FFD700, #FFA500); border: none; color: black; font-family: var(--font-head); font-weight: bold; font-size: 0.8rem; padding: 6px 12px; border-radius: 8px; cursor: pointer; box-shadow: 0 0 10px rgba(255,215,0,0.4); text-transform: uppercase; transition: 0.3s; flex-shrink: 0; }
         .declare-btn:active { transform: scale(0.95); }
 
         /* --- UPDATED PROFESSIONAL SETTINGS CARDS --- */
         .settings-list { margin-top: 25px; padding: 0 20px; display: flex; flex-direction: column; gap: 12px;}
         .setting-item { display: flex; align-items: center; padding: 16px 20px; background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.05); border-radius: 16px; cursor: pointer; transition: 0.3s; will-change: transform; backdrop-filter: blur(10px); box-shadow: 0 5px 15px rgba(0,0,0,0.2);}
         .setting-item:active { transform: scale(0.98); border-color: var(--accent-cyan); }
-        .setting-icon { width: 45px; height: 45px; background: rgba(255,255,255,0.03); border-radius: 12px; display: flex; align-items: center; justify-content: center; color: var(--accent-purple); font-size: 1.2rem; margin-right: 15px; transition: 0.3s; border: 1px solid rgba(255,255,255,0.05); box-shadow: inset 0 0 10px rgba(0,0,0,0.2);}
+        .setting-icon { width: 45px; height: 45px; background: rgba(255,255,255,0.03); border-radius: 12px; display: flex; align-items: center; justify-content: center; color: var(--accent-purple); font-size: 1.2rem; margin-right: 15px; transition: 0.3s; border: 1px solid rgba(255,255,255,0.05); box-shadow: inset 0 0 10px rgba(0,0,0,0.2); flex-shrink: 0;}
         .setting-item:hover .setting-icon { background: rgba(0,242,255,0.1); color: var(--accent-cyan); border-color: var(--accent-cyan); box-shadow: 0 0 15px rgba(0,242,255,0.3);}
         .setting-item:hover { background: rgba(0,242,255,0.02); }
         .setting-name { flex: 1; font-size: 1rem; font-weight: bold; color: #ddd; font-family: var(--font-head); letter-spacing: 0.5px;}
-        .setting-arrow { color: #555; font-size: 1rem; transition: 0.3s; }
+        .setting-arrow { color: #555; font-size: 1rem; transition: 0.3s; flex-shrink: 0; }
         .setting-item:hover .setting-arrow { color: var(--accent-cyan); transform: translateX(5px); }
 
         /* --- GLASSMORPHISM MODALS (FIXED OVERFLOW & PADDING) --- */
@@ -307,7 +312,7 @@
         .tier-reward { text-align: right; }
         .tier-reward span { display: block; font-family: var(--font-head); font-weight: bold; font-size: 0.9rem; color: var(--accent-green); }
         
-        .premium-promo { background: linear-gradient(135deg, rgba(255,215,0,0.1), rgba(255,153,0,0.1)); border: 1px solid #FFD700; border-radius: 15px; padding: 20px; text-align: center; margin-top: 20px; box-shadow: 0 5px 20px rgba(255,215,0,0.2); }
+        .premium-promo { background: linear-gradient(135deg, rgba(255,215,0,0.1), rgba(255,153,0,0.1)); border: 1px solid #FFD700; border-radius: 15px; padding: 20px; text-align: center; margin-top: 20px; box-shadow: 0 5px 20px rgba(255,215,0,0.2); transition: 0.3s; }
         .premium-promo h4 { color: #FFD700; font-family: var(--font-head); font-size: 1.2rem; margin-bottom: 10px; text-shadow: 0 0 10px rgba(255,215,0,0.5); }
         .premium-promo p { font-size: 0.9rem; color: #ddd; margin-bottom: 15px; }
         .premium-btn { background: linear-gradient(90deg, #FFD700, #FF8C00); color: black; padding: 12px 25px; border-radius: 10px; font-family: var(--font-head); font-weight: bold; text-decoration: none; display: inline-block; box-shadow: 0 5px 15px rgba(255,215,0,0.4); transition: 0.3s; border: none; cursor: pointer; text-transform: uppercase; letter-spacing: 1px;}
@@ -480,6 +485,17 @@
         </div>
     </div>
 
+    <!-- COMMON UNIFIED WITHDRAW SECTION FOR BOTH ROLES -->
+    <div class="common-withdraw-section">
+        <a href="withdraw.html" class="action-card ac-orange" onclick="triggerHaptic();" style="margin-bottom: 0;">
+            <div class="action-text">
+                <h4 style="color: var(--accent-orange);">Withdraw Wallet</h4>
+                <p>Transfer your earnings and prize money to UPI.</p>
+            </div>
+            <div class="action-icon"><i class="fa-solid fa-money-bill-transfer"></i></div>
+        </a>
+    </div>
+
     <div id="playerDash" class="dashboard-section active">
         <div class="milestone-box glass-panel" id="playerMilestoneBox" onclick="openMilestoneModal('player'); triggerHaptic();">
             <div class="ms-header">
@@ -529,14 +545,6 @@
             </div>
             <div class="action-icon"><i class="fa-solid fa-list-check"></i></div>
         </div>
-
-        <a href="withdraw.html" class="action-card ac-orange" onclick="triggerHaptic();">
-            <div class="action-text">
-                <h4 style="color: var(--accent-orange);">Withdraw Winnings</h4>
-                <p>Transfer your prize money securely to UPI.</p>
-            </div>
-            <div class="action-icon"><i class="fa-solid fa-money-bill-transfer"></i></div>
-        </a>
 
         <a href="explore.html" class="action-card" onclick="triggerHaptic();">
             <div class="action-text">
@@ -598,14 +606,6 @@
             </div>
         </div>
 
-        <a href="withdraw.html" class="action-card ac-orange" onclick="triggerHaptic();">
-            <div class="action-text">
-                <h4 style="color: var(--accent-orange);">Withdraw Earnings</h4>
-                <p>Transfer your hosted event earnings to UPI.</p>
-            </div>
-            <div class="action-icon"><i class="fa-solid fa-money-bill-transfer"></i></div>
-        </a>
-
         <a href="tournament.html" class="action-card" onclick="triggerHaptic();">
             <div class="action-text">
                 <h4>Create Tournament</h4>
@@ -661,11 +661,6 @@
         <div class="setting-item" onclick="window.location.href='tickets.html'; triggerHaptic();">
             <div class="setting-icon"><span class="tx-icon" style="font-size: 1rem; margin:0;">TX</span></div>
             <div class="setting-name">My Tickets & Ledger</div>
-            <div class="setting-arrow"><i class="fa-solid fa-chevron-right"></i></div>
-        </div>
-        <div class="setting-item" onclick="window.location.href='withdraw.html'; triggerHaptic();">
-            <div class="setting-icon" style="color: var(--accent-orange); border: 1px solid rgba(255,153,0,0.2); background: rgba(255,153,0,0.05);"><i class="fa-solid fa-money-bill-transfer"></i></div>
-            <div class="setting-name">Withdraw Center</div>
             <div class="setting-arrow"><i class="fa-solid fa-chevron-right"></i></div>
         </div>
         <div class="setting-item" onclick="cycleThemeColor(); triggerHaptic();">
@@ -1174,7 +1169,6 @@
                 showToast("Login to view Support ID", true); 
                 return; 
             }
-            // Generates a clean, unique alphanumeric ID based on the user's email
             let cleanString = btoa(userData.email).replace(/[^a-zA-Z0-9]/g, '');
             let supportId = "TX-" + cleanString.substring(0, 10).toUpperCase();
             
@@ -1244,15 +1238,17 @@
                 .then(res => res.json())
                 .then(data => {
                     if (data.status === "success") {
-                        // Silently merge without triggering toasts
                         userData.points = safeParseNum(data.data.points, userData.points || 0);
-                        
-                        // Separate Tickets (rupees) from Winnings (earnings) securely
                         userData.rupees = safeParseNum(data.data.rupees, userData.rupees || 0);
                         userData.earnings = safeParseNum(data.data.earnings, userData.earnings || 0);
                         
+                        // Matches count fetched directly from payload (Column K)
+                        userData.matches = safeParseNum(data.data.matches, userData.matches || 0);
                         userData.wins = safeParseNum(data.data.wins, userData.wins || 0);
                         userData.hosted = safeParseNum(data.data.hosted, userData.hosted || 0);
+                        
+                        // Check if premium status is true
+                        userData.is_premium = String(data.data.is_premium).toLowerCase() === 'true';
                         
                         localStorage.setItem('tournyx_user', JSON.stringify(userData));
                         renderUserInfo(userData, false); // Update UI passively without animations resetting
@@ -1299,12 +1295,12 @@
             if(urlParams.has('user')) {
                 try {
                     let targetUserEmail = atob(decodeURIComponent(urlParams.get('user')));
-                    userData = { email: targetUserEmail, username: "Player", ign: "", matches: 0, wins: 0, points: 0, hosted: 0, earnings: 0, rupees: 0, claimed_ms: [] };
+                    userData = { email: targetUserEmail, username: "Player", ign: "", matches: 0, wins: 0, points: 0, hosted: 0, earnings: 0, rupees: 0, claimed_ms: [], is_premium: false };
                 } catch(e) {
-                    userData = { email: "error", username: "Pro Gamer", ign: "Unknown", matches: 0, wins: 0, points: 0, hosted: 0, earnings: 0, rupees: 0, claimed_ms: [] };
+                    userData = { email: "error", username: "Pro Gamer", ign: "Unknown", matches: 0, wins: 0, points: 0, hosted: 0, earnings: 0, rupees: 0, claimed_ms: [], is_premium: false };
                 }
             } else {
-                userData = { email: "guest", username: "Guest Player", ign: "Guest", matches: 0, wins: 0, points: 0, hosted: 0, earnings: 0, rupees: 0, claimed_ms: [] };
+                userData = { email: "guest", username: "Guest Player", ign: "Guest", matches: 0, wins: 0, points: 0, hosted: 0, earnings: 0, rupees: 0, claimed_ms: [], is_premium: false };
             }
         }
         
@@ -1367,17 +1363,18 @@
             }
 
             if (!localUser) {
-                localUser = { username: "Player", ign: "", matches: 0, wins: 0, points: 0, hosted: 0, earnings: 0, rupees: 0, claimed_ms: [] };
+                localUser = { username: "Player", ign: "", matches: 0, wins: 0, points: 0, hosted: 0, earnings: 0, rupees: 0, claimed_ms: [], is_premium: false };
             }
 
-            if (localUser.username === "Loading..." || !localUser.username) localUser.username = "Player";
+            // Ensure loader un-sticks if username is totally missing or corrupted locally
+            if (localUser.username === "Loading..." || !localUser.username || localUser.username.trim() === "") localUser.username = "Player";
             if (localUser.ign === "Fetching Live Data..." || localUser.ign === "Loading...") localUser.ign = "";
             
             renderUserInfo(localUser, false); 
 
             if(isGuestMode) return;
 
-            // 1. Fetch Profile Data
+            // 1. Fetch Profile Data (This handles matches from Column K now)
             try {
                 const res = await fetch(API_URL, {
                     method: 'POST',
@@ -1397,13 +1394,16 @@
                     
                     userData.points = safeParseNum(data.data.points, localUser.points || 0);
                     
-                    // Carefully segregate passes (rupees) from withdrawable cash (earnings)
                     userData.rupees = safeParseNum(data.data.rupees, localUser.rupees || 0);
                     userData.earnings = safeParseNum(data.data.earnings, localUser.earnings || 0);
 
+                    // Replaced backend get_my_matches payload. Sourced directly from sheet col K payload.
+                    userData.matches = safeParseNum(data.data.matches, localUser.matches || 0);
                     userData.wins = safeParseNum(data.data.wins, localUser.wins || 0);
                     userData.hosted = safeParseNum(data.data.hosted, localUser.hosted || 0);
                     
+                    userData.is_premium = String(data.data.is_premium).toLowerCase() === 'true';
+
                     userData.main_game = data.data.main_game || localUser.main_game || "N/A";
                     userData.yt_link = data.data.yt_link || localUser.yt_link || "";
                     userData.role = data.data.role || localUser.role || "player";
@@ -1421,34 +1421,14 @@
                 if(isManual) showToast("Network issue. Showing cached profile.", true);
             }
 
-            // 2. Fetch True "Matches Played" based on completed status
-            fetch(API_URL, {
-                method: 'POST', headers: { 'Content-Type': 'text/plain' },
-                body: JSON.stringify({ action: 'get_my_matches', email: userData.email.trim().toLowerCase() })
-            }).then(res => res.json()).then(data => {
-                if(data.status === 'success' && data.data) {
-                    let completedMatches = data.data.filter(m => {
-                        let statusText = String(m.status || m.col_k || "").toLowerCase();
-                        return statusText.includes('completed') || statusText.includes('success');
-                    }).length;
-                    
-                    userData.matches = completedMatches;
-                    localStorage.setItem('tournyx_user', JSON.stringify(userData));
-                    
-                    document.getElementById('valMatches').innerHTML = completedMatches;
-                    updateMilestones(userData, true); // Trigger the bar update with accurate data
-                }
-                
-                renderUserInfo(userData, true); 
-                if(isManual) showToast("Profile fully synced!");
-            }).catch(err => {
-                console.error("Match sync failed", err);
-                renderUserInfo(userData, true);
-            });
+            renderUserInfo(userData, true); 
+            if(isManual) showToast("Profile fully synced!");
         }
 
         function renderUserInfo(data, doAnimate) {
             try {
+                let isPremiumUser = String(data.is_premium).toLowerCase() === 'true';
+                
                 document.getElementById('userIgn').innerText = data.ign ? data.ign : "Tap to set IGN";
                 
                 if(data.avatar && data.avatar.length > 5) {
@@ -1514,11 +1494,25 @@
                 else if(pts >= 5000 && pts < 15000) { tier = "Gold"; pct = 60; level = 25; badge = "🥇"; glow = "rgba(255,215,0,0.25)";}
                 else if(pts >= 15000) { tier = "Diamond"; pct = 90; level = 50; badge = "💎"; glow = "rgba(0,242,255,0.25)";}
                 
-                document.getElementById('profileHeaderGlow').style.boxShadow = `inset 0 -20px 50px -20px ${glow}`;
-                document.getElementById('userName').innerHTML = `${badge} ${data.username || "Player"}`;
-                document.getElementById('userTier').innerText = tier;
+                // VIP PREMIUM PLAN OVERRIDES
+                let premiumIcon = isPremiumUser ? '<i class="fa-solid fa-crown" style="color:#FFD700; margin-right:6px; filter:drop-shadow(0 0 5px #FFD700);"></i>' : '';
+                let promoBanner = document.querySelector('.premium-promo');
+                if(promoBanner) promoBanner.style.display = isPremiumUser ? 'none' : 'block';
+
+                document.getElementById('userName').innerHTML = `${premiumIcon}${badge} ${data.username || "Player"}`;
+                document.getElementById('userTier').innerText = isPremiumUser && pts < 15000 ? "VIP " + tier : tier;
                 document.getElementById('userLevel').innerText = level;
                 setTimeout(() => { document.getElementById('tierProgress').style.width = pct + "%"; }, 100);
+
+                if (isPremiumUser) {
+                    document.getElementById('profileHeaderGlow').style.boxShadow = `inset 0 -30px 60px -20px rgba(255,215,0,0.3)`;
+                    document.querySelector('.profile-avatar').style.border = "2px solid #FFD700";
+                    document.querySelector('.profile-avatar').style.boxShadow = "0 0 25px rgba(255,215,0,0.5)";
+                } else {
+                    document.getElementById('profileHeaderGlow').style.boxShadow = `inset 0 -20px 50px -20px ${glow}`;
+                    document.querySelector('.profile-avatar').style.border = "3px solid transparent";
+                    document.querySelector('.profile-avatar').style.boxShadow = "0 0 20px rgba(0,0,0,0.8)";
+                }
 
                 document.getElementById('mainGameTag').innerHTML = `<i class="fa-solid fa-crosshairs"></i> Game: ${data.main_game || 'N/A'}`;
                 document.getElementById('mainGameUid').innerHTML = `<i class="fa-solid fa-id-card"></i> UID: ${data.uid || 'Not Set'}`;
@@ -1565,6 +1559,7 @@
                 else if(hosted >= 15) { orgTier = "Amateur"; orgFee = "12% Comm."; orgNext = 30; orgPct = ((hosted-15)/15)*100; }
                 else { orgNext = 15; orgPct = (hosted/15)*100; if(hosted < 5) orgTier = "Unranked"; }
                 
+                if (data.is_premium) orgFee = "0% VIP Comm."; // Premium Override
                 oBadge.innerText = orgFee;
                 document.getElementById('orgTierText').innerText = orgTier;
                 document.getElementById('orgNextGoal').innerText = hosted >= 60 ? "Max Tier Reached!" : `${hosted}/${orgNext} to Next Tier`;
@@ -1583,6 +1578,7 @@
                 else if(matches >= 25) { pTier = "Veteran"; pBadgeText = "Level 2"; pNext = 50; pPct = ((matches-25)/25)*100; }
                 else { pNext = 25; pPct = (matches/25)*100; if(matches < 5) pTier = "Unranked"; }
                 
+                if (data.is_premium) { pTier = "VIP " + pTier; pBadge.classList.add('elite'); } // Premium Override
                 pBadge.innerText = pTier;
                 document.getElementById('playerTierText').innerText = pBadgeText;
                 document.getElementById('playerNextGoal').innerText = matches >= 150 ? "Legend Reached!" : `${matches}/${pNext} Matches`;
@@ -1656,7 +1652,6 @@
             localStorage.setItem('tournyx_user', JSON.stringify(userData));
             
             renderUserInfo(userData, true);
-            fireConfetti();
             showToast(`Claimed! Added successfully to Wallet.`);
             btn.outerHTML = `<span style="color:var(--accent-green); font-size: 0.8rem; font-family: var(--font-head); font-weight:bold; margin-top:5px; display:inline-block;"><i class="fa-solid fa-check"></i> Claimed</span>`;
 
@@ -2138,122 +2133,6 @@
                 document.getElementById(currentUploadState.base64Id).value = compressedBase64;
             });
         }
-
-        async function saveTournamentChanges() {
-            const btn = document.getElementById('saveTourneyBtn');
-            btn.innerHTML = "<i class='fa-solid fa-spinner fa-spin'></i> Updating...";
-            btn.disabled = true;
-            
-            let descVal = document.getElementById('editTourneyDesc').value;
-            let formattedDesc = descVal.split('\n').map(line => `<div>${line}</div>`).join('');
-
-            let startD = document.getElementById('editTourneyDateStart').value;
-            let endD = document.getElementById('editTourneyDateEnd').value;
-            let finalMatchPeriod = startD;
-            if(endD && endD !== "") finalMatchPeriod += " to " + endD;
-            
-            let p1 = document.getElementById('editPrize1').value.trim();
-            let p2 = document.getElementById('editPrize2').value.trim();
-            let p3 = document.getElementById('editPrize3').value.trim();
-            let prizeJson = {};
-            if(p1) prizeJson["1"] = p1;
-            if(p2) prizeJson["2"] = p2;
-            if(p3) prizeJson["3"] = p3;
-            let finalPrizeStr = Object.keys(prizeJson).length > 0 ? JSON.stringify(prizeJson) : "";
-
-            let scheduleArr = [];
-            document.querySelectorAll('#editScheduleContainer .sch-block').forEach(block => {
-                let title = block.querySelector('.sch-title').value.trim();
-                let start = block.querySelector('.sch-start').value;
-                let end = block.querySelector('.sch-end').value;
-                if(title && start && end) {
-                    scheduleArr.push({title: title, start: start, end: end});
-                }
-            });
-            let finalBracketStr = scheduleArr.length > 0 ? JSON.stringify(scheduleArr) : "";
-
-            const payload = {
-                action: 'edit_tournament',
-                id: document.getElementById('editTourneyId').value,
-                email: userData.email.trim().toLowerCase(), 
-                title: document.getElementById('editTourneyTitle').value,
-                banner: document.getElementById('editTourneyBannerStr').value,
-                
-                prize_json: finalPrizeStr,
-                bracket_json: finalBracketStr,
-                
-                room_id: document.getElementById('editTourneyRoomId').value,
-                room_pass: document.getElementById('editTourneyRoomPass').value,
-                match_period: finalMatchPeriod, 
-                reg_time: document.getElementById('editTourneyRegTime').value, 
-                slots: document.getElementById('editTourneySlots').value,
-                entry_fee: document.getElementById('editTourneyEntry').value,
-                prize_pool: document.getElementById('editTourneyPrize').value,
-                stream_url: document.getElementById('editTourneyStream').value,
-                description: formattedDesc,
-                status: document.getElementById('editTourneyStatus').value
-            };
-
-            try {
-                await fetch(API_URL, {
-                    method: 'POST',
-                    mode: 'no-cors',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(payload)
-                });
-                
-                setTimeout(() => {
-                    showToast("Tournament Updated Successfully!");
-                    closeManageModal();
-                    fetchMyTournaments(); 
-                    btn.innerText = "Update Tournament"; 
-                    btn.disabled = false;
-                }, 1200);
-
-            } catch (error) {
-                showToast("Tournament Updated Successfully!");
-                closeManageModal();
-                fetchMyTournaments();
-                btn.innerText = "Update Tournament"; 
-                btn.disabled = false;
-            }
-        }
-
-        function deleteTournament() {
-            if(!confirm("⚠️ WARNING: Are you sure you want to completely DELETE this tournament? This action cannot be undone.")) return;
-            const btn = document.getElementById('deleteTourneyBtn');
-            btn.innerHTML = "<i class='fa-solid fa-spinner fa-spin'></i> Deleting...";
-            btn.disabled = true;
-
-            let editId = document.getElementById('editTourneyId').value;
-
-            fetch(API_URL, {
-                method: 'POST', headers: { 'Content-Type': 'text/plain' },
-                body: JSON.stringify({ action: 'delete_tournament', id: editId, email: userData.email.trim().toLowerCase() })
-            }).then(() => {
-                showToast("Tournament Deleted!");
-                closeManageModal();
-                btn.innerHTML = "<i class='fa-solid fa-trash-can'></i> Delete Permanently"; 
-                btn.disabled = false;
-                
-                myHostedEvents = myHostedEvents.filter(t => String(t.id || t.match_id) !== String(editId));
-                setTimeout(() => { renderTournamentsList(document.getElementById('orgTourneysList')); }, 300);
-            });
-        }
-
-        function openEditModal() {
-            document.getElementById('editModal').classList.add('active');
-            document.getElementById('editEmailInfo').value = userData.email || "";
-            document.getElementById('editName').value = userData.username || "";
-            document.getElementById('editIgn').value = userData.ign || "";
-            document.getElementById('editMainGame').value = userData.main_game || "";
-            document.getElementById('editYtLink').value = userData.yt_link || "";
-            document.getElementById('editUid').value = userData.uid || ""; 
-            document.getElementById('editPhone').value = userData.phone || ""; 
-            document.getElementById('editState').value = userData.state || ""; 
-            document.getElementById('editCity').value = userData.city || ""; 
-        }
-        function closeEditModal() { document.getElementById('editModal').classList.remove('active'); }
 
         async function saveProfile() {
             const btn = document.getElementById('saveBtn'); 
