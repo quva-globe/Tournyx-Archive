@@ -1166,7 +1166,7 @@
         }
 
         function copySupportId() {
-            if(isGuestMode || !userData.email) { 
+            if(isGuestMode || !userData || !userData.email) { 
                 showToast("Login to view Support ID", true); 
                 return; 
             }
@@ -1222,7 +1222,7 @@
         // LIVE BACKEND API
         const API_URL = 'https://script.google.com/macros/s/AKfycbyqqTpgaflxKJ9xH0jq7mJ_jLzcoNhas3gNo0h5gvoa_6r5Ae9NFxJAJp7ZoYNnMRKl/exec'; 
         
-        let userData = JSON.parse(localStorage.getItem('tournyx_user'));
+        let userData = JSON.parse(localStorage.getItem('tournyx_user')) || {};
         let myHostedEvents = []; 
         let isGuestMode = false;
         
@@ -1363,19 +1363,20 @@
                 localStorage.removeItem('tournyx_user');
             }
 
-            if (!localUser) {
+            if (!localUser || typeof localUser !== 'object') {
                 localUser = { username: "Player", ign: "", matches: 0, wins: 0, points: 0, hosted: 0, earnings: 0, rupees: 0, claimed_ms: [], is_premium: false };
             }
 
             // Ensure loader un-sticks if username is totally missing or corrupted locally
-            if (localUser.username === "Loading..." || !localUser.username || localUser.username.trim() === "") localUser.username = "Player";
+            if (!localUser.username || localUser.username === "Loading..." || localUser.username.trim() === "") localUser.username = "Player";
             if (localUser.ign === "Fetching Live Data..." || localUser.ign === "Loading...") localUser.ign = "";
             
+            userData = localUser; // Crucial fix: Assign it globally so Modals work instantly
             renderUserInfo(localUser, false); 
 
             if(isGuestMode) return;
 
-            // 1. Fetch Profile Data (This handles matches from Column K now)
+            // 1. Fetch Profile Data
             try {
                 const res = await fetch(API_URL, {
                     method: 'POST',
@@ -1398,7 +1399,6 @@
                     userData.rupees = safeParseNum(data.data.rupees, localUser.rupees || 0);
                     userData.earnings = safeParseNum(data.data.earnings, localUser.earnings || 0);
 
-                    // Replaced backend get_my_matches payload. Sourced directly from sheet col K payload.
                     userData.matches = safeParseNum(data.data.matches, localUser.matches || 0);
                     userData.wins = safeParseNum(data.data.wins, localUser.wins || 0);
                     userData.hosted = safeParseNum(data.data.hosted, localUser.hosted || 0);
@@ -1454,24 +1454,25 @@
                 let successRate = hostedCount > 0 ? Math.min(100, 85 + (hostedCount * 1.5)).toFixed(1) : 0; 
                 let winRate = mCount > 0 ? ((wCount / mCount) * 100).toFixed(1) : 0;
 
+                // Safely update dom elements if they exist
                 if(doAnimate) {
-                    animateValue('valMatches', 0, mCount, 1000);
-                    animateValue('valWins', 0, wCount, 1000);
-                    animateValue('valPoints', 0, pts, 1200);
-                    animateValue('valHosted', 0, hostedCount, 1000);
+                    if(document.getElementById('valMatches')) animateValue('valMatches', 0, mCount, 1000);
+                    if(document.getElementById('valWins')) animateValue('valWins', 0, wCount, 1000);
+                    if(document.getElementById('valPoints')) animateValue('valPoints', 0, pts, 1200);
+                    if(document.getElementById('valHosted')) animateValue('valHosted', 0, hostedCount, 1000);
                     if(document.getElementById('valPlayerEarnings')) animateValue('valPlayerEarnings', 0, earnings, 1200);
                     if(document.getElementById('valEarnings')) animateValue('valEarnings', 0, earnings, 1200);
-                    document.getElementById('valSuccessRate').innerHTML = successRate; 
-                    document.getElementById('valWinRate').innerText = winRate;
+                    if(document.getElementById('valSuccessRate')) document.getElementById('valSuccessRate').innerHTML = successRate; 
+                    if(document.getElementById('valWinRate')) document.getElementById('valWinRate').innerText = winRate;
                 } else {
-                    document.getElementById('valMatches').innerHTML = mCount;
-                    document.getElementById('valWins').innerHTML = wCount;
-                    document.getElementById('valPoints').innerHTML = pts.toLocaleString();
-                    document.getElementById('valHosted').innerHTML = hostedCount;
+                    if(document.getElementById('valMatches')) document.getElementById('valMatches').innerHTML = mCount;
+                    if(document.getElementById('valWins')) document.getElementById('valWins').innerHTML = wCount;
+                    if(document.getElementById('valPoints')) document.getElementById('valPoints').innerHTML = pts.toLocaleString();
+                    if(document.getElementById('valHosted')) document.getElementById('valHosted').innerHTML = hostedCount;
                     if(document.getElementById('valPlayerEarnings')) document.getElementById('valPlayerEarnings').innerHTML = earnings.toLocaleString();
                     if(document.getElementById('valEarnings')) document.getElementById('valEarnings').innerHTML = earnings.toLocaleString();
-                    document.getElementById('valSuccessRate').innerHTML = successRate;
-                    document.getElementById('valWinRate').innerText = winRate;
+                    if(document.getElementById('valSuccessRate')) document.getElementById('valSuccessRate').innerHTML = successRate;
+                    if(document.getElementById('valWinRate')) document.getElementById('valWinRate').innerText = winRate;
                 }
                 
                 let starsHTML = ""; let ratingNum = 0.0;
@@ -1501,9 +1502,13 @@
                 if(promoBanner) promoBanner.style.display = isPremiumUser ? 'none' : 'block';
 
                 // --- THE CRITICAL FIX IS HERE ---
-                // This forces the code to strip out that invisible HTML loader box if it got saved
-                let cleanName = String(data.username || "").replace(/<[^>]*>?/gm, '').trim();
-                if (!cleanName || cleanName === "" || cleanName.toLowerCase() === "undefined") cleanName = "Player";
+                let cleanName = "Player";
+                if (data && data.username) {
+                    cleanName = String(data.username).replace(/<[^>]*>?/gm, '').trim();
+                    if (cleanName === "" || cleanName.toLowerCase() === "undefined" || cleanName.toLowerCase() === "null") {
+                        cleanName = "Player";
+                    }
+                }
 
                 let userNameEl = document.getElementById('userName');
                 if (userNameEl) {
@@ -2274,6 +2279,22 @@
         }
 
         // --- LIVE PASSWORD CHANGE FLOW ---
+        function openEditModal() {
+            let user = userData || {};
+            document.getElementById('editModal').classList.add('active');
+            document.getElementById('editEmailInfo').value = user.email || "";
+            document.getElementById('editName').value = user.username || "";
+            document.getElementById('editIgn').value = user.ign || "";
+            document.getElementById('editMainGame').value = user.main_game || "";
+            document.getElementById('editYtLink').value = user.yt_link || "";
+            document.getElementById('editUid').value = user.uid || ""; 
+            document.getElementById('editPhone').value = user.phone || ""; 
+            document.getElementById('editState').value = user.state || ""; 
+            document.getElementById('editCity').value = user.city || ""; 
+        }
+
+        function closeEditModal() { document.getElementById('editModal').classList.remove('active'); }
+
         function openPassModal() {
             document.getElementById('passModal').classList.add('active');
             document.getElementById('passStep0').style.display = 'block';
