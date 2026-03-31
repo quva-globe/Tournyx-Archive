@@ -1128,7 +1128,7 @@
             document.getElementById('qrModal').classList.add('active');
             let encodedEmail = btoa(userData.email);
             document.getElementById('dynamicQrImg').src = `https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https://tournyx.in/profile.html?user=${encodedEmail}`;
-            document.getElementById('qrName').innerText = userData.username;
+            document.getElementById('qrName').innerText = userData.username || "Player";
             document.getElementById('qrIgn').innerText = userData.ign || "IGN Not Set";
         }
         
@@ -1140,10 +1140,11 @@
             if(isGuestMode) { showToast("Login to share profile", true); return; }
             let encodedEmail = btoa(userData.email);
             let url = `https://tournyx.in/profile.html?user=${encodedEmail}`;
+            let uName = userData.username || "Player";
             let msg = `Check out my Organizer Profile on Tournyx and join my upcoming tournaments! 🎮\n${url}`;
             
             if (navigator.share) {
-                navigator.share({ title: `${userData.username}'s Tournyx Profile`, text: msg }).catch(() => showToast("Share cancelled"));
+                navigator.share({ title: `${uName}'s Tournyx Profile`, text: msg }).catch(() => showToast("Share cancelled"));
             } else {
                 navigator.clipboard.writeText(msg).then(() => showToast("Profile Link Copied to Clipboard!"));
             }
@@ -1502,9 +1503,12 @@
                 // --- THE CRITICAL FIX IS HERE ---
                 // This forces the code to strip out that invisible HTML loader box if it got saved
                 let cleanName = String(data.username || "").replace(/<[^>]*>?/gm, '').trim();
-                if (cleanName === "") cleanName = "Player";
+                if (!cleanName || cleanName === "" || cleanName.toLowerCase() === "undefined") cleanName = "Player";
 
-                document.getElementById('userName').innerHTML = `${premiumIcon}${badge} ${cleanName}`;
+                let userNameEl = document.getElementById('userName');
+                if (userNameEl) {
+                    userNameEl.innerHTML = `${premiumIcon}${badge} ${cleanName}`;
+                }
                 // --------------------------------
 
                 document.getElementById('userTier').innerText = isPremiumUser && pts < 15000 ? "VIP " + tier : tier;
