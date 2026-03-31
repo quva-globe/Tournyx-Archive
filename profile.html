@@ -31,12 +31,12 @@
             --font-body: 'Rajdhani', sans-serif;
         }
 
-        /* DYNAMIC VIP OVERRIDE CLASS */
+        /* --- TRUE GOLDEN VIP THEME --- */
         .theme-vip {
             --accent-cyan: #FFD700;
-            --accent-purple: #FF8C00;
-            --accent-gradient: linear-gradient(135deg, #FFD700, #FF8C00);
-            --card-border: rgba(255, 215, 0, 0.2);
+            --accent-purple: #FFA500;
+            --accent-gradient: linear-gradient(135deg, #FFDF00, #D4AF37, #FF8C00);
+            --card-border: rgba(255, 215, 0, 0.3);
         }
 
         * { -ms-overflow-style: none !important; scrollbar-width: none !important; margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
@@ -144,7 +144,7 @@
         .avatar-container:active { transform: scale(0.95); }
         .edit-avatar-btn { position: absolute; bottom: 5px; right: 0px; width: 30px; height: 30px; background: var(--accent-gradient); border-radius: 50%; color: white; display: flex; align-items: center; justify-content: center; font-size: 0.8rem; border: 2px solid var(--primary-bg); box-shadow: 0 0 10px rgba(189,0,255,0.5); z-index: 3;}
         
-        .vip-verified-badge { position: absolute; top: 0; right: 0; width: 28px; height: 28px; background: #FFD700; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: black; font-size: 0.8rem; z-index: 4; border: 2px solid var(--primary-bg); box-shadow: 0 0 15px rgba(255,215,0,0.8); display: none;}
+        .vip-verified-badge { position: absolute; top: 0; right: 0; width: 28px; height: 28px; background: #000; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #FFD700; z-index: 4; border: 2px solid #FFD700; box-shadow: 0 0 15px rgba(255,215,0,0.8); display: none;}
         .theme-vip .vip-verified-badge { display: flex; }
 
         .user-info { flex: 1; min-width: 0; overflow: hidden; }
@@ -483,7 +483,7 @@
             </svg>
             <img src="https://via.placeholder.com/90" alt="Avatar" class="profile-avatar" id="userAvatar">
             <div class="edit-avatar-btn"><i class="fa-solid fa-camera"></i></div>
-            <div class="vip-verified-badge"><i class="fa-solid fa-check"></i></div>
+            <div class="vip-verified-badge"><span style="font-family: var(--font-head); font-weight: 900; font-style: italic; font-size: 0.55rem; letter-spacing: -0.5px;">TX</span></div>
         </div>
         <input type="file" id="avatarUploadInp" accept="image/*" onchange="initCropper(event, 'userAvatar', '', 1, true)">
 
@@ -573,14 +573,6 @@
                     <span class="stat-label">Points (PTS)</span>
                 </div>
             </div>
-        </div>
-        
-        <div class="action-card ac-green" onclick="openMatchStatusModal(); triggerHaptic();">
-            <div class="action-text">
-                <h4>My Match Status</h4>
-                <p>Check played matches and verification status.</p>
-            </div>
-            <div class="action-icon"><i class="fa-solid fa-list-check"></i></div>
         </div>
 
         <a href="explore.html" class="action-card" onclick="triggerHaptic();">
@@ -854,10 +846,10 @@
                 <div id="emailStep2" style="display:none; text-align:center;">
                     <p style="color:#aaa; font-size:0.9rem; margin-bottom:15px;">Enter the 4-digit code sent to your old email.</p>
                     <div class="otp-input-group">
-                        <input type="text" class="otp-box" id="oe1" maxlength="1" onkeyup="moveToNext(this, 'oe2')">
-                        <input type="text" class="otp-box" id="oe2" maxlength="1" onkeyup="moveToNext(this, 'oe3')">
-                        <input type="text" class="otp-box" id="oe3" maxlength="1" onkeyup="moveToNext(this, 'oe4')">
-                        <input type="text" class="otp-box" id="oe4" maxlength="1">
+                        <input type="tel" inputmode="numeric" pattern="[0-9]*" class="otp-box" id="oe1" maxlength="1" onkeyup="moveToNext(this, 'oe2')">
+                        <input type="tel" inputmode="numeric" pattern="[0-9]*" class="otp-box" id="oe2" maxlength="1" onkeyup="moveToNext(this, 'oe3')">
+                        <input type="tel" inputmode="numeric" pattern="[0-9]*" class="otp-box" id="oe3" maxlength="1" onkeyup="moveToNext(this, 'oe4')">
+                        <input type="tel" inputmode="numeric" pattern="[0-9]*" class="otp-box" id="oe4" maxlength="1">
                     </div>
                     <button class="save-btn" onclick="verifyOldOtp()" id="btnVerifyOldOtp">Verify Account</button>
                 </div>
@@ -877,25 +869,6 @@
                     <p style="color:#aaa; font-size:0.9rem; line-height:1.5; margin-bottom:25px;">We have securely sent a verification link to your new email. Please check your inbox and click the link to finalize the update.</p>
                     <button class="save-btn" style="background:transparent; border:1px solid var(--accent-cyan); box-shadow:none; color:var(--accent-cyan);" onclick="simulateExternalLinkReturn()"><i class="fa-solid fa-link"></i> (Simulate User Clicking Link)</button>
                 </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- MATCH STATUS MODAL -->
-    <div class="modal-overlay full-screen-modal" id="matchStatusModal">
-        <div class="modal-card">
-            <div class="modal-header" style="margin-bottom: 10px;">
-                <div class="modal-title"><i class="fa-solid fa-list-check" style="color:var(--accent-green);"></i> Match Status</div>
-                <i class="fa-solid fa-xmark close-modal" onclick="closeMatchStatusModal(); triggerHaptic();"></i>
-            </div>
-            
-            <div class="org-list-header" style="border:none; padding-top:0; padding-right:15px; padding-left:5px;">
-                <span>Recent History</span>
-                <i class="fa-solid fa-rotate-right" id="refreshMatchesBtn" style="color:var(--accent-cyan); font-size:1.1rem; cursor:pointer; padding:5px; transition:0.3s;" onclick="fetchMyMatchStatus(); triggerHaptic();"></i>
-            </div>
-            
-            <div class="fs-content" id="playerMatchList">
-                <div style="text-align:center; padding:30px 20px; color:#888; font-size:0.95rem;"><i class="fa-solid fa-spinner fa-spin" style="color:var(--accent-purple); font-size:1.5rem; margin-bottom:10px; display:block;"></i> Fetching matches by email...</div>
             </div>
         </div>
     </div>
@@ -951,10 +924,10 @@
                 <div id="passStep2" style="display:none; text-align:center;">
                     <p style="color:#aaa; font-size:0.9rem; margin-bottom:15px;">Enter the 4-digit code sent to your email.</p>
                     <div class="otp-input-group">
-                        <input type="text" class="otp-box" id="pe1" maxlength="1" onkeyup="moveToNext(this, 'pe2')">
-                        <input type="text" class="otp-box" id="pe2" maxlength="1" onkeyup="moveToNext(this, 'pe3')">
-                        <input type="text" class="otp-box" id="pe3" maxlength="1" onkeyup="moveToNext(this, 'pe4')">
-                        <input type="text" class="otp-box" id="pe4" maxlength="1">
+                        <input type="tel" inputmode="numeric" pattern="[0-9]*" class="otp-box" id="pe1" maxlength="1" onkeyup="moveToNext(this, 'pe2')">
+                        <input type="tel" inputmode="numeric" pattern="[0-9]*" class="otp-box" id="pe2" maxlength="1" onkeyup="moveToNext(this, 'pe3')">
+                        <input type="tel" inputmode="numeric" pattern="[0-9]*" class="otp-box" id="pe3" maxlength="1" onkeyup="moveToNext(this, 'pe4')">
+                        <input type="tel" inputmode="numeric" pattern="[0-9]*" class="otp-box" id="pe4" maxlength="1">
                     </div>
                     <button class="save-btn" onclick="verifyPassOtp()" id="btnVerifyPassOtp">Verify Identity</button>
                 </div>
@@ -1075,7 +1048,7 @@
                 <label class="form-label"><i class="fa-solid fa-users"></i> Participation Format</label>
                 <div style="display: flex; gap: 15px; margin-bottom: 20px;">
                     <div style="flex: 1;"><input type="number" id="editTourneySlots" class="form-control" placeholder="Max Slots *"></div>
-                    <div style="flex: 1;"><input type="number" id="editTourneyEntry" class="form-control" placeholder="Entry Fee (TX Passes) *"></div>
+                    <div style="flex: 1;"><input type="number" id="editTourneyEntry" class="form-control" placeholder="Entry Fee (1 Ticket) *"></div>
                 </div>
 
                 <label class="form-label"><i class="fa-solid fa-money-bill-wave"></i> Economics & Prize</label>
@@ -1294,14 +1267,15 @@
                     if (data.status === "success") {
                         userData.points = safeParseNum(data.data.points, userData.points || 0);
                         userData.rupees = safeParseNum(data.data.rupees, userData.rupees || 0);
+                        
+                        // Strict data segregation: Column J -> Earnings, Column Y -> Winnings
+                        userData.winnings = safeParseNum(data.data.winnings, userData.winnings || 0);
                         userData.earnings = safeParseNum(data.data.earnings, userData.earnings || 0);
                         
-                        // Matches count fetched directly from payload (Column K)
                         userData.matches = safeParseNum(data.data.matches, userData.matches || 0);
                         userData.wins = safeParseNum(data.data.wins, userData.wins || 0);
                         userData.hosted = safeParseNum(data.data.hosted, userData.hosted || 0);
                         
-                        // Check if premium status is true
                         userData.is_premium = String(data.data.is_premium).toLowerCase() === 'true';
                         
                         localStorage.setItem('tournyx_user', JSON.stringify(userData));
@@ -1349,12 +1323,12 @@
             if(urlParams.has('user')) {
                 try {
                     let targetUserEmail = atob(decodeURIComponent(urlParams.get('user')));
-                    userData = { email: targetUserEmail, username: "Player", ign: "", matches: 0, wins: 0, points: 0, hosted: 0, earnings: 0, rupees: 0, claimed_ms: [], is_premium: false };
+                    userData = { email: targetUserEmail, username: "Player", ign: "", matches: 0, wins: 0, points: 0, hosted: 0, earnings: 0, winnings: 0, rupees: 0, claimed_ms: [], is_premium: false };
                 } catch(e) {
-                    userData = { email: "error", username: "Pro Gamer", ign: "Unknown", matches: 0, wins: 0, points: 0, hosted: 0, earnings: 0, rupees: 0, claimed_ms: [], is_premium: false };
+                    userData = { email: "error", username: "Pro Gamer", ign: "Unknown", matches: 0, wins: 0, points: 0, hosted: 0, earnings: 0, winnings: 0, rupees: 0, claimed_ms: [], is_premium: false };
                 }
             } else {
-                userData = { email: "guest", username: "Guest Player", ign: "Guest", matches: 0, wins: 0, points: 0, hosted: 0, earnings: 0, rupees: 0, claimed_ms: [], is_premium: false };
+                userData = { email: "guest", username: "Guest Player", ign: "Guest", matches: 0, wins: 0, points: 0, hosted: 0, earnings: 0, winnings: 0, rupees: 0, claimed_ms: [], is_premium: false };
             }
         }
         
@@ -1396,7 +1370,6 @@
             return isNaN(p) ? fallback : p;
         }
 
-        // UI HELPERS (Input box jumping for OTPs)
         function moveToNext(current, nextFieldID) {
             if (current.value.length >= 1) {
                 let next = document.getElementById(nextFieldID);
@@ -1417,10 +1390,9 @@
             }
 
             if (!localUser || typeof localUser !== 'object') {
-                localUser = { username: "Player", ign: "", matches: 0, wins: 0, points: 0, hosted: 0, earnings: 0, rupees: 0, claimed_ms: [], is_premium: false };
+                localUser = { username: "Player", ign: "", matches: 0, wins: 0, points: 0, hosted: 0, earnings: 0, winnings: 0, rupees: 0, claimed_ms: [], is_premium: false };
             }
 
-            // Ensure loader un-sticks if username is totally missing or corrupted locally
             if (!localUser.username || localUser.username === "Loading..." || localUser.username.trim() === "") localUser.username = "Player";
             if (localUser.ign === "Fetching Live Data..." || localUser.ign === "Loading...") localUser.ign = "";
             
@@ -1429,7 +1401,6 @@
 
             if(isGuestMode) return;
 
-            // 1. Fetch Profile Data
             try {
                 const res = await fetch(API_URL, {
                     method: 'POST',
@@ -1448,8 +1419,9 @@
                     userData.city = data.data.city || localUser.city || ""; 
                     
                     userData.points = safeParseNum(data.data.points, localUser.points || 0);
-                    
                     userData.rupees = safeParseNum(data.data.rupees, localUser.rupees || 0);
+                    
+                    userData.winnings = safeParseNum(data.data.winnings, localUser.winnings || 0);
                     userData.earnings = safeParseNum(data.data.earnings, localUser.earnings || 0);
 
                     userData.matches = safeParseNum(data.data.matches, localUser.matches || 0);
@@ -1482,7 +1454,7 @@
         function renderUserInfo(data, doAnimate) {
             try {
                 let isPremiumUser = String(data.is_premium).toLowerCase() === 'true';
-                applyGlobalTheme(); // Ensure theme updates immediately if premium status changed
+                applyGlobalTheme();
                 
                 document.getElementById('userIgn').innerText = data.ign ? data.ign : "Tap to set IGN";
                 
@@ -1504,29 +1476,30 @@
                 let mCount = parseInt(data.matches) || 0;
                 let wCount = parseInt(data.wins) || 0;
                 let hostedCount = parseInt(data.hosted) || 0;
-                let earnings = parseInt(data.earnings) || 0; 
+                
+                // Segregated Financial Displays
+                let displayWinnings = parseInt(data.winnings) || 0; // Player Tab
+                let displayEarnings = parseInt(data.earnings) || 0; // Org Tab
+                
                 let successRate = hostedCount > 0 ? Math.min(100, 85 + (hostedCount * 1.5)).toFixed(1) : 0; 
                 let winRate = mCount > 0 ? ((wCount / mCount) * 100).toFixed(1) : 0;
 
-                // Safely update dom elements if they exist
                 if(doAnimate) {
                     if(document.getElementById('valMatches')) animateValue('valMatches', 0, mCount, 1000);
                     if(document.getElementById('valWins')) animateValue('valWins', 0, wCount, 1000);
                     if(document.getElementById('valPoints')) animateValue('valPoints', 0, pts, 1200);
                     if(document.getElementById('valHosted')) animateValue('valHosted', 0, hostedCount, 1000);
-                    if(document.getElementById('valPlayerEarnings')) animateValue('valPlayerEarnings', 0, earnings, 1200);
-                    if(document.getElementById('valEarnings')) animateValue('valEarnings', 0, earnings, 1200);
+                    if(document.getElementById('valPlayerEarnings')) animateValue('valPlayerEarnings', 0, displayWinnings, 1200);
+                    if(document.getElementById('valEarnings')) animateValue('valEarnings', 0, displayEarnings, 1200);
                     if(document.getElementById('valSuccessRate')) document.getElementById('valSuccessRate').innerHTML = successRate; 
-                    if(document.getElementById('valWinRate')) document.getElementById('valWinRate').innerText = winRate;
                 } else {
                     if(document.getElementById('valMatches')) document.getElementById('valMatches').innerHTML = mCount;
                     if(document.getElementById('valWins')) document.getElementById('valWins').innerHTML = wCount;
                     if(document.getElementById('valPoints')) document.getElementById('valPoints').innerHTML = pts.toLocaleString();
                     if(document.getElementById('valHosted')) document.getElementById('valHosted').innerHTML = hostedCount;
-                    if(document.getElementById('valPlayerEarnings')) document.getElementById('valPlayerEarnings').innerHTML = earnings.toLocaleString();
-                    if(document.getElementById('valEarnings')) document.getElementById('valEarnings').innerHTML = earnings.toLocaleString();
+                    if(document.getElementById('valPlayerEarnings')) document.getElementById('valPlayerEarnings').innerHTML = displayWinnings.toLocaleString();
+                    if(document.getElementById('valEarnings')) document.getElementById('valEarnings').innerHTML = displayEarnings.toLocaleString();
                     if(document.getElementById('valSuccessRate')) document.getElementById('valSuccessRate').innerHTML = successRate;
-                    if(document.getElementById('valWinRate')) document.getElementById('valWinRate').innerText = winRate;
                 }
                 
                 let starsHTML = ""; let ratingNum = 0.0;
@@ -1550,7 +1523,6 @@
                 else if(pts >= 5000 && pts < 15000) { tier = "Gold"; pct = 60; level = 25; badge = "🥇"; glow = "rgba(255,215,0,0.25)";}
                 else if(pts >= 15000) { tier = "Diamond"; pct = 90; level = 50; badge = "💎"; glow = "rgba(0,242,255,0.25)";}
                 
-                // VIP PREMIUM PLAN OVERRIDES
                 let promoBanner = document.querySelector('.premium-promo');
                 if(promoBanner) promoBanner.style.display = isPremiumUser ? 'none' : 'block';
 
@@ -1614,7 +1586,6 @@
             let hosted = parseInt(data.hosted) || 0;
             let matches = parseInt(data.matches) || 0;
             
-            // Setup Organizer (5 to 60)
             let orgTier = "Rookie"; let orgFee = "15% Comm."; let orgNext = 15; let orgPct = 0;
             let oBadge = document.getElementById('orgFeeBadge');
             if(oBadge) {
@@ -1626,14 +1597,13 @@
                 else if(hosted >= 15) { orgTier = "Amateur"; orgFee = "12% Comm."; orgNext = 30; orgPct = ((hosted-15)/15)*100; }
                 else { orgNext = 15; orgPct = (hosted/15)*100; if(hosted < 5) orgTier = "Unranked"; }
                 
-                if (data.is_premium) orgFee = "0% VIP Comm."; // Premium Override
+                if (data.is_premium) orgFee = "0% VIP Comm."; 
                 oBadge.innerText = orgFee;
                 document.getElementById('orgTierText').innerText = orgTier;
                 document.getElementById('orgNextGoal').innerText = hosted >= 60 ? "Max Tier Reached!" : `${hosted}/${orgNext} to Next Tier`;
                 setTimeout(()=> { document.getElementById('orgProgressFill').style.width = orgPct + '%'; }, 300);
             }
 
-            // Setup Player (5 to 150)
             let pTier = "Scout"; let pBadgeText = "Level 1"; let pNext = 25; let pPct = 0;
             let pBadge = document.getElementById('playerRankBadge');
             if(pBadge) {
@@ -1645,7 +1615,7 @@
                 else if(matches >= 25) { pTier = "Veteran"; pBadgeText = "Level 2"; pNext = 50; pPct = ((matches-25)/25)*100; }
                 else { pNext = 25; pPct = (matches/25)*100; if(matches < 5) pTier = "Unranked"; }
                 
-                if (data.is_premium) { pTier = "VIP " + pTier; pBadge.classList.add('elite'); } // Premium Override
+                if (data.is_premium) { pTier = "VIP " + pTier; pBadge.classList.add('elite'); } 
                 pBadge.innerText = pTier;
                 document.getElementById('playerTierText').innerText = pBadgeText;
                 document.getElementById('playerNextGoal').innerText = matches >= 150 ? "Legend Reached!" : `${matches}/${pNext} Matches`;
@@ -1735,65 +1705,6 @@
                 })
             }).catch(() => console.log("Silent claim sync"));
         }
-
-        function fetchMyMatchStatus() {
-            const container = document.getElementById('playerMatchList');
-            const refBtn = document.getElementById('refreshMatchesBtn');
-            container.innerHTML = `<div style="text-align:center; padding:30px 20px; color:#888; font-size:0.95rem;"><i class="fa-solid fa-spinner fa-spin" style="color:var(--accent-purple); font-size:1.5rem; margin-bottom:10px; display:block;"></i> Fetching matches for ${userData.email}...</div>`;
-            
-            if(refBtn) { refBtn.classList.add('fa-spin'); setTimeout(()=>refBtn.classList.remove('fa-spin'), 1000); }
-
-            fetch(API_URL, {
-                method: 'POST', headers: { 'Content-Type': 'text/plain' },
-                body: JSON.stringify({ action: 'get_my_matches', email: userData.email.trim().toLowerCase() })
-            })
-            .then(res => res.json())
-            .then(data => {
-                container.innerHTML = "";
-                if(data.status === "success" && data.data && data.data.length > 0) {
-                    data.data.forEach(match => {
-                        let mStatus = String(match.status || match.col_k || "Pending");
-                        let isSuccess = mStatus.toLowerCase().includes("success");
-                        let isCompleted = mStatus.toLowerCase().includes("completed");
-                        
-                        let sColor = isSuccess || isCompleted ? 'var(--accent-green)' : 'var(--accent-orange)';
-                        let sText = isSuccess ? 'Success' : (isCompleted ? 'Completed' : 'Pending');
-                        
-                        let displayScore = "Pending";
-                        if (isCompleted || isSuccess) {
-                            displayScore = match.score || match.col_m || "N/A";
-                        }
-                        
-                        container.innerHTML += `
-                            <div class="managed-item">
-                                <div class="mi-info">
-                                    <h5>${match.title || "Tournament Match"}</h5>
-                                    <p>${match.date || "Recent"} • Score: ${displayScore}</p>
-                                </div>
-                                <div class="mi-btn-group">
-                                    <span style="background: rgba(255,255,255,0.1); padding: 5px 12px; border-radius: 8px; font-weight: bold; color: ${sColor}; border: 1px solid ${sColor};">${sText}</span>
-                                </div>
-                            </div>
-                        `;
-                    });
-                } else {
-                    container.innerHTML = `
-                        <div style='text-align:center; padding:30px 20px; color:#666; background:rgba(0,0,0,0.3); border-radius:15px; border:1px dashed var(--card-border);'>
-                            <i class="fa-solid fa-gamepad" style="font-size:2rem; margin-bottom:10px; opacity:0.5;"></i><br>
-                            No recent match data found for this email. Keep playing!
-                        </div>`;
-                }
-            }).catch(() => {
-                container.innerHTML = "<div style='text-align:center; padding:30px 20px; color:#ff4d4d;'><i class='fa-solid fa-triangle-exclamation' style='font-size:2rem; margin-bottom:10px;'></i><br>Failed to connect to database. Try again.</div>";
-            });
-        }
-
-        function openMatchStatusModal() {
-            if(isGuestMode) { showToast("Login to view Match History", true); return; }
-            document.getElementById('matchStatusModal').classList.add('active');
-            fetchMyMatchStatus();
-        }
-        function closeMatchStatusModal() { document.getElementById('matchStatusModal').classList.remove('active'); }
 
         function switchRole(role) {
             if (role === 'organizer' && userData.role !== 'organizer') {
@@ -1963,18 +1874,19 @@
             document.getElementById('editPrize2').value = "";
             document.getElementById('editPrize3').value = "";
             activeTournamentPrizes = {};
+            let pCount = 0;
             
             try {
                 let pData = t.prize_json || t.prize_distribution_image || t.prize_distribution || t.prize_image || "";
                 if(pData && pData.startsWith("{")) {
                     let parsed = JSON.parse(pData);
-                    if(parsed["1"]) { document.getElementById('editPrize1').value = parsed["1"]; activeTournamentPrizes[1] = parsed["1"]; }
-                    if(parsed["2"]) { document.getElementById('editPrize2').value = parsed["2"]; activeTournamentPrizes[2] = parsed["2"]; }
-                    if(parsed["3"]) { document.getElementById('editPrize3').value = parsed["3"]; activeTournamentPrizes[3] = parsed["3"]; }
+                    if(parsed["1"] && String(parsed["1"]).trim() !== "") { document.getElementById('editPrize1').value = parsed["1"]; activeTournamentPrizes[1] = parsed["1"]; pCount++; }
+                    if(parsed["2"] && String(parsed["2"]).trim() !== "") { document.getElementById('editPrize2').value = parsed["2"]; activeTournamentPrizes[2] = parsed["2"]; pCount++; }
+                    if(parsed["3"] && String(parsed["3"]).trim() !== "") { document.getElementById('editPrize3').value = parsed["3"]; activeTournamentPrizes[3] = parsed["3"]; pCount++; }
                 } else {
-                    if(t.prize1) { document.getElementById('editPrize1').value = t.prize1; activeTournamentPrizes[1] = t.prize1; }
-                    if(t.prize2) { document.getElementById('editPrize2').value = t.prize2; activeTournamentPrizes[2] = t.prize2; }
-                    if(t.prize3) { document.getElementById('editPrize3').value = t.prize3; activeTournamentPrizes[3] = t.prize3; }
+                    if(t.prize1 && String(t.prize1).trim() !== "") { document.getElementById('editPrize1').value = t.prize1; activeTournamentPrizes[1] = t.prize1; pCount++; }
+                    if(t.prize2 && String(t.prize2).trim() !== "") { document.getElementById('editPrize2').value = t.prize2; activeTournamentPrizes[2] = t.prize2; pCount++; }
+                    if(t.prize3 && String(t.prize3).trim() !== "") { document.getElementById('editPrize3').value = t.prize3; activeTournamentPrizes[3] = t.prize3; pCount++; }
                 }
             } catch(e) { console.log("Prize parse error"); }
 
@@ -2061,6 +1973,15 @@
                     if(matchRegs.length > 0) {
                         matchRegs.forEach(team => {
                             let teamName = team.clan || team.username || "Unknown";
+                            
+                            // Smart JSON Extractor for Solo Players
+                            try {
+                                if(teamName.startsWith("{")) {
+                                    let p = JSON.parse(teamName);
+                                    teamName = p.username || p.clan || teamName;
+                                }
+                            } catch(e) {}
+
                             let cleanTeamName = teamName.replace(/"/g, "&quot;").replace(/'/g, "\\'"); 
                             
                             let btnText = "👑 Declare Winner";
@@ -2108,8 +2029,9 @@
             if(!confirm(confirmMsg)) return;
 
             showToast(`Processing Payout for ${winnerName}...`);
+            triggerHaptic();
             
-            // visually remove team so they can't win twice
+            // Visually remove team so they can't win twice
             btnElement.parentElement.innerHTML = `<span style="color:var(--accent-green); font-size:0.8rem; font-weight:bold;">${rankText} Selected</span>`;
 
             let payload = {
@@ -2123,7 +2045,7 @@
             .then(() => {
                 if (totalPrizesToAward > 0 && currentActivePrizeIndex < totalPrizesToAward) {
                     currentActivePrizeIndex++;
-                    // Update remaining buttons
+                    // Update remaining buttons to next prize rank
                     document.querySelectorAll('#resolveTeamsList .declare-btn').forEach(b => {
                         b.innerText = `Declare ${currentActivePrizeIndex}${currentActivePrizeIndex===1?'st':currentActivePrizeIndex===2?'nd':'rd'} Winner`;
                     });
@@ -2287,7 +2209,6 @@
             });
         }
 
-        // --- LIVE SECURE EMAIL CHANGE FLOW ---
         let targetNewEmail = "";
         function startEmailChange() {
             document.getElementById('emailChangeModal').classList.add('active');
@@ -2376,7 +2297,6 @@
             window.location.href = 'index.html';
         }
 
-        // --- LIVE PASSWORD CHANGE FLOW ---
         function openEditModal() {
             let user = userData || {};
             document.getElementById('editModal').classList.add('active');
@@ -2408,7 +2328,6 @@
         
         function closePassModal() { document.getElementById('passModal').classList.remove('active'); }
 
-        // --- Submitting Direct Password Change ---
         function submitDirectPasswordChange() {
             const currentPass = document.getElementById('inpCurrentPass').value;
             const newPass = document.getElementById('inpDirectNewPass').value;
@@ -2439,7 +2358,6 @@
         }
 
 
-        // --- Forgotten Password OTP Flow ---
         function sendPassOtpEmail() {
             const btn = document.getElementById('btnSendPassOtpEmail');
             btn.style.opacity = '0.5';
