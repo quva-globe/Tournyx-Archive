@@ -1499,11 +1499,14 @@
                 let promoBanner = document.querySelector('.premium-promo');
                 if(promoBanner) promoBanner.style.display = isPremiumUser ? 'none' : 'block';
 
-                // Force strip any corrupted HTML (like the skeleton div) or blank spaces
-let cleanName = String(data.username || "").replace(/<[^>]*>?/gm, '').trim();
-if (cleanName === "") cleanName = "Player";
+                // --- THE CRITICAL FIX IS HERE ---
+                // This forces the code to strip out that invisible HTML loader box if it got saved
+                let cleanName = String(data.username || "").replace(/<[^>]*>?/gm, '').trim();
+                if (cleanName === "") cleanName = "Player";
 
-document.getElementById('userName').innerHTML = `${premiumIcon}${badge} ${cleanName}`;
+                document.getElementById('userName').innerHTML = `${premiumIcon}${badge} ${cleanName}`;
+                // --------------------------------
+
                 document.getElementById('userTier').innerText = isPremiumUser && pts < 15000 ? "VIP " + tier : tier;
                 document.getElementById('userLevel').innerText = level;
                 setTimeout(() => { document.getElementById('tierProgress').style.width = pct + "%"; }, 100);
