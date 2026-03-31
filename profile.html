@@ -7,7 +7,7 @@
 
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-        <title>Player Profile & Stats - Tournyx</title>
+    <title>Player Profile & Stats - Tournyx</title>
     <meta name="description" content="View your Tournyx player profile, track your esports tournament stats, update your in-game name (IGN), and manage your account settings.">
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700;900&family=Rajdhani:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -31,6 +31,14 @@
             --font-body: 'Rajdhani', sans-serif;
         }
 
+        /* DYNAMIC VIP OVERRIDE CLASS */
+        .theme-vip {
+            --accent-cyan: #FFD700;
+            --accent-purple: #FF8C00;
+            --accent-gradient: linear-gradient(135deg, #FFD700, #FF8C00);
+            --card-border: rgba(255, 215, 0, 0.2);
+        }
+
         * { -ms-overflow-style: none !important; scrollbar-width: none !important; margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
         *::-webkit-scrollbar { display: none !important; width: 0 !important; height: 0 !important; background: transparent !important; }
 
@@ -45,7 +53,7 @@
             max-width: 800px; margin-left: auto !important; margin-right: auto !important; width: 100%;
         }
         
-        .glass-panel { background: var(--card-bg); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border: 1px solid var(--card-border); border-radius: 16px; }
+        .glass-panel { background: var(--card-bg); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border: 1px solid var(--card-border); border-radius: 16px; transition: 0.3s; }
 
         #particles-canvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; background: radial-gradient(circle at 50% 20%, #15062e 0%, #070311 100%); transform: translateZ(0);}
 
@@ -55,7 +63,7 @@
             font-weight: 900;
             font-style: italic;
             letter-spacing: -1px;
-            background: linear-gradient(135deg, var(--accent-purple), var(--accent-cyan));
+            background: var(--accent-gradient);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             display: inline-flex;
@@ -64,35 +72,7 @@
             filter: drop-shadow(0 0 5px rgba(0,242,255,0.4));
         }
 
-        /* --- TOURNYX TX COMPOSITE TICKET ICON --- */
-        .tx-ticket-composite {
-            position: relative;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-        }
-        .tx-ticket-composite i {
-            font-size: inherit;
-            transition: inherit;
-        }
-        .tx-ticket-composite .tx-text {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -46%);
-            font-family: var(--font-head);
-            font-size: 0.38em; 
-            font-weight: 900;
-            color: var(--primary-bg) !important;
-            -webkit-text-fill-color: var(--primary-bg) !important;
-            letter-spacing: -0.5px;
-            pointer-events: none;
-            z-index: 2;
-            transition: 0.3s;
-            font-style: normal !important;
-        }
-
-        /* --- HEADER (MOBILE OPTIMIZED SIZES) --- */
+        /* --- HEADER --- */
         .top-header { position: fixed; top: 0; left: 0; width: 100%; padding: calc(12px + env(safe-area-inset-top)) 10px 12px; background: rgba(5, 2, 12, 0.6); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); border-bottom: 1px solid rgba(255, 255, 255, 0.05); z-index: 2000; box-shadow: 0 4px 30px rgba(0, 0, 0, 0.5); transform: translateZ(0); }
         .header-wrapper { display: flex; align-items: center; justify-content: space-between; max-width: 1000px; margin: 0 auto; width: 100%; gap: 5px; }
         .header-left { display: flex; align-items: center; gap: 8px; flex: 1; min-width: 0; }
@@ -124,7 +104,7 @@
             position: relative; padding: 20px 20px 30px;
             background: linear-gradient(180deg, rgba(20,10,35,0.6) 0%, rgba(7,3,17,0) 100%);
             display: flex; align-items: center; gap: 20px; border-bottom: 1px solid rgba(255,255,255,0.05);
-            animation: fadeIn 0.4s ease;
+            animation: fadeIn 0.4s ease; transition: 0.5s;
         }
         
         .avatar-container { position: relative; cursor: pointer; transition: 0.3s; will-change: transform; flex-shrink: 0; width: 100px; height: 100px; display: flex; align-items: center; justify-content: center;}
@@ -134,14 +114,19 @@
 
         .profile-avatar { width: 84px; height: 84px; border-radius: 50%; border: 3px solid transparent; background: #000; object-fit: cover; transition: 0.3s; z-index: 2; box-shadow: 0 0 20px rgba(0,0,0,0.8);}
         .avatar-container:active { transform: scale(0.95); }
-        .edit-avatar-btn { position: absolute; bottom: 5px; right: 0px; width: 30px; height: 30px; background: var(--accent-gradient); border-radius: 50%; color: white; display: flex; align-items: center; justify-content: center; font-size: 0.8rem; border: 2px solid var(--primary-bg); box-shadow: 0 0 10px rgba(189,0,255,0.5); z-index: 3;}
+        .edit-avatar-btn { position: absolute; bottom: 5px; right: 0px; width: 30px; height: 30px; background: var(--accent-gradient); border-radius: 50%; color: white; display: flex; align-items: center; justify-content: center; font-size: 0.8rem; border: 2px solid var(--primary-bg); box-shadow: 0 0 10px rgba(0,0,0,0.5); z-index: 3;}
         
+        .vip-verified-badge { position: absolute; top: 0; right: 0; width: 28px; height: 28px; background: #FFD700; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: black; font-size: 0.8rem; z-index: 4; border: 2px solid var(--primary-bg); box-shadow: 0 0 15px rgba(255,215,0,0.8); display: none;}
+        .theme-vip .vip-verified-badge { display: flex; }
+
         .user-info { flex: 1; min-width: 0; overflow: hidden; }
         .user-info h2 { font-family: var(--font-head); font-size: 1.15rem; margin-bottom: 5px; text-shadow: 0 0 10px rgba(255,255,255,0.2); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; display: flex; align-items: center; gap: 5px;}
         .ai-greeting { font-size: 0.8rem; color: var(--accent-cyan); font-family: var(--font-body); display: block; line-height: 1; margin-bottom: 2px;}
 
         .user-ign { color: var(--accent-cyan); font-size: 0.85rem; font-weight: bold; cursor: pointer; background: rgba(0,242,255,0.05); padding: 5px 12px; border-radius: 8px; display: inline-flex; align-items: center; gap: 8px; border: 1px solid rgba(0,242,255,0.2); transition: 0.3s; will-change: transform; backdrop-filter: blur(5px); max-width: 100%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;}
+        .theme-vip .user-ign { background: rgba(255,215,0,0.1); border-color: rgba(255,215,0,0.3); color: #FFD700; }
         .user-ign:active { background: var(--accent-cyan); color: black; transform: scale(0.95);}
+        .theme-vip .user-ign:active { background: #FFD700; color: black; }
         
         .user-extras { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; margin-top: 8px; font-size: 0.75rem; color: #a0a0b0; font-family: var(--font-head);}
         .game-tag { background: rgba(255,255,255,0.05); padding: 3px 8px; border-radius: 5px; border: 1px solid rgba(255,255,255,0.05); max-width: 100%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;}
@@ -154,6 +139,8 @@
         .tier-container { padding: 0 20px; margin-top: -15px; margin-bottom: 25px; position: relative; z-index: 2;}
         .tier-header { display: flex; justify-content: space-between; font-size: 0.85rem; font-family: var(--font-head); font-weight: bold; margin-bottom: 8px; color: #ccc; text-transform: uppercase; letter-spacing: 1px;}
         .tier-rank { color: var(--accent-orange); text-shadow: 0 0 10px rgba(255,153,0,0.5); }
+        .theme-vip .tier-rank { color: #FFD700; text-shadow: 0 0 10px rgba(255,215,0,0.8); }
+        
         .tier-bar-bg { width: 100%; height: 10px; background: rgba(255,255,255,0.05); border-radius: 10px; overflow: hidden; box-shadow: inset 0 0 5px rgba(0,0,0,0.5); border: 1px solid rgba(255,255,255,0.05);}
         .tier-bar-fill { height: 100%; background: var(--accent-gradient); border-radius: 10px; transition: width 1.5s cubic-bezier(0.175, 0.885, 0.32, 1.275); width: 0%; box-shadow: 0 0 10px rgba(0,242,255,0.5);}
 
@@ -172,6 +159,8 @@
 
         .milestone-box { background: linear-gradient(145deg, rgba(0,242,255,0.05), rgba(189,0,255,0.05)); border: 1px solid var(--card-border); border-radius: 18px; padding: 20px; margin-bottom: 25px; position: relative; overflow: hidden; box-shadow: 0 5px 20px rgba(0,0,0,0.4); cursor: pointer; transition: transform 0.2s; backdrop-filter: blur(10px);}
         .milestone-box:active { transform: scale(0.98); }
+        .theme-vip .milestone-box { background: linear-gradient(145deg, rgba(255,215,0,0.05), rgba(255,140,0,0.05)); }
+        
         .ms-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; font-family: var(--font-head); flex-wrap: wrap; gap: 5px; }
         .ms-header h4 { font-size: 1.05rem; color: white; display: flex; align-items: center; gap: 8px; text-shadow: 0 0 5px rgba(255,255,255,0.3); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 100%;}
         
@@ -188,6 +177,8 @@
         .stats-row { display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; margin-bottom: 25px; perspective: 1000px;}
         .stat-card { background: var(--card-bg); backdrop-filter: blur(10px); border: 1px solid var(--card-border); padding: 20px 10px; border-radius: 18px; text-align: center; box-shadow: 0 10px 25px rgba(0,0,0,0.3); transition: transform 0.1s ease-out, border-color 0.3s; will-change: transform; transform-style: preserve-3d; overflow: hidden;}
         .stat-card:active { transform: scale(0.95) !important; border-color: var(--accent-cyan); }
+        .theme-vip .stat-card:active { border-color: #FFD700; }
+        
         .stat-card-inner { transform: translateZ(20px); } 
         .stat-val { font-family: var(--font-head); font-size: 1.8rem; display: flex; justify-content: center; margin-bottom: 5px; font-weight: bold; text-shadow: 0 0 15px rgba(255,255,255,0.2); }
         .stat-label { font-size: 0.8rem; color: #888; text-transform: uppercase; font-weight: bold; letter-spacing: 0.5px; }
@@ -211,6 +202,8 @@
         .org-list-header { font-family: var(--font-head); font-size: 1.2rem; color: white; margin-bottom: 15px; display: flex; justify-content: space-between; align-items: center; border-top: 1px solid var(--card-border); padding-top: 25px; text-transform: uppercase; letter-spacing: 1px;}
         .managed-item { background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.05); border-radius: 15px; padding: 18px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; transition: 0.3s; box-shadow: 0 5px 15px rgba(0,0,0,0.2); gap: 10px; backdrop-filter: blur(10px);}
         .managed-item:hover { border-color: var(--accent-cyan); background: rgba(0,242,255,0.05); }
+        .theme-vip .managed-item:hover { border-color: #FFD700; }
+        
         .mi-info { flex: 1; min-width: 0; }
         .mi-info h5 { font-family: var(--font-head); font-size: 1.1rem; color: white; margin-bottom: 4px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;}
         .mi-info p { font-size: 0.8rem; color: #888; }
@@ -236,10 +229,13 @@
         .setting-item:active { transform: scale(0.98); border-color: var(--accent-cyan); }
         .setting-icon { width: 45px; height: 45px; background: rgba(255,255,255,0.03); border-radius: 12px; display: flex; align-items: center; justify-content: center; color: var(--accent-purple); font-size: 1.2rem; margin-right: 15px; transition: 0.3s; border: 1px solid rgba(255,255,255,0.05); box-shadow: inset 0 0 10px rgba(0,0,0,0.2); flex-shrink: 0;}
         .setting-item:hover .setting-icon { background: rgba(0,242,255,0.1); color: var(--accent-cyan); border-color: var(--accent-cyan); box-shadow: 0 0 15px rgba(0,242,255,0.3);}
+        .theme-vip .setting-item:hover .setting-icon { background: rgba(255,215,0,0.1); color: #FFD700; border-color: #FFD700; box-shadow: 0 0 15px rgba(255,215,0,0.3);}
+        
         .setting-item:hover { background: rgba(0,242,255,0.02); }
         .setting-name { flex: 1; font-size: 1rem; font-weight: bold; color: #ddd; font-family: var(--font-head); letter-spacing: 0.5px;}
         .setting-arrow { color: #555; font-size: 1rem; transition: 0.3s; flex-shrink: 0; }
         .setting-item:hover .setting-arrow { color: var(--accent-cyan); transform: translateX(5px); }
+        .theme-vip .setting-item:hover .setting-arrow { color: #FFD700; }
 
         /* --- GLASSMORPHISM MODALS (FIXED OVERFLOW & PADDING) --- */
         .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); z-index: 5000; display: none; align-items: flex-end; justify-content: center; backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); opacity: 0; transition: 0.4s; }
@@ -277,8 +273,6 @@
         .skeleton { background: linear-gradient(90deg, rgba(255,255,255,0.02) 25%, rgba(255,255,255,0.05) 50%, rgba(255,255,255,0.02) 75%); background-size: 200% 100%; animation: shimmer 1.5s infinite linear; border-radius: 8px; transform: translateZ(0);}
         @keyframes shimmer { 0% { background-position: -200% 0; } 100% { background-position: 200% 0; } }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-        .confetti { position: absolute; width: 8px; height: 16px; opacity: 0; z-index: 9999; border-radius: 4px; pointer-events: none;}
-        @keyframes fall { 0% { opacity: 1; transform: translateY(-50px) rotate(0deg); } 100% { opacity: 0; transform: translateY(150px) rotate(720deg); } }
 
         #customToast { visibility: hidden; min-width: 250px; background: rgba(0,242,255,0.9); backdrop-filter: blur(10px); color: #000; text-align: center; border-radius: 12px; padding: 16px; position: fixed; z-index: 9999; left: 50%; bottom: -50px; transform: translateX(-50%); font-family: var(--font-head); font-weight: bold; box-shadow: 0 8px 30px rgba(0,242,255,0.5); opacity: 0; transition: opacity 0.4s, bottom 0.4s; }
         #customToast.show { visibility: visible; opacity: 1; bottom: 100px; }
@@ -293,12 +287,12 @@
         .nav-item.active { color: var(--accent-cyan); }
         
         .nav-item.active .tx-ticket-composite { transform: translateY(-4px); }
-        .nav-item.active i, .nav-item.active .tx-icon, .nav-item.active .tx-ticket-composite i { transform: translateY(-4px); background: linear-gradient(135deg, var(--accent-purple), var(--accent-cyan)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; filter: drop-shadow(0 0 10px var(--accent-cyan)); font-style: normal;}
+        .nav-item.active i, .nav-item.active .tx-icon, .nav-item.active .tx-ticket-composite i { transform: translateY(-4px); background: var(--accent-gradient); -webkit-background-clip: text; -webkit-text-fill-color: transparent; filter: drop-shadow(0 0 10px var(--accent-cyan)); font-style: normal;}
         .nav-item.active .tx-ticket-composite i { transform: translateY(0); }
         
         .nav-item.active span { transform: translateY(2px); color: white; text-shadow: 0 0 5px rgba(255,255,255,0.5);}
         .fab-slot { flex: 1.2; display: flex; justify-content: center; position: relative; height: 100%; align-items: center; }
-        .floating-plus { position: absolute; top: -25px; left: 50%; transform: translateX(-50%); width: 54px; height: 54px; background: linear-gradient(135deg, var(--accent-cyan), var(--accent-purple)); border-radius: 50%; display: flex; align-items: center; justify-content: center; border: 4px solid var(--primary-bg); box-shadow: 0 10px 25px rgba(189,0,255,0.4); color: #fff; font-size: 1.6rem; cursor: pointer; transition: 0.3s; z-index: 10; }
+        .floating-plus { position: absolute; top: -25px; left: 50%; transform: translateX(-50%); width: 54px; height: 54px; background: var(--accent-gradient); border-radius: 50%; display: flex; align-items: center; justify-content: center; border: 4px solid var(--primary-bg); box-shadow: 0 10px 25px rgba(189,0,255,0.4); color: #fff; font-size: 1.6rem; cursor: pointer; transition: 0.3s; z-index: 10; }
         .floating-plus:hover { transform: translateX(-50%) scale(1.1) rotate(90deg); box-shadow: 0 15px 35px rgba(0,242,255,0.6); }
 
         @media (min-width: 850px) { .bottom-nav { display: none !important; } body { padding-bottom: 0; } }
@@ -306,6 +300,7 @@
         .tier-list { margin-top: 15px; }
         .tier-item { display: flex; align-items: center; justify-content: space-between; padding: 15px; border-radius: 12px; background: rgba(255,255,255,0.03); margin-bottom: 10px; border: 1px solid rgba(255,255,255,0.05); }
         .tier-item.current { border-color: var(--accent-cyan); background: rgba(0,242,255,0.05); box-shadow: inset 0 0 10px rgba(0,242,255,0.1); }
+        .theme-vip .tier-item.current { border-color: #FFD700; background: rgba(255,215,0,0.05); box-shadow: inset 0 0 10px rgba(255,215,0,0.1); }
         .tier-item.locked { opacity: 0.6; }
         .tier-info h5 { font-family: var(--font-head); font-size: 1.1rem; margin-bottom: 3px; color: white;}
         .tier-info p { font-size: 0.8rem; color: #aaa; }
@@ -373,7 +368,7 @@
     </style>
     
     <script>
-        // --- ADDED: Animation Engine for numbers ---
+        // --- Animation Engine for numbers ---
         function animateValue(id, start, end, duration) {
             const obj = document.getElementById(id);
             if(!obj) return;
@@ -398,11 +393,24 @@
             {cyan: '#ff9900', purple: '#ff4d4d'}
         ];
         function applyGlobalTheme() {
-            let tIndex = parseInt(localStorage.getItem('tournyx_theme_index')) || 0;
-            if(THEMES[tIndex]) {
-                document.documentElement.style.setProperty('--accent-cyan', THEMES[tIndex].cyan);
-                document.documentElement.style.setProperty('--accent-purple', THEMES[tIndex].purple);
-                document.documentElement.style.setProperty('--accent-gradient', `linear-gradient(135deg, ${THEMES[tIndex].purple}, ${THEMES[tIndex].cyan})`);
+            let isPremium = false;
+            try {
+                let user = JSON.parse(localStorage.getItem('tournyx_user'));
+                if (user && String(user.is_premium).toLowerCase() === 'true') {
+                    isPremium = true;
+                }
+            } catch(e) {}
+
+            if (isPremium) {
+                document.body.classList.add('theme-vip');
+            } else {
+                document.body.classList.remove('theme-vip');
+                let tIndex = parseInt(localStorage.getItem('tournyx_theme_index')) || 0;
+                if(THEMES[tIndex]) {
+                    document.documentElement.style.setProperty('--accent-cyan', THEMES[tIndex].cyan);
+                    document.documentElement.style.setProperty('--accent-purple', THEMES[tIndex].purple);
+                    document.documentElement.style.setProperty('--accent-gradient', `linear-gradient(135deg, ${THEMES[tIndex].purple}, ${THEMES[tIndex].cyan})`);
+                }
             }
         }
         applyGlobalTheme();
@@ -435,7 +443,7 @@
     </header>
 
     <div class="top-status-bar">
-        <span id="networkPing"><i class="fa-solid fa-satellite-dish fa-fade"></i> Ping: 14ms</span>
+        <span id="networkPing"><i class="fa-solid fa-satellite-dish fa-fade"></i> Ping: <span id="pingValue">14</span>ms</span>
         <span id="dailyStreak"><i class="fa-solid fa-fire" style="color:var(--accent-orange)"></i> <span id="streakCount">1</span> Day Streak</span>
     </div>
 
@@ -447,6 +455,7 @@
             </svg>
             <img src="https://via.placeholder.com/90" alt="Avatar" class="profile-avatar" id="userAvatar">
             <div class="edit-avatar-btn"><i class="fa-solid fa-camera"></i></div>
+            <div class="vip-verified-badge"><i class="fa-solid fa-check"></i></div>
         </div>
         <input type="file" id="avatarUploadInp" accept="image/*" onchange="initCropper(event, 'userAvatar', '', 1, true)">
 
@@ -1123,6 +1132,18 @@
             });
         }
 
+        // Live Ping Monitor
+        setInterval(() => {
+            const start = performance.now();
+            fetch(API_URL + "?action=ping", { mode: 'no-cors', cache: 'no-store' }).then(() => {
+                const duration = Math.floor(performance.now() - start);
+                const pingEl = document.getElementById('pingValue');
+                if(pingEl) {
+                    pingEl.innerText = duration < 5 ? 14 : duration; 
+                }
+            }).catch(() => {});
+        }, 5000);
+
         function openQrModal() {
             if(isGuestMode) { showToast("Login to view QR", true); return; }
             document.getElementById('qrModal').classList.add('active');
@@ -1151,6 +1172,10 @@
         }
 
         function cycleThemeColor() {
+            if (String(userData.is_premium).toLowerCase() === 'true') {
+                showToast("VIP Golden Theme Locked! 👑");
+                return;
+            }
             let tIndex = parseInt(localStorage.getItem('tournyx_theme_index')) || 0;
             tIndex = (tIndex + 1) % THEMES.length;
             localStorage.setItem('tournyx_theme_index', tIndex);
@@ -1371,7 +1396,7 @@
             if (!localUser.username || localUser.username === "Loading..." || localUser.username.trim() === "") localUser.username = "Player";
             if (localUser.ign === "Fetching Live Data..." || localUser.ign === "Loading...") localUser.ign = "";
             
-            userData = localUser; // Crucial fix: Assign it globally so Modals work instantly
+            userData = localUser; 
             renderUserInfo(localUser, false); 
 
             if(isGuestMode) return;
@@ -1429,6 +1454,7 @@
         function renderUserInfo(data, doAnimate) {
             try {
                 let isPremiumUser = String(data.is_premium).toLowerCase() === 'true';
+                applyGlobalTheme(); // Ensure theme updates immediately if premium status changed
                 
                 document.getElementById('userIgn').innerText = data.ign ? data.ign : "Tap to set IGN";
                 
@@ -1497,11 +1523,9 @@
                 else if(pts >= 15000) { tier = "Diamond"; pct = 90; level = 50; badge = "💎"; glow = "rgba(0,242,255,0.25)";}
                 
                 // VIP PREMIUM PLAN OVERRIDES
-                let premiumIcon = isPremiumUser ? '<i class="fa-solid fa-crown" style="color:#FFD700; margin-right:6px; filter:drop-shadow(0 0 5px #FFD700);"></i>' : '';
                 let promoBanner = document.querySelector('.premium-promo');
                 if(promoBanner) promoBanner.style.display = isPremiumUser ? 'none' : 'block';
 
-                // --- THE CRITICAL FIX IS HERE ---
                 let cleanName = "Player";
                 if (data && data.username) {
                     cleanName = String(data.username).replace(/<[^>]*>?/gm, '').trim();
@@ -1512,9 +1536,8 @@
 
                 let userNameEl = document.getElementById('userName');
                 if (userNameEl) {
-                    userNameEl.innerHTML = `${premiumIcon}${badge} ${cleanName}`;
+                    userNameEl.innerHTML = `${badge} ${cleanName}`;
                 }
-                // --------------------------------
 
                 document.getElementById('userTier').innerText = isPremiumUser && pts < 15000 ? "VIP " + tier : tier;
                 document.getElementById('userLevel').innerText = level;
