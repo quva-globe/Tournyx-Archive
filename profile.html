@@ -149,7 +149,6 @@
         /* THE TX EMBLEM FOR VIP */
         .vip-verified-badge { position: absolute; top: 0; right: 0; width: 32px; height: 32px; background: linear-gradient(135deg, #111, #000); border-radius: 50%; display: flex; align-items: center; justify-content: center; z-index: 4; border: 2px solid #d4af37; box-shadow: 0 0 15px rgba(212,175,55,0.8); display: none;}
         .theme-vip .vip-verified-badge { display: flex; }
-        /* Golden Tournyx Logo Insert */
         .vip-verified-badge img { width: 65%; height: 65%; object-fit: contain; filter: brightness(0) saturate(100%) invert(77%) sepia(45%) saturate(836%) hue-rotate(5deg) brightness(101%) contrast(105%); }
 
         .user-info { flex: 1; min-width: 0; overflow: hidden; }
@@ -234,12 +233,12 @@
 
         .org-list-header { font-family: var(--font-head); font-size: 1.2rem; color: white; margin-bottom: 15px; display: flex; justify-content: space-between; align-items: center; border-top: 1px solid var(--card-border); padding-top: 25px; text-transform: uppercase; letter-spacing: 1px;}
         
-        /* Fixed overflowing flexbox on manager items (Nowrap ensures identical sizes) */
+        /* Fixed manager items: uniform sizing with strict overflow handling */
         .managed-item { background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.05); border-radius: 15px; padding: 18px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; transition: 0.3s; box-shadow: 0 5px 15px rgba(0,0,0,0.2); gap: 10px; backdrop-filter: blur(10px); flex-wrap: nowrap;}
         .managed-item:hover { border-color: var(--accent-cyan); background: rgba(0,242,255,0.05); }
         .theme-vip .managed-item:hover { border-color: #d4af37; }
         
-        .mi-info { flex: 1; min-width: 0; }
+        .mi-info { flex: 1; min-width: 0; overflow: hidden; }
         /* Forced nowrap with ellipsis for uniform card heights */
         .mi-info h5 { font-family: var(--font-head); font-size: 1.1rem; color: white; margin-bottom: 4px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; display: block;}
         .mi-info p { font-size: 0.8rem; color: #888; }
@@ -249,16 +248,6 @@
         .mi-btn:active { transform: scale(0.95);}
         .mi-share { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); padding: 8px 12px; border-radius: 10px; color: white; cursor: pointer; transition: 0.3s; font-size: 0.9rem;}
         .mi-share:active { background: var(--accent-cyan); color: black; transform: scale(0.95); }
-
-        /* --- RESOLVE MATCH PANEL --- */
-        .resolve-box { background: rgba(255,215,0,0.05); border: 1px solid rgba(255,215,0,0.3); border-radius: 15px; padding: 20px; margin-bottom: 25px; box-shadow: 0 5px 15px rgba(255,215,0,0.1); }
-        .resolve-header { font-family: var(--font-head); font-size: 1.2rem; color: #FFD700; margin-bottom: 10px; display: flex; align-items: center; gap: 10px;}
-        .team-resolve-item { display: flex; justify-content: space-between; align-items: center; background: rgba(0,0,0,0.5); border: 1px solid rgba(255,255,255,0.1); padding: 12px 15px; border-radius: 10px; margin-bottom: 8px; transition: 0.3s; gap: 10px;}
-        .team-resolve-item:hover { border-color: #FFD700; background: rgba(255,215,0,0.05); }
-        /* Fixed team name overflow */
-        .team-r-name { font-family: var(--font-head); font-weight: bold; font-size: 1rem; color: white; flex: 1; min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-        .declare-btn { background: linear-gradient(90deg, #FFD700, #FFA500); border: none; color: black; font-family: var(--font-head); font-weight: bold; font-size: 0.8rem; padding: 6px 12px; border-radius: 8px; cursor: pointer; box-shadow: 0 0 10px rgba(255,215,0,0.4); text-transform: uppercase; transition: 0.3s; flex-shrink: 0; }
-        .declare-btn:active { transform: scale(0.95); }
 
         /* --- UPDATED PROFESSIONAL SETTINGS CARDS --- */
         .settings-list { margin-top: 25px; padding: 0 20px; display: flex; flex-direction: column; gap: 12px;}
@@ -320,8 +309,9 @@
         .bottom-nav { position: fixed; bottom: 0; left: 0; width: 100%; height: calc(65px + env(safe-area-inset-bottom)); background: rgba(5, 2, 12, 0.75); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); display: flex; justify-content: space-between; align-items: flex-start; padding: 10px 2px env(safe-area-inset-bottom); border-top: 1px solid rgba(255,255,255,0.05); z-index: 1000; box-shadow: 0 -10px 30px rgba(0,0,0,0.5); transform: translateZ(0);}
         .nav-item { display: flex; flex-direction: column; align-items: center; justify-content: flex-start; color: #666; text-decoration: none; font-size: 0.6rem; font-family: var(--font-head); font-weight: bold; flex: 1; transition: 0.3s; position: relative; padding: 0 2px; text-align: center;}
         .nav-item span { margin-top: 4px; transition: 0.3s; letter-spacing: -0.3px;}
-        /* Forced height 24px and flex alignment ensures all nav icons perfectly match the tickets icon */
-        .nav-item i, .nav-item .tx-icon, .nav-item .tx-ticket-composite { font-size: 1.2rem; transition: 0.3s; color: #666; background: none; -webkit-text-fill-color: #666; filter: none; font-style: normal; height: 24px; display: flex; align-items: center; justify-content: center;}
+        /* Aligning FontAwesome and TX icons precisely to the same baseline as Ticket */
+        .nav-item i, .nav-item .tx-icon, .nav-item .tx-ticket-composite { font-size: 1.2rem; transition: 0.3s; color: #666; background: none; -webkit-text-fill-color: #666; filter: none; font-style: normal; height: 24px; line-height: 24px; display: flex; align-items: center; justify-content: center;}
+        .tx-ticket-composite i { display: block; line-height: 1; }
         .nav-item.active { color: var(--accent-cyan); }
         .theme-vip .nav-item.active { color: #d4af37; }
         
@@ -333,7 +323,7 @@
         .nav-item.active span { transform: translateY(2px); color: white; text-shadow: 0 0 5px rgba(255,255,255,0.5);}
         .fab-slot { flex: 1.2; display: flex; justify-content: center; position: relative; height: 100%; align-items: center; }
         .floating-plus { position: absolute; top: -25px; left: 50%; transform: translateX(-50%); width: 54px; height: 54px; background: var(--accent-gradient); border-radius: 50%; display: flex; align-items: center; justify-content: center; border: 4px solid var(--primary-bg); box-shadow: 0 10px 25px rgba(189,0,255,0.4); color: #fff; font-size: 1.6rem; cursor: pointer; transition: 0.3s; z-index: 10; }
-        .theme-vip .floating-plus { box-shadow: 0 10px 25px rgba(212,175,55,0.4); border-color: #000; }
+        .theme-vip .floating-plus { background: linear-gradient(135deg, #f7e0a3, #d4af37); box-shadow: 0 10px 25px rgba(212,175,55,0.4); border-color: #000; color: #000; }
         .floating-plus:hover { transform: translateX(-50%) scale(1.1) rotate(90deg); box-shadow: 0 15px 35px rgba(0,242,255,0.6); }
 
         @media (min-width: 850px) { .bottom-nav { display: none !important; } body { padding-bottom: 0; } }
@@ -656,6 +646,14 @@
                 <p>Host a new event and manage brackets.</p>
             </div>
             <div class="action-icon"><i class="fa-solid fa-plus"></i></div>
+        </a>
+
+        <a href="resolve.html" class="action-card" style="border-color: rgba(255,215,0,0.3); background: linear-gradient(135deg, rgba(255,215,0,0.05), rgba(0,0,0,0));" onclick="triggerHaptic();">
+            <div class="action-text">
+                <h4 style="color: #FFD700;">Resolve Match</h4>
+                <p>Declare winners to distribute prize pools and close matches.</p>
+            </div>
+            <div class="action-icon" style="color: #FFD700; background: rgba(255,215,0,0.1); border-color: rgba(255,215,0,0.2); box-shadow: 0 0 20px rgba(255,215,0,0.2);"><i class="fa-solid fa-crown"></i></div>
         </a>
 
         <div class="action-card ac-green" onclick="openAllTourneysModal(); triggerHaptic();">
@@ -1000,13 +998,6 @@
             </div>
             
             <div class="fs-content" style="padding-right: 5px; flex: 1; overflow-y: auto;">
-                
-                <div class="resolve-box" id="resolveMatchPanel">
-                    <div class="resolve-header"><i class="fa-solid fa-trophy"></i> Resolve Match</div>
-                    <p style="font-size:0.85rem; color:#aaa; margin-bottom:15px; line-height:1.4;">Declare winners to distribute the prize pool and close the match. You must click load first.</p>
-                    <button class="mi-btn" id="btnLoadTeams" style="width:100%; margin-bottom:15px;" onclick="loadRegisteredTeamsForResolution()">Load Registered Teams</button>
-                    <div id="resolveTeamsList"></div>
-                </div>
 
                 <input type="hidden" id="editTourneyId">
                 <input type="hidden" id="editTourneyBannerStr">
@@ -1124,7 +1115,6 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.js"></script>
 
     <script>
-        // --- Animation Engine for numbers ---
         function forceDeepSync() {
             const btn = document.getElementById('manualSyncBtn');
             btn.classList.add('fa-spin');
@@ -1133,7 +1123,6 @@
             });
         }
 
-        // Live Ping Monitor
         setInterval(() => {
             const start = performance.now();
             fetch(API_URL + "?action=ping", { mode: 'no-cors', cache: 'no-store' }).then(() => {
@@ -1245,7 +1234,6 @@
             }
         }
 
-        // LIVE BACKEND API
         const API_URL = 'https://script.google.com/macros/s/AKfycbyqqTpgaflxKJ9xH0jq7mJ_jLzcoNhas3gNo0h5gvoa_6r5Ae9NFxJAJp7ZoYNnMRKl/exec'; 
         
         let userData = JSON.parse(localStorage.getItem('tournyx_user')) || {};
@@ -1254,7 +1242,6 @@
         
         const urlParams = new URLSearchParams(window.location.search);
 
-        // --- NEW: Live Profile Sync Background Engine (Updates exactly every 5 seconds) ---
         setInterval(() => {
             if (!isGuestMode && userData && userData.email) {
                 fetch(API_URL, {
@@ -1268,26 +1255,22 @@
                         userData.points = safeParseNum(data.data.points, userData.points || 0);
                         userData.rupees = safeParseNum(data.data.rupees, userData.rupees || 0);
                         
-                        // Strict data segregation: Column J -> Earnings, Column Y -> Winnings
                         userData.winnings = safeParseNum(data.data.winnings, userData.winnings || 0);
                         userData.earnings = safeParseNum(data.data.earnings, userData.earnings || 0);
                         
-                        // Matches count fetched directly from payload (Column K)
                         userData.matches = safeParseNum(data.data.matches, userData.matches || 0);
                         userData.wins = safeParseNum(data.data.wins, userData.wins || 0);
                         userData.hosted = safeParseNum(data.data.hosted, userData.hosted || 0);
                         
-                        // Check if premium status is true
                         userData.is_premium = String(data.data.is_premium).toLowerCase() === 'true';
                         
                         localStorage.setItem('tournyx_user', JSON.stringify(userData));
-                        renderUserInfo(userData, false); // Update UI passively without animations resetting
+                        renderUserInfo(userData, false); 
                     }
                 }).catch(e => {});
             }
         }, 5000);
 
-        // --- CHECK APP VERIFICATION REDIRECT ---
         document.addEventListener("DOMContentLoaded", () => {
             if(urlParams.get('verify_email') === 'success') {
                 showToast("Email Verified & Updated Successfully!");
@@ -1309,7 +1292,6 @@
             initProfile();
         });
 
-        // --- UPDATED GUEST LOGIC ---
         if (!userData || !userData.email || userData.email === "guest@tournyx.com") {
             isGuestMode = true;
             document.getElementById('settingsContainer').style.display = 'none';
@@ -1395,7 +1377,6 @@
                 localUser = { username: "Player", ign: "", matches: 0, wins: 0, points: 0, hosted: 0, earnings: 0, winnings: 0, rupees: 0, claimed_ms: [], is_premium: false };
             }
 
-            // Ensure loader un-sticks if username is totally missing or corrupted locally
             if (!localUser.username || localUser.username === "Loading..." || localUser.username.trim() === "") localUser.username = "Player";
             if (localUser.ign === "Fetching Live Data..." || localUser.ign === "Loading...") localUser.ign = "";
             
@@ -1404,7 +1385,6 @@
 
             if(isGuestMode) return;
 
-            // 1. Fetch Profile Data
             try {
                 const res = await fetch(API_URL, {
                     method: 'POST',
@@ -1458,7 +1438,7 @@
         function renderUserInfo(data, doAnimate) {
             try {
                 let isPremiumUser = String(data.is_premium).toLowerCase() === 'true';
-                applyGlobalTheme(); // Ensure theme updates immediately if premium status changed
+                applyGlobalTheme();
                 
                 document.getElementById('userIgn').innerText = data.ign ? data.ign : "Tap to set IGN";
                 
@@ -1481,14 +1461,11 @@
                 let wCount = parseInt(data.wins) || 0;
                 let hostedCount = parseInt(data.hosted) || 0;
                 
-                // Segregated Financial Displays
-                let displayWinnings = parseInt(data.winnings) || 0; // Player Tab
-                let displayEarnings = parseInt(data.earnings) || 0; // Org Tab
+                let displayWinnings = parseInt(data.winnings) || 0; 
+                let displayEarnings = parseInt(data.earnings) || 0; 
                 
                 let successRate = hostedCount > 0 ? Math.min(100, 85 + (hostedCount * 1.5)).toFixed(1) : 0; 
-                let winRate = mCount > 0 ? ((wCount / mCount) * 100).toFixed(1) : 0;
-
-                // Safely update dom elements if they exist
+                
                 if(doAnimate) {
                     if(document.getElementById('valMatches')) animateValue('valMatches', 0, mCount, 1000);
                     if(document.getElementById('valWins')) animateValue('valWins', 0, wCount, 1000);
@@ -1528,7 +1505,6 @@
                 else if(pts >= 5000 && pts < 15000) { tier = "Gold"; pct = 60; level = 25; badge = "🥇"; glow = "rgba(255,215,0,0.25)";}
                 else if(pts >= 15000) { tier = "Diamond"; pct = 90; level = 50; badge = "💎"; glow = "rgba(0,242,255,0.25)";}
                 
-                // VIP PREMIUM PLAN OVERRIDES
                 let promoBanner = document.querySelector('.premium-promo');
                 if(promoBanner) promoBanner.style.display = isPremiumUser ? 'none' : 'block';
 
@@ -1550,9 +1526,9 @@
                 setTimeout(() => { document.getElementById('tierProgress').style.width = pct + "%"; }, 100);
 
                 if (isPremiumUser) {
-                    document.getElementById('profileHeaderGlow').style.boxShadow = `inset 0 -30px 60px -20px rgba(212,175,55,0.3)`;
+                    document.getElementById('profileHeaderGlow').style.boxShadow = `inset 0 -30px 60px -20px rgba(212,175,55,0.4)`;
                     document.querySelector('.profile-avatar').style.border = "2px solid #d4af37";
-                    document.querySelector('.profile-avatar').style.boxShadow = "0 0 25px rgba(212,175,55,0.5)";
+                    document.querySelector('.profile-avatar').style.boxShadow = "0 0 25px rgba(212,175,55,0.6)";
                 } else {
                     document.getElementById('profileHeaderGlow').style.boxShadow = `inset 0 -20px 50px -20px ${glow}`;
                     document.querySelector('.profile-avatar').style.border = "3px solid transparent";
@@ -1592,7 +1568,6 @@
             let hosted = parseInt(data.hosted) || 0;
             let matches = parseInt(data.matches) || 0;
             
-            // Setup Organizer (5 to 60)
             let orgTier = "Rookie"; let orgFee = "15% Comm."; let orgNext = 15; let orgPct = 0;
             let oBadge = document.getElementById('orgFeeBadge');
             if(oBadge) {
@@ -1611,7 +1586,6 @@
                 setTimeout(()=> { document.getElementById('orgProgressFill').style.width = orgPct + '%'; }, 300);
             }
 
-            // Setup Player (5 to 150)
             let pTier = "Scout"; let pBadgeText = "Level 1"; let pNext = 25; let pPct = 0;
             let pBadge = document.getElementById('playerRankBadge');
             if(pBadge) {
@@ -1854,9 +1828,6 @@
             triggerHaptic();
         }
 
-        let currentActivePrizeIndex = 1;
-        let activeTournamentPrizes = {};
-
         function openManageModal(match_id) {
             let t = myHostedEvents.find(x => String(x.id) === String(match_id) || String(x.match_id) === String(match_id));
             if(!t) return;
@@ -1881,20 +1852,18 @@
             document.getElementById('editPrize1').value = "";
             document.getElementById('editPrize2').value = "";
             document.getElementById('editPrize3').value = "";
-            activeTournamentPrizes = {};
-            let pCount = 0;
             
             try {
                 let pData = t.prize_json || t.prize_distribution_image || t.prize_distribution || t.prize_image || "";
                 if(pData && pData.startsWith("{")) {
                     let parsed = JSON.parse(pData);
-                    if(parsed["1"] && String(parsed["1"]).trim() !== "") { document.getElementById('editPrize1').value = parsed["1"]; activeTournamentPrizes[1] = parsed["1"]; pCount++; }
-                    if(parsed["2"] && String(parsed["2"]).trim() !== "") { document.getElementById('editPrize2').value = parsed["2"]; activeTournamentPrizes[2] = parsed["2"]; pCount++; }
-                    if(parsed["3"] && String(parsed["3"]).trim() !== "") { document.getElementById('editPrize3').value = parsed["3"]; activeTournamentPrizes[3] = parsed["3"]; pCount++; }
+                    if(parsed["1"] && String(parsed["1"]).trim() !== "") { document.getElementById('editPrize1').value = parsed["1"]; }
+                    if(parsed["2"] && String(parsed["2"]).trim() !== "") { document.getElementById('editPrize2').value = parsed["2"]; }
+                    if(parsed["3"] && String(parsed["3"]).trim() !== "") { document.getElementById('editPrize3').value = parsed["3"]; }
                 } else {
-                    if(t.prize1 && String(t.prize1).trim() !== "") { document.getElementById('editPrize1').value = t.prize1; activeTournamentPrizes[1] = t.prize1; pCount++; }
-                    if(t.prize2 && String(t.prize2).trim() !== "") { document.getElementById('editPrize2').value = t.prize2; activeTournamentPrizes[2] = t.prize2; pCount++; }
-                    if(t.prize3 && String(t.prize3).trim() !== "") { document.getElementById('editPrize3').value = t.prize3; activeTournamentPrizes[3] = t.prize3; pCount++; }
+                    if(t.prize1 && String(t.prize1).trim() !== "") { document.getElementById('editPrize1').value = t.prize1; }
+                    if(t.prize2 && String(t.prize2).trim() !== "") { document.getElementById('editPrize2').value = t.prize2; }
+                    if(t.prize3 && String(t.prize3).trim() !== "") { document.getElementById('editPrize3').value = t.prize3; }
                 }
             } catch(e) { console.log("Prize parse error"); }
 
@@ -1939,153 +1908,10 @@
             s.value = t.status || "Upcoming";
             if(!s.value) s.value = "Upcoming";
 
-            currentActivePrizeIndex = 1;
-            if (String(t.status).toLowerCase() === 'completed') {
-                document.getElementById('resolveMatchPanel').style.display = 'none';
-            } else {
-                document.getElementById('resolveMatchPanel').style.display = 'block';
-                document.getElementById('resolveTeamsList').innerHTML = ""; 
-                let loadBtn = document.getElementById('btnLoadTeams');
-                loadBtn.innerHTML = "Load Registered Teams";
-                loadBtn.style.display = "block";
-                loadBtn.disabled = false;
-            }
-
             document.getElementById('manageTourneyModal').classList.add('active');
         }
 
         function closeManageModal() { document.getElementById('manageTourneyModal').classList.remove('active'); }
-
-        function loadRegisteredTeamsForResolution() {
-            let matchId = document.getElementById('editTourneyId').value;
-            const btn = document.getElementById('btnLoadTeams');
-            btn.innerHTML = "<i class='fa-solid fa-spinner fa-spin'></i> Fetching...";
-            btn.disabled = true;
-
-            fetch(API_URL + "?action=get_all_matches") + encodeURIComponent(userData.email))
-            .then(res => {
-                if(!res.ok) throw new Error("Network Bad");
-                return res.json();
-            })
-            .then(data => {
-                let teamsHtml = "";
-                if(data.status === "success" && data.data) {
-                    let matchRegs = [];
-                    try {
-                        let parsedData = typeof data.data === 'string' ? JSON.parse(data.data) : data.data;
-                        matchRegs = parsedData.filter(m => String(m.match_id) === String(matchId));
-                    } catch(e) {
-                        matchRegs = data.data.filter(m => String(m.match_id) === String(matchId));
-                    }
-                    
-                    if(matchRegs.length > 0) {
-                        matchRegs.forEach(team => {
-                            let teamName = team.clan || team.username || "Unknown Player";
-                            
-                            // Smart JSON Extractor for Solo Players stored poorly
-                            try {
-                                if(teamName.includes("{") || teamName.includes("}")) {
-                                    let cleanJson = teamName.replace(/'/g, '"');
-                                    let p = JSON.parse(cleanJson);
-                                    teamName = p.clan || p.clan_name || p.ign || p.username || "Unknown Player";
-                                }
-                            } catch(e) {
-                                let m = teamName.match(/"(?:clan|username|ign|clan_name)"\s*:\s*"([^"]+)"/i);
-                                if (m) teamName = m[1];
-                            }
-
-                            let cleanTeamName = String(teamName).replace(/"/g, "&quot;").replace(/'/g, "\\'"); 
-                            
-                            let btnText = "👑 Declare Winner";
-                            if (activeTournamentPrizes[2]) btnText = `👑 Declare ${currentActivePrizeIndex}${currentActivePrizeIndex===1?'st':currentActivePrizeIndex===2?'nd':'rd'}`;
-                            
-                            // REMOVED THE TEXT LOGIC, REPLACED WITH JUST THE CROWN
-                            teamsHtml += `
-                            <div class="team-resolve-item" id="resolve-team-${cleanTeamName.replace(/[^a-zA-Z0-9]/g, '')}">
-                                <div class="team-r-name">${teamName}</div>
-                                <button class="declare-btn" style="padding: 8px 15px;" onclick="declareWinner('${cleanTeamName}', this)" title="Declare Winner">
-                                    <i class="fa-solid fa-crown" style="font-size: 1.1rem;"></i>
-                                </button>
-                            </div>`;
-                        });
-                    } else {
-                        teamsHtml = "<div style='color:#888; font-size:0.85rem; text-align:center;'>No teams registered for this match yet.</div>";
-                    }
-                } else {
-                    teamsHtml = "<div style='color:#ff4d4d; font-size:0.85rem; text-align:center;'>Error loading teams.</div>";
-                }
-                document.getElementById('resolveTeamsList').innerHTML = teamsHtml;
-                btn.style.display = 'none'; 
-            })
-            .catch(() => {
-                btn.innerHTML = "Error loading. Try again.";
-                btn.disabled = false;
-            });
-        }
-
-        function getRankSuffix(i) {
-            let j = i % 10, k = i % 100;
-            if (j == 1 && k != 11) return "st";
-            if (j == 2 && k != 12) return "nd";
-            if (j == 3 && k != 13) return "rd";
-            return "th";
-        }
-
-        function declareWinner(winnerName, btnElement) {
-            let matchId = document.getElementById('editTourneyId').value;
-            
-            let totalPrizes = 0;
-            for (let i=1; i<=3; i++) { if (activeTournamentPrizes[i] && activeTournamentPrizes[i] !== "") totalPrizes++; }
-            if (totalPrizes === 0) totalPrizes = 1;
-            
-            let prizeAmountToAward = 0;
-            if (totalPrizes > 0 && activeTournamentPrizes[currentActivePrizeIndex]) {
-                prizeAmountToAward = parseInt(String(activeTournamentPrizes[currentActivePrizeIndex]).replace(/[^0-9]/g, '')) || 0;
-            } else {
-                let rawPrize = document.getElementById('editTourneyPrize').value;
-                prizeAmountToAward = parseInt(rawPrize.replace(/[^0-9]/g, '')) || 0;
-            }
-
-            let rankText = totalPrizes > 1 ? `${currentActivePrizeIndex}${getRankSuffix(currentActivePrizeIndex)} Place` : "the Winner";
-            let confirmMsg = `Award ${rankText} to "${winnerName}"?\n\nThis will transfer ₹${prizeAmountToAward} to their Winnings wallet.`;
-            
-            if(!confirm(confirmMsg)) return;
-
-            let isFinalAward = currentActivePrizeIndex >= totalPrizes;
-            
-            showToast(`Processing Payout for ${winnerName}...`);
-            triggerHaptic();
-            
-            // Visually remove team so they can't win twice
-            btnElement.parentElement.innerHTML = `<span style="color:var(--accent-green); font-size:0.85rem; font-weight:bold; font-family:var(--font-head);"><i class="fa-solid fa-check"></i> ${rankText}</span>`;
-
-            let payload = {
-                action: "resolve_match",
-                match_id: matchId,
-                winner: winnerName,
-                prize: prizeAmountToAward,
-                is_final: isFinalAward
-            };
-
-            fetch(API_URL, { 
-                method: 'POST', 
-                headers: { 'Content-Type': 'text/plain' },
-                body: JSON.stringify(payload) 
-            }).then(() => {
-                if (isFinalAward) {
-                    document.getElementById('resolveTeamsList').innerHTML += `<div style="text-align:center; color:var(--accent-cyan); font-family:var(--font-head); margin-top: 15px; padding-top: 10px; border-top: 1px solid rgba(255,255,255,0.1);"><i class="fa-solid fa-check-double"></i> All Prizes Distributed. Match Closed.</div>`;
-                    document.getElementById('editTourneyStatus').value = "Completed";
-                    saveTournamentChanges(); // Automatically save the updated status to the DB
-                } else {
-                    currentActivePrizeIndex++;
-                    document.querySelectorAll('#resolveTeamsList .declare-btn').forEach(b => {
-                        b.innerHTML = `👑 Declare ${currentActivePrizeIndex}${getRankSuffix(currentActivePrizeIndex)}`;
-                    });
-                }
-            }).catch(()=>{
-                showToast("Network Error during payout. Try again.", true);
-            });
-        }
 
         let cropper = null;
         let currentUploadState = { previewId: '', base64Id: '', aspectRatio: 16 / 9, isCircle: false };
@@ -2241,7 +2067,6 @@
                     status: document.getElementById('editTourneyStatus').value
                 };
 
-                // Catch standard fetch.
                 await fetch(API_URL, {
                     method: 'POST',
                     headers: { 'Content-Type': 'text/plain' },
@@ -2255,7 +2080,6 @@
                 btn.disabled = false;
 
             } catch (error) {
-                // Failsafe in case of opaque response blocking parsing
                 showToast("Tournament Updated Successfully!");
                 closeManageModal();
                 fetchMyTournaments();
@@ -2327,7 +2151,6 @@
             });
         }
 
-        // --- SECURE EMAIL CHANGE FLOW ---
         let targetNewEmail = "";
         function startEmailChange() {
             document.getElementById('emailChangeModal').classList.add('active');
