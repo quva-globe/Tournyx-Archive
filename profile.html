@@ -170,7 +170,7 @@
         .theme-vip .tier-rank { color: #FFD700; text-shadow: 0 0 10px rgba(255,215,0,0.8); }
         
         .tier-bar-bg { width: 100%; height: 10px; background: rgba(255,255,255,0.05); border-radius: 10px; overflow: hidden; box-shadow: inset 0 0 5px rgba(0,0,0,0.5); border: 1px solid rgba(255,255,255,0.05);}
-        .tier-bar-fill { height: 100%; background: var(--accent-gradient); border-radius: 10px; transition: width 1.5s cubic-bezier(0.175, 0.885, 0.32, 1.275); width: 0%; box-shadow: 0 0 10px rgba(0,242,255,0.5);}
+        .tier-bar-fill { height: 100%; background: var(--accent-gradient); border-radius: 10px; transition: width 1.5s cubic-bezier(0.175, 0.885, 0.32, 1.275); width: 0%; box-shadow: 0 0 10px rgba(0,242,255,0.5); transform: translateZ(0);}
 
         .role-switch-container { padding: 0 20px; margin-bottom: 25px; }
         .role-switch { display: flex; background: rgba(0,0,0,0.4); border-radius: 15px; padding: 6px; border: 1px solid var(--card-border); position: relative; box-shadow: inset 0 0 10px rgba(0,0,0,0.5);}
@@ -198,7 +198,7 @@
         .ms-fee-badge.elite:hover { background: #FFD700; color: black; }
         
         .ms-progress-wrap { width: 100%; height: 10px; background: rgba(255,255,255,0.05); border-radius: 10px; overflow: hidden; margin-bottom: 10px; box-shadow: inset 0 0 5px rgba(0,0,0,0.6); border: 1px solid rgba(255,255,255,0.05);}
-        .ms-progress-fill { height: 100%; background: var(--accent-gradient); width: 0%; transition: width 1.5s cubic-bezier(0.175, 0.885, 0.32, 1.275); box-shadow: 0 0 15px var(--accent-cyan); position: relative;}
+        .ms-progress-fill { height: 100%; background: var(--accent-gradient); width: 0%; transition: width 1.5s cubic-bezier(0.175, 0.885, 0.32, 1.275); box-shadow: 0 0 15px var(--accent-cyan); position: relative; transform: translateZ(0);}
         .ms-progress-fill::after { content: ''; position: absolute; top: 0; right: 0; bottom: 0; left: 0; background: linear-gradient(90deg, transparent, rgba(255,255,255,0.5), transparent); animation: shimmer 2s infinite linear; }
         .ms-footer { display: flex; justify-content: space-between; font-size: 0.8rem; color: #a0a0b0; font-family: var(--font-head); font-weight: bold; text-transform: uppercase;}
 
@@ -228,15 +228,18 @@
         .ac-orange .action-icon { color: var(--accent-orange); background: rgba(255,153,0,0.1); box-shadow: 0 0 20px rgba(255,153,0,0.3); border-color: rgba(255,153,0,0.2);}
 
         .org-list-header { font-family: var(--font-head); font-size: 1.2rem; color: white; margin-bottom: 15px; display: flex; justify-content: space-between; align-items: center; border-top: 1px solid var(--card-border); padding-top: 25px; text-transform: uppercase; letter-spacing: 1px;}
-        .managed-item { background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.05); border-radius: 15px; padding: 18px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; transition: 0.3s; box-shadow: 0 5px 15px rgba(0,0,0,0.2); gap: 10px; backdrop-filter: blur(10px);}
+        
+        /* Fixed overflowing flexbox on manager items */
+        .managed-item { background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.05); border-radius: 15px; padding: 18px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; transition: 0.3s; box-shadow: 0 5px 15px rgba(0,0,0,0.2); gap: 10px; backdrop-filter: blur(10px); flex-wrap: wrap;}
         .managed-item:hover { border-color: var(--accent-cyan); background: rgba(0,242,255,0.05); }
         .theme-vip .managed-item:hover { border-color: #FFD700; }
         
         .mi-info { flex: 1; min-width: 0; }
-        .mi-info h5 { font-family: var(--font-head); font-size: 1.1rem; color: white; margin-bottom: 4px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;}
+        /* Allowing title to wrap dynamically */
+        .mi-info h5 { font-family: var(--font-head); font-size: 1.1rem; color: white; margin-bottom: 4px; white-space: normal; word-break: break-word; line-height: 1.2;}
         .mi-info p { font-size: 0.8rem; color: #888; }
         
-        .mi-btn-group { display: flex; gap: 8px;}
+        .mi-btn-group { display: flex; gap: 8px; flex-shrink: 0; align-items: center; }
         .mi-btn { background: var(--accent-gradient); border: none; color: white; padding: 8px 15px; border-radius: 10px; font-size: 0.85rem; font-family: var(--font-head); font-weight: bold; cursor: pointer; transition: 0.3s; text-transform: uppercase; box-shadow: 0 0 15px rgba(0,242,255,0.3); will-change: transform;}
         .mi-btn:active { transform: scale(0.95);}
         .mi-share { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); padding: 8px 12px; border-radius: 10px; color: white; cursor: pointer; transition: 0.3s; font-size: 0.9rem;}
@@ -247,7 +250,8 @@
         .resolve-header { font-family: var(--font-head); font-size: 1.2rem; color: #FFD700; margin-bottom: 10px; display: flex; align-items: center; gap: 10px;}
         .team-resolve-item { display: flex; justify-content: space-between; align-items: center; background: rgba(0,0,0,0.5); border: 1px solid rgba(255,255,255,0.1); padding: 12px 15px; border-radius: 10px; margin-bottom: 8px; transition: 0.3s; gap: 10px;}
         .team-resolve-item:hover { border-color: #FFD700; background: rgba(255,215,0,0.05); }
-        .team-r-name { font-family: var(--font-head); font-weight: bold; font-size: 1rem; color: white; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 50%; }
+        /* Fixed team name overflow */
+        .team-r-name { font-family: var(--font-head); font-weight: bold; font-size: 1rem; color: white; flex: 1; min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
         .declare-btn { background: linear-gradient(90deg, #FFD700, #FFA500); border: none; color: black; font-family: var(--font-head); font-weight: bold; font-size: 0.8rem; padding: 6px 12px; border-radius: 8px; cursor: pointer; box-shadow: 0 0 10px rgba(255,215,0,0.4); text-transform: uppercase; transition: 0.3s; flex-shrink: 0; }
         .declare-btn:active { transform: scale(0.95); }
 
@@ -1048,7 +1052,7 @@
                 <label class="form-label"><i class="fa-solid fa-users"></i> Participation Format</label>
                 <div style="display: flex; gap: 15px; margin-bottom: 20px;">
                     <div style="flex: 1;"><input type="number" id="editTourneySlots" class="form-control" placeholder="Max Slots *"></div>
-                    <div style="flex: 1;"><input type="number" id="editTourneyEntry" class="form-control" placeholder="Entry Fee (1 Ticket) *"></div>
+                    <div style="flex: 1;"><input type="number" id="editTourneyEntry" class="form-control" placeholder="Entry Fee (TX Passes) *"></div>
                 </div>
 
                 <label class="form-label"><i class="fa-solid fa-money-bill-wave"></i> Economics & Prize</label>
@@ -1276,6 +1280,7 @@
                         userData.wins = safeParseNum(data.data.wins, userData.wins || 0);
                         userData.hosted = safeParseNum(data.data.hosted, userData.hosted || 0);
                         
+                        // Check if premium status is true
                         userData.is_premium = String(data.data.is_premium).toLowerCase() === 'true';
                         
                         localStorage.setItem('tournyx_user', JSON.stringify(userData));
@@ -1762,7 +1767,7 @@
                                 <p>${datePeriod} • <span style="color:${sColor}; font-weight:bold;">${statusText}</span></p>
                             </div>
                             <div class="mi-btn-group">
-                                <button class="mi-share" onclick="shareSpecificTournament('${title}'); triggerHaptic();" title="Share Invite"><i class="fa-solid fa-share-nodes"></i></button>
+                                <button class="mi-share" onclick="shareSpecificTournament('${title.replace(/'/g, "\\'")}'); triggerHaptic();" title="Share Invite"><i class="fa-solid fa-share-nodes"></i></button>
                                 <button class="mi-btn" onclick="openManageModal('${matchId}'); triggerHaptic();">Manage</button>
                             </div>
                         </div>
@@ -2209,6 +2214,7 @@
             });
         }
 
+        // --- LIVE SECURE EMAIL CHANGE FLOW ---
         let targetNewEmail = "";
         function startEmailChange() {
             document.getElementById('emailChangeModal').classList.add('active');
@@ -2297,6 +2303,7 @@
             window.location.href = 'index.html';
         }
 
+        // --- LIVE PASSWORD CHANGE FLOW ---
         function openEditModal() {
             let user = userData || {};
             document.getElementById('editModal').classList.add('active');
@@ -2328,6 +2335,7 @@
         
         function closePassModal() { document.getElementById('passModal').classList.remove('active'); }
 
+        // --- Submitting Direct Password Change ---
         function submitDirectPasswordChange() {
             const currentPass = document.getElementById('inpCurrentPass').value;
             const newPass = document.getElementById('inpDirectNewPass').value;
@@ -2358,6 +2366,7 @@
         }
 
 
+        // --- Forgotten Password OTP Flow ---
         function sendPassOtpEmail() {
             const btn = document.getElementById('btnSendPassOtpEmail');
             btn.style.opacity = '0.5';
