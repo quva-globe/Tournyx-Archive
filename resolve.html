@@ -37,47 +37,32 @@
         * { -ms-overflow-style: none !important; scrollbar-width: none !important; margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
         *::-webkit-scrollbar { display: none !important; width: 0 !important; height: 0 !important; background: transparent !important; }
 
-        /* ABSOLUTE DESKTOP/MOBILE RESET */
-        body {
-            background-color: var(--primary-bg); 
+        /* FIXED: Force top-to-bottom document flow for perfect Desktop & Mobile rendering */
+        html, body {
+            height: 100%;
+            background-color: var(--primary-bg);
             color: white; 
             font-family: var(--font-body);
-            padding-bottom: calc(140px + env(safe-area-inset-bottom, 0px)); 
             overflow-x: hidden;
-            padding-top: calc(85px + env(safe-area-inset-top, 0px)) !important; 
-            margin: 0 !important;
+        }
+
+        body {
+            display: block !important; 
+            padding-top: 85px !important; /* Destroyed the random top gap */
+            padding-bottom: 140px !important;
             width: 100vw;
-            min-height: 100vh;
-            display: block;
         }
 
         .main-container { 
+            display: block !important;
             max-width: 800px; 
-            margin: 0 auto !important; 
+            margin: 0 auto !important; /* Perfect desktop centering */
             padding: 0 20px; 
             width: 100%; 
-            display: block;
         }
 
-        /* BULLETPROOF HEADER ALIGNMENT */
-        .top-header { 
-            position: fixed; 
-            top: 0 !important; 
-            left: 0; 
-            width: 100%; 
-            height: calc(65px + env(safe-area-inset-top, 0px)); 
-            padding: env(safe-area-inset-top, 0px) 20px 0 20px; 
-            background: rgba(5, 2, 12, 0.95); 
-            backdrop-filter: blur(16px); 
-            -webkit-backdrop-filter: blur(16px); 
-            border-bottom: 1px solid rgba(255, 255, 255, 0.05); 
-            z-index: 9999; 
-            display: flex; 
-            align-items: center; 
-            justify-content: space-between; 
-            box-sizing: border-box;
-            margin: 0 !important;
-        }
+        /* HEADER FIXED */
+        .top-header { position: fixed; top: 0 !important; left: 0; width: 100%; height: 65px; padding: 0 20px; background: rgba(5, 2, 12, 0.85); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); border-bottom: 1px solid rgba(255, 255, 255, 0.05); z-index: 2000; box-shadow: 0 4px 30px rgba(0, 0, 0, 0.5); display: flex; align-items: center; justify-content: space-between; box-sizing: border-box;}
         .back-btn { color: white; font-size: 1.3rem; cursor: pointer; text-decoration: none; padding: 10px 10px 10px 0; transition: 0.3s; display: flex; align-items: center;}
         .back-btn:active { transform: translateX(-5px); color: var(--accent-cyan); }
         .theme-vip .back-btn:active { color: #FFD700; }
@@ -97,8 +82,8 @@
         .tourney-card:hover { transform: translateY(-2px); box-shadow: 0 5px 15px rgba(0,0,0,0.4); border-color: rgba(255,255,255,0.2); }
         .tourney-card:active { transform: scale(0.97); border-color: var(--accent-cyan); box-shadow: 0 0 15px rgba(0,242,255,0.2); }
         .theme-vip .tourney-card:active { border-color: #FFD700; box-shadow: 0 0 15px rgba(255,215,0,0.2); }
-        .t-info { flex: 1; min-width: 0; }
-        .t-info h4 { font-family: var(--font-head); font-size: 1.1rem; margin-bottom: 5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: white;}
+        .t-info { flex: 1; min-width: 0; overflow: hidden; } /* Fixed manager overflow */
+        .t-info h4 { font-family: var(--font-head); font-size: 1.1rem; margin-bottom: 5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: white; display: block;}
         .t-info p { font-size: 0.85rem; color: #888; }
         .t-arrow { color: var(--accent-cyan); font-size: 1.2rem; margin-left: 10px; flex-shrink: 0; transition: 0.3s; }
         .theme-vip .t-arrow { color: #FFD700; }
@@ -114,8 +99,8 @@
         .prize-tag.p3 { color: #cd7f32; border-color: rgba(205,127,50,0.3); background: rgba(205,127,50,0.05); box-shadow: 0 0 10px rgba(205,127,50,0.1); }
 
         .team-card { background: rgba(0,0,0,0.4); border: 1px solid var(--card-border); border-radius: 12px; padding: 15px; margin-bottom: 10px; display: flex; flex-direction: column; gap: 10px; transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); position: relative; overflow: hidden; animation: fadeInUp 0.4s ease backwards;}
-        .team-top { display: flex; justify-content: space-between; align-items: center; gap: 10px; }
-        .team-name { font-family: var(--font-head); font-weight: bold; font-size: 1.05rem; color: white; flex: 1; min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .team-top { display: flex; justify-content: space-between; align-items: center; gap: 10px; flex-wrap: wrap; }
+        .team-name { font-family: var(--font-head); font-weight: bold; font-size: 1.05rem; color: white; flex: 1; min-width: 150px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
         
         .action-btn { background: var(--accent-gradient); border: none; padding: 8px 15px; border-radius: 8px; color: white; font-family: var(--font-head); font-weight: bold; font-size: 0.8rem; cursor: pointer; transition: all 0.3s; text-transform: uppercase; flex-shrink: 0; display: flex; align-items: center; gap: 6px; box-shadow: 0 4px 15px rgba(0,242,255,0.2);}
         .action-btn:active { transform: scale(0.92); box-shadow: 0 0 5px rgba(0,242,255,0.5); }
@@ -128,18 +113,23 @@
         .team-card.ranked-3 { border-color: #cd7f32; background: rgba(205,127,50,0.05); }
         .team-card.ranked-3 .rank-badge { display: inline-block; background: #cd7f32; color: black; box-shadow: 0 0 10px rgba(205,127,50,0.5); animation: popIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
 
-        /* CUSTOM PAYOUT ALLOCATOR */
-        .points-allocator { display: none; width: 100%; border-top: 1px solid rgba(255,255,255,0.05); padding-top: 12px; align-items: center; gap: 10px; flex-wrap: wrap; animation: fadeInDown 0.3s ease; }
+        /* UPGRADED: Flex-wrapped custom allocator for Desktop & Mobile */
+        .points-allocator { display: none; width: 100%; border-top: 1px solid rgba(255,255,255,0.05); padding-top: 15px; flex-direction: column; gap: 10px; animation: fadeInDown 0.3s ease; }
         .team-card.points-mode .points-allocator { display: flex; }
-        .points-allocator input { flex: 1; min-width: 100px; background: rgba(0,0,0,0.5); border: 1px solid var(--card-border); padding: 10px 12px; border-radius: 8px; color: white; font-family: var(--font-head); font-size: 0.95rem; outline: none; transition: 0.3s; }
-        .points-allocator input:focus { border-color: var(--accent-cyan); box-shadow: 0 0 10px rgba(0,242,255,0.2); }
-        .theme-vip .points-allocator input:focus { border-color: #FFD700; box-shadow: 0 0 10px rgba(255,215,0,0.2); }
-        .pts-save-btn { background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); color: white; padding: 10px 18px; border-radius: 8px; font-weight: bold; cursor: pointer; transition: 0.3s; flex-shrink: 0; flex-basis: auto; }
-        .pts-save-btn:active { background: var(--accent-cyan); border-color: var(--accent-cyan); color: black; transform: scale(0.92); }
+        .pts-inputs { display: flex; gap: 10px; width: 100%; flex-wrap: wrap; }
+        .pts-inputs input { flex: 1; min-width: 120px; background: rgba(0,0,0,0.5); border: 1px solid var(--card-border); padding: 12px; border-radius: 8px; color: white; font-family: var(--font-head); font-size: 0.95rem; outline: none; transition: 0.3s; }
+        .pts-inputs input:focus { border-color: var(--accent-cyan); box-shadow: 0 0 10px rgba(0,242,255,0.2); }
+        .theme-vip .pts-inputs input:focus { border-color: #FFD700; box-shadow: 0 0 10px rgba(255,215,0,0.2); }
+        
+        .pts-actions { display: flex; gap: 10px; width: 100%; flex-wrap: wrap; }
+        .podium-save-btn { background: var(--accent-gradient); border: none; color: white; padding: 12px; border-radius: 8px; font-weight: bold; cursor: pointer; transition: 0.3s; flex: 1; min-width: 120px; display: flex; justify-content: center; align-items: center; gap: 8px; text-transform: uppercase; font-family: var(--font-head); box-shadow: 0 4px 15px rgba(0,242,255,0.2); }
+        .podium-save-btn:active { transform: scale(0.95); }
+        .pts-save-btn { background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); color: white; padding: 12px; border-radius: 8px; font-weight: bold; cursor: pointer; transition: 0.3s; flex: 1; min-width: 120px; display: flex; justify-content: center; align-items: center; gap: 8px; text-transform: uppercase; font-family: var(--font-head); }
+        .pts-save-btn:active { background: var(--accent-cyan); border-color: var(--accent-cyan); color: black; transform: scale(0.95); }
         .theme-vip .pts-save-btn:active { background: #FFD700; border-color: #FFD700; }
 
         /* FLOATING ACTION BAR */
-        .bottom-summary-bar { position: fixed; bottom: 0; left: 0; width: 100%; padding: 15px 20px calc(15px + env(safe-area-inset-bottom, 0px)); background: rgba(5,2,12,0.95); backdrop-filter: blur(20px); border-top: 1px solid var(--accent-cyan); z-index: 1000; box-shadow: 0 -10px 40px rgba(0,242,255,0.1); display: none; flex-direction: column; align-items: center; gap: 10px; }
+        .bottom-summary-bar { position: fixed; bottom: 0; left: 0; width: 100%; padding: 15px 20px 20px 20px; background: rgba(5,2,12,0.95); backdrop-filter: blur(20px); border-top: 1px solid var(--accent-cyan); z-index: 1000; box-shadow: 0 -10px 40px rgba(0,242,255,0.1); display: none; flex-direction: column; align-items: center; gap: 10px; }
         .theme-vip .bottom-summary-bar { border-top-color: #FFD700; box-shadow: 0 -10px 40px rgba(255,215,0,0.1); }
         .bottom-summary-bar.active { display: flex; animation: slideInUp 0.4s ease; }
         
@@ -175,7 +165,8 @@
     <header class="top-header">
         <a href="profile.html" class="back-btn"><i class="fa-solid fa-arrow-left"></i></a>
         <h3 class="page-title">Match Resolution</h3>
-        <div style="width: 24px;"></div> </header>
+        <div style="width: 24px;"></div>
+    </header>
 
     <div class="main-container">
         
@@ -206,7 +197,7 @@
             <div class="prize-legend" id="prizeLegendBox"></div>
 
             <p style="font-size: 0.85rem; color: #aaa; margin-bottom: 15px; line-height: 1.4;">
-                Tap the crown to assign podium prizes. Tap 'Undo' to reverse. For other players, use the custom payout.
+                Tap the crown to assign podium prizes. Tap 'Edit' to reverse or assign custom cash and points.
             </p>
 
             <div id="teamsContainer">
@@ -232,7 +223,7 @@
         let activeMatchId = "";
         let allPrizes = []; 
         
-        // Editable Tracking Maps
+        // Fully Editable Tracking Maps
         let rankAssignments = {}; // teamName -> rank (1, 2, 3)
         let cashAssignments = {}; // teamName -> amount (for podium cash)
         let customCashAssignments = {}; // teamName -> amount (for custom cash)
@@ -271,7 +262,6 @@
             }
             checkVIP();
             
-            // Initial render
             document.getElementById('orgEarningsBal').innerText = (parseInt(userData.earnings) || 0).toLocaleString();
             document.getElementById('orgPointsBal').innerText = (parseInt(userData.points) || 0).toLocaleString();
             if(document.body.classList.contains('theme-vip')) {
@@ -308,7 +298,7 @@
                             let rawTitle = String(t.title || "Untitled");
                             let animDelay = index * 0.1;
                             
-                            // Extract prizes to pass them forward safely
+                            // Safe parsing
                             let pObj = {1:0, 2:0, 3:0};
                             try {
                                 let pData = t.prize_json || t.prize_distribution || "";
@@ -358,7 +348,6 @@
             
             document.getElementById('resMatchTitle').innerText = decodeURIComponent(titleEnc);
 
-            // Setup Prizes Array from decoded string
             allPrizes = [];
             rankAssignments = {};
             cashAssignments = {};
@@ -421,21 +410,26 @@
                             }
                             
                             let cleanId = String(teamName).replace(/[^a-zA-Z0-9]/g, ''); 
-                            let safeTeamNameForJs = String(teamName).replace(/"/g, "&quot;").replace(/'/g, "\\'");
+                            let safeTeamNameEnc = encodeURIComponent(teamName);
                             
                             container.innerHTML += `
-                            <div class="team-card" id="card-${cleanId}" data-teamname="${safeTeamNameForJs}" style="animation-delay: ${animDelay}s">
+                            <div class="team-card" id="card-${cleanId}" data-teamname="${safeTeamNameEnc}" style="animation-delay: ${animDelay}s">
                                 <div class="team-top">
-                                    <div class="team-name">${teamName}</div>
+                                    <div class="team-name">${teamName.replace(/</g, "&lt;").replace(/>/g, "&gt;")}</div>
                                     <div class="rank-badge" id="badge-${cleanId}"></div>
-                                    <button class="action-btn" id="btn-${cleanId}" onclick="handleTeamAction('${cleanId}', '${safeTeamNameForJs}')">
+                                    <button class="action-btn" id="btn-${cleanId}" onclick="handleTeamAction('${cleanId}')">
                                         <i class="fa-solid fa-crown"></i> Assign
                                     </button>
                                 </div>
                                 <div class="points-allocator" id="pts-box-${cleanId}">
-                                    <input type="tel" inputmode="numeric" id="inp-cash-${cleanId}" placeholder="₹ Cash">
-                                    <input type="tel" inputmode="numeric" id="inp-pts-${cleanId}" placeholder="PTS">
-                                    <button class="pts-save-btn" onclick="saveCustomPayout('${cleanId}', '${safeTeamNameForJs}')"><i class="fa-solid fa-check"></i></button>
+                                    <div class="pts-inputs">
+                                        <input type="tel" inputmode="numeric" id="inp-cash-${cleanId}" placeholder="₹ Cash">
+                                        <input type="tel" inputmode="numeric" id="inp-pts-${cleanId}" placeholder="PTS">
+                                    </div>
+                                    <div class="pts-actions">
+                                        <button class="podium-save-btn" id="podium-btn-${cleanId}" onclick="assignPodiumFromEdit('${cleanId}')"><i class="fa-solid fa-crown"></i> Podium</button>
+                                        <button class="pts-save-btn" onclick="saveCustomPayout('${cleanId}')"><i class="fa-solid fa-check"></i> Save Custom</button>
+                                    </div>
                                 </div>
                             </div>`;
                         });
@@ -452,7 +446,7 @@
             });
         }
 
-        // --- STEP 3: INTERACTIVE PODIUM ASSIGNMENT ---
+        // --- STEP 3: INTERACTIVE PODIUM ASSIGNMENT & EDITING ---
         function getRankSuffix(i) {
             let j = i % 10, k = i % 100;
             if (j == 1 && k != 11) return "st";
@@ -474,59 +468,63 @@
             let nextPrize = getNextAvailablePrize();
             
             document.querySelectorAll('.team-card').forEach(card => {
-                let teamName = card.dataset.teamname;
+                let teamName = decodeURIComponent(card.dataset.teamname);
+                let cleanId = card.id.replace('card-', '');
                 let btn = card.querySelector('.action-btn');
                 let ptsBox = card.querySelector('.points-allocator');
+                let podiumBtn = document.getElementById(`podium-btn-${cleanId}`);
                 let badge = card.querySelector('.rank-badge');
                 
-                // Clear state
+                // Clear UI states
                 card.classList.remove('ranked-1', 'ranked-2', 'ranked-3', 'has-points');
 
-                if (rankAssignments[teamName]) {
-                    // HAS PODIUM PRIZE
-                    let rank = rankAssignments[teamName];
-                    let amt = cashAssignments[teamName] || 0;
+                if (rankAssignments[teamName] || customCashAssignments[teamName] || pointAssignments[teamName]) {
+                    // HAS AN ASSIGNMENT (Podium or Custom)
+                    if (rankAssignments[teamName]) {
+                        let rank = rankAssignments[teamName];
+                        let amt = cashAssignments[teamName] || 0;
+                        card.classList.add(`ranked-${rank}`);
+                        badge.style.display = 'inline-block';
+                        badge.innerText = `${rank}${getRankSuffix(rank)} (₹${amt})`;
+                    } else {
+                        let c = customCashAssignments[teamName] || 0;
+                        let p = pointAssignments[teamName] || 0;
+                        let bText = [];
+                        if (c > 0) bText.push(`₹${c}`);
+                        if (p > 0) bText.push(`${p} PTS`);
+                        card.classList.add('has-points');
+                        badge.style.display = 'inline-block';
+                        badge.innerText = "+" + bText.join(' | ');
+                        badge.style.background = 'rgba(255,255,255,0.1)';
+                        badge.style.color = document.body.classList.contains('theme-vip') ? '#FFD700' : 'var(--accent-orange)';
+                    }
                     
-                    card.classList.add(`ranked-${rank}`);
-                    badge.style.display = 'inline-block';
-                    badge.innerText = `${rank}${getRankSuffix(rank)} (₹${amt})`;
-                    
+                    // Show Edit Button
                     btn.style.display = 'flex';
-                    btn.innerHTML = `<i class="fa-solid fa-rotate-left"></i> Undo`;
-                    btn.style.background = 'rgba(255,77,77,0.2)';
-                    btn.style.color = 'var(--accent-danger)';
-                    ptsBox.style.display = 'none';
-
-                } else if (customCashAssignments[teamName] || pointAssignments[teamName]) {
-                    // HAS CUSTOM PAYOUT
-                    let c = customCashAssignments[teamName] || 0;
-                    let p = pointAssignments[teamName] || 0;
-                    
-                    let bText = [];
-                    if (c > 0) bText.push(`₹${c}`);
-                    if (p > 0) bText.push(`${p} PTS`);
-                    
-                    card.classList.add('has-points');
-                    badge.style.display = 'inline-block';
-                    badge.innerText = "+" + bText.join(' | ');
-                    badge.style.background = 'rgba(255,255,255,0.1)';
-                    badge.style.color = document.body.classList.contains('theme-vip') ? '#FFD700' : 'var(--accent-orange)';
-                    
-                    btn.style.display = 'flex';
-                    btn.innerHTML = `<i class="fa-solid fa-rotate-left"></i> Undo`;
-                    btn.style.background = 'rgba(255,77,77,0.2)';
-                    btn.style.color = 'var(--accent-danger)';
-                    ptsBox.style.display = 'none';
+                    btn.innerHTML = `<i class="fa-solid fa-pen"></i> Edit`;
+                    btn.style.background = 'rgba(255,255,255,0.1)';
+                    btn.style.color = 'white';
+                    if (!card.classList.contains('points-mode')) {
+                        ptsBox.style.display = 'none';
+                    }
 
                 } else {
-                    // UNASSIGNED
+                    // IS UNASSIGNED
                     badge.style.display = 'none';
                     if (card.classList.contains('points-mode')) {
-                        // User clicked custom payout, show inputs
+                        // User opened the editor
                         btn.style.display = 'none';
                         ptsBox.style.display = 'flex';
+                        if (podiumBtn) {
+                            if(nextPrize) {
+                                podiumBtn.style.display = 'flex';
+                                podiumBtn.innerHTML = `<i class="fa-solid fa-crown"></i> Assign ${nextPrize.rank}${getRankSuffix(nextPrize.rank)}`;
+                            } else {
+                                podiumBtn.style.display = 'none';
+                            }
+                        }
                     } else {
-                        // Default state
+                        // Default Idle State
                         ptsBox.style.display = 'none';
                         btn.style.display = 'flex';
                         if (nextPrize) {
@@ -543,29 +541,35 @@
             });
         }
 
-        function handleTeamAction(cleanId, teamName) {
+        function handleTeamAction(cleanId) {
             triggerHaptic();
             let card = document.getElementById(`card-${cleanId}`);
+            let teamName = decodeURIComponent(card.dataset.teamname);
 
-            // IF ASSIGNED: UNDO ACTION
+            // IF ASSIGNED: EDIT ACTION
             if (rankAssignments[teamName] || customCashAssignments[teamName] || pointAssignments[teamName]) {
+                let c = cashAssignments[teamName] || customCashAssignments[teamName] || 0;
+                let p = pointAssignments[teamName] || 0;
+                
+                document.getElementById(`inp-cash-${cleanId}`).value = c > 0 ? c : "";
+                document.getElementById(`inp-pts-${cleanId}`).value = p > 0 ? p : "";
+
+                // Undo assignment, throwing prize back into the available pool
                 delete rankAssignments[teamName];
                 delete cashAssignments[teamName];
                 delete customCashAssignments[teamName];
                 delete pointAssignments[teamName];
                 
-                document.getElementById(`inp-cash-${cleanId}`).value = "";
-                document.getElementById(`inp-pts-${cleanId}`).value = "";
-                
+                card.classList.add('points-mode');
                 updateActionButtons();
                 updateTotalsUI();
                 return;
             }
 
-            // IF NOT ASSIGNED: ASSIGN ACTION
+            // IF UNASSIGNED: INITIAL ASSIGN
             let nextPrize = getNextAvailablePrize();
             if (nextPrize) {
-                // Give Podium
+                // Instantly give highest podium
                 rankAssignments[teamName] = nextPrize.rank;
                 cashAssignments[teamName] = nextPrize.amount;
                 updateActionButtons();
@@ -577,15 +581,30 @@
             }
         }
 
-        function saveCustomPayout(cleanId, teamName) {
+        function assignPodiumFromEdit(cleanId) {
             triggerHaptic();
+            let card = document.getElementById(`card-${cleanId}`);
+            let teamName = decodeURIComponent(card.dataset.teamname);
+            let nextPrize = getNextAvailablePrize();
+            if (nextPrize) {
+                rankAssignments[teamName] = nextPrize.rank;
+                cashAssignments[teamName] = nextPrize.amount;
+                card.classList.remove('points-mode');
+                updateActionButtons();
+                updateTotalsUI();
+            }
+        }
+
+        function saveCustomPayout(cleanId) {
+            triggerHaptic();
+            let card = document.getElementById(`card-${cleanId}`);
+            let teamName = decodeURIComponent(card.dataset.teamname);
+            
             let cInp = document.getElementById(`inp-cash-${cleanId}`).value;
             let pInp = document.getElementById(`inp-pts-${cleanId}`).value;
             
             let cash = parseInt(cInp) || 0;
             let pts = parseInt(pInp) || 0;
-            
-            let card = document.getElementById(`card-${cleanId}`);
             
             if (cash > 0 || pts > 0) {
                 if (cash > 0) customCashAssignments[teamName] = cash;
@@ -645,11 +664,9 @@
             btn.innerHTML = "<i class='fa-solid fa-spinner fa-spin'></i> Processing Transaction...";
             btn.disabled = true;
 
-            // Format Data
+            // Format Data Safely
             let cArr = []; 
-            // Add Podium Cash
             for (let team in cashAssignments) { cArr.push({name: team, amount: cashAssignments[team]}); }
-            // Add Custom Cash
             for (let team in customCashAssignments) { 
                 let existing = cArr.find(x => x.name === team);
                 if (existing) existing.amount += customCashAssignments[team];
