@@ -1,0 +1,559 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link rel="icon" href="https://tournyx.in/favicon.ico" sizes="any">
+    <link rel="icon" href="https://tournyx.in/favicon.png" type="image/png" sizes="192x192">
+    <link rel="apple-touch-icon" href="https://tournyx.in/apple-touch-icon.png">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>Resolve Match - Tournyx</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700;900&family=Rajdhani:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        :root {
+            --primary-bg: #05020c;
+            --secondary-bg: #0a0514;
+            --card-bg: rgba(20, 10, 35, 0.4);
+            --card-border: rgba(255, 255, 255, 0.08);
+            --accent-cyan: #00f2ff;
+            --accent-purple: #bd00ff;
+            --accent-orange: #ff9900;
+            --accent-green: #00ff7f;
+            --accent-danger: #ff4d4d;
+            --accent-gradient: linear-gradient(135deg, var(--accent-purple), var(--accent-cyan));
+            --font-head: 'Orbitron', sans-serif;
+            --font-body: 'Rajdhani', sans-serif;
+        }
+
+        .theme-vip {
+            --accent-cyan: #FFD700;
+            --accent-purple: #FFA500;
+            --accent-gradient: linear-gradient(135deg, #FFE87C, #D4AF37, #FF8C00);
+            --card-border: rgba(212, 175, 55, 0.3);
+        }
+
+        * { -ms-overflow-style: none !important; scrollbar-width: none !important; margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+        *::-webkit-scrollbar { display: none !important; width: 0 !important; height: 0 !important; background: transparent !important; }
+
+        body {
+            background-color: var(--primary-bg); color: white; font-family: var(--font-body);
+            padding-bottom: calc(140px + env(safe-area-inset-bottom)); overflow-x: hidden;
+            padding-top: calc(75px + env(safe-area-inset-top)); 
+            width: 100vw;
+        }
+
+        .main-container { max-width: 800px; margin: 0 auto; padding: 0 20px; width: 100%; }
+
+        /* HEADER */
+        .top-header { position: fixed; top: 0; left: 0; width: 100%; padding: calc(12px + env(safe-area-inset-top)) 15px 12px; background: rgba(5, 2, 12, 0.8); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); border-bottom: 1px solid rgba(255, 255, 255, 0.05); z-index: 2000; box-shadow: 0 4px 30px rgba(0, 0, 0, 0.5); transform: translateZ(0); display: flex; align-items: center; justify-content: space-between;}
+        .back-btn { color: white; font-size: 1.2rem; cursor: pointer; text-decoration: none; padding: 5px; }
+        .page-title { font-family: var(--font-head); font-size: 1.1rem; font-weight: bold; background: var(--accent-gradient); -webkit-background-clip: text; -webkit-text-fill-color: transparent; text-transform: uppercase; letter-spacing: 1px; }
+
+        /* WALLET BAR */
+        .wallet-bar { background: rgba(255,255,255,0.03); border: 1px solid var(--card-border); border-radius: 12px; padding: 15px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; box-shadow: inset 0 0 10px rgba(0,0,0,0.5); backdrop-filter: blur(10px); }
+        .wallet-stat { text-align: center; flex: 1; }
+        .wallet-stat h5 { font-family: var(--font-head); font-size: 0.75rem; color: #888; text-transform: uppercase; margin-bottom: 3px; }
+        .wallet-stat span { font-family: var(--font-head); font-size: 1.2rem; font-weight: bold; color: white; }
+        .wallet-divider { width: 1px; height: 30px; background: rgba(255,255,255,0.1); }
+
+        .section-title { font-family: var(--font-head); font-size: 1.2rem; color: white; margin-bottom: 15px; display: flex; align-items: center; gap: 10px; border-bottom: 1px solid var(--card-border); padding-bottom: 10px;}
+
+        /* TOURNAMENT LIST */
+        .tourney-card { background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 16px; padding: 18px; margin-bottom: 15px; cursor: pointer; transition: 0.3s; display: flex; justify-content: space-between; align-items: center; backdrop-filter: blur(10px); }
+        .tourney-card:active { transform: scale(0.98); border-color: var(--accent-cyan); }
+        .theme-vip .tourney-card:active { border-color: var(--accent-cyan); }
+        .t-info { flex: 1; min-width: 0; }
+        .t-info h4 { font-family: var(--font-head); font-size: 1.1rem; margin-bottom: 5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: white;}
+        .t-info p { font-size: 0.85rem; color: #888; }
+        .t-arrow { color: var(--accent-cyan); font-size: 1.2rem; margin-left: 10px; flex-shrink: 0;}
+
+        /* RESOLUTION VIEW (HIDDEN INITIALLY) */
+        #resolutionView { display: none; animation: fadeIn 0.4s ease; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        
+        .prize-legend { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 20px; }
+        .prize-tag { background: rgba(255,255,255,0.05); padding: 5px 12px; border-radius: 8px; font-size: 0.8rem; font-weight: bold; border: 1px solid rgba(255,255,255,0.1); display: flex; align-items: center; gap: 5px; }
+        .prize-tag.p1 { color: #FFD700; border-color: rgba(255,215,0,0.3); background: rgba(255,215,0,0.05); }
+        .prize-tag.p2 { color: #C0C0C0; border-color: rgba(192,192,192,0.3); background: rgba(192,192,192,0.05); }
+        .prize-tag.p3 { color: #cd7f32; border-color: rgba(205,127,50,0.3); background: rgba(205,127,50,0.05); }
+
+        .team-card { background: rgba(0,0,0,0.4); border: 1px solid var(--card-border); border-radius: 12px; padding: 15px; margin-bottom: 10px; display: flex; flex-direction: column; gap: 10px; transition: 0.3s; position: relative; overflow: hidden;}
+        .team-top { display: flex; justify-content: space-between; align-items: center; }
+        .team-name { font-family: var(--font-head); font-weight: bold; font-size: 1.05rem; color: white; flex: 1; min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        
+        .action-btn { background: var(--accent-gradient); border: none; padding: 8px 15px; border-radius: 8px; color: white; font-family: var(--font-head); font-weight: bold; font-size: 0.8rem; cursor: pointer; transition: 0.3s; text-transform: uppercase; flex-shrink: 0; display: flex; align-items: center; gap: 6px; box-shadow: 0 4px 15px rgba(0,242,255,0.2);}
+        .action-btn:active { transform: scale(0.95); }
+        
+        .rank-badge { display: none; font-family: var(--font-head); font-weight: 900; font-size: 0.85rem; padding: 5px 12px; border-radius: 6px; text-transform: uppercase; }
+        .team-card.ranked-1 { border-color: #FFD700; background: rgba(255,215,0,0.05); }
+        .team-card.ranked-1 .rank-badge { display: inline-block; background: #FFD700; color: black; box-shadow: 0 0 10px rgba(255,215,0,0.5); }
+        .team-card.ranked-2 { border-color: #C0C0C0; background: rgba(192,192,192,0.05); }
+        .team-card.ranked-2 .rank-badge { display: inline-block; background: #C0C0C0; color: black; box-shadow: 0 0 10px rgba(192,192,192,0.5); }
+        .team-card.ranked-3 { border-color: #cd7f32; background: rgba(205,127,50,0.05); }
+        .team-card.ranked-3 .rank-badge { display: inline-block; background: #cd7f32; color: black; box-shadow: 0 0 10px rgba(205,127,50,0.5); }
+
+        .points-allocator { display: none; width: 100%; border-top: 1px solid rgba(255,255,255,0.05); padding-top: 10px; align-items: center; gap: 10px; }
+        .team-card.points-mode .points-allocator { display: flex; }
+        .points-allocator input { flex: 1; background: rgba(0,0,0,0.5); border: 1px solid var(--card-border); padding: 8px 12px; border-radius: 8px; color: white; font-family: var(--font-head); font-size: 0.9rem; outline: none; transition: 0.3s; }
+        .points-allocator input:focus { border-color: var(--accent-cyan); }
+        .pts-save-btn { background: rgba(255,255,255,0.1); border: none; color: white; padding: 8px 15px; border-radius: 8px; font-weight: bold; cursor: pointer; transition: 0.3s; }
+        .pts-save-btn:active { background: var(--accent-cyan); color: black; }
+
+        /* FLOATING ACTION BAR */
+        .bottom-summary-bar { position: fixed; bottom: 0; left: 0; width: 100%; padding: 15px 20px calc(15px + env(safe-area-inset-bottom)); background: rgba(5,2,12,0.9); backdrop-filter: blur(20px); border-top: 1px solid var(--accent-cyan); z-index: 1000; box-shadow: 0 -10px 40px rgba(0,242,255,0.1); display: none; flex-direction: column; align-items: center; gap: 10px; }
+        .bottom-summary-bar.active { display: flex; animation: slideInUp 0.4s ease; }
+        @keyframes slideInUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
+        
+        .totals-text { font-family: var(--font-head); font-size: 0.9rem; color: #aaa; text-align: center; width: 100%; display: flex; justify-content: space-between;}
+        .totals-text b { color: white; font-size: 1rem; }
+        .totals-text .err { color: var(--accent-danger); }
+
+        .submit-resolution-btn { width: 100%; max-width: 800px; padding: 16px; background: linear-gradient(90deg, var(--accent-purple), var(--accent-cyan)); border: none; border-radius: 12px; color: white; font-family: var(--font-head); font-size: 1.1rem; font-weight: bold; text-transform: uppercase; cursor: pointer; box-shadow: 0 5px 20px rgba(0,242,255,0.3); transition: 0.3s; letter-spacing: 1px; }
+        .submit-resolution-btn:active { transform: scale(0.96); box-shadow: 0 2px 10px rgba(0,242,255,0.3); }
+        .submit-resolution-btn:disabled { background: rgba(255,255,255,0.1); color: #888; box-shadow: none; cursor: not-allowed; transform: none; }
+
+        #customToast { visibility: hidden; min-width: 250px; background: rgba(0,242,255,0.9); backdrop-filter: blur(10px); color: #000; text-align: center; border-radius: 12px; padding: 16px; position: fixed; z-index: 9999; left: 50%; bottom: -50px; transform: translateX(-50%); font-family: var(--font-head); font-weight: bold; box-shadow: 0 8px 30px rgba(0,242,255,0.5); opacity: 0; transition: opacity 0.4s, bottom 0.4s; }
+        #customToast.show { visibility: visible; opacity: 1; bottom: 100px; }
+
+        .loading-state { text-align: center; padding: 40px 20px; color: #888; font-size: 0.95rem; }
+        .loading-state i { font-size: 2rem; color: var(--accent-cyan); margin-bottom: 15px; display: block; }
+    </style>
+</head>
+<body>
+
+    <canvas id="particles-canvas"></canvas>
+
+    <header class="top-header">
+        <a href="profile.html" class="back-btn"><i class="fa-solid fa-arrow-left"></i></a>
+        <div class="page-title">Match Resolution</div>
+        <div style="width: 24px;"></div> </header>
+
+    <div class="main-container">
+        
+        <div class="wallet-bar">
+            <div class="wallet-stat">
+                <h5>My Earnings</h5>
+                <span style="color: var(--accent-cyan);">₹<span id="orgEarningsBal">0</span></span>
+            </div>
+            <div class="wallet-divider"></div>
+            <div class="wallet-stat">
+                <h5>My Points</h5>
+                <span style="color: var(--accent-orange);"><span id="orgPointsBal">0</span> PTS</span>
+            </div>
+        </div>
+
+        <div id="tourneyListSection">
+            <div class="section-title"><i class="fa-solid fa-list-check"></i> Select Match to Resolve</div>
+            <div id="tourneyListContainer">
+                <div class="loading-state"><i class="fa-solid fa-spinner fa-spin"></i> Fetching active tournaments...</div>
+            </div>
+        </div>
+
+        <div id="resolutionView">
+            <div class="section-title" style="border:none; margin-bottom: 5px;">
+                <i class="fa-solid fa-trophy" style="color: #FFD700;"></i> <span id="resMatchTitle" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">Tournament Name</span>
+            </div>
+            
+            <div class="prize-legend" id="prizeLegendBox">
+                </div>
+
+            <p style="font-size: 0.85rem; color: #aaa; margin-bottom: 15px; line-height: 1.4;">
+                Tap the crown to assign the highest available prize. For all other players, tap 'Add PTS' to gift them custom performance points.
+            </p>
+
+            <div id="teamsContainer">
+                <div class="loading-state"><i class="fa-solid fa-spinner fa-spin"></i> Loading registered teams...</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="bottom-summary-bar" id="submitBar">
+        <div class="totals-text">
+            <span>Deducting:</span>
+            <span><b id="totCash" style="color:var(--accent-cyan);">₹0</b> &nbsp;|&nbsp; <b id="totPts" style="color:var(--accent-orange);">0 PTS</b></span>
+        </div>
+        <button class="submit-resolution-btn" id="btnFinalize" onclick="submitResolution()">Finalize Payouts</button>
+    </div>
+
+    <div id="customToast">Notification</div>
+
+    <script>
+        const API_URL = 'https://script.google.com/macros/s/AKfycbyqqTpgaflxKJ9xH0jq7mJ_jLzcoNhas3gNo0h5gvoa_6r5Ae9NFxJAJp7ZoYNnMRKl/exec'; 
+        let userData = JSON.parse(localStorage.getItem('tournyx_user')) || {};
+        
+        let activeMatchId = "";
+        let availablePrizes = []; // e.g. [{rank: 1, amount: 500}, {rank: 2, amount: 200}]
+        let currentPrizeIndex = 0;
+        
+        // Payout tracking maps
+        let cashAssignments = {}; // teamName -> amount
+        let pointAssignments = {}; // teamName -> points
+
+        function triggerHaptic() { if(navigator.vibrate) navigator.vibrate(40); }
+        function showToast(msg, isError = false) {
+            const t = document.getElementById('customToast');
+            t.innerText = msg; t.className = "show";
+            t.style.backgroundColor = isError ? "var(--accent-danger)" : "var(--accent-cyan)";
+            t.style.color = isError ? "white" : "#000";
+            setTimeout(() => t.className = "", 3000);
+        }
+
+        function checkVIP() {
+            if (String(userData.is_premium).toLowerCase() === 'true') {
+                document.body.classList.add('theme-vip');
+            }
+        }
+
+        // --- BACKGROUND ANIMATION ---
+        const canvas = document.getElementById('particles-canvas');
+        const ctx = canvas.getContext('2d');
+        canvas.width = window.innerWidth; canvas.height = window.innerHeight;
+        let pArray = [];
+        class P { constructor(){ this.x=Math.random()*canvas.width; this.y=Math.random()*canvas.height; this.s=Math.random()*2; this.c=Math.random()>0.5?'#bd00ff':'#00f2ff'; } u(){ this.y-=0.5; if(this.y<0)this.y=canvas.height; } d(){ ctx.fillStyle=this.c; ctx.globalAlpha=0.3; ctx.beginPath(); ctx.arc(Math.floor(this.x),Math.floor(this.y),this.s,0,Math.PI*2); ctx.fill(); } }
+        for(let i=0; i<30; i++) pArray.push(new P());
+        function anim(){ ctx.clearRect(0,0,canvas.width,canvas.height); pArray.forEach(p=>{p.u();p.d()}); requestAnimationFrame(anim); }
+        anim();
+        window.addEventListener('resize', () => { canvas.width = window.innerWidth; canvas.height = window.innerHeight; });
+
+        document.addEventListener("DOMContentLoaded", () => {
+            if (!userData.email || userData.role !== 'organizer') {
+                window.location.href = 'profile.html';
+                return;
+            }
+            checkVIP();
+            document.getElementById('orgEarningsBal').innerText = (parseInt(userData.earnings) || 0).toLocaleString();
+            document.getElementById('orgPointsBal').innerText = (parseInt(userData.points) || 0).toLocaleString();
+            
+            fetchOrganizerTournaments();
+        });
+
+        // --- STEP 1: FETCH TOURNAMENTS ---
+        function fetchOrganizerTournaments() {
+            const container = document.getElementById('tourneyListContainer');
+            fetch(API_URL, {
+                method: 'POST', headers: { 'Content-Type': 'text/plain' },
+                body: JSON.stringify({ action: 'get_tournaments' })
+            })
+            .then(res => res.json())
+            .then(data => {
+                if(data.status === "success" && data.data) {
+                    let myEmailStr = String(userData.email).toLowerCase().trim();
+                    let myEvents = data.data.filter(t => {
+                        let dbStatus = String(t.db_status || t.status || "").toLowerCase();
+                        if (dbStatus === 'completed' || dbStatus === 'deleted' || dbStatus === 'cancelled') return false;
+                        let backendEmail = String(t.org_email || t.organizer_email || t.email || "").toLowerCase().trim();
+                        return backendEmail === myEmailStr;
+                    });
+
+                    container.innerHTML = "";
+                    if(myEvents.length === 0) {
+                        container.innerHTML = "<div style='color:#888; text-align:center; padding:20px;'><i class='fa-solid fa-ghost' style='font-size:2rem; margin-bottom:10px;'></i><br>No active tournaments to resolve.</div>";
+                    } else {
+                        myEvents.forEach(t => {
+                            let matchId = t.id || t.match_id;
+                            let title = String(t.title || "Untitled").replace(/'/g, "\\'");
+                            
+                            // Extract prizes to pass them forward
+                            let pObj = {1:0, 2:0, 3:0};
+                            try {
+                                let pData = t.prize_json || t.prize_distribution || "";
+                                if(pData.startsWith("{")) {
+                                    let parsed = JSON.parse(pData);
+                                    if(parsed["1"]) pObj[1] = parseInt(String(parsed["1"]).replace(/[^0-9]/g, ''))||0;
+                                    if(parsed["2"]) pObj[2] = parseInt(String(parsed["2"]).replace(/[^0-9]/g, ''))||0;
+                                    if(parsed["3"]) pObj[3] = parseInt(String(parsed["3"]).replace(/[^0-9]/g, ''))||0;
+                                } else {
+                                    if(t.prize1) pObj[1] = parseInt(String(t.prize1).replace(/[^0-9]/g, ''))||0;
+                                    if(t.prize2) pObj[2] = parseInt(String(t.prize2).replace(/[^0-9]/g, ''))||0;
+                                    if(t.prize3) pObj[3] = parseInt(String(t.prize3).replace(/[^0-9]/g, ''))||0;
+                                    if(pObj[1]===0 && t.prize_pool) pObj[1] = parseInt(String(t.prize_pool).replace(/[^0-9]/g, ''))||0;
+                                }
+                            } catch(e) {}
+                            
+                            let pString = JSON.stringify(pObj);
+
+                            container.innerHTML += `
+                                <div class="tourney-card" onclick="openResolutionView('${matchId}', '${title}', '${pString}')">
+                                    <div class="t-info">
+                                        <h4>${t.title}</h4>
+                                        <p>Date: ${t.match_period || t.date || 'TBD'} • Status: Live</p>
+                                    </div>
+                                    <i class="fa-solid fa-chevron-right t-arrow"></i>
+                                </div>
+                            `;
+                        });
+                    }
+                } else {
+                    container.innerHTML = "<div style='color:#ff4d4d; text-align:center;'>Failed to load tournaments.</div>";
+                }
+            }).catch(() => {
+                container.innerHTML = "<div style='color:#ff4d4d; text-align:center;'>Network error.</div>";
+            });
+        }
+
+        // --- STEP 2: OPEN RESOLVE VIEW FOR A MATCH ---
+        function openResolutionView(matchId, title, prizeJsonStr) {
+            triggerHaptic();
+            activeMatchId = matchId;
+            document.getElementById('tourneyListSection').style.display = 'none';
+            document.getElementById('resolutionView').style.display = 'block';
+            document.getElementById('submitBar').classList.add('active');
+            
+            document.getElementById('resMatchTitle').innerText = title;
+
+            // Setup Prizes Array
+            availablePrizes = [];
+            currentPrizeIndex = 0;
+            cashAssignments = {};
+            pointAssignments = {};
+            updateTotalsUI();
+
+            let pObj = JSON.parse(prizeJsonStr);
+            let legendHtml = "";
+            if(pObj[1] > 0) { availablePrizes.push({rank: 1, amount: pObj[1]}); legendHtml += `<div class="prize-tag p1"><i class="fa-solid fa-trophy"></i> 1st: ₹${pObj[1]}</div>`; }
+            if(pObj[2] > 0) { availablePrizes.push({rank: 2, amount: pObj[2]}); legendHtml += `<div class="prize-tag p2"><i class="fa-solid fa-medal"></i> 2nd: ₹${pObj[2]}</div>`; }
+            if(pObj[3] > 0) { availablePrizes.push({rank: 3, amount: pObj[3]}); legendHtml += `<div class="prize-tag p3"><i class="fa-solid fa-award"></i> 3rd: ₹${pObj[3]}</div>`; }
+            
+            if(availablePrizes.length === 0) {
+                // Failsafe, assume 1st place gets 0 or custom amount
+                availablePrizes.push({rank: 1, amount: 0});
+                legendHtml = `<div class="prize-tag p1"><i class="fa-solid fa-trophy"></i> Winner Takes All</div>`;
+            }
+            document.getElementById('prizeLegendBox').innerHTML = legendHtml;
+
+            loadTeams(matchId);
+        }
+
+        function loadTeams(matchId) {
+            const container = document.getElementById('teamsContainer');
+            container.innerHTML = `<div class="loading-state"><i class="fa-solid fa-spinner fa-spin"></i> Loading registered teams...</div>`;
+
+            fetch(API_URL + "?action=get_all_matches")
+            .then(res => res.json())
+            .then(data => {
+                if(data.status === "success" && data.data) {
+                    let matchRegs = [];
+                    try {
+                        let parsedData = typeof data.data === 'string' ? JSON.parse(data.data) : data.data;
+                        matchRegs = parsedData.filter(m => String(m.match_id) === String(matchId));
+                    } catch(e) {
+                        matchRegs = data.data.filter(m => String(m.match_id) === String(matchId));
+                    }
+                    
+                    container.innerHTML = "";
+                    if(matchRegs.length > 0) {
+                        matchRegs.forEach(team => {
+                            // ULTRA AGGRESSIVE JSON STRIPPER
+                            let rawName = team.clan || team.username || team.user_email || "Unknown Player";
+                            let teamName = rawName;
+                            try {
+                                if (typeof rawName === 'string' && (rawName.trim().startsWith('{') || rawName.includes('username'))) {
+                                    let cleanJson = rawName.replace(/'/g, '"');
+                                    let p = JSON.parse(cleanJson);
+                                    teamName = p.clan || p.clan_name || p.username || p.ign || rawName;
+                                }
+                            } catch(e) {
+                                let match = String(rawName).match(/"(?:clan|clan_name|username|ign)"\s*:\s*"([^"]+)"/i);
+                                if (match) teamName = match[1];
+                            }
+                            
+                            let cleanId = String(teamName).replace(/[^a-zA-Z0-9]/g, ''); 
+                            let safeTeamNameForJs = String(teamName).replace(/"/g, "&quot;").replace(/'/g, "\\'");
+                            
+                            container.innerHTML += `
+                            <div class="team-card" id="card-${cleanId}">
+                                <div class="team-top">
+                                    <div class="team-name">${teamName}</div>
+                                    <div class="rank-badge" id="badge-${cleanId}"></div>
+                                    <button class="action-btn" id="btn-${cleanId}" onclick="handleTeamAction('${cleanId}', '${safeTeamNameForJs}')">
+                                        <i class="fa-solid fa-crown"></i> Assign
+                                    </button>
+                                </div>
+                                <div class="points-allocator" id="pts-box-${cleanId}">
+                                    <input type="tel" inputmode="numeric" pattern="[0-9]*" id="inp-pts-${cleanId}" placeholder="Enter Points (e.g. 50)">
+                                    <button class="pts-save-btn" onclick="savePoints('${cleanId}', '${safeTeamNameForJs}')"><i class="fa-solid fa-check"></i></button>
+                                </div>
+                            </div>`;
+                        });
+                        updateActionButtons();
+                    } else {
+                        container.innerHTML = "<div style='color:#888; text-align:center; padding: 20px;'>No teams registered for this match.</div>";
+                        document.getElementById('btnFinalize').disabled = true;
+                    }
+                } else {
+                    container.innerHTML = "<div style='color:#ff4d4d; text-align:center;'>Error loading teams.</div>";
+                }
+            }).catch(() => {
+                container.innerHTML = "<div style='color:#ff4d4d; text-align:center;'>Network error while loading.</div>";
+            });
+        }
+
+        // --- STEP 3: INTERACTIVE PODIUM ASSIGNMENT ---
+        function getRankSuffix(i) {
+            let j = i % 10, k = i % 100;
+            if (j == 1 && k != 11) return "st";
+            if (j == 2 && k != 12) return "nd";
+            if (j == 3 && k != 13) return "rd";
+            return "th";
+        }
+
+        function updateActionButtons() {
+            let hasPrizesLeft = currentPrizeIndex < availablePrizes.length;
+            let currentPrize = availablePrizes[currentPrizeIndex];
+            
+            document.querySelectorAll('.team-card').forEach(card => {
+                let btn = card.querySelector('.action-btn');
+                let ptsBox = card.querySelector('.points-allocator');
+                
+                // If this card already has a cash prize or points, hide the button
+                if (card.classList.contains('ranked-1') || card.classList.contains('ranked-2') || card.classList.contains('ranked-3') || card.classList.contains('has-points')) {
+                    btn.style.display = 'none';
+                    ptsBox.style.display = 'none';
+                } else {
+                    // It is unassigned.
+                    btn.style.display = 'flex';
+                    if (hasPrizesLeft) {
+                        let rankText = `${currentPrize.rank}${getRankSuffix(currentPrize.rank)}`;
+                        btn.innerHTML = `<i class="fa-solid fa-crown"></i> ${rankText}`;
+                        btn.style.background = 'var(--accent-gradient)';
+                    } else {
+                        // Out of cash prizes. Switch to point assignment mode.
+                        btn.innerHTML = `<i class="fa-solid fa-plus"></i> Add PTS`;
+                        btn.style.background = 'rgba(255,255,255,0.1)';
+                    }
+                }
+            });
+        }
+
+        function handleTeamAction(cleanId, teamName) {
+            triggerHaptic();
+            let card = document.getElementById(`card-${cleanId}`);
+            let badge = document.getElementById(`badge-${cleanId}`);
+
+            if (currentPrizeIndex < availablePrizes.length) {
+                // ASSIGN CASH PRIZE
+                let prize = availablePrizes[currentPrizeIndex];
+                cashAssignments[teamName] = prize.amount;
+                
+                badge.innerText = `${prize.rank}${getRankSuffix(prize.rank)} (₹${prize.amount})`;
+                card.classList.add(`ranked-${prize.rank}`);
+                
+                currentPrizeIndex++;
+                updateActionButtons();
+                updateTotalsUI();
+            } else {
+                // OUT OF PRIZES -> OPEN POINTS ALLOCATOR
+                card.classList.add('points-mode');
+                document.getElementById(`btn-${cleanId}`).style.display = 'none';
+            }
+        }
+
+        function savePoints(cleanId, teamName) {
+            triggerHaptic();
+            let inp = document.getElementById(`inp-pts-${cleanId}`).value;
+            let pts = parseInt(inp) || 0;
+            
+            let card = document.getElementById(`card-${cleanId}`);
+            let badge = document.getElementById(`badge-${cleanId}`);
+            
+            if (pts > 0) {
+                pointAssignments[teamName] = pts;
+                badge.innerText = `+${pts} PTS`;
+                badge.style.display = 'inline-block';
+                badge.style.background = 'rgba(255,255,255,0.1)';
+                badge.style.color = 'var(--accent-orange)';
+                card.classList.add('has-points');
+            }
+            card.classList.remove('points-mode');
+            updateActionButtons();
+            updateTotalsUI();
+        }
+
+        function updateTotalsUI() {
+            let totC = 0; let totP = 0;
+            Object.values(cashAssignments).forEach(v => totC += v);
+            Object.values(pointAssignments).forEach(v => totP += v);
+
+            let orgEarn = parseInt(userData.earnings) || 0;
+            let orgPts = parseInt(userData.points) || 0;
+
+            let cText = document.getElementById('totCash');
+            let pText = document.getElementById('totPts');
+            let subBtn = document.getElementById('btnFinalize');
+
+            cText.innerText = `₹${totC.toLocaleString()}`;
+            pText.innerText = `${totP.toLocaleString()} PTS`;
+
+            let hasError = false;
+            if (totC > orgEarn) { cText.classList.add('err'); hasError = true; } else { cText.classList.remove('err'); }
+            if (totP > orgPts) { pText.classList.add('err'); hasError = true; } else { pText.classList.remove('err'); }
+
+            if (hasError) {
+                subBtn.disabled = true;
+                subBtn.innerText = "Insufficient Wallet Balance";
+                subBtn.style.background = "rgba(255,77,77,0.2)";
+                subBtn.style.color = "var(--accent-danger)";
+            } else {
+                subBtn.disabled = false;
+                subBtn.innerText = "Finalize Payouts";
+                subBtn.style.background = ""; // reset to CSS default
+                subBtn.style.color = "";
+            }
+        }
+
+        // --- STEP 4: SUBMIT BATCH RESOLUTION ---
+        function submitResolution() {
+            if (Object.keys(cashAssignments).length === 0 && Object.keys(pointAssignments).length === 0) {
+                showToast("No prizes or points assigned!", true); return;
+            }
+
+            if (!confirm("⚠️ Confirm Payouts?\n\nThis will deduct the totals from your wallet, credit the players, and permanently close this match.")) return;
+
+            triggerHaptic();
+            const btn = document.getElementById('btnFinalize');
+            btn.innerHTML = "<i class='fa-solid fa-spinner fa-spin'></i> Processing Transaction...";
+            btn.disabled = true;
+
+            // Format data for backend
+            let cArr = []; for (let team in cashAssignments) { cArr.push({name: team, amount: cashAssignments[team]}); }
+            let pArr = []; for (let team in pointAssignments) { pArr.push({name: team, points: pointAssignments[team]}); }
+
+            let payload = {
+                action: 'resolve_match_batch',
+                match_id: activeMatchId,
+                org_email: userData.email,
+                cash_winners: cArr,
+                point_winners: pArr
+            };
+
+            fetch(API_URL, {
+                method: 'POST',
+                headers: { 'Content-Type': 'text/plain' },
+                body: JSON.stringify(payload)
+            })
+            .then(res => res.json())
+            .then(data => {
+                if (data.status === 'success') {
+                    // Update local wallet visually
+                    let totC = 0; cArr.forEach(x => totC += x.amount);
+                    let totP = 0; pArr.forEach(x => totP += x.points);
+                    userData.earnings = (parseInt(userData.earnings) || 0) - totC;
+                    userData.points = (parseInt(userData.points) || 0) - totP;
+                    localStorage.setItem('tournyx_user', JSON.stringify(userData));
+
+                    showToast("✅ Match Closed & Payouts Sent!");
+                    setTimeout(() => { window.location.href = 'profile.html'; }, 1500);
+                } else {
+                    showToast(data.message || "Transaction failed.", true);
+                    btn.innerText = "Finalize Payouts"; btn.disabled = false;
+                }
+            })
+            .catch(err => {
+                showToast("Network Error. Please verify in dashboard.", true);
+                setTimeout(() => { window.location.href = 'profile.html'; }, 2000);
+            });
+        }
+    </script>
+</body>
+</html>
