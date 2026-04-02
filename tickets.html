@@ -51,7 +51,7 @@
             --text-main: #ffffff; --text-muted: #a0a0b0;
             --font-head: 'Orbitron', sans-serif; --font-body: 'Rajdhani', sans-serif;
         }
-        
+
         /* --- TRUE GOLDEN VIP THEME --- */
         html.theme-vip {
             --accent-cyan: #FFD700;
@@ -383,34 +383,44 @@
         .floating-plus:hover { transform: translateX(-50%) scale(1.1) rotate(90deg); box-shadow: 0 15px 35px rgba(0,242,255,0.6); }
 
         @media (min-width: 850px) { .bottom-nav { display: none !important; } }
-
-        /* PDF Template Hidden */
-        <div style="position: absolute; left: 0; top: 0; width: 100%; opacity: 0; pointer-events: none; z-index: -9999;">
-            <div id="pdfTemplate" style="background:#070311; color:#ffffff; padding:40px; font-family:'Helvetica Neue', Arial, sans-serif; width:800px; box-sizing:border-box;">
-                <div style="text-align:center; border-bottom:2px solid #1a0a3a; padding-bottom:30px; margin-bottom:30px;">
-                    <div style="background: linear-gradient(90deg, #bd00ff, #00f2ff); padding: 15px; border-radius: 8px; margin-bottom: 10px; display: inline-block; width: 100%;">
-                        <h1 style="margin:0; font-size: 28px; font-weight: 900; color: #ffffff; text-transform:uppercase; letter-spacing: 2px;">Tournyx Esports</h1>
-                    </div>
-                    <p style="color:#a0a0b0; margin:8px 0 0 0; font-size:14px; letter-spacing: 1px; text-transform: uppercase;">Official Ticket Invoice</p>
-                </div>
-                <div style="display:flex; justify-content:space-between; margin-bottom:40px; background:linear-gradient(135deg, #110822, #1a0a3a); padding:25px; border-radius:12px; border: 1px solid #bd00ff; box-shadow: 0 0 15px rgba(189,0,255,0.2);">
-                    <div>
-                        <p style="margin:0 0 5px 0; color:#00f2ff; font-size:12px; text-transform:uppercase; letter-spacing:1px; font-weight: bold;">Player Profile</p>
-                        <h3 style="margin:0; color:#ffffff; font-size:20px;" id="pdfUserName">Name</h3>
-                    </div>
-                    <div style="text-align:right;">
-                        <p style="margin:0 0 5px 0; color:#00f2ff; font-size:12px; text-transform:uppercase; letter-spacing:1px; font-weight: bold;">Registered Email</p>
-                        <h3 style="margin:0; color:#ffffff; font-size:20px;" id="pdfUserEmail">email@domain.com</h3>
-                    </div>
-                </div>
-                <div id="pdfDynamicContentArea"></div>
-            </div>
-        </div>
     </style>
 </head>
 <body>
     <div class="bg-gradient"></div>
     <canvas id="particles-canvas"></canvas>
+
+    <div id="pdfWrapper" style="position: absolute; left: -9999px; top: 0; width: 800px; background:#070311; z-index: -1;">
+        <div id="pdfTemplate" style="background:#070311; color:#ffffff; padding:40px; font-family:'Helvetica Neue', Arial, sans-serif; width:800px; box-sizing:border-box;">
+            <div style="text-align:center; border-bottom:2px solid #1a0a3a; padding-bottom:30px; margin-bottom:30px;">
+                <div style="background: linear-gradient(90deg, #bd00ff, #00f2ff); padding: 15px; border-radius: 8px; margin-bottom: 10px; display: inline-block; width: 100%;">
+                    <h1 style="margin:0; font-size: 28px; font-weight: 900; color: #ffffff; text-transform:uppercase; letter-spacing: 2px;">Tournyx Esports</h1>
+                </div>
+                <p style="color:#a0a0b0; margin:8px 0 0 0; font-size:14px; letter-spacing: 1px; text-transform: uppercase;">Official Transaction Ledger</p>
+            </div>
+            
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:40px; background:linear-gradient(135deg, #110822, #1a0a3a); padding:25px; border-radius:12px; border: 1px solid #bd00ff;">
+                <div style="display:flex; align-items:center; gap: 15px;">
+                    <img id="pdfUserAvatar" src="https://tournyx.in/favicon.png" style="width:60px; height:60px; border-radius:50%; border:2px solid #00f2ff; object-fit: cover;">
+                    <div>
+                        <p style="margin:0 0 5px 0; color:#00f2ff; font-size:12px; text-transform:uppercase; font-weight: bold;">Player Profile</p>
+                        <h3 style="margin:0; color:#ffffff; font-size:22px;" id="pdfUserName">Name</h3>
+                        <p style="margin:5px 0 0 0; color:#aaa; font-size:14px;" id="pdfUserEmail">email</p>
+                    </div>
+                </div>
+                <div style="text-align:right;">
+                    <p style="margin:0 0 5px 0; color:#00f2ff; font-size:12px; text-transform:uppercase; font-weight: bold;">Current Balance</p>
+                    <h3 style="margin:0; color:#ffffff; font-size:24px;" id="pdfUserBal">0</h3>
+                </div>
+            </div>
+            
+            <div id="pdfDynamicContentArea"></div>
+            
+            <div style="margin-top: 40px; text-align: center; border-top: 1px dashed #333; padding-top: 20px; color: #666; font-size: 12px;">
+                Generated securely by Tournyx 256-bit Digital Ticketing System.<br>
+                © 2026 Tournyx Esports. Powered by Quva.
+            </div>
+        </div>
+    </div>
 
     <div id="skeletonLoader">
         <div class="skel-wrapper">
@@ -672,28 +682,6 @@
         <a class="nav-item" href="profile.html"><i class="fa-solid fa-user"></i><span>Profile</span></a>
     </nav>
 
-    <div style="position: absolute; left: 0; top: 0; width: 100%; opacity: 0; pointer-events: none; z-index: -9999;">
-        <div id="pdfTemplate" style="background:#070311; color:#ffffff; padding:40px; font-family:'Helvetica Neue', Arial, sans-serif; width:800px; box-sizing:border-box;">
-            <div style="text-align:center; border-bottom:2px solid #1a0a3a; padding-bottom:30px; margin-bottom:30px;">
-                <div style="background: linear-gradient(90deg, #bd00ff, #00f2ff); padding: 15px; border-radius: 8px; margin-bottom: 10px; display: inline-block; width: 100%;">
-                    <h1 style="margin:0; font-size: 28px; font-weight: 900; color: #ffffff; text-transform:uppercase; letter-spacing: 2px;">Tournyx Esports</h1>
-                </div>
-                <p style="color:#a0a0b0; margin:8px 0 0 0; font-size:14px; letter-spacing: 1px; text-transform: uppercase;">Official Ticket Invoice</p>
-            </div>
-            <div style="display:flex; justify-content:space-between; margin-bottom:40px; background:linear-gradient(135deg, #110822, #1a0a3a); padding:25px; border-radius:12px; border: 1px solid #bd00ff; box-shadow: 0 0 15px rgba(189,0,255,0.2);">
-                <div>
-                    <p style="margin:0 0 5px 0; color:#00f2ff; font-size:12px; text-transform:uppercase; letter-spacing:1px; font-weight: bold;">Player Profile</p>
-                    <h3 style="margin:0; color:#ffffff; font-size:20px;" id="pdfUserName">Name</h3>
-                </div>
-                <div style="text-align:right;">
-                    <p style="margin:0 0 5px 0; color:#00f2ff; font-size:12px; text-transform:uppercase; letter-spacing:1px; font-weight: bold;">Registered Email</p>
-                    <h3 style="margin:0; color:#ffffff; font-size:20px;" id="pdfUserEmail">email@domain.com</h3>
-                </div>
-            </div>
-            <div id="pdfDynamicContentArea"></div>
-        </div>
-    </div>
-
     <script>
         const inputs = document.querySelectorAll('input, select, textarea');
         const bNav = document.querySelector('.bottom-nav');
@@ -787,6 +775,7 @@
             let name = currentUser.username ? currentUser.username.split(" ")[0] : "Player";
             let tagHTML = isGuest ? '<span style="background:rgba(255,255,255,0.1); color:#ccc; padding:2px 6px; border-radius:4px; font-size:0.6rem; margin-left:8px; font-family:var(--font-head); font-weight:bold;">GUEST</span>' : (currentUser.role === 'organizer' ? '<span style="background:var(--accent-orange); color:black; padding:2px 6px; border-radius:4px; font-size:0.6rem; margin-left:8px; font-family:var(--font-head); font-weight:bold;">ORGANIZER</span>' : '<span style="background:var(--accent-purple); color:white; padding:2px 6px; border-radius:4px; font-size:0.6rem; margin-left:8px; font-family:var(--font-head); font-weight:bold;">PLAYER</span>');
             document.getElementById('dynamicGreeting').innerHTML = `${greet} ${name} ${tagHTML}`;
+            if(currentUser.avatar) document.getElementById('pdfUserAvatar').src = currentUser.avatar;
         }
 
         let isPrivacyOn = false;
@@ -819,23 +808,35 @@
 
             let pts = parseInt(currentUser.points) || 0;
             
-            // ORGANIZER ROLE CHECK
-            if (currentUser.role === 'organizer') {
+            let isOrg = currentUser.role === 'organizer';
+            let isVip = document.documentElement.classList.contains('theme-vip');
+            
+            if (isOrg) {
                 document.getElementById('displayTickets').innerText = "₹" + formatNum(totalRupees);
                 document.getElementById('mainBalanceTxIcon').style.display = 'none';
                 document.getElementById('balanceLabelText').innerHTML = 'Total Wallet Earnings <i class="fa-solid fa-eye" id="eyeIcon" onclick="if(isGuest) return showLoginModal(); togglePrivacy(); triggerHaptic();" style="margin-left:8px; cursor: pointer; color:#888;"></i>';
+                document.getElementById('pdfUserBal').innerText = "₹" + formatNum(totalRupees);
             } else {
                 animateValue(document.getElementById('displayTickets'), 0, totalTickets, 1000);
                 document.getElementById('mainBalanceTxIcon').style.display = 'inline-flex';
                 document.getElementById('balanceLabelText').innerHTML = 'Total Available Pass <i class="fa-solid fa-eye" id="eyeIcon" onclick="if(isGuest) return showLoginModal(); togglePrivacy(); triggerHaptic();" style="margin-left:8px; cursor: pointer; color:#888;"></i>';
+                document.getElementById('pdfUserBal').innerText = totalTickets + " Passes";
             }
             
             animateValue(document.getElementById('displayPoints'), 0, pts, 1000);
             
             let badge = document.getElementById('vipBadge'); let prog = document.getElementById('vipProgress'); let nTier = document.getElementById('nextTierText');
-            if (totalTickets >= 500) { badge.innerHTML = '<i class="fa-solid fa-crown"></i> ELITE TIER'; badge.className = 'vip-badge'; prog.style.width = '100%'; nTier.innerText = "Max Level"; }
-            else if (totalTickets >= 100) { badge.innerHTML = '<i class="fa-solid fa-star"></i> PRO GAMER'; badge.className = 'vip-badge vip-silver'; prog.style.width = ((totalTickets/500)*100)+'%'; nTier.innerText = "Elite Tier"; }
-            else { badge.innerHTML = '<span class="tx-icon" style="font-size: 0.9em; filter:none; color:white; -webkit-text-fill-color:white;">TX</span> STANDARD'; badge.className = 'vip-badge vip-bronze'; prog.style.width = ((totalTickets/100)*100)+'%'; nTier.innerText = "Pro Gamer"; }
+            
+            if (isVip) {
+                badge.innerHTML = '<i class="fa-solid fa-crown"></i> VIP MEMBER';
+                badge.className = 'vip-badge'; 
+                prog.style.width = '100%'; 
+                nTier.innerText = "Max Level";
+            } else {
+                if (totalTickets >= 500) { badge.innerHTML = '<i class="fa-solid fa-crown"></i> ELITE TIER'; badge.className = 'vip-badge'; prog.style.width = '100%'; nTier.innerText = "Max Level"; }
+                else if (totalTickets >= 100) { badge.innerHTML = '<i class="fa-solid fa-star"></i> PRO GAMER'; badge.className = 'vip-badge vip-silver'; prog.style.width = ((totalTickets/500)*100)+'%'; nTier.innerText = "Elite Tier"; }
+                else { badge.innerHTML = '<span class="tx-icon" style="font-size: 0.9em; filter:none; color:white; -webkit-text-fill-color:white;">TX</span> STANDARD'; badge.className = 'vip-badge vip-bronze'; prog.style.width = ((totalTickets/100)*100)+'%'; nTier.innerText = "Pro Gamer"; }
+            }
 
             renderInventory(baseTickets, goldenTickets);
         }
@@ -1026,7 +1027,8 @@
 
         async function syncLiveTransactions() {
             try {
-                let userRes = await fetch(API_URL + "?action=sync_user&email=" + encodeURIComponent(currentUser.email));
+                let ts = new Date().getTime();
+                let userRes = await fetch(API_URL + "?action=sync_user&email=" + encodeURIComponent(currentUser.email) + "&t=" + ts);
                 let userDataObj = await userRes.json();
                 if(userDataObj.status === 'success' && userDataObj.data && userDataObj.data.rupees !== undefined && userDataObj.data.rupees !== "") {
                     currentUser.rupees = String(userDataObj.data.rupees); // Secure String preservation for +
@@ -1035,7 +1037,7 @@
                     localStorage.setItem('tournyx_user', JSON.stringify(currentUser)); 
                     updateWalletDisplay(); 
                 }
-                let txnRes = await fetch(API_URL + "?action=get_transactions&email=" + encodeURIComponent(currentUser.email));
+                let txnRes = await fetch(API_URL + "?action=get_transactions&email=" + encodeURIComponent(currentUser.email) + "&t=" + ts);
                 let txnDataObj = await txnRes.json();
                 if(txnDataObj.status === 'success' && txnDataObj.data && Array.isArray(txnDataObj.data)) {
                     localStorage.setItem('tournyx_txns', JSON.stringify(txnDataObj.data));
@@ -1068,9 +1070,10 @@
             let cat = t.category || "General"; let catIcon = "fa-ticket-simple"; let iconClass = isCredit ? "icon-credit" : "icon-debit"; let mainIcon = isCredit ? "fa-arrow-down" : "fa-arrow-up";
             
             let titleLower = String(t.title || "").toLowerCase();
-            if(titleLower.includes('tournament') || titleLower.includes('entry')) { cat = "Entry Fee"; catIcon = "fa-gamepad"; iconClass = "icon-debit"; mainIcon = "fa-gamepad"; }
-            if(titleLower.includes('purchase') || titleLower.includes('bought')) { cat = "Purchase"; catIcon = "fa-ticket-simple"; iconClass = "icon-credit"; mainIcon = "fa-ticket-simple"; }
-            if(titleLower.includes('prize')) { cat = "Prize Won"; catIcon = "fa-trophy"; iconClass = "icon-credit"; mainIcon = "fa-trophy"; }
+            if(titleLower.includes('tournament') || titleLower.includes('entry') || titleLower.includes('joined')) { cat = "Tournament Entry"; catIcon = "fa-gamepad"; iconClass = "icon-debit"; mainIcon = "fa-gamepad"; }
+            else if(titleLower.includes('purchase') || titleLower.includes('bought')) { cat = "Pass Purchase"; catIcon = "fa-ticket-simple"; iconClass = "icon-credit"; mainIcon = "fa-ticket-simple"; }
+            else if(titleLower.includes('prize') || titleLower.includes('won')) { cat = "Prize Won"; catIcon = "fa-trophy"; iconClass = "icon-credit"; mainIcon = "fa-trophy"; }
+            else if(titleLower.includes('refund') || titleLower.includes('withdrawn')) { cat = "Refund"; catIcon = "fa-rotate-left"; iconClass = "icon-credit"; mainIcon = "fa-rotate-left"; }
             
             if(isPending) { iconClass = "icon-debit"; mainIcon = "fa-clock"; }
             if(isFailed) { mainIcon = "fa-xmark"; iconClass = "icon-debit"; }
@@ -1084,6 +1087,10 @@
             if(ticketVal === 0 && t.amount > 0 && (t.title.includes("Pass") || t.title.includes("Ticket"))) ticketVal = t.amount;
 
             let amtHTML = t.amount > 0 ? `${isCredit?'+':'-'} ${ticketVal} <span class="tx-icon" style="font-size:0.8rem; margin-left:3px; vertical-align:baseline;">TX</span>` : `---`;
+            if (currentUser.role === 'organizer') {
+                inOutLabel = isCredit ? `<div class="in-out-label in-label">EARNINGS IN</div>` : `<div class="in-out-label out-label">WITHDRAWAL</div>`;
+                amtHTML = t.amount > 0 ? `${isCredit?'+':'-'} ₹${t.amount}` : `---`;
+            }
 
             return `
                 <div class="txn-item glow-hover" style="animation-delay:${delay*0.1}s" onclick="openReceipt(${index})">
@@ -1120,7 +1127,12 @@
             iconEl.innerHTML = `<i class="fa-solid ${mainIcon}"></i>`;
             iconEl.className = `rcpt-icon ${isPending ? 'icon-debit' : (isCredit ? 'icon-credit' : 'icon-debit')}`;
             
-            document.getElementById('rcptAmt').innerHTML = t.amount > 0 ? `${isCredit?'+':'-'} ${ticketVal} Pass` : `Review Pending`;
+            let amtDisplay = t.amount > 0 ? `${isCredit?'+':'-'} ${ticketVal} Pass` : `Review Pending`;
+            if (currentUser.role === 'organizer') {
+                amtDisplay = t.amount > 0 ? `${isCredit?'+':'-'} ₹${t.amount}` : `Review Pending`;
+            }
+
+            document.getElementById('rcptAmt').innerHTML = amtDisplay;
             document.getElementById('rcptAmt').className = `rcpt-amt ${isCredit ? 'amt-credit' : 'amt-debit'}`;
             document.getElementById('rcptTitle').innerText = t.title;
             
@@ -1132,6 +1144,14 @@
             let sEl = document.getElementById('rcptStatusVal');
             sEl.innerHTML = `<i class="fa-solid ${mainIcon}"></i> ${t.status}`;
             sEl.style.color = statusColor;
+
+            let cat = t.category || "General";
+            let titleLower = String(t.title || "").toLowerCase();
+            if(titleLower.includes('tournament') || titleLower.includes('entry') || titleLower.includes('joined')) cat = "Tournament Entry";
+            if(titleLower.includes('purchase') || titleLower.includes('bought')) cat = "Pass Purchase";
+            if(titleLower.includes('prize') || titleLower.includes('won')) cat = "Prize Won";
+            if(titleLower.includes('refund') || titleLower.includes('withdrawn')) cat = "Refund";
+            document.getElementById('rcptCat').innerHTML = `<span class="tx-icon" style="font-size:0.9rem;">TX</span> ${cat}`;
 
             document.getElementById('pdfUserName').innerText = currentUser.username || "User";
             document.getElementById('pdfUserEmail').innerText = currentUser.email || "";
@@ -1154,8 +1174,8 @@
                         <td style="padding:15px 0; text-align:right; font-weight:bold; color:${statusColor}; text-transform: uppercase;">${t.status}</td>
                     </tr>
                     <tr>
-                        <td style="padding:25px 0; color:#ffffff; font-size:20px; font-weight:bold;">Total Quantity</td>
-                        <td style="padding:25px 0; text-align:right; font-size:26px; font-weight:bold; color:${isCredit ? "#00ff7f" : "#ff4d4d"};">${t.amount > 0 ? `${isCredit?'+':'-'} ${ticketVal} Pass` : `0`}</td>
+                        <td style="padding:25px 0; color:#ffffff; font-size:20px; font-weight:bold;">Total Amount</td>
+                        <td style="padding:25px 0; text-align:right; font-size:26px; font-weight:bold; color:${isCredit ? "#00ff7f" : "#ff4d4d"};">${amtDisplay}</td>
                     </tr>
                 </table>
             `;
@@ -1168,16 +1188,16 @@
         
         function downloadReceiptPDF() {
             triggerHaptic();
-            const element = document.getElementById('pdfTemplate');
+            const element = document.getElementById('pdfWrapper');
             
             setTimeout(() => {
                 html2pdf().set({ 
                     margin: 0.5, 
-                    filename: `Tournyx_Pass_${activeReceiptId}.pdf`, 
+                    filename: `Tournyx_Receipt_${activeReceiptId}.pdf`, 
                     image: { type: 'jpeg', quality: 1 }, 
                     html2canvas: { scale: 2, useCORS: true, backgroundColor: '#070311', windowWidth: 800 }, 
                     jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' } 
-                }).from(element).save();
+                }).from(document.getElementById('pdfTemplate')).save();
             }, 100);
             
             showToast("Downloading Secure Pass PDF...");
@@ -1196,7 +1216,7 @@
                             <th style="padding:15px 12px; text-transform:uppercase;">Ticket / Txn ID</th>
                             <th style="padding:15px 12px; text-transform:uppercase;">Description</th>
                             <th style="padding:15px 12px; text-transform:uppercase;">Status</th>
-                            <th style="padding:15px 12px; text-align:right; text-transform:uppercase;">Quantity</th>
+                            <th style="padding:15px 12px; text-align:right; text-transform:uppercase;">Amount</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -1211,14 +1231,19 @@
                 
                 let ticketVal = Math.floor(t.amount / TICKET_PRICE) || 0;
                 if(ticketVal === 0 && t.amount > 0 && (t.title.includes("Pass") || t.title.includes("Ticket"))) ticketVal = t.amount;
+                
+                let amtDisplay = t.amount > 0 ? `${isCredit?'+':'-'} ${ticketVal} Pass` : `0`;
+                if (currentUser.role === 'organizer') {
+                    amtDisplay = t.amount > 0 ? `${isCredit?'+':'-'} ₹${t.amount}` : `0`;
+                }
 
                 tableHTML += `
                     <tr style="border-bottom:1px solid rgba(255,255,255,0.05); background: rgba(0,0,0,0.2);">
                         <td style="padding:15px 12px; color:#aaa;">${t.date ? t.date.split(',')[0] : "Recent"}</td>
                         <td style="padding:15px 12px; font-family:monospace; color:#00f2ff;">${t.id || "SYS_TXN"}</td>
                         <td style="padding:15px 12px; color:#fff; font-weight: bold;">${t.title}</td>
-                        <td style="padding:15px 12px; font-weight:bold; color:${statusCol};">${t.status}</td>
-                        <td style="padding:15px 12px; text-align:right; font-weight:bold; font-size: 14px; color:${amtCol};">${isCredit?'+':'-'} ${ticketVal} Pass</td>
+                        <td style="padding:15px 12px; font-weight:bold; color:${statusCol}; text-transform:uppercase;">${t.status}</td>
+                        <td style="padding:15px 12px; text-align:right; font-weight:bold; font-size: 14px; color:${amtCol};">${amtDisplay}</td>
                     </tr>
                 `;
             });
@@ -1229,7 +1254,6 @@
             document.getElementById('pdfUserEmail').innerText = currentUser.email || "";
             document.getElementById('pdfDynamicContentArea').innerHTML = tableHTML;
             
-            const element = document.getElementById('pdfTemplate');
             const opt = {
                 margin: 0.5,
                 filename: `Tournyx_Tickets_Ledger_${currentUser.username.replace(/\s+/g, '_')}.pdf`,
@@ -1239,7 +1263,7 @@
             };
             
             setTimeout(() => {
-                html2pdf().set(opt).from(element).save();
+                html2pdf().set(opt).from(document.getElementById('pdfTemplate')).save();
             }, 100);
         }
 
