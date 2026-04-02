@@ -2223,9 +2223,23 @@
                 pendingRegistrationData = { clanName: clanName };
                 
                 let user = JSON.parse(localStorage.getItem('tournyx_user')) || {};
-                let currentRupees = parseInt(user.rupees) || 0;
-                let totalTickets = Math.floor(currentRupees / 10);
+                
+                // --- 🚀 NEW MAGIC PARSER ADDED HERE 🚀 ---
+                let rawRupees = String(user.rupees || user.earnings || "0");
+                let baseRupees = 0; let goldenRupees = 0;
+                
+                if (rawRupees.includes('+')) {
+                    let parts = rawRupees.split('+');
+                    baseRupees = parseFloat(parts[0]) || 0;
+                    goldenRupees = parseFloat(parts[1]) || 0;
+                } else {
+                    baseRupees = parseFloat(rawRupees) || 0;
+                }
+
+                let totalRupees = baseRupees + goldenRupees;
+                let totalTickets = Math.floor(totalRupees / 10);
                 let currentPoints = parseInt(user.points) || 0;
+                // -----------------------------------------
                 
                 // GAME TICKET CHECK LOGIC
                 let txns = JSON.parse(localStorage.getItem('tournyx_txns')) || [];
