@@ -2205,9 +2205,17 @@
         
         function closeRegistrationFlow() { triggerHaptic(); document.getElementById('regOverlay').classList.remove('active'); }
 
+        
+                function closePaymentModal() { 
+            if(navigator.vibrate) navigator.vibrate(40); 
+            document.getElementById('paymentOverlay').classList.remove('active'); 
+            document.getElementById('finalSubmitBtn').disabled = false;
+            document.getElementById('finalSubmitBtn').innerText = "Proceed";
+        }
+
         function processRegistrationPayment(e) {
             e.preventDefault();
-            triggerHaptic();
+            if(navigator.vibrate) navigator.vibrate(40);
             
             const submitBtn = document.getElementById('finalSubmitBtn');
             submitBtn.disabled = true;
@@ -2224,25 +2232,25 @@
                 
                 let user = JSON.parse(localStorage.getItem('tournyx_user')) || {};
                 
-                // 🚀 BULLETPROOF MAGIC PARSER (Protects 200 + 50) 🚀
+                // 🚀 BULLETPROOF MAGIC PARSER (Protects 200 + 50 from going negative) 🚀
                 let rawRupees = String(user.rupees || user.earnings || "0");
                 let baseRupees = 0; let goldenRupees = 0;
                 
                 if (rawRupees.includes('+')) {
                     let parts = rawRupees.split('+');
-                    baseRupees = parseFloat(parts[0]) || 0;
-                    goldenRupees = parseFloat(parts[1]) || 0;
+                    baseRupees = Math.max(0, parseFloat(parts[0]) || 0);
+                    goldenRupees = Math.max(0, parseFloat(parts[1]) || 0);
                 } else {
-                    baseRupees = parseFloat(rawRupees) || 0;
+                    baseRupees = Math.max(0, parseFloat(rawRupees) || 0);
                 }
 
-                let totalTickets = Math.floor(baseRupees / 10);
+                let baseTickets = Math.floor(baseRupees / 10);
                 let goldenTickets = Math.floor(goldenRupees / 10);
                 let currentPoints = parseInt(user.points) || 0;
                 
                 // 🎮 BULLETPROOF GAME TICKET ALLOCATOR 🎮
                 let txns = JSON.parse(localStorage.getItem('tournyx_txns')) || [];
-                let ffCount = 0; let bgmiCount = 0;
+                let ffBought = 0; let bgmiBought = 0;
                 
                 txns.forEach(txn => {
                     let cat = String(txn.category || "").toLowerCase();
@@ -2250,20 +2258,21 @@
                     // Identify past pass purchases correctly
                     if(txn.type === "Credit" && (cat.includes("purchase") || title.includes("bought") || title.includes("pass")) && (txn.status === "Success" || txn.status === "Pending")) {
                         let count = Math.floor(txn.amount / 10);
-                        if(title.includes("free fire") || title.includes("ff")) ffCount += count;
-                        else if(title.includes("bgmi")) bgmiCount += count;
+                        if(title.includes("free fire") || title.includes("ff")) ffBought += count;
+                        else if(title.includes("bgmi")) bgmiBought += count;
                     }
                 });
 
-                let identified = ffCount + bgmiCount;
+                let totalBought = ffBought + bgmiBought;
                 let ffDisplay = 0; let bgmiDisplay = 0; 
-                let uniDisplay = goldenTickets; // Always add the Golden Tickets to the Universal Pool!
+                let uniDisplay = goldenTickets; // Golden Tickets go to the Universal Pool!
 
-                if (identified === 0) { 
-                    uniDisplay += totalTickets; // If no history, assume all base tickets are universal
+                if (totalBought === 0) { 
+                    uniDisplay += baseTickets; // If no history, assume all base tickets are universal
                 } else {
-                    ffDisplay = Math.round((ffCount / identified) * totalTickets);
-                    bgmiDisplay = totalTickets - ffDisplay;
+                    let ffRatio = ffBought / totalBought;
+                    ffDisplay = Math.round(baseTickets * ffRatio);
+                    bgmiDisplay = baseTickets - ffDisplay;
                 }
 
                 // Target the specific game requested by the tournament
@@ -2275,7 +2284,7 @@
                 } else if (gameName.includes('bgmi')) {
                     availableSpecific += bgmiDisplay;
                 } else {
-                    availableSpecific += totalTickets; // Fallback: allow all tickets for generic esports
+                    availableSpecific += baseTickets; // Fallback: allow all tickets for generic esports
                 }
 
                 let headerTxt = "";
@@ -2307,7 +2316,7 @@
         }
 
         function confirmPayment(method, cost, available) {
-            triggerHaptic();
+            if(navigator.vibrate) navigator.vibrate(40);
             
             if (available < cost) {
                 showToast(method === 'tickets' ? "Insufficient Passes! Get more tickets." : "Insufficient Points!", true);
@@ -2325,10 +2334,10 @@
                 
                 if (rawRupees.includes('+')) {
                     let pts = rawRupees.split('+');
-                    baseR = parseFloat(pts[0]) || 0;
-                    goldR = parseFloat(pts[1]) || 0;
+                    baseR = Math.max(0, parseFloat(pts[0]) || 0);
+                    goldR = Math.max(0, parseFloat(pts[1]) || 0);
                 } else {
-                    baseR = parseFloat(rawRupees) || 0;
+                    baseR = Math.max(0, parseFloat(rawRupees) || 0);
                 }
                 
                 let costRupees = cost * 10;
@@ -2339,7 +2348,7 @@
                 } else {
                     let rem = costRupees - baseR;
                     baseR = 0; // Base is depleted
-                    goldR -= rem; // Take the remainder from Universal Gold
+                    goldR = Math.max(0, goldR - rem); // Take remainder from Universal Gold, NEVER go below 0
                 }
                 
                 if (goldR > 0) {
@@ -2349,7 +2358,7 @@
                 }
             } 
             else if (method === 'points') { 
-                user.points = (parseInt(user.points) || 0) - cost; 
+                user.points = Math.max(0, (parseInt(user.points) || 0) - cost); 
             } 
 
             localStorage.setItem('tournyx_user', JSON.stringify(user));
