@@ -141,8 +141,7 @@
         .tkt-theme-BGM { --glow-color: #00ff7f; --glow-border: #00b09b; }
         .tkt-theme-UNI { --glow-color: #FFD700; --glow-border: #FF8C00; }
 
-        .tournyx-ticket { background: linear-gradient(135deg, rgba(20,10,35,0.9), rgba(5,2,12,0.9)); border: 1px solid var(--glow-border, var(--accent-cyan)); border-radius: 15px; display: flex; align-items: center; padding: 15px; margin-bottom: 12px; position: relative; box-shadow: 0 5px 20px rgba(0,0,0,0.5), inset 0 0 15px rgba(0,0,0,0.2), 0 0 15px var(--glow-color, rgba(0,242,255,0.1)); overflow: hidden; animation: fadeIn 0.5s ease; transition: 0.3s;}
-        .tournyx-ticket:active { transform: scale(0.98); border-color: var(--accent-cyan); }
+        .tournyx-ticket { background: linear-gradient(135deg, rgba(20,10,35,0.9), rgba(5,2,12,0.9)); border: 1px solid var(--glow-border, var(--accent-cyan)); border-radius: 15px; display: flex; align-items: center; padding: 15px; margin-bottom: 12px; position: relative; box-shadow: 0 5px 20px rgba(0,0,0,0.5), inset 0 0 15px rgba(0,0,0,0.2), 0 0 15px var(--glow-color, rgba(0,242,255,0.1)); overflow: hidden; animation: fadeIn 0.5s ease; }
         .tournyx-ticket::before { content: ''; position: absolute; left: -10px; top: 50%; transform: translateY(-50%); width: 20px; height: 20px; background: var(--primary-bg); border-radius: 50%; border-right: 1px solid var(--glow-border, var(--accent-cyan)); }
         .tournyx-ticket::after { content: ''; position: absolute; right: -10px; top: 50%; transform: translateY(-50%); width: 20px; height: 20px; background: var(--primary-bg); border-radius: 50%; border-left: 1px solid var(--glow-border, var(--accent-cyan)); }
         
@@ -326,7 +325,7 @@
     <div class="bg-gradient"></div>
     <canvas id="particles-canvas"></canvas>
 
-    <div id="pdfWrapper" style="position: absolute; left: 0; top: 0; width: 800px; background:#070311; z-index: -9999; opacity: 0; pointer-events: none;">
+    <div id="pdfWrapper" style="position: absolute; left: -9999px; top: 0; width: 800px; background:#070311; z-index: -1;">
         <div id="pdfTemplate" style="background:#070311; color:#ffffff; padding:40px; font-family:'Helvetica Neue', Arial, sans-serif; width:800px; box-sizing:border-box;">
             <div style="text-align:center; border-bottom:2px solid #1a0a3a; padding-bottom:30px; margin-bottom:30px;">
                 <div style="background: linear-gradient(90deg, #bd00ff, #00f2ff); padding: 15px; border-radius: 8px; margin-bottom: 10px; display: inline-block; width: 100%;">
@@ -553,7 +552,6 @@
                 <div class="rcpt-row" style="border-bottom:none;"><span class="rcpt-lbl">Pass ID</span><span class="rcpt-val"><span id="receiptId" style="font-size:0.85rem; color:#ccc;">TKT...</span> <i class="fa-regular fa-copy" style="color:var(--accent-cyan); cursor:pointer; padding:5px;" onclick="copyTxnId(); triggerHaptic();"></i></span></div>
             </div>
             <div style="display:flex; gap:10px; margin-top:10px;">
-                <button class="pay-btn" style="flex:1; background:transparent; border:1px solid #25D366; color:#25D366; box-shadow:none; font-size:0.9rem;" onclick="openWhatsAppSupport()"><i class="fa-brands fa-whatsapp"></i> Support</button>
                 <button class="pay-btn" style="flex:1; background:transparent; border:1px solid var(--accent-cyan); color:var(--accent-cyan); box-shadow:none; font-size:0.9rem;" onclick="downloadReceiptPDF()"><i class="fa-solid fa-download"></i> PDF</button>
             </div>
         </div>
@@ -570,7 +568,7 @@
 
     <div class="app-footer">
         © 2026 TOURNYX. All rights reserved.<br>
-        <div class="footer-made-with">made with 🔥 for gamers worldwide • Powered by Quva</div>
+        <div class="footer-made-with">made with ⚡ for gamers worldwide</div>
     </div>
 
     <nav class="bottom-nav">
@@ -763,23 +761,6 @@
             renderInventory(baseTickets, goldenTickets);
         }
 
-        // TICKET CLICK OVERLAY HANDLER
-        function showTicketDetails(game, count, tid) {
-            document.getElementById('rcptIcon').innerHTML = '<i class="fa-solid fa-gamepad"></i>';
-            document.getElementById('rcptIcon').className = 'rcpt-icon icon-credit';
-            document.getElementById('rcptAmt').innerHTML = count + ' Pass';
-            document.getElementById('rcptAmt').className = 'rcpt-amt amt-credit';
-            document.getElementById('rcptTitle').innerText = game + ' Pass';
-            document.getElementById('receiptDate').innerText = 'Active Ticket';
-            document.getElementById('receiptId').innerText = tid;
-            document.getElementById('rcptStatusVal').innerHTML = '<i class="fa-solid fa-circle-check"></i> Available';
-            document.getElementById('rcptStatusVal').style.color = 'var(--accent-green)';
-            document.getElementById('rcptCat').innerHTML = '<span class="tx-icon" style="font-size:0.9rem;">TX</span> Inventory';
-
-            document.getElementById('receiptOverlay').classList.add('active');
-            activeReceiptId = tid;
-        }
-
         function renderInventory(baseTickets, goldenTickets) {
             const inv = document.getElementById('ticketInventoryList');
             let totalTickets = baseTickets + goldenTickets;
@@ -823,7 +804,7 @@
                 let safeName = currentUser.email || currentUser.username || "guest";
                 let tid = `TKT-${prefix}-${genId(safeName + game + "_W1")}`;
                 return `
-                    <div class="tournyx-ticket tkt-theme-${prefix}" onclick="showTicketDetails('${game}', '${count}', '${tid}')" style="cursor:pointer;">
+                    <div class="tournyx-ticket tkt-theme-${prefix}">
                         <div class="tkt-tournyx-stamp">TOURNYX SECURE</div>
                         <img src="${imgUrl}" class="tkt-logo" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
                         <div class="tkt-logo-fallback"><i class="fa-solid fa-gamepad"></i></div>
@@ -929,10 +910,11 @@
             }, 6500);
         }
 
-        // PERFECT ANTI-BLINKING JSON HASH IMPLEMENTED HERE
         async function syncLiveTransactions() {
             try {
+                // Perfect, live cache-busting logic.
                 let ts = new Date().getTime();
+                
                 let [userRes, txnRes] = await Promise.all([
                     fetch(API_URL + "?action=sync_user&email=" + encodeURIComponent(currentUser.email) + "&t=" + ts),
                     fetch(API_URL + "?action=get_transactions&email=" + encodeURIComponent(currentUser.email) + "&t=" + ts)
@@ -944,8 +926,7 @@
                 ]);
                 
                 if(userDataObj.status === 'success' && userDataObj.data) {
-                    let oldUserStr = JSON.stringify(currentUser);
-                    
+                    // Update in-memory object properly mapping backend 'earnings' to frontend state
                     currentUser.earnings = String(userDataObj.data.rupees || userDataObj.data.earnings || "0"); 
                     currentUser.points = String(userDataObj.data.points || "0");
                     currentUser.role = userDataObj.data.role || currentUser.role;
@@ -959,27 +940,16 @@
                         document.documentElement.classList.remove('theme-vip');
                     }
                     
+                    // Maintain session without relying on local storage for data source
                     localStorage.setItem('tournyx_user', JSON.stringify(currentUser));
                     
-                    let updatedUserStr = JSON.stringify(currentUser);
-                    if (oldUserStr !== updatedUserStr) {
-                        initializeAppData(); 
-                        updateWalletDisplay();
-                    }
+                    initializeAppData(); 
+                    updateWalletDisplay(); 
                 }
 
                 if(txnDataObj.status === 'success' && txnDataObj.data && Array.isArray(txnDataObj.data)) {
-                    let oldTxnStr = JSON.stringify(transactionsData);
-                    let newTxnStr = JSON.stringify(txnDataObj.data);
-                    
-                    // ONLY RE-RENDER DOM IF TICKETS ACTUALLY CHANGED TO STOP BLINKING
-                    if (oldTxnStr !== newTxnStr) {
-                        transactionsData = txnDataObj.data;
-                        renderTransactions();
-                        if(document.getElementById('ledgerModal').classList.contains('active')){
-                            openAllTxns();
-                        }
-                    }
+                    transactionsData = txnDataObj.data;
+                    renderTransactions();
                 }
             } catch(e) {}
         }
@@ -1003,11 +973,11 @@
         }
         function closeAllTxns() { document.getElementById('ledgerModal').classList.remove('active'); }
 
-        // HARDENED AMOUNT PARSER FIX TO STOP '---' AND HANDLE '0' PERFECTLY
         function buildTxnHtml(t, delay, index) {
             let typeStr = String(t.type || "").toLowerCase(); let isCredit = typeStr === "credit"; 
             let stat = String(t.status || "").toLowerCase(); let isPending = stat === "pending"; let isFailed = stat === "failed"; let isSuccess = stat === "success";
             
+            // Strictly uses the category provided by the updated backend
             let cat = t.category || "General"; 
             let catIcon = "fa-ticket-simple"; let iconClass = isCredit ? "icon-credit" : "icon-debit"; let mainIcon = isCredit ? "fa-arrow-down" : "fa-arrow-up";
             
@@ -1025,20 +995,13 @@
             let inOutLabel = isCredit ? `<div class="in-out-label in-label">PASSES IN</div>` : `<div class="in-out-label out-label">PASSES OUT</div>`;
             let displayDate = t.date ? (String(t.date).includes(',') ? String(t.date).split(',')[0] : String(t.date).split(' ')[0]) : "Today";
             
-            // Amount parsing fixed
-            let amt = parseFloat(t.amount) || 0;
-            let ticketVal = Math.floor(amt / TICKET_PRICE) || 0;
-            if(ticketVal === 0 && amt > 0 && (String(t.title).includes("Pass") || String(t.title).includes("Ticket"))) ticketVal = amt;
+            let ticketVal = Math.floor(t.amount / TICKET_PRICE) || 0;
+            if(ticketVal === 0 && t.amount > 0 && (String(t.title).includes("Pass") || String(t.title).includes("Ticket"))) ticketVal = t.amount;
 
-            let amtHTML;
-            if (amt > 0) amtHTML = `${isCredit?'+':'-'} ${ticketVal} <span class="tx-icon" style="font-size:0.8rem; margin-left:3px; vertical-align:baseline;">TX</span>`;
-            else if (amt === 0 && isCredit) amtHTML = `+ 0 <span class="tx-icon" style="font-size:0.8rem; margin-left:3px; vertical-align:baseline;">TX</span>`;
-            else if (amt === 0 && !isCredit) amtHTML = `- 0 <span class="tx-icon" style="font-size:0.8rem; margin-left:3px; vertical-align:baseline;">TX</span>`;
-            else amtHTML = `0`;
-
+            let amtHTML = t.amount > 0 ? `${isCredit?'+':'-'} ${ticketVal} <span class="tx-icon" style="font-size:0.8rem; margin-left:3px; vertical-align:baseline;">TX</span>` : `---`;
             if (currentUser.role === 'organizer') {
                 inOutLabel = isCredit ? `<div class="in-out-label in-label">EARNINGS IN</div>` : `<div class="in-out-label out-label">WITHDRAWAL</div>`;
-                amtHTML = amt >= 0 ? `${isCredit?'+':'-'} ₹${amt}` : `₹0`;
+                amtHTML = t.amount > 0 ? `${isCredit?'+':'-'} ₹${t.amount}` : `---`;
             }
 
             return `
@@ -1068,18 +1031,17 @@
             let typeStr = String(t.type || "").toLowerCase(); let isCredit = typeStr === "credit"; 
             let stat = String(t.status || "").toLowerCase(); let isPending = stat === "pending"; let isFailed = stat === "failed"; let isSuccess = stat === "success";
             
-            let amt = parseFloat(t.amount) || 0;
-            let ticketVal = Math.floor(amt / TICKET_PRICE) || 0;
-            if(ticketVal === 0 && amt > 0 && (String(t.title).includes("Pass") || String(t.title).includes("Ticket"))) ticketVal = amt;
+            let ticketVal = Math.floor(t.amount / TICKET_PRICE) || 0;
+            if(ticketVal === 0 && t.amount > 0 && (String(t.title).includes("Pass") || String(t.title).includes("Ticket"))) ticketVal = t.amount;
             
             let mainIcon = isFailed ? "fa-xmark" : (isPending ? "fa-clock" : (isCredit ? "fa-check" : "fa-arrow-up"));
             let iconEl = document.getElementById('rcptIcon');
             iconEl.innerHTML = `<i class="fa-solid ${mainIcon}"></i>`;
             iconEl.className = `rcpt-icon ${isPending ? 'icon-debit' : (isCredit ? 'icon-credit' : 'icon-debit')}`;
             
-            let amtDisplay = amt > 0 ? `${isCredit?'+':'-'} ${ticketVal} Pass` : `0 Pass`;
+            let amtDisplay = t.amount > 0 ? `${isCredit?'+':'-'} ${ticketVal} Pass` : `Review Pending`;
             if (currentUser.role === 'organizer') {
-                amtDisplay = amt >= 0 ? `${isCredit?'+':'-'} ₹${amt}` : `₹0`;
+                amtDisplay = t.amount > 0 ? `${isCredit?'+':'-'} ₹${t.amount}` : `Review Pending`;
             }
 
             document.getElementById('rcptAmt').innerHTML = amtDisplay;
@@ -1131,16 +1093,6 @@
         
         function closeReceipt() { document.getElementById('receiptOverlay').classList.remove('active'); }
         function copyTxnId() { navigator.clipboard.writeText(activeReceiptId); showToast("Pass ID Copied!"); }
-
-        // NEW WHATSAPP SUPPORT INTEGRATION FOR RECEIPTS
-        function openWhatsAppSupport() {
-            let rcptAmt = document.getElementById('rcptAmt').innerText;
-            let rcptStat = document.getElementById('rcptStatusVal').innerText;
-            let msg = `Hello Tournyx Support, I need help with my transaction.\n\n*Txn ID:* ${activeReceiptId}\n*Amount/Pass:* ${rcptAmt}\n*Status:* ${rcptStat}`;
-            // Uses standard support number from the payment gateway variables
-            let waUrl = `https://wa.me/918608159825?text=${encodeURIComponent(msg)}`;
-            window.open(waUrl, '_blank');
-        }
         
         function downloadReceiptPDF() {
             triggerHaptic();
@@ -1149,7 +1101,7 @@
                     margin: 0.5, 
                     filename: `Tournyx_Receipt_${activeReceiptId}.pdf`, 
                     image: { type: 'jpeg', quality: 1 }, 
-                    html2canvas: { scale: 2, useCORS: true, backgroundColor: '#070311', windowWidth: 800, scrollX: 0, scrollY: 0 }, 
+                    html2canvas: { scale: 2, useCORS: true, backgroundColor: '#070311', windowWidth: 800 }, 
                     jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' } 
                 }).from(document.getElementById('pdfTemplate')).save();
             }, 100);
@@ -1183,13 +1135,12 @@
                 let statusCol = isSuccess ? "#00ff7f" : (isFailed ? "#ff4d4d" : "#ff9900");
                 let amtCol = isCredit ? "#00ff7f" : "#ff4d4d";
                 
-                let amt = parseFloat(t.amount) || 0;
-                let ticketVal = Math.floor(amt / TICKET_PRICE) || 0;
-                if(ticketVal === 0 && amt > 0 && (String(t.title).includes("Pass") || String(t.title).includes("Ticket"))) ticketVal = amt;
+                let ticketVal = Math.floor(t.amount / TICKET_PRICE) || 0;
+                if(ticketVal === 0 && t.amount > 0 && (String(t.title).includes("Pass") || String(t.title).includes("Ticket"))) ticketVal = t.amount;
                 
-                let amtDisplay = amt > 0 ? `${isCredit?'+':'-'} ${ticketVal} Pass` : `0`;
+                let amtDisplay = t.amount > 0 ? `${isCredit?'+':'-'} ${ticketVal} Pass` : `0`;
                 if (currentUser.role === 'organizer') {
-                    amtDisplay = amt >= 0 ? `${isCredit?'+':'-'} ₹${amt}` : `0`;
+                    amtDisplay = t.amount > 0 ? `${isCredit?'+':'-'} ₹${t.amount}` : `0`;
                 }
 
                 tableHTML += `
@@ -1213,7 +1164,7 @@
                 margin: 0.5,
                 filename: `Tournyx_Tickets_Ledger_${currentUser.username.replace(/\s+/g, '_')}.pdf`,
                 image: { type: 'jpeg', quality: 1 },
-                html2canvas: { scale: 2, useCORS: true, backgroundColor: '#070311', windowWidth: 800, scrollX: 0, scrollY: 0 },
+                html2canvas: { scale: 2, useCORS: true, backgroundColor: '#070311', windowWidth: 800 },
                 jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' }
             };
             
