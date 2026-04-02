@@ -64,7 +64,7 @@
         }
         html.theme-vip .tx-icon { background: linear-gradient(135deg, #FFE87C, #FF8C00); -webkit-background-clip: text; -webkit-text-fill-color: transparent; filter: drop-shadow(0 0 5px rgba(255,215,0,0.6)); }
 
-        .tx-ticket-composite { position: relative; display: inline-flex; align-items: center; justify-content: center; }
+        .tx-ticket-composite { position: relative; display: inline-flex; align-items: center; justify-content: center; cursor: pointer; }
         .tx-ticket-composite i { font-size: inherit; transition: inherit; }
         .tx-ticket-composite .tx-text { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -46%); font-family: var(--font-head); font-size: 0.38em; font-weight: 900; color: var(--primary-bg) !important; -webkit-text-fill-color: var(--primary-bg) !important; letter-spacing: -0.5px; pointer-events: none; z-index: 2; transition: 0.3s; font-style: normal !important; }
 
@@ -141,7 +141,8 @@
         .tkt-theme-BGM { --glow-color: #00ff7f; --glow-border: #00b09b; }
         .tkt-theme-UNI { --glow-color: #FFD700; --glow-border: #FF8C00; }
 
-        .tournyx-ticket { background: linear-gradient(135deg, rgba(20,10,35,0.9), rgba(5,2,12,0.9)); border: 1px solid var(--glow-border, var(--accent-cyan)); border-radius: 15px; display: flex; align-items: center; padding: 15px; margin-bottom: 12px; position: relative; box-shadow: 0 5px 20px rgba(0,0,0,0.5), inset 0 0 15px rgba(0,0,0,0.2), 0 0 15px var(--glow-color, rgba(0,242,255,0.1)); overflow: hidden; animation: fadeIn 0.5s ease; }
+        .tournyx-ticket { background: linear-gradient(135deg, rgba(20,10,35,0.9), rgba(5,2,12,0.9)); border: 1px solid var(--glow-border, var(--accent-cyan)); border-radius: 15px; display: flex; align-items: center; padding: 15px; margin-bottom: 12px; position: relative; box-shadow: 0 5px 20px rgba(0,0,0,0.5), inset 0 0 15px rgba(0,0,0,0.2), 0 0 15px var(--glow-color, rgba(0,242,255,0.1)); overflow: hidden; animation: fadeIn 0.5s ease; cursor: pointer; transition: 0.3s; }
+        .tournyx-ticket:active { transform: scale(0.98); }
         .tournyx-ticket::before { content: ''; position: absolute; left: -10px; top: 50%; transform: translateY(-50%); width: 20px; height: 20px; background: var(--primary-bg); border-radius: 50%; border-right: 1px solid var(--glow-border, var(--accent-cyan)); }
         .tournyx-ticket::after { content: ''; position: absolute; right: -10px; top: 50%; transform: translateY(-50%); width: 20px; height: 20px; background: var(--primary-bg); border-radius: 50%; border-left: 1px solid var(--glow-border, var(--accent-cyan)); }
         
@@ -553,6 +554,7 @@
             </div>
             <div style="display:flex; gap:10px; margin-top:10px;">
                 <button class="pay-btn" style="flex:1; background:transparent; border:1px solid var(--accent-cyan); color:var(--accent-cyan); box-shadow:none; font-size:0.9rem;" onclick="downloadReceiptPDF()"><i class="fa-solid fa-download"></i> PDF</button>
+                <button class="pay-btn" style="flex:1; background:transparent; border:1px solid #25D366; color:#25D366; box-shadow:none; font-size:0.9rem;" onclick="contactWhatsAppSupport()"><i class="fa-brands fa-whatsapp"></i> Support</button>
             </div>
         </div>
     </div>
@@ -567,8 +569,8 @@
     <div id="customToast">Notification</div>
 
     <div class="app-footer">
-        © 2026 TOURNYX. All rights reserved.<br>
-        <div class="footer-made-with">made with ⚡ for gamers worldwide</div>
+        © 2026 TOURNYX. All rights reserved. Powered by Quva<br>
+        <div class="footer-made-with">made with 🔥 for gamers worldwide</div>
     </div>
 
     <nav class="bottom-nav">
@@ -610,10 +612,30 @@
         let qrTimerInterval;
         let currentRandomPaisa = "0.00"; 
         
+        // Cache DOM updates to prevent blinking
+        let lastTxnHtml = "";
+        let lastLedgerHtml = "";
+        let lastInvHtml = "";
+        
         // 1 Pass = Rs 10
         const TICKET_PRICE = 10;
         const TICKET_OFFERS = [1, 5, 10, 20]; 
         let selectedGameName = "Free Fire"; 
+
+        // Failsafe normalizer to fix the backend column mapping bug dynamically 
+        function normalizeTxn(t) {
+            let norm = { ...t };
+            if (t.amount === "Credit" || t.amount === "Debit") {
+                norm.type = t.amount;
+                norm.amount = parseFloat(t.type) || 0;
+                norm.status = t.date;
+                norm.date = ""; 
+                norm.currency = t.status;
+            } else {
+                norm.amount = parseFloat(t.amount) || 0;
+            }
+            return norm;
+        }
 
         function showLoginModal() { document.getElementById('loginPromptModal').classList.add('active'); triggerHaptic(); return false; }
         function handleProtectedAction(event, url) { if(isGuest) { if(event) event.preventDefault(); return showLoginModal(); } if(url) window.location.href = url; return true; }
@@ -624,7 +646,6 @@
         function formatNum(num) { return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ","); }
 
         document.addEventListener("DOMContentLoaded", function() {
-            // Read local storage to keep session alive during reload
             let storedUser = localStorage.getItem('tournyx_user');
             if (storedUser && storedUser !== "undefined") {
                 try {
@@ -648,7 +669,6 @@
             renderQuickAmts();
             selectServer(1);
 
-            // Fetch live data immediately, then start 3s real-time sync loop.
             if (!isGuest) {
                 syncLiveTransactions().finally(() => { 
                     let loader = document.getElementById('skeletonLoader');
@@ -707,12 +727,10 @@
         }
 
         function updateWalletDisplay() {
-            // Read directly from earnings logic fetched from server
             let rawEarnings = String(currentUser.earnings || currentUser.rupees || "0"); 
             let baseRupees = 0;
             let goldenRupees = 0;
             
-            // MAGIC PARSER: "200 + 50" -> 200 base, 50 golden
             if (rawEarnings.includes('+')) {
                 let parts = rawEarnings.split('+');
                 baseRupees = parseFloat(parts[0]) || 0;
@@ -761,19 +779,61 @@
             renderInventory(baseTickets, goldenTickets);
         }
 
+        function showTicketDetails(game, count, tid) {
+            activeReceiptId = tid;
+            document.getElementById('rcptIcon').innerHTML = `<i class="fa-solid fa-ticket-simple"></i>`;
+            document.getElementById('rcptIcon').className = `rcpt-icon icon-credit`;
+            document.getElementById('rcptAmt').innerHTML = `${count} Pass`;
+            document.getElementById('rcptAmt').className = `rcpt-amt amt-credit`;
+            document.getElementById('rcptTitle').innerText = `${game} Entry Pass`;
+            document.getElementById('receiptDate').innerText = "Active";
+            document.getElementById('receiptId').innerText = tid;
+            
+            let sEl = document.getElementById('rcptStatusVal');
+            sEl.innerHTML = `<i class="fa-solid fa-check"></i> Available`;
+            sEl.style.color = "var(--accent-green)";
+
+            document.getElementById('rcptCat').innerHTML = `<span class="tx-icon" style="font-size:0.9rem;">TX</span> Inventory`;
+
+            document.getElementById('pdfDynamicContentArea').innerHTML = `
+                <table style="width:100%; border-collapse:collapse; text-align:left; font-size:14px; margin-top: 15px;">
+                    <tr style="border-bottom:1px solid #1a0a3a;">
+                        <td style="padding:15px 0; color:#888;">Pass ID</td>
+                        <td style="padding:15px 0; text-align:right; font-weight:bold; color:#ffffff;">${tid}</td>
+                    </tr>
+                    <tr style="border-bottom:1px solid #1a0a3a;">
+                        <td style="padding:15px 0; color:#888;">Game Category</td>
+                        <td style="padding:15px 0; text-align:right; font-weight:bold; color:#00f2ff;">${game}</td>
+                    </tr>
+                    <tr style="border-bottom:1px solid #1a0a3a;">
+                        <td style="padding:15px 0; color:#888;">Status</td>
+                        <td style="padding:15px 0; text-align:right; font-weight:bold; color:#00ff7f; text-transform: uppercase;">Available</td>
+                    </tr>
+                    <tr>
+                        <td style="padding:25px 0; color:#ffffff; font-size:20px; font-weight:bold;">Total Passes</td>
+                        <td style="padding:25px 0; text-align:right; font-size:26px; font-weight:bold; color:#00ff7f;">${count} Pass</td>
+                    </tr>
+                </table>
+            `;
+
+            document.getElementById('receiptOverlay').classList.add('active');
+        }
+
         function renderInventory(baseTickets, goldenTickets) {
             const inv = document.getElementById('ticketInventoryList');
             let totalTickets = baseTickets + goldenTickets;
 
             if(totalTickets <= 0) {
-                inv.innerHTML = `<div style="text-align:center; padding: 20px; color:#888; font-size:0.9rem; background:rgba(0,0,0,0.3); border-radius:12px; border:1px dashed rgba(255,255,255,0.1);">0 Pass Available.<br><span style="color:var(--accent-cyan);">Buy pass to enter tournaments!</span></div>`;
+                let emptyHtml = `<div style="text-align:center; padding: 20px; color:#888; font-size:0.9rem; background:rgba(0,0,0,0.3); border-radius:12px; border:1px dashed rgba(255,255,255,0.1);">0 Pass Available.<br><span style="color:var(--accent-cyan);">Buy pass to enter tournaments!</span></div>`;
+                if(lastInvHtml !== emptyHtml) { inv.innerHTML = emptyHtml; lastInvHtml = emptyHtml; }
                 return;
             }
 
             let txns = transactionsData || [];
             let ffCount = 0; let bgmiCount = 0;
             
-            txns.forEach(t => {
+            txns.forEach(rawT => {
+                let t = normalizeTxn(rawT);
                 if(t.type === "Credit" && t.category === "Pass Purchase" && (t.status === "Success" || t.status === "Pending")) {
                     let count = Math.floor(t.amount / TICKET_PRICE);
                     if(t.title.includes("Free Fire")) ffCount += count;
@@ -804,7 +864,7 @@
                 let safeName = currentUser.email || currentUser.username || "guest";
                 let tid = `TKT-${prefix}-${genId(safeName + game + "_W1")}`;
                 return `
-                    <div class="tournyx-ticket tkt-theme-${prefix}">
+                    <div class="tournyx-ticket tkt-theme-${prefix}" onclick="showTicketDetails('${game}', ${count}, '${tid}')">
                         <div class="tkt-tournyx-stamp">TOURNYX SECURE</div>
                         <img src="${imgUrl}" class="tkt-logo" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
                         <div class="tkt-logo-fallback"><i class="fa-solid fa-gamepad"></i></div>
@@ -821,7 +881,10 @@
             if(ffDisplay > 0) html += buildTicketHTML("Free Fire", ffDisplay, "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEiJvPTY_y_XU-0Lwbnjwm7961lCDkSlQh2MtCWHunFVX6WS7WCprCtkPyB334BU_-4vGsP0NseDQf4NPBEOIxqjk7VZQqZUHpnLb4Bw-c1UeXQy2M9DzNrNdYt_aL0GEb1AlTPupC5zEjJiP3Ci0Oxk-wdg5TF5cs8_UNSe3uTT1BE884je3iXr8QlMjx8/s240/1000094210.jpg", "FF");
             if(bgmiDisplay > 0) html += buildTicketHTML("BGMI", bgmiDisplay, "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEj3MKUI87mMK4_3DltS3LQgqfrK1sESUIMMqlENdi0dPRtOFkeDbvPsTbSaCRaJOb17QZ5s9OO5dR6kFCYiCkgUCF2zBWwvGFSb3T-9Nz51XuIzMvIiOuqwcLzyzeFmn1orKbiETP4LrlaG-RidnWAAzBwUA3aL5_z62HP4_F7R02lAK_WSYdH0U_Gn7Es/s250/1000094211.jpg", "BGM");
             
-            inv.innerHTML = html;
+            if (lastInvHtml !== html) {
+                inv.innerHTML = html;
+                lastInvHtml = html;
+            }
         }
 
         function renderQuickAmts() {
@@ -905,14 +968,12 @@
                 scanner.classList.remove('active');
                 showToast("Pending verification. Your tickets will be updated shortly.");
                 
-                // Uses backend mapping: sending 'rupees' to update Col J.
                 fetch(API_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify({ action: "submit_utr", email: currentUser.email, amount: baseAmt, utr: utr, gameName: selectedGameName }) });
             }, 6500);
         }
 
         async function syncLiveTransactions() {
             try {
-                // Perfect, live cache-busting logic.
                 let ts = new Date().getTime();
                 
                 let [userRes, txnRes] = await Promise.all([
@@ -926,7 +987,6 @@
                 ]);
                 
                 if(userDataObj.status === 'success' && userDataObj.data) {
-                    // Update in-memory object properly mapping backend 'earnings' to frontend state
                     currentUser.earnings = String(userDataObj.data.rupees || userDataObj.data.earnings || "0"); 
                     currentUser.points = String(userDataObj.data.points || "0");
                     currentUser.role = userDataObj.data.role || currentUser.role;
@@ -940,7 +1000,6 @@
                         document.documentElement.classList.remove('theme-vip');
                     }
                     
-                    // Maintain session without relying on local storage for data source
                     localStorage.setItem('tournyx_user', JSON.stringify(currentUser));
                     
                     initializeAppData(); 
@@ -950,6 +1009,9 @@
                 if(txnDataObj.status === 'success' && txnDataObj.data && Array.isArray(txnDataObj.data)) {
                     transactionsData = txnDataObj.data;
                     renderTransactions();
+                    if(document.getElementById('ledgerModal').classList.contains('active')) {
+                        renderLedger();
+                    }
                 }
             } catch(e) {}
         }
@@ -959,25 +1021,43 @@
             if(isGuest) { container.innerHTML = `<div style="text-align:center; padding:30px; color:#666; font-size:0.9rem;"><i class="fa-solid fa-lock" style="display:block; font-size:2rem; margin-bottom:10px; color:#444;"></i> Log in to view your secure transaction ledger.</div>`; return; }
             
             let txns = transactionsData || [];
-            container.innerHTML = "";
-            if (txns.length === 0) { container.innerHTML = `<div style="text-align:center; padding:30px; color:#666;">No recent transactions.</div>`; return; }
+            let newHtml = "";
             
-            txns.slice(0, 5).forEach((t, i) => { container.innerHTML += buildTxnHtml(t, i, i); });
+            if (txns.length === 0) { 
+                newHtml = `<div style="text-align:center; padding:30px; color:#666;">No recent transactions.</div>`; 
+            } else {
+                txns.slice(0, 5).forEach((t, i) => { newHtml += buildTxnHtml(t, i, i); });
+            }
+            
+            if (lastTxnHtml !== newHtml) {
+                container.innerHTML = newHtml;
+                lastTxnHtml = newHtml;
+            }
         }
 
         function openAllTxns() {
             document.getElementById('ledgerModal').classList.add('active');
-            let txns = transactionsData || [];
-            const container = document.getElementById('fullTxnListContainer'); container.innerHTML = "";
-            txns.forEach((t, i) => { container.innerHTML += buildTxnHtml(t, i, i); });
+            renderLedger();
         }
+        
         function closeAllTxns() { document.getElementById('ledgerModal').classList.remove('active'); }
 
-        function buildTxnHtml(t, delay, index) {
+        function renderLedger() {
+            let txns = transactionsData || [];
+            const container = document.getElementById('fullTxnListContainer');
+            let newHtml = "";
+            txns.forEach((t, i) => { newHtml += buildTxnHtml(t, i, i); });
+            if (lastLedgerHtml !== newHtml) {
+                container.innerHTML = newHtml;
+                lastLedgerHtml = newHtml;
+            }
+        }
+
+        function buildTxnHtml(rawT, delay, index) {
+            let t = normalizeTxn(rawT);
             let typeStr = String(t.type || "").toLowerCase(); let isCredit = typeStr === "credit"; 
             let stat = String(t.status || "").toLowerCase(); let isPending = stat === "pending"; let isFailed = stat === "failed"; let isSuccess = stat === "success";
             
-            // Strictly uses the category provided by the updated backend
             let cat = t.category || "General"; 
             let catIcon = "fa-ticket-simple"; let iconClass = isCredit ? "icon-credit" : "icon-debit"; let mainIcon = isCredit ? "fa-arrow-down" : "fa-arrow-up";
             
@@ -1023,7 +1103,8 @@
 
         function openReceipt(index) {
             let txns = transactionsData || [];
-            let t = txns[index]; if(!t) return;
+            let rawT = txns[index]; if(!rawT) return;
+            let t = normalizeTxn(rawT);
             
             activeReceiptId = t.id && String(t.id).trim() !== "" ? t.id : "TKT_SYS_" + Math.floor(100000 + Math.random() * 900000); 
             activeReceiptData = t;
@@ -1060,7 +1141,6 @@
             let cat = t.category || "General";
             document.getElementById('rcptCat').innerHTML = `<span class="tx-icon" style="font-size:0.9rem;">TX</span> ${cat}`;
 
-            // Perfect PDF generator setup.
             document.getElementById('pdfUserName').innerText = currentUser.username || "User";
             document.getElementById('pdfUserEmail').innerText = currentUser.email || "";
             document.getElementById('pdfDynamicContentArea').innerHTML = `
@@ -1093,6 +1173,16 @@
         
         function closeReceipt() { document.getElementById('receiptOverlay').classList.remove('active'); }
         function copyTxnId() { navigator.clipboard.writeText(activeReceiptId); showToast("Pass ID Copied!"); }
+
+        function contactWhatsAppSupport() {
+            let id = activeReceiptId;
+            let title = document.getElementById('rcptTitle').innerText;
+            let amt = document.getElementById('rcptAmt').innerText;
+            let status = document.getElementById('rcptStatusVal').innerText.replace(/[^a-zA-Z]/g, '').trim();
+            
+            let msg = `Hello Tournyx Support,\nI need help with my ticket.\n\n*Transaction ID:* ${id}\n*Details:* ${title}\n*Amount:* ${amt}\n*Status:* ${status}\n\nPlease check this.`;
+            window.open(`https://wa.me/918608159825?text=${encodeURIComponent(msg)}`, '_blank');
+        }
         
         function downloadReceiptPDF() {
             triggerHaptic();
@@ -1128,7 +1218,8 @@
                     <tbody>
             `;
             
-            txns.forEach(t => {
+            txns.forEach(rawT => {
+                let t = normalizeTxn(rawT);
                 let isCredit = String(t.type).toLowerCase() === "credit";
                 let isFailed = String(t.status).toLowerCase() === "failed";
                 let isSuccess = String(t.status).toLowerCase() === "success";
