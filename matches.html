@@ -2,35 +2,40 @@
 <html lang="en">
 <head>
     <link rel="icon" href="https://tournyx.in/favicon.ico" sizes="any">
-<link rel="icon" href="https://tournyx.in/favicon.png" type="image/png" sizes="192x192">
-<link rel="apple-touch-icon" href="https://tournyx.in/apple-touch-icon.png">
+    <link rel="icon" href="https://tournyx.in/favicon.png" type="image/png" sizes="192x192">
+    <link rel="apple-touch-icon" href="https://tournyx.in/apple-touch-icon.png">
 
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-        <title>My Matches & Results - Tournyx</title>
+    <title>My Matches & Results - Tournyx</title>
     <meta name="description" content="Track your upcoming esports matches, view live room ID and passwords, and check your past tournament results and winnings on Tournyx.">
 
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700;900&family=Rajdhani:wght@500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-          <script>
-            (function() {
-                try {
-                    const THEMES = [
-                        {cyan: '#00f2ff', purple: '#bd00ff'},
-                        {cyan: '#00ff7f', purple: '#00b09b'},
-                        {cyan: '#ff9900', purple: '#ff4d4d'}
-                    ];
-                    let tIndex = parseInt(localStorage.getItem('tournyx_theme_index')) || 0;
-                    if(THEMES[tIndex]) {
-                        document.documentElement.style.setProperty('--accent-cyan', THEMES[tIndex].cyan);
-                        document.documentElement.style.setProperty('--accent-purple', THEMES[tIndex].purple);
-                        document.documentElement.style.setProperty('--accent-gradient', `linear-gradient(135deg, ${THEMES[tIndex].purple}, ${THEMES[tIndex].cyan})`);
-                    }
-                } catch(e) {
-                    console.log("Theme setting bypassed - strict browser settings.");
+    <script>
+        (function() {
+            try {
+                const THEMES = [
+                    {cyan: '#00f2ff', purple: '#bd00ff'},
+                    {cyan: '#00ff7f', purple: '#00b09b'},
+                    {cyan: '#ff9900', purple: '#ff4d4d'}
+                ];
+                let tIndex = parseInt(localStorage.getItem('tournyx_theme_index')) || 0;
+                if(THEMES[tIndex]) {
+                    document.documentElement.style.setProperty('--accent-cyan', THEMES[tIndex].cyan);
+                    document.documentElement.style.setProperty('--accent-purple', THEMES[tIndex].purple);
+                    document.documentElement.style.setProperty('--accent-gradient', `linear-gradient(135deg, ${THEMES[tIndex].purple}, ${THEMES[tIndex].cyan})`);
                 }
-            })();
-        </script>
+                
+                let user = JSON.parse(localStorage.getItem('tournyx_user'));
+                if (user && String(user.is_premium).toLowerCase() === 'true') {
+                    document.documentElement.classList.add('theme-vip');
+                }
+            } catch(e) {
+                console.log("Theme setting bypassed - strict browser settings.");
+            }
+        })();
+    </script>
 
     <style>
         /* --- GLOBAL VARIABLES --- */
@@ -46,6 +51,14 @@
             --accent-gradient: linear-gradient(135deg, #7b2cbf, #bd00ff, #00f2ff);
             --font-head: 'Orbitron', sans-serif;
             --font-body: 'Rajdhani', sans-serif;
+        }
+
+        /* --- TRUE GOLDEN VIP THEME --- */
+        html.theme-vip {
+            --accent-cyan: #FFD700;
+            --accent-purple: #FFA500;
+            --accent-gradient: linear-gradient(135deg, #FFE87C, #D4AF37, #FF8C00);
+            --card-border: rgba(212, 175, 55, 0.3);
         }
 
         /* --- ULTIMATE SCROLLBAR KILLER --- */
@@ -99,18 +112,23 @@
         .header-wrapper { display: flex; align-items: center; justify-content: space-between; gap: 5px;}
         .header-left { display: flex; align-items: center; gap: 8px; flex: 1; min-width: 0; }
         .app-logo { width: 28px; height: 28px; border-radius: 50%; object-fit: contain; box-shadow: 0 0 15px var(--accent-purple); border: 1px solid rgba(255,255,255,0.2); flex-shrink: 0;}
+        html.theme-vip .app-logo { box-shadow: 0 0 15px #FFD700; border-color: #FFD700; }
         .app-title { font-family: var(--font-head); font-size: 0.9rem; font-weight: 700; background: var(--accent-gradient); -webkit-background-clip: text; -webkit-text-fill-color: transparent; letter-spacing: 0px; white-space: normal; line-height: 1.1; word-break: break-word;}
         
         .desktop-nav { display: none; align-items: center; gap: 25px; }
         .desktop-nav a { color: var(--text-muted); text-decoration: none; font-family: var(--font-head); font-size: 0.95rem; font-weight: bold; transition: 0.3s; display: flex; align-items: center; gap: 6px; text-transform: uppercase; letter-spacing: 1px;}
         .desktop-nav a:hover, .desktop-nav a.active { color: var(--accent-cyan); text-shadow: 0 0 10px rgba(0,242,255,0.4); }
+        html.theme-vip .desktop-nav a:hover, html.theme-vip .desktop-nav a.active { color: #FFD700; text-shadow: 0 0 10px rgba(255,215,0,0.6); }
         @media (min-width: 850px) { .desktop-nav { display: flex; } }
 
         .refresh-btn { width: 30px; height: 30px; display: flex; align-items: center; justify-content: center; background: rgba(255,255,255,0.05); border-radius: 50%; cursor: pointer; border: 1px solid rgba(0,242,255,0.5); color: var(--accent-cyan); transition: 0.3s; flex-shrink: 0; font-size: 0.9rem;}
+        html.theme-vip .refresh-btn { border-color: rgba(255,215,0,0.5); color: #FFD700; }
         .refresh-btn:active { transform: rotate(180deg); background: var(--accent-cyan); color: black; box-shadow: 0 0 15px rgba(0,242,255,0.5); }
+        html.theme-vip .refresh-btn:active { background: #FFD700; box-shadow: 0 0 15px rgba(255,215,0,0.5); }
         .refresh-btn.cooldown { opacity: 0.5; pointer-events: none; border-color: #555; color: #555; }
 
         .header-profile-img { width: 30px; height: 30px; border-radius: 50%; border: 2px solid var(--accent-cyan); object-fit: cover; cursor: pointer; box-shadow: 0 0 10px rgba(0,242,255,0.4); transition: 0.3s; flex-shrink: 0;}
+        html.theme-vip .header-profile-img { border-color: #FFD700; box-shadow: 0 0 10px rgba(255,215,0,0.6); }
 
         /* --- ADVANCED STATS WIDGET --- */
         .stats-row { display: flex; gap: 10px; padding: 5px 15px 5px; margin-bottom: 5px; }
@@ -123,11 +141,14 @@
         .tabs { display: flex; padding: 0 15px; margin-bottom: 10px; }
         .tab { flex: 1; text-align: center; padding: 12px; color: #888; font-family: var(--font-head); cursor: pointer; position: relative; transition: 0.3s; font-weight: bold; letter-spacing: 0.5px; }
         .tab.active { color: var(--accent-cyan); text-shadow: 0 0 10px rgba(0,242,255,0.4); }
+        html.theme-vip .tab.active { color: #FFD700; text-shadow: 0 0 10px rgba(255,215,0,0.6); }
         .tab.active::after { content: ''; position: absolute; bottom: -1px; left: 20%; width: 60%; height: 3px; background: var(--accent-cyan); box-shadow: 0 -2px 10px var(--accent-cyan); border-radius: 3px 3px 0 0; }
+        html.theme-vip .tab.active::after { background: #FFD700; box-shadow: 0 -2px 10px #FFD700; }
 
         .search-box { position: relative; margin: 0 15px 15px; }
         .search-input { width: 100%; background: #110822; border: 1px solid var(--card-border); padding: 12px 15px 12px 40px; border-radius: 10px; color: white; font-size: 0.9rem; font-family: var(--font-body); outline: none; transition: 0.3s; box-sizing: border-box; }
         .search-input:focus { border-color: var(--accent-cyan); box-shadow: 0 0 10px rgba(0,242,255,0.2); }
+        html.theme-vip .search-input:focus { border-color: #FFD700; box-shadow: 0 0 10px rgba(255,215,0,0.2); }
         .search-icon { position: absolute; left: 15px; top: 50%; transform: translateY(-50%); color: #888; font-size: 0.9rem; }
         .highlight { color: var(--accent-orange); font-weight: 900; text-shadow: 0 0 5px rgba(255,153,0,0.5); }
 
@@ -135,7 +156,6 @@
         .match-list { padding: 15px 15px 0; min-height: 50vh; display: flex; flex-direction: column; gap: 20px; position: relative; }
         
         .skeleton-wrapper { display: flex; flex-direction: column; gap: 20px; width: 100%; }
-        /* BRIGHTER, FASTER SHINING SKELETON */
         .skeleton { background: linear-gradient(90deg, rgba(255,255,255,0.02) 25%, rgba(255,255,255,0.05) 50%, rgba(255,255,255,0.02) 75%); background-size: 200% 100%; animation: shimmer 1.5s infinite linear; transform: translateZ(0); }
         @keyframes shimmer { 0% { background-position: -200% 0; } 100% { background-position: 200% 0; } }
         .s-card { background: var(--secondary-bg); border-radius: 16px; border: 1px solid var(--card-border); overflow: hidden; height: 260px; }
@@ -164,6 +184,8 @@
         
         .match-card.glow-upcoming { background-image: linear-gradient(var(--card-bg), var(--card-bg)), linear-gradient(90deg, #00f2ff, #bd00ff); box-shadow: 0 5px 20px rgba(0,242,255,0.1); }
         .match-card.glow-upcoming:hover { box-shadow: 0 5px 25px rgba(0,242,255,0.4); }
+        html.theme-vip .match-card.glow-upcoming { background-image: linear-gradient(var(--card-bg), var(--card-bg)), linear-gradient(135deg, #FFD700, #FF8C00); box-shadow: 0 5px 20px rgba(255,215,0,0.1); }
+        html.theme-vip .match-card.glow-upcoming:hover { box-shadow: 0 5px 25px rgba(255,215,0,0.4); }
         
         .match-card.glow-live { background-image: linear-gradient(var(--card-bg), var(--card-bg)), linear-gradient(90deg, #00ff7f, #00b09b); box-shadow: 0 0 20px rgba(0,255,127,0.2); }
         .match-card.glow-live:hover { box-shadow: 0 10px 30px rgba(0,255,127,0.4); }
@@ -176,13 +198,14 @@
         @keyframes slideInUp { from{opacity:0; transform:translateY(20px);} to{opacity:1; transform:translateY(0);} }
 
         .m-banner-wrapper { position: relative; width: 100%; height: 140px; background: #000; overflow: hidden; }
-        /* IMAGE FADE OVERLAY */
         .m-banner-wrapper::after { content: ''; position: absolute; bottom: 0; left: 0; width: 100%; height: 60px; background: linear-gradient(to bottom, transparent, var(--card-bg)); z-index: 1; }
         .m-banner { width: 100%; height: 100%; object-fit: cover; opacity: 0.85; transition: transform 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275); border-bottom: 1px solid rgba(255,255,255,0.05); }
         .match-card:hover .m-banner { opacity: 1; transform: scale(1.08); }
 
         .m-share-btn { position: absolute; top: 12px; right: 12px; background: rgba(0,0,0,0.8); color: var(--accent-cyan); width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; border: 1px solid var(--accent-cyan); backdrop-filter: blur(5px); z-index: 5; transition: 0.3s; box-shadow: 0 0 10px rgba(0,0,0,0.8); }
+        html.theme-vip .m-share-btn { color: #FFD700; border-color: #FFD700; }
         .m-share-btn:hover { background: var(--accent-cyan); color: #000; transform: scale(1.1); }
+        html.theme-vip .m-share-btn:hover { background: #FFD700; color: #000; }
 
         .m-content { padding: 5px 15px 15px 15px; position: relative; z-index: 2;}
 
@@ -193,12 +216,14 @@
 
         .m-actions-box { display: flex; flex-direction: column; align-items: flex-end; gap: 8px; flex-shrink: 0; padding-top: 2px;}
         .status-badge { color: #000; background: var(--accent-cyan); padding: 4px 10px; border-radius: 8px; font-size: 0.7rem; font-weight: bold; font-family: var(--font-head); box-shadow: 0 0 10px rgba(0,242,255,0.3); text-transform: uppercase; }
+        html.theme-vip .status-badge { background: #FFD700 !important; color: black !important; box-shadow: 0 0 10px rgba(255,215,0,0.4); }
         
         .leave-btn { background: rgba(255, 77, 77, 0.1); border: 1px solid rgba(255, 77, 77, 0.4); color: #ff4d4d; padding: 6px 12px; border-radius: 8px; font-size: 0.7rem; cursor: pointer; font-weight: bold; transition: 0.3s; font-family: var(--font-head); text-transform: uppercase; z-index: 5; min-width: 65px; text-align: center;}
 
         .m-details-row { display: flex; justify-content: space-between; font-size: 0.85rem; color: #888; border-top: 1px solid rgba(255,255,255,0.05); padding-top: 12px; margin-bottom: 12px; flex-wrap: wrap; gap: 10px; }
         .m-detail-item { display: flex; align-items: center; gap: 6px; }
         .m-detail-item i { color: var(--accent-purple); }
+        html.theme-vip .m-detail-item i { color: #FFD700; }
 
         /* ROOM ID BOX & BLUR REVEAL */
         .room-box-container { background: rgba(0,0,0,0.4); border-radius: 12px; border: 1px solid var(--card-border); padding: 12px; display: flex; justify-content: space-between; align-items: center; box-shadow: inset 0 0 10px rgba(0,0,0,0.5); flex-wrap: wrap; gap: 10px; position: relative;}
@@ -212,10 +237,13 @@
         .val-waiting { color: #555; filter: blur(3px); user-select: none; }
         .val-active { color: var(--accent-green); text-shadow: 0 0 10px rgba(0,255,127,0.4); filter: blur(0px); }
         .val-copied { color: var(--accent-cyan) !important; text-shadow: 0 0 10px rgba(0,242,255,0.6) !important; font-family: var(--font-head); font-size: 0.9rem;}
+        html.theme-vip .val-copied { color: #FFD700 !important; text-shadow: 0 0 10px rgba(255,215,0,0.6) !important; }
         
         /* Instant Share Squad Button */
         .squad-share-btn { width: 100%; text-align: center; background: rgba(0,242,255,0.1); border: 1px solid var(--accent-cyan); color: var(--accent-cyan); padding: 8px; border-radius: 8px; font-family: var(--font-head); font-size: 0.8rem; cursor: pointer; margin-top: 5px; transition: 0.3s; z-index: 5;}
+        html.theme-vip .squad-share-btn { background: rgba(255,215,0,0.1); border-color: #FFD700; color: #FFD700; }
         .squad-share-btn:active { background: var(--accent-cyan); color: black; transform: scale(0.98);}
+        html.theme-vip .squad-share-btn:active { background: #FFD700; color: black; }
 
         /* DYNAMIC EMPTY STATE */
         .empty-box { text-align: center; padding: 60px 20px; color: #666; animation: fadeIn 0.5s; width: 100%; }
@@ -227,9 +255,11 @@
         
         .browse-link { display: inline-block; margin-top: 20px; padding: 14px 35px; background: var(--accent-gradient); color: white; text-decoration: none; border-radius: 12px; font-weight: bold; font-family: var(--font-head); font-size: 0.9rem; box-shadow: 0 5px 15px rgba(189,0,255,0.4); transition: 0.3s; letter-spacing: 1px; border: none; cursor: pointer; }
         .browse-link:active { transform: scale(0.95); }
+        html.theme-vip .browse-link { background: linear-gradient(135deg, #FFD700, #FF8C00); color: black; box-shadow: 0 5px 15px rgba(255,215,0,0.4); }
 
         /* CUSTOM TOAST */
         #customToast { visibility: hidden; min-width: 250px; background-color: var(--accent-cyan); color: #000; text-align: center; border-radius: 10px; padding: 14px; position: fixed; z-index: 5000; left: 50%; bottom: -50px; transform: translateX(-50%); font-family: var(--font-head); font-weight: bold; box-shadow: 0 5px 15px rgba(0,242,255,0.5); opacity: 0; transition: opacity 0.4s, bottom 0.4s; }
+        html.theme-vip #customToast { background-color: #FFD700; box-shadow: 0 5px 15px rgba(255,215,0,0.5); }
         #customToast.show { visibility: visible; opacity: 1; bottom: 100px; }
 
         /* FULL SCREEN LOADER FOR LEAVING TOURNAMENT */
@@ -248,41 +278,27 @@
         .nav-item { display: flex; flex-direction: column; align-items: center; justify-content: flex-start; color: #666; text-decoration: none; font-size: 0.6rem; font-family: var(--font-head); font-weight: bold; flex: 1; transition: 0.3s; position: relative; padding: 0 2px; text-align: center;}
         .nav-item span { margin-top: 4px; transition: 0.3s; letter-spacing: -0.3px;}
         
-        .nav-item i, .nav-item .tx-icon, .nav-item .tx-ticket-composite { font-size: 1.2rem; transition: 0.3s; color: #666; background: none; -webkit-text-fill-color: #666; filter: none; font-style: normal; }
-        .nav-item.active { color: var(--accent-cyan); }
+        .nav-item > i, .nav-item > .tx-icon, .nav-item > .tx-ticket-composite { 
+            font-size: 1.2rem; transition: 0.3s; color: #666; background: none; -webkit-text-fill-color: #666; filter: none; font-style: normal; 
+            height: 24px; width: 24px; display: flex; align-items: center; justify-content: center;
+        }
+        .tx-ticket-composite i { display: block; line-height: 1; font-size: 1.2rem; color: inherit; -webkit-text-fill-color: inherit; transition: 0.3s; background: inherit; filter: inherit; -webkit-background-clip: inherit; }
         
-        /* Specific fix for composite to move together */
-        .nav-item.active .tx-ticket-composite { transform: translateY(-4px); }
-        .nav-item.active i, .nav-item.active .tx-icon, .nav-item.active .tx-ticket-composite i { transform: translateY(-4px); background: linear-gradient(135deg, var(--accent-purple), var(--accent-cyan)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; filter: drop-shadow(0 0 10px var(--accent-cyan)); font-style: normal; }
-        .nav-item.active .tx-ticket-composite i { transform: translateY(0); } /* Reset inner transform */
+        .nav-item.active { color: var(--accent-cyan); }
+        html.theme-vip .nav-item.active { color: #FFD700; }
+        
+        .nav-item.active > .tx-ticket-composite { transform: translateY(-4px); }
+        .nav-item.active > i, .nav-item.active > .tx-icon, .nav-item.active > .tx-ticket-composite i { transform: translateY(-4px); background: linear-gradient(135deg, var(--accent-purple), var(--accent-cyan)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; filter: drop-shadow(0 0 10px var(--accent-cyan)); font-style: normal; }
+        html.theme-vip .nav-item.active > i, html.theme-vip .nav-item.active > .tx-icon, html.theme-vip .nav-item.active > .tx-ticket-composite i { background: linear-gradient(135deg, #FFE87C, #FF8C00); -webkit-background-clip: text; -webkit-text-fill-color: transparent; filter: drop-shadow(0 0 10px rgba(255,215,0,0.6)); }
+        .nav-item.active .tx-ticket-composite i { transform: translateY(0); }
         
         .nav-item.active span { transform: translateY(2px); color: white; text-shadow: 0 0 5px rgba(255,255,255,0.5);}
         
         .fab-slot { flex: 1.2; display: flex; justify-content: center; position: relative; height: 100%; align-items: center; }
         .floating-plus { position: absolute; top: -25px; left: 50%; transform: translateX(-50%); width: 54px; height: 54px; background: linear-gradient(135deg, var(--accent-cyan), var(--accent-purple)); border-radius: 50%; display: flex; align-items: center; justify-content: center; border: 4px solid var(--primary-bg); box-shadow: 0 10px 25px rgba(189,0,255,0.4); color: #fff; font-size: 1.6rem; cursor: pointer; transition: 0.3s; z-index: 10; }
+        html.theme-vip .floating-plus { background: linear-gradient(135deg, #FFE87C, #D4AF37); box-shadow: 0 10px 25px rgba(212,175,55,0.4); border-color: #000; color: #000; }
         .floating-plus:hover { transform: translateX(-50%) scale(1.1) rotate(90deg); box-shadow: 0 15px 35px rgba(0,242,255,0.6); }
-
-        /* PERFECT DESKTOP FULL WIDTH FIX */
-        @media (min-width: 850px) {
-            .match-list { flex-direction: column; gap: 20px; align-items: center; }
-            .match-card { width: 100%; max-width: 900px; }
-            .bottom-nav { display: none !important; }
-            body { padding-bottom: 0; }
-        }
-
-        /* --- MEDIAN DETECTOR --- */
-        .median-active .top-header { display: none !important; }
-        .median-active { padding-top: 15px !important; }
-        .median-active .tabs-wrapper { top: env(safe-area-inset-top); }
     </style>
-    
-    <script>
-        document.addEventListener("DOMContentLoaded", function() {
-            if (navigator.userAgent.indexOf('gonative') > -1 || navigator.userAgent.indexOf('median') > -1) {
-                document.body.classList.add('median-active');
-            }
-        });
-    </script>
 </head>
 <body>
     <canvas id="particles-canvas"></canvas>
@@ -373,6 +389,9 @@
     <div class="app-footer">
         © 2026 TOURNYX. All rights reserved.<br>
         <div class="footer-made-with">made with 🔥 for gamers worldwide</div>
+        <div style="margin-top: 15px; font-size: 0.85rem; color: #888; font-family: var(--font-head); letter-spacing: 2px;">
+            Powered by <span style="font-weight: 900; background: var(--accent-gradient); -webkit-background-clip: text; -webkit-text-fill-color: transparent; letter-spacing: 2px;">QUVA</span>
+        </div>
     </div>
 
     <nav class="bottom-nav">
@@ -441,7 +460,7 @@
         function showToast(msg, isError = false) {
             var x = document.getElementById("customToast");
             x.innerText = msg;
-            x.style.backgroundColor = isError ? "#ff4d4d" : "var(--accent-cyan)";
+            x.style.backgroundColor = isError ? "#ff4d4d" : (document.documentElement.classList.contains('theme-vip') ? "#FFD700" : "var(--accent-cyan)");
             x.style.color = isError ? "white" : "#000";
             x.className = "show";
             triggerHaptic();
@@ -638,6 +657,7 @@
                             date: s(tDetails.match_period) || s(tDetails.date, "TBA"),
                             img: formatImageUrl(tDetails.banner),
                             status: s(tDetails.status, "Upcoming"), // Organizer's status
+                            format: s(tDetails.format, "Unknown"), // For Solo check
                             user_status: isLeaved ? "Leaved" : entryStatus, // Accurate Local Status
                             isRefundPending: isRefundPending,
                             isRefundSuccess: isRefundSuccess,
@@ -776,14 +796,13 @@
                     } else {
                         rStatus = "WITHDRAWN"; sColor = "#ff4d4d"; glowClass = "glow-refund-pending";
                     }
+                } else if (sLower.includes("completed") || sLower.includes("past")) { 
+                    rStatus = "COMPLETED"; sColor = "#888"; glowClass = "glow-history"; 
                 } else if (sLower.includes("live")) { 
                     rStatus = "LIVE NOW"; sColor = "var(--accent-green)"; glowClass = "glow-live"; 
                 }
                 else if (sLower.includes("wait") || sLower.includes("pending")) { 
                     rStatus = "WAITING ID"; sColor = "var(--accent-orange)"; glowClass = "glow-upcoming"; 
-                }
-                else if (sLower.includes("completed") || sLower.includes("past")) { 
-                    rStatus = "COMPLETED"; sColor = "#888"; glowClass = "glow-history"; 
                 }
 
                 let idClass = rID === 'WAITING' ? 'val-waiting' : 'val-active';
@@ -802,6 +821,13 @@
                             <div style="font-size:0.85rem; color:#aaa; margin-top:5px;">${refundMsg}</div>
                         </div>
                     `;
+                } else if (sLower.includes("completed") || sLower.includes("past")) {
+                    roomBoxHtml = `
+                        <div class="room-box-container" style="justify-content:center; padding: 15px; border:1px solid rgba(255,255,255,0.1);">
+                            <div style="font-family:var(--font-head); font-weight:bold; color:#aaa; font-size:1rem; text-transform:uppercase;"><i class="fa-solid fa-flag-checkered"></i> Match Concluded</div>
+                        </div>
+                    `;
+                    shareBtnHtml = ''; // Don't show share for completed matches
                 } else {
                     roomBoxHtml = `
                         <div class="room-box-container">
@@ -822,6 +848,12 @@
 
                 let displayTitle = highlightText(match.name, search);
                 let displayClan = highlightText(match.clan, search);
+                
+                // SOLO MATCH REGISTRATION DISPLAY
+                let isSolo = match.format.toLowerCase().includes('solo');
+                let rosterHtml = isSolo 
+                    ? `<div class="m-detail-item"><i class="fa-solid fa-user"></i> Solo: <span style="color:white; font-weight:bold;">${displayClan}</span></div>`
+                    : `<div class="m-detail-item"><i class="fa-solid fa-shield-halved"></i> Roster: <span style="color:white; font-weight:bold;">${displayClan}</span></div>`;
 
                 htmlContent += `
                     <div class="match-card ${glowClass}" onclick="viewDetails('${match.match_id}')">
@@ -840,12 +872,12 @@
                                 </div>
                                 <div class="m-actions-box">
                                     <span class="status-badge" style="background:${sColor}; color:${(sLower.includes('completed') || rStatus==='WITHDRAWN') ? 'white' : 'black'}">${rStatus}</span>
-                                    ${(currentTab === 'Upcoming' && !isLeaved) ? `<button onclick="confirmLeave(event, '${s(match.name).replace(/'/g, "\\'")}', '${match.match_id}')" class="leave-btn">LEAVE</button>` : ''}
+                                    ${(currentTab === 'Upcoming' && !isLeaved && !sLower.includes("completed")) ? `<button onclick="confirmLeave(event, '${s(match.name).replace(/'/g, "\\'")}', '${match.match_id}')" class="leave-btn">LEAVE</button>` : ''}
                                 </div>
                             </div>
                             
                             <div class="m-details-row">
-                                <div class="m-detail-item"><i class="fa-solid fa-shield-halved"></i> Roster: <span style="color:white; font-weight:bold;">${displayClan}</span></div>
+                                ${rosterHtml}
                                 <div class="m-detail-item"><span style="color:${isLeaved ? '#ff4d4d' : 'var(--accent-green)'}; font-weight:bold;"><i class="fa-solid ${isLeaved ? 'fa-ban' : 'fa-check-circle'}"></i> ${isLeaved ? 'Withdrawn' : 'Confirmed'}</span></div>
                             </div>
                             
@@ -876,7 +908,7 @@
 
             fetch(API_URL, {
                 method: 'POST', mode: 'no-cors', headers: { 'Content-Type': 'text/plain' },
-                body: JSON.stringify({ action: "unjoin", title: tournamentName, email: user.email })
+                body: JSON.stringify({ action: "unjoin", title: tournamentName, email: user.email, match_id: matchId })
             }).then(() => {
                 
                 // INSTANT FRONTEND UPDATE
