@@ -27,10 +27,6 @@
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700;900&family=Rajdhani:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     
-    <!-- ⚠️ PASTE YOUR MAIN ADSENSE SCRIPT TAG HERE ⚠️ -->
-    <!-- <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2610280925070403"
-     crossorigin="anonymous"></script> -->
-
     <script>
             (function() {
                 try {
@@ -44,6 +40,12 @@
                         document.documentElement.style.setProperty('--accent-cyan', THEMES[tIndex].cyan);
                         document.documentElement.style.setProperty('--accent-purple', THEMES[tIndex].purple);
                         document.documentElement.style.setProperty('--accent-gradient', `linear-gradient(135deg, ${THEMES[tIndex].purple}, ${THEMES[tIndex].cyan})`);
+                    }
+
+                    // VIP Theme Check
+                    let user = JSON.parse(localStorage.getItem('tournyx_user'));
+                    if (user && String(user.is_premium).toLowerCase() === 'true') {
+                        document.documentElement.classList.add('theme-vip');
                     }
                 } catch(e) {
                     console.log("Theme setting bypassed - strict browser settings.");
@@ -68,6 +70,14 @@
             --font-body: 'Rajdhani', sans-serif;
         }
 
+        /* --- TRUE GOLDEN VIP THEME --- */
+        html.theme-vip {
+            --accent-cyan: #FFD700;
+            --accent-purple: #FFA500;
+            --accent-gradient: linear-gradient(135deg, #FFE87C, #D4AF37, #FF8C00);
+            --card-border: rgba(212, 175, 55, 0.3);
+        }
+
         /* --- ULTIMATE SCROLLBAR KILLER --- */
         * { -ms-overflow-style: none !important; scrollbar-width: none !important; margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
         *::-webkit-scrollbar { display: none !important; width: 0 !important; height: 0 !important; background: transparent !important; }
@@ -75,13 +85,13 @@
         body {
             background-color: var(--primary-bg); color: var(--text-main); font-family: var(--font-body);
             overflow-x: hidden; width: 100%; 
-            padding-bottom: calc(90px + env(safe-area-inset-bottom)); 
-            padding-top: calc(75px + env(safe-area-inset-top)); 
+            padding-bottom: calc(90px + env(safe-area-inset-bottom, 0px)); 
+            padding-top: calc(75px + env(safe-area-inset-top, 0px)); 
         }
 
         /* --- RESPONSIVE WRAPPERS --- */
         .hero, .filter-container, .rewards-wrapper, .app-footer, .top-header .header-wrapper {
-            max-width: 800px; margin-left: auto !important; margin-right: auto !important; width: 100%;
+            max-width: 1000px; margin-left: auto !important; margin-right: auto !important; width: 100%;
         }
 
         /* --- BACKGROUND --- */
@@ -89,19 +99,22 @@
 
         /* --- HEADER (MOBILE OPTIMIZED SIZES) --- */
         .top-header { 
-            position: fixed; top: 0; left: 0; width: 100%; 
-            padding: calc(12px + env(safe-area-inset-top)) 10px 12px; 
-            background: rgba(5, 2, 12, 0.6); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); 
-            border-bottom: 1px solid rgba(255, 255, 255, 0.05); z-index: 2000; box-shadow: 0 4px 30px rgba(0, 0, 0, 0.5); transform: translateZ(0);
+            position: fixed; top: 0; left: 0; width: 100%; height: 65px;
+            padding: 0 15px; 
+            background: rgba(5, 2, 12, 0.85); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); 
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05); z-index: 2000; box-shadow: 0 4px 30px rgba(0, 0, 0, 0.5); transform: translateZ(0); display: flex; align-items: center;
         }
         .header-wrapper { display: flex; align-items: center; justify-content: space-between; gap: 5px; }
         .header-left { display: flex; align-items: center; gap: 8px; flex: 1; min-width: 0; }
-        .back-btn { color: white; font-size: 1.3rem; text-decoration: none; transition: 0.3s; cursor: pointer; padding: 5px; flex-shrink:0;}
+        .back-btn { color: white; font-size: 1.3rem; text-decoration: none; transition: 0.3s; cursor: pointer; padding: 5px 10px 5px 0; flex-shrink:0;}
         .back-btn:active { color: var(--accent-cyan); transform: scale(0.9); }
-        .app-title { font-family: var(--font-head); font-size: 1.15rem; font-weight: 700; background: var(--accent-gradient); -webkit-background-clip: text; -webkit-text-fill-color: transparent; letter-spacing: 0px; white-space: normal; line-height: 1.1; word-break: break-word; text-transform: uppercase; margin:0;}
+        html.theme-vip .back-btn:active { color: #FFD700; }
+        .app-title { font-family: var(--font-head); font-size: 1.15rem; font-weight: 700; background: var(--accent-gradient); -webkit-background-clip: text; -webkit-text-fill-color: transparent; letter-spacing: 1px; white-space: normal; line-height: 1.1; word-break: break-word; text-transform: uppercase; margin:0;}
         
         .wallet-badge { background: rgba(0, 242, 255, 0.1); border: 1px solid rgba(0, 242, 255, 0.3); padding: 6px 12px; border-radius: 20px; display: flex; align-items: center; gap: 6px; font-family: var(--font-head); font-size: 0.85rem; color: var(--accent-cyan); font-weight: bold; box-shadow: inset 0 0 10px rgba(0,242,255,0.1); transition: 0.3s; cursor: pointer; backdrop-filter: blur(5px);}
+        html.theme-vip .wallet-badge { background: rgba(255, 215, 0, 0.1); border-color: rgba(255, 215, 0, 0.3); color: #FFD700; box-shadow: inset 0 0 10px rgba(255,215,0,0.1); }
         .wallet-badge:active { transform: scale(0.95); background: var(--accent-cyan); color: black; box-shadow: 0 0 15px rgba(0,242,255,0.5);}
+        html.theme-vip .wallet-badge:active { background: #FFD700; color: black; box-shadow: 0 0 15px rgba(255,215,0,0.5); }
 
         /* --- HERO --- */
         .hero { text-align: center; padding: 25px 20px 10px; animation: fadeIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
@@ -114,6 +127,7 @@
         .filter-container { padding: 15px; display: flex; gap: 12px; overflow-x: auto; scrollbar-width: none; margin-bottom: 10px; }
         .filter-btn { background: rgba(255,255,255,0.05); border: 1px solid var(--card-border); color: #a0a0b0; font-family: var(--font-head); font-size: 0.9rem; font-weight: bold; padding: 10px 20px; border-radius: 25px; cursor: pointer; white-space: nowrap; transition: 0.3s; }
         .filter-btn.active { background: rgba(189,0,255,0.2); color: white; border-color: var(--accent-cyan); box-shadow: 0 0 20px rgba(0,242,255,0.3); transform: scale(1.05); }
+        html.theme-vip .filter-btn.active { background: rgba(255,215,0,0.15); border-color: #FFD700; box-shadow: 0 0 20px rgba(255,215,0,0.3); }
 
         /* --- REWARD GRID --- */
         .rewards-wrapper { padding: 0 15px 30px; display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
@@ -121,6 +135,7 @@
 
         .reward-card { background: var(--card-bg); backdrop-filter: blur(10px); border: 1px solid var(--card-border); border-radius: 18px; overflow: hidden; display: flex; flex-direction: column; transition: 0.4s; box-shadow: 0 10px 25px rgba(0,0,0,0.5); animation: slideInUp 0.5s ease backwards; }
         .reward-card:active { transform: scale(0.96); border-color: var(--accent-cyan); box-shadow: 0 5px 15px rgba(0,242,255,0.2); }
+        html.theme-vip .reward-card:active { border-color: #FFD700; box-shadow: 0 5px 15px rgba(255,215,0,0.2); }
         @keyframes slideInUp { from{opacity:0; transform:translateY(30px);} to{opacity:1; transform:translateY(0);} }
 
         .r-image-box { height: 110px; display: flex; align-items: center; justify-content: center; font-size: 3.5rem; position: relative; overflow: hidden; border-bottom: 1px solid rgba(255,255,255,0.05);}
@@ -133,6 +148,8 @@
         .bg-ff { background: linear-gradient(135deg, rgba(255,153,0,0.15), rgba(0,0,0,0)); color: var(--accent-orange); box-shadow: inset 0 -10px 30px rgba(255,153,0,0.05); }
         .bg-bgmi { background: linear-gradient(135deg, rgba(0,242,255,0.15), rgba(0,0,0,0)); color: var(--accent-cyan); box-shadow: inset 0 -10px 30px rgba(0,242,255,0.05); }
         .bg-cod { background: linear-gradient(135deg, rgba(160,160,176,0.15), rgba(0,0,0,0)); color: #d0d0d0; box-shadow: inset 0 -10px 30px rgba(160,160,176,0.05); }
+        
+        html.theme-vip .r-image-box { background: linear-gradient(135deg, rgba(255,215,0,0.15), rgba(0,0,0,0)); color: #FFD700; box-shadow: inset 0 -10px 30px rgba(255,215,0,0.05); }
 
         .r-content { padding: 15px; flex: 1; display: flex; flex-direction: column; justify-content: space-between; }
         .r-title { font-family: var(--font-head); font-size: 1.05rem; color: white; margin-bottom: 2px; font-weight: bold; text-shadow: 0 0 5px rgba(255,255,255,0.2); }
@@ -140,18 +157,27 @@
         
         /* Interactive Buttons */
         .r-btn { width: 100%; padding: 12px 10px; border-radius: 12px; border: 1px solid var(--accent-cyan); background: rgba(0,242,255,0.1); color: var(--accent-cyan); font-family: var(--font-head); font-size: 0.95rem; font-weight: bold; cursor: pointer; transition: 0.3s; display: flex; justify-content: center; align-items: center; gap: 8px; box-shadow: inset 0 0 10px rgba(0,242,255,0.1); backdrop-filter: blur(5px);}
+        html.theme-vip .r-btn { border-color: #FFD700; background: rgba(255,215,0,0.1); color: #FFD700; box-shadow: inset 0 0 10px rgba(255,215,0,0.1); }
         .r-btn:active { background: var(--accent-cyan); color: #000; box-shadow: 0 0 20px rgba(0,242,255,0.5); transform: scale(0.95); }
+        html.theme-vip .r-btn:active { background: #FFD700; color: black; box-shadow: 0 0 20px rgba(255,215,0,0.5); }
         
         /* LOCKED STATE */
         .r-btn.locked { background: rgba(255,255,255,0.02); border-color: rgba(255,255,255,0.1); color: #666; cursor: not-allowed; box-shadow: none; animation: none; transform: none;}
+        html.theme-vip .r-btn.locked { background: rgba(255,255,255,0.02); border-color: rgba(255,255,255,0.1); color: #666; box-shadow: none;}
         .reward-card.locked-card { opacity: 0.8; filter: grayscale(50%); }
 
         /* --- REDEEM BOTTOM SHEET MODAL --- */
         .bottom-sheet-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); z-index: 5000; display: none; align-items: flex-end; justify-content: center; backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); opacity: 0; transition: 0.4s; }
         .bottom-sheet-overlay.active { display: flex; opacity: 1; }
-        .bottom-sheet { width: 100%; max-width: 800px; background: rgba(10,5,20,0.85); border-radius: 25px 25px 0 0; border-top: 1px solid var(--card-border); border-left: 1px solid rgba(255,255,255,0.05); border-right: 1px solid rgba(255,255,255,0.05); padding: 30px 20px calc(20px + env(safe-area-inset-bottom)); transform: translateY(100%); transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); max-height: 90vh; overflow-y: auto; box-shadow: 0 -10px 40px rgba(0,0,0,0.8); backdrop-filter: blur(20px);}
+        .bottom-sheet { width: 100%; max-width: 800px; background: rgba(10,5,20,0.85); border-radius: 25px 25px 0 0; border-top: 1px solid var(--card-border); border-left: 1px solid rgba(255,255,255,0.05); border-right: 1px solid rgba(255,255,255,0.05); padding: 30px 20px calc(20px + env(safe-area-inset-bottom, 0px)); transform: translateY(100%); transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); max-height: 90vh; overflow-y: auto; box-shadow: 0 -10px 40px rgba(0,0,0,0.8); backdrop-filter: blur(20px);}
         .bottom-sheet-overlay.active .bottom-sheet { transform: translateY(0); }
         
+        @media (min-width: 850px) {
+            .bottom-sheet-overlay { align-items: center; justify-content: center; }
+            .bottom-sheet { border-radius: 25px; transform: scale(0.9); opacity: 0; transition: all 0.3s ease; max-height:85vh; margin: auto; padding-bottom: 30px;}
+            .bottom-sheet-overlay.active .bottom-sheet { transform: scale(1); opacity: 1; }
+        }
+
         .sheet-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; }
         .sheet-title { font-family: var(--font-head); font-size: 1.3rem; color: white; display: flex; align-items: center; gap: 10px; }
         .close-sheet { color: #888; font-size: 1.8rem; cursor: pointer; padding: 5px; transition: 0.3s; }
@@ -159,15 +185,29 @@
 
         .sheet-reward-info { display: flex; align-items: center; gap: 18px; margin-bottom: 25px; padding: 15px; background: rgba(255,255,255,0.02); border-radius: 15px; border: 1px solid rgba(255,255,255,0.05); }
         .sri-icon { width: 60px; height: 60px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 2rem; box-shadow: inset 0 0 15px rgba(255,255,255,0.1);}
+        html.theme-vip .sri-icon { background: rgba(255,215,0,0.1); color: #FFD700; box-shadow: inset 0 0 15px rgba(255,215,0,0.1); }
         .sri-details h4 { font-family: var(--font-head); font-size: 1.2rem; color: white; margin-bottom: 3px; }
         .sri-details p { font-size: 0.95rem; color: var(--accent-cyan); font-weight: bold; font-family: var(--font-head); }
+        html.theme-vip .sri-details p { color: #FFD700; }
 
         .form-label { display: block; font-size: 0.85rem; color: #a0a0b0; margin-bottom: 8px; font-family: var(--font-head); font-weight: bold; text-transform: uppercase; letter-spacing: 0.5px;}
         .form-input { width: 100%; background: rgba(0,0,0,0.4); border: 1px solid rgba(255,255,255,0.08); padding: 16px 15px; border-radius: 12px; color: white; font-family: var(--font-body); font-size: 1.1rem; outline: none; transition: 0.3s; margin-bottom: 20px; box-shadow: inset 0 0 10px rgba(0,0,0,0.5); }
         .form-input:focus { border-color: var(--accent-cyan); box-shadow: 0 0 15px rgba(0,242,255,0.2), inset 0 0 5px rgba(0,0,0,0.5); background: rgba(0,0,0,0.6);}
+        html.theme-vip .form-input:focus { border-color: #FFD700; box-shadow: 0 0 15px rgba(255,215,0,0.2), inset 0 0 5px rgba(0,0,0,0.5); }
+        
+        /* Shake animation for input errors */
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); }
+            20%, 40%, 60%, 80% { transform: translateX(5px); }
+        }
+        .input-error { border-color: var(--accent-red) !important; animation: shake 0.4s; }
 
         .btn-confirm { width: 100%; padding: 18px; background: var(--accent-gradient); border: none; border-radius: 15px; color: white; font-family: var(--font-head); font-size: 1.1rem; font-weight: bold; text-transform: uppercase; cursor: pointer; box-shadow: 0 5px 20px rgba(189,0,255,0.4); transition: 0.3s; letter-spacing: 1px; }
+        html.theme-vip .btn-confirm { background: linear-gradient(135deg, #FFD700, #FF8C00); color: black; box-shadow: 0 5px 20px rgba(255,215,0,0.4); }
         .btn-confirm:active { transform: scale(0.98); box-shadow: 0 2px 10px rgba(189,0,255,0.4); }
+        html.theme-vip .btn-confirm:active { box-shadow: 0 2px 10px rgba(255,215,0,0.4); }
+        .btn-confirm.btn-error { background: var(--accent-red); box-shadow: 0 5px 20px rgba(255,77,77,0.4); animation: shake 0.4s; }
 
         /* --- ANIMATED OVERLAYS (Status & ADS) --- */
         .full-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(7,3,17,0.98); z-index: 9999; display: flex; flex-direction: column; align-items: center; justify-content: center; opacity: 0; pointer-events: none; transition: 0.4s; backdrop-filter: blur(10px); }
@@ -175,6 +215,7 @@
         
         .anim-circle { width: 80px; height: 80px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 2.5rem; margin-bottom: 20px; transition: 0.3s; }
         .anim-loading { border: 4px solid rgba(255,255,255,0.1); border-top: 4px solid var(--accent-purple); animation: spin 1s cubic-bezier(0.175, 0.885, 0.32, 1.275) infinite; box-shadow: 0 0 20px rgba(189,0,255,0.5); }
+        html.theme-vip .anim-loading { border-top-color: #FFD700; box-shadow: 0 0 20px rgba(255,215,0,0.5); }
         .anim-success { background: var(--accent-green); color: black; box-shadow: 0 0 30px rgba(0,255,127,0.6); animation: popIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
         .anim-error { background: var(--accent-red); color: white; box-shadow: 0 0 30px rgba(255,77,77,0.6); animation: popIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
         
@@ -189,52 +230,50 @@
         @keyframes popIn { 0% { transform: scale(0.5); opacity: 0; } 80% { transform: scale(1.2); } 100% { transform: scale(1); opacity: 1; } }
 
         /* Custom Toast */
-        #customToast { visibility: hidden; min-width: 250px; background-color: var(--accent-cyan); color: #000; text-align: center; border-radius: 12px; padding: 16px; position: fixed; z-index: 9999; left: 50%; bottom: -50px; transform: translateX(-50%); font-family: var(--font-head); font-weight: bold; box-shadow: 0 8px 25px rgba(0,242,255,0.6); opacity: 0; transition: opacity 0.4s, bottom 0.4s; }
+        #customToast { visibility: hidden; min-width: 250px; background-color: var(--accent-cyan); color: #000; text-align: center; border-radius: 12px; padding: 16px; position: fixed; z-index: 9999; left: 50%; bottom: -50px; transform: translateX(-50%); font-family: var(--font-head); font-weight: bold; box-shadow: 0 8px 30px rgba(0,242,255,0.5); opacity: 0; transition: opacity 0.4s, bottom 0.4s; }
+        html.theme-vip #customToast { background-color: #FFD700; box-shadow: 0 8px 30px rgba(255,215,0,0.5); }
         #customToast.show { visibility: visible; opacity: 1; bottom: 100px; }
 
         /* --- FOOTER & NAV --- */
         .app-footer { text-align: center; padding: 20px 20px 110px 20px; color: #555; font-size: 0.75rem; font-family: var(--font-body); letter-spacing: 1px; border-top: 1px solid rgba(255,255,255,0.05); margin-top: 10px; }
         .footer-logo { font-family: var(--font-head); font-size: 1.1rem; letter-spacing: 1px; color: white; margin-bottom: 5px; display: inline-flex; align-items: center; gap: 8px; text-shadow: 0 0 10px rgba(255,255,255,0.2);}
         
-        /* PERFECT BOTTOM NAVIGATION */
-        .bottom-nav { position: fixed; bottom: 0; left: 0; width: 100%; height: calc(65px + env(safe-area-inset-bottom)); background: rgba(5, 2, 12, 0.75); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); display: flex; justify-content: space-between; align-items: flex-start; padding: 10px 2px env(safe-area-inset-bottom); border-top: 1px solid rgba(255,255,255,0.05); z-index: 1000; box-shadow: 0 -10px 30px rgba(0,0,0,0.5); transform: translateZ(0);}
-        .nav-item { display: flex; flex-direction: column; align-items: center; justify-content: flex-start; color: #666; text-decoration: none; font-size: 0.6rem; font-family: var(--font-head); font-weight: bold; flex: 1; transition: 0.3s; position: relative; padding: 0 2px; text-align: center;}
+        /* PERFECTLY ALIGNED BOTTOM NAVIGATION */
+        .bottom-nav { position: fixed; bottom: 0; left: 0; width: 100%; height: calc(65px + env(safe-area-inset-bottom, 0px)); background: rgba(7, 3, 17, 0.92); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); display: flex; justify-content: space-between; align-items: flex-start; padding: 10px 2px env(safe-area-inset-bottom, 0px); border-top: 1px solid rgba(255,255,255,0.05); z-index: 1000; box-shadow: 0 -10px 30px rgba(0,0,0,0.6); }
+        .nav-item { display: flex; flex-direction: column; align-items: center; justify-content: flex-start; color: #666; text-decoration: none; font-size: 0.6rem; font-family: var(--font-head); font-weight: bold; flex: 1; transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); position: relative; padding: 0 2px; text-align: center;}
         .nav-item span { margin-top: 4px; transition: 0.3s; letter-spacing: -0.3px;}
-        .nav-item i { font-size: 1.2rem; transition: 0.3s; }
+        
+        /* Fixed Icon Alignment */
+        .nav-item > i, .nav-item > .tx-icon, .nav-item > .tx-ticket-composite { 
+            font-size: 1.2rem; transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); color: #666; background: none; -webkit-text-fill-color: #666; filter: none; font-style: normal;
+            height: 24px; width: 24px; display: flex; align-items: center; justify-content: center; 
+        }
+        .tx-ticket-composite i { display: block; line-height: 1; font-size: 1.2rem; color: inherit; -webkit-text-fill-color: inherit; transition: 0.3s; background: inherit; filter: inherit; -webkit-background-clip: inherit;}
+
         .nav-item.active { color: var(--accent-cyan); }
-        .nav-item.active i { transform: translateY(-4px); color: var(--accent-cyan); filter: drop-shadow(0 0 10px var(--accent-cyan)); }
+        html.theme-vip .nav-item.active { color: #FFD700; }
+        
+        .nav-item.active > .tx-ticket-composite { transform: translateY(-4px); }
+        .nav-item.active > i, .nav-item.active > .tx-icon, .nav-item.active > .tx-ticket-composite i { transform: translateY(-4px); background: linear-gradient(135deg, var(--accent-purple), var(--accent-cyan)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; filter: drop-shadow(0 0 10px var(--accent-cyan)); font-style: normal; }
+        html.theme-vip .nav-item.active > i, html.theme-vip .nav-item.active > .tx-icon, html.theme-vip .nav-item.active > .tx-ticket-composite i { background: linear-gradient(135deg, #FFE87C, #FF8C00); -webkit-background-clip: text; -webkit-text-fill-color: transparent; filter: drop-shadow(0 0 10px rgba(212,175,55,0.8)); }
+        .nav-item.active .tx-ticket-composite i { transform: translateY(0); } /* Reset inner transform */
+        
         .nav-item.active span { transform: translateY(2px); color: white; text-shadow: 0 0 5px rgba(255,255,255,0.5);}
         .fab-slot { flex: 1.2; display: flex; justify-content: center; position: relative; height: 100%; align-items: center; }
-        .floating-plus { position: absolute; top: -25px; left: 50%; transform: translateX(-50%); width: 54px; height: 54px; background: linear-gradient(135deg, var(--accent-cyan), var(--accent-purple)); border-radius: 50%; display: flex; align-items: center; justify-content: center; border: 4px solid var(--primary-bg); box-shadow: 0 10px 25px rgba(189,0,255,0.4); color: #fff; font-size: 1.6rem; cursor: pointer; transition: 0.3s; z-index: 10; }
+        .floating-plus { position: absolute; top: -25px; left: 50%; transform: translateX(-50%); width: 54px; height: 54px; background: linear-gradient(135deg, var(--accent-cyan), var(--accent-purple)); border-radius: 50%; display: flex; align-items: center; justify-content: center; border: 4px solid var(--primary-bg); box-shadow: 0 10px 25px rgba(189,0,255,0.5); color: #fff; font-size: 1.6rem; cursor: pointer; transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); z-index: 10; }
+        html.theme-vip .floating-plus { background: linear-gradient(135deg, #FFE87C, #FF8C00); box-shadow: 0 10px 25px rgba(255,215,0,0.4); border-color: #000; color: #000; }
         .floating-plus:hover { transform: translateX(-50%) scale(1.1) rotate(90deg); box-shadow: 0 15px 35px rgba(0,242,255,0.6); }
 
-        @media (min-width: 850px) { 
-            .bottom-nav { display: none !important; } 
-            .bottom-sheet-overlay { align-items: center !important; justify-content: center !important; padding: 20px; }
-            .bottom-sheet { transform: scale(0.95) !important; opacity: 0; border-radius: 20px !important; max-height: 85vh; margin: auto !important; transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) !important; }
-            .bottom-sheet-overlay.active .bottom-sheet { transform: scale(1) !important; opacity: 1; }
-        }
+        @media (min-width: 850px) { .bottom-nav { display: none !important; } body { padding-bottom: 0; } }
+        
+        /* Focus fix for bottom nav on mobile */
+        .median-active .top-header { display: none !important; }
+        .median-active { padding-top: 15px !important; }
     </style>
 </head>
 <body>
 
     <canvas id="particles-canvas"></canvas>
-
-    <div class="bottom-sheet-overlay" id="guestLoginModal">
-        <div class="bottom-sheet" style="text-align: center; padding-bottom: 40px; transform: scale(0.95); margin: auto;">
-            <div class="sheet-header" style="justify-content: flex-end; margin-bottom: 10px;">
-                <i class="fa-solid fa-xmark close-sheet" onclick="window.location.href='index.html'"></i>
-            </div>
-            <i class="fa-solid fa-user-astronaut" style="font-size: 4rem; color: var(--accent-cyan); margin-bottom: 15px; filter: drop-shadow(0 0 15px var(--accent-cyan)); animation: float 3s ease-in-out infinite;"></i>
-            <h2 style="font-family: var(--font-head); font-size: 1.5rem; margin-bottom: 10px; color: white;">Access Restricted</h2>
-            <p style="color: #aaa; font-size: 0.95rem; margin-bottom: 25px; line-height: 1.5;">Please log in or sign up to access the rewards store and redeem your points.</p>
-            <button class="btn-confirm" style="background: linear-gradient(90deg, #ff4d4d, #ff9900); box-shadow: 0 5px 20px rgba(255, 77, 77, 0.4); margin-bottom: 15px;" onclick="window.location.href='login.html'">LOGIN TO ACCOUNT</button>
-            <button class="btn-confirm" style="background: transparent; border: 1px solid var(--accent-purple); box-shadow: none;" onclick="window.location.href='signup.html'">CREATE NEW ACCOUNT</button>
-            <div style="margin-top: 20px; font-size: 0.8rem; color: #888; font-family: var(--font-head); letter-spacing: 1px;">
-                Powered by <span style="font-weight: 900; background: var(--accent-gradient); -webkit-background-clip: text; -webkit-text-fill-color: transparent; letter-spacing: 1px;">QUVA</span>
-            </div>
-        </div>
-    </div>
 
     <header class="top-header">
         <div class="header-wrapper">
@@ -242,6 +281,16 @@
                 <a href="wallet.html" class="back-btn" onclick="triggerHaptic()"><i class="fa-solid fa-arrow-left"></i></a>
                 <div class="app-title">STORE</div>
             </div>
+            
+            <div class="desktop-nav">
+                <a href="index.html">Home</a>
+                <a href="explore.html">Explore</a>
+                <a href="matches.html">Matches</a>
+                <a href="clans.html">Clan</a>
+                <a href="tickets.html" class="active">Tickets</a>
+                <a href="profile.html">Profile</a>
+            </div>
+
             <div class="wallet-badge" id="walletBadge" onclick="window.location.href='wallet.html'; triggerHaptic();">
                 <i class="fa-solid fa-coins"></i> <span id="userPointsDisplay"><i class="fa-solid fa-spinner fa-spin" style="font-size:0.9rem;"></i></span>
             </div>
@@ -466,57 +515,6 @@
             </div>
         </div>
 
-        <div class="reward-card cat-games" style="animation-delay: 0.5s;">
-            <div class="r-image-box bg-cod"><i class="fa-solid fa-person-military-rifle"></i></div>
-            <div class="r-content">
-                <div>
-                    <div class="r-title">Call of Duty</div>
-                    <div class="r-sub">80 CP Top-Up</div>
-                </div>
-                <button class="r-btn" data-cost="5500" onclick="openRedeemModal('CODM 80 CP', 5500, 'CODM Player UID', 'fa-person-military-rifle', 'bg-cod')">5,500 PTS</button>
-            </div>
-        </div>
-        <div class="reward-card cat-games" style="animation-delay: 0.5s;">
-            <div class="r-image-box bg-cod"><i class="fa-solid fa-person-military-rifle"></i></div>
-            <div class="r-content">
-                <div>
-                    <div class="r-title">Call of Duty</div>
-                    <div class="r-sub">400 + 20 CP</div>
-                </div>
-                <button class="r-btn" data-cost="27500" onclick="openRedeemModal('CODM 420 CP', 27500, 'CODM Player UID', 'fa-person-military-rifle', 'bg-cod')">27,500 PTS</button>
-            </div>
-        </div>
-        <div class="reward-card cat-games" style="animation-delay: 0.5s;">
-            <div class="r-image-box bg-cod"><i class="fa-solid fa-person-military-rifle"></i></div>
-            <div class="r-content">
-                <div>
-                    <div class="r-title">Call of Duty</div>
-                    <div class="r-sub">800 + 80 CP</div>
-                </div>
-                <button class="r-btn" data-cost="55000" onclick="openRedeemModal('CODM 880 CP', 55000, 'CODM Player UID', 'fa-person-military-rifle', 'bg-cod')">55,000 PTS</button>
-            </div>
-        </div>
-        <div class="reward-card cat-games" style="animation-delay: 0.5s;">
-            <div class="r-image-box bg-cod"><i class="fa-solid fa-person-military-rifle"></i></div>
-            <div class="r-content">
-                <div>
-                    <div class="r-title">Call of Duty</div>
-                    <div class="r-sub">2000 + 400 CP</div>
-                </div>
-                <button class="r-btn" data-cost="135000" onclick="openRedeemModal('CODM 2400 CP', 135000, 'CODM Player UID', 'fa-person-military-rifle', 'bg-cod')">135,000 PTS</button>
-            </div>
-        </div>
-        <div class="reward-card cat-games" style="animation-delay: 0.5s;">
-            <div class="r-image-box bg-cod"><i class="fa-solid fa-person-military-rifle"></i></div>
-            <div class="r-content">
-                <div>
-                    <div class="r-title">Call of Duty</div>
-                    <div class="r-sub">4000 + 1000 CP</div>
-                </div>
-                <button class="r-btn" data-cost="270000" onclick="openRedeemModal('CODM 5000 CP', 270000, 'CODM Player UID', 'fa-person-military-rifle', 'bg-cod')">270,000 PTS</button>
-            </div>
-        </div>
-
     </div>
 
     <div class="bottom-sheet-overlay" id="redeemModal">
@@ -535,7 +533,7 @@
             </div>
 
             <label class="form-label" id="modalInputLabel">Enter Details *</label>
-            <input type="text" id="modalInput" class="form-input" placeholder="Required for processing...">
+            <input type="text" id="modalInput" class="form-input" placeholder="Required for processing..." oninput="this.style.borderColor='var(--card-border)'">
             
             <div style="font-size:0.75rem; color:#888; text-align:center; margin-bottom: 20px; line-height:1.5;">
                 <i class="fa-solid fa-shield-halved" style="color:var(--accent-purple);"></i> Please double-check your input. Processing takes up to 24 hours.
@@ -545,7 +543,6 @@
         </div>
     </div>
 
-    <!-- UPGRADED OVERLAY FOR ADSENSE -->
     <div class="full-overlay" id="statusOverlay">
         <div class="anim-circle" id="statusCircle"></div>
         <h2 class="overlay-title" id="statusTitle">Processing...</h2>
@@ -554,9 +551,7 @@
         <div class="ad-container" id="adContainer">
             <span style="color:rgba(255,255,255,0.2); font-size:0.7rem; font-family:var(--font-head); margin-bottom: 5px;">SPONSOR AD</span>
             
-            <!-- ⚠️ PASTE YOUR ADSENSE <ins> TAG HERE ⚠️ -->
-            <!-- Banner reedem -->
-<ins class="adsbygoogle"
+            <ins class="adsbygoogle"
      style="display:inline-block;width:300px;height:250px"
      data-ad-client="ca-pub-2610280925070403"
      data-ad-slot="1164728881"></ins>
@@ -565,11 +560,24 @@
         <div class="ad-timer" id="adTimer">Closing in 5...</div>
     </div>
 
+    <div class="auth-popup-overlay" id="authPopup" onclick="if(event.target === this) closeAuthPopup()">
+        <div class="auth-popup-box glass-panel">
+            <i class="fa-solid fa-xmark auth-close" onclick="closeAuthPopup()"></i>
+            <i class="fa-solid fa-user-shield auth-icon"></i>
+            <h2 style="font-family: var(--font-head); font-size: 1.5rem; margin-bottom: 10px; color: white;">Authentication Required</h2>
+            <p style="font-size: 0.95rem; color: #b0b0cc; margin-bottom: 25px; line-height: 1.4;">Please log in or sign up to access player profiles, wallets, and the rewards store.</p>
+            <button class="btn-confirm" style="margin-bottom:0;" onclick="window.location.href='login.html'">Log In / Sign Up</button>
+            <div style="margin-top: 20px; font-size: 0.8rem; color: #888; font-family: var(--font-head); letter-spacing: 1px;">
+                Powered by <span style="color: var(--accent-cyan); font-weight: bold; text-shadow: 0 0 10px rgba(0,242,255,0.5);">QUVA</span>
+            </div>
+        </div>
+    </div>
+
     <div class="app-footer">
         © 2026 TOURNYX. All rights reserved.<br>
-        <div style="margin-top: 5px; font-style: italic; color: #777; font-size: 0.8rem;">made with ⚡ for gamers</div>
+        <div style="margin-top: 5px; font-style: italic; color: #777; font-size: 0.8rem;">made with 🔥 for gamers</div>
         <div style="margin-top: 15px; font-size: 0.85rem; color: #888; font-family: var(--font-head); letter-spacing: 1px;">
-            Powered by <span style="font-weight: 900; background: var(--accent-gradient); -webkit-background-clip: text; -webkit-text-fill-color: transparent; letter-spacing: 2px;">QUVA</span>
+            Powered by <span style="font-weight: 900; background: var(--accent-gradient); -webkit-background-clip: text; -webkit-text-fill-color: transparent; letter-spacing: 1px;">QUVA</span>
         </div>
     </div>
 
@@ -582,21 +590,21 @@
         <a class="nav-item" href="explore.html">
             <i class="fa-solid fa-compass"></i><span>Explore</span>
         </a>
-        <a class="nav-item" href="matches.html">
+        <a class="nav-item" href="matches.html" onclick="return checkAuth(event)">
             <i class="fa-solid fa-trophy"></i><span>Matches</span>
         </a>
         <div class="fab-slot">
-            <div class="floating-plus" onclick="window.location.href='tournament.html'">
+            <div class="floating-plus" onclick="if(checkAuth(event)) window.location.href='tournament.html'">
                 <i class="fa-solid fa-plus"></i>
             </div>
         </div>
-        <a class="nav-item" href="clans.html">
+        <a class="nav-item" href="clans.html" onclick="return checkAuth(event)">
             <i class="fa-solid fa-shield-halved"></i><span>Clan</span>
         </a>
-        <a class="nav-item active" href="wallet.html">
+        <a class="nav-item" href="wallet.html" onclick="return checkAuth(event)">
             <i class="fa-solid fa-wallet"></i><span>Wallet</span>
         </a>
-        <a class="nav-item" href="profile.html">
+        <a class="nav-item active" href="profile.html" onclick="return checkAuth(event)">
             <i class="fa-solid fa-user"></i><span>Profile</span>
         </a>
     </nav>
@@ -628,12 +636,25 @@
 
         function triggerHaptic() { if(navigator.vibrate) navigator.vibrate(40); }
 
+        function checkAuth(e) {
+            let user = JSON.parse(localStorage.getItem('tournyx_user'));
+            if (!user || !user.email || user.email === "guest@tournyx.com") {
+                if(e) e.preventDefault();
+                document.getElementById('authPopup').classList.add('active');
+                return false;
+            }
+            return true;
+        }
+        function closeAuthPopup() {
+            document.getElementById('authPopup').classList.remove('active');
+        }
+
         document.addEventListener("DOMContentLoaded", function() {
             if (!currentUser || !currentUser.email || currentUser.email === "guest@tournyx.com") {
                 isGuest = true;
                 currentUser = { username: "Guest Player", points: 0, email: "guest@tournyx.com" };
                 setTimeout(() => {
-                    document.getElementById('guestLoginModal').classList.add('active');
+                    document.getElementById('authPopup').classList.add('active');
                 }, 500);
             }
             
@@ -646,9 +667,9 @@
         function showToast(msg, isError = false) {
             var x = document.getElementById("customToast");
             x.innerText = msg;
-            x.style.backgroundColor = isError ? "var(--accent-red)" : "var(--accent-green)";
-            x.style.color = isError ? "white" : "#000";
-            x.style.boxShadow = isError ? "0 8px 25px rgba(255,77,77,0.6)" : "0 8px 25px rgba(0,255,127,0.6)";
+            x.style.backgroundColor = isError ? "var(--accent-red)" : (document.documentElement.classList.contains('theme-vip') ? "#FFD700" : "var(--accent-cyan)");
+            x.style.color = "black";
+            x.style.boxShadow = isError ? "0 8px 25px rgba(255,77,77,0.6)" : (document.documentElement.classList.contains('theme-vip') ? "0 8px 25px rgba(255,215,0,0.6)" : "0 8px 25px rgba(0,242,255,0.6)");
             x.className = "show";
             triggerHaptic();
             setTimeout(function(){ x.className = x.className.replace("show", ""); }, 3500);
@@ -661,22 +682,35 @@
             .then(data => {
                 if(data.status === 'success') {
                     currentUser.points = data.data.points || currentUser.points;
+                    currentUser.is_premium = String(data.data.is_premium).toLowerCase() === 'true';
+                    
+                    if (currentUser.is_premium) {
+                        document.documentElement.classList.add('theme-vip');
+                    } else {
+                        document.documentElement.classList.remove('theme-vip');
+                    }
+                    
                     localStorage.setItem('tournyx_user', JSON.stringify(currentUser));
                     updateUIState(); 
                 }
             }).catch(e => console.log("Offline mode"));
         }
 
-        // --- DYNAMIC AFFORDABILITY ENGINE ---
+        // --- DYNAMIC AFFORDABILITY ENGINE (VIP UNLOCK) ---
         function updateUIState() {
             let pts = parseInt(currentUser.points) || 0;
-            document.getElementById('userPointsDisplay').innerText = formatNum(pts);
+            let isVip = document.documentElement.classList.contains('theme-vip');
+            
+            // Animate Points display
+            let ptsDisplay = document.getElementById('userPointsDisplay');
+            animateValue(ptsDisplay, parseInt(ptsDisplay.innerText.replace(/,/g, '')) || 0, pts, 1000);
 
             document.querySelectorAll('.r-btn').forEach(btn => {
                 let cost = parseInt(btn.getAttribute('data-cost'));
                 let card = btn.closest('.reward-card');
                 
-                if (pts < cost) {
+                // VIPs get everything unlocked visually. Otherwise, check points.
+                if (pts < cost && !isVip) {
                     btn.classList.add('locked');
                     btn.innerHTML = `<i class="fa-solid fa-lock"></i> Locked (${formatNum(cost)})`;
                     card.classList.add('locked-card');
@@ -686,6 +720,18 @@
                     card.classList.remove('locked-card');
                 }
             });
+        }
+        
+        function animateValue(obj, start, end, duration) {
+            if(start === end) { obj.innerHTML = formatNum(end); return; }
+            let startTimestamp = null;
+            const step = (timestamp) => {
+                if (!startTimestamp) startTimestamp = timestamp;
+                const progress = Math.min((timestamp - startTimestamp) / duration, 1);
+                obj.innerHTML = formatNum(Math.floor(progress * (end - start) + start));
+                if (progress < 1) { window.requestAnimationFrame(step); } else { obj.innerHTML = formatNum(end); }
+            };
+            window.requestAnimationFrame(step);
         }
 
         // --- FILTER LOGIC ---
@@ -703,6 +749,9 @@
                     card.style.display = 'none';
                 }
             });
+            
+            // Scroll to top of rewards nicely
+            window.scrollTo({ top: document.querySelector('.filter-container').offsetTop - 80, behavior: 'smooth' });
         }
 
         // --- OVERLAY & MODAL CONTROLLERS ---
@@ -710,12 +759,15 @@
 
         function openRedeemModal(name, cost, inputLabel, iconClass, bgClass) {
             if(isGuest) {
-                document.getElementById('guestLoginModal').classList.add('active');
+                document.getElementById('authPopup').classList.add('active');
                 return;
             }
 
             let pts = parseInt(currentUser.points) || 0;
-            if (pts < cost) {
+            let isVip = document.documentElement.classList.contains('theme-vip');
+            
+            // Allow VIPs to open modal regardless of points, just for show (backend will still verify)
+            if (pts < cost && !isVip) {
                 let badge = document.getElementById('walletBadge');
                 badge.style.animation = "shake 0.4s";
                 setTimeout(()=>badge.style.animation = "none", 400);
@@ -738,7 +790,7 @@
             document.getElementById('modalRewardCost').innerText = formatNum(cost) + " PTS";
             document.getElementById('modalInputLabel').innerText = inputLabel + " *";
             document.getElementById('modalInput').value = "";
-            document.getElementById('modalInput').placeholder = inputLabel;
+            document.getElementById('modalInput').placeholder = "Enter your " + inputLabel; // Dynamic placeholder
 
             document.getElementById('redeemModal').classList.add('active');
         }
@@ -765,11 +817,25 @@
 
         // --- SECURE REDEMPTION & ADSENSE LOGIC ---
         function confirmRedeem() {
-            let payoutDetails = document.getElementById('modalInput').value.trim();
+            let inputField = document.getElementById('modalInput');
+            let payoutDetails = inputField.value.trim();
+            let btn = document.getElementById('confirmRedeemBtn');
+
             if (!payoutDetails) {
                 showToast("Please enter the required details.", true);
-                document.getElementById('modalInput').style.borderColor = "var(--accent-red)";
-                setTimeout(()=>document.getElementById('modalInput').style.borderColor = "var(--card-border)", 2000);
+                
+                // Error animation and cooldown
+                inputField.classList.add('input-error');
+                btn.classList.add('btn-error');
+                btn.innerText = "REQUIRED FIELD EMPTY";
+                btn.disabled = true;
+                
+                setTimeout(() => {
+                    inputField.classList.remove('input-error');
+                    btn.classList.remove('btn-error');
+                    btn.innerText = "Confirm & Deduct Points";
+                    btn.disabled = false;
+                }, 2000);
                 return;
             }
 
@@ -789,9 +855,14 @@
                 body: JSON.stringify(payload)
             }).then(() => {
                 
-                currentUser.points = parseInt(currentUser.points) - activeReward.cost;
+                // Deduct points instantly in UI
+                let oldPts = parseInt(currentUser.points) || 0;
+                currentUser.points = oldPts - activeReward.cost;
                 localStorage.setItem('tournyx_user', JSON.stringify(currentUser));
                 
+                updateUIState(); // This handles the animateValue automatically
+                
+                // Optimistically log transaction
                 let localTxns = JSON.parse(localStorage.getItem('tournyx_txns')) || [];
                 localTxns.unshift({ 
                     id: "RD" + Date.now().toString().slice(-6), 
@@ -799,7 +870,6 @@
                     amount: activeReward.cost, type: "Debit", title: "Redeemed: " + activeReward.name, status: "Pending"
                 });
                 localStorage.setItem('tournyx_txns', JSON.stringify(localTxns));
-                updateUIState();
 
                 showOverlay('success', 'Reward Claimed!', 'Your request has been sent to the admins. Allow up to 24 hours.');
                 
