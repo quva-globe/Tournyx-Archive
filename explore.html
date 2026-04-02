@@ -2213,7 +2213,10 @@
             document.getElementById('finalSubmitBtn').innerText = "Proceed";
         }
 
-        function processRegistrationPayment(e) {
+        
+
+                
+                function processRegistrationPayment(e) {
             e.preventDefault();
             if(navigator.vibrate) navigator.vibrate(40);
             
@@ -2232,61 +2235,25 @@
                 
                 let user = JSON.parse(localStorage.getItem('tournyx_user')) || {};
                 
-                // 🚀 BULLETPROOF MAGIC PARSER (Protects 200 + 50 from going negative) 🚀
-                let rawRupees = String(user.rupees || user.earnings || "0");
+                // 🚀 THE ULTIMATE BULLETPROOF PARSER 🚀
+                // Strip out any weird spaces or undefined text that crashes the math
+                let rawString = String(user.rupees || user.earnings || "0").replace(/\s/g, '');
+                if (rawString === "undefined" || rawString === "null" || rawString === "") rawString = "0";
+                
                 let baseRupees = 0; let goldenRupees = 0;
                 
-                if (rawRupees.includes('+')) {
-                    let parts = rawRupees.split('+');
+                if (rawString.includes('+')) {
+                    let parts = rawString.split('+');
                     baseRupees = Math.max(0, parseFloat(parts[0]) || 0);
                     goldenRupees = Math.max(0, parseFloat(parts[1]) || 0);
                 } else {
-                    baseRupees = Math.max(0, parseFloat(rawRupees) || 0);
+                    baseRupees = Math.max(0, parseFloat(rawString) || 0);
                 }
 
-                let baseTickets = Math.floor(baseRupees / 10);
-                let goldenTickets = Math.floor(goldenRupees / 10);
+                // Total available passes (combining base and universal golden passes safely)
+                let availableSpecific = Math.floor(baseRupees / 10) + Math.floor(goldenRupees / 10);
                 let currentPoints = parseInt(user.points) || 0;
                 
-                // 🎮 BULLETPROOF GAME TICKET ALLOCATOR 🎮
-                let txns = JSON.parse(localStorage.getItem('tournyx_txns')) || [];
-                let ffBought = 0; let bgmiBought = 0;
-                
-                txns.forEach(txn => {
-                    let cat = String(txn.category || "").toLowerCase();
-                    let title = String(txn.title || "").toLowerCase();
-                    // Identify past pass purchases correctly
-                    if(txn.type === "Credit" && (cat.includes("purchase") || title.includes("bought") || title.includes("pass")) && (txn.status === "Success" || txn.status === "Pending")) {
-                        let count = Math.floor(txn.amount / 10);
-                        if(title.includes("free fire") || title.includes("ff")) ffBought += count;
-                        else if(title.includes("bgmi")) bgmiBought += count;
-                    }
-                });
-
-                let totalBought = ffBought + bgmiBought;
-                let ffDisplay = 0; let bgmiDisplay = 0; 
-                let uniDisplay = goldenTickets; // Golden Tickets go to the Universal Pool!
-
-                if (totalBought === 0) { 
-                    uniDisplay += baseTickets; // If no history, assume all base tickets are universal
-                } else {
-                    let ffRatio = ffBought / totalBought;
-                    ffDisplay = Math.round(baseTickets * ffRatio);
-                    bgmiDisplay = baseTickets - ffDisplay;
-                }
-
-                // Target the specific game requested by the tournament
-                let gameName = String(activeTournament.game || "").toLowerCase();
-                let availableSpecific = uniDisplay; // Universal tickets can always be used!
-                
-                if (gameName.includes('free fire') || gameName.includes('ff')) {
-                    availableSpecific += ffDisplay;
-                } else if (gameName.includes('bgmi')) {
-                    availableSpecific += bgmiDisplay;
-                } else {
-                    availableSpecific += baseTickets; // Fallback: allow all tickets for generic esports
-                }
-
                 let headerTxt = "";
                 let pRup = document.getElementById('payOptRupees');
                 let pPts = document.getElementById('payOptPts');
@@ -2329,26 +2296,26 @@
             let user = JSON.parse(localStorage.getItem('tournyx_user')) || {};
             
             if (method === 'tickets') { 
-                let rawRupees = String(user.rupees || user.earnings || "0");
+                let rawString = String(user.rupees || user.earnings || "0").replace(/\s/g, '');
                 let baseR = 0; let goldR = 0;
                 
-                if (rawRupees.includes('+')) {
-                    let pts = rawRupees.split('+');
+                if (rawString.includes('+')) {
+                    let pts = rawString.split('+');
                     baseR = Math.max(0, parseFloat(pts[0]) || 0);
                     goldR = Math.max(0, parseFloat(pts[1]) || 0);
                 } else {
-                    baseR = Math.max(0, parseFloat(rawRupees) || 0);
+                    baseR = Math.max(0, parseFloat(rawString) || 0);
                 }
                 
                 let costRupees = cost * 10;
                 
-                // Deduct from base game tickets first, then universal golden tickets
+                // Deduct safely from Base first, then Gold
                 if (baseR >= costRupees) {
                     baseR -= costRupees;
                 } else {
                     let rem = costRupees - baseR;
-                    baseR = 0; // Base is depleted
-                    goldR = Math.max(0, goldR - rem); // Take remainder from Universal Gold, NEVER go below 0
+                    baseR = 0; 
+                    goldR = Math.max(0, goldR - rem); 
                 }
                 
                 if (goldR > 0) {
