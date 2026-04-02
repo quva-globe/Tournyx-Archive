@@ -242,8 +242,22 @@
         .t-plat-badge { position: absolute; bottom: 12px; right: 12px; background: rgba(0,0,0,0.85); border: 1px solid rgba(255,255,255,0.3); color: white; padding: 4px 8px; border-radius: 8px; font-size: 0.65rem; font-family: var(--font-head); font-weight: bold; backdrop-filter: blur(5px); z-index: 2; letter-spacing: 0.5px; display: flex; align-items: center; gap: 4px;}
         
         .t-info-box { padding: 5px 15px 15px 15px; position: relative; z-index: 2; }
-        .t-title { font-family: var(--font-head); font-size: 1.2rem; color: white; margin-bottom: 15px; display: flex; align-items: center; gap: 8px; text-shadow: 0 0 5px rgba(255,255,255,0.3); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; width: 100%; }
-        .verified-badge { color: #1da1f2; font-size: 0.9rem; flex-shrink:0; }
+        .t-title { 
+            font-family: var(--font-head); 
+            font-size: 1.05rem; 
+            color: white; 
+            margin-bottom: 12px; 
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            white-space: normal; 
+            overflow: hidden; 
+            text-overflow: ellipsis; 
+            line-height: 1.3;
+            width: 100%;
+            text-shadow: 0 0 5px rgba(255,255,255,0.3); 
+        }
+        .verified-badge { color: #1da1f2; font-size: 0.9rem; flex-shrink:0; margin-left: 5px; vertical-align: middle;}
         
         .t-details-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 15px; }
         .t-detail-item { display: flex; align-items: flex-start; gap: 8px; font-size: 0.85rem; color: #b0b0cc; line-height: 1.3; }
@@ -316,7 +330,7 @@
 
         .dm-header { background: rgba(7,3,17,0.95); padding: calc(10px + env(safe-area-inset-top, 0px)) 15px 10px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(var(--dynamic-t-color), 0.2); flex-shrink: 0; z-index: 10; backdrop-filter: blur(10px); transition: border-color 0.4s ease;}
         .dm-back { font-size: 1.4rem; cursor: pointer; color: white; padding: 5px 10px 5px 0; }
-        .dm-title { font-family: var(--font-head); font-weight: bold; flex: 1; text-align: center; font-size: 1.15rem; text-shadow: 0 0 5px rgba(255,255,255,0.5); white-space: nowrap; overflow: hidden; text-overflow: ellipsis;}
+        .dm-title { font-family: var(--font-head); font-weight: bold; flex: 1; text-align: center; font-size: 1rem; text-shadow: 0 0 5px rgba(255,255,255,0.5); white-space: nowrap; overflow: hidden; text-overflow: ellipsis;}
         .dm-share { font-size: 1.3rem; color: rgb(var(--dynamic-t-color)); cursor: pointer; padding: 5px 0 5px 10px; transition: 0.3s; }
         .dm-share:active { transform: scale(0.9); }
 
@@ -696,7 +710,7 @@
                 <div class="dm-tab-content active" id="dtTabOverview">
                     <div id="dynamicBadgesArea" style="margin-bottom: 10px;"></div>
                 
-                    <h2 id="dtTitle" class="t-title" style="font-size: 1.5rem; white-space: normal; margin-bottom: 5px;">Tournament Title</h2>
+                    <h2 id="dtTitle" class="t-title" style="font-size: 1.3rem !important; white-space: normal; margin-bottom: 5px;">Tournament Title</h2>
                     
                     <div class="dm-section" style="padding:10px; margin-bottom: 20px; display:flex; align-items:center; gap:10px; cursor: pointer; transition: 0.3s; border-color: var(--accent-cyan) !important;" onclick="openHostProfile()">
                         <img id="orgAvatarImg" src="https://via.placeholder.com/40" style="width:40px; height:40px; border-radius:50%; border:2px solid var(--accent-cyan); object-fit: cover;">
@@ -1058,6 +1072,14 @@
         let localTournamentsData = []; 
         let activeCountdown = null;
         let activeTimelineInterval = null;
+
+        // Perfect IST Date & Time Formatter
+        function getISTDateTime(dateInput) {
+            let d = (dateInput && String(dateInput).trim() !== "") ? new Date(dateInput) : new Date();
+            if (isNaN(d.getTime())) d = new Date(); 
+            let options = { timeZone: 'Asia/Kolkata', month: 'short', day: '2-digit', year: 'numeric', hour: 'numeric', minute: '2-digit', hour12: true };
+            return d.toLocaleString('en-IN', options).toUpperCase();
+        }
 
         // Failsafe normalizer to fix the backend column mapping bug dynamically 
         function normalizeTxn(t) {
@@ -2151,7 +2173,7 @@
             let totalRupees = baseRupees + goldenRupees;
             let totalTickets = Math.floor(totalRupees / 10);
             let goldenTickets = Math.floor(goldenRupees / 10);
-            let baseTickets = totalTickets - goldenTickets;
+            let baseTickets = Math.floor(baseRupees / 10);
 
             let txns = JSON.parse(localStorage.getItem('tournyx_txns')) || [];
             let ffCount = 0; let bgmiCount = 0;
@@ -2168,8 +2190,10 @@
 
             let identified = ffCount + bgmiCount;
             let uniDisplay = goldenTickets, ffDisplay = 0, bgmiDisplay = 0;
+            
+            // If identified is 0, we default the base tickets to Free Fire to prevent them leaking into Universal.
             if (identified === 0) {
-                uniDisplay += baseTickets;
+                ffDisplay = baseTickets;
             } else {
                 ffDisplay = Math.round((ffCount / identified) * baseTickets);
                 bgmiDisplay = baseTickets - ffDisplay;
@@ -2457,7 +2481,7 @@
                     });
                     
                     let txns = JSON.parse(localStorage.getItem('tournyx_txns')) || [];
-                    let dateStr = new Date().toLocaleString('en-US', { month:'short', day:'2-digit', year:'numeric', hour:'numeric', minute:'2-digit', hour12:true });
+                    let dateStr = getISTDateTime();
                     let newTxn = { 
                         id: "ENTRY-" + Math.floor(Math.random() * 1000000), 
                         title: "Joined: " + (t.title || "Tournament"), 
@@ -2619,7 +2643,7 @@
             });
 
             let txns = JSON.parse(localStorage.getItem('tournyx_txns')) || [];
-            let dateStr = new Date().toLocaleString('en-US', { month:'short', day:'2-digit', year:'numeric', hour:'numeric', minute:'2-digit', hour12:true });
+            let dateStr = getISTDateTime();
             let newTxn = { 
                 id: "TXN-" + Math.floor(Math.random() * 1000000), 
                 title: "Contributed to: " + (activeTournament.title || "Tournament"), 
