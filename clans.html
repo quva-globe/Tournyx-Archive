@@ -9,7 +9,6 @@
     <meta name="keywords" content="Esports Clan, Gaming Squad, BGMI Clan, Free Fire Team, Tournyx Clan Hub, Join Esports Team, Quva">
     <meta name="robots" content="index, follow">
     <meta name="author" content="Tournyx">
-    <meta name="google-site-verification" content="ADD_YOUR_GOOGLE_SEARCH_CONSOLE_TAG_HERE" />
     <link rel="canonical" href="https://tournyx.in/clans.html" />
     
     <meta property="og:type" content="website">
@@ -41,6 +40,12 @@
                     document.documentElement.style.setProperty('--accent-purple', THEMES[tIndex].purple);
                     document.documentElement.style.setProperty('--accent-gradient', `linear-gradient(90deg, ${THEMES[tIndex].purple}, ${THEMES[tIndex].cyan})`);
                 }
+                
+                // VIP Theme Check
+                let user = JSON.parse(localStorage.getItem('tournyx_user'));
+                if (user && String(user.is_premium).toLowerCase() === 'true') {
+                    document.documentElement.classList.add('theme-vip');
+                }
             } catch(e) { console.log("Theme setting bypassed."); }
         })();
     </script>
@@ -55,6 +60,14 @@
             --font-head: 'Orbitron', sans-serif; --font-body: 'Rajdhani', sans-serif;
         }
         
+        /* TRUE GOLDEN VIP THEME */
+        html.theme-vip {
+            --accent-cyan: #FFD700;
+            --accent-purple: #FFA500;
+            --accent-gradient: linear-gradient(135deg, #FFE87C, #D4AF37, #FF8C00);
+            --card-border: rgba(212, 175, 55, 0.3);
+        }
+        
         * { -ms-overflow-style: none !important; scrollbar-width: none !important; margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
         *::-webkit-scrollbar { display: none !important; width: 0 !important; height: 0 !important; }
 
@@ -64,30 +77,11 @@
 
         /* --- TOURNYX TX COMPOSITE TICKET ICON --- */
         .tx-ticket-composite {
-            position: relative;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
+            position: relative; display: inline-flex; align-items: center; justify-content: center; height: 24px;
         }
-        .tx-ticket-composite i {
-            font-size: inherit;
-            transition: inherit;
-        }
+        .tx-ticket-composite i { font-size: inherit; transition: inherit; }
         .tx-ticket-composite .tx-text {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -46%);
-            font-family: var(--font-head);
-            font-size: 0.38em; 
-            font-weight: 900;
-            color: var(--primary-bg) !important;
-            -webkit-text-fill-color: var(--primary-bg) !important;
-            letter-spacing: -0.5px;
-            pointer-events: none;
-            z-index: 2;
-            transition: 0.3s;
-            font-style: normal !important;
+            position: absolute; top: 50%; left: 50%; transform: translate(-50%, -46%); font-family: var(--font-head); font-size: 0.38em; font-weight: 900; color: var(--primary-bg) !important; -webkit-text-fill-color: var(--primary-bg) !important; letter-spacing: -0.5px; pointer-events: none; z-index: 2; transition: 0.3s; font-style: normal !important;
         }
 
         /* --- HEADER (MOBILE OPTIMIZED SIZES) --- */
@@ -95,13 +89,16 @@
         .header-wrapper { display: flex; align-items: center; justify-content: space-between; gap: 5px; }
         .header-left { display: flex; align-items: center; gap: 8px; flex: 1; min-width: 0; }
         .app-logo { width: 28px; height: 28px; border-radius: 50%; object-fit: contain; box-shadow: 0 0 15px var(--accent-purple); border: 1px solid rgba(255,255,255,0.2); flex-shrink: 0; }
+        html.theme-vip .app-logo { box-shadow: 0 0 15px #FFD700; border-color: #FFD700;}
         .app-title { font-family: var(--font-head); font-size: 0.9rem; font-weight: 700; background: var(--accent-gradient); -webkit-background-clip: text; -webkit-text-fill-color: transparent; letter-spacing: 0px; white-space: normal; line-height: 1.1; word-break: break-word; }
         .header-profile-img { width: 30px; height: 30px; border-radius: 50%; border: 2px solid var(--accent-cyan); object-fit: cover; flex-shrink: 0; cursor: pointer; box-shadow: 0 0 10px rgba(0,242,255,0.4); transition: 0.3s;}
+        html.theme-vip .header-profile-img { border-color: #FFD700; box-shadow: 0 0 10px rgba(255,215,0,0.6); }
 
         /* --- DESKTOP NAV --- */
         .desktop-nav { display: none; align-items: center; gap: 20px; }
         .desktop-nav a { color: var(--text-muted); text-decoration: none; font-family: var(--font-head); font-size: 0.95rem; font-weight: bold; transition: 0.3s; display: flex; align-items: center; gap: 6px; text-transform: uppercase; letter-spacing: 1px;}
         .desktop-nav a:hover, .desktop-nav a.active { color: var(--accent-cyan); text-shadow: 0 0 10px rgba(0,242,255,0.4); }
+        html.theme-vip .desktop-nav a:hover, html.theme-vip .desktop-nav a.active { color: #FFD700; text-shadow: 0 0 10px rgba(255,215,0,0.6); }
         
         .desktop-icon-btn { display: none; color: white; font-size: 1.1rem; transition: 0.3s; text-decoration: none; align-items: center; justify-content: center; width: 35px; height: 35px; border-radius: 50%; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); }
         .desktop-icon-btn:hover { color: var(--accent-cyan); border-color: var(--accent-cyan); background: rgba(0,242,255,0.1); transform: scale(1.05); box-shadow: 0 0 10px rgba(0,242,255,0.3); }
@@ -112,12 +109,15 @@
         }
 
         .sync-indicator { font-size: 0.65rem; color: var(--accent-cyan); font-family: var(--font-head); display: flex; align-items: center; gap: 5px; opacity: 0; transition: 0.3s; margin-right: 12px; font-weight:bold; text-transform: uppercase;}
+        html.theme-vip .sync-indicator { color: #FFD700; }
         .sync-indicator.active { opacity: 1; }
 
         .tabs { display: flex; padding: 10px 15px 0; border-bottom: 1px solid var(--card-border); margin-bottom: 15px; }
         .tab { flex: 1; text-align: center; padding: 12px 5px; color: #888; font-family: var(--font-head); cursor: pointer; position: relative; transition: 0.3s; font-weight: bold; font-size: 0.85rem; letter-spacing: 0.5px; display:flex; align-items:center; justify-content:center; gap:5px; white-space: nowrap; }
         .tab.active { color: var(--accent-cyan); text-shadow: 0 0 10px rgba(0,242,255,0.4); }
+        html.theme-vip .tab.active { color: #FFD700; text-shadow: 0 0 10px rgba(255,215,0,0.6); }
         .tab.active::after { content: ''; position: absolute; bottom: -1px; left: 10%; width: 80%; height: 3px; background: var(--accent-cyan); border-radius: 3px 3px 0 0; }
+        html.theme-vip .tab.active::after { background: #FFD700; }
         .badge { background: var(--accent-orange); color: #000; padding: 2px 6px; border-radius: 10px; font-size: 0.6rem; font-weight: bold; }
 
         /* --- CLAN GAME FILTER --- */
@@ -125,6 +125,7 @@
         .filter-scroll-wrapper::-webkit-scrollbar { display: none; }
         .filter-pill { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); padding: 8px 16px; border-radius: 20px; font-family: var(--font-head); font-size: 0.8rem; font-weight: bold; color: #888; cursor: pointer; white-space: nowrap; transition: 0.3s; display: flex; align-items: center; gap: 6px; }
         .filter-pill.active { background: rgba(0,242,255,0.15); border-color: var(--accent-cyan); color: var(--accent-cyan); box-shadow: 0 0 10px rgba(0,242,255,0.3); }
+        html.theme-vip .filter-pill.active { border-color: #FFD700; background: rgba(255,215,0,0.15); color: #FFD700; box-shadow: 0 0 10px rgba(255,215,0,0.3); }
 
         .content-section { display: none; padding: 0 15px; animation: slideInUp 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275); min-height: 60vh; width: 100%; }
         .content-section.active { display: block; }
@@ -138,10 +139,12 @@
         .hub-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; background: rgba(255,255,255,0.02); padding: 15px; border-radius: 15px; border: 1px solid rgba(255,255,255,0.05); }
         .hub-title { font-family: var(--font-head); font-size: 1.2rem; color: white; display: flex; align-items: center; gap: 10px; }
         .total-clans-badge { background: rgba(0,242,255,0.1); border: 1px solid var(--accent-cyan); color: var(--accent-cyan); padding: 5px 12px; border-radius: 20px; font-size: 0.8rem; font-family: var(--font-head); font-weight: bold; flex-shrink: 0; }
+        html.theme-vip .total-clans-badge { border-color: #FFD700; color: #FFD700; background: rgba(255,215,0,0.1); }
         
         .hub-grid { display: grid; grid-template-columns: 1fr; gap: 15px; margin-bottom: 20px; }
         .hub-card { background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 15px; padding: 15px; display: flex; align-items: center; gap: 15px; cursor: pointer; transition: 0.4s; position: relative; overflow: hidden; box-shadow: 0 5px 15px rgba(0,0,0,0.5); }
         .hub-card:hover { border-color: var(--accent-cyan); transform: translateY(-5px); box-shadow: 0 10px 25px rgba(0,242,255,0.3); }
+        html.theme-vip .hub-card:hover { border-color: #FFD700; box-shadow: 0 10px 25px rgba(255,215,0,0.3); }
         .hub-card::before { content: ''; position: absolute; left: 0; top: 0; width: 4px; height: 100%; background: var(--accent-gradient); }
         .hc-logo { width: 65px; height: 65px; border-radius: 15px; object-fit: cover; border: 2px solid var(--accent-purple); flex-shrink: 0; background: var(--primary-bg); }
         .hc-info { flex: 1; min-width: 0; } 
@@ -163,6 +166,7 @@
         .c-name { font-family: var(--font-head); font-size: 1.6rem; color: white; margin-top: 10px; text-shadow: 0 0 10px rgba(255,255,255,0.2); display: flex; align-items: center; justify-content: center; gap: 8px; flex-wrap: wrap; width: 100%; }
         .verified-badge { color: #1da1f2; font-size: 1.1rem; flex-shrink: 0; }
         .c-tag { font-size: 0.9rem; color: var(--accent-cyan); font-weight: bold; margin-bottom: 5px; letter-spacing: 1px; display:flex; gap:8px; align-items:center; justify-content:center; flex-wrap: wrap;}
+        html.theme-vip .c-tag { color: #FFD700; }
         .c-motto { font-size: 0.85rem; color: #aaa; font-style: italic; margin-bottom: 15px; cursor: pointer; word-break: break-word; max-width: 90%; }
 
         .level-container { width: 100%; max-width: 400px; margin: 10px auto; background: rgba(0,0,0,0.5); padding: 10px 15px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.05); }
@@ -173,10 +177,10 @@
         .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(100px, 1fr)); gap: 10px; margin-bottom: 20px; }
         .stat-box { background: var(--card-bg); border: 1px solid var(--card-border); padding: 15px 10px; border-radius: 15px; text-align: center; display: flex; flex-direction: column; align-items: center; position: relative; overflow:hidden; transition:0.3s;}
         .stat-box:hover { transform: translateY(-3px); border-color:var(--accent-cyan); box-shadow: 0 5px 15px rgba(0,242,255,0.1); }
+        html.theme-vip .stat-box:hover { border-color:#FFD700; box-shadow: 0 5px 15px rgba(255,215,0,0.1); }
         .stat-val { font-family: var(--font-head); font-size: 1.3rem; font-weight: bold; color: white; margin: 5px 0; white-space: nowrap; text-overflow: ellipsis; max-width: 100%; overflow: hidden;}
         .stat-lbl { font-size: 0.65rem; color: #888; text-transform: uppercase; font-weight: bold; text-align: center;}
         
-        /* UNIQUE SMALL LIVE SYMBOL */
         .live-indicator { position: absolute; top: 6px; right: 6px; background: rgba(255, 77, 77, 0.15); border: 1px solid rgba(255, 77, 77, 0.5); color: var(--accent-red); font-size: 0.55rem; padding: 2px 6px; border-radius: 8px; font-family: var(--font-head); font-weight: 900; letter-spacing: 0.5px; display: flex; align-items: center; gap: 4px; box-shadow: 0 0 8px rgba(255, 77, 77, 0.3); animation: livePulse 1.5s infinite; text-transform: uppercase; }
         @keyframes livePulse { 0% { box-shadow: 0 0 5px rgba(255,77,77,0.2); opacity: 1; } 50% { box-shadow: 0 0 12px rgba(255,77,77,0.6); opacity: 0.7; } 100% { box-shadow: 0 0 5px rgba(255,77,77,0.2); opacity: 1; } }
 
@@ -185,11 +189,12 @@
         .recruit-badge.closed { background: rgba(255,77,77,0.1); color: #ff4d4d; border: 1px solid #ff4d4d; }
         .recruit-badge { padding: 4px 10px; border-radius: 20px; font-size: 0.7rem; font-family: var(--font-head); font-weight: bold; text-transform: uppercase; cursor: pointer; flex-shrink: 0;}
 
-        /* --- 30+ ESPORTS FEATURES GRID (3 Columns to fit perfectly without PDF) --- */
         .esports-cmd-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 20px; }
         .cmd-btn { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; padding: 12px 5px; display: flex; flex-direction: column; align-items: center; gap: 8px; cursor: pointer; transition: 0.3s; position: relative; overflow: hidden; }
         .cmd-btn:hover { background: rgba(0,242,255,0.1); border-color: var(--accent-cyan); transform: translateY(-3px); }
+        html.theme-vip .cmd-btn:hover { background: rgba(255,215,0,0.1); border-color: #FFD700; }
         .cmd-btn i { font-size: 1.4rem; color: var(--accent-cyan); }
+        html.theme-vip .cmd-btn i { color: #FFD700; }
         .cmd-lbl { font-family: var(--font-body); font-size: 0.65rem; font-weight: bold; text-align: center; color: white; white-space: nowrap; }
         .cmd-pro-tag { position: absolute; top: 0; right: 0; background: var(--accent-orange); color: #000; font-size: 0.45rem; font-weight: bold; padding: 2px 5px; border-bottom-left-radius: 5px; font-family: var(--font-head); }
 
@@ -202,7 +207,9 @@
         .wa-btn { background: #25D366; }
         
         .notification-box { background: rgba(0,242,255,0.05); border-left: 3px solid var(--accent-cyan); padding: 15px; border-radius: 0 10px 10px 0; margin-bottom: 20px; }
+        html.theme-vip .notification-box { background: rgba(255,215,0,0.05); border-left-color: #FFD700; }
         .notification-header { display: flex; justify-content: space-between; align-items: center; font-family: var(--font-head); color: var(--accent-cyan); font-size: 0.8rem; margin-bottom: 8px; }
+        html.theme-vip .notification-header { color: #FFD700; }
         .notification-list { font-size: 0.85rem; color: #ccc; line-height: 1.5; max-height: 100px; overflow-y: auto; display: flex; flex-direction: column; gap: 5px;}
         .notif-item { background: rgba(255,255,255,0.03); padding: 5px 8px; border-radius: 5px; border: 1px solid rgba(255,255,255,0.05); word-break: break-word;}
 
@@ -215,22 +222,35 @@
         .r-name { font-family: var(--font-head); font-size: 1.05rem; color: white; font-weight: bold; margin-bottom: 3px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;}
         .r-role-tag { font-size: 0.65rem; padding: 3px 8px; border-radius: 6px; font-weight: bold; background: rgba(255,255,255,0.1); color: #ccc; margin-right: 5px; border: 1px solid rgba(255,255,255,0.2); display: inline-block;}
         .r-pos-tag { font-size: 0.6rem; padding: 2px 6px; border-radius: 4px; color: var(--accent-cyan); border: 1px dashed var(--accent-cyan); display: inline-block;}
+        html.theme-vip .r-pos-tag { color: #FFD700; border-color: #FFD700;}
         
         .btn-primary { width: 100%; padding: 14px; background: var(--accent-gradient); border: none; border-radius: 12px; color: white; font-family: var(--font-head); font-size: 1rem; font-weight: bold; cursor: pointer; box-shadow: 0 5px 15px rgba(189,0,255,0.4); margin-bottom: 10px; transition:0.3s; }
         .btn-primary:active { transform: scale(0.96); }
+        html.theme-vip .btn-primary { background: linear-gradient(90deg, #FFD700, #FF8C00); color: black; box-shadow: 0 5px 15px rgba(255,215,0,0.4); }
         .btn-secondary { width: 100%; padding: 14px; background: transparent; border: 1px solid var(--accent-purple); border-radius: 12px; color: var(--accent-purple); font-family: var(--font-head); font-size: 1rem; font-weight: bold; cursor: pointer; margin-bottom: 10px; transition:0.3s; }
+        html.theme-vip .btn-secondary { border-color: #FFD700; color: #FFD700; }
         .btn-danger { width: 100%; padding: 14px; background: rgba(255,77,77,0.1); border: 1px solid var(--accent-red); border-radius: 12px; color: var(--accent-red); font-family: var(--font-head); font-weight: bold; cursor: pointer; margin-bottom: 10px; transition:0.3s;}
 
-        .search-card { background: var(--secondary-bg); border: 1px solid var(--card-border); border-radius: 15px; padding: 15px; margin-bottom: 15px; display: flex; align-items: center; gap: 15px; flex-wrap: wrap; transition:0.3s;}
-        .sc-img { width: 60px; height: 60px; border-radius: 15px; object-fit: cover; background: var(--accent-purple); border: 2px solid var(--accent-cyan); flex-shrink: 0;}
+        /* UPGRADED FIND TAB CARDS */
+        .search-card { background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 15px; margin-bottom: 15px; overflow: hidden; transition:0.3s; display: flex; flex-direction: column; }
+        .search-card:hover { border-color: var(--accent-cyan); transform: translateY(-3px); box-shadow: 0 5px 20px rgba(0,242,255,0.15);}
+        html.theme-vip .search-card:hover { border-color: #FFD700; box-shadow: 0 5px 20px rgba(255,215,0,0.15);}
+        .sc-banner { width: 100%; height: 80px; object-fit: cover; border-bottom: 1px solid rgba(255,255,255,0.05); }
+        .sc-body { padding: 15px; display: flex; align-items: center; gap: 15px; }
+        .sc-img { width: 55px; height: 55px; border-radius: 12px; object-fit: cover; background: var(--accent-purple); border: 2px solid var(--accent-cyan); flex-shrink: 0; margin-top: -30px; z-index: 2;}
+        html.theme-vip .sc-img { border-color: #FFD700; }
         .sc-info { flex: 1; min-width: 0; }
         .sc-name { font-family: var(--font-head); font-size: 1.1rem; font-weight: bold; color: white; margin-bottom: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;}
-        .s-btn { padding: 8px 15px; border-radius: 8px; font-family: var(--font-head); font-size: 0.8rem; font-weight: bold; cursor: pointer; border: none; white-space: nowrap;}
-        .s-btn.acc { background: var(--accent-green); color: black; }
+        .sc-motto { font-size: 0.75rem; color: #aaa; font-style: italic; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-bottom: 5px;}
+        .s-btn { padding: 8px 15px; border-radius: 8px; font-family: var(--font-head); font-size: 0.8rem; font-weight: bold; cursor: pointer; border: none; white-space: nowrap; transition: 0.3s;}
+        .s-btn:active { transform: scale(0.95); }
+        .s-btn.acc { background: var(--accent-green); color: black; box-shadow: 0 0 10px rgba(0,255,127,0.3); }
         .s-btn.rej { background: rgba(255,255,255,0.1); color: white; border: 1px solid #666; }
+        .s-btn.req { background: rgba(255,153,0,0.2); color: var(--accent-orange); border: 1px solid var(--accent-orange); cursor: default;}
 
         .form-control { width: 100%; background: #110822; border: 1px solid var(--card-border); color: white; padding: 14px; border-radius: 10px; font-family: var(--font-body); margin-bottom: 15px; outline: none; box-sizing: border-box; transition:0.3s;}
         .form-control:focus { border-color: var(--accent-cyan); box-shadow:0 0 10px rgba(0,242,255,0.2);}
+        html.theme-vip .form-control:focus { border-color: #FFD700; box-shadow:0 0 10px rgba(255,215,0,0.2);}
         .form-label { font-family: var(--font-head); font-size: 0.85rem; color: #888; margin-bottom: 5px; display: block; }
         
         .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); z-index: 5000; display: none; align-items: center; justify-content: center; backdrop-filter: blur(5px); }
@@ -243,6 +263,7 @@
         .modal-close:hover { color: white; transform: rotate(90deg); }
 
         #customToast { visibility: hidden; min-width: 250px; background-color: var(--accent-cyan); color: #000; text-align: center; border-radius: 10px; padding: 14px; position: fixed; z-index: 9999; left: 50%; bottom: -50px; transform: translateX(-50%); font-family: var(--font-head); font-weight: bold; transition: 0.4s; box-shadow: 0 5px 20px rgba(0,242,255,0.5);}
+        html.theme-vip #customToast { background-color: #FFD700; box-shadow: 0 5px 20px rgba(255,215,0,0.5); }
         #customToast.show { visibility: visible; bottom: 100px; }
 
         .app-footer { text-align: center; padding: 40px 20px 100px 20px; color: #555; font-size: 0.75rem; font-family: var(--font-body); letter-spacing: 1px; border-top: 1px solid var(--card-border); margin-top: 20px; max-width: 900px; margin-left: auto; margin-right: auto; width: 100%; }
@@ -253,16 +274,24 @@
         .nav-item { display: flex; flex-direction: column; align-items: center; justify-content: flex-start; color: #666; text-decoration: none; font-size: 0.6rem; font-family: var(--font-head); font-weight: bold; flex: 1; transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); position: relative; padding: 0 2px; text-align: center;}
         .nav-item span { margin-top: 4px; transition: 0.3s; letter-spacing: -0.3px;}
         
-        .nav-item i, .nav-item .tx-icon, .nav-item .tx-ticket-composite { font-size: 1.2rem; transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); color: #666; background: none; -webkit-text-fill-color: #666; filter: none; font-style: normal;}
+        .nav-item > i, .nav-item > .tx-icon, .nav-item > .tx-ticket-composite { 
+            font-size: 1.2rem; transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); color: #666; background: none; -webkit-text-fill-color: #666; filter: none; font-style: normal;
+            height: 24px; width: 24px; display: flex; align-items: center; justify-content: center; 
+        }
+        .tx-ticket-composite i { display: block; line-height: 1; font-size: 1.2rem; color: inherit; -webkit-text-fill-color: inherit; transition: 0.3s; background: inherit; filter: inherit; -webkit-background-clip: inherit;}
+
         .nav-item.active { color: var(--accent-cyan); }
+        html.theme-vip .nav-item.active { color: #FFD700; }
         
-        .nav-item.active .tx-ticket-composite { transform: translateY(-4px); }
-        .nav-item.active i, .nav-item.active .tx-icon, .nav-item.active .tx-ticket-composite i { transform: translateY(-4px); background: linear-gradient(135deg, var(--accent-purple), var(--accent-cyan)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; filter: drop-shadow(0 0 10px var(--accent-cyan)); font-style: normal; }
-        .nav-item.active .tx-ticket-composite i { transform: translateY(0); } /* Reset inner transform */
+        .nav-item.active > .tx-ticket-composite { transform: translateY(-4px); }
+        .nav-item.active > i, .nav-item.active > .tx-icon, .nav-item.active > .tx-ticket-composite i { transform: translateY(-4px); background: linear-gradient(135deg, var(--accent-purple), var(--accent-cyan)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; filter: drop-shadow(0 0 10px var(--accent-cyan)); font-style: normal; }
+        html.theme-vip .nav-item.active > i, html.theme-vip .nav-item.active > .tx-icon, html.theme-vip .nav-item.active > .tx-ticket-composite i { background: linear-gradient(135deg, #FFE87C, #FF8C00); -webkit-background-clip: text; -webkit-text-fill-color: transparent; filter: drop-shadow(0 0 10px rgba(255,215,0,0.6)); }
+        .nav-item.active .tx-ticket-composite i { transform: translateY(0); }
         
         .nav-item.active span { transform: translateY(2px); color: white; text-shadow: 0 0 5px rgba(255,255,255,0.5);}
         .fab-slot { flex: 1.2; display: flex; justify-content: center; position: relative; height: 100%; align-items: center; }
         .floating-plus { position: absolute; top: -25px; left: 50%; transform: translateX(-50%); width: 54px; height: 54px; background: linear-gradient(135deg, var(--accent-cyan), var(--accent-purple)); border-radius: 50%; display: flex; align-items: center; justify-content: center; border: 4px solid var(--primary-bg); box-shadow: 0 10px 25px rgba(189,0,255,0.5); color: #fff; font-size: 1.6rem; cursor: pointer; transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); z-index: 10; }
+        html.theme-vip .floating-plus { background: linear-gradient(135deg, #FFE87C, #D4AF37); box-shadow: 0 10px 25px rgba(255,215,0,0.4); border-color: #000; color: #000; }
         .floating-plus:hover { transform: translateX(-50%) scale(1.1) rotate(90deg); box-shadow: 0 15px 35px rgba(0,242,255,0.6); }
 
         @media (min-width: 850px) { .bottom-nav { display: none !important; } body { padding-bottom: 0; } }
@@ -321,11 +350,11 @@
             <div id="hubState" style="display: none;">
                 <div class="hub-header">
                     <div class="hub-title"><i class="fa-solid fa-layer-group" style="color:var(--accent-cyan);"></i> Your Clans</div>
-                    <div class="total-clans-badge">Total: <span id="totalClansCount">0</span>/5</div>
+                    <div class="total-clans-badge">Total: <span id="totalClansCount">0</span>/10</div>
                 </div>
                 <div id="hubClansGrid" class="hub-grid"></div>
                 <button class="btn-primary" onclick="showCreateForm()" style="margin-top:10px;"><i class="fa-solid fa-plus"></i> Create New Game Clan</button>
-                <div style="text-align:center; font-size:0.75rem; color:#888; margin-top:5px; padding:0 10px;">Rule: You can join or create up to 3 clans per specific game.</div>
+                <div style="text-align:center; font-size:0.75rem; color:#888; margin-top:5px; padding:0 10px;">Rule: You can join or create up to 10 clans.</div>
             </div>
 
             <div id="createClanState" style="display: none;">
@@ -442,7 +471,7 @@
                 <div class="action-card ac-green" onclick="openChat(); triggerHaptic();" style="margin-bottom: 20px; background: linear-gradient(135deg, rgba(0,255,127,0.1), rgba(0,0,0,0)); border: 1px solid rgba(0,255,127,0.3); border-radius: 15px; padding: 20px; display: flex; align-items: center; justify-content: space-between; cursor: pointer; transition: 0.3s; box-shadow: 0 5px 15px rgba(0,0,0,0.3);">
                     <div class="action-text">
                         <h4 style="font-family: var(--font-head); font-size: 1.1rem; color: white; margin-bottom: 5px;">Clan Chat</h4>
-                        <p style="font-size: 0.85rem; color: #888;">Communicate securely with your roster.</p>
+                        <p style="font-size: 0.85rem; color: #888;">Communicate securely with your roster. (7-Day Auto Delete)</p>
                     </div>
                     <div class="action-icon" style="color: var(--accent-green); background: rgba(0,255,127,0.15); box-shadow: 0 0 20px rgba(0,255,127,0.4); width: 50px; height: 50px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.5rem;"><i class="fa-solid fa-message"></i></div>
                 </div>
@@ -488,6 +517,7 @@
 
                 <div class="dash-section edit-owner">
                     <div class="ds-header" style="color:var(--accent-red);"><i class="fa-solid fa-triangle-exclamation"></i> Admin Zone</div>
+                    <button class="btn-secondary" style="color:var(--accent-cyan); border-color:var(--accent-cyan);" onclick="openTransferOwnershipModal()"><i class="fa-solid fa-crown"></i> Transfer Ownership</button>
                     <button class="btn-danger" onclick="deleteClan()"><i class="fa-solid fa-trash"></i> Disband Clan</button>
                 </div>
                 
@@ -549,7 +579,7 @@
                 <i class="fa-solid fa-xmark modal-close" style="position:static;" onclick="closeChat()"></i>
             </div>
             <div style="background: rgba(0,255,127,0.1); padding: 6px; text-align: center; font-size: 0.75rem; color: var(--accent-green); font-family: var(--font-head); letter-spacing: 1px; border-bottom: 1px solid rgba(0,255,127,0.2);">
-                <i class="fa-solid fa-lock"></i> End-to-End Encrypted
+                <i class="fa-solid fa-clock-rotate-left"></i> Messages Auto-Delete after 7 Days
             </div>
             <div id="chatMessages" style="flex: 1; overflow-y: auto; padding: 15px; display: flex; flex-direction: column; gap: 10px;">
             </div>
@@ -603,12 +633,45 @@
         </div>
     </div>
 
+    <div class="modal-overlay" id="roleSelectModal">
+        <div class="modal-box">
+            <div class="modal-header">
+                <div class="modal-title"><i class="fa-solid fa-crosshairs" style="color:var(--accent-cyan);"></i> Assign Roster Role</div>
+                <i class="fa-solid fa-xmark modal-close" onclick="document.getElementById('roleSelectModal').classList.remove('active')"></i>
+            </div>
+            <input type="hidden" id="roleTargetPlayer">
+            <select class="form-control" id="roleDropdownSelect">
+                <option value="IGL">IGL (In-Game Leader)</option>
+                <option value="Sniper">Sniper</option>
+                <option value="Assaulter">Assaulter</option>
+                <option value="Support">Support</option>
+            </select>
+            <button class="btn-primary" onclick="confirmRoleChange()">Save Role</button>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="transferOwnershipModal">
+        <div class="modal-box">
+            <div class="modal-header">
+                <div class="modal-title"><i class="fa-solid fa-crown" style="color:var(--accent-orange);"></i> Transfer Ownership</div>
+                <i class="fa-solid fa-xmark modal-close" onclick="document.getElementById('transferOwnershipModal').classList.remove('active')"></i>
+            </div>
+            <div style="font-size:0.85rem; color:#aaa; margin-bottom:15px; line-height: 1.4;">
+                Select a member below to transfer your Owner status. You will be demoted to Admin and can then leave the clan safely.
+            </div>
+            <select class="form-control" id="transferDropdownSelect">
+                <option value="" disabled selected>Loading members...</option>
+            </select>
+            <button class="btn-primary" style="background:var(--accent-orange); box-shadow:0 5px 15px rgba(255,153,0,0.4);" onclick="confirmOwnershipTransfer()">Confirm Transfer</button>
+        </div>
+    </div>
+
     <div id="customToast">Notification</div>
 
     <div class="app-footer">
         © 2026 TOURNYX. All rights reserved.<br>
         <div class="footer-made-with">made with ⚡ for gamers worldwide</div>
-        <div style="margin-top: 15px; font-size: 0.85rem; color: #888; font-family: var(--font-head); letter-spacing: 1px;">
+        <div style="margin-top: 15px; font-size: 0.85rem; color: #888; font-family: var(--font-head); letter-spacing: 2px;">
             Powered by <span style="font-weight: 900; background: var(--accent-gradient); -webkit-background-clip: text; -webkit-text-fill-color: transparent; letter-spacing: 2px;">QUVA</span>
         </div>
     </div>
@@ -663,7 +726,7 @@
 
         function showToast(msg, isError = false) {
             const t = document.getElementById('customToast'); t.innerText = msg;
-            t.style.backgroundColor = isError ? "#ff4d4d" : "var(--accent-cyan)";
+            t.style.backgroundColor = isError ? "#ff4d4d" : (document.documentElement.classList.contains('theme-vip') ? "#FFD700" : "var(--accent-cyan)");
             t.style.color = isError ? "white" : "#000"; t.className = "show";
             setTimeout(() => t.className = "", 3000);
         }
@@ -820,12 +883,27 @@
         
         function showCreateForm() { 
             if(isGuestMode) { document.getElementById('guestLoginModal').classList.add('active'); return; }
-            if(userLiveClans.length >= 5) { showToast("Max 5 clans total limit reached.", true); return; } 
+            if(userLiveClans.length >= 10) { showToast("Max 10 clans total limit reached.", true); return; } 
             document.getElementById('noClanState').style.display = 'none'; document.getElementById('hubState').style.display = 'none'; document.getElementById('createClanState').style.display = 'block'; 
         }
         function hideCreateForm() { if(userLiveClans.length > 0) renderHub(); else showNoClan(); }
 
         function openClanDashboard(index) { activeClan = userLiveClans[index]; renderDashboard(activeClan); calculateLiveClanStats(activeClan); }
+
+        function formatMessageTime(timestamp) {
+            let d = new Date(timestamp);
+            let now = new Date();
+            
+            let timeStr = d.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true });
+            
+            let diffDays = Math.floor((now.getTime() - d.getTime()) / (1000 * 60 * 60 * 24));
+            
+            if(diffDays === 0 && d.getDate() === now.getDate()) return `Today at ${timeStr}`;
+            if(diffDays === 1 || (diffDays === 0 && d.getDate() !== now.getDate())) return `Yesterday at ${timeStr}`;
+            if(diffDays < 7) return `${d.toLocaleDateString('en-US', {weekday: 'long'})} at ${timeStr}`;
+            
+            return `${d.toLocaleDateString('en-US', {month: 'short', day: 'numeric'})} at ${timeStr}`;
+        }
 
         function openChat() {
             renderChat();
@@ -836,14 +914,27 @@
         function renderChat() {
             const box = document.getElementById('chatMessages');
             box.innerHTML = '';
-            let msgs = activeClan.messages || [];
+            
+            // Filter out messages older than 7 days (604800000 ms)
+            const SEVEN_DAYS = 7 * 24 * 60 * 60 * 1000;
+            let now = Date.now();
+            let rawMsgs = activeClan.messages || [];
+            let msgs = rawMsgs.filter(m => (now - m.timestamp) < SEVEN_DAYS);
+            
+            if(msgs.length !== rawMsgs.length) {
+                // Background cleanup of old messages
+                activeClan.messages = msgs;
+                let cleanClan = JSON.parse(JSON.stringify(activeClan));
+                delete cleanClan.logo; delete cleanClan.banner;
+                fetch(API_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify({ action: "update_clan", clan_id: activeClan.clanId, field: "messages", value: JSON.stringify(msgs) }) });
+            }
             
             if(msgs.length === 0) {
                 box.innerHTML = '<div style="text-align:center; color:#666; margin-top: 20px;">No messages yet. Start the secure conversation!</div>';
                 return;
             }
 
-            msgs.forEach(m => {
+            msgs.forEach((m, idx) => {
                 let isMe = m.sender === user.username;
                 let align = isMe ? 'flex-end' : 'flex-start';
                 let bg = isMe ? 'var(--accent-purple)' : 'rgba(255,255,255,0.1)';
@@ -853,11 +944,18 @@
                 let decText = "Error decrypting";
                 try { decText = decodeURIComponent(atob(m.text)); } catch(e) { decText = m.text; }
 
+                let timeStr = formatMessageTime(m.timestamp);
+                
+                let deleteIcon = isMe ? `<i class="fa-solid fa-trash" style="font-size:0.7rem; color:#ff4d4d; cursor:pointer; margin-left:10px; opacity:0.7;" onclick="deleteMessage(${idx})" title="Delete Message"></i>` : '';
+
                 box.innerHTML += `
                     <div style="display:flex; flex-direction:column; align-items:${align}; width:100%;">
                         <span style="font-size:0.65rem; color:#888; margin-bottom:2px; font-family:var(--font-head);">${m.sender}</span>
                         <div style="background:${bg}; color:${color}; padding:10px 15px; border-radius:${borderRadius}; max-width:85%; font-size:0.95rem; word-wrap:break-word; box-shadow:0 2px 5px rgba(0,0,0,0.2);">
                             ${decText}
+                        </div>
+                        <div style="font-size:0.6rem; color:#666; margin-top:3px; display:flex; align-items:center;">
+                            ${timeStr} ${deleteIcon}
                         </div>
                     </div>
                 `;
@@ -876,14 +974,22 @@
             activeClan.messages.push({ sender: user.username, text: encText, timestamp: Date.now() });
             if(activeClan.messages.length > 50) activeClan.messages.shift();
             
-            pushUpdateToLive('FULL_UPDATE', activeClan);
+            pushUpdateToLive('messages', activeClan.messages);
             inp.value = '';
             renderChat();
         }
 
+        function deleteMessage(index) {
+            if(confirm("Delete this message for everyone?")) {
+                triggerHaptic();
+                activeClan.messages.splice(index, 1);
+                pushUpdateToLive('messages', activeClan.messages);
+                renderChat();
+            }
+        }
+
         /* --- 7 LEVEL CALCULATION UTILITY --- */
         function getClanLevelInfo(xp) {
-            // Free Fire Guild Style: 14000 Max Streaks/XP for Level 7
             const tiers = [0, 1000, 3000, 6000, 9000, 12000, 14000];
             let level = 1;
             let nextXp = tiers[1];
@@ -936,6 +1042,8 @@
 
             document.querySelectorAll('.edit-admin').forEach(el => el.style.display = isAdmin ? '' : 'none');
             document.querySelectorAll('.edit-owner').forEach(el => el.style.display = isOwner ? 'block' : 'none');
+            
+            // Only non-owners can leave normally. Owners must transfer first.
             document.querySelectorAll('.edit-player-only').forEach(el => el.style.display = isOwner ? 'none' : 'block');
             
             let inviteBtn = document.getElementById('btnInviteLink');
@@ -950,9 +1058,8 @@
                 let rColor = member.role==='Owner' ? 'var(--accent-orange)' : (member.role==='Admin'?'var(--accent-cyan)':'#ccc');
                 let actions = "";
                 
-                // Add Set Position option for Admins to manage players
                 if(isAdmin && member.name !== user.username) {
-                    actions += `<button class="s-btn rej" style="padding:4px 8px; font-size:0.7rem; border:1px solid var(--accent-cyan); color:var(--accent-cyan);" onclick="modPos(event, '${member.name}')">Set Role</button>`;
+                    actions += `<button class="s-btn rej" style="padding:4px 8px; font-size:0.7rem; border:1px solid var(--accent-cyan); color:var(--accent-cyan);" onclick="openRoleDropdown(event, '${member.name}')">Set Role</button>`;
                     if(isOwner && member.role === 'Player') actions += `<button class="s-btn acc" style="padding:4px 8px; font-size:0.7rem;" onclick="modRole(event, '${member.name}', 'Admin')">Make Admin</button>`;
                     if(isOwner && member.role === 'Admin') actions += `<button class="s-btn rej" style="padding:4px 8px; font-size:0.7rem; border:1px solid #888;" onclick="modRole(event, '${member.name}', 'Player')">Demote</button>`;
                     actions += `<button class="s-btn rej" style="color:#ff4d4d; border:1px solid #ff4d4d; padding:4px 8px; font-size:0.7rem;" onclick="kickMember(event, '${member.name}')">Kick</button>`;
@@ -977,6 +1084,73 @@
                         <div style="display:flex; gap:5px; flex-wrap:wrap;">${actions}</div>
                     </div>`;
             });
+        }
+
+        function openRoleDropdown(e, name) {
+            e.stopPropagation();
+            document.getElementById('roleTargetPlayer').value = name;
+            
+            let p = activeClan.roster.find(r => r.name === name);
+            if(p && p.pos) document.getElementById('roleDropdownSelect').value = p.pos;
+            else document.getElementById('roleDropdownSelect').value = "Assaulter";
+
+            document.getElementById('roleSelectModal').classList.add('active');
+        }
+
+        function confirmRoleChange() {
+            triggerHaptic();
+            let name = document.getElementById('roleTargetPlayer').value;
+            let newPos = document.getElementById('roleDropdownSelect').value;
+            
+            let p = activeClan.roster.find(r => r.name === name);
+            if(p) { 
+                p.pos = newPos; 
+                pushUpdateToLive('FULL_UPDATE', activeClan); 
+                showToast("Position updated."); 
+                document.getElementById('roleSelectModal').classList.remove('active');
+            }
+        }
+
+        function openTransferOwnershipModal() {
+            triggerHaptic();
+            let select = document.getElementById('transferDropdownSelect');
+            select.innerHTML = '<option value="" disabled selected>Select a member...</option>';
+            
+            let eligibleMembers = activeClan.roster.filter(r => r.name !== user.username);
+            if(eligibleMembers.length === 0) {
+                showToast("You are the only member. Just disband the clan.", true);
+                return;
+            }
+
+            eligibleMembers.forEach(m => {
+                select.innerHTML += `<option value="${m.name}">${m.name} (${m.role})</option>`;
+            });
+
+            document.getElementById('transferOwnershipModal').classList.add('active');
+        }
+
+        function confirmOwnershipTransfer() {
+            let targetName = document.getElementById('transferDropdownSelect').value;
+            if(!targetName) { showToast("Please select a member.", true); return; }
+
+            if(confirm(`Are you sure you want to make ${targetName} the new Owner? You will be demoted to Admin.`)) {
+                triggerHaptic();
+                
+                let me = activeClan.roster.find(r => r.name === user.username);
+                let newOwner = activeClan.roster.find(r => r.name === targetName);
+                
+                if(me && newOwner) {
+                    me.role = 'Admin';
+                    newOwner.role = 'Owner';
+                    
+                    if(!activeClan.notifications) activeClan.notifications = [];
+                    activeClan.notifications.push({ msg: `<b style='color:var(--accent-orange)'>${targetName}</b> was promoted to Clan Owner!` });
+                    
+                    pushUpdateToLive('FULL_UPDATE', activeClan);
+                    showToast("Ownership transferred successfully!");
+                    document.getElementById('transferOwnershipModal').classList.remove('active');
+                }
+            }
         }
 
         function openMemberCard(encodedStr) {
@@ -1020,7 +1194,6 @@
                 let wrEl = document.getElementById('dashWR'); wrEl.innerText = wr + "%";
                 if(wr > 50) wrEl.style.color = 'var(--accent-green)'; else if (wr > 0) wrEl.style.color = 'var(--accent-red)';
 
-                // 7 LEVEL ALGORITHM
                 let levelData = getClanLevelInfo(generatedXp);
                 
                 document.getElementById('dashLvl').innerText = levelData.level; 
@@ -1053,6 +1226,7 @@
                 payloadValue = typeof value === 'object' ? JSON.stringify(value) : value;
             }
 
+            // Using the strict action endpoint for clan updates
             let payload = { action: "update_clan", clan_id: activeClan.clanId, field: field, value: payloadValue };
             fetch(API_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify(payload) });
         }
@@ -1082,6 +1256,7 @@
         }
 
         function triggerUpload(type) { document.getElementById(type === 'banner' ? 'liveBannerInp' : 'liveLogoInp').click(); }
+        
         function processImageUpload(e, field) {
             const file = e.target.files[0]; if(!file) return;
             const reader = new FileReader();
@@ -1089,7 +1264,7 @@
                 const img = new Image();
                 img.onload = () => {
                     const canvas = document.createElement('canvas');
-                    let MAX_WIDTH = field === 'logo' ? 150 : 500;
+                    let MAX_WIDTH = field === 'logo' ? 250 : 600; // Increased clarity
                     let scaleSize = MAX_WIDTH / img.width;
                     if(scaleSize > 1) scaleSize = 1; 
                     canvas.width = img.width * scaleSize;
@@ -1097,8 +1272,13 @@
                     const ctx = canvas.getContext('2d');
                     ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
                     
-                    const compressedBase64 = canvas.toDataURL('image/jpeg', 0.5); 
-                    pushUpdateToLive(field, compressedBase64); 
+                    const compressedBase64 = canvas.toDataURL('image/jpeg', 0.6); 
+                    
+                    // Force the payload directly to columns using the specific backend router fields
+                    // (Assuming backend router uses these to hit Column F / G)
+                    let apiFieldTarget = field === 'logo' ? 'logo' : 'banner';
+                    
+                    pushUpdateToLive(apiFieldTarget, compressedBase64); 
                     showToast("Image Saved Perfectly!"); playSuccessSound();
                 };
                 img.src = ev.target.result;
@@ -1131,16 +1311,6 @@
             e.stopPropagation();
             let p = activeClan.roster.find(r => r.name === name);
             if(p) { p.role = newRole; pushUpdateToLive('FULL_UPDATE', activeClan); showToast("Role updated."); }
-        }
-
-        function modPos(e, name) {
-            e.stopPropagation();
-            let roles = ["IGL", "Sniper", "Assaulter", "Support", "Flanker"];
-            let newPos = prompt("Set Player Role (e.g., IGL, Sniper, Support, Assaulter):", "");
-            if(newPos && newPos.trim() !== "") {
-                let p = activeClan.roster.find(r => r.name === name);
-                if(p) { p.pos = newPos.substring(0,10); pushUpdateToLive('FULL_UPDATE', activeClan); showToast("Position updated."); }
-            }
         }
 
         function kickMember(e, name) {
@@ -1227,7 +1397,12 @@
                     data.data.forEach(item => {
                         try {
                             let cObj = typeof item === 'string' ? JSON.parse(item) : (item.team_json ? (typeof item.team_json === 'string' ? JSON.parse(item.team_json) : item.team_json) : item);
-                            if(cObj && cObj.clanId) allParsed.push(cObj);
+                            if(cObj && cObj.clanId) {
+                                // Inject external rows just in case structure differs in DB
+                                if(item.logo) cObj.externalLogo = item.logo;
+                                if(item.banner) cObj.externalBanner = item.banner;
+                                allParsed.push(cObj);
+                            }
                         } catch(e){}
                     });
                     globalClans = allParsed;
@@ -1247,13 +1422,11 @@
         function searchGlobalClans() {
             let q = document.getElementById('searchClanInput').value;
             
-            // Filter 1: Exclude user's own clans AND hide fully stacked (6/6) clans
             let availableClans = globalClans.filter(gClan => 
                 !userLiveClans.some(myClan => myClan.clanId === gClan.clanId) && 
                 (!gClan.roster || gClan.roster.length < 6)
             );
             
-            // Filter 2: Apply the Game Pill Filter
             if(activeFilterGame !== 'All') {
                 availableClans = availableClans.filter(c => {
                     let cGame = c.game || "";
@@ -1261,7 +1434,6 @@
                 });
             }
 
-            // Filter 3: Apply the Text Search
             if(q) {
                 availableClans = availableClans.filter(c => {
                     if(!c.name) return false; 
@@ -1275,42 +1447,55 @@
 
         function renderClans(list) {
             let html = "";
+            let reqListCache = JSON.parse(localStorage.getItem('tournyx_join_requests')) || [];
+
             list.forEach(c => {
                 if(!c.name) return;
-                let finalLogo = c.logo && c.logo.length > 20 ? c.logo : `https://ui-avatars.com/api/?name=${encodeURIComponent(c.name)}&background=110822&color=bd00ff`;
-                let rCount = c.roster ? c.roster.length : 1; let cGame = c.game || "Esports"; let cTag = c.tag || "TNYX";
                 
+                // Use external logo if JSON logo is missing
+                let safeLogo = c.logo || c.externalLogo || "";
+                let safeBanner = c.banner || c.externalBanner || "https://via.placeholder.com/600x200/110822/bd00ff?text=Clan+Banner";
+                
+                let finalLogo = safeLogo.length > 20 ? safeLogo : `https://ui-avatars.com/api/?name=${encodeURIComponent(c.name)}&background=110822&color=bd00ff`;
+                let rCount = c.roster ? c.roster.length : 1; let cGame = c.game || "Esports"; let cTag = c.tag || "TNYX";
                 let cLoc = (c.city && c.state) ? `${c.city}, ${c.state}` : (c.region || "Global");
 
-                // Calculate random XP for display if not stored, just to show the level system works globally
                 let demoXp = Math.floor(Math.random() * 12000);
                 let lvlData = getClanLevelInfo(demoXp);
+                
+                let isRequested = reqListCache.includes(c.clanId);
+                let btnHtml = isRequested ? 
+                    `<button class="s-btn req" disabled>REQUESTED</button>` : 
+                    `<button class="s-btn acc" onclick="triggerJoinFlow('${c.clanId}', '${c.name}', '${cGame}', ${c.autoAccept}, this)">JOIN</button>`;
 
                 html += `
-                <div class="search-card">
-                    <img src="${finalLogo}" class="sc-img">
-                    <div class="sc-info">
-                        <div class="sc-name">${c.name} <span style="font-size:0.7rem; color:#888;">#${cTag}</span></div>
-                        <div style="font-size:0.75rem; color:#aaa; margin-bottom: 2px;"><i class="fa-solid fa-location-dot"></i> ${cLoc}</div>
-                        <div style="font-size:0.8rem; color:var(--accent-cyan); display:flex; gap:10px; margin-top:3px; align-items:center; flex-wrap:wrap;">
-                            <span><i class="fa-solid fa-users"></i> ${rCount}/6</span>
-                            <span style="color:var(--accent-orange); font-weight:bold; font-size:0.75rem;"><i class="fa-solid fa-gamepad"></i> ${cGame}</span>
-                            <span style="color:#FFD700; font-weight:bold; font-size:0.75rem;"><i class="fa-solid fa-fire"></i> Lvl ${lvlData.level}</span>
+                <div class="search-card" style="padding:0; flex-direction:column; align-items:stretch;">
+                    <img src="${safeBanner}" class="sc-banner">
+                    <div class="sc-body">
+                        <img src="${finalLogo}" class="sc-img">
+                        <div class="sc-info">
+                            <div class="sc-name">${c.name} <span style="font-size:0.7rem; color:#888;">#${cTag}</span></div>
+                            <div class="sc-motto">${c.motto || '"Ready for Battle"'}</div>
+                            <div style="font-size:0.8rem; color:var(--accent-cyan); display:flex; gap:10px; align-items:center; flex-wrap:wrap;">
+                                <span><i class="fa-solid fa-users"></i> ${rCount}/6</span>
+                                <span style="color:var(--accent-orange); font-weight:bold; font-size:0.75rem;"><i class="fa-solid fa-gamepad"></i> ${cGame}</span>
+                                <span style="color:#FFD700; font-weight:bold; font-size:0.75rem;"><i class="fa-solid fa-fire"></i> Lvl ${lvlData.level}</span>
+                            </div>
                         </div>
+                        ${btnHtml}
                     </div>
-                    <button class="btn-secondary" style="width:auto; margin:0; padding:8px 15px; font-size:0.8rem;" onclick="triggerJoinFlow('${c.clanId}', '${c.name}', '${cGame}', ${c.autoAccept})">JOIN</button>
                 </div>`;
             });
             document.getElementById('globalClansList').innerHTML = html || "<div style='text-align:center; color:#666; padding:20px;'><i class='fa-solid fa-ghost' style='font-size:2rem; margin-bottom:10px;'></i><br>No matching clans found.</div>";
         }
 
-        function triggerJoinFlow(cId, cName, cGame, autoAccept) {
+        function triggerJoinFlow(cId, cName, cGame, autoAccept, btnEl) {
             if(isGuestMode) { document.getElementById('guestLoginModal').classList.add('active'); return; }
 
             let existingClansForGame = userLiveClans.filter(c => c.game === cGame);
             if(existingClansForGame.length >= 3) { showToast(`Max 3 clans allowed for ${cGame}!`, true); return; }
 
-            pendingJoinData = { newClanId: cId, newClanName: cName, game: cGame, isAuto: autoAccept, oldClanId: null };
+            pendingJoinData = { newClanId: cId, newClanName: cName, game: cGame, isAuto: autoAccept, btnRef: btnEl };
             document.getElementById('joinSwitchWarning').style.display = 'none'; 
             
             document.getElementById('joinDataModal').classList.add('active');
@@ -1331,6 +1516,14 @@
 
             fetch(API_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify(payload) });
             
+            // Instantly update button to "REQUESTED"
+            if (pendingJoinData.btnRef && !pendingJoinData.isAuto) {
+                pendingJoinData.btnRef.outerHTML = `<button class="s-btn req" disabled>REQUESTED</button>`;
+                let cachedReqs = JSON.parse(localStorage.getItem('tournyx_join_requests')) || [];
+                cachedReqs.push(pendingJoinData.newClanId);
+                localStorage.setItem('tournyx_join_requests', JSON.stringify(cachedReqs));
+            }
+            
             closeJoinModal(); showToast(pendingJoinData.isAuto ? "Clan Joined successfully!" : "Request Sent! Check Inbox.");
             document.getElementById('btnFinalJoin').innerText = "Confirm Request"; document.getElementById('btnFinalJoin').disabled = false;
             playSuccessSound(); setTimeout(() => { fetchLiveClanData(true); }, 5000);
@@ -1348,7 +1541,6 @@
             let totalBadgeCount = 0;
             let isAdminInAny = false;
 
-            // Clan Mail / Broadcasts for All Players
             let clanMailHtml = "";
             userLiveClans.forEach(clan => {
                 let myRole = clan.roster.find(r => String(r.name).toLowerCase() === String(user.username).toLowerCase())?.role;
@@ -1374,7 +1566,6 @@
             let rejectionsHtml = "";
             let dismissed = JSON.parse(localStorage.getItem('tournyx_dismissed_rejects')) || [];
             
-            // Handle new advanced Reject Object logic
             globalClans.forEach(c => {
                 if(c.rejectedList) {
                     let rejObj = c.rejectedList.find(x => x.name === user.username);
@@ -1390,7 +1581,6 @@
                         </div>`;
                     }
                 } 
-                // Fallback for old string array
                 else if(c.rejected && c.rejected.includes(user.username) && !dismissed.includes(c.clanId)) {
                     totalBadgeCount++;
                     rejectionsHtml += `
@@ -1419,7 +1609,7 @@
                                 <div class="sc-name">${rName}</div>
                                 <div style="font-size:0.75rem; color:#888;">Wants to join <strong style="color:var(--accent-cyan)">${reqObj.clan.name}</strong></div>
                             </div>
-                            <div class="sc-btn-group">
+                            <div class="sc-btn-group" style="display:flex; gap:5px;">
                                 <button class="s-btn acc" onclick="handleReq('${rDataEnc}', true, '${reqObj.clan.clanId}')">Accept</button>
                                 <button class="s-btn rej" onclick="handleReq('${rDataEnc}', false, '${reqObj.clan.clanId}')">Reject</button>
                             </div>
@@ -1446,7 +1636,7 @@
                 showToast(`${reqData.name} joined!`); playSuccessSound();
             } else { 
                 let reason = prompt("Why are you rejecting this player?", "Roster is full / Requirements not met");
-                if (reason === null) return; // User clicked Cancel
+                if (reason === null) return; 
                 if(!targetClan.rejectedList) targetClan.rejectedList = [];
                 targetClan.rejectedList.push({ name: reqData.name, reason: reason });
                 showToast("Request rejected and reason sent."); 
