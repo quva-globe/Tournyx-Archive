@@ -32,6 +32,11 @@
                     document.documentElement.style.setProperty('--accent-purple', THEMES[tIndex].purple);
                     document.documentElement.style.setProperty('--accent-gradient', `linear-gradient(135deg, ${THEMES[tIndex].purple}, ${THEMES[tIndex].cyan})`);
                 }
+                
+                let user = JSON.parse(localStorage.getItem('tournyx_user'));
+                if (user && String(user.is_premium).toLowerCase() === 'true') {
+                    document.documentElement.classList.add('theme-vip');
+                }
             } catch(e) {}
         })();
     </script>
@@ -45,6 +50,14 @@
             --accent-gradient: linear-gradient(135deg, #7b2cbf, #bd00ff, #00f2ff);
             --text-main: #ffffff; --text-muted: #a0a0b0;
             --font-head: 'Orbitron', sans-serif; --font-body: 'Rajdhani', sans-serif;
+        }
+        
+        /* --- TRUE GOLDEN VIP THEME --- */
+        html.theme-vip {
+            --accent-cyan: #FFD700;
+            --accent-purple: #FFA500;
+            --accent-gradient: linear-gradient(135deg, #FFE87C, #D4AF37, #FF8C00);
+            --card-border: rgba(212, 175, 55, 0.3);
         }
 
         * { -ms-overflow-style: none !important; scrollbar-width: none !important; box-sizing: border-box; -webkit-tap-highlight-color: transparent; margin: 0; padding: 0; }
@@ -74,6 +87,7 @@
             margin-right: 2px;
             vertical-align: middle;
         }
+        html.theme-vip .tx-icon { background: linear-gradient(135deg, #FFE87C, #FF8C00); filter: drop-shadow(0 0 5px rgba(255,215,0,0.6)); }
 
         /* --- TOURNYX TX COMPOSITE TICKET ICON --- */
         .tx-ticket-composite {
@@ -115,36 +129,47 @@
         /* --- SKELETON LOADER --- */
         .skeleton-box { background: linear-gradient(90deg, rgba(255,255,255,0.03) 25%, rgba(255,255,255,0.08) 50%, rgba(255,255,255,0.03) 75%); background-size: 200% 100%; animation: shimmer 1.5s infinite linear; border-radius: 8px; }
         @keyframes shimmer { 0% { background-position: -200% 0; } 100% { background-position: 200% 0; } }
-        #skeletonLoader { position: fixed; top: calc(75px + env(safe-area-inset-top)); bottom: calc(65px + env(safe-area-inset-bottom)); left: 0; width: 100%; background: var(--primary-bg); z-index: 990; padding: 15px; transition: opacity 0.5s, visibility 0.5s; backdrop-filter: blur(10px); overflow: hidden;}
+        #skeletonLoader { position: fixed; top: calc(75px + env(safe-area-inset-top)); bottom: calc(65px + env(safe-area-inset-bottom)); left: 0; width: 100%; background: var(--primary-bg); z-index: 990; padding: 15px; transition: opacity 0.3s ease, visibility 0.3s ease; backdrop-filter: blur(10px); overflow: hidden;}
         #skeletonLoader.hidden { opacity: 0; visibility: hidden; pointer-events: none; }
         .skel-wrapper { max-width: 800px; margin: 0 auto; width: 100%; }
         .skel-card { width: 100%; height: 210px; border-radius: 20px; margin-bottom: 20px; }
         .skel-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin-bottom: 25px; }
 
         /* --- RESPONSIVE HEADER --- */
-        .top-header { position: fixed; top: 0; left: 0; width: 100%; padding: calc(12px + env(safe-area-inset-top)) 10px 12px; background: rgba(5, 2, 12, 0.6); backdrop-filter: blur(16px); border-bottom: 1px solid var(--card-border); display: flex; align-items: center; justify-content: center; z-index: 2000; box-shadow: 0 4px 30px rgba(0,0,0,0.5); }
+        .top-header { position: fixed; top: 0; left: 0; width: 100%; padding: calc(12px + env(safe-area-inset-top)) 10px 12px; background: rgba(5, 2, 12, 0.6); backdrop-filter: blur(16px); border-bottom: 1px solid var(--card-border); display: flex; align-items: center; justify-content: center; z-index: 2000; box-shadow: 0 4px 30px rgba(0,0,0,0.5); transform: translateZ(0); }
         .header-wrapper { display: flex; align-items: center; justify-content: space-between; gap: 5px;}
         .header-left { display: flex; align-items: center; gap: 8px; flex: 1; min-width: 0; }
         .back-btn { color: white; font-size: 1.3rem; text-decoration: none; transition: 0.3s; cursor: pointer; padding: 5px; flex-shrink:0;}
         .back-btn:active { color: var(--accent-cyan); transform: scale(0.9); }
+        html.theme-vip .back-btn:active { color: #FFD700; }
         .app-title { font-family: var(--font-head); font-size: 1.15rem; font-weight: 700; background: var(--accent-gradient); -webkit-background-clip: text; -webkit-text-fill-color: transparent; letter-spacing: 0px; white-space: normal; line-height: 1.1; text-transform: uppercase; margin:0;}
         .header-greeting { font-size: 0.85rem; color: #aaa; margin-bottom: 2px; }
         
         .desktop-nav { display: none; gap: 20px; align-items: center; }
         .desktop-nav a { color: var(--text-muted); text-decoration: none; font-family: var(--font-head); font-size: 0.95rem; font-weight: bold; text-transform: uppercase; transition: 0.3s; }
         .desktop-nav a.active { color: var(--accent-cyan); text-shadow: 0 0 10px rgba(0,242,255,0.4); }
+        html.theme-vip .desktop-nav a:hover, html.theme-vip .desktop-nav a.active { color: #FFD700; text-shadow: 0 0 10px rgba(255,215,0,0.6); }
         
         .header-actions { display: flex; align-items: center; gap: 15px; flex-shrink: 0;}
-        .header-profile-img { width: 35px; height: 35px; border-radius: 50%; border: 2px solid var(--accent-cyan); object-fit: cover; cursor: pointer; background:#000; }
+        .header-profile-img { width: 35px; height: 35px; border-radius: 50%; border: 2px solid var(--accent-cyan); object-fit: cover; cursor: pointer; background:#000; transition: 0.3s; box-shadow: 0 0 10px rgba(0,242,255,0.4);}
+        html.theme-vip .header-profile-img { border-color: #FFD700; box-shadow: 0 0 10px rgba(255,215,0,0.6); }
 
         .support-pulse-icon { color: var(--accent-cyan); font-size: 1.25rem; cursor: pointer; margin-right: 5px; animation: ringGlow 2s infinite; padding: 5px; }
+        html.theme-vip .support-pulse-icon { color: #FFD700; animation: ringGlowVIP 2s infinite; }
         @keyframes ringGlow { 0% { filter: drop-shadow(0 0 0 rgba(0,242,255,0.7)); transform: scale(1); } 50% { filter: drop-shadow(0 0 12px rgba(0,242,255,0.9)); transform: scale(1.05); } 100% { filter: drop-shadow(0 0 0 rgba(0,242,255,0)); transform: scale(1); } }
+        @keyframes ringGlowVIP { 0% { filter: drop-shadow(0 0 0 rgba(255,215,0,0.7)); transform: scale(1); } 50% { filter: drop-shadow(0 0 12px rgba(255,215,0,0.9)); transform: scale(1.05); } 100% { filter: drop-shadow(0 0 0 rgba(255,215,0,0)); transform: scale(1); } }
+
+        @media (min-width: 850px) { .desktop-nav { display: flex; } }
 
         .container { padding: 15px; margin-top: 0; }
 
         /* --- TICKET BALANCE CARD --- */
         .wallet-card { background: linear-gradient(135deg, rgba(189,0,255,0.15) 0%, rgba(0,242,255,0.05) 100%); border: 1px dashed var(--accent-cyan); border-radius: 20px; padding: 25px 20px; position: relative; overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.5); margin-bottom: 20px; animation: borderGlow 4s infinite alternate, slideUpGlow 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275) both; backdrop-filter: blur(10px);}
+        html.theme-vip .wallet-card { background: linear-gradient(135deg, rgba(255,215,0,0.1) 0%, rgba(255,140,0,0.05) 100%); border-color: #FFD700; animation: borderGlowVIP 4s infinite alternate, slideUpGlow 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275) both;}
+        
         @keyframes borderGlow { from{border-color: rgba(255,255,255,0.05); box-shadow: 0 10px 30px rgba(189,0,255,0.1);} to{border-color: rgba(0,242,255,0.3); box-shadow: 0 10px 30px rgba(0,242,255,0.2);} }
+        @keyframes borderGlowVIP { from{border-color: rgba(255,255,255,0.05); box-shadow: 0 10px 30px rgba(255,215,0,0.1);} to{border-color: rgba(255,215,0,0.3); box-shadow: 0 10px 30px rgba(255,215,0,0.2);} }
+        
         .wallet-card::before { content: ''; position: absolute; top: -50%; left: -50%; width: 200%; height: 200%; background: radial-gradient(circle, rgba(255,255,255,0.05) 0%, transparent 60%); transform: rotate(45deg); pointer-events: none; }
         .wallet-card::after { content: '||| | |||| | | |||| | |||'; position: absolute; right: -20px; top: 50%; transform: translateY(-50%) rotate(90deg); font-family: monospace; font-size: 2rem; color: rgba(255,255,255,0.05); pointer-events: none; letter-spacing: 2px;}
 
@@ -158,13 +183,15 @@
 
         .pts-balance { display: flex; align-items: center; justify-content:space-between; gap: 8px; background: rgba(0,0,0,0.4); padding: 8px 15px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.08); width: 100%; transition: 0.3s; box-shadow: inset 0 0 10px rgba(0,0,0,0.5); }
         .pts-balance span { font-family: var(--font-head); font-size: clamp(0.85rem, 4vw, 1rem); font-weight: bold; color: var(--accent-cyan); text-shadow: 0 0 10px rgba(0,242,255,0.4);}
+        html.theme-vip .pts-balance span { color: #FFD700; text-shadow: 0 0 10px rgba(255,215,0,0.4); }
+        
         .vip-progress-bg { width: 100%; height: 6px; background: rgba(255,255,255,0.05); border-radius: 5px; margin-top: 15px; overflow:hidden;}
         .vip-progress-fill { height: 100%; width: 0%; background: linear-gradient(90deg, var(--accent-orange), #FFD700); box-shadow: 0 0 10px var(--accent-orange); transition: 1s ease;}
 
         /* --- VISUAL TICKET STUB INVENTORY THEMES --- */
         .tkt-theme-FF { --glow-color: #ff9900; --glow-border: #ff4d4d; }
         .tkt-theme-BGM { --glow-color: #00ff7f; --glow-border: #00b09b; }
-        .tkt-theme-UNI { --glow-color: #00f2ff; --glow-border: #bd00ff; }
+        .tkt-theme-UNI { --glow-color: #FFD700; --glow-border: #FF8C00; }
 
         .tournyx-ticket {
             background: linear-gradient(135deg, rgba(20,10,35,0.9), rgba(5,2,12,0.9));
@@ -188,6 +215,7 @@
         .tkt-details { flex: 1; margin-left: 15px; z-index: 2;}
         .tkt-game { font-family: var(--font-head); color: white; font-size: 1.05rem; text-transform: uppercase; letter-spacing: 1px; font-weight: bold; }
         .tkt-id { font-size: 0.7rem; color: var(--accent-cyan); font-family: monospace; }
+        html.theme-vip .tkt-id { color: #FFD700; }
         .tkt-count { font-family: var(--font-head); font-size: 1.6rem; color: var(--glow-color, var(--accent-green)); font-weight: bold; text-shadow: 0 0 10px var(--glow-color, rgba(0,255,127,0.4)); padding-left: 15px; border-left: 1px dashed rgba(255,255,255,0.2); z-index: 2;}
         .tkt-tournyx-stamp { position: absolute; top: 5px; right: 20px; font-size: 0.6rem; color: rgba(255,255,255,0.15); text-transform: uppercase; letter-spacing: 2px; font-family: var(--font-head); font-weight:900; z-index: 1;}
 
@@ -200,13 +228,18 @@
         .btn-add { border-color: rgba(189,0,255,0.3); } .btn-add i, .btn-add .tx-icon { color: var(--accent-purple); text-shadow: 0 0 15px rgba(189,0,255,0.5); } .btn-add:hover { background: rgba(189,0,255,0.1); border-color: var(--accent-purple); }
         .btn-redeem { border-color: rgba(0,242,255,0.3); } .btn-redeem i { color: var(--accent-cyan); text-shadow: 0 0 15px rgba(0,242,255,0.5); } .btn-redeem:hover { background: rgba(0,242,255,0.1); border-color: var(--accent-cyan); }
 
+        html.theme-vip .btn-add { border-color: rgba(255,215,0,0.3); } html.theme-vip .btn-add i, html.theme-vip .btn-add .tx-icon { color: #FFD700; text-shadow: 0 0 15px rgba(255,215,0,0.5); } html.theme-vip .btn-add:hover { background: rgba(255,215,0,0.1); border-color: #FFD700; }
+        html.theme-vip .btn-redeem { border-color: rgba(255,140,0,0.3); } html.theme-vip .btn-redeem i { color: #FF8C00; text-shadow: 0 0 15px rgba(255,140,0,0.5); } html.theme-vip .btn-redeem:hover { background: rgba(255,140,0,0.1); border-color: #FF8C00; }
+
         /* --- TRANSACTION HISTORY --- */
         .section-title { font-family: var(--font-head); font-size: 1.15rem; color: white; margin-bottom: 15px; display: flex; justify-content: space-between; align-items: center; text-shadow: 0 0 10px rgba(255,255,255,0.2); }
         .section-title span { font-size: 0.8rem; color: var(--accent-cyan); cursor: pointer; text-transform: uppercase; padding: 5px 10px; border-radius: 8px; transition: 0.3s; border: 1px solid transparent;}
+        html.theme-vip .section-title span { color: #FFD700; }
         
         .txn-list { background: var(--card-bg); backdrop-filter: blur(10px); border: 1px solid var(--card-border); border-radius: 15px; padding: 12px; display: flex; flex-direction: column; gap: 10px; margin-bottom: 25px; box-shadow: 0 10px 20px rgba(0,0,0,0.3); }
         .txn-item { display: flex; justify-content: space-between; align-items: center; padding: 15px; background: rgba(255,255,255,0.02); border-radius: 12px; border: 1px solid rgba(255,255,255,0.05); cursor: pointer; transition: 0.3s; animation: slideInUp 0.4s ease both;}
         .txn-item:active { background: rgba(255,255,255,0.05); border-color: var(--accent-cyan); transform: scale(0.98); }
+        html.theme-vip .txn-item:active { border-color: #FFD700; }
         
         .txn-left { display: flex; align-items: center; gap: 12px; min-width: 0; flex: 1; padding-right: 10px; }
         .txn-icon { width: 45px; height: 45px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.2rem; flex-shrink: 0; }
@@ -250,8 +283,9 @@
         
         /* --- GAME SELECTOR --- */
         .game-selector { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 20px; }
-        .game-card { background: rgba(0,0,0,0.5); border: 1px solid var(--border); border-radius: 12px; padding: 12px 10px; text-align: center; cursor: pointer; transition: 0.3s; position: relative; }
+        .game-card { background: rgba(0,0,0,0.5); border: 1px solid var(--card-border); border-radius: 12px; padding: 12px 10px; text-align: center; cursor: pointer; transition: 0.3s; position: relative; }
         .game-card.active { border-color: var(--accent-purple); background: rgba(189,0,255,0.1); box-shadow: 0 0 15px rgba(189,0,255,0.3); transform: scale(1.02); }
+        html.theme-vip .game-card.active { border-color: #FFD700; background: rgba(255,215,0,0.1); box-shadow: 0 0 15px rgba(255,215,0,0.3); }
         .game-card img { width: 45px; height: 45px; border-radius: 8px; margin-bottom: 8px; border: 1px solid rgba(255,255,255,0.1);}
         .game-card span { display: block; font-family: var(--font-head); font-size: 0.9rem; color: white; font-weight: bold; text-transform: uppercase; }
 
@@ -259,23 +293,31 @@
         .amt-currency { position: absolute; left: 20px; top: 50%; transform: translateY(-50%); font-family: var(--font-head); font-size: 1.2rem; color: white; font-weight: bold; }
         .amt-input { width: 100%; background: rgba(0,0,0,0.5); border: 1px solid rgba(255,255,255,0.1); padding: 20px 20px 20px 60px; border-radius: 15px; color: white; font-family: var(--font-head); font-size: 1.8rem; font-weight: bold; outline: none; transition: 0.3s; box-shadow: inset 0 0 10px rgba(0,0,0,0.5); }
         .amt-input:focus { border-color: var(--accent-purple); box-shadow: 0 0 15px rgba(189,0,255,0.3), inset 0 0 10px rgba(0,0,0,0.5); background: rgba(0,0,0,0.8);}
+        html.theme-vip .amt-input:focus { border-color: #FFD700; box-shadow: 0 0 15px rgba(255,215,0,0.3), inset 0 0 10px rgba(0,0,0,0.5); }
         @keyframes shake { 0%,100%{transform:translateX(0);} 20%,60%{transform:translateX(-10px);} 40%,80%{transform:translateX(10px);} }
         .input-error { border-color: var(--accent-red) !important; animation: shake 0.4s both; }
         
         .quick-amt-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-bottom: 25px; }
         .quick-amt-btn { background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08); color: #ccc; padding: 12px 0; text-align: center; border-radius: 10px; font-family: var(--font-head); font-weight: bold; cursor: pointer; transition: 0.3s; position: relative;}
         .quick-amt-btn:active { background: rgba(189,0,255,0.2); border-color: var(--accent-purple); color: white; transform:scale(0.95);}
+        html.theme-vip .quick-amt-btn:active { background: rgba(255,215,0,0.2); border-color: #FFD700; }
 
         .qr-section { background: rgba(0,0,0,0.4); border: 1px dashed var(--accent-cyan); border-radius: 15px; padding: 20px; text-align: center; margin-bottom: 20px; position: relative; overflow: hidden; display:none; transition: 0.3s; box-shadow: inset 0 0 15px rgba(0,0,0,0.5);}
+        html.theme-vip .qr-section { border-color: #FFD700; }
         .qr-section.active { display: block; animation: fadeIn 0.5s; }
         .qr-img-box { width: 180px; height: 180px; background: white; padding: 10px; border-radius: 10px; margin: 0 auto 15px; position: relative; box-shadow: 0 0 20px rgba(0,242,255,0.3);}
+        html.theme-vip .qr-img-box { box-shadow: 0 0 20px rgba(255,215,0,0.3); }
         .qr-img-box img { width: 100%; height: 100%; object-fit: contain; }
         
         .upi-copy-box { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); display: inline-flex; align-items: center; gap: 10px; padding: 8px 15px; border-radius: 20px; font-family: var(--font-body); font-size: 0.9rem; cursor: pointer; margin-bottom:10px; transition: 0.3s;}
         .upi-copy-box:active { background: rgba(0,242,255,0.1); border-color: var(--accent-cyan); transform: scale(0.95);}
+        html.theme-vip .upi-copy-box:active { background: rgba(255,215,0,0.1); border-color: #FFD700; }
         
         .pay-btn { width: 100%; padding: 18px; background: var(--accent-gradient); border: none; border-radius: 12px; color: white; font-family: var(--font-head); font-size: 1.1rem; font-weight: bold; text-transform: uppercase; cursor: pointer; box-shadow: 0 5px 20px rgba(189,0,255,0.4); display: flex; justify-content: center; align-items: center; gap: 10px; margin-bottom: 10px; letter-spacing: 1px; transition: 0.3s;}
+        html.theme-vip .pay-btn { background: linear-gradient(135deg, #FFD700, #FF8C00); color: black; box-shadow: 0 5px 20px rgba(255,215,0,0.4); }
         .pay-btn:active { transform: scale(0.96); box-shadow: 0 2px 10px rgba(189,0,255,0.4);}
+        html.theme-vip .pay-btn:active { box-shadow: 0 2px 10px rgba(255,215,0,0.4); }
+        
         .utr-input-field { width: 100%; background: rgba(0,0,0,0.4); border: 1px solid rgba(255,255,255,0.1); padding: 16px; border-radius: 12px; color: white; font-family: var(--font-body); font-size: 1.1rem; outline: none; margin-bottom: 15px; transition: 0.3s; letter-spacing: 2px; font-weight:bold; text-align:center; box-shadow: inset 0 0 10px rgba(0,0,0,0.5);}
         .utr-input-field:focus { border-color: var(--accent-green); background: rgba(0,0,0,0.6);}
 
@@ -296,37 +338,74 @@
         .cyber-scanner-overlay { position: fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.95); z-index:9999; display:flex; flex-direction:column; align-items:center; justify-content:center; opacity:0; pointer-events:none; transition:0.4s; backdrop-filter:blur(10px);}
         .cyber-scanner-overlay.active { opacity:1; pointer-events:all; }
         .cyber-circle { width: 100px; height: 100px; border: 3px dashed var(--accent-cyan); border-radius: 50%; animation: spin 2s linear infinite; display: flex; align-items: center; justify-content: center; position: relative; transition: 0.3s;}
+        html.theme-vip .cyber-circle { border-color: #FFD700; }
         .cyber-inner { width: 60px; height: 60px; background: rgba(0,242,255,0.2); border-radius: 50%; box-shadow: 0 0 30px var(--accent-cyan); animation: pulse 1s infinite alternate; transition: 0.3s;}
+        html.theme-vip .cyber-inner { background: rgba(255,215,0,0.2); box-shadow: 0 0 30px #FFD700; }
         .cyber-text { font-family: var(--font-head); color: var(--accent-cyan); font-size: 1.2rem; margin-top: 20px; letter-spacing: 2px; text-transform: uppercase; text-shadow: 0 0 10px var(--accent-cyan); transition: 0.3s; text-align: center; padding: 0 20px;}
+        html.theme-vip .cyber-text { color: #FFD700; text-shadow: 0 0 10px #FFD700; }
         .cyber-desc { color:#888; font-size:0.8rem; margin-top:10px; transition: 0.3s; text-align: center; padding: 0 20px;}
         .cyber-timer { font-family: var(--font-head); color: white; font-size: 2.5rem; font-weight: bold; margin-top: 15px; text-shadow: 0 0 20px var(--accent-cyan); transition: 0.3s; }
+        html.theme-vip .cyber-timer { text-shadow: 0 0 20px #FFD700; }
+        
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
         @keyframes pulse { 0%{transform:scale(0.8); opacity:0.5;} 100%{transform:scale(1.2); opacity:1;} }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 
         #customToast { visibility: hidden; min-width: 250px; background-color: var(--accent-cyan); color: #000; text-align: center; border-radius: 12px; padding: 14px; position: fixed; z-index: 9999; left: 50%; bottom: -50px; transform: translateX(-50%); font-family: var(--font-head); font-weight: bold; box-shadow: 0 8px 25px rgba(0,242,255,0.6); opacity: 0; transition: opacity 0.4s, bottom 0.4s; }
+        html.theme-vip #customToast { background-color: #FFD700; box-shadow: 0 8px 25px rgba(255,215,0,0.6); }
         #customToast.show { visibility: visible; opacity: 1; bottom: 100px; }
 
         .app-footer { text-align: center; padding: 20px 20px 110px 20px; color: #555; font-size: 0.75rem; font-family: var(--font-body); letter-spacing: 1px; border-top: 1px solid rgba(255,255,255,0.05); margin-top: 10px;}
 
-        /* PERFECTLY ALIGNED BOTTOM NAVIGATION */
-        .bottom-nav { position: fixed; bottom: 0; left: 0; width: 100%; height: calc(65px + env(safe-area-inset-bottom)); background: rgba(7, 3, 17, 0.92); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); display: flex; justify-content: space-between; align-items: flex-start; padding: 10px 2px env(safe-area-inset-bottom); border-top: 1px solid rgba(255,255,255,0.05); z-index: 1000; box-shadow: 0 -10px 30px rgba(0,0,0,0.5); transform: translateZ(0);}
+        /* --- PERFECT BOTTOM NAVIGATION (MOBILE OPTIMIZED) --- */
+        .bottom-nav { position: fixed; bottom: 0; left: 0; width: 100%; height: calc(65px + env(safe-area-inset-bottom, 0px)); background: rgba(5, 2, 12, 0.75); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); display: flex; justify-content: space-between; align-items: flex-start; padding: 10px 2px env(safe-area-inset-bottom, 0px); border-top: 1px solid rgba(255,255,255,0.05); z-index: 1000; box-shadow: 0 -10px 30px rgba(0,0,0,0.5); transform: translateZ(0);}
         .nav-item { display: flex; flex-direction: column; align-items: center; justify-content: flex-start; color: #666; text-decoration: none; font-size: 0.6rem; font-family: var(--font-head); font-weight: bold; flex: 1; transition: 0.3s; position: relative; padding: 0 2px; text-align: center;}
         .nav-item span { margin-top: 4px; transition: 0.3s; letter-spacing: -0.3px;}
         
-        .nav-item i, .nav-item .tx-icon, .nav-item .tx-ticket-composite { font-size: 1.2rem; transition: 0.3s; color: #666; background: none; -webkit-text-fill-color: #666; filter: none; font-style: normal; }
-        .nav-item.active { color: var(--accent-cyan); }
+        .nav-item > i, .nav-item > .tx-icon, .nav-item > .tx-ticket-composite { 
+            font-size: 1.2rem; transition: 0.3s; color: #666; background: none; -webkit-text-fill-color: #666; filter: none; font-style: normal; 
+            height: 24px; width: 24px; display: flex; align-items: center; justify-content: center;
+        }
+        .tx-ticket-composite i { display: block; line-height: 1; font-size: 1.2rem; color: inherit; -webkit-text-fill-color: inherit; transition: 0.3s; background: inherit; filter: inherit; -webkit-background-clip: inherit; }
         
-        /* Specific fix for composite to move together */
-        .nav-item.active .tx-ticket-composite { transform: translateY(-4px); }
-        .nav-item.active i, .nav-item.active .tx-icon, .nav-item.active .tx-ticket-composite i { transform: translateY(-4px); background: linear-gradient(135deg, var(--accent-purple), var(--accent-cyan)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; filter: drop-shadow(0 0 10px var(--accent-cyan)); font-style: normal; }
-        .nav-item.active .tx-ticket-composite i { transform: translateY(0); } /* Reset inner transform */
+        .nav-item.active { color: var(--accent-cyan); }
+        html.theme-vip .nav-item.active { color: #d4af37; }
+        
+        .nav-item.active > .tx-ticket-composite { transform: translateY(-4px); }
+        .nav-item.active > i, .nav-item.active > .tx-icon, .nav-item.active > .tx-ticket-composite i { transform: translateY(-4px); background: linear-gradient(135deg, var(--accent-purple), var(--accent-cyan)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; filter: drop-shadow(0 0 10px var(--accent-cyan)); font-style: normal;}
+        html.theme-vip .nav-item.active > i, html.theme-vip .nav-item.active > .tx-icon, html.theme-vip .nav-item.active > .tx-ticket-composite i { background: linear-gradient(135deg, #FFE87C, #FF8C00); -webkit-background-clip: text; -webkit-text-fill-color: transparent; filter: drop-shadow(0 0 10px rgba(212,175,55,0.8)); }
+        .nav-item.active .tx-ticket-composite i { transform: translateY(0); }
         
         .nav-item.active span { transform: translateY(2px); color: white; text-shadow: 0 0 5px rgba(255,255,255,0.5);}
-        
         .fab-slot { flex: 1.2; display: flex; justify-content: center; position: relative; height: 100%; align-items: center; }
         .floating-plus { position: absolute; top: -25px; left: 50%; transform: translateX(-50%); width: 54px; height: 54px; background: linear-gradient(135deg, var(--accent-cyan), var(--accent-purple)); border-radius: 50%; display: flex; align-items: center; justify-content: center; border: 4px solid var(--primary-bg); box-shadow: 0 10px 25px rgba(189,0,255,0.4); color: #fff; font-size: 1.6rem; cursor: pointer; transition: 0.3s; z-index: 10; }
-        
+        html.theme-vip .floating-plus { background: linear-gradient(135deg, #FFE87C, #D4AF37); box-shadow: 0 10px 25px rgba(212,175,55,0.4); border-color: #000; color: #000; }
+        .floating-plus:hover { transform: translateX(-50%) scale(1.1) rotate(90deg); box-shadow: 0 15px 35px rgba(0,242,255,0.6); }
+
         @media (min-width: 850px) { .bottom-nav { display: none !important; } }
+
+        /* PDF Template Hidden */
+        <div style="position: absolute; left: 0; top: 0; width: 100%; opacity: 0; pointer-events: none; z-index: -9999;">
+            <div id="pdfTemplate" style="background:#070311; color:#ffffff; padding:40px; font-family:'Helvetica Neue', Arial, sans-serif; width:800px; box-sizing:border-box;">
+                <div style="text-align:center; border-bottom:2px solid #1a0a3a; padding-bottom:30px; margin-bottom:30px;">
+                    <div style="background: linear-gradient(90deg, #bd00ff, #00f2ff); padding: 15px; border-radius: 8px; margin-bottom: 10px; display: inline-block; width: 100%;">
+                        <h1 style="margin:0; font-size: 28px; font-weight: 900; color: #ffffff; text-transform:uppercase; letter-spacing: 2px;">Tournyx Esports</h1>
+                    </div>
+                    <p style="color:#a0a0b0; margin:8px 0 0 0; font-size:14px; letter-spacing: 1px; text-transform: uppercase;">Official Ticket Invoice</p>
+                </div>
+                <div style="display:flex; justify-content:space-between; margin-bottom:40px; background:linear-gradient(135deg, #110822, #1a0a3a); padding:25px; border-radius:12px; border: 1px solid #bd00ff; box-shadow: 0 0 15px rgba(189,0,255,0.2);">
+                    <div>
+                        <p style="margin:0 0 5px 0; color:#00f2ff; font-size:12px; text-transform:uppercase; letter-spacing:1px; font-weight: bold;">Player Profile</p>
+                        <h3 style="margin:0; color:#ffffff; font-size:20px;" id="pdfUserName">Name</h3>
+                    </div>
+                    <div style="text-align:right;">
+                        <p style="margin:0 0 5px 0; color:#00f2ff; font-size:12px; text-transform:uppercase; letter-spacing:1px; font-weight: bold;">Registered Email</p>
+                        <h3 style="margin:0; color:#ffffff; font-size:20px;" id="pdfUserEmail">email@domain.com</h3>
+                    </div>
+                </div>
+                <div id="pdfDynamicContentArea"></div>
+            </div>
+        </div>
     </style>
 </head>
 <body>
@@ -337,14 +416,13 @@
         <div class="skel-wrapper">
             <div class="skeleton-box skel-card"></div>
             <div class="skel-grid">
-                <div class="skeleton-box skel-btn"></div>
-                <div class="skeleton-box skel-btn"></div>
+                <div class="skeleton-box skel-btn" style="height: 100px;"></div>
+                <div class="skeleton-box skel-btn" style="height: 100px;"></div>
             </div>
             <div class="skel-list">
-                <div class="skeleton-box skel-item"></div>
-                <div class="skeleton-box skel-item"></div>
-                <div class="skeleton-box skel-item"></div>
-                <div class="skeleton-box skel-item"></div>
+                <div class="skeleton-box skel-item" style="height: 60px; margin-bottom: 10px;"></div>
+                <div class="skeleton-box skel-item" style="height: 60px; margin-bottom: 10px;"></div>
+                <div class="skeleton-box skel-item" style="height: 60px; margin-bottom: 10px;"></div>
             </div>
         </div>
     </div>
@@ -378,10 +456,10 @@
         <div class="wallet-card animate-section delay-1">
             <div class="vip-badge" id="vipBadge"><span class="tx-icon" style="font-size: 0.9em; filter:none; color:black; -webkit-text-fill-color:black;">TX</span> STANDARD</div>
             <div class="balance-label">
-                <span>Total Available Pass <i class="fa-solid fa-eye" id="eyeIcon" onclick="if(isGuest) return showLoginModal(); togglePrivacy(); triggerHaptic();" style="margin-left:8px; cursor: pointer; color:#888;"></i></span>
+                <span id="balanceLabelText">Total Available Pass <i class="fa-solid fa-eye" id="eyeIcon" onclick="if(isGuest) return showLoginModal(); togglePrivacy(); triggerHaptic();" style="margin-left:8px; cursor: pointer; color:#888;"></i></span>
             </div>
             <div class="balance-amount" id="balanceWrapper">
-                <span class="tx-icon" style="font-size: 1.1em; margin-right: 8px;">TX</span> <span id="displayTickets">0</span>
+                <span class="tx-icon" id="mainBalanceTxIcon" style="font-size: 1.1em; margin-right: 8px;">TX</span> <span id="displayTickets">0</span>
             </div>
             
             <div class="pts-balance" id="ptsWrapper">
@@ -395,13 +473,10 @@
             <div style="font-size:0.65rem; color:#aaa; margin-top:5px; text-align:right;">Next Tier: <span id="nextTierText">Pro Gamer</span></div>
         </div>
 
-        <!-- VISUAL TICKET INVENTORY -->
         <div class="section-title animate-section delay-2" style="font-size:1rem;">My Inventory</div>
         <div id="ticketInventoryList" class="animate-section delay-2">
-            <!-- Dynamic Tournyx Tickets generated here -->
-        </div>
+            </div>
 
-        <!-- REFINED QUICK ACTIONS -->
         <div class="quick-actions animate-section delay-2">
             <div class="action-btn btn-add" onclick="if(isGuest) return showLoginModal(); openAddMoney(); triggerHaptic();">
                 <span class="tx-icon" style="font-size: 2rem;">TX</span>
@@ -432,7 +507,6 @@
         </div>
     </div>
 
-    <!-- Modals -->
     <div class="bottom-sheet-overlay" id="loginPromptModal">
         <div class="bottom-sheet" style="max-height: auto; text-align: center; padding-bottom: 40px; transform: scale(0.95);">
             <div class="sheet-header" style="justify-content: flex-end; margin-bottom: 10px;">
@@ -454,16 +528,15 @@
             
             <div class="add-money-flex">
                 <div class="add-money-left">
-                    <!-- GAME SELECTOR -->
                     <div style="margin-bottom: 15px;">
                         <div style="font-size: 0.8rem; color: #aaa; text-transform: uppercase; margin-bottom:8px; font-weight:bold;">Select Game</div>
                         <div class="game-selector" id="gameSelector">
                             <div class="game-card active" onclick="selectGame('Free Fire', this)">
-                                <img src="https://play-lh.googleusercontent.com/1-1bH7uYv4oZ2Yd3Iu1_2s7r5W8QkR8_9h9o1eU9b2gJ0I8Xq_zX9x7O8Q9r9k1fQ" onerror="this.src='https://tournyx.in/favicon.png'" alt="FF">
+                                <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEiJvPTY_y_XU-0Lwbnjwm7961lCDkSlQh2MtCWHunFVX6WS7WCprCtkPyB334BU_-4vGsP0NseDQf4NPBEOIxqjk7VZQqZUHpnLb4Bw-c1UeXQy2M9DzNrNdYt_aL0GEb1AlTPupC5zEjJiP3Ci0Oxk-wdg5TF5cs8_UNSe3uTT1BE884je3iXr8QlMjx8/s240/1000094210.jpg" onerror="this.src='https://tournyx.in/favicon.png'" alt="FF">
                                 <span>Free Fire</span>
                             </div>
                             <div class="game-card" onclick="selectGame('BGMI', this)">
-                                <img src="https://play-lh.googleusercontent.com/nJzZgH1NnQ8_2qD61QO0r-f1VvQk-KxS2pI-JgD99f_8M8vR9zN_6FwG4Q2vB3N52g" onerror="this.src='https://tournyx.in/favicon.png'" alt="BGMI">
+                                <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEj3MKUI87mMK4_3DltS3LQgqfrK1sESUIMMqlENdi0dPRtOFkeDbvPsTbSaCRaJOb17QZ5s9OO5dR6kFCYiCkgUCF2zBWwvGFSb3T-9Nz51XuIzMvIiOuqwcLzyzeFmn1orKbiETP4LrlaG-RidnWAAzBwUA3aL5_z62HP4_F7R02lAK_WSYdH0U_Gn7Es/s250/1000094211.jpg" onerror="this.src='https://tournyx.in/favicon.png'" alt="BGMI">
                                 <span>BGMI</span>
                             </div>
                         </div>
@@ -507,7 +580,6 @@
         </div>
     </div>
 
-    <!-- Modals -->
     <div class="bottom-sheet-overlay" id="supportBotOverlay">
         <div class="bottom-sheet">
             <div class="sheet-header">
@@ -516,14 +588,14 @@
             </div>
             <div id="supportStep1">
                 <p style="color: #ccc; font-size: 0.95rem; margin-bottom: 20px; text-align:center;">Hi! I'm the Tournyx AI. What do you need help with?</p>
-                <div class="support-option-btn" onclick="supportProceed('Ticket Delivery Issue'); triggerHaptic();">Purchased Pass not delivered <i class="fa-solid fa-chevron-right" style="color:var(--accent-cyan)"></i></div>
-                <div class="support-option-btn" onclick="supportProceed('Match Entry Issue'); triggerHaptic();">Could not enter match <i class="fa-solid fa-chevron-right" style="color:var(--accent-cyan)"></i></div>
-                <div class="support-option-btn" onclick="supportProceed('Other'); triggerHaptic();">Other inquiries <i class="fa-solid fa-chevron-right" style="color:var(--accent-cyan)"></i></div>
+                <div class="support-option-btn" onclick="supportProceed('Ticket Delivery Issue'); triggerHaptic();" style="background:rgba(255,255,255,0.05); padding:15px; border-radius:10px; margin-bottom:10px; cursor:pointer; display:flex; justify-content:space-between; align-items:center;">Purchased Pass not delivered <i class="fa-solid fa-chevron-right" style="color:var(--accent-cyan)"></i></div>
+                <div class="support-option-btn" onclick="supportProceed('Match Entry Issue'); triggerHaptic();" style="background:rgba(255,255,255,0.05); padding:15px; border-radius:10px; margin-bottom:10px; cursor:pointer; display:flex; justify-content:space-between; align-items:center;">Could not enter match <i class="fa-solid fa-chevron-right" style="color:var(--accent-cyan)"></i></div>
+                <div class="support-option-btn" onclick="supportProceed('Other'); triggerHaptic();" style="background:rgba(255,255,255,0.05); padding:15px; border-radius:10px; margin-bottom:10px; cursor:pointer; display:flex; justify-content:space-between; align-items:center;">Other inquiries <i class="fa-solid fa-chevron-right" style="color:var(--accent-cyan)"></i></div>
             </div>
             <div id="supportStep2" style="display:none;">
                 <div style="display:flex; align-items:center; gap:10px; margin-bottom:15px; cursor:pointer; color:var(--accent-cyan); font-size:0.9rem; font-family:var(--font-head); text-transform:uppercase;" onclick="supportBack(); triggerHaptic();"><i class="fa-solid fa-arrow-left"></i> Back</div>
-                <textarea id="supportMsg" class="support-msg-box" placeholder="Describe your issue..."></textarea>
-                <div class="support-bot-box" onclick="document.getElementById('screenshotInput').click()">
+                <textarea id="supportMsg" style="width:100%; background:rgba(0,0,0,0.5); border:1px solid var(--card-border); color:white; padding:15px; border-radius:10px; min-height:100px; margin-bottom:15px;" placeholder="Describe your issue..."></textarea>
+                <div style="background:rgba(0,242,255,0.05); border:1px dashed var(--accent-cyan); border-radius:10px; padding:20px; text-align:center; cursor:pointer; margin-bottom:15px;" onclick="document.getElementById('screenshotInput').click()">
                     <i class="fa-solid fa-cloud-arrow-up" style="font-size: 2.5rem; color: var(--accent-cyan); margin-bottom: 10px;"></i>
                     <div style="font-family: var(--font-head); color: white; font-weight: bold;">Upload Screenshot</div>
                     <input type="file" id="screenshotInput" accept="image/*,video/*" style="display: none;" onchange="previewScreenshot(event)">
@@ -600,7 +672,6 @@
         <a class="nav-item" href="profile.html"><i class="fa-solid fa-user"></i><span>Profile</span></a>
     </nav>
 
-    <!-- PDF Template Hidden (Fixed Visibility Issue) -->
     <div style="position: absolute; left: 0; top: 0; width: 100%; opacity: 0; pointer-events: none; z-index: -9999;">
         <div id="pdfTemplate" style="background:#070311; color:#ffffff; padding:40px; font-family:'Helvetica Neue', Arial, sans-serif; width:800px; box-sizing:border-box;">
             <div style="text-align:center; border-bottom:2px solid #1a0a3a; padding-bottom:30px; margin-bottom:30px;">
@@ -641,7 +712,7 @@
         let currentUser = JSON.parse(localStorage.getItem('tournyx_user'));
         if(!currentUser || !currentUser.email) {
             isGuest = true;
-            currentUser = { username: "Guest Player", rupees: 0, points: 0, email: "guest@tournyx.com", avatar: "https://tournyx.in/favicon.png" };
+            currentUser = { username: "Guest Player", rupees: "0", points: "0", email: "guest@tournyx.com", avatar: "https://tournyx.in/favicon.png", role: "player" };
         }
 
         let activeReceiptId = "";
@@ -659,7 +730,7 @@
         function handleProfileClick() { if(isGuest) return showLoginModal(); window.location.href='profile.html'; }
         function triggerHaptic() { if(navigator.vibrate) navigator.vibrate(40); }
         function triggerError(id) { let el = document.getElementById(id); el.classList.add('input-error'); triggerHaptic(); setTimeout(()=>el.classList.remove('input-error'),500); }
-        function showToast(msg, isError=false) { let t = document.getElementById("customToast"); t.innerText = msg; t.style.backgroundColor = isError ? "var(--accent-red)" : "var(--accent-cyan)"; t.style.color = "black"; t.className = "show"; triggerHaptic(); setTimeout(()=>t.className="", 3500); }
+        function showToast(msg, isError=false) { let t = document.getElementById("customToast"); t.innerText = msg; t.style.backgroundColor = isError ? "var(--accent-red)" : (document.documentElement.classList.contains('theme-vip') ? "#FFD700" : "var(--accent-cyan)"); t.style.color = "black"; t.className = "show"; triggerHaptic(); setTimeout(()=>t.className="", 3500); }
         function formatNum(num) { return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ","); }
 
         document.addEventListener("DOMContentLoaded", function() {
@@ -671,14 +742,21 @@
             else { document.getElementById('qrContainer').classList.add('active'); setAmt(1); } 
             
             let cached = JSON.parse(localStorage.getItem('tournyx_txns')) || [];
-            if(cached.length > 0 && !isGuest) { renderTransactions(); updateWalletDisplay(); } 
-            else { updateWalletDisplay(); renderQuickAmts(); }
             
-            if(!isGuest) {
-                syncLiveTransactions().finally(() => { document.getElementById('skeletonLoader').classList.add('hidden'); });
+            if (!isGuest) {
+                if (cached.length > 0 || currentUser.rupees) {
+                    renderTransactions(); 
+                    updateWalletDisplay();
+                    document.getElementById('skeletonLoader').classList.add('hidden'); // Insta-hide
+                }
+                syncLiveTransactions().finally(() => { 
+                    document.getElementById('skeletonLoader').classList.add('hidden'); 
+                });
                 setInterval(() => syncLiveTransactions(), 5000); 
             } else {
-                setTimeout(() => document.getElementById('skeletonLoader').classList.add('hidden'), 800);
+                updateWalletDisplay(); 
+                renderQuickAmts();
+                document.getElementById('skeletonLoader').classList.add('hidden'); // Insta-hide for guests
             }
             
             selectServer(1); renderQuickAmts();
@@ -707,7 +785,7 @@
             const hr = new Date().getHours(); let greet = "Welcome,";
             if (hr < 12) greet = "Good Morning,"; else if (hr < 18) greet = "Good Afternoon,"; else greet = "Good Evening,";
             let name = currentUser.username ? currentUser.username.split(" ")[0] : "Player";
-            let tagHTML = isGuest ? '<span style="background:rgba(255,255,255,0.1); color:#ccc; padding:2px 6px; border-radius:4px; font-size:0.6rem; margin-left:8px; font-family:var(--font-head); font-weight:bold;">GUEST</span>' : '<span style="background:var(--accent-purple); color:white; padding:2px 6px; border-radius:4px; font-size:0.6rem; margin-left:8px; font-family:var(--font-head); font-weight:bold;">PLAYER</span>';
+            let tagHTML = isGuest ? '<span style="background:rgba(255,255,255,0.1); color:#ccc; padding:2px 6px; border-radius:4px; font-size:0.6rem; margin-left:8px; font-family:var(--font-head); font-weight:bold;">GUEST</span>' : (currentUser.role === 'organizer' ? '<span style="background:var(--accent-orange); color:black; padding:2px 6px; border-radius:4px; font-size:0.6rem; margin-left:8px; font-family:var(--font-head); font-weight:bold;">ORGANIZER</span>' : '<span style="background:var(--accent-purple); color:white; padding:2px 6px; border-radius:4px; font-size:0.6rem; margin-left:8px; font-family:var(--font-head); font-weight:bold;">PLAYER</span>');
             document.getElementById('dynamicGreeting').innerHTML = `${greet} ${name} ${tagHTML}`;
         }
 
@@ -721,12 +799,37 @@
         }
 
         function updateWalletDisplay() {
-            let rupees = parseFloat(currentUser.rupees);
-            if(isNaN(rupees)) rupees = 0;
-            let totalTickets = Math.floor(rupees / TICKET_PRICE); 
+            let rawRupees = String(currentUser.rupees || "0");
+            let baseRupees = 0;
+            let goldenRupees = 0;
+            
+            // MAGIC PARSER: "200 + 50" -> 200 base, 50 golden
+            if (rawRupees.includes('+')) {
+                let parts = rawRupees.split('+');
+                baseRupees = parseFloat(parts[0]) || 0;
+                goldenRupees = parseFloat(parts[1]) || 0;
+            } else {
+                baseRupees = parseFloat(rawRupees) || 0;
+            }
+
+            let totalRupees = baseRupees + goldenRupees;
+            let totalTickets = Math.floor(totalRupees / TICKET_PRICE);
+            let goldenTickets = Math.floor(goldenRupees / TICKET_PRICE);
+            let baseTickets = totalTickets - goldenTickets;
+
             let pts = parseInt(currentUser.points) || 0;
             
-            animateValue(document.getElementById('displayTickets'), 0, totalTickets, 1000);
+            // ORGANIZER ROLE CHECK
+            if (currentUser.role === 'organizer') {
+                document.getElementById('displayTickets').innerText = "₹" + formatNum(totalRupees);
+                document.getElementById('mainBalanceTxIcon').style.display = 'none';
+                document.getElementById('balanceLabelText').innerHTML = 'Total Wallet Earnings <i class="fa-solid fa-eye" id="eyeIcon" onclick="if(isGuest) return showLoginModal(); togglePrivacy(); triggerHaptic();" style="margin-left:8px; cursor: pointer; color:#888;"></i>';
+            } else {
+                animateValue(document.getElementById('displayTickets'), 0, totalTickets, 1000);
+                document.getElementById('mainBalanceTxIcon').style.display = 'inline-flex';
+                document.getElementById('balanceLabelText').innerHTML = 'Total Available Pass <i class="fa-solid fa-eye" id="eyeIcon" onclick="if(isGuest) return showLoginModal(); togglePrivacy(); triggerHaptic();" style="margin-left:8px; cursor: pointer; color:#888;"></i>';
+            }
+            
             animateValue(document.getElementById('displayPoints'), 0, pts, 1000);
             
             let badge = document.getElementById('vipBadge'); let prog = document.getElementById('vipProgress'); let nTier = document.getElementById('nextTierText');
@@ -734,11 +837,13 @@
             else if (totalTickets >= 100) { badge.innerHTML = '<i class="fa-solid fa-star"></i> PRO GAMER'; badge.className = 'vip-badge vip-silver'; prog.style.width = ((totalTickets/500)*100)+'%'; nTier.innerText = "Elite Tier"; }
             else { badge.innerHTML = '<span class="tx-icon" style="font-size: 0.9em; filter:none; color:white; -webkit-text-fill-color:white;">TX</span> STANDARD'; badge.className = 'vip-badge vip-bronze'; prog.style.width = ((totalTickets/100)*100)+'%'; nTier.innerText = "Pro Gamer"; }
 
-            renderInventory(totalTickets);
+            renderInventory(baseTickets, goldenTickets);
         }
 
-        function renderInventory(totalTickets) {
+        function renderInventory(baseTickets, goldenTickets) {
             const inv = document.getElementById('ticketInventoryList');
+            let totalTickets = baseTickets + goldenTickets;
+
             if(totalTickets <= 0) {
                 inv.innerHTML = `<div style="text-align:center; padding: 20px; color:#888; font-size:0.9rem; background:rgba(0,0,0,0.3); border-radius:12px; border:1px dashed rgba(255,255,255,0.1);">0 Pass Available.<br><span style="color:var(--accent-cyan);">Buy pass to enter tournaments!</span></div>`;
                 return;
@@ -756,12 +861,13 @@
             });
 
             let identified = ffCount + bgmiCount;
-            let ffDisplay = 0, bgmiDisplay = 0, uniDisplay = 0;
+            let ffDisplay = 0, bgmiDisplay = 0, uniDisplay = goldenTickets;
             
-            if (identified === 0) { uniDisplay = totalTickets; } 
-            else {
-                ffDisplay = Math.round((ffCount / identified) * totalTickets);
-                bgmiDisplay = totalTickets - ffDisplay; 
+            if (identified === 0) { 
+                uniDisplay += baseTickets; 
+            } else {
+                ffDisplay = Math.round((ffCount / identified) * baseTickets);
+                bgmiDisplay = baseTickets - ffDisplay; 
             }
 
             let html = '';
@@ -775,7 +881,6 @@
             const buildTicketHTML = (game, count, imgUrl, prefix) => {
                 if(count <= 0) return '';
                 let safeName = currentUser.email || currentUser.username || "guest";
-                // Ticket ID Generation modified here with '_W1' to force unique weekly ID rotation globally
                 let tid = `TKT-${prefix}-${genId(safeName + game + "_W1")}`;
                 return `
                     <div class="tournyx-ticket tkt-theme-${prefix}">
@@ -792,8 +897,8 @@
             };
 
             if(uniDisplay > 0) html += buildTicketHTML("Universal", uniDisplay, "https://tournyx.in/favicon.png", "UNI");
-            if(ffDisplay > 0) html += buildTicketHTML("Free Fire", ffDisplay, "https://play-lh.googleusercontent.com/1-1bH7uYv4oZ2Yd3Iu1_2s7r5W8QkR8_9h9o1eU9b2gJ0I8Xq_zX9x7O8Q9r9k1fQ", "FF");
-            if(bgmiDisplay > 0) html += buildTicketHTML("BGMI", bgmiDisplay, "https://play-lh.googleusercontent.com/nJzZgH1NnQ8_2qD61QO0r-f1VvQk-KxS2pI-JgD99f_8M8vR9zN_6FwG4Q2vB3N52g", "BGM");
+            if(ffDisplay > 0) html += buildTicketHTML("Free Fire", ffDisplay, "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEiJvPTY_y_XU-0Lwbnjwm7961lCDkSlQh2MtCWHunFVX6WS7WCprCtkPyB334BU_-4vGsP0NseDQf4NPBEOIxqjk7VZQqZUHpnLb4Bw-c1UeXQy2M9DzNrNdYt_aL0GEb1AlTPupC5zEjJiP3Ci0Oxk-wdg5TF5cs8_UNSe3uTT1BE884je3iXr8QlMjx8/s240/1000094210.jpg", "FF");
+            if(bgmiDisplay > 0) html += buildTicketHTML("BGMI", bgmiDisplay, "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEj3MKUI87mMK4_3DltS3LQgqfrK1sESUIMMqlENdi0dPRtOFkeDbvPsTbSaCRaJOb17QZ5s9OO5dR6kFCYiCkgUCF2zBWwvGFSb3T-9Nz51XuIzMvIiOuqwcLzyzeFmn1orKbiETP4LrlaG-RidnWAAzBwUA3aL5_z62HP4_F7R02lAK_WSYdH0U_Gn7Es/s250/1000094211.jpg", "BGM");
             
             inv.innerHTML = html;
         }
@@ -924,8 +1029,11 @@
                 let userRes = await fetch(API_URL + "?action=sync_user&email=" + encodeURIComponent(currentUser.email));
                 let userDataObj = await userRes.json();
                 if(userDataObj.status === 'success' && userDataObj.data && userDataObj.data.rupees !== undefined && userDataObj.data.rupees !== "") {
-                    let freshBal = parseFloat(userDataObj.data.rupees);
-                    if(!isNaN(freshBal)) { currentUser.rupees = freshBal.toString(); localStorage.setItem('tournyx_user', JSON.stringify(currentUser)); updateWalletDisplay(); }
+                    currentUser.rupees = String(userDataObj.data.rupees); // Secure String preservation for +
+                    currentUser.points = String(userDataObj.data.points);
+                    currentUser.role = userDataObj.data.role || currentUser.role;
+                    localStorage.setItem('tournyx_user', JSON.stringify(currentUser)); 
+                    updateWalletDisplay(); 
                 }
                 let txnRes = await fetch(API_URL + "?action=get_transactions&email=" + encodeURIComponent(currentUser.email));
                 let txnDataObj = await txnRes.json();
@@ -1062,7 +1170,6 @@
             triggerHaptic();
             const element = document.getElementById('pdfTemplate');
             
-            // Timeout allows the DOM to properly render the innerHTML injection before taking the snapshot
             setTimeout(() => {
                 html2pdf().set({ 
                     margin: 0.5, 
@@ -1131,7 +1238,6 @@
                 jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' }
             };
             
-            // Timeout allows the DOM to properly render the innerHTML injection before taking the snapshot
             setTimeout(() => {
                 html2pdf().set(opt).from(element).save();
             }, 100);
