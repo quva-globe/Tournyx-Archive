@@ -897,20 +897,33 @@
             
             <div style="margin-bottom: 20px; color: #ccc; font-size: 0.9rem; text-align: center;" id="paymentHeaderChoice"></div>
             
-            <div class="reg-option" id="payOptRupees">
+            <div class="reg-option" id="payOptUniversal" style="display:none;">
                 <div class="ro-left">
-                    <div class="ro-icon" style="background:rgba(189,0,255,0.1); color:var(--accent-purple); border-color:rgba(189,0,255,0.2);">
-                        <div class="tx-badge" style="font-size:1.2rem;">TX</div>
+                    <div class="ro-icon" style="background:rgba(255,215,0,0.1); color:#FFD700; border-color:rgba(255,215,0,0.2);">
+                        <i class="fa-solid fa-star"></i>
                     </div>
                     <div>
-                        <div class="ro-title">Use Game Passes</div>
-                        <div class="bal-display">Available: <span id="balRupees" style="color:var(--accent-cyan); font-weight:bold;">0 Passes</span></div>
+                        <div class="ro-title">Universal Pass</div>
+                        <div class="bal-display">Available: <span id="balUniversal" style="color:#FFD700; font-weight:bold;">0 Passes</span></div>
+                    </div>
+                </div>
+                <i class="fa-solid fa-arrow-right icon-arrow" style="color:#FFD700;"></i>
+            </div>
+            
+            <div class="reg-option" id="payOptSpecific" style="display:none;">
+                <div class="ro-left">
+                    <div class="ro-icon" style="background:rgba(189,0,255,0.1); color:var(--accent-purple); border-color:rgba(189,0,255,0.2);">
+                        <i class="fa-solid fa-gamepad"></i>
+                    </div>
+                    <div>
+                        <div class="ro-title" id="specificPassTitle">Game Pass</div>
+                        <div class="bal-display">Available: <span id="balSpecific" style="color:var(--accent-cyan); font-weight:bold;">0 Passes</span></div>
                     </div>
                 </div>
                 <i class="fa-solid fa-arrow-right icon-arrow" style="color:var(--accent-cyan);"></i>
             </div>
             
-            <div class="reg-option" id="payOptPts">
+            <div class="reg-option" id="payOptPts" style="display:none;">
                 <div class="ro-left">
                     <div class="ro-icon" style="background:rgba(0,242,255,0.1); color:var(--accent-cyan); border-color:rgba(0,242,255,0.2);"><i class="fa-solid fa-coins"></i></div>
                     <div>
@@ -1045,6 +1058,21 @@
         let localTournamentsData = []; 
         let activeCountdown = null;
         let activeTimelineInterval = null;
+
+        // Failsafe normalizer to fix the backend column mapping bug dynamically 
+        function normalizeTxn(t) {
+            let norm = { ...t };
+            if (t.amount === "Credit" || t.amount === "Debit") {
+                norm.type = t.amount;
+                norm.amount = parseFloat(t.type) || 0;
+                norm.status = t.date;
+                norm.date = ""; 
+                norm.currency = t.status;
+            } else {
+                norm.amount = parseFloat(t.amount) || 0;
+            }
+            return norm;
+        }
 
         window.addEventListener('popstate', function(event) {
             const modal = document.getElementById('tourneyDetailModal');
@@ -2104,15 +2132,111 @@
                 document.getElementById('guestLoginModal').classList.add('active');
                 return;
             }
-            
-            document.getElementById('regOverlay').classList.add('active');
 
             const clanSelectionArea = document.getElementById('clanSelectionArea');
             const btnArea = document.getElementById('regButtonsArea');
             let user = JSON.parse(localStorage.getItem('tournyx_user')) || {};
+
+            // Calculate exact Passes (Universal vs Game Specific)
+            let rawEarnings = String(user.earnings || user.rupees || "0");
+            let baseRupees = 0; let goldenRupees = 0;
+            if (rawEarnings.includes('+')) {
+                let parts = rawEarnings.split('+');
+                baseRupees = parseFloat(parts[0]) || 0;
+                goldenRupees = parseFloat(parts[1]) || 0;
+            } else {
+                baseRupees = parseFloat(rawEarnings) || 0;
+            }
+
+            let totalRupees = baseRupees + goldenRupees;
+            let totalTickets = Math.floor(totalRupees / 10);
+            let goldenTickets = Math.floor(goldenRupees / 10);
+            let baseTickets = totalTickets - goldenTickets;
+
+            let txns = JSON.parse(localStorage.getItem('tournyx_txns')) || [];
+            let ffCount = 0; let bgmiCount = 0;
+            txns.forEach(rawT => {
+                let t = normalizeTxn(rawT);
+                let cat = String(t.category || "").toLowerCase();
+                let title = String(t.title || "").toLowerCase();
+                if(t.type === "Credit" && (cat.includes("purchase") || title.includes("bought") || title.includes("pass")) && (t.status === "Success" || t.status === "Pending")) {
+                    let count = Math.floor(t.amount / 10);
+                    if(title.includes("free fire") || title.includes("ff")) ffCount += count;
+                    else if(title.includes("bgmi")) bgmiCount += count;
+                }
+            });
+
+            let identified = ffCount + bgmiCount;
+            let uniDisplay = goldenTickets, ffDisplay = 0, bgmiDisplay = 0;
+            if (identified === 0) {
+                uniDisplay += baseTickets;
+            } else {
+                ffDisplay = Math.round((ffCount / identified) * baseTickets);
+                bgmiDisplay = baseTickets - ffDisplay;
+            }
+
+            let gameName = String(activeTournament.game || "").toLowerCase();
+            let specificDisplay = 0;
+            let isSpecificValid = false;
+
+            if (gameName.includes('free fire') || gameName.includes('ff')) {
+                specificDisplay = ffDisplay;
+                isSpecificValid = true;
+            } else if (gameName.includes('bgmi')) {
+                specificDisplay = bgmiDisplay;
+                isSpecificValid = true;
+            }
+
+            // Setup Payment Overlay Text
+            let rawFeeRupees = parseInt(activeTournament.fee) || 0;
+            let reqTickets = Math.ceil(rawFeeRupees / 10);
+            let rawFeePts = parseInt(activeTournament.fee_pts) || 0; 
+            
+            let headerTxt = "";
+            let pUni = document.getElementById('payOptUniversal');
+            let pSpec = document.getElementById('payOptSpecific');
+            let pPts = document.getElementById('payOptPts');
+
+            if(reqTickets > 0 && rawFeePts > 0) {
+                headerTxt = `Entry Fee: <span id="payFeeRupees">${reqTickets} Passes</span> OR <span id="payFeePts">${rawFeePts} PTS</span>`;
+            } else if(reqTickets > 0) {
+                headerTxt = `Entry Fee: <span id="payFeeRupees">${reqTickets} Passes</span>`;
+            } else {
+                headerTxt = `Entry Fee: <span id="payFeePts">${rawFeePts} PTS</span>`;
+            }
+
+            document.getElementById('paymentHeaderChoice').innerHTML = headerTxt;
+            let currentPoints = parseInt(user.points) || 0;
+
+            if (reqTickets > 0) {
+                pUni.style.display = 'flex';
+                document.getElementById('balUniversal').innerText = uniDisplay + " Passes";
+                pUni.onclick = function() { confirmPayment('universal', reqTickets, uniDisplay); };
+                
+                if (isSpecificValid && specificDisplay > 0) {
+                    pSpec.style.display = 'flex';
+                    document.getElementById('specificPassTitle').innerText = `${activeTournament.game} Pass`;
+                    document.getElementById('balSpecific').innerText = specificDisplay + " Passes";
+                    pSpec.onclick = function() { confirmPayment('specific', reqTickets, specificDisplay); };
+                } else {
+                    pSpec.style.display = 'none';
+                }
+            } else {
+                pUni.style.display = 'none';
+                pSpec.style.display = 'none';
+            }
+
+            if (rawFeePts > 0) {
+                pPts.style.display = 'flex';
+                document.getElementById('balPts').innerText = currentPoints;
+                pPts.onclick = function() { confirmPayment('points', rawFeePts, currentPoints); };
+            } else {
+                pPts.style.display = 'none';
+            }
+
+            document.getElementById('regOverlay').classList.add('active');
             
             let isSolo = activeTournament.format && activeTournament.format.toLowerCase().includes('solo');
-            
             if(isSolo) {
                 let soloPayload = { username: user.username, id: user.email, phone: user.phone };
                 clanSelectionArea.innerHTML = `
@@ -2205,14 +2329,61 @@
         
         function closeRegistrationFlow() { triggerHaptic(); document.getElementById('regOverlay').classList.remove('active'); }
 
-        
-                
-
-                function closePaymentModal() { 
+        function closePaymentModal() { 
             if(navigator.vibrate) navigator.vibrate(40); 
             document.getElementById('paymentOverlay').classList.remove('active'); 
             document.getElementById('finalSubmitBtn').disabled = false;
             document.getElementById('finalSubmitBtn').innerText = "Proceed";
+        }
+
+        function confirmPayment(method, cost, available) {
+            if(navigator.vibrate) navigator.vibrate(40);
+            
+            if (available < cost) {
+                showToast(method !== 'points' ? "Insufficient Passes!" : "Insufficient Points!", true);
+                if(method !== 'points') {
+                    setTimeout(() => { window.location.href = "tickets.html"; }, 1500);
+                }
+                return;
+            }
+
+            let user = JSON.parse(localStorage.getItem('tournyx_user')) || {};
+            
+            if (method !== 'points') { 
+                let rawEarnings = String(user.earnings || user.rupees || "0");
+                let baseRupees = 0; let goldenRupees = 0;
+                if (rawEarnings.includes('+')) {
+                    let parts = rawEarnings.split('+');
+                    baseRupees = parseFloat(parts[0]) || 0;
+                    goldenRupees = parseFloat(parts[1]) || 0;
+                } else {
+                    baseRupees = parseFloat(rawEarnings) || 0;
+                }
+
+                let costRupees = cost * 10;
+                if (method === 'specific') {
+                    baseRupees -= costRupees;
+                } else if (method === 'universal') {
+                    if (goldenRupees >= costRupees) {
+                        goldenRupees -= costRupees;
+                    } else {
+                        let remainder = costRupees - goldenRupees;
+                        goldenRupees = 0;
+                        baseRupees -= remainder;
+                    }
+                }
+                
+                let newRupeesString = goldenRupees > 0 ? `${baseRupees}+${goldenRupees}` : `${baseRupees}`;
+                user.rupees = newRupeesString;
+                user.earnings = newRupeesString;
+            } 
+            else { 
+                user.points = Math.max(0, (parseInt(user.points) || 0) - cost); 
+            } 
+
+            localStorage.setItem('tournyx_user', JSON.stringify(user));
+            closePaymentModal();
+            triggerSecureLoader(pendingRegistrationData.clanName, method !== 'points' ? (cost * 10) : cost, method);
         }
 
         function processRegistrationPayment(e) {
@@ -2231,101 +2402,10 @@
             if (reqTickets > 0 || rawFeePts > 0) {
                 closeRegistrationFlow();
                 pendingRegistrationData = { clanName: clanName };
-                
-                let user = JSON.parse(localStorage.getItem('tournyx_user')) || {};
-                
-                // --- CLEAN, ORIGINAL PARSER ---
-                let currentRupees = parseInt(user.rupees);
-                if (isNaN(currentRupees)) currentRupees = parseInt(user.earnings) || 0;
-                
-                let totalTickets = Math.floor(currentRupees / 10);
-                let currentPoints = parseInt(user.points) || 0;
-                
-                // --- ORIGINAL GAME TICKET ALLOCATOR ---
-                let txns = JSON.parse(localStorage.getItem('tournyx_txns')) || [];
-                let ffCount = 0; let bgmiCount = 0;
-                
-                txns.forEach(txn => {
-                    let cat = String(txn.category || "").toLowerCase();
-                    let title = String(txn.title || "").toLowerCase();
-                    if(txn.type === "Credit" && (cat.includes("purchase") || title.includes("bought") || title.includes("pass")) && (txn.status === "Success" || txn.status === "Pending")) {
-                        let count = Math.floor(txn.amount / 10);
-                        if(title.includes("free fire") || title.includes("ff")) ffCount += count;
-                        else if(title.includes("bgmi")) bgmiCount += count;
-                    }
-                });
-
-                let identified = ffCount + bgmiCount;
-                let uniDisplay = 0, ffDisplay = 0, bgmiDisplay = 0;
-                
-                if (identified === 0) { 
-                    uniDisplay = totalTickets; 
-                } else {
-                    ffDisplay = Math.round((ffCount / identified) * totalTickets);
-                    bgmiDisplay = totalTickets - ffDisplay;
-                }
-
-                let gameName = String(activeTournament.game || "").toLowerCase();
-                let availableSpecific = uniDisplay; 
-                
-                if (gameName.includes('free fire') || gameName.includes('ff')) availableSpecific += ffDisplay;
-                else if (gameName.includes('bgmi')) availableSpecific += bgmiDisplay;
-                else availableSpecific = totalTickets; 
-
-                let headerTxt = "";
-                let pRup = document.getElementById('payOptRupees');
-                let pPts = document.getElementById('payOptPts');
-                
-                if(reqTickets > 0 && rawFeePts > 0) {
-                    headerTxt = `Entry Fee: <span id="payFeeRupees">${reqTickets} TX Passes</span> OR <span id="payFeePts">${rawFeePts} PTS</span>`;
-                    pRup.style.display = 'flex'; pPts.style.display = 'flex';
-                } else if(reqTickets > 0) {
-                    headerTxt = `Entry Fee: <span id="payFeeRupees">${reqTickets} TX Passes</span>`;
-                    pRup.style.display = 'flex'; pPts.style.display = 'none';
-                } else {
-                    headerTxt = `Entry Fee: <span id="payFeePts">${rawFeePts} PTS</span>`;
-                    pRup.style.display = 'none'; pPts.style.display = 'flex';
-                }
-                
-                document.getElementById('paymentHeaderChoice').innerHTML = headerTxt;
-                document.getElementById('balRupees').innerText = availableSpecific + " Passes";
-                document.getElementById('balPts').innerText = currentPoints;
-
-                pRup.onclick = function() { confirmPayment('tickets', reqTickets, availableSpecific); };
-                pPts.onclick = function() { confirmPayment('points', rawFeePts, currentPoints); };
-
                 document.getElementById('paymentOverlay').classList.add('active');
             } else {
                 triggerSecureLoader(clanName, 0, 'free');
             }
-        }
-
-        function confirmPayment(method, cost, available) {
-            if(navigator.vibrate) navigator.vibrate(40);
-            
-            if (available < cost) {
-                showToast(method === 'tickets' ? "Insufficient Passes! Get more tickets." : "Insufficient Points!", true);
-                if(method === 'tickets') {
-                    setTimeout(() => { window.location.href = "tickets.html"; }, 1500);
-                }
-                return;
-            }
-
-            let user = JSON.parse(localStorage.getItem('tournyx_user')) || {};
-            
-            if (method === 'tickets') { 
-                let currentRupees = parseInt(user.rupees);
-                if (isNaN(currentRupees)) currentRupees = parseInt(user.earnings) || 0;
-                
-                user.rupees = currentRupees - (cost * 10); 
-            } 
-            else if (method === 'points') { 
-                user.points = Math.max(0, (parseInt(user.points) || 0) - cost); 
-            } 
-
-            localStorage.setItem('tournyx_user', JSON.stringify(user));
-            closePaymentModal();
-            triggerSecureLoader(pendingRegistrationData.clanName, method === 'tickets' ? (cost * 10) : cost, method);
         }
 
         // --- UPGRADED PROFESSIONAL REGISTRATION LOADER ---
@@ -2384,7 +2464,7 @@
                         amount: cost, 
                         type: "Debit", 
                         status: "Success", 
-                        category: "Entry Fee", 
+                        category: "Tournament Entry", 
                         date: dateStr 
                     };
                     txns.unshift(newTxn);
@@ -2473,9 +2553,22 @@
             if(isGuestMode) { document.getElementById('guestLoginModal').classList.add('active'); return; }
             document.getElementById('contributeOverlay').classList.add('active');
             let user = JSON.parse(localStorage.getItem('tournyx_user')) || {};
-            let passes = Math.floor((parseInt(user.rupees) || 0) / 10);
+            
+            let rawEarnings = String(user.earnings || user.rupees || "0");
+            let baseRupees = 0; let goldenRupees = 0;
+            if (rawEarnings.includes('+')) {
+                let parts = rawEarnings.split('+');
+                baseRupees = parseFloat(parts[0]) || 0;
+                goldenRupees = parseFloat(parts[1]) || 0;
+            } else {
+                baseRupees = parseFloat(rawEarnings) || 0;
+            }
+            
+            let totalRupees = baseRupees + goldenRupees;
+            let passes = Math.floor(totalRupees / 10);
+            
             document.getElementById('contributeWalletBal').innerText = passes;
-            document.getElementById('contributeRsVal').innerText = parseInt(user.rupees) || 0;
+            document.getElementById('contributeRsVal').innerText = totalRupees;
         }
         
         function closeContributeModal() { document.getElementById('contributeOverlay').classList.remove('active'); document.getElementById('customAmtInput').value = ""; clearAmtBtns(); }
@@ -2487,11 +2580,32 @@
             if(isNaN(val) || val <= 0) { showToast("Please select a valid amount.", true); return; }
 
             let user = JSON.parse(localStorage.getItem('tournyx_user')) || {};
-            let uRupees = parseInt(user.rupees) || 0;
+            let rawEarnings = String(user.earnings || user.rupees || "0");
+            let baseRupees = 0; let goldenRupees = 0;
+            if (rawEarnings.includes('+')) {
+                let parts = rawEarnings.split('+');
+                baseRupees = parseFloat(parts[0]) || 0;
+                goldenRupees = parseFloat(parts[1]) || 0;
+            } else {
+                baseRupees = parseFloat(rawEarnings) || 0;
+            }
+            
+            let totalRupees = baseRupees + goldenRupees;
 
-            if (val > uRupees) { showToast("Insufficient Balance!", true); return; }
+            if (val > totalRupees) { showToast("Insufficient Balance!", true); return; }
 
-            user.rupees = uRupees - val;
+            if (baseRupees >= val) {
+                baseRupees -= val;
+            } else {
+                let rem = val - baseRupees;
+                baseRupees = 0;
+                goldenRupees -= rem;
+            }
+            
+            let newRupeesString = goldenRupees > 0 ? `${baseRupees}+${goldenRupees}` : `${baseRupees}`;
+            user.rupees = newRupeesString;
+            user.earnings = newRupeesString;
+            
             localStorage.setItem('tournyx_user', JSON.stringify(user));
             
             fetch(API_URL, {
@@ -2518,8 +2632,8 @@
             txns.unshift(newTxn);
             localStorage.setItem('tournyx_txns', JSON.stringify(txns));
 
-            document.getElementById('contributeWalletBal').innerText = Math.floor(user.rupees / 10);
-            document.getElementById('contributeRsVal').innerText = user.rupees;
+            document.getElementById('contributeWalletBal').innerText = Math.floor((baseRupees + goldenRupees) / 10);
+            document.getElementById('contributeRsVal').innerText = (baseRupees + goldenRupees);
             
             showToast("Successfully contributed ₹" + val + " to " + (activeTournament.title || "the event") + "!");
             closeContributeModal();
