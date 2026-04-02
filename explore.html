@@ -2224,7 +2224,7 @@
                 
                 let user = JSON.parse(localStorage.getItem('tournyx_user')) || {};
                 
-                // --- 🚀 NEW MAGIC PARSER ADDED HERE 🚀 ---
+                // 🚀 BULLETPROOF MAGIC PARSER (Protects 200 + 50) 🚀
                 let rawRupees = String(user.rupees || user.earnings || "0");
                 let baseRupees = 0; let goldenRupees = 0;
                 
@@ -2236,35 +2236,47 @@
                     baseRupees = parseFloat(rawRupees) || 0;
                 }
 
-                let totalRupees = baseRupees + goldenRupees;
-                let totalTickets = Math.floor(totalRupees / 10);
+                let totalTickets = Math.floor(baseRupees / 10);
+                let goldenTickets = Math.floor(goldenRupees / 10);
                 let currentPoints = parseInt(user.points) || 0;
-                // -----------------------------------------
                 
-                // GAME TICKET CHECK LOGIC
+                // 🎮 BULLETPROOF GAME TICKET ALLOCATOR 🎮
                 let txns = JSON.parse(localStorage.getItem('tournyx_txns')) || [];
                 let ffCount = 0; let bgmiCount = 0;
+                
                 txns.forEach(txn => {
-                    if(txn.type === "Credit" && txn.category === "Purchase" && (txn.status === "Success" || txn.status === "Pending")) {
+                    let cat = String(txn.category || "").toLowerCase();
+                    let title = String(txn.title || "").toLowerCase();
+                    // Identify past pass purchases correctly
+                    if(txn.type === "Credit" && (cat.includes("purchase") || title.includes("bought") || title.includes("pass")) && (txn.status === "Success" || txn.status === "Pending")) {
                         let count = Math.floor(txn.amount / 10);
-                        if(txn.title.includes("Free Fire")) ffCount += count;
-                        else if(txn.title.includes("BGMI")) bgmiCount += count;
+                        if(title.includes("free fire") || title.includes("ff")) ffCount += count;
+                        else if(title.includes("bgmi")) bgmiCount += count;
                     }
                 });
 
                 let identified = ffCount + bgmiCount;
-                let uniDisplay = 0, ffDisplay = 0, bgmiDisplay = 0;
-                if (identified === 0) { uniDisplay = totalTickets; }
-                else {
+                let ffDisplay = 0; let bgmiDisplay = 0; 
+                let uniDisplay = goldenTickets; // Always add the Golden Tickets to the Universal Pool!
+
+                if (identified === 0) { 
+                    uniDisplay += totalTickets; // If no history, assume all base tickets are universal
+                } else {
                     ffDisplay = Math.round((ffCount / identified) * totalTickets);
                     bgmiDisplay = totalTickets - ffDisplay;
                 }
 
-                let gameName = (activeTournament.game || "").toLowerCase();
-                let availableSpecific = uniDisplay;
-                if (gameName.includes('free fire')) availableSpecific += ffDisplay;
-                else if (gameName.includes('bgmi')) availableSpecific += bgmiDisplay;
-                else availableSpecific = totalTickets;
+                // Target the specific game requested by the tournament
+                let gameName = String(activeTournament.game || "").toLowerCase();
+                let availableSpecific = uniDisplay; // Universal tickets can always be used!
+                
+                if (gameName.includes('free fire') || gameName.includes('ff')) {
+                    availableSpecific += ffDisplay;
+                } else if (gameName.includes('bgmi')) {
+                    availableSpecific += bgmiDisplay;
+                } else {
+                    availableSpecific += totalTickets; // Fallback: allow all tickets for generic esports
+                }
 
                 let headerTxt = "";
                 let pRup = document.getElementById('payOptRupees');
@@ -2293,7 +2305,6 @@
                 triggerSecureLoader(clanName, 0, 'free');
             }
         }
-        function closePaymentModal() { triggerHaptic(); document.getElementById('paymentOverlay').classList.remove('active'); }
 
         function confirmPayment(method, cost, available) {
             triggerHaptic();
@@ -2308,8 +2319,38 @@
 
             let user = JSON.parse(localStorage.getItem('tournyx_user')) || {};
             
-            if (method === 'tickets') { user.rupees = (parseInt(user.rupees) || 0) - (cost * 10); } 
-            else if (method === 'points') { user.points = (parseInt(user.points) || 0) - cost; } 
+            if (method === 'tickets') { 
+                let rawRupees = String(user.rupees || user.earnings || "0");
+                let baseR = 0; let goldR = 0;
+                
+                if (rawRupees.includes('+')) {
+                    let pts = rawRupees.split('+');
+                    baseR = parseFloat(pts[0]) || 0;
+                    goldR = parseFloat(pts[1]) || 0;
+                } else {
+                    baseR = parseFloat(rawRupees) || 0;
+                }
+                
+                let costRupees = cost * 10;
+                
+                // Deduct from base game tickets first, then universal golden tickets
+                if (baseR >= costRupees) {
+                    baseR -= costRupees;
+                } else {
+                    let rem = costRupees - baseR;
+                    baseR = 0; // Base is depleted
+                    goldR -= rem; // Take the remainder from Universal Gold
+                }
+                
+                if (goldR > 0) {
+                    user.rupees = `${baseR} + ${goldR}`;
+                } else {
+                    user.rupees = `${baseR}`;
+                }
+            } 
+            else if (method === 'points') { 
+                user.points = (parseInt(user.points) || 0) - cost; 
+            } 
 
             localStorage.setItem('tournyx_user', JSON.stringify(user));
             closePaymentModal();
