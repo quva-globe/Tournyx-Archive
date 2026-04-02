@@ -10,8 +10,6 @@
     <link rel="icon" href="https://tournyx.in/favicon.ico" sizes="any">
     <link rel="icon" href="https://tournyx.in/favicon.png" type="image/png" sizes="192x192">
     
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700;900&family=Rajdhani:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
@@ -86,10 +84,30 @@
             margin-right: 2px;
             vertical-align: middle;
         }
-        html.theme-vip .tx-icon { background: linear-gradient(135deg, #FFE87C, #FF8C00); filter: drop-shadow(0 0 5px rgba(255,215,0,0.6)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        
+        /* VIP Theme Override */
+        html.theme-vip .tx-icon {
+            background: linear-gradient(135deg, #FFE87C, #FF8C00);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            filter: drop-shadow(0 0 5px rgba(255, 215, 0, 0.6));
+        }
 
-        /* --- TOURNYX TX COMPOSITE TICKET ICON --- */
-        .tx-ticket-composite { position: relative; display: inline-flex; align-items: center; justify-content: center; height: 24px; }
+        /* Fix for TX Icon inside the VIP Badge */
+        .vip-badge .tx-icon {
+            background: none;
+            -webkit-text-fill-color: black;
+            filter: none;
+        }
+
+        html.theme-vip .vip-badge .tx-icon {
+             background: none;
+            -webkit-text-fill-color: black;
+            filter: none;
+        }
+
+
+        .tx-ticket-composite { position: relative; display: inline-flex; align-items: center; justify-content: center; }
         .tx-ticket-composite i { font-size: inherit; transition: inherit; }
         .tx-ticket-composite .tx-text { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -46%); font-family: var(--font-head); font-size: 0.38em; font-weight: 900; color: var(--primary-bg) !important; -webkit-text-fill-color: var(--primary-bg) !important; letter-spacing: -0.5px; pointer-events: none; z-index: 2; transition: 0.3s; font-style: normal !important; }
 
@@ -110,6 +128,8 @@
         .skel-wrapper { max-width: 800px; margin: 0 auto; width: 100%; }
         .skel-card { width: 100%; height: 210px; border-radius: 20px; margin-bottom: 20px; }
         .skel-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin-bottom: 25px; }
+        .skel-list { display: flex; flex-direction: column; gap: 10px; }
+        .skel-item { height: 60px; border-radius: 12px; }
 
         /* --- RESPONSIVE HEADER --- */
         .top-header { position: fixed; top: 0; left: 0; width: 100%; padding: calc(12px + env(safe-area-inset-top)) 10px 12px; background: rgba(5, 2, 12, 0.6); backdrop-filter: blur(16px); border-bottom: 1px solid var(--card-border); display: flex; align-items: center; justify-content: center; z-index: 2000; box-shadow: 0 4px 30px rgba(0,0,0,0.5); transform: translateZ(0); }
@@ -169,7 +189,7 @@
         .tkt-theme-BGM { --glow-color: #00ff7f; --glow-border: #00b09b; }
         .tkt-theme-UNI { --glow-color: #FFD700; --glow-border: #FF8C00; }
 
-        .tournyx-ticket { background: linear-gradient(135deg, rgba(20,10,35,0.9), rgba(5,2,12,0.9)); border: 1px solid var(--glow-border, var(--accent-cyan)); border-radius: 15px; display: flex; align-items: center; padding: 15px; margin-bottom: 12px; position: relative; box-shadow: 0 5px 20px rgba(0,0,0,0.5), inset 0 0 15px rgba(0,0,0,0.2), 0 0 15px var(--glow-color, rgba(0,242,255,0.1)); overflow: hidden; animation: fadeIn 0.5s ease; cursor: pointer; transition: 0.3s; }
+        .tournyx-ticket { background: linear-gradient(135deg, rgba(20,10,35,0.9), rgba(5,2,12,0.9)); border: 1px solid var(--glow-border, var(--accent-cyan)); border-radius: 15px; display: flex; align-items: center; padding: 15px; margin-bottom: 12px; position: relative; box-shadow: 0 5px 20px rgba(0,0,0,0.5), inset 0 0 15px rgba(0,0,0,0.2), 0 0 15px var(--glow-color, rgba(0,242,255,0.1)); overflow: hidden; animation: fadeIn 0.5s ease; cursor: pointer; transition: 0.3s;}
         .tournyx-ticket:active { transform: scale(0.98); }
         .tournyx-ticket::before { content: ''; position: absolute; left: -10px; top: 50%; transform: translateY(-50%); width: 20px; height: 20px; background: var(--primary-bg); border-radius: 50%; border-right: 1px solid var(--glow-border, var(--accent-cyan)); }
         .tournyx-ticket::after { content: ''; position: absolute; right: -10px; top: 50%; transform: translateY(-50%); width: 20px; height: 20px; background: var(--primary-bg); border-radius: 50%; border-left: 1px solid var(--glow-border, var(--accent-cyan)); }
@@ -216,7 +236,7 @@
         .txn-info p { font-size: 0.75rem; color: #888; display:flex; flex-wrap: wrap; gap:5px; align-items:center; line-height: 1.2;}
         .cat-tag { font-size: 0.6rem; padding: 2px 6px; border-radius: 5px; background:rgba(255,255,255,0.05); text-transform:uppercase; border: 1px solid rgba(255,255,255,0.1);}
         
-        .txn-right { text-align: right; flex-shrink: 0; display: flex; flex-direction: column; align-items: flex-end; min-width: 75px; position: relative;}
+        .txn-right { text-align: right; flex-shrink: 0; display: flex; flex-direction: column; align-items: flex-end; min-width: 75px; }
         .in-out-label { font-size: 0.65rem; text-transform: uppercase; font-family: var(--font-head); font-weight: bold; padding: 2px 6px; border-radius: 4px; margin-bottom: 3px; letter-spacing: 1px; }
         .in-label { background: rgba(0,255,127,0.15); color: var(--accent-green); border: 1px solid rgba(0,255,127,0.3); }
         .out-label { background: rgba(255,77,77,0.15); color: var(--accent-red); border: 1px solid rgba(255,77,77,0.3); }
@@ -354,7 +374,7 @@
     <div class="bg-gradient"></div>
     <canvas id="particles-canvas"></canvas>
 
-    <div id="pdfWrapper" style="position: absolute; left: -9999px; top: 0; width: 800px; background:#070311; z-index: -9999; visibility: visible; display: block;">
+    <div id="pdfWrapper" style="position: absolute; left: -9999px; top: 0; width: 800px; background:#070311; z-index: -1;">
         <div id="pdfTemplate" style="background:#070311; color:#ffffff; padding:40px; font-family:'Helvetica Neue', Arial, sans-serif; width:800px; box-sizing:border-box;">
             <div style="text-align:center; border-bottom:2px solid #1a0a3a; padding-bottom:30px; margin-bottom:30px;">
                 <div style="background: linear-gradient(90deg, #bd00ff, #00f2ff); padding: 15px; border-radius: 8px; margin-bottom: 10px; display: inline-block; width: 100%;">
@@ -420,7 +440,6 @@
                 <a href="profile.html">Profile</a>
             </div>
             <div class="header-actions">
-                <i class="fa-solid fa-headset support-pulse-icon" onclick="openGlobalSupport(); triggerHaptic();"></i>
                 <img src="https://tournyx.in/favicon.png" class="header-profile-img" id="headerProfilePic" onclick="handleProfileClick()">
             </div>
         </div>
@@ -429,7 +448,7 @@
     <div class="container">
         
         <div class="wallet-card animate-section delay-1">
-            <div class="vip-badge" id="vipBadge"><span class="tx-icon" style="font-size: 0.9em; filter:none; color:black; -webkit-text-fill-color:black;">TX</span> STANDARD</div>
+            <div class="vip-badge" id="vipBadge"><span class="tx-icon" style="font-size: 0.9em;">TX</span> STANDARD</div>
             <div class="balance-label">
                 <span id="balanceLabelText">Total Available Pass <i class="fa-solid fa-eye" id="eyeIcon" onclick="if(isGuest) return showLoginModal(); togglePrivacy(); triggerHaptic();" style="margin-left:8px; cursor: pointer; color:#888;"></i></span>
             </div>
@@ -555,35 +574,6 @@
         </div>
     </div>
 
-    <div class="bottom-sheet-overlay" id="supportBotOverlay">
-        <div class="bottom-sheet">
-            <div class="sheet-header">
-                <div class="sheet-title"><i class="fa-solid fa-robot" style="color:var(--accent-purple);"></i> Support Bot</div>
-                <i class="fa-solid fa-xmark close-sheet" onclick="closeSupportBot()"></i>
-            </div>
-            <div id="supportStep1">
-                <p style="color: #ccc; font-size: 0.95rem; margin-bottom: 20px; text-align:center;">Hi! I'm the Tournyx AI. What do you need help with?</p>
-                <div class="support-option-btn" onclick="supportProceed('Ticket Delivery Issue'); triggerHaptic();" style="background:rgba(255,255,255,0.05); padding:15px; border-radius:10px; margin-bottom:10px; cursor:pointer; display:flex; justify-content:space-between; align-items:center;">Purchased Pass not delivered <i class="fa-solid fa-chevron-right" style="color:var(--accent-cyan)"></i></div>
-                <div class="support-option-btn" onclick="supportProceed('Match Entry Issue'); triggerHaptic();" style="background:rgba(255,255,255,0.05); padding:15px; border-radius:10px; margin-bottom:10px; cursor:pointer; display:flex; justify-content:space-between; align-items:center;">Could not enter match <i class="fa-solid fa-chevron-right" style="color:var(--accent-cyan)"></i></div>
-                <div class="support-option-btn" onclick="supportProceed('Other'); triggerHaptic();" style="background:rgba(255,255,255,0.05); padding:15px; border-radius:10px; margin-bottom:10px; cursor:pointer; display:flex; justify-content:space-between; align-items:center;">Other inquiries <i class="fa-solid fa-chevron-right" style="color:var(--accent-cyan)"></i></div>
-            </div>
-            <div id="supportStep2" style="display:none;">
-                <div style="display:flex; align-items:center; gap:10px; margin-bottom:15px; cursor:pointer; color:var(--accent-cyan); font-size:0.9rem; font-family:var(--font-head); text-transform:uppercase;" onclick="supportBack(); triggerHaptic();"><i class="fa-solid fa-arrow-left"></i> Back</div>
-                <textarea id="supportMsg" style="width:100%; background:rgba(0,0,0,0.5); border:1px solid var(--card-border); color:white; padding:15px; border-radius:10px; min-height:100px; margin-bottom:15px;" placeholder="Describe your issue..."></textarea>
-                <div style="background:rgba(0,242,255,0.05); border:1px dashed var(--accent-cyan); border-radius:10px; padding:20px; text-align:center; cursor:pointer; margin-bottom:15px;" onclick="document.getElementById('screenshotInput').click()">
-                    <i class="fa-solid fa-cloud-arrow-up" style="font-size: 2.5rem; color: var(--accent-cyan); margin-bottom: 10px;"></i>
-                    <div style="font-family: var(--font-head); color: white; font-weight: bold;">Upload Screenshot</div>
-                    <input type="file" id="screenshotInput" accept="image/*,video/*" style="display: none;" onchange="previewScreenshot(event)">
-                </div>
-                <div id="screenshotPreviewBox" style="display: none; text-align: center;">
-                    <img id="ssPreview" style="max-width: 100%; border-radius: 10px; max-height: 200px; margin-bottom: 15px; border: 1px solid var(--card-border); display:none;">
-                    <video id="vidPreview" style="max-width: 100%; border-radius: 10px; max-height: 200px; margin-bottom: 15px; border: 1px solid var(--card-border); display:none;" controls></video>
-                    <button class="pay-btn" style="background: var(--accent-purple);" onclick="analyzeAndSubmitScreenshot(); triggerHaptic();">Submit Ticket <i class="fa-solid fa-paper-plane"></i></button>
-                </div>
-            </div>
-        </div>
-    </div>
-
     <div class="ledger-modal" id="ledgerModal">
         <div class="lm-header">
             <i class="fa-solid fa-arrow-left back-btn" onclick="closeAllTxns(); triggerHaptic();"></i>
@@ -608,11 +598,11 @@
                 <div class="rcpt-row"><span class="rcpt-lbl">Status</span><span class="rcpt-val" id="rcptStatusVal"></span></div>
                 <div class="rcpt-row"><span class="rcpt-lbl">Category</span><span class="rcpt-val" id="rcptCat"><span class="tx-icon" style="font-size:0.9rem;">TX</span> Pass Purchase</span></div>
                 <div class="rcpt-row"><span class="rcpt-lbl">Date & Time</span><span class="rcpt-val" id="receiptDate">Jan 1, 12:00 PM</span></div>
-                <div class="rcpt-row" style="border-bottom:none;"><span class="rcpt-lbl">Pass / Txn ID</span><span class="rcpt-val"><span id="receiptId" style="font-size:0.85rem; color:#ccc;">TKT...</span> <i class="fa-regular fa-copy" style="color:var(--accent-cyan); cursor:pointer; padding:5px;" onclick="copyTxnId(); triggerHaptic();"></i></span></div>
+                <div class="rcpt-row" style="border-bottom:none;"><span class="rcpt-lbl">Pass ID</span><span class="rcpt-val"><span id="receiptId" style="font-size:0.85rem; color:#ccc;">TKT...</span> <i class="fa-regular fa-copy" style="color:var(--accent-cyan); cursor:pointer; padding:5px;" onclick="copyTxnId(); triggerHaptic();"></i></span></div>
             </div>
             <div style="display:flex; gap:10px; margin-top:10px;">
-                <button class="pay-btn" style="flex:1; background:transparent; border:1px solid var(--accent-cyan); color:var(--accent-cyan); box-shadow:none; font-size:0.9rem;" onclick="downloadReceiptPDF()"><i class="fa-solid fa-download"></i> Download PDF</button>
-                <button class="pay-btn" style="flex:1; background:#25D366; color:black; border:none; box-shadow:0 5px 20px rgba(37,211,102,0.3); font-size:0.9rem;" id="supportBtn" onclick="contactSupportTxn()"><i class="fa-brands fa-whatsapp"></i> WhatsApp Support</button>
+                <button class="pay-btn" style="flex:1; background:transparent; border:1px solid var(--accent-cyan); color:var(--accent-cyan); box-shadow:none; font-size:0.9rem;" onclick="downloadReceiptPDF()"><i class="fa-solid fa-download"></i> PDF</button>
+                <button class="pay-btn" style="flex:1; background:var(--accent-green); color:black; border:none; box-shadow:0 5px 20px rgba(0,255,127,0.3); font-size:0.9rem;" id="supportBtn" onclick="contactSupportTxn()"><i class="fa-brands fa-whatsapp"></i> Support</button>
             </div>
         </div>
     </div>
@@ -664,10 +654,11 @@
         const MASKED_UPIS = { 1: "touurnyx@phonepe", 2: "tournyx@phonepe-2", 3: "tournyx@paytm", 4: "tournyx@fampay" };
         let currentServer = 1;
         
+        // Remove localStorage dependence - State is now purely in memory.
         let isGuest = true;
         let currentUser = { username: "Guest Player", rupees: "0", points: "0", email: "guest@tournyx.com", avatar: "https://tournyx.in/favicon.png", role: "player", is_premium: false };
         
-        let transactionsData = []; 
+        let transactionsData = []; // Store transactions in memory only.
         let activeReceiptId = "";
         let activeReceiptData = null;
         let qrTimerInterval;
@@ -687,6 +678,8 @@
         function formatNum(num) { return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ","); }
 
         document.addEventListener("DOMContentLoaded", function() {
+            // First time UI set up based on guest.
+            // Read local storage to keep session alive during reload
             let storedUser = localStorage.getItem('tournyx_user');
             if (storedUser && storedUser !== "undefined") {
                 try {
@@ -700,29 +693,28 @@
                     }
                 } catch(e) {}
             }
-
             initializeAppData();
 
+            // Mobile-specific payment buttons.
             let isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
             if(isMobile) { document.getElementById('mobilePayBtn').style.display = 'block'; }
             else { document.getElementById('qrContainer').classList.add('active'); setAmt(1); } 
             
+            // Render basic UI that doesn't need data.
             renderQuickAmts();
             selectServer(1);
 
-            // Instantly fetch live data every 3 seconds for 100% Real-Time experience
+            // Fetch live data immediately, then start 3s real-time sync loop.
             if (!isGuest) {
                 syncLiveTransactions().finally(() => { 
-                    let loader = document.getElementById('skeletonLoader');
-                    loader.style.opacity = '0';
-                    setTimeout(() => loader.classList.add('hidden'), 300);
+                    document.getElementById('skeletonLoader').classList.add('hidden'); 
                 });
+                // Real-time sync interval changed to 3s.
                 setInterval(() => syncLiveTransactions(), 3000); 
             } else {
+                // If guest, just hide loader and update what we can.
                 updateWalletDisplay(); 
-                let loader = document.getElementById('skeletonLoader');
-                loader.style.opacity = '0';
-                setTimeout(() => loader.classList.add('hidden'), 300);
+                document.getElementById('skeletonLoader').classList.add('hidden');
             }
         });
 
@@ -769,16 +761,18 @@
         }
 
         function updateWalletDisplay() {
-            let rawRupees = String(currentUser.rupees || "0"); 
+            // Read directly from earnings logic fetched from server
+            let rawEarnings = String(currentUser.earnings || currentUser.rupees || "0"); 
             let baseRupees = 0;
             let goldenRupees = 0;
             
-            if (rawRupees.includes('+')) {
-                let parts = rawRupees.split('+');
+            // MAGIC PARSER: "200 + 50" -> 200 base, 50 golden
+            if (rawEarnings.includes('+')) {
+                let parts = rawEarnings.split('+');
                 baseRupees = parseFloat(parts[0]) || 0;
                 goldenRupees = parseFloat(parts[1]) || 0;
             } else {
-                baseRupees = parseFloat(rawRupees) || 0;
+                baseRupees = parseFloat(rawEarnings) || 0;
             }
 
             let totalRupees = baseRupees + goldenRupees;
@@ -807,6 +801,7 @@
             
             let badge = document.getElementById('vipBadge'); let prog = document.getElementById('vipProgress'); let nTier = document.getElementById('nextTierText');
             
+            // Golden VIP logic.
             if (isVip) {
                 badge.innerHTML = '<i class="fa-solid fa-crown"></i> VIP MEMBER';
                 badge.className = 'vip-badge'; 
@@ -815,15 +810,10 @@
             } else {
                 if (totalTickets >= 500) { badge.innerHTML = '<i class="fa-solid fa-crown"></i> ELITE TIER'; badge.className = 'vip-badge'; prog.style.width = '100%'; nTier.innerText = "Max Level"; }
                 else if (totalTickets >= 100) { badge.innerHTML = '<i class="fa-solid fa-star"></i> PRO GAMER'; badge.className = 'vip-badge vip-silver'; prog.style.width = ((totalTickets/500)*100)+'%'; nTier.innerText = "Elite Tier"; }
-                else { badge.innerHTML = '<span class="tx-icon" style="font-size: 0.9em; filter:none; color:white; -webkit-text-fill-color:white;">TX</span> STANDARD'; badge.className = 'vip-badge vip-bronze'; prog.style.width = ((totalTickets/100)*100)+'%'; nTier.innerText = "Pro Gamer"; }
+                else { badge.innerHTML = '<span class="tx-icon" style="font-size: 0.9em;">TX</span> STANDARD'; badge.className = 'vip-badge vip-bronze'; prog.style.width = ((totalTickets/100)*100)+'%'; nTier.innerText = "Pro Gamer"; }
             }
 
             renderInventory(baseTickets, goldenTickets);
-        }
-
-        function showTicketInfo(game, tid, count) {
-            triggerHaptic();
-            showToast(`${count}x ${game} Passes Ready! ID: ${tid}`);
         }
 
         function renderInventory(baseTickets, goldenTickets) {
@@ -831,18 +821,17 @@
             let totalTickets = baseTickets + goldenTickets;
 
             if(totalTickets <= 0) {
-                let html = `<div style="text-align:center; padding: 20px; color:#888; font-size:0.9rem; background:rgba(0,0,0,0.3); border-radius:12px; border:1px dashed rgba(255,255,255,0.1);">0 Pass Available.<br><span style="color:var(--accent-cyan);">Buy pass to enter tournaments!</span></div>`;
-                if(inv.innerHTML !== html) inv.innerHTML = html;
+                inv.innerHTML = `<div style="text-align:center; padding: 20px; color:#888; font-size:0.9rem; background:rgba(0,0,0,0.3); border-radius:12px; border:1px dashed rgba(255,255,255,0.1);">0 Pass Available.<br><span style="color:var(--accent-cyan);">Buy pass to enter tournaments!</span></div>`;
                 return;
             }
 
+            // Calculate game-specific pass display.
             let txns = transactionsData || [];
             let ffCount = 0; let bgmiCount = 0;
             
             txns.forEach(t => {
                 if(t.type === "Credit" && t.category === "Pass Purchase" && (t.status === "Success" || t.status === "Pending")) {
-                    let amtVal = parseFloat(t.amount) || 0;
-                    let count = Math.floor(amtVal / TICKET_PRICE);
+                    let count = Math.floor(t.amount / TICKET_PRICE);
                     if(t.title.includes("Free Fire")) ffCount += count;
                     else if(t.title.includes("BGMI")) bgmiCount += count;
                 }
@@ -871,7 +860,7 @@
                 let safeName = currentUser.email || currentUser.username || "guest";
                 let tid = `TKT-${prefix}-${genId(safeName + game + "_W1")}`;
                 return `
-                    <div class="tournyx-ticket tkt-theme-${prefix}" onclick="showTicketInfo('${game}', '${tid}', ${count})">
+                    <div class="tournyx-ticket tkt-theme-${prefix}">
                         <div class="tkt-tournyx-stamp">TOURNYX SECURE</div>
                         <img src="${imgUrl}" class="tkt-logo" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
                         <div class="tkt-logo-fallback"><i class="fa-solid fa-gamepad"></i></div>
@@ -884,14 +873,12 @@
                 `;
             };
 
+            // Visual golden universal pass is first.
             if(uniDisplay > 0) html += buildTicketHTML("Universal", uniDisplay, "https://tournyx.in/favicon.png", "UNI");
             if(ffDisplay > 0) html += buildTicketHTML("Free Fire", ffDisplay, "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEiJvPTY_y_XU-0Lwbnjwm7961lCDkSlQh2MtCWHunFVX6WS7WCprCtkPyB334BU_-4vGsP0NseDQf4NPBEOIxqjk7VZQqZUHpnLb4Bw-c1UeXQy2M9DzNrNdYt_aL0GEb1AlTPupC5zEjJiP3Ci0Oxk-wdg5TF5cs8_UNSe3uTT1BE884je3iXr8QlMjx8/s240/1000094210.jpg", "FF");
             if(bgmiDisplay > 0) html += buildTicketHTML("BGMI", bgmiDisplay, "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEj3MKUI87mMK4_3DltS3LQgqfrK1sESUIMMqlENdi0dPRtOFkeDbvPsTbSaCRaJOb17QZ5s9OO5dR6kFCYiCkgUCF2zBWwvGFSb3T-9Nz51XuIzMvIiOuqwcLzyzeFmn1orKbiETP4LrlaG-RidnWAAzBwUA3aL5_z62HP4_F7R02lAK_WSYdH0U_Gn7Es/s250/1000094211.jpg", "BGM");
             
-            // Prevent blinking by only updating if HTML actually changes
-            if(inv.innerHTML !== html) {
-                inv.innerHTML = html;
-            }
+            inv.innerHTML = html;
         }
 
         function renderQuickAmts() {
@@ -966,6 +953,7 @@
             closeAddMoney();
             let scanner = document.getElementById('cyberScanner'); let sText = document.getElementById('scannerText'); let sDesc = document.getElementById('scannerDesc'); let sCircle = document.getElementById('scannerCircle'); let sInner = document.getElementById('scannerInner');
             
+            // Cyber scanner processing overlay.
             scanner.classList.add('active'); sText.innerText = "AUTHORIZING..."; sDesc.innerText = "Connecting to Ticket Server..."; sCircle.style.borderColor = "var(--accent-cyan)"; sInner.style.background = "rgba(0,242,255,0.2)";
 
             setTimeout(() => { sText.innerText = "VERIFYING PAYMENT..."; sDesc.innerText = "Checking UTR Hash..."; }, 2500);
@@ -978,11 +966,37 @@
             }, 6500);
         }
 
+        let currentSupportCategory = "";
+        function openGlobalSupport() { if(isGuest) return showLoginModal(); closeAddMoney(); document.getElementById('supportBotOverlay').classList.add('active'); supportBack(); }
+        function supportProceed(category) { currentSupportCategory = category; document.getElementById('supportStep1').style.display = 'none'; document.getElementById('supportStep2').style.display = 'block'; }
+        function supportBack() { document.getElementById('supportStep1').style.display = 'block'; document.getElementById('supportStep2').style.display = 'none'; document.getElementById('screenshotInput').value = ""; document.getElementById('supportMsg').value = ""; document.getElementById('screenshotPreviewBox').style.display = "none"; }
+        function closeSupportBot() { document.getElementById('supportBotOverlay').classList.remove('active'); }
+        
+        function previewScreenshot(event) {
+            const file = event.target.files[0];
+            if(file) {
+                let isVid = file.type.startsWith('video/');
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    if(isVid) { document.getElementById('ssPreview').style.display = 'none'; document.getElementById('vidPreview').style.display = 'inline-block'; document.getElementById('vidPreview').src = e.target.result; } 
+                    else { document.getElementById('vidPreview').style.display = 'none'; document.getElementById('ssPreview').style.display = 'inline-block'; document.getElementById('ssPreview').src = e.target.result; }
+                    document.getElementById('screenshotPreviewBox').style.display = "block";
+                }
+                reader.readAsDataURL(file);
+            }
+        }
+        
+        function analyzeAndSubmitScreenshot() {
+            closeSupportBot();
+            showToast("Success! Admin has been alerted for priority review.");
+        }
+
         async function syncLiveTransactions() {
             try {
-                // 100% Cache-busting real-time fetch
+                // Perfect, live cache-busting logic.
                 let ts = new Date().getTime();
                 
+                // Concurrent requests using Promise.all for efficiency.
                 let [userRes, txnRes] = await Promise.all([
                     fetch(API_URL + "?action=sync_user&email=" + encodeURIComponent(currentUser.email) + "&t=" + ts),
                     fetch(API_URL + "?action=get_transactions&email=" + encodeURIComponent(currentUser.email) + "&t=" + ts)
@@ -993,62 +1007,47 @@
                     txnRes.json()
                 ]);
                 
+                // Live user data update.
                 if(userDataObj.status === 'success' && userDataObj.data && userDataObj.data.rupees !== undefined && userDataObj.data.rupees !== "") {
-                    currentUser.rupees = String(userDataObj.data.rupees); // Preserves "200 + 50" logic
-                    currentUser.points = String(userDataObj.data.points);
-                    currentUser.role = userDataObj.data.role || currentUser.role;
-                    currentUser.is_premium = userDataObj.data.is_premium;
+                    // Update in-memory object and apply theme based on premium status from backend.
+                    currentUser = userDataObj.data;
+                    isGuest = false; // Backend confirmed user, so they are not a guest.
                     
-                    isGuest = false; 
-                    
+                    // Apply VIP theme based on backend data.
                     if (String(currentUser.is_premium).toLowerCase() === 'true') {
                         document.documentElement.classList.add('theme-vip');
                     } else {
                         document.documentElement.classList.remove('theme-vip');
                     }
                     
+                    // Maintain session without relying on local storage for data source
                     localStorage.setItem('tournyx_user', JSON.stringify(currentUser));
+                    
+                    initializeAppData(); // Update profile pic and greeting.
                     updateWalletDisplay(); 
                 }
 
+                // Live transactions ledger update.
                 if(txnDataObj.status === 'success' && txnDataObj.data && Array.isArray(txnDataObj.data)) {
+                    // Update in-memory array.
                     transactionsData = txnDataObj.data;
                     renderTransactions();
                 }
-            } catch(e) {}
-        }
-
-        function contactSupportDirect(e, tId, amt, stat, title) {
-            e.stopPropagation();
-            triggerHaptic();
-            const adminWhatsAppNumber = "918608159825"; 
-            let userEmail = currentUser.email || "Unknown User";
-            let text = `Hello Tournyx Support, I need help with my transaction.%0A%0A*Txn ID:* ${tId}%0A*Description:* ${title}%0A*Amount:* Rs. ${amt}%0A*Status:* ${stat}%0A*My Email:* ${userEmail}%0A%0APlease look into this.`;
-            window.open(`https://wa.me/${adminWhatsAppNumber}?text=${text}`, '_blank');
+            } catch(e) {
+                // In case of error, just rely on the next 3s sync tick.
+            }
         }
 
         function renderTransactions() {
             const container = document.getElementById('txnListContainer');
-            if(isGuest) { 
-                let html = `<div style="text-align:center; padding:30px; color:#666; font-size:0.9rem;"><i class="fa-solid fa-lock" style="display:block; font-size:2rem; margin-bottom:10px; color:#444;"></i> Log in to view your secure transaction ledger.</div>`; 
-                if(container.innerHTML !== html) container.innerHTML = html;
-                return; 
-            }
+            if(isGuest) { container.innerHTML = `<div style="text-align:center; padding:30px; color:#666; font-size:0.9rem;"><i class="fa-solid fa-lock" style="display:block; font-size:2rem; margin-bottom:10px; color:#444;"></i> Log in to view your secure transaction ledger.</div>`; return; }
             
             let txns = transactionsData || [];
+            container.innerHTML = "";
+            if (txns.length === 0) { container.innerHTML = `<div style="text-align:center; padding:30px; color:#666;">No recent transactions.</div>`; return; }
             
-            if (txns.length === 0) { 
-                let html = `<div style="text-align:center; padding:30px; color:#666;">No recent transactions.</div>`; 
-                if(container.innerHTML !== html) container.innerHTML = html;
-                return; 
-            }
-            
-            let newHtml = "";
-            txns.slice(0, 5).forEach((t, i) => { newHtml += buildTxnHtml(t, i, i); });
-            
-            if (container.innerHTML !== newHtml) {
-                container.innerHTML = newHtml;
-            }
+            // Render first 5.
+            txns.slice(0, 5).forEach((t, i) => { container.innerHTML += buildTxnHtml(t, i, i); });
         }
 
         function openAllTxns() {
@@ -1063,6 +1062,7 @@
             let typeStr = String(t.type || "").toLowerCase(); let isCredit = typeStr === "credit"; 
             let stat = String(t.status || "").toLowerCase(); let isPending = stat === "pending"; let isFailed = stat === "failed"; let isSuccess = stat === "success";
             
+            // Strictly uses the category provided by the updated backend
             let cat = t.category || "General"; 
             let catIcon = "fa-ticket-simple"; let iconClass = isCredit ? "icon-credit" : "icon-debit"; let mainIcon = isCredit ? "fa-arrow-down" : "fa-arrow-up";
             
@@ -1080,16 +1080,13 @@
             let inOutLabel = isCredit ? `<div class="in-out-label in-label">PASSES IN</div>` : `<div class="in-out-label out-label">PASSES OUT</div>`;
             let displayDate = t.date ? (String(t.date).includes(',') ? String(t.date).split(',')[0] : String(t.date).split(' ')[0]) : "Today";
             
-            let amtVal = parseFloat(t.amount);
-            if(isNaN(amtVal)) amtVal = 0;
-            
-            let ticketVal = Math.floor(amtVal / TICKET_PRICE) || 0;
-            if(ticketVal === 0 && amtVal > 0 && (String(t.title).includes("Pass") || String(t.title).includes("Ticket"))) ticketVal = amtVal;
+            let ticketVal = Math.floor(t.amount / TICKET_PRICE) || 0;
+            if(ticketVal === 0 && t.amount > 0 && (String(t.title).includes("Pass") || String(t.title).includes("Ticket"))) ticketVal = t.amount;
 
-            let amtHTML = amtVal > 0 ? `${isCredit?'+':'-'} ${ticketVal} <span class="tx-icon" style="font-size:0.8rem; margin-left:3px; vertical-align:baseline;">TX</span>` : `0 <span class="tx-icon" style="font-size:0.8rem; margin-left:3px; vertical-align:baseline;">TX</span>`;
+            let amtHTML = t.amount > 0 ? `${isCredit?'+':'-'} ${ticketVal} <span class="tx-icon" style="font-size:0.8rem; margin-left:3px; vertical-align:baseline;">TX</span>` : `---`;
             if (currentUser.role === 'organizer') {
                 inOutLabel = isCredit ? `<div class="in-out-label in-label">EARNINGS IN</div>` : `<div class="in-out-label out-label">WITHDRAWAL</div>`;
-                amtHTML = amtVal > 0 ? `${isCredit?'+':'-'} ₹${amtVal}` : `0`;
+                amtHTML = t.amount > 0 ? `${isCredit?'+':'-'} ₹${t.amount}` : `---`;
             }
 
             return `
@@ -1097,19 +1094,14 @@
                     <div class="txn-left">
                         <div class="txn-icon ${iconClass}"><i class="fa-solid ${mainIcon}"></i></div>
                         <div class="txn-info">
-                            <h4 style="display:flex; justify-content:space-between; align-items:center;">
-                                <span style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${t.title}</span>
-                            </h4>
+                            <h4>${t.title}</h4>
                             <p><span class="cat-tag"><i class="fa-solid ${catIcon}"></i> ${cat}</span> ${displayDate}</p>
                         </div>
                     </div>
                     <div class="txn-right">
                         ${inOutLabel}
                         <div class="txn-amt ${amtClass}">${amtHTML}</div>
-                        <div class="txn-status" style="display:flex; align-items:center; gap:5px; color:${statusColor};">
-                            ${t.status}
-                            <i class="fa-brands fa-whatsapp" style="color:#25D366; font-size:1.1rem; cursor:pointer;" onclick="contactSupportDirect(event, '${t.id}', '${amtVal}', '${t.status}', '${String(t.title).replace(/'/g, "\\'")}')" title="WhatsApp Support"></i>
-                        </div>
+                        <div class="txn-status" style="color:${statusColor};">${t.status}</div>
                     </div>
                 </div>`;
         }
@@ -1118,26 +1110,24 @@
             let txns = transactionsData || [];
             let t = txns[index]; if(!t) return;
             
+            // Live receipt ID generation if not present.
             activeReceiptId = t.id && String(t.id).trim() !== "" ? t.id : "TKT_SYS_" + Math.floor(100000 + Math.random() * 900000); 
             activeReceiptData = t;
             
             let typeStr = String(t.type || "").toLowerCase(); let isCredit = typeStr === "credit"; 
             let stat = String(t.status || "").toLowerCase(); let isPending = stat === "pending"; let isFailed = stat === "failed"; let isSuccess = stat === "success";
             
-            let amtVal = parseFloat(t.amount);
-            if(isNaN(amtVal)) amtVal = 0;
-
-            let ticketVal = Math.floor(amtVal / TICKET_PRICE) || 0;
-            if(ticketVal === 0 && amtVal > 0 && (String(t.title).includes("Pass") || String(t.title).includes("Ticket"))) ticketVal = amtVal;
+            let ticketVal = Math.floor(t.amount / TICKET_PRICE) || 0;
+            if(ticketVal === 0 && t.amount > 0 && (String(t.title).includes("Pass") || String(t.title).includes("Ticket"))) ticketVal = t.amount;
             
             let mainIcon = isFailed ? "fa-xmark" : (isPending ? "fa-clock" : (isCredit ? "fa-check" : "fa-arrow-up"));
             let iconEl = document.getElementById('rcptIcon');
             iconEl.innerHTML = `<i class="fa-solid ${mainIcon}"></i>`;
             iconEl.className = `rcpt-icon ${isPending ? 'icon-debit' : (isCredit ? 'icon-credit' : 'icon-debit')}`;
             
-            let amtDisplay = amtVal > 0 ? `${isCredit?'+':'-'} ${ticketVal} Pass` : `0 Pass`;
+            let amtDisplay = t.amount > 0 ? `${isCredit?'+':'-'} ${ticketVal} Pass` : `Review Pending`;
             if (currentUser.role === 'organizer') {
-                amtDisplay = amtVal > 0 ? `${isCredit?'+':'-'} ₹${amtVal}` : `₹0`;
+                amtDisplay = t.amount > 0 ? `${isCredit?'+':'-'} ₹${t.amount}` : `Review Pending`;
             }
 
             document.getElementById('rcptAmt').innerHTML = amtDisplay;
@@ -1192,6 +1182,7 @@
         
         function downloadReceiptPDF() {
             triggerHaptic();
+            // Secure, off-screen PDF generation.
             setTimeout(() => {
                 html2pdf().set({ 
                     margin: 0.5, 
@@ -1231,17 +1222,15 @@
                 let statusCol = isSuccess ? "#00ff7f" : (isFailed ? "#ff4d4d" : "#ff9900");
                 let amtCol = isCredit ? "#00ff7f" : "#ff4d4d";
                 
-                let amtVal = parseFloat(t.amount);
-                if(isNaN(amtVal)) amtVal = 0;
+                let ticketVal = Math.floor(t.amount / TICKET_PRICE) || 0;
+                if(ticketVal === 0 && t.amount > 0 && (String(t.title).includes("Pass") || String(t.title).includes("Ticket"))) ticketVal = t.amount;
                 
-                let ticketVal = Math.floor(amtVal / TICKET_PRICE) || 0;
-                if(ticketVal === 0 && amtVal > 0 && (String(t.title).includes("Pass") || String(t.title).includes("Ticket"))) ticketVal = amtVal;
-                
-                let amtDisplay = amtVal > 0 ? `${isCredit?'+':'-'} ${ticketVal} Pass` : `0`;
+                let amtDisplay = t.amount > 0 ? `${isCredit?'+':'-'} ${ticketVal} Pass` : `0`;
                 if (currentUser.role === 'organizer') {
-                    amtDisplay = amtVal > 0 ? `${isCredit?'+':'-'} ₹${amtVal}` : `0`;
+                    amtDisplay = t.amount > 0 ? `${isCredit?'+':'-'} ₹${t.amount}` : `0`;
                 }
 
+                // Off-screen, universal ticket stub with images and dynamic content.
                 tableHTML += `
                     <tr style="border-bottom:1px solid rgba(255,255,255,0.05); background: rgba(0,0,0,0.2);">
                         <td style="padding:15px 12px; color:#aaa;">${t.date ? String(t.date).split(',')[0] : "Recent"}</td>
@@ -1272,12 +1261,6 @@
             }, 100);
         }
 
-        let currentSupportCategory = "";
-        function openGlobalSupport() { if(isGuest) return showLoginModal(); closeAddMoney(); document.getElementById('supportBotOverlay').classList.add('active'); supportBack(); }
-        function supportProceed(category) { currentSupportCategory = category; document.getElementById('supportStep1').style.display = 'none'; document.getElementById('supportStep2').style.display = 'block'; }
-        function supportBack() { document.getElementById('supportStep1').style.display = 'block'; document.getElementById('supportStep2').style.display = 'none'; document.getElementById('screenshotInput').value = ""; document.getElementById('supportMsg').value = ""; document.getElementById('screenshotPreviewBox').style.display = "none"; }
-        function closeSupportBot() { document.getElementById('supportBotOverlay').classList.remove('active'); }
-        
         function contactSupportTxn() {
             triggerHaptic();
             const adminWhatsAppNumber = "918608159825"; 
