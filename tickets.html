@@ -139,12 +139,12 @@
         /* --- VISUAL TICKET STUB INVENTORY THEMES --- */
         .tkt-theme-FF { --glow-color: #ff9900; --glow-border: #ff4d4d; }
         .tkt-theme-BGM { --glow-color: #00ff7f; --glow-border: #00b09b; }
-        .tkt-theme-UNI { --glow-color: #FFD700; --glow-border: #FF8C00; }
+        .tkt-theme-UNI { --glow-color: #FFD700; --glow-border: #FFD700; background: linear-gradient(135deg, rgba(40,30,0,0.95), rgba(20,15,0,0.95)) !important; }
 
         .tournyx-ticket { background: linear-gradient(135deg, rgba(20,10,35,0.9), rgba(5,2,12,0.9)); border: 1px solid var(--glow-border, var(--accent-cyan)); border-radius: 15px; display: flex; align-items: center; padding: 15px; margin-bottom: 12px; position: relative; box-shadow: 0 5px 20px rgba(0,0,0,0.5), inset 0 0 15px rgba(0,0,0,0.2), 0 0 15px var(--glow-color, rgba(0,242,255,0.1)); overflow: hidden; animation: fadeIn 0.5s ease; cursor: pointer; transition: 0.3s; }
         .tournyx-ticket:active { transform: scale(0.98); }
-        .tournyx-ticket::before { content: ''; position: absolute; left: -10px; top: 50%; transform: translateY(-50%); width: 20px; height: 20px; background: var(--primary-bg); border-radius: 50%; border-right: 1px solid var(--glow-border, var(--accent-cyan)); }
-        .tournyx-ticket::after { content: ''; position: absolute; right: -10px; top: 50%; transform: translateY(-50%); width: 20px; height: 20px; background: var(--primary-bg); border-radius: 50%; border-left: 1px solid var(--glow-border, var(--accent-cyan)); }
+        .tournyx-ticket::before { content: ''; position: absolute; left: -10px; top: 50%; transform: translateY(-50%); width: 20px; height: 20px; background: var(--primary-bg); border-radius: 50%; border-right: 1px solid var(--glow-border, var(--accent-cyan)); z-index: 5; }
+        .tournyx-ticket::after { content: ''; position: absolute; right: -10px; top: 50%; transform: translateY(-50%); width: 20px; height: 20px; background: var(--primary-bg); border-radius: 50%; border-left: 1px solid var(--glow-border, var(--accent-cyan)); z-index: 5; }
         
         .tkt-logo { width: 45px; height: 45px; border-radius: 10px; object-fit: cover; border: 2px solid var(--glow-border, var(--accent-purple)); box-shadow: 0 0 15px var(--glow-color, rgba(189,0,255,0.5)); z-index: 2;}
         .tkt-logo-fallback { width: 45px; height: 45px; border-radius: 10px; background: rgba(189,0,255,0.2); border: 2px solid var(--glow-border, var(--accent-purple)); box-shadow: 0 0 15px var(--glow-color, rgba(189,0,255,0.5)); z-index: 2; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; color: white; display: none; }
@@ -335,7 +335,7 @@
                 <p style="color:#a0a0b0; margin:8px 0 0 0; font-size:14px; letter-spacing: 1px; text-transform: uppercase;">Official Transaction Ledger</p>
             </div>
             
-            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:40px; background:linear-gradient(135deg, #110822, #1a0a3a); padding:25px; border-radius:12px; border: 1px solid #bd00ff;">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:40px; background:linear-gradient(135deg, #110822, #1a0a3a); padding:25px; border-radius:12px; border: 1px solid #00f2ff;">
                 <div style="display:flex; align-items:center; gap: 15px;">
                     <img id="pdfUserAvatar" src="https://tournyx.in/favicon.png" style="width:60px; height:60px; border-radius:50%; border:2px solid #00f2ff; object-fit: cover;">
                     <div>
@@ -622,6 +622,14 @@
         const TICKET_OFFERS = [1, 5, 10, 20]; 
         let selectedGameName = "Free Fire"; 
 
+        // Perfect IST Date & Time Formatter
+        function getISTDateTime(dateInput) {
+            let d = (dateInput && String(dateInput).trim() !== "") ? new Date(dateInput) : new Date();
+            if (isNaN(d.getTime())) d = new Date(); 
+            let options = { timeZone: 'Asia/Kolkata', month: 'short', day: '2-digit', year: 'numeric', hour: 'numeric', minute: '2-digit', hour12: true };
+            return d.toLocaleString('en-IN', options).toUpperCase();
+        }
+
         // Failsafe normalizer to fix the backend column mapping bug dynamically 
         function normalizeTxn(t) {
             let norm = { ...t };
@@ -863,13 +871,24 @@
                 if(count <= 0) return '';
                 let safeName = currentUser.email || currentUser.username || "guest";
                 let tid = `TKT-${prefix}-${genId(safeName + game + "_W1")}`;
+                
+                let logoHtml = `<img src="${imgUrl}" class="tkt-logo" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                                <div class="tkt-logo-fallback"><i class="fa-solid fa-gamepad"></i></div>`;
+                let stampColor = "rgba(255,255,255,0.15)";
+                let gameColor = "white";
+                
+                if (prefix === 'UNI') {
+                    logoHtml = `<div class="tkt-logo" style="background: linear-gradient(135deg, #FFD700, #FF8C00); display:flex; align-items:center; justify-content:center; border: 2px solid #fff; box-shadow: 0 0 20px rgba(255,215,0,0.8);"><span class="tx-icon" style="color:#000; -webkit-text-fill-color:#000; filter:none; font-size:1.6rem; margin:0;">TX</span></div>`;
+                    stampColor = "rgba(255,215,0,0.3)";
+                    gameColor = "#FFD700";
+                }
+
                 return `
                     <div class="tournyx-ticket tkt-theme-${prefix}" onclick="showTicketDetails('${game}', ${count}, '${tid}')">
-                        <div class="tkt-tournyx-stamp">TOURNYX SECURE</div>
-                        <img src="${imgUrl}" class="tkt-logo" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
-                        <div class="tkt-logo-fallback"><i class="fa-solid fa-gamepad"></i></div>
+                        <div class="tkt-tournyx-stamp" style="color:${stampColor};">${prefix === 'UNI' ? 'TX VIP SECURE' : 'TOURNYX SECURE'}</div>
+                        ${logoHtml}
                         <div class="tkt-details">
-                            <div class="tkt-game">${game} PASS</div>
+                            <div class="tkt-game" style="color:${gameColor}; ${prefix === 'UNI' ? 'text-shadow: 0 0 10px rgba(255,215,0,0.5);' : ''}">${game} PASS</div>
                             <div class="tkt-id">ID: ${tid}</div>
                         </div>
                         <div class="tkt-count">x${count}</div>
@@ -1073,7 +1092,8 @@
             let amtClass = isCredit ? "amt-credit" : "amt-debit";
             let statusColor = isSuccess ? "var(--accent-green)" : (isFailed ? "var(--accent-red)" : "#ff9900");
             let inOutLabel = isCredit ? `<div class="in-out-label in-label">PASSES IN</div>` : `<div class="in-out-label out-label">PASSES OUT</div>`;
-            let displayDate = t.date ? (String(t.date).includes(',') ? String(t.date).split(',')[0] : String(t.date).split(' ')[0]) : "Today";
+            
+            let displayDate = getISTDateTime(t.date);
             
             let ticketVal = Math.floor(t.amount / TICKET_PRICE) || 0;
             if(ticketVal === 0 && t.amount > 0 && (String(t.title).includes("Pass") || String(t.title).includes("Ticket"))) ticketVal = t.amount;
@@ -1129,7 +1149,7 @@
             document.getElementById('rcptAmt').className = `rcpt-amt ${isCredit ? 'amt-credit' : 'amt-debit'}`;
             document.getElementById('rcptTitle').innerText = t.title;
             
-            let displayDate = t.date && String(t.date).trim() !== "" ? String(t.date) : "Recent";
+            let displayDate = getISTDateTime(t.date);
             document.getElementById('receiptDate').innerText = displayDate;
             document.getElementById('receiptId').innerText = activeReceiptId;
             
@@ -1188,10 +1208,10 @@
             triggerHaptic();
             setTimeout(() => {
                 html2pdf().set({ 
-                    margin: 0.5, 
+                    margin: [0.5, 0.5, 0.5, 0.5], 
                     filename: `Tournyx_Receipt_${activeReceiptId}.pdf`, 
                     image: { type: 'jpeg', quality: 1 }, 
-                    html2canvas: { scale: 2, useCORS: true, backgroundColor: '#070311', windowWidth: 800 }, 
+                    html2canvas: { scale: 2, useCORS: true, backgroundColor: '#070311', windowWidth: 800, letterRendering: true }, 
                     jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' } 
                 }).from(document.getElementById('pdfTemplate')).save();
             }, 100);
@@ -1208,7 +1228,7 @@
                 <table style="width:100%; border-collapse:collapse; text-align:left; font-size:12px;">
                     <thead>
                         <tr style="background:linear-gradient(90deg, #110822, #1a0a3a); color:#00f2ff; border-bottom: 2px solid #bd00ff;">
-                            <th style="padding:15px 12px; text-transform:uppercase;">Date</th>
+                            <th style="padding:15px 12px; text-transform:uppercase;">Date & Time</th>
                             <th style="padding:15px 12px; text-transform:uppercase;">Ticket / Txn ID</th>
                             <th style="padding:15px 12px; text-transform:uppercase;">Description</th>
                             <th style="padding:15px 12px; text-transform:uppercase;">Status</th>
@@ -1236,7 +1256,7 @@
 
                 tableHTML += `
                     <tr style="border-bottom:1px solid rgba(255,255,255,0.05); background: rgba(0,0,0,0.2);">
-                        <td style="padding:15px 12px; color:#aaa;">${t.date ? String(t.date).split(',')[0] : "Recent"}</td>
+                        <td style="padding:15px 12px; color:#aaa;">${getISTDateTime(t.date)}</td>
                         <td style="padding:15px 12px; font-family:monospace; color:#00f2ff;">${t.id || "SYS_TXN"}</td>
                         <td style="padding:15px 12px; color:#fff; font-weight: bold;">${t.title}</td>
                         <td style="padding:15px 12px; font-weight:bold; color:${statusCol}; text-transform:uppercase;">${t.status}</td>
@@ -1252,10 +1272,10 @@
             document.getElementById('pdfDynamicContentArea').innerHTML = tableHTML;
             
             const opt = {
-                margin: 0.5,
+                margin: [0.5, 0.5, 0.5, 0.5],
                 filename: `Tournyx_Tickets_Ledger_${currentUser.username.replace(/\s+/g, '_')}.pdf`,
                 image: { type: 'jpeg', quality: 1 },
-                html2canvas: { scale: 2, useCORS: true, backgroundColor: '#070311', windowWidth: 800 },
+                html2canvas: { scale: 2, useCORS: true, backgroundColor: '#070311', windowWidth: 800, letterRendering: true },
                 jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' }
             };
             
