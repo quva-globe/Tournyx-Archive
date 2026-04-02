@@ -2206,6 +2206,8 @@
         function closeRegistrationFlow() { triggerHaptic(); document.getElementById('regOverlay').classList.remove('active'); }
 
         
+                
+
                 function closePaymentModal() { 
             if(navigator.vibrate) navigator.vibrate(40); 
             document.getElementById('paymentOverlay').classList.remove('active'); 
@@ -2213,12 +2215,9 @@
             document.getElementById('finalSubmitBtn').innerText = "Proceed";
         }
 
-        
-
-                
-                function processRegistrationPayment(e) {
+        function processRegistrationPayment(e) {
             e.preventDefault();
-            if(navigator.vibrate) navigator.vibrate(40);
+            triggerHaptic();
             
             const submitBtn = document.getElementById('finalSubmitBtn');
             submitBtn.disabled = true;
@@ -2235,25 +2234,44 @@
                 
                 let user = JSON.parse(localStorage.getItem('tournyx_user')) || {};
                 
-                // 🚀 THE ULTIMATE BULLETPROOF PARSER 🚀
-                // Strip out any weird spaces or undefined text that crashes the math
-                let rawString = String(user.rupees || user.earnings || "0").replace(/\s/g, '');
-                if (rawString === "undefined" || rawString === "null" || rawString === "") rawString = "0";
+                // --- CLEAN, ORIGINAL PARSER ---
+                let currentRupees = parseInt(user.rupees);
+                if (isNaN(currentRupees)) currentRupees = parseInt(user.earnings) || 0;
                 
-                let baseRupees = 0; let goldenRupees = 0;
-                
-                if (rawString.includes('+')) {
-                    let parts = rawString.split('+');
-                    baseRupees = Math.max(0, parseFloat(parts[0]) || 0);
-                    goldenRupees = Math.max(0, parseFloat(parts[1]) || 0);
-                } else {
-                    baseRupees = Math.max(0, parseFloat(rawString) || 0);
-                }
-
-                // Total available passes (combining base and universal golden passes safely)
-                let availableSpecific = Math.floor(baseRupees / 10) + Math.floor(goldenRupees / 10);
+                let totalTickets = Math.floor(currentRupees / 10);
                 let currentPoints = parseInt(user.points) || 0;
                 
+                // --- ORIGINAL GAME TICKET ALLOCATOR ---
+                let txns = JSON.parse(localStorage.getItem('tournyx_txns')) || [];
+                let ffCount = 0; let bgmiCount = 0;
+                
+                txns.forEach(txn => {
+                    let cat = String(txn.category || "").toLowerCase();
+                    let title = String(txn.title || "").toLowerCase();
+                    if(txn.type === "Credit" && (cat.includes("purchase") || title.includes("bought") || title.includes("pass")) && (txn.status === "Success" || txn.status === "Pending")) {
+                        let count = Math.floor(txn.amount / 10);
+                        if(title.includes("free fire") || title.includes("ff")) ffCount += count;
+                        else if(title.includes("bgmi")) bgmiCount += count;
+                    }
+                });
+
+                let identified = ffCount + bgmiCount;
+                let uniDisplay = 0, ffDisplay = 0, bgmiDisplay = 0;
+                
+                if (identified === 0) { 
+                    uniDisplay = totalTickets; 
+                } else {
+                    ffDisplay = Math.round((ffCount / identified) * totalTickets);
+                    bgmiDisplay = totalTickets - ffDisplay;
+                }
+
+                let gameName = String(activeTournament.game || "").toLowerCase();
+                let availableSpecific = uniDisplay; 
+                
+                if (gameName.includes('free fire') || gameName.includes('ff')) availableSpecific += ffDisplay;
+                else if (gameName.includes('bgmi')) availableSpecific += bgmiDisplay;
+                else availableSpecific = totalTickets; 
+
                 let headerTxt = "";
                 let pRup = document.getElementById('payOptRupees');
                 let pPts = document.getElementById('payOptPts');
@@ -2296,33 +2314,10 @@
             let user = JSON.parse(localStorage.getItem('tournyx_user')) || {};
             
             if (method === 'tickets') { 
-                let rawString = String(user.rupees || user.earnings || "0").replace(/\s/g, '');
-                let baseR = 0; let goldR = 0;
+                let currentRupees = parseInt(user.rupees);
+                if (isNaN(currentRupees)) currentRupees = parseInt(user.earnings) || 0;
                 
-                if (rawString.includes('+')) {
-                    let pts = rawString.split('+');
-                    baseR = Math.max(0, parseFloat(pts[0]) || 0);
-                    goldR = Math.max(0, parseFloat(pts[1]) || 0);
-                } else {
-                    baseR = Math.max(0, parseFloat(rawString) || 0);
-                }
-                
-                let costRupees = cost * 10;
-                
-                // Deduct safely from Base first, then Gold
-                if (baseR >= costRupees) {
-                    baseR -= costRupees;
-                } else {
-                    let rem = costRupees - baseR;
-                    baseR = 0; 
-                    goldR = Math.max(0, goldR - rem); 
-                }
-                
-                if (goldR > 0) {
-                    user.rupees = `${baseR} + ${goldR}`;
-                } else {
-                    user.rupees = `${baseR}`;
-                }
+                user.rupees = currentRupees - (cost * 10); 
             } 
             else if (method === 'points') { 
                 user.points = Math.max(0, (parseInt(user.points) || 0) - cost); 
