@@ -9,8 +9,6 @@
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700;900&family=Rajdhani:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.css">
-
     <script>
         (function() {
             try {
@@ -202,17 +200,6 @@
         
         /* Median override to ensure visibility */
         .median-active .top-header { display: flex !important; }
-
-        /* --- CROPPER MODAL --- */
-        .cropper-modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 9999; display: none; flex-direction: column; align-items: center; justify-content: center; backdrop-filter: blur(10px); }
-        .cropper-modal.active { display: flex; }
-        .cropper-container-wrapper { width: 90%; max-width: 600px; height: 60vh; background: #000; border: 2px solid var(--accent-cyan); border-radius: 12px; overflow: hidden; margin-bottom: 20px; box-shadow: 0 0 30px rgba(0,242,255,0.2); }
-        .cropper-actions { display: flex; gap: 15px; width: 90%; max-width: 600px; }
-        .cropper-btn { flex: 1; padding: 12px; border-radius: 10px; font-family: var(--font-head); font-weight: bold; cursor: pointer; text-transform: uppercase; transition: 0.3s; border: none; }
-        .btn-crop-cancel { background: rgba(255,255,255,0.1); color: white; border: 1px solid rgba(255,255,255,0.3); }
-        .btn-crop-cancel:active { background: rgba(255,255,255,0.2); }
-        .btn-crop-confirm { background: var(--accent-gradient); color: white; box-shadow: 0 5px 15px rgba(189,0,255,0.4); }
-        .btn-crop-confirm:active { transform: scale(0.95); }
     </style>
 </head>
 <body>
@@ -245,14 +232,14 @@
             </div>
             <div class="section-content">
                 <div class="upload-box-wrapper" id="bannerArea" onclick="document.getElementById('bannerInput').click(); triggerHaptic();">
-                    <div class="upload-icon-circle"><i class="fa-solid fa-cloud-arrow-up"></i></div>
-                    <div class="upload-title">Upload Banner Image *</div>
-                    <div class="upload-desc">High-quality banner (16:9 ratio) • Max 5MB</div>
+                    <div class="upload-icon-circle"><i class="fa-solid fa-cloud-arrow-up" id="uploadIconState"></i></div>
+                    <div class="upload-title" id="uploadTitleState">Upload Banner Image *</div>
+                    <div class="upload-desc" id="uploadDescState">High-quality banner (16:9 ratio) • Max 5MB</div>
                 </div>
                 <img src="" id="bannerPreview" class="preview-img">
                 <div id="removeBanner" class="remove-img" onclick="removeImage('bannerInput', 'bannerBase64', 'bannerArea', 'bannerPreview', 'removeBanner'); triggerHaptic();"><i class="fa-solid fa-trash"></i> Remove Banner</div>
-                <input type="file" id="bannerInput" class="file-input" accept="image/*" onchange="initCropper(event, 'bannerPreview', 'bannerBase64', 'bannerArea', 'removeBanner', 16/9)" required>
-                <input type="hidden" name="banner_base64" id="bannerBase64">
+                <input type="file" id="bannerInput" class="file-input" accept="image/*" onchange="uploadDirectToImgBB(event)">
+                <input type="hidden" name="banner_base64" id="bannerBase64" required>
             </div>
         </div>
 
@@ -493,16 +480,6 @@
         </button>
     </div>
 
-    <div class="cropper-modal" id="cropperModal">
-        <div class="cropper-container-wrapper">
-            <img id="cropperImage" src="" style="max-width: 100%;">
-        </div>
-        <div class="cropper-actions">
-            <button class="cropper-btn btn-crop-cancel" onclick="cancelCrop()">Cancel</button>
-            <button class="cropper-btn btn-crop-confirm" onclick="confirmCrop()">Crop & Save</button>
-        </div>
-    </div>
-
     <div class="loading-overlay" id="loadingOverlay">
         <div class="loader-ring" id="spinnerEl"></div>
         <i class="fa-solid fa-circle-check success-icon-anim" id="successIcon"></i>
@@ -512,8 +489,6 @@
     </div>
 
     <div id="customToast">Notification</div>
-
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.js"></script>
 
     <script>
         // --- 1. CORE CONFIGURATION & INIT ---
@@ -772,100 +747,96 @@
             }, 4000);
         }
 
-        // --- 7. ADVANCED CROPPER & COMPRESSOR LOGIC (Banner Only) ---
-        let cropper = null;
-        let currentUploadState = {
-            previewId: '',
-            base64Id: '',
-            areaId: '',
-            removeBtnId: '',
-            aspectRatio: NaN // NaN means free crop
-        };
-
-        function initCropper(event, previewId, base64Id, areaId, removeBtnId, aspectRatio) {
+        // --- 7. DIRECT IMAGE UPLOADER LOGIC (NO CROPPER) ---
+        function uploadDirectToImgBB(event) {
             const file = event.target.files[0];
             if (!file) return;
 
             if(file.size > 5 * 1024 * 1024) { 
-                document.getElementById(areaId).classList.add('error');
+                document.getElementById('bannerArea').classList.add('error');
                 showToast("File exceeds 5MB limit.", true); 
                 return; 
             }
 
-            // Save state so the modal knows where to output
-            currentUploadState = { previewId, base64Id, areaId, removeBtnId, aspectRatio };
+            let titleState = document.getElementById('uploadTitleState');
+            let descState = document.getElementById('uploadDescState');
+            let iconState = document.getElementById('uploadIconState');
+
+            titleState.innerText = "Compressing & Uploading...";
+            descState.innerText = "Please wait, securing image link.";
+            iconState.className = "fa-solid fa-circle-notch fa-spin";
+            document.getElementById('bannerArea').classList.remove('error');
 
             const reader = new FileReader();
             reader.onload = function(e) {
-                const imageEl = document.getElementById('cropperImage');
-                imageEl.src = e.target.result;
-                
-                document.getElementById('cropperModal').classList.add('active');
+                // Compress slightly using canvas before upload to save bandwidth
+                const img = new Image();
+                img.onload = function() {
+                    const canvas = document.createElement('canvas');
+                    const ctx = canvas.getContext('2d');
+                    
+                    // Max width 1280 to maintain 16:9 quality without massive file sizes
+                    const MAX_WIDTH = 1280;
+                    let width = img.width;
+                    let height = img.height;
 
-                if (cropper) { cropper.destroy(); }
-                
-                cropper = new Cropper(imageEl, {
-                    aspectRatio: currentUploadState.aspectRatio,
-                    viewMode: 1,
-                    autoCropArea: 1,
-                    background: false,
-                    responsive: true
-                });
+                    if (width > MAX_WIDTH) {
+                        height *= MAX_WIDTH / width;
+                        width = MAX_WIDTH;
+                    }
+                    
+                    canvas.width = width;
+                    canvas.height = height;
+                    ctx.drawImage(img, 0, 0, width, height);
+
+                    const compressedBase64 = canvas.toDataURL('image/jpeg', 0.8);
+                    
+                    // Upload to ImgBB
+                    const base64Data = compressedBase64.split(',')[1];
+                    const formData = new FormData();
+                    formData.append("image", base64Data);
+                    
+                    fetch("https://api.imgbb.com/1/upload?key=727c66ecfe2882d63fee08fee7495850", {
+                        method: "POST",
+                        body: formData
+                    })
+                    .then(response => response.json())
+                    .then(result => {
+                        if(result.success) {
+                            document.getElementById('bannerBase64').value = result.data.url;
+                            document.getElementById('bannerPreview').src = result.data.url;
+                            
+                            document.getElementById('bannerArea').style.display = 'none';
+                            document.getElementById('bannerPreview').style.display = 'block';
+                            document.getElementById('removeBanner').style.display = 'block';
+                            
+                            showToast("Image uploaded successfully!");
+                            calculateProgress();
+                        } else {
+                            throw new Error("ImgBB Failed");
+                        }
+                    })
+                    .catch(error => {
+                        // Fallback to raw base64 if API fails
+                        document.getElementById('bannerBase64').value = compressedBase64;
+                        document.getElementById('bannerPreview').src = compressedBase64;
+                        
+                        document.getElementById('bannerArea').style.display = 'none';
+                        document.getElementById('bannerPreview').style.display = 'block';
+                        document.getElementById('removeBanner').style.display = 'block';
+                        
+                        showToast("Image saved locally.");
+                        calculateProgress();
+                    })
+                    .finally(() => {
+                        titleState.innerText = "Upload Banner Image *";
+                        descState.innerText = "High-quality banner (16:9 ratio) • Max 5MB";
+                        iconState.className = "fa-solid fa-cloud-arrow-up";
+                    });
+                };
+                img.src = e.target.result;
             };
             reader.readAsDataURL(file);
-            event.target.value = ""; // Reset input so same file can be selected again if cancelled
-        }
-
-        function cancelCrop() {
-            document.getElementById('cropperModal').classList.remove('active');
-            if (cropper) { cropper.destroy(); cropper = null; }
-        }
-
-        function confirmCrop() {
-            if (!cropper) return;
-            
-            const canvas = cropper.getCroppedCanvas({
-                maxWidth: 1280, // Enforce HD max width for compression
-                maxHeight: 1280
-            });
-
-            // Compress to JPEG with 0.7 quality
-            const compressedBase64 = canvas.toDataURL('image/jpeg', 0.7);
-            
-            // Apply to UI immediately
-            document.getElementById(currentUploadState.areaId).style.display = 'none';
-            document.getElementById(currentUploadState.previewId).src = compressedBase64;
-            document.getElementById(currentUploadState.previewId).style.display = 'block';
-            document.getElementById(currentUploadState.removeBtnId).style.display = 'block';
-            document.getElementById(currentUploadState.areaId).classList.remove('error');
-            
-            cancelCrop();
-            showToast("Compressing and generating secure link...");
-
-            // Upload to ImgBB to get Short Link (so Google Sheets doesn't crash from huge base64 strings)
-            const base64Data = compressedBase64.split(',')[1];
-            const formData = new FormData();
-            formData.append("image", base64Data);
-            
-            fetch("https://api.imgbb.com/1/upload?key=727c66ecfe2882d63fee08fee7495850", {
-                method: "POST",
-                body: formData
-            })
-            .then(response => response.json())
-            .then(result => {
-                if(result.success) {
-                    document.getElementById(currentUploadState.base64Id).value = result.data.url;
-                    showToast("Image processed successfully!");
-                    calculateProgress();
-                } else {
-                    document.getElementById(currentUploadState.base64Id).value = compressedBase64;
-                    calculateProgress();
-                }
-            })
-            .catch(error => {
-                document.getElementById(currentUploadState.base64Id).value = compressedBase64;
-                calculateProgress();
-            });
         }
 
         function removeImage(inputId, base64Id, areaId, previewId, removeBtnId) {
@@ -928,7 +899,7 @@
                     if(r.id === 'hiddenRules') {
                         document.getElementById('rtContainer').classList.add('error');
                         if(!firstError) firstError = document.getElementById('rtContainer');
-                    } else if (r.id === 'bannerInput') {
+                    } else if (r.id === 'bannerBase64') { // Changed check to base64 hidden input
                         document.getElementById('bannerArea').classList.add('error');
                         if(!firstError) firstError = document.getElementById('bannerArea');
                     } else {
@@ -937,7 +908,7 @@
                     }
                 } else { 
                     if(r.id === 'hiddenRules') document.getElementById('rtContainer').classList.remove('error');
-                    else if (r.id === 'bannerInput') document.getElementById('bannerArea').classList.remove('error');
+                    else if (r.id === 'bannerBase64') document.getElementById('bannerArea').classList.remove('error');
                     else r.classList.remove('error'); 
                 }
             });
