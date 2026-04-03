@@ -70,6 +70,17 @@
             background: radial-gradient(circle at 50% 50%, #15062e 0%, #070311 100%);
         }
 
+        /* --- TOURNYX TX COMPOSITE TICKET ICON --- */
+        .tx-ticket-composite {
+            position: relative; display: inline-flex; align-items: center; justify-content: center;
+        }
+        .tx-ticket-composite i { font-size: inherit; transition: inherit; }
+        .tx-ticket-composite .tx-text {
+            position: absolute; top: 50%; left: 50%; transform: translate(-50%, -46%); font-family: var(--font-head);
+            font-size: 0.38em; font-weight: 900; color: var(--primary-bg) !important; -webkit-text-fill-color: var(--primary-bg) !important;
+            letter-spacing: -0.5px; pointer-events: none; z-index: 2; transition: 0.3s; font-style: normal !important;
+        }
+
         /* --- HEADER --- */
         .top-header {
             position: fixed; top: 0; left: 0; width: 100%; padding: 10px 15px; height: calc(65px + env(safe-area-inset-top));
@@ -133,28 +144,33 @@
         .footer-logo { font-family: var(--font-head); font-size: 1.1rem; letter-spacing: 1px; color: white; margin-bottom: 5px; display: inline-flex; align-items: center; gap: 8px; }
 
         /* PERFECTLY ALIGNED 7-TAB BOTTOM NAVIGATION */
-        .bottom-nav { position: fixed; bottom: 0; left: 0; width: 100%; height: calc(65px + env(safe-area-inset-bottom)); background: rgba(7, 3, 17, 0.95); backdrop-filter: blur(20px); border-top: 1px solid var(--card-border); z-index: 1000; display: flex; justify-content: space-between; align-items: flex-start; padding: 10px 5px env(safe-area-inset-bottom); box-shadow: 0 -10px 30px rgba(0,0,0,0.8); }
-        .nav-item { display: flex; flex-direction: column; align-items: center; justify-content: flex-start; color: #666; text-decoration: none; font-size: 0.65rem; font-family: var(--font-head); font-weight: bold; flex: 1; transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); position: relative; }
-        .nav-item span { margin-top: 4px; transition: 0.3s; }
-        .nav-item i { font-size: 1.3rem; transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+        .bottom-nav { position: fixed; bottom: 0; left: 0; width: 100%; height: calc(65px + env(safe-area-inset-bottom, 0px)); background: rgba(7, 3, 17, 0.92); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); display: flex; justify-content: space-between; align-items: flex-start; padding: 10px 2px env(safe-area-inset-bottom, 0px); border-top: 1px solid rgba(255,255,255,0.05); z-index: 1000; box-shadow: 0 -10px 30px rgba(0,0,0,0.6); }
+        .nav-item { display: flex; flex-direction: column; align-items: center; justify-content: flex-start; color: #666; text-decoration: none; font-size: 0.6rem; font-family: var(--font-head); font-weight: bold; flex: 1; transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); position: relative; padding: 0 2px; text-align: center;}
+        .nav-item span { margin-top: 4px; transition: 0.3s; letter-spacing: -0.3px;}
+        
+        .nav-item > i, .nav-item > .tx-icon, .nav-item > .tx-ticket-composite { 
+            font-size: 1.2rem; transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); color: #666; background: none; -webkit-text-fill-color: #666; filter: none; font-style: normal;
+            height: 24px; width: 24px; display: flex; align-items: center; justify-content: center; 
+        }
+        .tx-ticket-composite i { display: block; line-height: 1; font-size: 1.2rem; color: inherit; -webkit-text-fill-color: inherit; transition: 0.3s; background: inherit; filter: inherit; -webkit-background-clip: inherit;}
+
         .nav-item.active { color: var(--accent-cyan); }
-        .nav-item.active i { transform: translateY(-4px); filter: drop-shadow(0 0 10px var(--accent-cyan)); }
-        .nav-item.active span { transform: translateY(2px); color: white; }
+        html.theme-vip .nav-item.active { color: #FFD700; }
+        
+        .nav-item.active > .tx-ticket-composite { transform: translateY(-4px); }
+        .nav-item.active > i, .nav-item.active > .tx-icon, .nav-item.active > .tx-ticket-composite i { transform: translateY(-4px); background: linear-gradient(135deg, var(--accent-purple), var(--accent-cyan)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; filter: drop-shadow(0 0 10px var(--accent-cyan)); font-style: normal; }
+        html.theme-vip .nav-item.active > i, html.theme-vip .nav-item.active > .tx-icon, html.theme-vip .nav-item.active > .tx-ticket-composite i { background: linear-gradient(135deg, #FFE87C, #FF8C00); -webkit-background-clip: text; -webkit-text-fill-color: transparent; filter: drop-shadow(0 0 10px rgba(212,175,55,0.8)); }
+        .nav-item.active .tx-ticket-composite i { transform: translateY(0); } 
+        
+        .nav-item.active span { transform: translateY(2px); color: white; text-shadow: 0 0 5px rgba(255,255,255,0.5);}
         .fab-slot { flex: 1.2; display: flex; justify-content: center; position: relative; height: 100%; align-items: center; }
-        .floating-plus { position: absolute; top: -30px; left: 50%; transform: translateX(-50%); width: 58px; height: 58px; background: linear-gradient(135deg, var(--accent-cyan), var(--accent-purple)); border-radius: 50%; display: flex; align-items: center; justify-content: center; border: 4px solid var(--primary-bg); box-shadow: 0 10px 25px rgba(189,0,255,0.5); color: #fff; font-size: 1.8rem; cursor: pointer; transition: 0.4s; z-index: 10; }
-        .floating-plus:active { transform: translateX(-50%) scale(0.95); box-shadow: 0 5px 15px rgba(189,0,255,0.4); }
+        .floating-plus { position: absolute; top: -25px; left: 50%; transform: translateX(-50%); width: 54px; height: 54px; background: linear-gradient(135deg, var(--accent-cyan), var(--accent-purple)); border-radius: 50%; display: flex; align-items: center; justify-content: center; border: 4px solid var(--primary-bg); box-shadow: 0 10px 25px rgba(189,0,255,0.5); color: #fff; font-size: 1.6rem; cursor: pointer; transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); z-index: 10; }
+        html.theme-vip .floating-plus { background: linear-gradient(135deg, #FFE87C, #FF8C00); box-shadow: 0 10px 25px rgba(212,175,55,0.4); border-color: #000; color: #000; }
+        .floating-plus:hover { transform: translateX(-50%) scale(1.1) rotate(90deg); box-shadow: 0 15px 35px rgba(0,242,255,0.6); }
 
         @media (min-width: 850px) { .bottom-nav { display: none !important; } body { padding-bottom: 0; } }
         .median-active .top-header { display: none !important; } .median-active { padding-top: 15px !important; }
     </style>
-
-    <script>
-        document.addEventListener("DOMContentLoaded", function() {
-            if (navigator.userAgent.indexOf('gonative') > -1 || navigator.userAgent.indexOf('median') > -1) {
-                document.body.classList.add('median-active');
-            }
-        });
-    </script>
 </head>
 <body>
 
@@ -181,11 +197,11 @@
                 <i class="fa-solid fa-database policy-icon"></i>
                 <div class="policy-title">1. Information We Collect</div>
             </div>
-            <p class="policy-text">To provide a seamless matchmaking and wallet experience on the Tournyx app and website, we collect strictly necessary data:</p>
+            <p class="policy-text">To provide a seamless matchmaking and digital ticket experience on the Tournyx app and website, we collect strictly necessary data:</p>
             <ul class="policy-list">
                 <li><span class="highlight">Account Info:</span> Your Email Address, unique Display Name, and encrypted password.</li>
                 <li><span class="highlight">Gaming Identity:</span> Specific In-Game Names (IGN) and Player UIDs (e.g., Free Fire, BGMI) required for match verification.</li>
-                <li><span class="highlight">Financial Data:</span> Transaction history regarding your Tournyx Wallet. <strong style="color:var(--accent-red);">We do NOT collect, store, or process full credit/debit card numbers or UPI PINs</strong> on our servers. All financial transactions are securely processed by RBI-regulated, PCI-DSS compliant payment aggregators.</li>
+                <li><span class="highlight">Financial Data:</span> Transaction history regarding your Tournyx Passes. <strong style="color:var(--accent-red);">We do NOT collect, store, or process full credit/debit card numbers or UPI PINs</strong> on our servers. All financial transactions are securely processed by RBI-regulated, PCI-DSS compliant payment aggregators.</li>
             </ul>
         </div>
 
@@ -197,7 +213,7 @@
             <p class="policy-text">Your data powers the Tournyx app and website. We use it exclusively to:</p>
             <ul class="policy-list">
                 <li>Verify your identity in custom tournament lobbies to prevent ringers and account sharing.</li>
-                <li>Process automated wallet transactions, track tournament entry fees, and facilitate prize distributions securely.</li>
+                <li>Process automated ticket transactions, track tournament entry allocations, and facilitate reward distributions securely.</li>
                 <li>Comply with legal obligations, resolve financial disputes, and prevent fraudulent transactions in compliance with local laws and regulations.</li>
             </ul>
         </div>
@@ -209,7 +225,7 @@
             </div>
             <p class="policy-text">We treat your data like a secure payload. Tournyx uses secure database protocols to ensure your information cannot be intercepted.</p>
             <ul class="policy-list">
-                <li><span class="highlight">Payment Partners:</span> We share only strictly necessary transaction identifiers (like Order IDs and Amounts) with our secure payment gateway partners (e.g., Cashfree, Razorpay) to process your wallet top-ups.</li>
+                <li><span class="highlight">Payment Partners:</span> We share only strictly necessary transaction identifiers (like Order IDs and Amounts) with our secure payment gateway partners (e.g., Cashfree, Razorpay) to process your digital pass top-ups.</li>
                 <li>We <span class="highlight" style="color:var(--accent-red); background:rgba(255,77,77,0.1)">never</span> sell, rent, or trade your personal data to third-party advertising agencies.</li>
                 <li><span class="highlight">Legal Compliance:</span> We reserve the right to disclose necessary information to law enforcement agencies or regulatory authorities if mandated by applicable law.</li>
             </ul>
@@ -222,7 +238,7 @@
             </div>
             <p class="policy-text">You have absolute control over your digital footprint on the Tournyx app and website:</p>
             <ul class="policy-list">
-                <li><span class="highlight">Data Deletion:</span> You can permanently erase all your data, match history, and wallet balances using the "Delete Account" button located in the Settings. This action is instantaneous and irreversible.</li>
+                <li><span class="highlight">Data Deletion:</span> You can permanently erase all your data, match history, and ticket balances using the "Delete Account" button located in the Settings. This action is instantaneous and irreversible.</li>
                 <li><span class="highlight">Opt-Out:</span> You may toggle off App Animations, Haptics, and WhatsApp Alerts at any time without losing access to the app.</li>
             </ul>
         </div>
@@ -232,7 +248,7 @@
                 <i class="fa-solid fa-scale-balanced policy-icon"></i>
                 <div class="policy-title">5. Grievance & Compliance</div>
             </div>
-            <p class="policy-text">In accordance with applicable data protection and consumer privacy laws, Tournyx Esports (MSME Registered) is committed to resolving any data or payment discrepancies. If you have any financial or data-related grievances, please contact our designated Grievance Officer via the support email below.</p>
+            <p class="policy-text">In accordance with applicable data protection and consumer privacy laws, Tournyx Esports (MSME Registered) is committed to resolving any data or payment discrepancies. If you have any financial or data-related grievances regarding your digital ticket purchases, please contact our designated Grievance Officer via the support email below.</p>
         </div>
 
         <div class="contact-box" onclick="triggerHaptic(); window.open('mailto:privacy@tournyx.in', '_blank');">
@@ -248,29 +264,40 @@
         <div style="margin-top: 5px; font-size: 0.7rem; color: #666;">&copy; 2026 Tournyx Esports. All Rights Reserved.</div>
     </div>
 
-    <nav class="bottom-nav" id="bottomNavBar">
-        <a class="nav-item" href="index.html" onclick="triggerHaptic()">
-            <i class="fa-solid fa-house"></i><span>Home</span>
+    <nav class="bottom-nav">
+        <a class="nav-item" href="index.html">
+            <i class="fa-solid fa-house"></i>
+            <span>Home</span>
         </a>
-        <a class="nav-item" href="explore.html" onclick="triggerHaptic()">
-            <i class="fa-solid fa-compass"></i><span>Explore</span>
+        <a class="nav-item" href="explore.html">
+            <i class="fa-solid fa-compass"></i>
+            <span>Explore</span>
         </a>
-        <a class="nav-item" href="matches.html" onclick="triggerHaptic()">
-            <i class="fa-solid fa-trophy"></i><span>Matches</span>
+        <a class="nav-item" href="matches.html">
+            <i class="fa-solid fa-trophy"></i>
+            <span>Matches</span>
         </a>
+        
         <div class="fab-slot">
-            <div class="floating-plus" onclick="window.location.href='tournament.html'; triggerHaptic();">
+            <div class="floating-plus" onclick="window.location.href='tournament.html'">
                 <i class="fa-solid fa-plus"></i>
             </div>
         </div>
-        <a class="nav-item" href="clans.html" onclick="triggerHaptic()">
-            <i class="fa-solid fa-shield-halved"></i><span>Clan</span>
+        
+        <a class="nav-item" href="clans.html">
+            <i class="fa-solid fa-shield-halved"></i>
+            <span>Clan</span>
         </a>
-        <a class="nav-item" href="wallet.html" onclick="triggerHaptic()">
-            <i class="fa-solid fa-wallet"></i><span>Wallet</span>
+        <a class="nav-item" href="tickets.html">
+            <div class="tx-ticket-composite">
+                <i class="fa-solid fa-ticket"></i>
+                <b class="tx-text">TX</b>
+            </div>
+            <span>Tickets</span>
         </a>
-        <a class="nav-item active" href="profile.html" onclick="triggerHaptic()">
-            <i class="fa-solid fa-user"></i><span>Profile</span>
+        <a class="nav-item active" href="profile.html">
+            <i class="fa-solid fa-user"></i>
+            <span>Profile</span>
         </a>
     </nav>
 
