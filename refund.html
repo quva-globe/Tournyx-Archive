@@ -70,6 +70,17 @@
             background: radial-gradient(circle at 50% 50%, #15062e 0%, #070311 100%);
         }
 
+        /* --- TOURNYX TX COMPOSITE TICKET ICON --- */
+        .tx-ticket-composite {
+            position: relative; display: inline-flex; align-items: center; justify-content: center;
+        }
+        .tx-ticket-composite i { font-size: inherit; transition: inherit; }
+        .tx-ticket-composite .tx-text {
+            position: absolute; top: 50%; left: 50%; transform: translate(-50%, -46%); font-family: var(--font-head);
+            font-size: 0.38em; font-weight: 900; color: var(--primary-bg) !important; -webkit-text-fill-color: var(--primary-bg) !important;
+            letter-spacing: -0.5px; pointer-events: none; z-index: 2; transition: 0.3s; font-style: normal !important;
+        }
+
         /* --- HEADER --- */
         .top-header {
             position: fixed; top: 0; left: 0; width: 100%; padding: 10px 15px; height: calc(65px + env(safe-area-inset-top));
@@ -98,10 +109,10 @@
         .policy-card:hover { border-color: var(--accent-cyan); transform: translateY(-3px); box-shadow: 0 15px 35px rgba(0,242,255,0.15); }
 
         /* Card Accents */
-        .pc-rules { border-left: 4px solid var(--accent-red); }
         .pc-privacy { border-left: 4px solid var(--accent-cyan); }
-        .pc-prizes { border-left: 4px solid var(--accent-green); }
         .pc-general { border-left: 4px solid var(--accent-purple); }
+        .pc-rules { border-left: 4px solid var(--accent-red); }
+        .pc-prizes { border-left: 4px solid var(--accent-green); }
 
         .policy-header { display: flex; align-items: center; gap: 12px; margin-bottom: 15px; border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 12px; }
         .policy-icon { font-size: 1.4rem; }
@@ -130,29 +141,35 @@
         .app-footer { text-align: center; padding: 20px 20px 40px 20px; color: #555; font-size: 0.75rem; font-family: var(--font-body); letter-spacing: 1px; margin-top: 20px; max-width: 800px; margin-left: auto; margin-right: auto; }
         .footer-logo { font-family: var(--font-head); font-size: 1.1rem; letter-spacing: 1px; color: white; margin-bottom: 5px; display: inline-flex; align-items: center; gap: 8px; }
 
-        /* --- PERFECT BOTTOM NAVIGATION (MOBILE OPTIMIZED) --- */
-        .bottom-nav { position: fixed; bottom: 0; left: 0; width: 100%; height: calc(65px + env(safe-area-inset-bottom)); background: rgba(5, 2, 12, 0.75); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); display: flex; justify-content: space-between; align-items: flex-start; padding: 10px 2px env(safe-area-inset-bottom); border-top: 1px solid rgba(255,255,255,0.05); z-index: 1000; box-shadow: 0 -10px 30px rgba(0,0,0,0.5); transform: translateZ(0);}
-        .nav-item { display: flex; flex-direction: column; align-items: center; justify-content: flex-start; color: #666; text-decoration: none; font-size: 0.6rem; font-family: var(--font-head); font-weight: bold; flex: 1; transition: 0.3s; position: relative; padding: 0 2px; text-align: center;}
+        /* PERFECTLY ALIGNED BOTTOM NAVIGATION (Copied from explore.html) */
+        .bottom-nav { position: fixed; bottom: 0; left: 0; width: 100%; height: calc(65px + env(safe-area-inset-bottom, 0px)); background: rgba(7, 3, 17, 0.92); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); display: flex; justify-content: space-between; align-items: flex-start; padding: 10px 2px env(safe-area-inset-bottom, 0px); border-top: 1px solid rgba(255,255,255,0.05); z-index: 1000; box-shadow: 0 -10px 30px rgba(0,0,0,0.6); }
+        .nav-item { display: flex; flex-direction: column; align-items: center; justify-content: flex-start; color: #666; text-decoration: none; font-size: 0.6rem; font-family: var(--font-head); font-weight: bold; flex: 1; transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); position: relative; padding: 0 2px; text-align: center;}
         .nav-item span { margin-top: 4px; transition: 0.3s; letter-spacing: -0.3px;}
-        .nav-item i { font-size: 1.2rem; transition: 0.3s; }
+        
+        /* Fixed Icon Alignment */
+        .nav-item > i, .nav-item > .tx-icon, .nav-item > .tx-ticket-composite { 
+            font-size: 1.2rem; transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); color: #666; background: none; -webkit-text-fill-color: #666; filter: none; font-style: normal;
+            height: 24px; width: 24px; display: flex; align-items: center; justify-content: center; 
+        }
+        .tx-ticket-composite i { display: block; line-height: 1; font-size: 1.2rem; color: inherit; -webkit-text-fill-color: inherit; transition: 0.3s; background: inherit; filter: inherit; -webkit-background-clip: inherit;}
+
         .nav-item.active { color: var(--accent-cyan); }
-        .nav-item.active i { transform: translateY(-4px); color: var(--accent-cyan); filter: drop-shadow(0 0 10px var(--accent-cyan)); }
+        html.theme-vip .nav-item.active { color: #FFD700; }
+        
+        .nav-item.active > .tx-ticket-composite { transform: translateY(-4px); }
+        .nav-item.active > i, .nav-item.active > .tx-icon, .nav-item.active > .tx-ticket-composite i { transform: translateY(-4px); background: linear-gradient(135deg, var(--accent-purple), var(--accent-cyan)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; filter: drop-shadow(0 0 10px var(--accent-cyan)); font-style: normal; }
+        html.theme-vip .nav-item.active > i, html.theme-vip .nav-item.active > .tx-icon, html.theme-vip .nav-item.active > .tx-ticket-composite i { background: linear-gradient(135deg, #FFE87C, #FF8C00); -webkit-background-clip: text; -webkit-text-fill-color: transparent; filter: drop-shadow(0 0 10px rgba(212,175,55,0.8)); }
+        .nav-item.active .tx-ticket-composite i { transform: translateY(0); } /* Reset inner transform */
+        
         .nav-item.active span { transform: translateY(2px); color: white; text-shadow: 0 0 5px rgba(255,255,255,0.5);}
         .fab-slot { flex: 1.2; display: flex; justify-content: center; position: relative; height: 100%; align-items: center; }
-        .floating-plus { position: absolute; top: -25px; left: 50%; transform: translateX(-50%); width: 54px; height: 54px; background: linear-gradient(135deg, var(--accent-cyan), var(--accent-purple)); border-radius: 50%; display: flex; align-items: center; justify-content: center; border: 4px solid var(--primary-bg); box-shadow: 0 10px 25px rgba(189,0,255,0.4); color: #fff; font-size: 1.6rem; cursor: pointer; transition: 0.3s; z-index: 10; }
+        .floating-plus { position: absolute; top: -25px; left: 50%; transform: translateX(-50%); width: 54px; height: 54px; background: linear-gradient(135deg, var(--accent-cyan), var(--accent-purple)); border-radius: 50%; display: flex; align-items: center; justify-content: center; border: 4px solid var(--primary-bg); box-shadow: 0 10px 25px rgba(189,0,255,0.4); color: #fff; font-size: 1.6rem; cursor: pointer; transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); z-index: 10; }
+        html.theme-vip .floating-plus { background: linear-gradient(135deg, #FFE87C, #D4AF37); box-shadow: 0 10px 25px rgba(212,175,55,0.4); border-color: #000; color: #000; }
         .floating-plus:hover { transform: translateX(-50%) scale(1.1) rotate(90deg); box-shadow: 0 15px 35px rgba(0,242,255,0.6); }
 
         @media (min-width: 850px) { .bottom-nav { display: none !important; } body { padding-bottom: 0; } }
         .median-active .top-header { display: none !important; } .median-active { padding-top: 15px !important; }
     </style>
-
-    <script>
-        document.addEventListener("DOMContentLoaded", function() {
-            if (navigator.userAgent.indexOf('gonative') > -1 || navigator.userAgent.indexOf('median') > -1) {
-                document.body.classList.add('median-active');
-            }
-        });
-    </script>
 </head>
 <body>
 
@@ -177,11 +194,11 @@
         <div class="policy-card pc-privacy">
             <div class="policy-header">
                 <i class="fa-solid fa-wallet policy-icon"></i>
-                <div class="policy-title">1. Wallet Top-ups</div>
+                <div class="policy-title">1. Digital Ticket Purchases</div>
             </div>
-            <p class="policy-text">Any funds added to the Tournyx Wallet are converted directly into <span class="highlight">Money (Rs)</span> or <span class="highlight">Points (PTS)</span> strictly to be used for tournament entry fees and are generally non-refundable.</p>
+            <p class="policy-text">All purchases of digital Tournyx Passes / Tickets are strictly to be used for tournament entry fees and are generally non-refundable.</p>
             <ul class="policy-list">
-                <li>Funds cannot be withdrawn back to your bank account unless specifically requested through a Verified Organizer withdrawal or required by law.</li>
+                <li>Digital passes cannot be withdrawn, redeemed for cash, or transferred to your bank account unless specifically required by law.</li>
                 <li>Exceptions are only made in the case of a severe technical error resulting in a double charge.</li>
             </ul>
         </div>
@@ -193,7 +210,7 @@
             </div>
             <p class="policy-text">If a tournament is cancelled by Tournyx Esports or the organizer for any reason (e.g., server issues, lack of participants):</p>
             <ul class="policy-list">
-                <li><span class="highlight">100% of the entry fee</span> will be immediately refunded back to the user's Tournyx Wallet as either Money (Rs) or Points (PTS), depending on the original payment method used.</li>
+                <li><span class="highlight">100% of the entry pass</span> will be automatically and immediately refunded back to the user's Tournyx Inventory as digital Tournyx Passes or Points (PTS), depending on the original payment method used.</li>
             </ul>
         </div>
 
@@ -204,8 +221,8 @@
             </div>
             <p class="policy-text">To maintain competitive integrity and fair brackets for all players:</p>
             <ul class="policy-list">
-                <li>If a user securely leaves a tournament before the registration deadline, <span class="highlight">100% of the entry fee</span> will be safely refunded back to their wallet within 1-3 working days.</li>
-                <li>Once the bracket/matchmaking has been generated or the match has started, the entry fee is strictly <span class="highlight">non-refundable</span>.</li>
+                <li>If a user securely leaves a tournament before the registration deadline, <span class="highlight">100% of the entry pass</span> will be safely refunded back to their inventory.</li>
+                <li>Once the bracket/matchmaking has been generated or the match has started, the entry pass is strictly <span class="highlight">non-refundable</span>.</li>
                 <li>If a user fails to attend the match or drops out (No-Show) without withdrawing prior to the start, no refund will be provided.</li>
             </ul>
         </div>
@@ -218,7 +235,7 @@
             <p class="policy-text">Tournyx maintains a zero-tolerance policy for cheating.</p>
             <ul class="policy-list">
                 <li>If a user is found violating the game rules, using hacks, or engaging in toxic behavior, their account will be permanently banned.</li>
-                <li>Any entry fees paid for ongoing tournaments and remaining <span class="highlight">Money (Rs) & Points (PTS)</span> will be completely forfeited and not refunded.</li>
+                <li>Any entry passes paid for ongoing tournaments and remaining <span class="highlight">Tournyx Passes & Points (PTS)</span> will be completely forfeited and not refunded.</li>
             </ul>
         </div>
 
@@ -243,32 +260,43 @@
     <div class="app-footer">
         <div class="footer-logo"><img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEg_20wCR-WBMpQmw3vxcYUf-vxIO1PYDJoQN_Sid3UDjA9tf0cuX0eH40jbzHoJad4cxbnjhPjqfCw1Z5V1LhgN9zFuIQC0fJjecTy3D9PFu5WjR2H1wHwTD1bUGnXY_NiApWn5gMs6velcQngSzKoP1yHzX0cVsFSUFM8zIefcbiPayY7680Kz0V0ZAAE/s1264/1000093706.png" style="width:20px;"> TOURNYX</div>
         <div>Built for Gamers, By Gamers.</div>
-        <div style="margin-top: 5px; font-size: 0.7rem; color: #666;">&copy; © 2026 Tournyx Esports All rights reserved</div>
+        <div style="margin-top: 5px; font-size: 0.7rem; color: #666;">&copy; 2026 Tournyx Esports. All Rights Reserved.</div>
     </div>
 
-    <nav class="bottom-nav" id="bottomNavBar">
-        <a class="nav-item" href="index.html" onclick="triggerHaptic()">
-            <i class="fa-solid fa-house"></i><span>Home</span>
+    <nav class="bottom-nav">
+        <a class="nav-item" href="index.html">
+            <i class="fa-solid fa-house"></i>
+            <span>Home</span>
         </a>
-        <a class="nav-item" href="explore.html" onclick="triggerHaptic()">
-            <i class="fa-solid fa-compass"></i><span>Explore</span>
+        <a class="nav-item" href="explore.html">
+            <i class="fa-solid fa-compass"></i>
+            <span>Explore</span>
         </a>
-        <a class="nav-item" href="matches.html" onclick="triggerHaptic()">
-            <i class="fa-solid fa-trophy"></i><span>Matches</span>
+        <a class="nav-item" href="matches.html">
+            <i class="fa-solid fa-trophy"></i>
+            <span>Matches</span>
         </a>
+        
         <div class="fab-slot">
-            <div class="floating-plus" onclick="window.location.href='tournament.html'; triggerHaptic();">
+            <div class="floating-plus" onclick="window.location.href='tournament.html'">
                 <i class="fa-solid fa-plus"></i>
             </div>
         </div>
-        <a class="nav-item" href="clans.html" onclick="triggerHaptic()">
-            <i class="fa-solid fa-shield-halved"></i><span>Clan</span>
+        
+        <a class="nav-item" href="clans.html">
+            <i class="fa-solid fa-shield-halved"></i>
+            <span>Clan</span>
         </a>
-        <a class="nav-item" href="wallet.html" onclick="triggerHaptic()">
-            <i class="fa-solid fa-wallet"></i><span>Wallet</span>
+        <a class="nav-item" href="tickets.html">
+            <div class="tx-ticket-composite">
+                <i class="fa-solid fa-ticket"></i>
+                <b class="tx-text">TX</b>
+            </div>
+            <span>Tickets</span>
         </a>
-        <a class="nav-item" href="profile.html" onclick="triggerHaptic()">
-            <i class="fa-solid fa-user"></i><span>Profile</span>
+        <a class="nav-item active" href="profile.html">
+            <i class="fa-solid fa-user"></i>
+            <span>Profile</span>
         </a>
     </nav>
 
