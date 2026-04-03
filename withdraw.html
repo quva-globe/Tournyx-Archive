@@ -58,38 +58,36 @@
         
         #particles-canvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; pointer-events: none; transform: translateZ(0); }
         .bg-gradient { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -2; background: radial-gradient(circle at 50% 0%, #15062e 0%, #070311 100%); pointer-events: none;}
+        .orb { position: fixed; border-radius: 50%; filter: blur(80px); opacity: 0.25; pointer-events: none; z-index: -1; animation: floatOrb 10s infinite ease-in-out alternate; }
+        .orb-1 { width: 300px; height: 300px; background: var(--accent-purple); top: -50px; left: -100px; }
+        .orb-2 { width: 250px; height: 250px; background: var(--accent-cyan); bottom: 10%; right: -50px; animation-delay: -5s; }
+        @keyframes floatOrb { 0% { transform: translate(0, 0) scale(1); } 100% { transform: translate(50px, 50px) scale(1.1); } }
         
-        .tx-ticket-composite { position: relative; display: inline-flex; align-items: center; justify-content: center; }
-        .tx-ticket-composite i { font-size: inherit; transition: inherit; }
-        .tx-ticket-composite .tx-text { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -46%); font-family: var(--font-head); font-size: 0.38em; font-weight: 900; color: var(--primary-bg) !important; -webkit-text-fill-color: var(--primary-bg) !important; letter-spacing: -0.5px; pointer-events: none; z-index: 2; transition: 0.3s; font-style: normal !important; }
-
         .animate-section { animation: slideUpGlow 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275) both; }
         @keyframes slideUpGlow { 0% { opacity: 0; transform: translateY(30px); } 100% { opacity: 1; transform: translateY(0); } }
         .delay-1 { animation-delay: 0.1s; } .delay-2 { animation-delay: 0.2s; } .delay-3 { animation-delay: 0.3s; } .delay-4 { animation-delay: 0.4s; }
         
         /* --- HEADER --- */
         .top-header { 
-            position: fixed; top: 0; left: 0; width: 100%; height: 65px;
-            padding: 0 15px; 
-            background: rgba(5, 2, 12, 0.85); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); 
-            border-bottom: 1px solid rgba(255, 255, 255, 0.05); z-index: 2000; box-shadow: 0 4px 30px rgba(0, 0, 0, 0.5); transform: translateZ(0); display: flex; align-items: center;
+            position: fixed; top: 0; left: 0; width: 100%; 
+            padding: calc(12px + env(safe-area-inset-top)) 10px 12px; 
+            background: rgba(5, 2, 12, 0.6); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); 
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05); z-index: 2000; box-shadow: 0 4px 30px rgba(0, 0, 0, 0.5); transform: translateZ(0);
         }
         .header-wrapper { display: flex; align-items: center; justify-content: space-between; gap: 5px;}
         .header-left { display: flex; align-items: center; gap: 8px; flex: 1; min-width: 0; }
         .back-btn { color: white; font-size: 1.3rem; text-decoration: none; transition: 0.3s; cursor: pointer; padding: 5px; flex-shrink:0;}
         .back-btn:active { color: var(--accent-cyan); transform: scale(0.9); }
-        html.theme-vip .back-btn:active { color: #FFD700; }
-        .app-title { font-family: var(--font-head); font-size: 1.15rem; font-weight: 700; background: var(--accent-gradient); -webkit-background-clip: text; -webkit-text-fill-color: transparent; letter-spacing: 0px; white-space: normal; line-height: 1.1; text-transform: uppercase; margin:0;}
-        
+        .app-title { font-family: var(--font-head); font-size: 1.15rem; font-weight: 700; background: var(--accent-gradient); -webkit-background-clip: text; -webkit-text-fill-color: transparent; letter-spacing: 0px; white-space: normal; line-height: 1.1; word-break: break-word; text-transform: uppercase; margin:0;}
+        .header-greeting { font-size: 0.85rem; color: #aaa; margin-bottom: 2px; display: flex; align-items: center; }
+        .header-profile-img { width: 30px; height: 30px; border-radius: 50%; border: 2px solid var(--accent-cyan); object-fit: cover; cursor: pointer; box-shadow: 0 0 10px rgba(0,242,255,0.4); transition: 0.3s; flex-shrink: 0; background:#000; }
+        html.theme-vip .header-profile-img { border-color: #FFD700; box-shadow: 0 0 10px rgba(255,215,0,0.6); }
+
         .desktop-nav { display: none !important; align-items: center; gap: 25px; }
         .desktop-nav a { color: #aaa; text-decoration: none; font-family: var(--font-head); font-size: 0.95rem; font-weight: bold; transition: 0.3s; display: flex; align-items: center; gap: 6px; text-transform: uppercase; letter-spacing: 1px;}
         .desktop-nav a:hover, .desktop-nav a.active { color: var(--accent-cyan); text-shadow: 0 0 10px rgba(0,242,255,0.4); }
         html.theme-vip .desktop-nav a:hover, html.theme-vip .desktop-nav a.active { color: #FFD700; text-shadow: 0 0 10px rgba(255,215,0,0.6); }
         @media (min-width: 850px) { .desktop-nav { display: flex !important; } }
-
-        .header-actions { display: flex; align-items: center; gap: 15px; flex-shrink: 0;}
-        .header-profile-img { width: 35px; height: 35px; border-radius: 50%; border: 2px solid var(--accent-cyan); object-fit: cover; cursor: pointer; background:#000; transition: 0.3s; box-shadow: 0 0 10px rgba(0,242,255,0.4);}
-        html.theme-vip .header-profile-img { border-color: #FFD700; box-shadow: 0 0 10px rgba(255,215,0,0.6); }
         
         .container { padding: 15px; }
 
@@ -97,36 +95,21 @@
         .balance-card { background: linear-gradient(135deg, rgba(0, 242, 255, 0.05), rgba(0, 0, 0, 0)); border: 1px solid rgba(0, 242, 255, 0.2); border-radius: 20px; padding: 25px; text-align: center; margin-bottom: 25px; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4); position: relative; overflow: hidden; animation: borderGlow 4s infinite alternate, slideUpGlow 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275) both; backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);}
         html.theme-vip .balance-card { background: linear-gradient(135deg, rgba(255, 215, 0, 0.05), rgba(0, 0, 0, 0)); border-color: rgba(255, 215, 0, 0.2); }
         @keyframes borderGlow { from{border-color:rgba(0,242,255,0.1); box-shadow: 0 10px 30px rgba(0,242,255,0.1);} to{border-color:rgba(0,242,255,0.3); box-shadow: 0 10px 30px rgba(0,242,255,0.2);} }
-        
         .balance-label { font-size: 0.85rem; color: var(--accent-cyan); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 5px; font-weight: bold; }
         html.theme-vip .balance-label { color: #FFD700; }
         .balance-amount { font-family: var(--font-head); font-size: 2.8rem; color: white; text-shadow: 0 0 15px rgba(0, 242, 255, 0.3); display: flex; align-items: center; justify-content: center; gap: 8px; transition:0.3s;}
         
         .form-group { margin-bottom: 20px; width: 100%; transition: all 0.3s ease; position: relative;}
-        .form-label { display: flex; justify-content: space-between; color: var(--text-muted); font-size: 0.85rem; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.5px; font-family: var(--font-head); font-weight: bold; }
+        .form-label { display: flex; justify-content: space-between; color: var(--text-muted); font-size: 0.85rem; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.5px; font-family: var(--font-head); font-weight: bold; align-items: center;}
         .input-wrapper { position: relative; width: 100%; }
-        .input-prefix { position: absolute; left: 15px; top: 50%; transform: translateY(-50%); color: white; font-family: var(--font-head); font-size: 1.1rem; font-weight: bold; z-index: 2;}
+        .input-prefix { position: absolute; left: 15px; top: 50%; transform: translateY(-50%); color: white; font-family: var(--font-head); font-size: 1.1rem; font-weight: bold; }
         .form-control { width: 100%; background: rgba(0,0,0,0.4); border: 1px solid rgba(255,255,255,0.08); padding: 16px 15px 16px 50px; color: white; border-radius: 12px; font-family: var(--font-body); font-size: 1.1rem; transition: 0.3s; box-shadow: inset 0 0 10px rgba(0,0,0,0.5); outline: none; font-weight: bold; }
         .form-control:focus { border-color: var(--accent-cyan); box-shadow: 0 0 15px rgba(0, 242, 255, 0.2), inset 0 0 10px rgba(0,0,0,0.5); background: rgba(0,0,0,0.6);}
         html.theme-vip .form-control:focus { border-color: #FFD700; box-shadow: 0 0 15px rgba(255, 215, 0, 0.2), inset 0 0 10px rgba(0,0,0,0.5); }
         .form-control.no-prefix { padding-left: 15px; }
-        
-        /* Security Vault Overrides */
-        .vault-locked { color: #888; filter: blur(2px); user-select: none; pointer-events: none; }
-        .vault-btn { position: absolute; right: 10px; top: 50%; transform: translateY(-50%); background: rgba(0,242,255,0.1); color: var(--accent-cyan); border: 1px solid var(--accent-cyan); padding: 6px 12px; border-radius: 8px; font-family: var(--font-head); font-size: 0.75rem; font-weight: bold; cursor: pointer; z-index: 5; transition: 0.3s;}
-        html.theme-vip .vault-btn { background: rgba(255,215,0,0.1); color: #FFD700; border-color: #FFD700; }
-        .vault-btn:active { transform: translateY(-50%) scale(0.9); }
-
         @keyframes shake { 0%,100%{transform:translateX(0);} 20%,60%{transform:translateX(-10px);} 40%,80%{transform:translateX(10px);} }
         .input-error { border-color: var(--accent-red) !important; animation: shake 0.4s both; box-shadow: 0 0 15px rgba(255,77,77,0.3), inset 0 0 10px rgba(0,0,0,0.5) !important; }
         select.form-control { appearance: none; background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%2300f2ff'%3e%3cpath d='M7 10l5 5 5-5z'/%3e%3c/svg%3e"); background-repeat: no-repeat; background-position: right 15px center; background-size: 25px; }
-        
-        .fee-calculator { background: rgba(0,242,255,0.05); border: 1px solid rgba(0,242,255,0.2); padding: 12px 15px; border-radius: 10px; margin-top: 10px; display: flex; justify-content: space-between; align-items: center; font-size: 0.85rem; font-family: var(--font-body); }
-        html.theme-vip .fee-calculator { background: rgba(255,215,0,0.05); border-color: rgba(255,215,0,0.2); }
-        .fee-calculator .fee-amt { color: var(--accent-red); font-weight: bold; }
-        .fee-calculator .payout-amt { color: var(--accent-green); font-weight: bold; font-size: 1.1rem; font-family: var(--font-head); }
-        .pro-zero-fee { color: var(--accent-cyan) !important; text-shadow: 0 0 10px rgba(0,242,255,0.5); }
-        html.theme-vip .pro-zero-fee { color: #FFD700 !important; text-shadow: 0 0 10px rgba(255,215,0,0.5); }
         
         .promo-box { display: flex; gap: 10px; margin-top: 15px; }
         .promo-input { flex: 1; background: rgba(255,255,255,0.05); border: 1px dashed var(--accent-purple); color: white; padding: 10px 15px; border-radius: 8px; outline: none; font-family: var(--font-head); font-size: 0.85rem; text-transform: uppercase;}
@@ -135,6 +118,13 @@
         html.theme-vip .promo-btn { background: rgba(255,215,0,0.2); border-color: #FFD700; }
         .promo-btn:active { transform: scale(0.95); }
 
+        .fee-calculator { background: rgba(0,242,255,0.05); border: 1px solid rgba(0,242,255,0.2); padding: 12px 15px; border-radius: 10px; margin-top: 10px; display: flex; justify-content: space-between; align-items: center; font-size: 0.85rem; font-family: var(--font-body); }
+        html.theme-vip .fee-calculator { background: rgba(255,215,0,0.05); border-color: rgba(255,215,0,0.2); }
+        .fee-calculator .fee-amt { color: var(--accent-red); font-weight: bold; }
+        .fee-calculator .payout-amt { color: var(--accent-green); font-weight: bold; font-size: 1.1rem; font-family: var(--font-head); }
+        .pro-zero-fee { color: var(--accent-cyan) !important; text-shadow: 0 0 10px rgba(0,242,255,0.5); }
+        html.theme-vip .pro-zero-fee { color: #FFD700 !important; text-shadow: 0 0 10px rgba(255,215,0,0.5); }
+        
         .quick-chips { display: flex; gap: 10px; margin-top: 12px; width: 100%; }
         .chip { flex: 1; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08); color: var(--text-muted); padding: 10px 0; border-radius: 8px; text-align: center; font-family: var(--font-head); font-size: 0.85rem; cursor: pointer; transition: 0.3s; font-weight: bold; }
         .chip:active { background: rgba(0, 242, 255, 0.1); color: var(--accent-cyan); border-color: var(--accent-cyan); transform:scale(0.95);}
@@ -216,6 +206,11 @@
         .pin-btn:active { background: var(--accent-cyan); color: black; transform: scale(0.9); }
         html.theme-vip .pin-btn:active { background: #FFD700; color: black; }
         
+        /* SAVED ACCOUNTS MODAL */
+        .saved-acc-item { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); padding: 15px; border-radius: 12px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; cursor: pointer; transition: 0.3s; }
+        .saved-acc-item:active { border-color: var(--accent-cyan); background: rgba(0,242,255,0.1); transform: scale(0.98); }
+        html.theme-vip .saved-acc-item:active { border-color: #FFD700; background: rgba(255,215,0,0.1); }
+        
         .cyber-scanner-overlay { position: fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.95); z-index:9999; display:flex; flex-direction:column; align-items:center; justify-content:center; opacity:0; pointer-events:none; transition:0.4s; backdrop-filter:blur(10px);}
         .cyber-scanner-overlay.active { opacity:1; pointer-events:all; }
         .cyber-circle { width: 100px; height: 100px; border: 3px dashed var(--accent-cyan); border-radius: 50%; animation: spin 4s linear infinite; display: flex; align-items: center; justify-content: center; position: relative;}
@@ -233,26 +228,20 @@
         html.theme-vip #customToast { background-color: #FFD700; box-shadow: 0 8px 25px rgba(255,215,0,0.6); }
         #customToast.show { visibility: visible; opacity: 1; bottom: 100px; }
         
-        /* PERFECT BOTTOM NAVIGATION */
         .bottom-nav { position: fixed; bottom: 0; left: 0; width: 100%; height: calc(65px + env(safe-area-inset-bottom)); background: rgba(5, 2, 12, 0.75); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); display: flex; justify-content: space-between; align-items: flex-start; padding: 10px 2px env(safe-area-inset-bottom); border-top: 1px solid rgba(255,255,255,0.05); z-index: 1000; box-shadow: 0 -10px 30px rgba(0,0,0,0.5); transform: translateZ(0);}
         .nav-item { display: flex; flex-direction: column; align-items: center; justify-content: flex-start; color: #666; text-decoration: none; font-size: 0.6rem; font-family: var(--font-head); font-weight: bold; flex: 1; transition: 0.3s; position: relative; padding: 0 2px; text-align: center;}
         .nav-item span { margin-top: 4px; transition: 0.3s; letter-spacing: -0.3px;}
-        
-        .nav-item > i, .nav-item > .tx-icon, .nav-item > .tx-ticket-composite { 
-            font-size: 1.2rem; transition: 0.3s; color: #666; background: none; -webkit-text-fill-color: #666; filter: none; font-style: normal; 
-            height: 24px; width: 24px; display: flex; align-items: center; justify-content: center;
-        }
+        .nav-item > i, .nav-item > .tx-icon, .nav-item > .tx-ticket-composite { font-size: 1.2rem; transition: 0.3s; color: #666; background: none; -webkit-text-fill-color: #666; filter: none; font-style: normal; height: 24px; width: 24px; display: flex; align-items: center; justify-content: center; }
         .tx-ticket-composite i { display: block; line-height: 1; font-size: 1.2rem; color: inherit; -webkit-text-fill-color: inherit; transition: 0.3s; background: inherit; filter: inherit; -webkit-background-clip: inherit; }
         
         .nav-item.active { color: var(--accent-cyan); }
         html.theme-vip .nav-item.active { color: #FFD700; }
-        
         .nav-item.active > .tx-ticket-composite { transform: translateY(-4px); }
-        .nav-item.active > i, .nav-item.active > .tx-icon, .nav-item.active > .tx-ticket-composite i { transform: translateY(-4px); background: linear-gradient(135deg, var(--accent-purple), var(--accent-cyan)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; filter: drop-shadow(0 0 10px var(--accent-cyan)); font-style: normal;}
+        .nav-item.active > i, .nav-item.active > .tx-icon, .nav-item.active > .tx-ticket-composite i { transform: translateY(-4px); background: linear-gradient(135deg, var(--accent-purple), var(--accent-cyan)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; filter: drop-shadow(0 0 10px var(--accent-cyan)); font-style: normal; }
         html.theme-vip .nav-item.active > i, html.theme-vip .nav-item.active > .tx-icon, html.theme-vip .nav-item.active > .tx-ticket-composite i { background: linear-gradient(135deg, #FFE87C, #FF8C00); -webkit-background-clip: text; -webkit-text-fill-color: transparent; filter: drop-shadow(0 0 10px rgba(212,175,55,0.8)); }
         .nav-item.active .tx-ticket-composite i { transform: translateY(0); }
-        
         .nav-item.active span { transform: translateY(2px); color: white; text-shadow: 0 0 5px rgba(255,255,255,0.5);}
+        
         .fab-slot { flex: 1.2; display: flex; justify-content: center; position: relative; height: 100%; align-items: center; }
         .floating-plus { position: absolute; top: -25px; left: 50%; transform: translateX(-50%); width: 54px; height: 54px; background: linear-gradient(135deg, var(--accent-cyan), var(--accent-purple)); border-radius: 50%; display: flex; align-items: center; justify-content: center; border: 4px solid var(--primary-bg); box-shadow: 0 10px 25px rgba(189,0,255,0.4); color: #fff; font-size: 1.6rem; cursor: pointer; transition: 0.3s; z-index: 10; }
         html.theme-vip .floating-plus { background: linear-gradient(135deg, #FFE87C, #D4AF37); box-shadow: 0 10px 25px rgba(212,175,55,0.4); border-color: #000; color: #000; }
@@ -265,10 +254,8 @@
             .bottom-sheet-overlay.active .bottom-sheet { transform: scale(1) !important; opacity: 1; }
         }
         .median-active .top-header { display: flex !important; visibility: visible !important; }
-
         .app-footer { text-align: center; padding: 20px 20px 110px 20px; color: #555; font-size: 0.75rem; font-family: var(--font-body); letter-spacing: 1px; border-top: 1px solid rgba(255,255,255,0.05); margin-top: 10px;}
 
-        /* INVISIBLE CONTAINER FOR ULTIMATE PDF RENDER */
         #pdfContainerWrapper { position: absolute; left: -9999px; top: -9999px; width: 600px; }
     </style>
 </head>
@@ -354,7 +341,10 @@
         </div>
 
         <div class="form-group animate-section delay-3">
-            <div class="form-label"><span>Payment Method</span> <span style="color:#888; font-size:0.7rem; cursor:pointer;" onclick="clearSavedData(); triggerHaptic();"><i class="fa-solid fa-eraser"></i> Clear Saved</span></div>
+            <div class="form-label">
+                <span>Payment Method</span> 
+                <span style="color:var(--accent-cyan); font-size:0.75rem; cursor:pointer; background:rgba(0,242,255,0.1); padding:2px 8px; border-radius:10px; border:1px solid var(--accent-cyan);" onclick="checkVaultAccess(); triggerHaptic();"><i class="fa-solid fa-vault"></i> Saved Accounts</span>
+            </div>
             <select id="paymentMethod" class="form-control no-prefix" onchange="updatePaymentPlaceholder(); triggerHaptic();">
                 <option value="upi">UPI ID (Fastest)</option>
                 <option value="bank">Bank Transfer (IMPS/NEFT)</option>
@@ -367,7 +357,6 @@
             <label class="form-label" id="paymentDetailsLabel">UPI ID *</label>
             <div class="input-wrapper">
                 <input type="text" id="paymentDetails" class="form-control no-prefix" placeholder="e.g. yourname@oksbi" required>
-                <button id="vaultUnlockBtn" class="vault-btn" style="display:none;" onclick="promptSecurity()"><i class="fa-solid fa-lock"></i> UNLOCK</button>
             </div>
         </div>
 
@@ -376,6 +365,11 @@
             <div class="input-wrapper">
                 <input type="text" id="paymentDetails2" class="form-control no-prefix" placeholder="e.g. SBIN0001234">
             </div>
+        </div>
+
+        <div class="form-group animate-section delay-3" style="display:flex; align-items:center; gap:10px; margin-top:-10px;">
+            <input type="checkbox" id="saveAccountCheck" style="width:18px; height:18px; accent-color:var(--accent-cyan);">
+            <label for="saveAccountCheck" style="font-size:0.85rem; color:#ccc; cursor:pointer;">Save this account to Vault for next time (Max 5)</label>
         </div>
 
         <div class="limit-tracker animate-section delay-4">
@@ -418,8 +412,8 @@
                 <i class="fa-solid fa-xmark close-sheet" onclick="document.getElementById('securityPinModal').classList.remove('active')"></i>
             </div>
             <i class="fa-solid fa-shield-halved" style="font-size: 3.5rem; color: var(--accent-cyan); margin-bottom: 10px; filter: drop-shadow(0 0 15px var(--accent-cyan));"></i>
-            <h2 style="font-family: var(--font-head); font-size: 1.4rem; color: white; margin-bottom: 5px;">Security Check</h2>
-            <p style="font-size: 0.85rem; color: #888;">Enter your 4-digit PIN to access saved payment credentials.</p>
+            <h2 id="pinModalTitle" style="font-family: var(--font-head); font-size: 1.4rem; color: white; margin-bottom: 5px;">Security Check</h2>
+            <p id="pinModalDesc" style="font-size: 0.85rem; color: #888;">Enter your 4-digit PIN to access saved payment credentials.</p>
             
             <div class="pin-dots" id="pinDots">
                 <div class="pin-dot"></div><div class="pin-dot"></div><div class="pin-dot"></div><div class="pin-dot"></div>
@@ -432,6 +426,16 @@
                 <div></div><div class="pin-btn" onclick="addPin(0)">0</div>
                 <div class="pin-btn" onclick="deletePin()" style="background:transparent; border:none; color:var(--accent-red);"><i class="fa-solid fa-delete-left"></i></div>
             </div>
+        </div>
+    </div>
+
+    <div class="bottom-sheet-overlay" id="savedAccountsModal">
+        <div class="bottom-sheet">
+            <div class="sheet-header">
+                <div class="sheet-title"><i class="fa-solid fa-vault" style="color:var(--accent-cyan);"></i> Saved Accounts</div>
+                <i class="fa-solid fa-xmark close-sheet" onclick="document.getElementById('savedAccountsModal').classList.remove('active');"></i>
+            </div>
+            <div id="accountsListArea" style="max-height: 50vh; overflow-y:auto; margin-bottom:15px;"></div>
         </div>
     </div>
 
@@ -504,9 +508,9 @@
 
     <div class="app-footer">
         © 2026 TOURNYX. All rights reserved.<br>
-        <div style="margin-top: 5px; font-style: italic; color: #777; font-size: 0.8rem;">made with 🔥 for gamers</div>
+        <div style="margin-top: 5px; font-style: italic; color: #777; font-size: 0.8rem;">made with ⚡ for gamers</div>
         <div style="margin-top: 15px; font-size: 0.85rem; color: #888; font-family: var(--font-head); letter-spacing: 1px;">
-            Powered by <span style="font-weight: 900; background: var(--accent-gradient); -webkit-background-clip: text; -webkit-text-fill-color: transparent; letter-spacing: 1px;">QUVA</span>
+            Powered by <span style="font-weight: 900; background: var(--accent-gradient); -webkit-background-clip: text; -webkit-text-fill-color: transparent; letter-spacing: 2px;">QUVA</span>
         </div>
     </div>
 
@@ -563,10 +567,13 @@
         let platformFeePercentage = 0.05;
         let isGuest = false;
         let isCouponApplied = false;
+        let currentNetPayout = 0;
+        let currentPlatformFee = 0;
         
         // Security Vault Setup
-        let isVaultUnlocked = false;
-        let unmaskedData = { detail1: "", detail2: "" };
+        let userHasPin = false;
+        let pinMode = 'verify'; // 'verify', 'create_1', 'create_2'
+        let tempPin = "";
         let currentPin = "";
 
         function getISTDateTime() {
@@ -588,12 +595,10 @@
         if(!userData || !userData.email || userData.email === "guest@tournyx.com") {
             isGuest = true;
             userData = { username: "Guest Player", rupees: 0, points: 0, email: "guest@tournyx.com", avatar: "https://tournyx.in/favicon.png", role: "player" };
-            
-            setTimeout(() => {
-                document.getElementById('loginPromptModal').classList.add('active');
-            }, 500);
+            setTimeout(() => { document.getElementById('loginPromptModal').classList.add('active'); }, 500);
         } else {
             initPageData();
+            checkVaultStatusOnLoad();
         }
 
         function checkAuth(e) {
@@ -672,9 +677,6 @@
 
             document.getElementById('displayBalance').innerHTML = formatNum(currentBalance);
 
-            // AUTO-FILL SAVED DETAILS
-            loadSavedPaymentData();
-
             let cachedTxns = JSON.parse(localStorage.getItem('tournyx_txns')) || [];
             if(cachedTxns.length > 0) {
                 renderHistoryUI(cachedTxns);
@@ -704,11 +706,15 @@
             const input1 = document.getElementById('paymentDetails');
             const group2 = document.getElementById('field2Group');
             
+            input1.value = "";
+            document.getElementById('paymentDetails2').value = "";
+            document.getElementById('saveAccountCheck').checked = false;
+
             if(method === 'coupon') {
                 isCouponApplied = true;
                 label1.innerText = 'Email Address *'; input1.placeholder = 'e.g. email@tournyx.in'; group2.style.display = 'none';
             } else {
-                isCouponApplied = false; // Promo code must be used if not coupon method
+                isCouponApplied = false; 
                 let pCode = document.getElementById('promoInput').value.trim().toUpperCase();
                 if(pCode === "QUVAPRO" || pCode === "ZEROFEE") isCouponApplied = true;
                 
@@ -716,7 +722,6 @@
                 else if(method === 'bank') { label1.innerText = 'Account Number *'; input1.placeholder = 'e.g. 123456789012'; group2.style.display = 'block'; }
                 else { label1.innerText = 'Wallet Number *'; input1.placeholder = 'e.g. 9876543210'; group2.style.display = 'none'; }
             }
-            loadSavedPaymentData(method);
             validateAmount();
         }
 
@@ -758,102 +763,63 @@
                 currentFeePct = 0.00;
             }
 
-            let fee = Math.ceil(grossAmount * currentFeePct);
-            let netPayout = grossAmount - fee;
+            currentPlatformFee = Math.ceil(grossAmount * currentFeePct);
+            currentNetPayout = grossAmount - currentPlatformFee;
 
             let displayPct = (currentFeePct * 100).toFixed(1).replace('.0', '') + "%";
             document.getElementById('feePctLabel').innerText = `(${displayPct})`;
-            document.getElementById('calcFee').innerText = `Rs. ${fee}`;
+            document.getElementById('calcFee').innerText = `Rs. ${currentPlatformFee}`;
             document.getElementById('calcFee').className = (currentFeePct === 0) ? "fee-amt pro-zero-fee" : "fee-amt";
-            document.getElementById('calcPayout').innerText = `Rs. ${netPayout}`;
+            document.getElementById('calcPayout').innerText = `Rs. ${currentNetPayout}`;
 
             if (!amountInput) { errorDiv.style.display = 'none'; btn.disabled = true; return false; }
             if (grossAmount < 50) { errorDiv.innerText = "Minimum withdrawal amount is Rs. 50"; errorDiv.style.display = 'block'; btn.disabled = true; return false; }
             else if (grossAmount > 20000) { errorDiv.innerText = "Maximum withdrawal amount is Rs. 20,000 per request."; errorDiv.style.display = 'block'; btn.disabled = true; return false; }
             else if (grossAmount > currentBalance) { errorDiv.innerText = `Insufficient balance! (Available: Rs. ${formatNum(currentBalance)})`; errorDiv.style.display = 'block'; btn.disabled = true; return false; }
             else if (grossAmount > limitRemainingValue) { errorDiv.innerText = `Daily limit reached! Please try again after 24 hours.`; errorDiv.style.display = 'block'; btn.disabled = true; return false; }
-            else if (netPayout <= 0) { errorDiv.innerText = `Amount too low after platform fees.`; errorDiv.style.display = 'block'; btn.disabled = true; return false; }
+            else if (currentNetPayout <= 0) { errorDiv.innerText = `Amount too low after platform fees.`; errorDiv.style.display = 'block'; btn.disabled = true; return false; }
             else { errorDiv.style.display = 'none'; btn.disabled = false; return true; }
         }
 
         // --- SMART CACHING: SECURITY VAULT ---
-        function maskString(str) {
-            if(!str) return "";
-            if(str.length <= 4) return "****";
-            if(str.includes('@')) {
-                let parts = str.split('@');
-                return parts[0].substring(0,4) + "****@" + parts[1];
-            }
-            return str.substring(0,4) + "*".repeat(str.length - 4);
+        function checkVaultStatusOnLoad() {
+            fetch(API_URL, {
+                method: 'POST', mode: 'no-cors', headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ action: 'check_vault', email: userData.email })
+            }).then(() => {
+                // Since no-cors doesn't allow reading response easily, we assume they might have a pin.
+                // The true validation happens when they actually click the vault button.
+            });
         }
 
-        function savePaymentData() {
-            if(!isVaultUnlocked) return; // Only save if they manually entered it / vault is unlocked
-            let pData = { method: document.getElementById('paymentMethod').value, detail1: document.getElementById('paymentDetails').value.trim(), detail2: document.getElementById('paymentDetails2').value.trim() }; 
-            localStorage.setItem('tournyx_saved_vault', JSON.stringify(pData)); 
-        }
-
-        function loadSavedPaymentData(forceMethod = null) { 
-            let saved = JSON.parse(localStorage.getItem('tournyx_saved_vault')); 
-            let d1 = document.getElementById('paymentDetails');
-            let d2 = document.getElementById('paymentDetails2');
-            let unlockBtn = document.getElementById('vaultUnlockBtn');
-
-            if(saved) { 
-                if(!forceMethod) { 
-                    document.getElementById('paymentMethod').value = saved.method; 
-                    updatePaymentPlaceholder(); 
-                } 
-                if(saved.method === document.getElementById('paymentMethod').value) { 
-                    unmaskedData.detail1 = saved.detail1;
-                    unmaskedData.detail2 = saved.detail2;
-                    
-                    if(!isVaultUnlocked) {
-                        d1.value = maskString(saved.detail1); 
-                        d1.classList.add('vault-locked');
-                        d1.readOnly = true;
-                        unlockBtn.style.display = 'block';
-                        
-                        if(saved.method === 'bank') {
-                            d2.value = maskString(saved.detail2);
-                            d2.classList.add('vault-locked');
-                            d2.readOnly = true;
-                        }
-                    } else {
-                        d1.value = saved.detail1;
-                        if(saved.method === 'bank') d2.value = saved.detail2;
-                    }
-                } else { 
-                    d1.value = ""; d2.value = ""; 
-                    d1.classList.remove('vault-locked'); d2.classList.remove('vault-locked');
-                    d1.readOnly = false; d2.readOnly = false;
-                    unlockBtn.style.display = 'none';
-                } 
-            } else {
-                d1.classList.remove('vault-locked'); d2.classList.remove('vault-locked');
-                d1.readOnly = false; d2.readOnly = false;
-                unlockBtn.style.display = 'none';
-            }
-        }
-
-        function clearSavedData() { 
-            localStorage.removeItem('tournyx_saved_vault'); 
-            isVaultUnlocked = true;
-            document.getElementById('paymentDetails').value = ""; 
-            document.getElementById('paymentDetails2').value = ""; 
-            document.getElementById('paymentDetails').classList.remove('vault-locked');
-            document.getElementById('paymentDetails2').classList.remove('vault-locked');
-            document.getElementById('paymentDetails').readOnly = false;
-            document.getElementById('paymentDetails2').readOnly = false;
-            document.getElementById('vaultUnlockBtn').style.display = 'none';
-            showToast("Saved vault cleared."); 
-        }
-
-        function promptSecurity() {
+        function checkVaultAccess() {
             triggerHaptic();
-            currentPin = "";
-            updatePinUI();
-            document.getElementById('securityPinModal').classList.add('active');
+            showOverlay('loading', 'Accessing Vault...', 'Secure connection established.');
+            
+            // First check if they have a PIN set
+            fetch(API_URL + "?action=check_vault&email=" + encodeURIComponent(userData.email))
+            .then(r=>r.json()).then(data => {
+                hideOverlay();
+                if(data.status === 'success') {
+                    userHasPin = data.data.hasPin;
+                    if(userHasPin) {
+                        pinMode = 'verify';
+                        document.getElementById('pinModalTitle').innerText = "Vault Locked";
+                        document.getElementById('pinModalDesc').innerText = "Enter your 4-digit PIN to access saved payment credentials.";
+                    } else {
+                        pinMode = 'create_1';
+                        document.getElementById('pinModalTitle').innerText = "Create PIN";
+                        document.getElementById('pinModalDesc').innerText = "Create a 4-digit security PIN to protect your payment details.";
+                    }
+                    currentPin = "";
+                    updatePinUI();
+                    document.getElementById('securityPinModal').classList.add('active');
+                } else {
+                    showToast("Failed to connect to Vault.", true);
+                }
+            }).catch(e => {
+                hideOverlay(); showToast("Network Error", true);
+            });
         }
 
         function addPin(num) {
@@ -862,20 +828,7 @@
                 currentPin += num;
                 updatePinUI();
                 if(currentPin.length === 4) {
-                    setTimeout(() => {
-                        // Mock verification - accept any 4 digits
-                        isVaultUnlocked = true;
-                        document.getElementById('securityPinModal').classList.remove('active');
-                        showToast("Vault Unlocked!");
-                        
-                        let d1 = document.getElementById('paymentDetails');
-                        let d2 = document.getElementById('paymentDetails2');
-                        d1.value = unmaskedData.detail1;
-                        d2.value = unmaskedData.detail2;
-                        d1.classList.remove('vault-locked'); d2.classList.remove('vault-locked');
-                        d1.readOnly = false; d2.readOnly = false;
-                        document.getElementById('vaultUnlockBtn').style.display = 'none';
-                    }, 300);
+                    setTimeout(() => { processPinEntry(); }, 300);
                 }
             }
         }
@@ -886,6 +839,122 @@
                 if(i < currentPin.length) dots[i].classList.add('filled');
                 else dots[i].classList.remove('filled');
             }
+        }
+
+        function processPinEntry() {
+            if (pinMode === 'create_1') {
+                tempPin = currentPin;
+                currentPin = "";
+                updatePinUI();
+                pinMode = 'create_2';
+                document.getElementById('pinModalTitle').innerText = "Confirm PIN";
+                document.getElementById('pinModalDesc').innerText = "Re-enter your 4-digit PIN to confirm.";
+            } 
+            else if (pinMode === 'create_2') {
+                if (currentPin === tempPin) {
+                    document.getElementById('securityPinModal').classList.remove('active');
+                    showOverlay('loading', 'Securing Vault...', 'Saving your new PIN...');
+                    fetch(API_URL, {
+                        method: 'POST', mode: 'no-cors', headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ action: 'set_pin', email: userData.email, pin: currentPin })
+                    }).then(() => {
+                        setTimeout(() => {
+                            hideOverlay();
+                            showToast("Security PIN created! You can now save accounts.");
+                            userHasPin = true;
+                        }, 1500);
+                    });
+                } else {
+                    triggerError('pinDots');
+                    showToast("PINs do not match. Try again.", true);
+                    currentPin = "";
+                    tempPin = "";
+                    pinMode = 'create_1';
+                    document.getElementById('pinModalTitle').innerText = "Create PIN";
+                    document.getElementById('pinModalDesc').innerText = "Create a 4-digit security PIN to protect your payment details.";
+                    updatePinUI();
+                }
+            } 
+            else if (pinMode === 'verify') {
+                document.getElementById('securityPinModal').classList.remove('active');
+                showOverlay('loading', 'Verifying...', 'Checking cryptographic signature...');
+                
+                fetch(API_URL + "?action=verify_pin&email=" + encodeURIComponent(userData.email) + "&pin=" + currentPin)
+                .then(r=>r.json()).then(data => {
+                    hideOverlay();
+                    if(data.status === 'success') {
+                        showToast("Vault Unlocked!");
+                        renderSavedAccounts(data.data.accounts || []);
+                    } else {
+                        showToast("Invalid PIN!", true);
+                    }
+                }).catch(e => {
+                    hideOverlay(); showToast("Network Error", true);
+                });
+            }
+        }
+
+        function renderSavedAccounts(accounts) {
+            const listArea = document.getElementById('accountsListArea');
+            listArea.innerHTML = "";
+            if(accounts.length === 0) {
+                listArea.innerHTML = `<div style="text-align:center; padding:20px; color:#888;">Your vault is empty. Check "Save this account" when withdrawing to add one.</div>`;
+            } else {
+                accounts.forEach((acc, i) => {
+                    let icon = "fa-building-columns";
+                    if(acc.method === 'upi') icon = "fa-at";
+                    else if(acc.method === 'wallet') icon = "fa-wallet";
+                    else if(acc.method === 'coupon') icon = "fa-gift";
+                    
+                    let masked = maskString(acc.details);
+
+                    listArea.innerHTML += `
+                        <div class="saved-acc-item" onclick="autoFillAccount('${acc.method}', '${acc.details}')">
+                            <div style="display:flex; align-items:center; gap:12px;">
+                                <i class="fa-solid ${icon}" style="font-size:1.5rem; color:var(--accent-cyan);"></i>
+                                <div>
+                                    <div style="font-family:var(--font-head); font-weight:bold; color:white; text-transform:uppercase;">${acc.method}</div>
+                                    <div style="font-size:0.85rem; color:#aaa; font-family:monospace;">${masked}</div>
+                                </div>
+                            </div>
+                            <i class="fa-solid fa-chevron-right" style="color:#666;"></i>
+                        </div>
+                    `;
+                });
+            }
+            document.getElementById('savedAccountsModal').classList.add('active');
+        }
+
+        function autoFillAccount(method, details) {
+            triggerHaptic();
+            document.getElementById('savedAccountsModal').classList.remove('active');
+            document.getElementById('paymentMethod').value = method;
+            updatePaymentPlaceholder();
+            
+            if(method === 'bank') {
+                let parts = details.split('|');
+                document.getElementById('paymentDetails').value = parts[0].replace('A/C: ', '').trim();
+                document.getElementById('paymentDetails2').value = parts[1] ? parts[1].replace('IFSC: ', '').trim() : '';
+            } else {
+                document.getElementById('paymentDetails').value = details;
+            }
+            showToast("Details Auto-Filled Securely.");
+        }
+
+        function maskString(str) {
+            if(!str) return "";
+            if(str.includes('|')) { // Handle bank
+                let parts = str.split('|');
+                let ac = parts[0].replace('A/C: ', '').trim();
+                let mAc = ac.substring(0,4) + "*".repeat(ac.length > 4 ? 4 : 0);
+                return `A/C: ${mAc} | ` + parts[1];
+            }
+            if(str.length <= 4) return "****";
+            if(str.includes('@')) {
+                let parts = str.split('@');
+                return parts[0].substring(0,4) + "****@" + parts[1];
+            }
+            return str.substring(0,4) + "*".repeat(str.length > 4 ? 4 : 0);
         }
 
         // --- FETCH STATUS HISTORY ---
@@ -1004,47 +1073,36 @@
         function processWithdrawal() {
             const grossAmount = parseFloat(document.getElementById('withdrawAmount').value);
             const method = document.getElementById('paymentMethod').value;
+            let details1 = document.getElementById('paymentDetails').value.trim();
+            let details2 = document.getElementById('paymentDetails2').value.trim();
             
-            // If vault is locked, use the unmasked data in memory
-            let details1 = isVaultUnlocked ? document.getElementById('paymentDetails').value.trim() : unmaskedData.detail1;
-            let details2 = isVaultUnlocked ? document.getElementById('paymentDetails2').value.trim() : unmaskedData.detail2;
-            
-            if(!isVaultUnlocked && !unmaskedData.detail1) {
-                // First time setup, user must be typing
-                details1 = document.getElementById('paymentDetails').value.trim();
-                details2 = document.getElementById('paymentDetails2').value.trim();
-                isVaultUnlocked = true;
-            }
+            let isSaveChecked = document.getElementById('saveAccountCheck').checked;
 
             if (!validateAmount() || isNaN(grossAmount)) { triggerError('withdrawAmount'); return; }
-            
             if (!details1) { triggerError('paymentDetails'); showToast("Payment details required", true); return;}
             
             let finalDetails = method === 'bank' ? `A/C: ${details1} | IFSC: ${details2}` : details1;
 
-            savePaymentData(); 
-            showOverlay('loading', 'Authorizing Payout...', 'Validating funds and securing gateway...');
-
-            let currentFeePct = platformFeePercentage;
-            if (userData.role !== 'organizer' && !isPremiumUser) {
-                if (grossAmount > 15000) currentFeePct = 0.10;
-                else currentFeePct = 0.05;
+            if(isSaveChecked && !userHasPin) {
+                showToast("You must set up a Security PIN to save accounts. Click 'Saved Accounts' to set it up.", true);
+                triggerError('saveAccountCheck');
+                return;
             }
-            if (isCouponApplied) { currentFeePct = 0.00; }
 
-            let fee = Math.ceil(grossAmount * currentFeePct);
-            let netPayout = grossAmount - fee;
+            showOverlay('loading', 'Authorizing Payout...', 'Validating funds and securing gateway...');
 
             const payload = {
                 action: 'withdraw_request',
                 email: userData.email,
-                role: userData.role, // Tells backend to use Earnings or Winnings
-                isPremium: isPremiumUser, // Unlocks 0% fee
-                promo: document.getElementById('promoInput').value.trim(), // Sends the promo code
+                role: userData.role, 
+                isPremium: isPremiumUser,
+                promo: document.getElementById('promoInput').value.trim(),
                 amount: grossAmount, 
-                netPayout: netPayout, 
+                netPayout: currentNetPayout, 
+                platformFee: currentPlatformFee,
                 method: method,
-                details: finalDetails
+                details: finalDetails,
+                saveAccount: isSaveChecked
             };
 
             setTimeout(() => {
@@ -1060,11 +1118,14 @@
                 let localTxns = JSON.parse(localStorage.getItem('tournyx_txns')) || [];
                 let dateStr = getISTDateTime();
                 
-                localTxns.unshift({ id: "WD" + Date.now().toString().slice(-6), date: dateStr, amount: grossAmount, type: "Debit", category: "Payout", title: "Withdrawal: " + method, status: "Pending" });
+                localTxns.unshift({ id: "WD-" + Date.now().toString().slice(-6), date: dateStr, amount: grossAmount, type: "Debit", category: "Payout", title: "Withdrawal: " + method, status: "Pending" });
                 localStorage.setItem('tournyx_txns', JSON.stringify(localTxns));
 
                 document.getElementById('displayBalance').innerText = formatNum(currentBalance);
                 document.getElementById('withdrawAmount').value = '';
+                document.getElementById('promoInput').value = '';
+                isCouponApplied = false;
+                document.getElementById('saveAccountCheck').checked = false;
                 validateAmount(); 
 
                 // Send to backend invisibly
