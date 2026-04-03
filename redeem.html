@@ -91,11 +91,22 @@
 
         /* --- RESPONSIVE WRAPPERS --- */
         .hero, .filter-container, .rewards-wrapper, .app-footer, .top-header .header-wrapper {
-            max-width: 1000px; margin-left: auto !important; margin-right: auto !important; width: 100%;
+            max-width: 1200px; margin-left: auto !important; margin-right: auto !important; width: 100%;
         }
 
         /* --- BACKGROUND --- */
         #particles-canvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; background: radial-gradient(circle at 50% 0%, #15062e 0%, #070311 100%); pointer-events: none; transform: translateZ(0);}
+
+        /* --- TOURNYX TX COMPOSITE TICKET ICON --- */
+        .tx-ticket-composite {
+            position: relative; display: inline-flex; align-items: center; justify-content: center;
+        }
+        .tx-ticket-composite i { font-size: inherit; transition: inherit; }
+        .tx-ticket-composite .tx-text {
+            position: absolute; top: 50%; left: 50%; transform: translate(-50%, -46%); font-family: var(--font-head);
+            font-size: 0.38em; font-weight: 900; color: var(--primary-bg) !important; -webkit-text-fill-color: var(--primary-bg) !important;
+            letter-spacing: -0.5px; pointer-events: none; z-index: 2; transition: 0.3s; font-style: normal !important;
+        }
 
         /* --- HEADER (MOBILE OPTIMIZED SIZES) --- */
         .top-header { 
@@ -104,14 +115,20 @@
             background: rgba(5, 2, 12, 0.85); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); 
             border-bottom: 1px solid rgba(255, 255, 255, 0.05); z-index: 2000; box-shadow: 0 4px 30px rgba(0, 0, 0, 0.5); transform: translateZ(0); display: flex; align-items: center;
         }
-        .header-wrapper { display: flex; align-items: center; justify-content: space-between; gap: 5px; }
+        .header-wrapper { display: flex; align-items: center; justify-content: space-between; gap: 10px; flex-wrap: nowrap; }
         .header-left { display: flex; align-items: center; gap: 8px; flex: 1; min-width: 0; }
         .back-btn { color: white; font-size: 1.3rem; text-decoration: none; transition: 0.3s; cursor: pointer; padding: 5px 10px 5px 0; flex-shrink:0;}
         .back-btn:active { color: var(--accent-cyan); transform: scale(0.9); }
         html.theme-vip .back-btn:active { color: #FFD700; }
-        .app-title { font-family: var(--font-head); font-size: 1.15rem; font-weight: 700; background: var(--accent-gradient); -webkit-background-clip: text; -webkit-text-fill-color: transparent; letter-spacing: 1px; white-space: normal; line-height: 1.1; word-break: break-word; text-transform: uppercase; margin:0;}
+        .app-title { font-family: var(--font-head); font-size: 1.15rem; font-weight: 700; background: var(--accent-gradient); -webkit-background-clip: text; -webkit-text-fill-color: transparent; letter-spacing: 1px; white-space: nowrap; margin:0; flex-shrink: 0;}
         
-        .wallet-badge { background: rgba(0, 242, 255, 0.1); border: 1px solid rgba(0, 242, 255, 0.3); padding: 6px 12px; border-radius: 20px; display: flex; align-items: center; gap: 6px; font-family: var(--font-head); font-size: 0.85rem; color: var(--accent-cyan); font-weight: bold; box-shadow: inset 0 0 10px rgba(0,242,255,0.1); transition: 0.3s; cursor: pointer; backdrop-filter: blur(5px);}
+        .desktop-nav { display: none !important; align-items: center; gap: 25px; }
+        .desktop-nav a { color: #aaa; text-decoration: none; font-family: var(--font-head); font-size: 0.95rem; font-weight: bold; transition: 0.3s; display: flex; align-items: center; gap: 6px; text-transform: uppercase; letter-spacing: 1px;}
+        .desktop-nav a:hover, .desktop-nav a.active { color: var(--accent-cyan); text-shadow: 0 0 10px rgba(0,242,255,0.4); }
+        html.theme-vip .desktop-nav a:hover, html.theme-vip .desktop-nav a.active { color: #FFD700; text-shadow: 0 0 10px rgba(255,215,0,0.6); }
+        @media (min-width: 850px) { .desktop-nav { display: flex !important; } }
+
+        .wallet-badge { background: rgba(0, 242, 255, 0.1); border: 1px solid rgba(0, 242, 255, 0.3); padding: 6px 12px; border-radius: 20px; display: flex; align-items: center; gap: 6px; font-family: var(--font-head); font-size: 0.85rem; color: var(--accent-cyan); font-weight: bold; box-shadow: inset 0 0 10px rgba(0,242,255,0.1); transition: 0.3s; cursor: pointer; backdrop-filter: blur(5px); flex-shrink: 0;}
         html.theme-vip .wallet-badge { background: rgba(255, 215, 0, 0.1); border-color: rgba(255, 215, 0, 0.3); color: #FFD700; box-shadow: inset 0 0 10px rgba(255,215,0,0.1); }
         .wallet-badge:active { transform: scale(0.95); background: var(--accent-cyan); color: black; box-shadow: 0 0 15px rgba(0,242,255,0.5);}
         html.theme-vip .wallet-badge:active { background: #FFD700; color: black; box-shadow: 0 0 15px rgba(255,215,0,0.5); }
@@ -125,7 +142,7 @@
 
         /* --- CATEGORY FILTERS --- */
         .filter-container { padding: 15px; display: flex; gap: 12px; overflow-x: auto; scrollbar-width: none; margin-bottom: 10px; }
-        .filter-btn { background: rgba(255,255,255,0.05); border: 1px solid var(--card-border); color: #a0a0b0; font-family: var(--font-head); font-size: 0.9rem; font-weight: bold; padding: 10px 20px; border-radius: 25px; cursor: pointer; white-space: nowrap; transition: 0.3s; }
+        .filter-btn { background: rgba(255,255,255,0.05); border: 1px solid var(--card-border); color: #a0a0b0; font-family: var(--font-head); font-size: 0.9rem; font-weight: bold; padding: 10px 20px; border-radius: 25px; cursor: pointer; white-space: nowrap; transition: 0.3s; flex-shrink: 0;}
         .filter-btn.active { background: rgba(189,0,255,0.2); color: white; border-color: var(--accent-cyan); box-shadow: 0 0 20px rgba(0,242,255,0.3); transform: scale(1.05); }
         html.theme-vip .filter-btn.active { background: rgba(255,215,0,0.15); border-color: #FFD700; box-shadow: 0 0 20px rgba(255,215,0,0.3); }
 
@@ -203,7 +220,7 @@
         }
         .input-error { border-color: var(--accent-red) !important; animation: shake 0.4s; }
 
-        .btn-confirm { width: 100%; padding: 18px; background: var(--accent-gradient); border: none; border-radius: 15px; color: white; font-family: var(--font-head); font-size: 1.1rem; font-weight: bold; text-transform: uppercase; cursor: pointer; box-shadow: 0 5px 20px rgba(189,0,255,0.4); transition: 0.3s; letter-spacing: 1px; }
+        .btn-confirm { width: 100%; padding: 18px; background: var(--accent-gradient); border: none; border-radius: 15px; color: white; font-family: var(--font-head); font-size: 1.1rem; font-weight: bold; text-transform: uppercase; cursor: pointer; box-shadow: 0 5px 20px rgba(189,0,255,0.4); transition: 0.3s; letter-spacing: 1px; margin-bottom:0;}
         html.theme-vip .btn-confirm { background: linear-gradient(135deg, #FFD700, #FF8C00); color: black; box-shadow: 0 5px 20px rgba(255,215,0,0.4); }
         .btn-confirm:active { transform: scale(0.98); box-shadow: 0 2px 10px rgba(189,0,255,0.4); }
         html.theme-vip .btn-confirm:active { box-shadow: 0 2px 10px rgba(255,215,0,0.4); }
@@ -222,23 +239,29 @@
         .overlay-title { font-family: var(--font-head); font-size: 1.6rem; color: white; margin-bottom: 10px; text-shadow: 0 0 10px rgba(255,255,255,0.3); transition: 0.3s; }
         .overlay-desc { color: #aaa; font-size: 0.95rem; text-align: center; max-width: 80%; line-height: 1.5; transition: 0.3s; }
 
-        /* ADSENSE CONTAINER */
+        /* ADSTERRA & MONETAG CONTAINER */
         .ad-container { width: 100%; max-width: 336px; min-height: 280px; background: rgba(255,255,255,0.02); border-radius: 12px; margin-top: 20px; display: none; align-items: center; justify-content: center; border: 1px dashed rgba(255,255,255,0.15); flex-direction: column; overflow: hidden; }
-        .ad-timer { font-family: var(--font-head); font-size: 1rem; color: var(--accent-gold); margin-top: 20px; font-weight: bold; display: none; text-shadow: 0 0 10px rgba(255,215,0,0.5); animation: pulse 1s infinite;}
+        .ad-timer { font-family: var(--font-head); font-size: 1rem; color: var(--accent-orange); margin-top: 20px; font-weight: bold; display: none; text-shadow: 0 0 10px rgba(255,153,0,0.5); animation: pulse 1s infinite;}
+        html.theme-vip .ad-timer { color: #FFD700; text-shadow: 0 0 10px rgba(255,215,0,0.5); }
 
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
         @keyframes popIn { 0% { transform: scale(0.5); opacity: 0; } 80% { transform: scale(1.2); } 100% { transform: scale(1); opacity: 1; } }
 
-        /* Custom Toast */
+        /* AUTH MODAL & TOAST */
+        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); z-index: 5000; display: none; align-items: center; justify-content: center; backdrop-filter: blur(5px); }
+        .modal-overlay.active { display: flex; animation: popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+        .modal-box { background: rgba(7, 3, 17, 0.95); backdrop-filter: blur(15px); width: 90%; max-width: 400px; border-radius: 20px; border: 1px solid var(--card-border); padding: 25px; box-shadow: 0 10px 40px rgba(0,0,0,0.8); text-align: center; position: relative;}
+        .modal-close { position: absolute; top: 15px; right: 15px; color: #888; font-size: 1.3rem; cursor: pointer; transition: 0.3s;}
+        .modal-close:hover { color: white; transform: rotate(90deg); }
+
         #customToast { visibility: hidden; min-width: 250px; background-color: var(--accent-cyan); color: #000; text-align: center; border-radius: 12px; padding: 16px; position: fixed; z-index: 9999; left: 50%; bottom: -50px; transform: translateX(-50%); font-family: var(--font-head); font-weight: bold; box-shadow: 0 8px 30px rgba(0,242,255,0.5); opacity: 0; transition: opacity 0.4s, bottom 0.4s; }
         html.theme-vip #customToast { background-color: #FFD700; box-shadow: 0 8px 30px rgba(255,215,0,0.5); }
         #customToast.show { visibility: visible; opacity: 1; bottom: 100px; }
 
         /* --- FOOTER & NAV --- */
         .app-footer { text-align: center; padding: 20px 20px 110px 20px; color: #555; font-size: 0.75rem; font-family: var(--font-body); letter-spacing: 1px; border-top: 1px solid rgba(255,255,255,0.05); margin-top: 10px; }
-        .footer-logo { font-family: var(--font-head); font-size: 1.1rem; letter-spacing: 1px; color: white; margin-bottom: 5px; display: inline-flex; align-items: center; gap: 8px; text-shadow: 0 0 10px rgba(255,255,255,0.2);}
         
-        /* PERFECTLY ALIGNED BOTTOM NAVIGATION */
+        /* PERFECTLY ALIGNED BOTTOM NAVIGATION (Copied from explore.html) */
         .bottom-nav { position: fixed; bottom: 0; left: 0; width: 100%; height: calc(65px + env(safe-area-inset-bottom, 0px)); background: rgba(7, 3, 17, 0.92); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); display: flex; justify-content: space-between; align-items: flex-start; padding: 10px 2px env(safe-area-inset-bottom, 0px); border-top: 1px solid rgba(255,255,255,0.05); z-index: 1000; box-shadow: 0 -10px 30px rgba(0,0,0,0.6); }
         .nav-item { display: flex; flex-direction: column; align-items: center; justify-content: flex-start; color: #666; text-decoration: none; font-size: 0.6rem; font-family: var(--font-head); font-weight: bold; flex: 1; transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); position: relative; padding: 0 2px; text-align: center;}
         .nav-item span { margin-top: 4px; transition: 0.3s; letter-spacing: -0.3px;}
@@ -278,7 +301,7 @@
     <header class="top-header">
         <div class="header-wrapper">
             <div class="header-left">
-                <a href="wallet.html" class="back-btn" onclick="triggerHaptic()"><i class="fa-solid fa-arrow-left"></i></a>
+                <a href="tickets.html" class="back-btn" onclick="triggerHaptic()"><i class="fa-solid fa-arrow-left"></i></a>
                 <div class="app-title">STORE</div>
             </div>
             
@@ -358,7 +381,7 @@
                     <div class="r-title">UPI Transfer</div>
                     <div class="r-sub">Rs. 1000 Cash to Bank</div>
                 </div>
-                <button class="r-btn" data-cost="110000" onclick="openRedeemModal('UPI Rs. 1000', 110000, 'UPI ID / VPA', 'fa-landmark', 'bg-upi')">110,000 PTS</button>
+                <button class="r-btn" data-cost="110000" data-premium="true" onclick="openRedeemModal('UPI Rs. 1000', 110000, 'UPI ID / VPA', 'fa-landmark', 'bg-upi', true)">110,000 PTS</button>
             </div>
         </div>
 
@@ -409,7 +432,7 @@
                     <div class="r-title">Free Fire</div>
                     <div class="r-sub">2400 Diamonds</div>
                 </div>
-                <button class="r-btn" data-cost="112000" onclick="openRedeemModal('Free Fire 2400 Diamonds', 112000, 'Free Fire Player UID', 'fa-dragon', 'bg-ff')">112,000 PTS</button>
+                <button class="r-btn" data-cost="112000" data-premium="true" onclick="openRedeemModal('Free Fire 2400 Diamonds', 112000, 'Free Fire Player UID', 'fa-dragon', 'bg-ff', true)">112,000 PTS</button>
             </div>
         </div>
 
@@ -460,7 +483,7 @@
                     <div class="r-title">BGMI</div>
                     <div class="r-sub">3000 + 850 UC</div>
                 </div>
-                <button class="r-btn" data-cost="270000" onclick="openRedeemModal('BGMI 3850 UC', 270000, 'BGMI Character ID', 'fa-fighter-jet', 'bg-bgmi')">270,000 PTS</button>
+                <button class="r-btn" data-cost="270000" data-premium="true" onclick="openRedeemModal('BGMI 3850 UC', 270000, 'BGMI Character ID', 'fa-fighter-jet', 'bg-bgmi', true)">270,000 PTS</button>
             </div>
         </div>
 
@@ -511,7 +534,7 @@
                     <div class="r-title">Google Play Code</div>
                     <div class="r-sub">Rs. 1000 Redeem Code</div>
                 </div>
-                <button class="r-btn" data-cost="110000" onclick="openRedeemModal('Google Play Rs. 1000', 110000, 'Delivery Email Address', 'fa-google-play', 'bg-play')">110,000 PTS</button>
+                <button class="r-btn" data-cost="110000" data-premium="true" onclick="openRedeemModal('Google Play Rs. 1000', 110000, 'Delivery Email Address', 'fa-google-play', 'bg-play', true)">110,000 PTS</button>
             </div>
         </div>
 
@@ -551,24 +574,25 @@
         <div class="ad-container" id="adContainer">
             <span style="color:rgba(255,255,255,0.2); font-size:0.7rem; font-family:var(--font-head); margin-bottom: 5px;">SPONSOR AD</span>
             
-            <ins class="adsbygoogle"
-     style="display:inline-block;width:300px;height:250px"
-     data-ad-client="ca-pub-2610280925070403"
-     data-ad-slot="1164728881"></ins>
+            <div id="adsterra-banner">
+                </div>
+
+            <div id="monetag-banner">
+                </div>
 
         </div>
-        <div class="ad-timer" id="adTimer">Closing in 5...</div>
+        <div class="ad-timer" id="adTimer">Closing in 10...</div>
     </div>
 
-    <div class="auth-popup-overlay" id="authPopup" onclick="if(event.target === this) closeAuthPopup()">
-        <div class="auth-popup-box glass-panel">
-            <i class="fa-solid fa-xmark auth-close" onclick="closeAuthPopup()"></i>
-            <i class="fa-solid fa-user-shield auth-icon"></i>
-            <h2 style="font-family: var(--font-head); font-size: 1.5rem; margin-bottom: 10px; color: white;">Authentication Required</h2>
-            <p style="font-size: 0.95rem; color: #b0b0cc; margin-bottom: 25px; line-height: 1.4;">Please log in or sign up to access player profiles, wallets, and the rewards store.</p>
+    <div class="modal-overlay" id="guestLoginModal">
+        <div class="modal-box">
+            <i class="fa-solid fa-xmark modal-close" onclick="document.getElementById('guestLoginModal').classList.remove('active');"></i>
+            <i class="fa-solid fa-user-astronaut" style="font-size: 4rem; color: var(--accent-cyan); margin-bottom: 15px; filter: drop-shadow(0 0 15px var(--accent-cyan));"></i>
+            <h3 style="font-family: var(--font-head); font-size: 1.5rem; margin-bottom: 10px; color: white;">Authentication Required</h3>
+            <p style="color: #aaa; font-size: 0.95rem; margin-bottom: 25px; line-height: 1.5;">Please log in or sign up to access the rewards store.</p>
             <button class="btn-confirm" style="margin-bottom:0;" onclick="window.location.href='login.html'">Log In / Sign Up</button>
-            <div style="margin-top: 20px; font-size: 0.8rem; color: #888; font-family: var(--font-head); letter-spacing: 1px;">
-                Powered by <span style="color: var(--accent-cyan); font-weight: bold; text-shadow: 0 0 10px rgba(0,242,255,0.5);">QUVA</span>
+            <div style="margin-top: 25px; font-size: 0.75rem; color: #888; display: flex; align-items: center; justify-content: center; gap: 6px;">
+                Powered by <strong style="color: white; font-family: var(--font-head); font-size: 0.95rem; letter-spacing: 1px;">QUVA</strong>
             </div>
         </div>
     </div>
@@ -585,13 +609,16 @@
 
     <nav class="bottom-nav">
         <a class="nav-item" href="index.html">
-            <i class="fa-solid fa-house"></i><span>Home</span>
+            <i class="fa-solid fa-house"></i>
+            <span>Home</span>
         </a>
         <a class="nav-item" href="explore.html">
-            <i class="fa-solid fa-compass"></i><span>Explore</span>
+            <i class="fa-solid fa-compass"></i>
+            <span>Explore</span>
         </a>
         <a class="nav-item" href="matches.html" onclick="return checkAuth(event)">
-            <i class="fa-solid fa-trophy"></i><span>Matches</span>
+            <i class="fa-solid fa-trophy"></i>
+            <span>Matches</span>
         </a>
         <div class="fab-slot">
             <div class="floating-plus" onclick="if(checkAuth(event)) window.location.href='tournament.html'">
@@ -599,13 +626,16 @@
             </div>
         </div>
         <a class="nav-item" href="clans.html" onclick="return checkAuth(event)">
-            <i class="fa-solid fa-shield-halved"></i><span>Clan</span>
+            <i class="fa-solid fa-shield-halved"></i>
+            <span>Clan</span>
         </a>
         <a class="nav-item" href="wallet.html" onclick="return checkAuth(event)">
-            <i class="fa-solid fa-wallet"></i><span>Wallet</span>
+            <i class="fa-solid fa-wallet"></i>
+            <span>Wallet</span>
         </a>
         <a class="nav-item active" href="profile.html" onclick="return checkAuth(event)">
-            <i class="fa-solid fa-user"></i><span>Profile</span>
+            <i class="fa-solid fa-user"></i>
+            <span>Profile</span>
         </a>
     </nav>
 
@@ -640,13 +670,10 @@
             let user = JSON.parse(localStorage.getItem('tournyx_user'));
             if (!user || !user.email || user.email === "guest@tournyx.com") {
                 if(e) e.preventDefault();
-                document.getElementById('authPopup').classList.add('active');
+                document.getElementById('guestLoginModal').classList.add('active');
                 return false;
             }
             return true;
-        }
-        function closeAuthPopup() {
-            document.getElementById('authPopup').classList.remove('active');
         }
 
         document.addEventListener("DOMContentLoaded", function() {
@@ -654,7 +681,7 @@
                 isGuest = true;
                 currentUser = { username: "Guest Player", points: 0, email: "guest@tournyx.com" };
                 setTimeout(() => {
-                    document.getElementById('authPopup').classList.add('active');
+                    document.getElementById('guestLoginModal').classList.add('active');
                 }, 500);
             }
             
@@ -707,12 +734,14 @@
 
             document.querySelectorAll('.r-btn').forEach(btn => {
                 let cost = parseInt(btn.getAttribute('data-cost'));
+                let isPremiumOnly = btn.getAttribute('data-premium') === 'true';
                 let card = btn.closest('.reward-card');
                 
-                // VIPs get everything unlocked visually. Otherwise, check points.
-                if (pts < cost && !isVip) {
+                // If it's a premium-only item (the 5th ones) and user is NOT a VIP, strictly lock it visually.
+                // The first 4 items are NEVER visually locked (they will just toast if points are low).
+                if (isPremiumOnly && !isVip) {
                     btn.classList.add('locked');
-                    btn.innerHTML = `<i class="fa-solid fa-lock"></i> Locked (${formatNum(cost)})`;
+                    btn.innerHTML = `<i class="fa-solid fa-crown"></i> VIP Only`;
                     card.classList.add('locked-card');
                 } else {
                     btn.classList.remove('locked');
@@ -757,16 +786,25 @@
         // --- OVERLAY & MODAL CONTROLLERS ---
         let activeReward = {};
 
-        function openRedeemModal(name, cost, inputLabel, iconClass, bgClass) {
+        function openRedeemModal(name, cost, inputLabel, iconClass, bgClass, isPremiumOnly = false) {
             if(isGuest) {
-                document.getElementById('authPopup').classList.add('active');
+                document.getElementById('guestLoginModal').classList.add('active');
                 return;
             }
 
             let pts = parseInt(currentUser.points) || 0;
             let isVip = document.documentElement.classList.contains('theme-vip');
             
-            // Allow VIPs to open modal regardless of points, just for show (backend will still verify)
+            // Strictly reject non-VIPs from Premium items
+            if (isPremiumOnly && !isVip) {
+                let badge = document.getElementById('walletBadge');
+                badge.style.animation = "shake 0.4s";
+                setTimeout(()=>badge.style.animation = "none", 400);
+                showToast("This reward is exclusively for VIP Members!", true);
+                return;
+            }
+
+            // Reject standard items if points are insufficient (Toast popup only, no visual lock)
             if (pts < cost && !isVip) {
                 let badge = document.getElementById('walletBadge');
                 badge.style.animation = "shake 0.4s";
@@ -815,7 +853,7 @@
             document.getElementById('statusOverlay').classList.remove('active'); 
         }
 
-        // --- SECURE REDEMPTION & ADSENSE LOGIC ---
+        // --- SECURE REDEMPTION & ADSTERRA/MONETAG LOGIC ---
         function confirmRedeem() {
             let inputField = document.getElementById('modalInput');
             let payoutDetails = inputField.value.trim();
@@ -873,42 +911,50 @@
 
                 showOverlay('success', 'Reward Claimed!', 'Your request has been sent to the admins. Allow up to 24 hours.');
                 
-                // --- 5 SECOND ADSENSE BREAK ---
-                setTimeout(() => {
-                    // Hide circle, change text
-                    document.getElementById('statusCircle').style.display = 'none';
-                    document.getElementById('statusTitle').innerText = 'Sponsor Message';
-                    document.getElementById('statusDesc').innerText = 'Thank you for supporting Tournyx!';
-                    
-                    // Show Ad Container
-                    document.getElementById('adContainer').style.display = 'flex';
-                    document.getElementById('adTimer').style.display = 'block';
+                // VIP Check for Ad Bypass
+                let isVip = document.documentElement.classList.contains('theme-vip');
+                
+                if (isVip) {
+                    // Premium Users - No Ads
+                    setTimeout(() => {
+                        hideOverlay();
+                        showToast("Reward processed successfully!", false);
+                    }, 2000);
+                } else {
+                    // Standard Users - 10 SECOND MANDATORY AD
+                    setTimeout(() => {
+                        // Hide circle, change text
+                        document.getElementById('statusCircle').style.display = 'none';
+                        document.getElementById('statusTitle').innerText = 'Sponsor Message';
+                        document.getElementById('statusDesc').innerText = 'Thank you for supporting Tournyx!';
+                        
+                        // Show Ad Container
+                        document.getElementById('adContainer').style.display = 'flex';
+                        document.getElementById('adTimer').style.display = 'block';
 
-                    // Push AdSense
-                    try { (adsbygoogle = window.adsbygoogle || []).push({}); } catch (e) {}
-
-                    let timeLeft = 5;
-                    document.getElementById('adTimer').innerText = `Closing in ${timeLeft}...`;
-                    
-                    let adInterval = setInterval(() => {
-                        timeLeft--;
+                        let timeLeft = 10;
                         document.getElementById('adTimer').innerText = `Closing in ${timeLeft}...`;
                         
-                        if(timeLeft <= 0) {
-                            clearInterval(adInterval);
-                            hideOverlay();
-                            showToast("Thanks for supporting us!", false);
+                        let adInterval = setInterval(() => {
+                            timeLeft--;
+                            document.getElementById('adTimer').innerText = `Closing in ${timeLeft}...`;
                             
-                            // Reset UI for next time
-                            setTimeout(() => {
-                                document.getElementById('statusCircle').style.display = 'flex';
-                                document.getElementById('adContainer').style.display = 'none';
-                                document.getElementById('adTimer').style.display = 'none';
-                            }, 500);
-                        }
-                    }, 1000);
+                            if(timeLeft <= 0) {
+                                clearInterval(adInterval);
+                                hideOverlay();
+                                showToast("Thanks for supporting us!", false);
+                                
+                                // Reset UI for next time
+                                setTimeout(() => {
+                                    document.getElementById('statusCircle').style.display = 'flex';
+                                    document.getElementById('adContainer').style.display = 'none';
+                                    document.getElementById('adTimer').style.display = 'none';
+                                }, 500);
+                            }
+                        }, 1000);
 
-                }, 2000); // Wait 2 seconds for user to see the Green Checkmark before Ad
+                    }, 2000); // Wait 2 seconds for user to see the Green Checkmark before Ad
+                }
 
             }).catch(() => {
                 showOverlay('error', 'Connection Error', 'Failed to reach server. Please try again.');
