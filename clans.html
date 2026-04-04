@@ -191,7 +191,7 @@
         .recruit-badge.closed { background: rgba(255,77,77,0.1); color: #ff4d4d; border: 1px solid #ff4d4d; }
         .recruit-badge { padding: 4px 10px; border-radius: 20px; font-size: 0.7rem; font-family: var(--font-head); font-weight: bold; text-transform: uppercase; cursor: pointer; flex-shrink: 0;}
 
-        /* --- 30+ ESPORTS FEATURES GRID (3 Columns to fit perfectly without PDF) --- */
+        /* --- 30+ ESPORTS FEATURES GRID --- */
         .esports-cmd-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 20px; }
         .cmd-btn { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; padding: 12px 5px; display: flex; flex-direction: column; align-items: center; gap: 8px; cursor: pointer; transition: 0.3s; position: relative; overflow: hidden; }
         .cmd-btn:hover { background: rgba(0,242,255,0.1); border-color: var(--accent-cyan); transform: translateY(-3px); }
@@ -219,12 +219,14 @@
         .dash-section { background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 15px; padding: 20px; margin-bottom: 20px; }
         .ds-header { font-family: var(--font-head); font-size: 1.15rem; color: white; margin-bottom: 15px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px;}
         
-        .roster-item { display: flex; align-items: center; gap: 10px; background: rgba(255,255,255,0.03); padding: 12px; border-radius: 12px; margin-bottom: 10px; border: 1px solid rgba(255,255,255,0.05); flex-wrap: wrap; cursor:pointer;}
+        /* ROSTER CARDS FIX FOR OVERFLOW */
+        .roster-item { display: flex; align-items: center; gap: 10px; background: rgba(255,255,255,0.03); padding: 12px; border-radius: 12px; margin-bottom: 10px; border: 1px solid rgba(255,255,255,0.05); flex-wrap: nowrap; cursor:pointer; overflow: hidden;}
         .r-avatar { width: 45px; height: 45px; border-radius: 12px; background: var(--accent-purple); display: flex; align-items: center; justify-content: center; font-family: var(--font-head); font-weight: bold; color: white; font-size: 1.2rem; flex-shrink: 0;}
-        .r-info { flex: 1; min-width: 0; }
-        .r-name { font-family: var(--font-head); font-size: 1.05rem; color: white; font-weight: bold; margin-bottom: 8px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;}
-        .r-role-tag { font-size: 0.65rem; padding: 3px 8px; border-radius: 6px; font-weight: bold; background: rgba(255,255,255,0.1); color: #ccc; margin-right: 5px; border: 1px solid rgba(255,255,255,0.2); display: inline-block;}
-        .r-pos-tag { font-size: 0.6rem; padding: 2px 6px; border-radius: 4px; color: var(--accent-cyan); border: 1px dashed var(--accent-cyan); display: inline-block;}
+        .r-info { flex: 1; min-width: 0; overflow: hidden; display: flex; flex-direction: column; justify-content: center;}
+        .r-name { font-family: var(--font-head); font-size: 1.05rem; color: white; font-weight: bold; margin-bottom: 4px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; width: 100%; display: block;}
+        .roster-tags-wrapper { display: flex; flex-wrap: wrap; gap: 6px; width: 100%; overflow: hidden; align-items: center; }
+        .r-role-tag { font-size: 0.65rem; padding: 3px 8px; border-radius: 6px; font-weight: bold; background: rgba(255,255,255,0.1); color: #ccc; border: 1px solid rgba(255,255,255,0.2); white-space: nowrap;}
+        .r-pos-tag { font-size: 0.6rem; padding: 2px 6px; border-radius: 4px; color: var(--accent-cyan); border: 1px dashed var(--accent-cyan); white-space: nowrap;}
         html.theme-vip .r-pos-tag { color: #FFD700; border-color: #FFD700;}
         
         .btn-primary { width: 100%; padding: 14px; background: var(--accent-gradient); border: none; border-radius: 12px; color: white; font-family: var(--font-head); font-size: 1rem; font-weight: bold; cursor: pointer; box-shadow: 0 5px 15px rgba(189,0,255,0.4); margin-bottom: 10px; transition:0.3s; }
@@ -923,7 +925,7 @@
             
             // --- START SILENT BACKGROUND SYNC FOR CHAT ---
             if(chatSyncInterval) clearInterval(chatSyncInterval);
-            chatSyncInterval = setInterval(silentChatSync, 5000);
+            chatSyncInterval = setInterval(silentChatSync, 1500); // Super fast realtime feel
         }
         
         function closeChat() { 
@@ -999,7 +1001,7 @@
                 activeClan.messages = msgs;
                 let cleanClan = JSON.parse(JSON.stringify(activeClan));
                 delete cleanClan.logo; delete cleanClan.banner;
-                fetch(API_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify({ action: "update_clan", clan_id: activeClan.clanId, field: "messages", value: JSON.stringify(msgs) }) });
+                fetch(API_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify({ action: "update_clan", clan_id: activeClan.clanId, field: "FULL_UPDATE", value: JSON.stringify(cleanClan) }) });
             }
             
             if(msgs.length === 0) {
@@ -1050,7 +1052,8 @@
             activeClan.messages.push({ sender: user.username, text: encText, timestamp: Date.now() });
             if(activeClan.messages.length > 50) activeClan.messages.shift();
             
-            pushUpdateToLive('messages', activeClan.messages);
+            // FULL_UPDATE ensures roster isn't wiped
+            pushUpdateToLive('FULL_UPDATE', activeClan);
             inp.value = '';
             renderChat();
             
@@ -1062,7 +1065,7 @@
             if(confirm("Delete this message for everyone?")) {
                 triggerHaptic();
                 activeClan.messages.splice(index, 1);
-                pushUpdateToLive('messages', activeClan.messages);
+                pushUpdateToLive('FULL_UPDATE', activeClan);
                 renderChat();
             }
         }
@@ -1155,7 +1158,7 @@
                 let encodedData = encodeURIComponent(JSON.stringify(member));
                 let isOnline = Math.random() > 0.5 ? 'block' : 'none'; if(member.name === user.username) isOnline = 'block'; 
 
-                let posTag = member.pos ? `<div class="r-pos-tag">${member.pos}</div>` : "";
+                let posTag = member.pos ? `<span class="r-pos-tag">${member.pos}</span>` : "";
 
                 rl.innerHTML += `
                     <div class="roster-item" onclick="openMemberCard('${encodedData}')">
@@ -1163,12 +1166,12 @@
                         <div class="online-dot" style="display:${isOnline};"></div>
                         <div class="r-info">
                             <div class="r-name">${member.name}</div>
-                            <div style="display:flex; flex-wrap:wrap; gap:6px; margin-top:4px;">
+                            <div class="roster-tags-wrapper">
                                 <span class="r-role-tag" style="color:${rColor}; border-color:${rColor}; margin:0;">${member.role}</span>
                                 ${posTag}
                             </div>
                         </div>
-                        <div style="display:flex; gap:5px; flex-wrap:wrap;">${actions}</div>
+                        <div style="display:flex; gap:5px; flex-wrap:wrap; flex-shrink:0;">${actions}</div>
                     </div>`;
             });
         }
@@ -1294,6 +1297,7 @@
         }
 
         function pushUpdateToLive(field, value) {
+            // Force FULL_UPDATE for reliability to prevent data wipe bugs.
             if (field !== 'FULL_UPDATE') { activeClan[field] = value; } 
             else { activeClan = value; }
 
@@ -1304,17 +1308,14 @@
             renderDashboard(activeClan); triggerSyncIndicator();
 
             let payloadValue = value;
-            if (field === 'FULL_UPDATE') {
-                let cleanClan = JSON.parse(JSON.stringify(activeClan));
-                delete cleanClan.logo;
-                delete cleanClan.banner;
-                payloadValue = JSON.stringify(cleanClan);
-            } else if (field !== 'logo' && field !== 'banner') {
-                payloadValue = typeof value === 'object' ? JSON.stringify(value) : value;
-            }
+            // Always push the FULL JSON back so Google Apps Script doesn't accidentally overwrite the whole cell with a small array
+            let cleanClan = JSON.parse(JSON.stringify(activeClan));
+            delete cleanClan.logo;
+            delete cleanClan.banner;
+            payloadValue = JSON.stringify(cleanClan);
 
             // Using the strict action endpoint for clan updates
-            let payload = { action: "update_clan", clan_id: activeClan.clanId, field: field, value: payloadValue };
+            let payload = { action: "update_clan", clan_id: activeClan.clanId, field: "FULL_UPDATE", value: payloadValue };
             fetch(API_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify(payload) });
         }
 
@@ -1323,23 +1324,29 @@
             if(msg && msg.trim() !== "") {
                 if(!activeClan.notifications) activeClan.notifications = [];
                 activeClan.notifications.push({ msg: `<b style='color:var(--accent-orange)'>${user.username}</b>: ${msg}` });
-                pushUpdateToLive('notifications', activeClan.notifications);
+                pushUpdateToLive('FULL_UPDATE', activeClan);
                 showToast("Notice posted!");
             }
         }
 
         function editField(field) {
             let val = prompt(`Update ${field}:`, activeClan[field] || "");
-            if(val && val.trim() !== "") { pushUpdateToLive(field, val); showToast("Updated successfully."); }
+            if(val && val.trim() !== "") { 
+                activeClan[field] = val;
+                pushUpdateToLive('FULL_UPDATE', activeClan); 
+                showToast("Updated successfully."); 
+            }
         }
 
         function toggleRecruitment() {
-            let next = activeClan.status === 'OPEN' ? 'CLOSED' : 'OPEN';
-            pushUpdateToLive('status', next); showToast("Recruitment set to " + next);
+            activeClan.status = activeClan.status === 'OPEN' ? 'CLOSED' : 'OPEN';
+            pushUpdateToLive('FULL_UPDATE', activeClan); 
+            showToast("Recruitment set to " + activeClan.status);
         }
         function toggleAutoAccept() {
-            let state = document.getElementById('dashAutoAccept').checked;
-            pushUpdateToLive('autoAccept', state); showToast(state ? "Auto-Accept Enabled" : "Manual Review Enabled");
+            activeClan.autoAccept = document.getElementById('dashAutoAccept').checked;
+            pushUpdateToLive('FULL_UPDATE', activeClan); 
+            showToast(activeClan.autoAccept ? "Auto-Accept Enabled" : "Manual Review Enabled");
         }
 
         function triggerUpload(type) { document.getElementById(type === 'banner' ? 'liveBannerInp' : 'liveLogoInp').click(); }
@@ -1361,11 +1368,18 @@
                     
                     const compressedBase64 = canvas.toDataURL('image/jpeg', 0.6); 
                     
-                    // Force the payload directly to columns using the specific backend router fields
-                    // (Assuming backend router uses these to hit Column F / G)
                     let apiFieldTarget = field === 'logo' ? 'logo' : 'banner';
                     
-                    pushUpdateToLive(apiFieldTarget, compressedBase64); 
+                    // We only use isolated field pushes for images to save bandwidth
+                    activeClan[apiFieldTarget] = compressedBase64;
+                    let payload = { action: "update_clan", clan_id: activeClan.clanId, field: apiFieldTarget, value: compressedBase64 };
+                    fetch(API_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify(payload) });
+                    
+                    let index = userLiveClans.findIndex(c => c.clanId === activeClan.clanId);
+                    if(index !== -1) userLiveClans[index] = activeClan;
+                    localStorage.setItem('tournyx_my_clans_cache', JSON.stringify(userLiveClans));
+                    renderDashboard(activeClan);
+                    
                     showToast("Image Saved Perfectly!"); playSuccessSound();
                 };
                 img.src = ev.target.result;
@@ -1375,7 +1389,11 @@
 
         function editSocial(platform) {
             let link = prompt(`Enter your ${platform} link:`, activeClan[`${platform}Link`] || "");
-            if(link) { pushUpdateToLive(`${platform}Link`, link); showToast(`Linked ${platform}!`); }
+            if(link) { 
+                activeClan[`${platform}Link`] = link;
+                pushUpdateToLive('FULL_UPDATE', activeClan); 
+                showToast(`Linked ${platform}!`); 
+            }
         }
         
         function nativeShare() {
@@ -1404,7 +1422,11 @@
                 }
             }
             let p = activeClan.roster.find(r => r.name === name);
-            if(p) { p.role = newRole; pushUpdateToLive('FULL_UPDATE', activeClan); showToast("Role updated."); }
+            if(p) { 
+                p.role = newRole; 
+                pushUpdateToLive('FULL_UPDATE', activeClan); 
+                showToast("Role updated."); 
+            }
         }
 
         function kickMember(e, name) {
@@ -1413,7 +1435,8 @@
                 activeClan.roster = activeClan.roster.filter(r => r.name !== name);
                 if(!activeClan.notifications) activeClan.notifications = [];
                 activeClan.notifications.push({ msg: `<b style='color:#ff4d4d'>${name}</b> was kicked by Admin.` });
-                pushUpdateToLive('FULL_UPDATE', activeClan); showToast(`${name} kicked.`);
+                pushUpdateToLive('FULL_UPDATE', activeClan); 
+                showToast(`${name} kicked.`);
             }
         }
 
@@ -1492,7 +1515,6 @@
                         try {
                             let cObj = typeof item === 'string' ? JSON.parse(item) : (item.team_json ? (typeof item.team_json === 'string' ? JSON.parse(item.team_json) : item.team_json) : item);
                             if(cObj && cObj.clanId) {
-                                // Inject external rows just in case structure differs in DB
                                 if(item.logo) cObj.externalLogo = item.logo;
                                 if(item.banner) cObj.externalBanner = item.banner;
                                 allParsed.push(cObj);
@@ -1546,14 +1568,12 @@
             list.forEach(c => {
                 if(!c.name) return;
                 
-                // Use external logo if JSON logo is missing
                 let safeLogo = c.logo || c.externalLogo || "";
                 let safeBanner = c.banner || c.externalBanner || "https://via.placeholder.com/600x200/110822/bd00ff?text=Clan+Banner";
                 
                 let finalLogo = safeLogo.length > 20 ? safeLogo : `https://ui-avatars.com/api/?name=${encodeURIComponent(c.name)}&background=110822&color=bd00ff`;
                 let rCount = c.roster ? c.roster.length : 1; let cGame = c.game || "Esports"; let cTag = c.tag || "TNYX";
                 
-                // SMART LOCATION EXTRACTOR
                 let st = c.state && c.state !== "N/A" ? c.state : "";
                 let ct = c.city && c.city !== "N/A" ? c.city : "";
                 if (!st && !ct && c.roster && c.roster.length > 0) {
@@ -1620,7 +1640,6 @@
 
             fetch(API_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify(payload) });
             
-            // Instantly update button to "REQUESTED"
             if (pendingJoinData.btnRef && !pendingJoinData.isAuto) {
                 pendingJoinData.btnRef.outerHTML = `<button class="s-btn req" disabled>REQUESTED</button>`;
                 let cachedReqs = JSON.parse(localStorage.getItem('tournyx_join_requests')) || [];
