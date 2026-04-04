@@ -190,6 +190,9 @@
         #submission-confirmed { display: none; text-align: center; padding: 20px 0;}
         .confirmed-icon { font-size: 5rem; color: var(--accent-green); margin-bottom: 20px; animation: scaleInGlow 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275); text-shadow: 0 0 20px rgba(0,255,127,0.6);}
 
+        .timer-text { font-family: var(--font-body); font-size: 0.95rem; color: #888; margin-top: 30px; font-weight: bold;}
+        .timer-text span { color: var(--accent-gold); font-size: 1.2rem; font-family: var(--font-head);}
+
         /* --- TOAST --- */
         #customToast { visibility: hidden; min-width: 250px; background-color: var(--accent-gold); color: #000; text-align: center; border-radius: 12px; padding: 14px; position: fixed; z-index: 9999; left: 50%; bottom: -50px; transform: translateX(-50%); font-family: var(--font-head); font-weight: bold; box-shadow: 0 5px 15px rgba(255,215,0,0.4); opacity: 0; transition: opacity 0.4s, bottom 0.4s; }
         #customToast.show { visibility: visible; opacity: 1; bottom: 30px; }
@@ -216,7 +219,6 @@
             <p class="tagline">Organizer Portal</p>
         </div>
 
-        <!-- LANDING SLIDER -->
         <div id="landing-slider-container">
             <div class="landing-slider" id="landingSlider">
                 <div class="landing-slide">
@@ -253,7 +255,6 @@
             </div>
         </div>
 
-        <!-- APPLICATION FORM -->
         <div id="questions-slider-container">
             
             <div class="loader-overlay" id="mainLoader">
@@ -268,7 +269,6 @@
                 <div class="question-wrapper">
                     <div class="question-track" id="questionTrack">
                         
-                        <!-- STEP 1: ROLE -->
                         <div class="question-slide">
                             <h3 class="question-heading">Select Your Role</h3>
                             <div class="form-group">
@@ -355,7 +355,6 @@
                             </div>
                         </div>
 
-                        <!-- STEP 2: STANDARD -->
                         <div class="question-slide">
                             <h3 class="question-heading">Your Standard</h3>
                             <div class="form-group">
@@ -365,7 +364,6 @@
                             </div>
                         </div>
 
-                        <!-- STEP 3: CONTACT -->
                         <div class="question-slide">
                             <h3 class="question-heading">Contact Info</h3>
                             <div class="form-group">
@@ -387,7 +385,6 @@
                             </div>
                         </div>
 
-                        <!-- STEP 4: PERSONAL -->
                         <div class="question-slide">
                             <h3 class="question-heading">Personal Details</h3>
                             <div class="form-group">
@@ -416,7 +413,6 @@
                             </div>
                         </div>
 
-                        <!-- STEP 5: UPLOAD -->
                         <div class="question-slide">
                             <h3 class="question-heading">Aadhar Verification</h3>
                             <p style="color:#ccc; font-size:0.9rem; margin-bottom:15px; text-align:center;">Upload front and back images. Max 10MB each.</p>
@@ -431,7 +427,6 @@
                             <div class="preview-container" id="aadharPreviews"></div>
                         </div>
 
-                        <!-- STEP 6: VERIFY -->
                         <div class="question-slide">
                             <h3 class="question-heading">Verify & Submit</h3>
                             <p style="color:#ccc; font-size:0.9rem; margin-bottom:15px; text-align:center;">Ensure details are perfectly accurate.</p>
@@ -454,12 +449,13 @@
             </form>
         </div>
 
-        <!-- SUCCESS SCREEN -->
         <div id="submission-confirmed">
             <i class="fa-solid fa-circle-check confirmed-icon"></i>
             <h2 class="slide-heading" style="color:var(--accent-green); text-shadow: 0 0 10px rgba(0,255,127,0.5);">Application Submitted!</h2>
             <p style="font-family: var(--font-body); font-size: 1.1rem; color: #ccc; margin-bottom: 15px; line-height: 1.5;">The Tournyx Team will shortly contact you. You will also receive a greeting email from us.</p>
             <p style="font-family: var(--font-body); font-size: 1.1rem; color: var(--accent-gold); font-weight: bold;">Welcome to the professional arena.</p>
+            
+            <p class="timer-text">Redirecting to Login Portal in <span id="redirectTimer">10</span> seconds...</p>
         </div>
     </div>
 
@@ -498,7 +494,7 @@
         // 👉 YOUR LIVE WEB APP URL
         const API_URL = "https://script.google.com/macros/s/AKfycbyqqTpgaflxKJ9xH0jq7mJ_jLzcoNhas3gNo0h5gvoa_6r5Ae9NFxJAJp7ZoYNnMRKl/exec";
 
-        // --- LANDING SLIDER (FLUID X-AXIS ANIMATION) ---
+        // --- LANDING SLIDER ---
         let currentLandingIndex = 0;
         const totalLandingSlides = 4;
         let autoSlideInterval;
@@ -692,7 +688,6 @@
             let currentSlideIndex = currentStep - 1;
             let slideEls = document.querySelectorAll('.question-slide')[currentSlideIndex];
             
-            // Custom Step 1 Check (New Organizer Any One Logic)
             if (currentStep === 1) {
                 const role = document.getElementById('mainRole').value;
                 if (!role) {
@@ -733,7 +728,6 @@
 
             if(!isValid) { showToast("🛑 Fill all required fields.", true); return false; }
 
-            // Custom Step 3 Check (Email & Phone)
             if (currentStep === 3) {
                 const email = document.getElementById('professionalEmail').value;
                 if (!email.toLowerCase().includes('tournyx')) {
@@ -750,7 +744,6 @@
                 }
             }
 
-            // Custom Step 5 Check (Aadhar)
             if (currentStep === 5) {
                 if (aadharBase64Files.length === 0) {
                     document.getElementById('aadharDropZone').classList.add('shake-error');
@@ -776,7 +769,7 @@
                 org_youtube: 'YouTube', org_insta: 'Instagram', org_hosted_count: 'Tournaments Hosted', org_type: 'Format',
                 new_youtube: 'YouTube', new_insta: 'Instagram', new_hosted_count: 'Tournaments Hosted', new_type: 'Format',
                 standardResponse: 'Standard Validation',
-                professionalEmail: 'Pro Email', whatsappPhone: 'WhatsApp (+91)',
+                professionalEmail: 'Pro Email', whatsappPhone: 'WhatsApp (10 Digits)',
                 fullName: 'Full Name', userState: 'State', userCity: 'City', userGender: 'Gender'
             };
 
@@ -829,7 +822,7 @@
 
             data.standardResponse = document.getElementById('standardResponse').value;
             data.professionalEmail = document.getElementById('professionalEmail').value;
-            data.whatsappPhone = document.getElementById('whatsappPhone').value;
+            data.whatsappPhone = document.getElementById('whatsappPhone').value; // We only pull the 10 digits here
             data.fullName = document.getElementById('fullName').value;
             data.userState = document.getElementById('userState').value;
             data.userCity = document.getElementById('userCity').value;
@@ -908,9 +901,22 @@
                     icon.classList.add('fa-beat-fade');
                     
                     document.getElementById('mainContainer').scrollIntoView({ behavior: 'smooth' });
+
+                    // 10 Second Redirect Timer Logic
+                    let secondsLeft = 10;
+                    let timerElement = document.getElementById('redirectTimer');
+                    
+                    let redirectInterval = setInterval(() => {
+                        secondsLeft--;
+                        timerElement.innerText = secondsLeft;
+                        if (secondsLeft <= 0) {
+                            clearInterval(redirectInterval);
+                            window.location.href = 'login.html?tab=organizer';
+                        }
+                    }, 1000);
                     
                 } else {
-                    showToast('🛑 Submission Error: ' + result.data, true);
+                    showToast('🛑 ' + result.data, true);
                     finalBtn.disabled = false; prevBtn.disabled = false; loader.style.display = 'none';
                 }
 
