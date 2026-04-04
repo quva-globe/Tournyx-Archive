@@ -44,7 +44,7 @@
             font-family: var(--font-body);
             padding-bottom: calc(140px + env(safe-area-inset-bottom, 0px)); 
             overflow-x: hidden;
-            padding-top: calc(85px + env(safe-area-inset-top, 0px)) !important; 
+            padding-top: calc(75px + env(safe-area-inset-top, 0px)) !important; /* Fixed: Reduced from 85px to eliminate unnecessary top gap */
             margin: 0 !important;
             width: 100vw;
             min-height: 100vh;
@@ -104,8 +104,42 @@
         .theme-vip .t-arrow { color: #FFD700; }
         .tourney-card:hover .t-arrow { transform: translateX(3px); }
 
-        /* RESOLUTION VIEW */
-        #resolutionView { display: none; animation: fadeIn 0.4s ease; }
+        /* RESOLUTION VIEW AS POPUP MODAL (Fixed centering and animation) */
+        #resolutionView { 
+            display: none; 
+            position: fixed; 
+            top: 0; left: 0; 
+            width: 100vw; height: 100vh; 
+            background: rgba(0, 0, 0, 0.7); 
+            backdrop-filter: blur(8px); 
+            -webkit-backdrop-filter: blur(8px); 
+            z-index: 10000; 
+            align-items: center; 
+            justify-content: center; 
+            opacity: 0; 
+            transition: opacity 0.4s ease; 
+        }
+        #resolutionView.active { display: flex; opacity: 1; }
+        
+        .resolution-modal { 
+            background: var(--primary-bg); 
+            width: 95%; max-width: 600px; 
+            max-height: 80vh; 
+            border-radius: 20px; 
+            border: 1px solid var(--accent-cyan); 
+            box-shadow: 0 10px 40px rgba(0,0,0,0.8), 0 0 20px rgba(0,242,255,0.2); 
+            padding: 25px 20px 100px 20px; 
+            position: relative; 
+            overflow-y: auto; 
+            transform: scale(0.9) translateY(20px); 
+            opacity: 0; 
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); 
+        }
+        .theme-vip .resolution-modal { border-color: #FFD700; box-shadow: 0 10px 40px rgba(0,0,0,0.8), 0 0 20px rgba(255,215,0,0.2); }
+        #resolutionView.active .resolution-modal { transform: scale(1) translateY(0); opacity: 1; }
+        
+        .close-modal-btn { position: absolute; top: 20px; right: 20px; color: #888; font-size: 1.5rem; cursor: pointer; transition: 0.3s; z-index: 10; }
+        .close-modal-btn:hover { color: var(--accent-danger); transform: rotate(90deg); }
         
         .prize-legend { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 20px; }
         .prize-tag { background: rgba(255,255,255,0.05); padding: 5px 12px; border-radius: 8px; font-size: 0.8rem; font-weight: bold; border: 1px solid rgba(255,255,255,0.1); display: flex; align-items: center; gap: 5px; transition: 0.3s; }
@@ -139,7 +173,7 @@
         .theme-vip .pts-save-btn:active { background: #FFD700; border-color: #FFD700; }
 
         /* FLOATING ACTION BAR */
-        .bottom-summary-bar { position: fixed; bottom: 0; left: 0; width: 100%; padding: 15px 20px calc(15px + env(safe-area-inset-bottom, 0px)); background: rgba(5,2,12,0.95); backdrop-filter: blur(20px); border-top: 1px solid var(--accent-cyan); z-index: 1000; box-shadow: 0 -10px 40px rgba(0,242,255,0.1); display: none; flex-direction: column; align-items: center; gap: 10px; }
+        .bottom-summary-bar { position: fixed; bottom: 0; left: 0; width: 100%; padding: 15px 20px calc(15px + env(safe-area-inset-bottom, 0px)); background: rgba(5,2,12,0.95); backdrop-filter: blur(20px); border-top: 1px solid var(--accent-cyan); z-index: 10001; /* Fixed: Kept above the modal overlay */ box-shadow: 0 -10px 40px rgba(0,242,255,0.1); display: none; flex-direction: column; align-items: center; gap: 10px; }
         .theme-vip .bottom-summary-bar { border-top-color: #FFD700; box-shadow: 0 -10px 40px rgba(255,215,0,0.1); }
         .bottom-summary-bar.active { display: flex; animation: slideInUp 0.4s ease; }
         
@@ -199,18 +233,22 @@
         </div>
 
         <div id="resolutionView">
-            <div class="section-title" style="border:none; margin-bottom: 5px;">
-                <i class="fa-solid fa-trophy" style="color: #FFD700;"></i> <span id="resMatchTitle" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">Tournament Name</span>
-            </div>
-            
-            <div class="prize-legend" id="prizeLegendBox"></div>
+            <div class="resolution-modal">
+                <div class="close-modal-btn" onclick="closeResolutionView()"><i class="fa-solid fa-xmark"></i></div>
+                
+                <div class="section-title" style="border:none; margin-bottom: 5px; padding-right: 30px;">
+                    <i class="fa-solid fa-trophy" style="color: #FFD700;"></i> <span id="resMatchTitle" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">Tournament Name</span>
+                </div>
+                
+                <div class="prize-legend" id="prizeLegendBox"></div>
 
-            <p style="font-size: 0.85rem; color: #aaa; margin-bottom: 15px; line-height: 1.4;">
-                Tap the crown to assign podium prizes. Tap 'Undo' to reverse. For other players, use the custom payout.
-            </p>
+                <p style="font-size: 0.85rem; color: #aaa; margin-bottom: 15px; line-height: 1.4;">
+                    Tap the crown to assign podium prizes. Tap 'Undo' to reverse. For other players, use the custom payout.
+                </p>
 
-            <div id="teamsContainer">
-                <div class="loading-state"><i class="fa-solid fa-spinner fa-spin"></i> Loading registered teams...</div>
+                <div id="teamsContainer">
+                    <div class="loading-state"><i class="fa-solid fa-spinner fa-spin"></i> Loading registered teams...</div>
+                </div>
             </div>
         </div>
     </div>
@@ -352,9 +390,11 @@
         function openResolutionView(matchId, titleEnc, prizeJsonStrEncoded) {
             triggerHaptic();
             activeMatchId = matchId;
-            document.getElementById('tourneyListSection').style.display = 'none';
-            document.getElementById('resolutionView').style.display = 'block';
+            
+            // FIXED: Triggering the popup modal display
+            document.getElementById('resolutionView').classList.add('active');
             document.getElementById('submitBar').classList.add('active');
+            document.body.style.overflow = 'hidden'; // Locks background scrolling
             
             document.getElementById('resMatchTitle').innerText = decodeURIComponent(titleEnc);
 
@@ -379,6 +419,15 @@
             document.getElementById('prizeLegendBox').innerHTML = legendHtml;
 
             loadTeams(matchId);
+        }
+
+        // FIXED: Added function to securely close the popup overlay
+        function closeResolutionView() {
+            triggerHaptic();
+            document.getElementById('resolutionView').classList.remove('active');
+            document.getElementById('submitBar').classList.remove('active');
+            document.body.style.overflow = '';
+            activeMatchId = "";
         }
 
         function loadTeams(matchId) {
