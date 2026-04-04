@@ -259,13 +259,30 @@
         .setting-item:hover .setting-arrow { color: var(--accent-cyan); transform: translateX(5px); }
         .theme-vip .setting-item:hover .setting-arrow { color: #d4af37; }
 
-        /* --- GLASSMORPHISM MODALS (FIXED OVERFLOW & PADDING) --- */
+        /* --- MILESTONE MODAL STYLES (FIXED) --- */
+        .tier-list { display: flex; flex-direction: column; gap: 10px; }
+        .tier-item { display: flex; justify-content: space-between; align-items: center; padding: 15px; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.05); border-radius: 12px; gap: 15px; transition: 0.3s;}
+        .tier-item.locked { opacity: 0.5; filter: grayscale(0.8); }
+        .tier-item.current { border-color: var(--accent-cyan); background: rgba(0,242,255,0.05); box-shadow: 0 5px 15px rgba(0,242,255,0.1); }
+        .theme-vip .tier-item.current { border-color: #FFD700; background: rgba(255,215,0,0.05); box-shadow: 0 5px 15px rgba(255,215,0,0.1); }
+        .tier-info { flex: 1; min-width: 0; }
+        .tier-info h5 { font-family: var(--font-head); font-size: 1.05rem; color: white; margin-bottom: 4px; display: flex; align-items: center; gap: 8px;}
+        .tier-info p { font-size: 0.8rem; color: #aaa; margin-bottom: 5px; line-height: 1.3;}
+        .tier-reward { text-align: right; font-family: var(--font-head); font-size: 0.9rem; font-weight: bold; flex-shrink: 0;}
+        .claim-btn { background: var(--accent-gradient); border: none; color: white; padding: 6px 12px; border-radius: 8px; font-size: 0.75rem; font-family: var(--font-head); font-weight: bold; cursor: pointer; text-transform: uppercase; box-shadow: 0 4px 10px rgba(0,242,255,0.3); transition: 0.3s;}
+        .claim-btn:active { transform: scale(0.92); }
+        .premium-promo { background: linear-gradient(135deg, rgba(212,175,55,0.1), rgba(153,101,21,0.05)); border: 1px solid rgba(212,175,55,0.3); border-radius: 15px; padding: 20px; text-align: center; margin-top: 20px; }
+        .premium-promo h4 { font-family: var(--font-head); color: #FFD700; font-size: 1.2rem; margin-bottom: 5px; }
+        .premium-promo p { font-size: 0.85rem; color: #ccc; margin-bottom: 12px; line-height: 1.4; }
+        .premium-btn { background: linear-gradient(90deg, #FFE87C, #D4AF37); border: none; color: black; padding: 10px 20px; border-radius: 10px; font-family: var(--font-head); font-weight: bold; cursor: pointer; text-transform: uppercase; box-shadow: 0 5px 15px rgba(212,175,55,0.3); transition: 0.3s;}
+        .premium-btn:active { transform: scale(0.95); }
+
+        /* --- GLASSMORPHISM MODALS --- */
         .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); z-index: 5000; display: none; align-items: flex-end; justify-content: center; backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); opacity: 0; transition: 0.4s; }
         .modal-overlay.active { display: flex; opacity: 1; }
         .modal-card { width: 100%; max-width: 800px; background: rgba(10,5,20,0.95); border-radius: 25px 25px 0 0; border-top: 1px solid var(--card-border); border-left: 1px solid rgba(255,255,255,0.05); border-right: 1px solid rgba(255,255,255,0.05); transform: translateY(100%); transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); max-height: 90vh; overflow-y: auto; overflow-x: hidden; box-shadow: 0 -10px 40px rgba(0,0,0,0.8); backdrop-filter: blur(20px);}
         .modal-overlay.active .modal-card { transform: translateY(0); }
         
-        /* Fixed Full Screen Modals to respect safe area */
         .full-screen-modal .modal-card { height: 95vh; max-height: 95vh; padding: max(25px, env(safe-area-inset-top, 0px)) 20px 0; display: flex; flex-direction: column;}
         .fs-content { flex: 1; overflow-y: auto; overflow-x: hidden; padding-bottom: 20px; padding-right: 5px; }
         .fs-content::-webkit-scrollbar { display: none !important; }
@@ -1587,7 +1604,14 @@
             let msId = type + '_' + levelIndex;
             
             userData.rupees = (parseInt(userData.rupees) || 0) + rupeesToAdd;
-            userData.earnings = (parseInt(userData.earnings) || 0) + rupeesToAdd;
+            
+            // Log logic correctly based on Organizer vs Player 
+            if(type === 'organizer') {
+                userData.earnings = (parseInt(userData.earnings) || 0) + rupeesToAdd;
+            } else {
+                userData.winnings = (parseInt(userData.winnings) || 0) + rupeesToAdd;
+            }
+            
             userData.points = (parseInt(userData.points) || 0) + pointsToAdd;
             
             if(!userData.claimed_ms) userData.claimed_ms = [];
@@ -1607,7 +1631,8 @@
                     email: userData.email.trim().toLowerCase(), 
                     rupees: rupeesToAdd,
                     points: pointsToAdd,
-                    ms_id: msId
+                    ms_id: msId,
+                    type: type // Passed to backend
                 })
             }).catch(() => console.log("Silent claim sync"));
         }
@@ -1841,7 +1866,6 @@
 
         function closeManageModal() { document.getElementById('manageTourneyModal').classList.remove('active'); }
 
-        // --- NEW COMPRESSION ENGINE FOR PROFILE PICTURES ---
         function processAvatarUpload(event) {
             const file = event.target.files[0];
             if (!file) return;
@@ -1888,7 +1912,6 @@
             event.target.value = ""; 
         }
 
-        // --- NEW COMPRESSION ENGINE FOR TOURNAMENT BANNERS ---
         function processTournamentBanner(event) {
             const file = event.target.files[0];
             if (!file) return;
