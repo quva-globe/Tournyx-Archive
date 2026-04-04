@@ -222,7 +222,7 @@
         .roster-item { display: flex; align-items: center; gap: 10px; background: rgba(255,255,255,0.03); padding: 12px; border-radius: 12px; margin-bottom: 10px; border: 1px solid rgba(255,255,255,0.05); flex-wrap: wrap; cursor:pointer;}
         .r-avatar { width: 45px; height: 45px; border-radius: 12px; background: var(--accent-purple); display: flex; align-items: center; justify-content: center; font-family: var(--font-head); font-weight: bold; color: white; font-size: 1.2rem; flex-shrink: 0;}
         .r-info { flex: 1; min-width: 0; }
-        .r-name { font-family: var(--font-head); font-size: 1.05rem; color: white; font-weight: bold; margin-bottom: 3px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;}
+        .r-name { font-family: var(--font-head); font-size: 1.05rem; color: white; font-weight: bold; margin-bottom: 8px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;}
         .r-role-tag { font-size: 0.65rem; padding: 3px 8px; border-radius: 6px; font-weight: bold; background: rgba(255,255,255,0.1); color: #ccc; margin-right: 5px; border: 1px solid rgba(255,255,255,0.2); display: inline-block;}
         .r-pos-tag { font-size: 0.6rem; padding: 2px 6px; border-radius: 4px; color: var(--accent-cyan); border: 1px dashed var(--accent-cyan); display: inline-block;}
         html.theme-vip .r-pos-tag { color: #FFD700; border-color: #FFD700;}
@@ -928,6 +928,11 @@
             const SEVEN_DAYS = 7 * 24 * 60 * 60 * 1000;
             let now = Date.now();
             let rawMsgs = activeClan.messages || [];
+            
+            if (typeof rawMsgs === 'string') {
+                try { rawMsgs = JSON.parse(rawMsgs); activeClan.messages = rawMsgs; } catch(e) { rawMsgs = []; }
+            }
+            
             let msgs = rawMsgs.filter(m => (now - m.timestamp) < SEVEN_DAYS);
             
             if(msgs.length !== rawMsgs.length) {
@@ -1093,8 +1098,8 @@
                         <div class="online-dot" style="display:${isOnline};"></div>
                         <div class="r-info">
                             <div class="r-name">${member.name}</div>
-                            <div>
-                                <span class="r-role-tag" style="color:${rColor}; border-color:${rColor};">${member.role}</span>
+                            <div style="display:flex; flex-wrap:wrap; gap:6px; margin-top:4px;">
+                                <span class="r-role-tag" style="color:${rColor}; border-color:${rColor}; margin:0;">${member.role}</span>
                                 ${posTag}
                             </div>
                         </div>
@@ -1326,6 +1331,13 @@
 
         function modRole(e, name, newRole) {
             e.stopPropagation();
+            if (newRole === 'Admin') {
+                let currentAdmins = activeClan.roster.filter(r => r.role === 'Admin').length;
+                if (currentAdmins >= 1) {
+                    showToast("Only 1 Admin allowed. Demote the current Admin first.", true);
+                    return;
+                }
+            }
             let p = activeClan.roster.find(r => r.name === name);
             if(p) { p.role = newRole; pushUpdateToLive('FULL_UPDATE', activeClan); showToast("Role updated."); }
         }
