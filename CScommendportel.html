@@ -28,31 +28,29 @@
         body { background-color: var(--bg-main); color: #fff; font-family: var(--font-body); overflow-x: hidden; min-height: 100vh; }
         #particles { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; background: radial-gradient(circle at 50% 0%, #1c053a 0%, #070311 100%); }
 
-        /* HEADER & LOGO ANIMATIONS */
-        .top-bar { background: rgba(5, 2, 10, 0.95); border-bottom: 2px solid var(--tx-violet); padding: 15px 25px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 5px 30px rgba(162, 0, 255, 0.3); position: sticky; top: 0; z-index: 100; backdrop-filter: blur(15px); }
-        .logo-container { display: flex; align-items: center; gap: 15px; }
+        /* ELITE COMPOSITE LOGO */
+        .cs-logo-container { display: flex; align-items: center; gap: 15px; }
+        .tournyx-logo { width: 45px; height: 45px; object-fit: contain; animation: pulseLogo 3s infinite alternate; filter: drop-shadow(0 0 10px rgba(0, 242, 255, 0.6)); border-radius: 50%; border: 2px solid var(--tx-cyan); }
         
-        .dragon-logo { width: 50px; height: 50px; object-fit: contain; animation: pulseLogo 3s infinite alternate; filter: drop-shadow(0 0 10px rgba(162,0,255,0.8)); }
-        @keyframes pulseLogo { from { transform: scale(1); filter: drop-shadow(0 0 5px var(--tx-violet)); } to { transform: scale(1.1); filter: drop-shadow(0 0 20px var(--tx-cyan)); } }
+        .sys-title { font-family: var(--font-head); font-size: 1.6rem; color: #fff; font-weight: 900; letter-spacing: 2px; display: flex; flex-direction: column; line-height: 1;}
+        .sys-title span { font-size: 0.75rem; color: var(--tx-cyan); letter-spacing: 5px; text-shadow: 0 0 10px rgba(0,242,255,0.5); text-transform: uppercase;}
 
-        .sys-title { font-family: var(--font-head); font-size: 1.8rem; color: var(--tx-silver); font-weight: 900; letter-spacing: 3px; display: flex; flex-direction: column; line-height: 1; text-shadow: 0 0 15px rgba(224, 224, 224, 0.5);}
-        .sys-title span { font-size: 0.75rem; color: var(--tx-cyan); letter-spacing: 6px; text-shadow: 0 0 10px var(--tx-cyan); text-transform: uppercase;}
+        @keyframes pulseLogo { from { transform: scale(1); filter: drop-shadow(0 0 5px var(--tx-cyan)); } to { transform: scale(1.1); filter: drop-shadow(0 0 20px var(--tx-violet)); border-color: var(--tx-violet); } }
 
-        .btn-outline { background: transparent; border: 1px solid var(--tx-silver); color: var(--tx-silver); padding: 8px 20px; border-radius: 8px; cursor: pointer; font-family: var(--font-head); font-weight: bold; transition: 0.3s; text-transform: uppercase;}
+        /* HEADER */
+        .top-bar { background: rgba(5, 2, 10, 0.95); border-bottom: 2px solid var(--tx-violet); padding: 15px 25px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 5px 30px rgba(162, 0, 255, 0.3); position: sticky; top: 0; z-index: 100; backdrop-filter: blur(15px); }
+        .btn-outline { background: transparent; border: 1px solid var(--tx-silver); color: var(--tx-silver); padding: 8px 20px; border-radius: 8px; cursor: pointer; font-family: var(--font-head); font-weight: bold; transition: 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); text-transform: uppercase;}
         .btn-outline:hover { background: var(--tx-silver); color: #000; box-shadow: 0 0 20px rgba(224,224,224,0.5); transform: translateY(-2px); }
         .btn-outline:active { transform: scale(0.95); }
 
-        /* AUTH SCREENS */
-        .auth-container { height: 85vh; display: flex; align-items: center; justify-content: center; padding: 20px; }
-        .auth-box { background: var(--panel-bg); border: 1px solid rgba(162,0,255,0.4); padding: 40px 30px; border-radius: 20px; width: 100%; max-width: 420px; text-align: center; box-shadow: 0 15px 50px rgba(0,0,0,0.9), inset 0 0 40px rgba(162,0,255,0.15); animation: glitchEntry 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards; }
+        /* AUTH SCREENS & ANIMATIONS */
+        .auth-container { height: 85vh; display: flex; align-items: center; justify-content: center; padding: 20px; position: absolute; width: 100%; transition: 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
         
-        @keyframes glitchEntry {
-            0% { transform: scale(0.9) skewX(10deg); opacity: 0; filter: blur(10px); }
-            50% { transform: scale(1.05) skewX(-5deg); opacity: 0.8; filter: blur(2px); }
-            100% { transform: scale(1) skewX(0); opacity: 1; filter: blur(0); }
-        }
+        .auth-container.hidden { opacity: 0; transform: scale(0.8) translateY(-50px); pointer-events: none; visibility: hidden; }
+        .auth-container.active { opacity: 1; transform: scale(1) translateY(0); visibility: visible; }
 
-        .auth-box h2 { font-family: var(--font-head); color: var(--tx-cyan); margin-bottom: 5px; text-transform: uppercase; letter-spacing: 2px; text-shadow: 0 0 10px var(--tx-cyan);}
+        .auth-box { background: var(--panel-bg); border: 1px solid rgba(162,0,255,0.4); padding: 40px 30px; border-radius: 20px; width: 100%; max-width: 420px; text-align: center; box-shadow: 0 15px 50px rgba(0,0,0,0.9), inset 0 0 40px rgba(162,0,255,0.15); backdrop-filter: blur(10px); }
+        .auth-box h2 { font-family: var(--font-head); color: var(--tx-cyan); margin-bottom: 5px; text-transform: uppercase; letter-spacing: 1px;}
         
         .input-wrapper { position: relative; margin-bottom: 20px; }
         .input-icon { position: absolute; left: 15px; top: 50%; transform: translateY(-50%); color: var(--tx-silver); transition: 0.3s; }
@@ -65,7 +63,7 @@
         .btn-solid:active { transform: scale(0.96); }
 
         /* DASHBOARD */
-        #dashboard { display: none; padding: 30px 20px; max-width: 1400px; margin: 0 auto; animation: fadeScaleUp 0.5s ease; }
+        #dashboard { display: none; padding: 30px 20px; max-width: 1400px; margin: 0 auto; animation: fadeScaleUp 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
         
         .search-area { display: flex; gap: 15px; margin-bottom: 30px; background: var(--panel-bg); padding: 15px; border-radius: 15px; border: 1px solid rgba(255,255,255,0.05); box-shadow: 0 10px 30px rgba(0,0,0,0.6); }
         .search-area input { flex: 1; padding: 15px; font-size: 1.1rem; background: rgba(0,0,0,0.5); border: 1px solid var(--tx-cyan); color: #fff; font-family: var(--font-code); border-radius: 10px; outline: none; transition: 0.3s;}
@@ -77,9 +75,9 @@
         .tools-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 15px; margin-bottom: 30px; }
         .tool-card { background: rgba(0,0,0,0.4); border: 1px solid rgba(255,255,255,0.05); border-left: 3px solid var(--tx-violet); padding: 15px; border-radius: 10px; cursor: pointer; transition: 0.3s; display: flex; align-items: center; gap: 15px; }
         .tool-card:hover { background: rgba(162,0,255,0.1); border-color: rgba(162,0,255,0.3); transform: translateX(5px); box-shadow: 0 5px 15px rgba(162,0,255,0.2); }
-        .tool-icon { font-size: 1.5rem; color: var(--tx-silver); width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; background: rgba(255,255,255,0.05); border-radius: 8px; }
+        .tool-icon { font-size: 1.5rem; color: var(--tx-silver); width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; background: rgba(255,255,255,0.05); border-radius: 8px; transition: 0.3s; }
         .tool-card:hover .tool-icon { color: var(--tx-cyan); background: rgba(0,242,255,0.1); text-shadow: 0 0 10px var(--tx-cyan); }
-        .tool-text { font-family: var(--font-head); font-size: 0.85rem; font-weight: bold; text-transform: uppercase; color: #ccc; }
+        .tool-text { font-family: var(--font-head); font-size: 0.85rem; font-weight: bold; text-transform: uppercase; color: #ccc; transition: 0.3s; }
         .tool-card:hover .tool-text { color: #fff; }
 
         .dossier-layout { display: grid; grid-template-columns: 1fr; gap: 25px; }
@@ -101,6 +99,10 @@
         .list-card { border: 1px solid rgba(255,255,255,0.05); border-left: 3px solid var(--tx-violet); padding: 15px; border-radius: 10px; margin-bottom: 12px; background: rgba(0,0,0,0.5); font-family: var(--font-code); font-size: 0.95rem; transition: 0.3s; display: flex; flex-direction: column; gap: 5px;}
         .list-card:hover { background: rgba(162,0,255,0.05); border-color: rgba(162,0,255,0.3); transform: translateX(5px); }
 
+        .action-bar { display: flex; justify-content: space-between; margin-top: 30px; padding: 25px 0 10px; border-top: 1px solid rgba(255,255,255,0.1); align-items: center; flex-wrap: wrap; gap: 15px;}
+        .btn-escalate { background: transparent; color: #ff4d4d; border: 1px solid #ff4d4d; padding: 14px 25px; border-radius: 10px; font-family: var(--font-head); font-weight: bold; cursor: pointer; transition: 0.3s; text-transform: uppercase;}
+        .btn-escalate:hover { background: rgba(255,77,77,0.1); box-shadow: 0 0 15px rgba(255,77,77,0.3); }
+
         /* MODALS */
         .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); z-index: 2000; display: none; align-items: center; justify-content: center; backdrop-filter: blur(10px); opacity: 0; transition: 0.3s; }
         .modal-overlay.active { display: flex; opacity: 1; }
@@ -118,27 +120,35 @@
         .diff-old { color: var(--tx-red); text-decoration: line-through; width: 30%; word-break: break-all; }
         .diff-new { color: #00ff66; font-weight: bold; width: 35%; word-break: break-all; }
 
-        @keyframes fadeScaleUp { from { opacity: 0; transform: scale(0.9) translateY(20px); } to { opacity: 1; transform: scale(1) translateY(0); } }
+        @keyframes fadeScaleUp { from { opacity: 0; transform: scale(0.9) translateY(30px); } to { opacity: 1; transform: scale(1) translateY(0); } }
         @keyframes staggerFadeUp { to { opacity: 1; transform: translateY(0); } }
 
         #toast { position: fixed; bottom: -100px; left: 50%; transform: translateX(-50%); background: var(--tx-cyan); color: #000; padding: 16px 35px; border-radius: 10px; font-family: var(--font-head); font-weight: bold; z-index: 9999; transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); box-shadow: 0 10px 30px rgba(0,242,255,0.4); text-transform: uppercase; letter-spacing: 1px;}
         #toast.show { bottom: 40px; }
         #toast.error { background: var(--tx-red); color: #fff; box-shadow: 0 10px 30px rgba(255,0,85,0.4); }
 
+        @media (max-width: 600px) {
+            .search-area { flex-direction: column; background: transparent; box-shadow: none; padding: 0; border: none;}
+            .search-area input { background: var(--panel-bg); border-color: rgba(255,255,255,0.1); }
+            .search-area button { padding: 15px; }
+            .diff-row { flex-direction: column; align-items: flex-start; gap: 5px; }
+            .diff-field, .diff-old, .diff-new { width: 100%; }
+            .diff-old { display: none; }
+        }
     </style>
 </head>
 <body>
     <div id="particles"></div>
 
     <div class="top-bar">
-        <div class="logo-container">
-            <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEj7b34eZ7Z8n5Z9n7Z9n7Z9n7Z9n7Z9n7Z9n7Z9n7Z9n7Z9n7Z9n7Z9n7Z9n7Z9n7Z9n7Z9/s1024/Picsart_26-02-16_14-38-46-168.jpg" alt="TX Dragon" class="dragon-logo">
-            <div class="sys-title">TOURNYX <span>CS COMMAND</span></div>
+        <div class="cs-logo-container">
+            <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEg_20wCR-WBMpQmw3vxcYUf-vxIO1PYDJoQN_Sid3UDjA9tf0cuX0eH40jbzHoJad4cxbnjhPjqfCw1Z5V1LhgN9zFuIQC0fJjecTy3D9PFu5WjR2H1wHwTD1bUGnXY_NiApWn5gMs6velcQngSzKoP1yHzX0cVsFSUFM8zIefcbiPayY7680Kz0V0ZAAE/s1264/1000093706.png" alt="Tournyx Logo" class="tournyx-logo">
+            <div class="sys-title">TOURNYX <span>CS Command</span></div>
         </div>
         <button class="btn-outline" id="btnLogout" style="display:none;" onclick="logout()"><i class="fa-solid fa-power-off"></i> Disconnect</button>
     </div>
 
-    <div class="auth-container" id="loginView">
+    <div class="auth-container active" id="loginView">
         <div class="auth-box">
             <h2>System Access</h2>
             <p style="color:#aaa; font-size:0.9rem; margin-bottom:25px;">Provide level-4 clearance credentials.</p>
@@ -156,7 +166,7 @@
         </div>
     </div>
 
-    <div class="auth-container" id="otpView" style="display:none;">
+    <div class="auth-container hidden" id="otpView">
         <div class="auth-box">
             <h2 style="color:var(--tx-cyan)">Verify Identity</h2>
             <p style="color:#aaa; font-size:0.9rem; margin-bottom:25px;">Enter the secure 24-Hour token sent to your email.</p>
@@ -291,8 +301,19 @@
                 const result = await res.json();
                 if(result.status === 'success') {
                     agentEmail = email;
-                    document.getElementById('loginView').style.display = 'none';
-                    document.getElementById('otpView').style.display = 'flex';
+                    
+                    // Smooth Transition to OTP Screen
+                    document.getElementById('loginView').classList.remove('active');
+                    document.getElementById('loginView').classList.add('hidden');
+                    setTimeout(() => {
+                        document.getElementById('loginView').style.display = 'none';
+                        document.getElementById('otpView').style.display = 'flex';
+                        // Force reflow
+                        void document.getElementById('otpView').offsetWidth;
+                        document.getElementById('otpView').classList.remove('hidden');
+                        document.getElementById('otpView').classList.add('active');
+                    }, 500);
+
                     showToast("Credentials Accepted. Token Sent.");
                 } else { showToast(result.data, true); }
             } catch(e) { showToast("Network Error", true); }
@@ -312,6 +333,8 @@
                 if(result.status === 'success') {
                     localStorage.setItem('tournyx_agent_email', agentEmail);
                     localStorage.setItem('tournyx_agent_session', 'active');
+                    
+                    // Hide OTP and Show Dashboard
                     document.getElementById('otpView').style.display = 'none';
                     document.getElementById('dashboard').style.display = 'block';
                     document.getElementById('btnLogout').style.display = 'block';
