@@ -57,7 +57,12 @@
         /* --- LANDING HERO SECTION --- */
         .landing-container {
             text-align: center; z-index: 10; padding: 15px;
-            animation: fadeIn 1s ease-out forwards; width: 100%; max-width: 500px;
+            animation: cinematicZoomIn 1.2s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; width: 100%; max-width: 500px;
+        }
+
+        @keyframes cinematicZoomIn {
+            0% { transform: scale(0.85); opacity: 0; filter: blur(10px); }
+            100% { transform: scale(1); opacity: 1; filter: blur(0); }
         }
 
         /* NORMAL APP ICON SHAPE */
@@ -146,9 +151,11 @@
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: rgba(0, 0, 0, 0.5); z-index: 50; display: none;
             align-items: center; justify-content: center; backdrop-filter: blur(5px);
-            opacity: 0; transition: opacity 0.3s ease; padding: 15px;
+            opacity: 0; transition: opacity 0.4s ease; padding: 15px;
         }
-        .modal-overlay.active { display: flex; opacity: 1; }
+        .modal-overlay.active { display: flex; opacity: 1; animation: modalBgFade 0.4s forwards; }
+
+        @keyframes modalBgFade { from { opacity: 0; backdrop-filter: blur(0px); } to { opacity: 1; backdrop-filter: blur(5px); } }
 
         .modal-card {
             background: var(--card-bg); border: 1px solid var(--card-border);
@@ -215,6 +222,9 @@
             color: var(--accent-cyan); filter: drop-shadow(0 0 5px var(--accent-cyan)); transform: translateY(-50%) scale(1.1);
         }
         input:-webkit-autofill { -webkit-box-shadow: 0 0 0 30px var(--input-bg) inset !important; -webkit-text-fill-color: white !important; }
+        
+        /* Removed background logic for read-only to ensure it works beautifully when editable */
+        .form-control:read-only { opacity: 0.7; }
 
         /* EYE ICON FLASH */
         .pwd-toggle {
@@ -598,7 +608,7 @@
             </form>
 
             <div style="margin-top: 20px; padding-top: 15px; border-top: 1px solid rgba(255,255,255,0.1); text-align: center;">
-                <a href="https://docs.google.com/forms/d/e/1FAIpQLSe6k-ejzzvmEdYU6ynHlMIyr_PgQibH5ViBV5_v3HBpCdIbjw/viewform?usp=dialog" target="_blank" class="terms-link" style="color:#aaa;"><i class="fa-solid fa-file-signature"></i> Apply to Host Tournaments</a>
+                <a href="organizerportel.html" class="terms-link" style="color:#aaa;"><i class="fa-solid fa-file-signature"></i> Apply to Host Tournaments</a>
             </div>
         </div>
     </div>
@@ -646,7 +656,6 @@
             try {
                 const res = await fetch(API_URL, { 
                     method: 'POST', 
-                    // New action: 'send_email_otp'
                     body: JSON.stringify({ action: 'send_email_otp', email: email }) 
                 });
                 const result = await res.json();
@@ -693,7 +702,7 @@
             }, 800);
         }
 
-        // --- PHONE NUMBER LOCK LOGIC ---
+        // --- PHONE NUMBER STRIP AND LOCK LOGIC ---
         const phoneInput = document.getElementById('regPhone');
         phoneInput.addEventListener('input', function(e) {
             if (!this.value.startsWith('+91 ')) {
@@ -766,6 +775,7 @@
             closeModals(); 
             document.getElementById(id).classList.add('active');
         }
+        
         function closeModals() {
             document.querySelectorAll('.modal-overlay').forEach(m => m.classList.remove('active'));
             document.querySelectorAll('.error-msg').forEach(e => e.style.display = 'none');
@@ -792,6 +802,28 @@
             const btn = document.getElementById(btnId);
             btn.innerHTML = btn.dataset.original;
             btn.disabled = false;
+        }
+
+        // ALLOW EMAIL TO BE EDITABLE IF IT EXISTS
+        function unlockEmailInput() {
+            document.getElementById('regEmail').readOnly = false;
+            
+            // Reset verification status
+            isEmailVerified = false;
+            
+            const btn = document.getElementById('btnVerifyOtp');
+            btn.innerHTML = `VERIFY`;
+            btn.classList.remove('verified');
+            btn.disabled = false;
+            
+            const otpInput = document.getElementById('regOtp');
+            otpInput.readOnly = false;
+            otpInput.value = "";
+            
+            const infoBox = document.getElementById('emailInfoBox');
+            infoBox.innerHTML = `<i class="fa-solid fa-shield-halved" style="color:var(--accent-purple)"></i> <span>Your email serves as your primary account recovery and receipt method. Please update and re-verify.</span>`;
+            infoBox.style.borderColor = "var(--accent-purple)";
+            infoBox.style.background = "rgba(189, 0, 255, 0.08)";
         }
 
         // PLAYER SIGNUP 
@@ -822,8 +854,8 @@
                 const formData = new FormData(e.target);
                 const rawData = Object.fromEntries(formData);
                 
-                // Keep the phone string fix active so it writes safely to Google Sheets
-                const safePhoneStr = "'" + rawData.phone.replace(/\s+/g, '').trim();
+                // Format phone number specifically to prevent #NUM! issues in Sheets
+                const safePhoneStr = "'+91" + phoneDigits;
 
                 const payload = {
                     action: 'signup',
@@ -848,7 +880,13 @@
                     alert("Account Created! You can now Login.");
                     openModal('loginModal');
                 } else {
-                    errBox.innerText = result.data; errBox.style.display = 'block';
+                    errBox.innerText = result.data; 
+                    errBox.style.display = 'block';
+                    
+                    // Unlock the email input if it was already registered
+                    if (result.data.toLowerCase().includes("email already registered")) {
+                        unlockEmailInput();
+                    }
                 }
             } catch (err) { 
                 errBox.innerText = "Connection Error or system unavailable."; 
@@ -875,7 +913,11 @@
                 const result = await res.json();
                 
                 if (result.status === 'success') {
-                    triggerArenaEntry(result.data, 'index.html');
+                    if (result.data.role === 'organizer') {
+                        errBox.innerText = "Organizers must log in through the Organizer Portal."; errBox.style.display = 'block';
+                    } else {
+                        triggerArenaEntry(result.data, 'index.html');
+                    }
                 } else { 
                     errBox.innerText = "Invalid Credentials"; errBox.style.display = 'block'; 
                 }
@@ -899,8 +941,12 @@
                 });
                 const result = await res.json();
                 
-                if (result.status === 'success' && result.data.role === 'organizer') {
-                    triggerArenaEntry(result.data, 'profile.html');
+                if (result.status === 'success') {
+                    if (result.data.role === 'organizer') {
+                        triggerArenaEntry(result.data, 'profile.html');
+                    } else {
+                        errBox.innerText = "Players must log in through the Player Portal."; errBox.style.display = 'block';
+                    }
                 } else { 
                     errBox.innerText = "Invalid Admin Credentials"; errBox.style.display = 'block'; 
                 }
