@@ -69,6 +69,11 @@
     <script>
             (function() {
                 try {
+                    // Check PSM First to kill animations early
+                    if(localStorage.getItem('tournyx_psm') === 'true') {
+                        document.documentElement.classList.add('psm-active');
+                    }
+
                     const THEMES = [
                         {cyan: '#00f2ff', purple: '#bd00ff'},
                         {cyan: '#00ff7f', purple: '#00b09b'},
@@ -135,6 +140,23 @@
             padding-top: calc(85px + env(safe-area-inset-top, 0px)); 
         }
 
+        /* --- PSM OVERRIDE (KILLS ALL ANIMATIONS) --- */
+        html.psm-active *, html.psm-active *::before, html.psm-active *::after {
+            animation: none !important;
+            transition: none !important;
+            scroll-behavior: auto !important;
+        }
+        html.psm-active .bg-orbs, html.psm-active #particles-canvas, html.psm-active .warp-bg {
+            display: none !important;
+        }
+        html.psm-active .glow-section {
+            box-shadow: none !important;
+            border-color: rgba(255,255,255,0.1) !important;
+        }
+        html.psm-active .tourney-card:active, html.psm-active .f-card:hover {
+            transform: none !important;
+        }
+
         /* --- TOURNYX TX ICON CUSTOM CLASS --- */
         .tx-icon {
             font-family: var(--font-head);
@@ -174,8 +196,14 @@
             max-width: 1000px; margin-left: auto !important; margin-right: auto !important; width: 100%;
         }
 
+        /* --- EXTRAORDINARY WARP BACKGROUND --- */
+        .warp-bg { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -3; overflow: hidden; pointer-events: none; }
+        .warp-star { position: absolute; width: 2px; height: 35px; background: linear-gradient(to bottom, rgba(0,242,255,0), rgba(0,242,255,1)); animation: warpStarAnim linear infinite; filter: drop-shadow(0 0 5px var(--accent-cyan)); border-radius: 2px;}
+        html.theme-vip .warp-star { background: linear-gradient(to bottom, rgba(255,215,0,0), rgba(255,215,0,1)); filter: drop-shadow(0 0 5px #FFD700); }
+        @keyframes warpStarAnim { 0% { transform: translateY(-100px); opacity: 0; } 10% { opacity: 0.8; } 90% { opacity: 0.8; } 100% { transform: translateY(110vh); opacity: 0; } }
+
         /* --- BRIGHTER BACKGROUND ORBS & PARTICLES --- */
-        .bg-orbs { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -2; overflow: hidden; background: var(--primary-bg); pointer-events: none; }
+        .bg-orbs { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -2; overflow: hidden; background: transparent; pointer-events: none; }
         .orb { position: absolute; border-radius: 50%; opacity: 0.45; animation: floatOrb 12s infinite ease-in-out alternate; will-change: transform; transform: translate3d(0,0,0); filter: blur(40px); }
         .orb1 { width: 500px; height: 500px; background: radial-gradient(circle, rgba(189,0,255,0.7) 0%, transparent 60%); top: -100px; left: -100px; }
         .orb2 { width: 600px; height: 600px; background: radial-gradient(circle, rgba(0,242,255,0.6) 0%, transparent 60%); bottom: -150px; right: -150px; animation-delay: -5s; opacity: 0.4; }
@@ -215,11 +243,18 @@
 
         /* --- LOADER --- */
         #tournyx-loader { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: var(--primary-bg); z-index: 99999; display: flex; flex-direction: column; align-items: center; justify-content: center; transition: opacity 0.4s ease-out; overflow: hidden; transform: translateZ(0); }
+        html.theme-vip #tournyx-loader { background: radial-gradient(circle at center, #1a1000 0%, #05020c 100%); }
         .loader-logo { font-family: var(--font-head); font-size: 4rem; font-weight: 900; color: transparent; -webkit-text-stroke: 2px rgba(255,255,255,0.3); position: relative; z-index: 10; }
         .loader-logo::after { content: 'T'; position: absolute; top: 0; left: 0; color: #fff; text-shadow: 0 0 30px var(--accent-purple), 0 0 50px var(--accent-cyan); opacity: 0; animation: flashHit 1s infinite; }
+        html.theme-vip .loader-logo::after { text-shadow: 0 0 30px #FFD700, 0 0 50px #FF8C00; }
+        
         .bullet { position: absolute; height: 4px; width: 100px; background: linear-gradient(90deg, transparent, var(--accent-cyan)); border-radius: 4px; box-shadow: 0 0 10px var(--accent-cyan); opacity: 0; }
+        html.theme-vip .bullet { background: linear-gradient(90deg, transparent, #FFD700); box-shadow: 0 0 10px #FFD700; }
+        
         .b1 { top: 40%; left: -150px; animation: shootRight 1s infinite; }
         .b2 { top: 60%; right: -150px; background: linear-gradient(-90deg, transparent, var(--accent-purple)); box-shadow: 0 0 10px var(--accent-purple); animation: shootLeft 1s 0.5s infinite; }
+        html.theme-vip .b2 { background: linear-gradient(-90deg, transparent, #FF8C00); box-shadow: 0 0 10px #FF8C00; }
+        
         .b3 { animation-delay: 1.3s; left: 80px; } 
         .b4 { top: 40%; bottom: -100px; animation:shootup 1s infinite; animation-delay: 1.4s; left: 90px; }
         .b5 { top: 40%; margin-top: -90px; animation:shootdown 1s infinite; animation-delay: 1.5s; left: 120px; }
@@ -227,6 +262,7 @@
         @keyframes shootLeft { 0% { right: -150px; opacity: 1; } 50% { right: 50%; opacity: 0; } 100% { right: 50%; opacity: 0; } }
         @keyframes flashHit { 0%, 48% { opacity: 0; } 50% { opacity: 1; text-shadow: 0 0 40px white; } 52%, 100% { opacity: 0; } }
         .loader-text { margin-top: 30px; font-family: var(--font-body); font-size: 1rem; letter-spacing: 3px; color: var(--accent-purple); text-transform: uppercase; animation: blink 1s infinite alternate; text-shadow: 0 0 10px rgba(189,0,255,0.5); }
+        html.theme-vip .loader-text { color: #FFD700; text-shadow: 0 0 10px rgba(255,215,0,0.5); }
         @keyframes blink { from { opacity: 0.5; } to { opacity: 1; } }
 
         /* --- GLOBAL GLOW ANIMATIONS (OPTIMIZED) --- */
@@ -241,7 +277,7 @@
         .glow-section { animation: glowPulse 4s infinite alternate; will-change: border-color, box-shadow; transform: translateZ(0); }
         html.theme-vip .glow-section { animation: glowPulseVIP 4s infinite alternate; }
 
-        /* --- HEADER & NAV (OPTIMIZED SPACING FOR FULL NAME) --- */
+        /* --- HEADER & NAV (COMPRESSED LONG NAME LOGIC) --- */
         .top-header { 
             position: fixed; top: 0; left: 0; width: 100%; height: 65px;
             padding: 0 15px; 
@@ -252,7 +288,13 @@
         .header-left { display: flex; align-items: center; gap: 8px; flex: 1; min-width: 0; }
         .app-logo { width: 30px; height: 30px; border-radius: 50%; object-fit: contain; box-shadow: 0 0 15px var(--accent-purple); border: 1px solid rgba(255,255,255,0.2); flex-shrink: 0;}
         html.theme-vip .app-logo { box-shadow: 0 0 15px #FFD700; border-color: #FFD700; }
-        .app-title { font-family: var(--font-head); font-size: 1rem; font-weight: 700; background: var(--accent-gradient); -webkit-background-clip: text; -webkit-text-fill-color: transparent; letter-spacing: 1px; white-space: normal; line-height: 1.1; word-break: break-word;}
+        
+        /* The magical wrapper for long names */
+        .app-title { 
+            font-family: var(--font-head); font-size: 0.85rem; font-weight: 700; background: var(--accent-gradient); 
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent; letter-spacing: 1px; 
+            white-space: normal; line-height: 1.2; word-wrap: break-word; max-width: 140px; 
+        }
         
         /* --- DESKTOP NAV --- */
         .desktop-nav { display: none; align-items: center; gap: 20px; }
@@ -285,7 +327,9 @@
         .header-balance i { font-size: 0.75rem; color: var(--accent-orange); }
         html.theme-vip .header-balance i { color: #FFD700; }
         .wallet-divider { opacity: 0.4; margin: 0 2px; }
-        .rupee-text { color: var(--accent-green); }
+        
+        .pass-text { color: var(--accent-cyan); display:flex; align-items:center; gap:3px;}
+        html.theme-vip .pass-text { color: #FFD700; }
         
         .menu-btn { font-size: 1.25rem; color: white; cursor: pointer; transition: 0.3s; padding: 2px; flex-shrink: 0;}
 
@@ -320,7 +364,7 @@
         .quva-powered span { color: var(--accent-cyan); font-weight: bold; text-shadow: 0 0 10px rgba(0,242,255,0.5); }
         html.theme-vip .quva-powered span { color: #FFD700; text-shadow: 0 0 10px rgba(255,215,0,0.5); }
 
-        /* --- SMOOTH MENU (ATTRACTIVE STYLE - MOBILE OPTIMIZED) --- */
+        /* --- SMOOTH MENU --- */
         .menu-backdrop { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0,0,0,0.6); backdrop-filter: blur(4px); z-index: 2999; opacity: 0; pointer-events: none; transition: opacity 0.3s ease; }
         .menu-backdrop.active { opacity: 1; pointer-events: auto; }
         
@@ -453,7 +497,7 @@
         .game-pill:hover { border-color: var(--accent-cyan); box-shadow: 0 0 20px rgba(0,242,255,0.2); transform: scale(1.05);}
         html.theme-vip .game-pill:hover { border-color: #FFD700; box-shadow: 0 0 20px rgba(255,215,0,0.2); }
 
-        /* --- 15 FEATURES GRID (ULTIMATE GLASSMORPHISM) --- */
+        /* --- 15 FEATURES GRID --- */
         .features-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(110px, 1fr)); gap: 15px; margin-top: 20px; }
         .f-card { padding: 25px 10px; text-align: center; transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); cursor: pointer; }
         .f-card:hover, .f-card:active { background: rgba(255,255,255,0.1); border-color: var(--accent-cyan); transform: translateY(-8px); box-shadow: 0 15px 30px rgba(0,242,255,0.15); }
@@ -469,7 +513,7 @@
         .section-title span { color: var(--accent-purple); text-shadow: 0 0 20px rgba(189,0,255,0.5); }
         html.theme-vip .section-title span { color: #FFD700; text-shadow: 0 0 20px rgba(255,215,0,0.5); }
 
-        /* --- LEADERBOARD (ANIMATED 6 LIST) --- */
+        /* --- LEADERBOARD (ANIMATED LIST) --- */
         .lb-tabs { display: flex; gap: 10px; margin-bottom: 25px; padding: 8px; border-radius: 15px; }
         .lb-tab { flex: 1; text-align: center; padding: 12px; font-size: 0.85rem; color: #a0a0b0; border-radius: 10px; cursor: pointer; transition: 0.3s; font-family: var(--font-body); font-weight: bold; text-transform: uppercase; letter-spacing: 1px; }
         .lb-tab.active { background: var(--accent-gradient); color: #fff; box-shadow: 0 0 20px rgba(189,0,255,0.4); }
@@ -477,20 +521,21 @@
 
         .people-list { display: flex; flex-direction: column; gap: 15px; }
         .person-row { display: flex; align-items: center; gap: 15px; padding: 15px; transition: 0.3s; position: relative; animation: slideInUp 0.5s ease backwards; }
-        /* Staggered animation delays for the 6 rows */
+        /* Staggered animation delays for rows */
         .person-row:nth-child(1) { animation-delay: 0.05s; }
         .person-row:nth-child(2) { animation-delay: 0.1s; }
         .person-row:nth-child(3) { animation-delay: 0.15s; }
         .person-row:nth-child(4) { animation-delay: 0.2s; }
         .person-row:nth-child(5) { animation-delay: 0.25s; }
         .person-row:nth-child(6) { animation-delay: 0.3s; }
+        .person-row:nth-child(7) { animation-delay: 0.35s; }
 
         .person-row:active { border-color: var(--accent-cyan); transform: translateX(8px); box-shadow: 0 8px 25px rgba(0,242,255,0.2); }
         html.theme-vip .person-row:active { border-color: #FFD700; box-shadow: 0 8px 25px rgba(255,215,0,0.2); }
         .person-img-small { width: 55px; height: 55px; border-radius: 50%; object-fit: cover; border: 2px solid var(--accent-cyan); box-shadow: 0 0 15px rgba(0,242,255,0.3); z-index: 2; background:#000;}
         html.theme-vip .person-img-small { border-color: #FFD700; box-shadow: 0 0 15px rgba(255,215,0,0.3); }
-        .person-info { flex: 1; z-index: 2;}
-        .person-name { font-family: var(--font-head); font-size: 1.1rem; font-weight: bold; color: white; margin-bottom: 4px; text-shadow: 0 0 5px rgba(255,255,255,0.2);}
+        .person-info { flex: 1; z-index: 2; overflow: hidden;}
+        .person-name { font-family: var(--font-head); font-size: 1.1rem; font-weight: bold; color: white; margin-bottom: 4px; text-shadow: 0 0 5px rgba(255,255,255,0.2); white-space: nowrap; overflow: hidden; text-overflow: ellipsis;}
         .person-role { font-size: 0.85rem; color: var(--accent-cyan); font-weight: 600; letter-spacing: 0.5px; }
         html.theme-vip .person-role { color: #FFD700; }
         
@@ -689,6 +734,8 @@
         <div class="loader-text">INITIALIZING BATTLEGROUNDS...</div>
     </div>
 
+    <div class="warp-bg" id="warpBg"></div>
+
     <div class="bg-orbs">
         <div class="orb orb1"></div>
         <div class="orb orb2"></div>
@@ -733,7 +780,7 @@
                     <i class="fa-solid fa-wallet fa-sm"></i>
                     <span id="homeWalletBalance">0</span> PTS 
                     <span class="wallet-divider">|</span> 
-                    <span class="rupee-text">₹<span id="homeRupeeBalance">0</span></span>
+                    <span class="pass-text"><i class="fa-solid fa-ticket"></i> <span id="homePassBalance">0</span></span>
                 </a>
                 <i class="fa-solid fa-bars menu-btn" onclick="toggleMenu()"></i>
             </div>
@@ -930,31 +977,13 @@
         </div>
 
         <div id="organizers" class="lb-content people-list active">
-            <div class="person-row rank-1-border glass-panel"><div class="rank-medal rank-1"><i class="fa-solid fa-medal"></i></div><img src="https://via.placeholder.com/100" class="person-img-small"><div class="person-info"><div class="person-name">Eagle Esports</div><div class="person-role">120 Tournaments Hosted</div></div></div>
-            <div class="person-row rank-2-border glass-panel"><div class="rank-medal rank-2"><i class="fa-solid fa-medal"></i></div><img src="https://via.placeholder.com/100" class="person-img-small"><div class="person-info"><div class="person-name">Wolves Org</div><div class="person-role">85 Tournaments Hosted</div></div></div>
-            <div class="person-row rank-3-border glass-panel"><div class="rank-medal rank-3"><i class="fa-solid fa-medal"></i></div><img src="https://via.placeholder.com/100" class="person-img-small"><div class="person-info"><div class="person-name">MGM Esports</div><div class="person-role">65 Tournaments Hosted</div></div></div>
-            <div class="person-row glass-panel"><img src="https://via.placeholder.com/100" class="person-img-small"><div class="person-info"><div class="person-name">Titan Gaming</div><div class="person-role">42 Tournaments Hosted</div></div></div>
-            <div class="person-row glass-panel"><img src="https://via.placeholder.com/100" class="person-img-small"><div class="person-info"><div class="person-name">Alpha Squad</div><div class="person-role">30 Tournaments Hosted</div></div></div>
-            <div class="person-row glass-panel"><img src="https://via.placeholder.com/100" class="person-img-small"><div class="person-info"><div class="person-name">Nexus Pro</div><div class="person-role">25 Tournaments Hosted</div></div></div>
-        </div>
+            </div>
 
         <div id="teams" class="lb-content people-list">
-            <div class="person-row rank-1-border glass-panel"><div class="rank-medal rank-1"><i class="fa-solid fa-medal"></i></div><img src="https://via.placeholder.com/100" class="person-img-small" style="border-color:var(--accent-purple)"><div class="person-info"><div class="person-name">K9 Esports</div><div class="person-role" style="color:var(--accent-purple)">₹ 8,840 Won</div></div></div>
-            <div class="person-row rank-2-border glass-panel"><div class="rank-medal rank-2"><i class="fa-solid fa-medal"></i></div><img src="https://via.placeholder.com/100" class="person-img-small" style="border-color:var(--accent-purple)"><div class="person-info"><div class="person-name">BooWrath</div><div class="person-role" style="color:var(--accent-purple)">₹ 6,735 Won</div></div></div>
-            <div class="person-row rank-3-border glass-panel"><div class="rank-medal rank-3"><i class="fa-solid fa-medal"></i></div><img src="https://via.placeholder.com/100" class="person-img-small" style="border-color:var(--accent-purple)"><div class="person-info"><div class="person-name">True Impact</div><div class="person-role" style="color:var(--accent-purple)">₹ 5,200 Won</div></div></div>
-            <div class="person-row glass-panel"><img src="https://via.placeholder.com/100" class="person-img-small" style="border-color:var(--accent-purple)"><div class="person-info"><div class="person-name">Godlike</div><div class="person-role" style="color:var(--accent-purple)">₹ 4,150 Won</div></div></div>
-            <div class="person-row glass-panel"><img src="https://via.placeholder.com/100" class="person-img-small" style="border-color:var(--accent-purple)"><div class="person-info"><div class="person-name">Soul Esports</div><div class="person-role" style="color:var(--accent-purple)">₹ 3,900 Won</div></div></div>
-            <div class="person-row glass-panel"><img src="https://via.placeholder.com/100" class="person-img-small" style="border-color:var(--accent-purple)"><div class="person-info"><div class="person-name">Blind</div><div class="person-role" style="color:var(--accent-purple)">₹ 3,200 Won</div></div></div>
-        </div>
+            </div>
 
         <div id="contributors" class="lb-content people-list">
-            <div class="person-row rank-1-border glass-panel"><div class="rank-medal rank-1"><i class="fa-solid fa-medal"></i></div><img src="https://via.placeholder.com/100" class="person-img-small" style="border-color:#ffd700"><div class="person-info"><div class="person-name">Serpent</div><div class="person-role" style="color:#ffd700">32 Contributions</div></div></div>
-            <div class="person-row rank-2-border glass-panel"><div class="rank-medal rank-2"><i class="fa-solid fa-medal"></i></div><img src="https://via.placeholder.com/100" class="person-img-small" style="border-color:#ffd700"><div class="person-info"><div class="person-name">SATAN</div><div class="person-role" style="color:#ffd700">28 Contributions</div></div></div>
-            <div class="person-row rank-3-border glass-panel"><div class="rank-medal rank-3"><i class="fa-solid fa-medal"></i></div><img src="https://via.placeholder.com/100" class="person-img-small" style="border-color:#ffd700"><div class="person-info"><div class="person-name">Lucifer</div><div class="person-role" style="color:#ffd700">21 Contributions</div></div></div>
-            <div class="person-row glass-panel"><img src="https://via.placeholder.com/100" class="person-img-small" style="border-color:#ffd700"><div class="person-info"><div class="person-name">Venom</div><div class="person-role" style="color:#ffd700">18 Contributions</div></div></div>
-            <div class="person-row glass-panel"><img src="https://via.placeholder.com/100" class="person-img-small" style="border-color:#ffd700"><div class="person-info"><div class="person-name">Ghost</div><div class="person-role" style="color:#ffd700">15 Contributions</div></div></div>
-            <div class="person-row glass-panel"><img src="https://via.placeholder.com/100" class="person-img-small" style="border-color:#ffd700"><div class="person-info"><div class="person-name">Phoenix</div><div class="person-role" style="color:#ffd700">12 Contributions</div></div></div>
-        </div>
+            </div>
     </section>
 
     <section class="section-pad fade-up" id="workflowSection">
@@ -1037,6 +1066,7 @@
                 <h4>LEGAL</h4>
                 <a href="privacy.html">Privacy Policy</a>
                 <a href="terms.html">Terms of Service</a>
+                <a href="refund.html">Refund & Cancellation Policy</a>
             </div>
         </div>
 
@@ -1091,6 +1121,37 @@
     <script>
         // --- 1. CONFIGURATION ---
         const API_URL = "https://script.google.com/macros/s/AKfycbyqqTpgaflxKJ9xH0jq7mJ_jLzcoNhas3gNo0h5gvoa_6r5Ae9NFxJAJp7ZoYNnMRKl/exec";
+        
+        // --- HARDWARE ACCELERATED CANVAS PARTICLES ---
+        const canvas = document.getElementById('particles-canvas');
+        const ctx = canvas.getContext('2d');
+        canvas.width = window.innerWidth; canvas.height = window.innerHeight;
+        let pArray = [];
+        class P { constructor(){ this.x=Math.random()*canvas.width; this.y=Math.random()*canvas.height; this.s=Math.random()*2; this.v=Math.random()*0.5 + 0.1;} u(){ this.y-=this.v; if(this.y<0)this.y=canvas.height; } d(){ ctx.fillStyle='rgba(255, 215, 0, 0.15)'; ctx.beginPath(); ctx.arc(this.x,this.y,this.s,0,Math.PI*2); ctx.fill(); } }
+        for(let i=0; i<30; i++) pArray.push(new P());
+        function anim(){ ctx.clearRect(0,0,canvas.width,canvas.height); pArray.forEach(p=>{p.u();p.d()}); requestAnimationFrame(anim); }
+        
+        // Tie Canvas resizing and animation to PSM directly
+        let animPaused = localStorage.getItem('tournyx_psm') === 'true';
+        if(animPaused) {
+            ctx.clearRect(0,0,canvas.width,canvas.height);
+        } else {
+            anim();
+        }
+        window.addEventListener('resize', () => { canvas.width = window.innerWidth; canvas.height = window.innerHeight; });
+
+        // ADD EXTRAORDINARY WARP STARS
+        if(!animPaused) {
+            const warp = document.getElementById('warpBg');
+            for(let j=0; j<25; j++) {
+                let star = document.createElement('div');
+                star.className = 'warp-star';
+                star.style.left = Math.random() * 100 + 'vw';
+                star.style.animationDelay = Math.random() * 3 + 's';
+                star.style.animationDuration = (Math.random() * 1 + 1) + 's';
+                warp.appendChild(star);
+            }
+        }
 
         // --- AUTH CHECKER FOR GUESTS ---
         function checkAuth(e) {
@@ -1113,25 +1174,27 @@
         }
 
         function createLaunchCelebration() {
-            // Check if seen
+            // Check if seen or if PSM is on
             if(localStorage.getItem('tournyx_beta_seen') === 'true') return;
             
             // Show Banner
             document.getElementById('betaOverlay').classList.add('active');
 
-            // Fire Confetti Behind the Banner for effect
-            const container = document.getElementById('launch-celebration');
-            for(let i=0; i<40; i++) {
-                let spark = document.createElement('div');
-                spark.classList.add('spark');
-                spark.style.left = Math.random() * 100 + 'vw';
-                spark.style.animationDelay = Math.random() * 2 + 's';
-                spark.style.animationDuration = (Math.random() * 1.5 + 2) + 's';
-                if(Math.random() > 0.5) spark.style.background = 'var(--accent-purple)';
-                container.appendChild(spark);
+            if(!animPaused) {
+                // Fire Confetti Behind the Banner for effect
+                const container = document.getElementById('launch-celebration');
+                for(let i=0; i<40; i++) {
+                    let spark = document.createElement('div');
+                    spark.classList.add('spark');
+                    spark.style.left = Math.random() * 100 + 'vw';
+                    spark.style.animationDelay = Math.random() * 2 + 's';
+                    spark.style.animationDuration = (Math.random() * 1.5 + 2) + 's';
+                    if(Math.random() > 0.5) spark.style.background = 'var(--accent-purple)';
+                    container.appendChild(spark);
+                }
+                // Auto hide sparks
+                setTimeout(() => { container.style.display = 'none'; }, 6000);
             }
-            // Auto hide sparks
-            setTimeout(() => { container.style.display = 'none'; }, 6000);
         }
 
         // --- 2. STARTUP & LOADER ---
@@ -1143,29 +1206,29 @@
             createLaunchCelebration();
             
             if (user && !isGuestMode) {
-                document.getElementById('welcomeText').innerText = "Hi, " + (user.username || user.ign || "Player");
+                document.getElementById('welcomeText').innerText = (user.username || user.ign || "Player");
                 document.getElementById('menuUserName').innerText = user.username || "Player";
                 document.getElementById('menuUserImg').src = user.avatar || "https://via.placeholder.com/60";
                 fetchNextMatch(user);
                 syncLiveWalletPoints(user); 
             } else {
-                document.getElementById('welcomeText').innerText = "Welcome, Guest";
+                document.getElementById('welcomeText').innerText = "Guest";
                 document.getElementById('menuUserName').innerText = "Guest Player";
                 document.getElementById('menuUserImg').src = "https://via.placeholder.com/60";
                 document.getElementById('homeWalletBalance').innerText = "0";
-                document.getElementById('homeRupeeBalance').innerText = "0";
+                document.getElementById('homePassBalance').innerText = "0";
             }
 
             // Background pre-fetch
             loadFeaturedTournaments();
             
             // Dynamic Sheets Loading
-            renderQuests(); // Instant render from cache first
+            renderQuests(); 
             loadQuestsFromSheets(); 
             loadLeaderboard(); 
 
             initScrollAnimations(); 
-            typeWriterEffect();
+            if(!animPaused) typeWriterEffect();
 
             // Force loader to vanish gracefully
             setTimeout(() => {
@@ -1205,6 +1268,7 @@
         }
 
         function triggerConfetti(btnEl) {
+            if(animPaused) return;
             for(let i=0; i<30; i++) {
                 let conf = document.createElement('div');
                 conf.classList.add('confetti-piece');
@@ -1223,7 +1287,7 @@
                     if (entry.isIntersecting) {
                         entry.target.classList.add('visible');
                         
-                        if(entry.target.classList.contains('stats-area')) {
+                        if(entry.target.classList.contains('stats-area') && !animPaused) {
                             document.querySelectorAll('.count-up').forEach(counter => {
                                 let target = +counter.getAttribute('data-target');
                                 let count = 0;
@@ -1289,7 +1353,6 @@
 
                     document.getElementById('nmDate').innerHTML = `<span style="color:${sColor}; font-weight:bold; font-family:var(--font-head);"><i class="fa-solid fa-satellite-dish fa-fade"></i> ${next.status.toUpperCase()}</span> • ${displayDate}`;
                     
-                    // The onclick is handled inline in the HTML now
                     widget.style.display = 'block';
                 } else {
                     widget.style.display = 'none';
@@ -1357,7 +1420,7 @@
                 const bg = formatImageUrl(t.banner);
                 const prize = (!t.prize || t.prize == 0) ? "Glory" : "₹" + t.prize;
                 
-                // FIX: ENTRY RUPEES TO TX PASSES
+                // PASS SYSTEM CONVERSION
                 let rFee = parseInt(t.fee) || 0;
                 let passCount = Math.ceil(rFee / 10);
                 const feeText = passCount > 0 ? `${passCount} <span class="tx-icon" style="font-size:0.9em;">TX</span>` : "Free Entry";
@@ -1383,7 +1446,7 @@
                             <div class="t-detail-item"><i class="fa-regular fa-calendar"></i> Starts: <strong style="color:white; margin-left:4px;">${formatDT}</strong></div>
                             <div class="t-detail-item" style="color:${timeData.isClosed ? '#ff4d4d' : 'var(--accent-orange)'}"><i class="fa-solid fa-hourglass-half"></i> Registration: <strong>${timeData.text}</strong></div>
                             
-                            <div class="t-meta" style="margin-bottom: 5px;"><span><i class="fa-solid fa-ticket" style="color:var(--accent-purple);"></i> ${feeText}</span><span class="t-prize">${prize}</span></div>
+                            <div class="t-meta" style="margin-bottom: 5px;"><span><i class="fa-solid fa-ticket" style="color:var(--accent-cyan);"></i> ${feeText}</span><span class="t-prize">${prize}</span></div>
                             
                             <div style="margin-bottom: 15px;">
                                 <div style="display:flex; justify-content:space-between; font-size:0.75rem; font-family:var(--font-head); font-weight:bold;">
@@ -1423,20 +1486,27 @@
         // --- 6. USER, WALLET, & TOGGLES ---
         function syncLiveWalletPoints(user) {
             const balanceDisplay = document.getElementById('homeWalletBalance');
-            const rupeeDisplay = document.getElementById('homeRupeeBalance');
+            const passDisplay = document.getElementById('homePassBalance');
+            
+            let displayPasses = user.passes !== undefined ? user.passes : Math.floor((parseInt(user.rupees)||0) / 10);
+            
             if (user.points !== undefined) { balanceDisplay.innerText = user.points; }
-            if (user.rupees !== undefined) { rupeeDisplay.innerText = user.rupees; }
+            passDisplay.innerText = displayPasses;
             
             if (user.email) {
                 fetch(API_URL + "?action=sync_user&email=" + encodeURIComponent(user.email))
                 .then(res => res.json())
                 .then(data => {
                     if (data.status === 'success') {
-                        user.points = data.data.points || user.points; 
-                        user.rupees = data.data.rupees || user.rupees;
+                        user.points = data.data.points !== undefined ? data.data.points : user.points; 
+                        user.rupees = data.data.rupees !== undefined ? data.data.rupees : user.rupees;
+                        user.passes = data.data.passes !== undefined ? data.data.passes : user.passes;
                         localStorage.setItem('tournyx_user', JSON.stringify(user));
+                        
+                        let livePasses = user.passes !== undefined ? user.passes : Math.floor((parseInt(user.rupees)||0) / 10);
+                        
                         balanceDisplay.innerText = user.points || 0;
-                        rupeeDisplay.innerText = user.rupees || 0;
+                        passDisplay.innerText = livePasses || 0;
                     }
                 }).catch(err => console.log("Sync skipped."));
             }
@@ -1456,7 +1526,7 @@
         }
 
         // --- 7. PERFECT 24HR RESET DAILY QUESTS LOGIC ---
-        let currentDynamicQuests = []; // Store fetched quests
+        let currentDynamicQuests = [];
 
         async function loadQuestsFromSheets() {
             try {
@@ -1465,7 +1535,7 @@
                 
                 if (result.status === "success" && result.data && result.data.length > 0) {
                     currentDynamicQuests = result.data;
-                    renderQuests(); // Render with the live data
+                    renderQuests(); 
                 }
             } catch(e) { console.log("Loading fallback default quests."); renderQuests(); }
         }
@@ -1484,18 +1554,15 @@
                 { id: "quest_share", title: "Share Tournyx with a Friend", reward: 200, reqType: "share", reqVal: 1, redirect: "refer.html", isDaily: false }
             ];
 
-            wrapper.innerHTML = ""; // Clear wrapper to re-render clean
+            wrapper.innerHTML = ""; 
 
             questsToRender.forEach(q => {
-                // If it's a one-time quest and already claimed, SKIP rendering it entirely!
                 if (!q.isDaily && oneTimeData.includes(q.id)) {
                     return; 
                 }
 
-                // Default state for button
                 let btnState = `<button class="quest-btn" onclick="claimQuest('${q.id}', ${q.reward}, '${q.reqType}', '${q.reqVal}', '${q.redirect}', ${q.isDaily})">CLAIM</button>`;
 
-                // Check Daily Reset Logic
                 if (q.isDaily && claimedData[q.id]) {
                     if (now - claimedData[q.id] > 24 * 60 * 60 * 1000) {
                         delete claimedData[q.id];
@@ -1575,7 +1642,6 @@
             
             showToast(`+${rewardPts} PTS verified & added to Wallet!`);
 
-            // Save state based on Quest Type
             if (isDaily) {
                 let claimedData = JSON.parse(localStorage.getItem('tournyx_quests_24h')) || {};
                 claimedData[questId] = Date.now(); 
@@ -1598,7 +1664,7 @@
                 if (card) {
                     card.style.transform = "scale(0)";
                     card.style.opacity = "0";
-                    setTimeout(() => { card.remove(); }, 300); // Remove smoothly
+                    setTimeout(() => { card.remove(); }, 300);
                 }
             }
 
@@ -1632,7 +1698,7 @@
             tabElement.classList.add('active');
         }
 
-        // --- 8. LEADERBOARD FETCH LOGIC (ANIMATED 6 LIST) ---
+        // --- 8. LEADERBOARD FETCH LOGIC (UP TO 15 WITH EMPTY STATES) ---
         async function loadLeaderboard() {
             try {
                 const res = await fetch(API_URL + "?action=get_leaderboard");
@@ -1643,21 +1709,33 @@
                     renderLeaderboardList('teams', result.data.teams, 'Won', '₹ ', 'var(--accent-purple)');
                     renderLeaderboardList('contributors', result.data.contributors, 'Contributions', '', '#ffd700');
                 }
-            } catch(e) { console.log("Leaderboard loaded from initial HTML placeholders."); }
+            } catch(e) { console.log("Leaderboard fetching failed, checking cache."); }
         }
 
         function renderLeaderboardList(containerId, list, roleText, prefix, colorStr) {
-            if (!list || list.length === 0) return;
             const container = document.getElementById(containerId);
+            if (!list || list.length === 0) {
+                container.innerHTML = `
+                    <div style="text-align:center; padding: 40px 20px; background: rgba(255,255,255,0.02); border-radius: 15px; border: 1px dashed rgba(255,255,255,0.1); width: 100%;">
+                        <i class="fa-solid fa-ghost" style="font-size:3rem; color:#444; margin-bottom:15px; filter: drop-shadow(0 0 10px rgba(0,0,0,0.5));"></i>
+                        <h3 style="font-family:var(--font-head); color:#888;">No Legends Yet</h3>
+                        <p style="color:#666; font-size:0.9rem;">Data will sync automatically when available.</p>
+                    </div>`;
+                return;
+            }
+            
             let html = '';
             
-            // Limit to top 6
-            list.slice(0, 6).forEach((item, i) => {
+            // Limit to top 15
+            list.slice(0, 15).forEach((item, i) => {
                 let rankClass = ''; let medal = ''; let borderClass = '';
                 
                 if (i === 0) { rankClass = 'rank-1'; medal = `<div class="rank-medal rank-1"><i class="fa-solid fa-medal"></i></div>`; borderClass = 'rank-1-border'; }
                 if (i === 1) { rankClass = 'rank-2'; medal = `<div class="rank-medal rank-2"><i class="fa-solid fa-medal"></i></div>`; borderClass = 'rank-2-border'; }
                 if (i === 2) { rankClass = 'rank-3'; medal = `<div class="rank-medal rank-3"><i class="fa-solid fa-medal"></i></div>`; borderClass = 'rank-3-border'; }
+                if (i >= 3) {
+                    medal = `<div class="rank-medal" style="font-size:1.5rem; color:#666; font-family:var(--font-head); font-weight:bold;">#${i+1}</div>`;
+                }
                 
                 html += `
                 <div class="person-row ${borderClass} glass-panel">
@@ -1671,18 +1749,6 @@
             });
             container.innerHTML = html;
         }
-
-        // --- HARDWARE ACCELERATED CANVAS PARTICLES ---
-        let animPaused = localStorage.getItem('tournyx_psm') === 'true';
-
-        // Tie Canvas resizing to PSM directly
-        if(animPaused) {
-            ctx.clearRect(0,0,canvas.width,canvas.height);
-        } else {
-            anim();
-        }
-
     </script>
-
 </body>
 </html>
