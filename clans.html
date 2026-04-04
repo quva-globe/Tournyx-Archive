@@ -724,6 +724,9 @@
         let globalClans = [];
         let pendingJoinData = {};
         let activeFilterGame = 'All';
+        
+        // --- NEW CHAT SYNC ENGINE ---
+        let chatSyncInterval = null;
 
         function showToast(msg, isError = false) {
             const t = document.getElementById('customToast'); t.innerText = msg;
@@ -917,10 +920,66 @@
         function openChat() {
             renderChat();
             document.getElementById('chatModal').classList.add('active');
+            
+            // --- START SILENT BACKGROUND SYNC FOR CHAT ---
+            if(chatSyncInterval) clearInterval(chatSyncInterval);
+            chatSyncInterval = setInterval(silentChatSync, 5000);
         }
-        function closeChat() { document.getElementById('chatModal').classList.remove('active'); }
+        
+        function closeChat() { 
+            document.getElementById('chatModal').classList.remove('active'); 
+            
+            // --- STOP SILENT BACKGROUND SYNC ---
+            if(chatSyncInterval) clearInterval(chatSyncInterval);
+        }
 
-        function renderChat() {
+        async function silentChatSync() {
+            if(!activeClan || isGuestMode) return;
+            try {
+                const res = await fetch(API_URL + "?action=get_my_clans&username=" + encodeURIComponent(user.username));
+                const data = await res.json();
+                
+                if (data.status === "success" && data.data && data.data.length > 0) {
+                    data.data.forEach(item => {
+                        let clanObj = typeof item === 'string' ? JSON.parse(item) : (item.team_json ? (typeof item.team_json === 'string' ? JSON.parse(item.team_json) : item.team_json) : item);
+                        
+                        if(clanObj && clanObj.clanId === activeClan.clanId) {
+                            let newMsgs = clanObj.messages || [];
+                            if(typeof newMsgs === 'string') {
+                                try { newMsgs = JSON.parse(newMsgs); } catch(e) { newMsgs = []; }
+                            }
+                            
+                            let currentMsgsStr = JSON.stringify(activeClan.messages || []);
+                            let newMsgsStr = JSON.stringify(newMsgs);
+                            
+                            // IF NEW MESSAGES ARRIVED, UPDATE DOM SILENTLY
+                            if(currentMsgsStr !== newMsgsStr) {
+                                activeClan.messages = newMsgs;
+                                
+                                // Update local cache so it persists
+                                let index = userLiveClans.findIndex(c => c.clanId === activeClan.clanId);
+                                if(index !== -1) {
+                                    userLiveClans[index].messages = newMsgs;
+                                    localStorage.setItem('tournyx_my_clans_cache', JSON.stringify(userLiveClans));
+                                }
+                                
+                                // Check scroll position to prevent annoying jumps if user is reading history
+                                const box = document.getElementById('chatMessages');
+                                let isAtBottom = box.scrollHeight - box.scrollTop - box.clientHeight < 20;
+                                
+                                renderChat(true); // Re-render silently
+                                
+                                if(isAtBottom) {
+                                    setTimeout(() => { box.scrollTop = box.scrollHeight; }, 50);
+                                }
+                            }
+                        }
+                    });
+                }
+            } catch(e) { } // Silent fail to avoid disrupting user
+        }
+
+        function renderChat(isSilent = false) {
             const box = document.getElementById('chatMessages');
             box.innerHTML = '';
             
@@ -935,8 +994,8 @@
             
             let msgs = rawMsgs.filter(m => (now - m.timestamp) < SEVEN_DAYS);
             
-            if(msgs.length !== rawMsgs.length) {
-                // Background cleanup of old messages
+            if(msgs.length !== rawMsgs.length && !isSilent) {
+                // Background cleanup of old messages (skip if just silent polling)
                 activeClan.messages = msgs;
                 let cleanClan = JSON.parse(JSON.stringify(activeClan));
                 delete cleanClan.logo; delete cleanClan.banner;
@@ -974,7 +1033,10 @@
                     </div>
                 `;
             });
-            setTimeout(() => { box.scrollTop = box.scrollHeight; }, 50);
+            
+            if(!isSilent) {
+                setTimeout(() => { box.scrollTop = box.scrollHeight; }, 50);
+            }
         }
 
         function sendChatMessage() {
@@ -991,6 +1053,9 @@
             pushUpdateToLive('messages', activeClan.messages);
             inp.value = '';
             renderChat();
+            
+            const box = document.getElementById('chatMessages');
+            setTimeout(() => { box.scrollTop = box.scrollHeight; }, 50);
         }
 
         function deleteMessage(index) {
