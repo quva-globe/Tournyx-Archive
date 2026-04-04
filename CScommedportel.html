@@ -1,0 +1,536 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link rel="icon" href="https://tournyx.in/favicon.ico" sizes="any">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>TX Command Center</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Rajdhani:wght@500;600;700&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        :root {
+            --bg-main: #070311;
+            --panel-bg: rgba(15, 5, 25, 0.85);
+            --tx-violet: #a200ff;
+            --tx-silver: #e0e0e0;
+            --tx-cyan: #00f2ff;
+            --tx-red: #ff0055;
+            --font-head: 'Orbitron', sans-serif;
+            --font-body: 'Rajdhani', sans-serif;
+            --font-code: 'Share Tech Mono', monospace;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-thumb { background: var(--tx-violet); border-radius: 10px; }
+
+        body { background-color: var(--bg-main); color: #fff; font-family: var(--font-body); overflow-x: hidden; min-height: 100vh; }
+        #particles { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; background: radial-gradient(circle at 50% 0%, #1c053a 0%, #070311 100%); }
+
+        /* HEADER & LOGO ANIMATIONS */
+        .top-bar { background: rgba(5, 2, 10, 0.95); border-bottom: 2px solid var(--tx-violet); padding: 15px 25px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 5px 30px rgba(162, 0, 255, 0.3); position: sticky; top: 0; z-index: 100; backdrop-filter: blur(15px); }
+        .logo-container { display: flex; align-items: center; gap: 15px; }
+        
+        .dragon-logo { width: 50px; height: 50px; object-fit: contain; animation: pulseLogo 3s infinite alternate; filter: drop-shadow(0 0 10px rgba(162,0,255,0.8)); }
+        @keyframes pulseLogo { from { transform: scale(1); filter: drop-shadow(0 0 5px var(--tx-violet)); } to { transform: scale(1.1); filter: drop-shadow(0 0 20px var(--tx-cyan)); } }
+
+        .sys-title { font-family: var(--font-head); font-size: 1.8rem; color: var(--tx-silver); font-weight: 900; letter-spacing: 3px; display: flex; flex-direction: column; line-height: 1; text-shadow: 0 0 15px rgba(224, 224, 224, 0.5);}
+        .sys-title span { font-size: 0.75rem; color: var(--tx-cyan); letter-spacing: 6px; text-shadow: 0 0 10px var(--tx-cyan); text-transform: uppercase;}
+
+        .btn-outline { background: transparent; border: 1px solid var(--tx-silver); color: var(--tx-silver); padding: 8px 20px; border-radius: 8px; cursor: pointer; font-family: var(--font-head); font-weight: bold; transition: 0.3s; text-transform: uppercase;}
+        .btn-outline:hover { background: var(--tx-silver); color: #000; box-shadow: 0 0 20px rgba(224,224,224,0.5); transform: translateY(-2px); }
+        .btn-outline:active { transform: scale(0.95); }
+
+        /* AUTH SCREENS */
+        .auth-container { height: 85vh; display: flex; align-items: center; justify-content: center; padding: 20px; }
+        .auth-box { background: var(--panel-bg); border: 1px solid rgba(162,0,255,0.4); padding: 40px 30px; border-radius: 20px; width: 100%; max-width: 420px; text-align: center; box-shadow: 0 15px 50px rgba(0,0,0,0.9), inset 0 0 40px rgba(162,0,255,0.15); animation: glitchEntry 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards; }
+        
+        @keyframes glitchEntry {
+            0% { transform: scale(0.9) skewX(10deg); opacity: 0; filter: blur(10px); }
+            50% { transform: scale(1.05) skewX(-5deg); opacity: 0.8; filter: blur(2px); }
+            100% { transform: scale(1) skewX(0); opacity: 1; filter: blur(0); }
+        }
+
+        .auth-box h2 { font-family: var(--font-head); color: var(--tx-cyan); margin-bottom: 5px; text-transform: uppercase; letter-spacing: 2px; text-shadow: 0 0 10px var(--tx-cyan);}
+        
+        .input-wrapper { position: relative; margin-bottom: 20px; }
+        .input-icon { position: absolute; left: 15px; top: 50%; transform: translateY(-50%); color: var(--tx-silver); transition: 0.3s; }
+        .form-control { width: 100%; padding: 14px 14px 14px 45px; background: rgba(0,0,0,0.6); border: 1px solid rgba(255,255,255,0.15); color: #fff; border-radius: 10px; font-family: var(--font-code); font-size: 1rem; outline: none; transition: 0.3s; }
+        .form-control:focus { border-color: var(--tx-violet); box-shadow: 0 0 20px rgba(162,0,255,0.3); background: rgba(0,0,0,0.8); }
+        .form-control:focus + .input-icon { color: var(--tx-violet); filter: drop-shadow(0 0 5px var(--tx-violet)); }
+        
+        .btn-solid { width: 100%; padding: 15px; background: linear-gradient(135deg, var(--tx-violet), #5a009d); color: #fff; border: 1px solid #d073ff; border-radius: 10px; font-family: var(--font-head); font-weight: bold; font-size: 1.1rem; cursor: pointer; transition: 0.3s; box-shadow: 0 5px 25px rgba(162,0,255,0.5); text-transform: uppercase; letter-spacing: 2px;}
+        .btn-solid:hover { transform: translateY(-3px); box-shadow: 0 8px 35px rgba(162,0,255,0.7); }
+        .btn-solid:active { transform: scale(0.96); }
+
+        /* DASHBOARD */
+        #dashboard { display: none; padding: 30px 20px; max-width: 1400px; margin: 0 auto; animation: fadeScaleUp 0.5s ease; }
+        
+        .search-area { display: flex; gap: 15px; margin-bottom: 30px; background: var(--panel-bg); padding: 15px; border-radius: 15px; border: 1px solid rgba(255,255,255,0.05); box-shadow: 0 10px 30px rgba(0,0,0,0.6); }
+        .search-area input { flex: 1; padding: 15px; font-size: 1.1rem; background: rgba(0,0,0,0.5); border: 1px solid var(--tx-cyan); color: #fff; font-family: var(--font-code); border-radius: 10px; outline: none; transition: 0.3s;}
+        .search-area input:focus { box-shadow: 0 0 15px rgba(0,242,255,0.3); }
+        .search-area button { background: var(--tx-cyan); color: #000; border: none; padding: 0 40px; border-radius: 10px; font-family: var(--font-head); font-weight: bold; cursor: pointer; font-size: 1.1rem; box-shadow: 0 5px 20px rgba(0,242,255,0.4); transition: 0.3s; text-transform: uppercase; }
+        .search-area button:active { transform: scale(0.95); }
+
+        /* 15 FEATURE GRID */
+        .tools-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 15px; margin-bottom: 30px; }
+        .tool-card { background: rgba(0,0,0,0.4); border: 1px solid rgba(255,255,255,0.05); border-left: 3px solid var(--tx-violet); padding: 15px; border-radius: 10px; cursor: pointer; transition: 0.3s; display: flex; align-items: center; gap: 15px; }
+        .tool-card:hover { background: rgba(162,0,255,0.1); border-color: rgba(162,0,255,0.3); transform: translateX(5px); box-shadow: 0 5px 15px rgba(162,0,255,0.2); }
+        .tool-icon { font-size: 1.5rem; color: var(--tx-silver); width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; background: rgba(255,255,255,0.05); border-radius: 8px; }
+        .tool-card:hover .tool-icon { color: var(--tx-cyan); background: rgba(0,242,255,0.1); text-shadow: 0 0 10px var(--tx-cyan); }
+        .tool-text { font-family: var(--font-head); font-size: 0.85rem; font-weight: bold; text-transform: uppercase; color: #ccc; }
+        .tool-card:hover .tool-text { color: #fff; }
+
+        .dossier-layout { display: grid; grid-template-columns: 1fr; gap: 25px; }
+        
+        .section-card { background: var(--panel-bg); border: 1px solid rgba(255,255,255,0.05); border-top: 3px solid var(--tx-cyan); border-radius: 15px; padding: 25px; box-shadow: 0 10px 40px rgba(0,0,0,0.6); opacity: 0; transform: translateY(20px); animation: staggerFadeUp 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; }
+        .section-card:nth-child(1) { animation-delay: 0.1s; }
+        .section-card:nth-child(2) { border-top-color: var(--tx-violet); animation-delay: 0.2s; }
+        .section-card:nth-child(3) { border-top-color: #00ff66; animation-delay: 0.3s; }
+
+        .section-title { font-family: var(--font-head); color: #fff; font-size: 1.2rem; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 12px; margin-bottom: 20px; text-transform: uppercase; display: flex; align-items: center; gap: 10px; }
+        .section-title i { color: var(--tx-cyan); font-size: 1.4rem; }
+
+        .data-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 15px; }
+        .input-group { display: flex; flex-direction: column; gap: 5px; }
+        .input-group label { font-family: var(--font-code); color: var(--tx-silver); font-size: 0.85rem; text-transform: uppercase; margin-bottom: 2px;}
+        .data-input { background: rgba(0,0,0,0.6); border: 1px solid rgba(255,255,255,0.15); color: #fff; padding: 12px; border-radius: 8px; font-family: var(--font-code); font-size: 1rem; transition: 0.3s; width: 100%; outline: none; }
+        .data-input:focus { border-color: var(--tx-cyan); background: rgba(0,242,255,0.05); box-shadow: inset 0 0 10px rgba(0,242,255,0.2); }
+
+        .list-card { border: 1px solid rgba(255,255,255,0.05); border-left: 3px solid var(--tx-violet); padding: 15px; border-radius: 10px; margin-bottom: 12px; background: rgba(0,0,0,0.5); font-family: var(--font-code); font-size: 0.95rem; transition: 0.3s; display: flex; flex-direction: column; gap: 5px;}
+        .list-card:hover { background: rgba(162,0,255,0.05); border-color: rgba(162,0,255,0.3); transform: translateX(5px); }
+
+        /* MODALS */
+        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); z-index: 2000; display: none; align-items: center; justify-content: center; backdrop-filter: blur(10px); opacity: 0; transition: 0.3s; }
+        .modal-overlay.active { display: flex; opacity: 1; }
+        .modal-box { background: var(--bg-main); border: 1px solid var(--tx-cyan); width: 95%; max-width: 650px; border-radius: 20px; box-shadow: 0 20px 60px rgba(0,0,0,0.9), 0 0 30px rgba(0,242,255,0.2); max-height: 90vh; display: flex; flex-direction: column; transform: scale(0.9); transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+        .modal-overlay.active .modal-box { transform: scale(1); }
+        
+        .modal-header { padding: 25px; border-bottom: 1px solid rgba(255,255,255,0.1); display: flex; justify-content: space-between; align-items: center; }
+        .modal-header h3 { color: #fff; font-family: var(--font-head); display: flex; align-items: center; gap: 10px; text-transform: uppercase; }
+        .close-btn { color: #888; font-size: 1.5rem; cursor: pointer; transition: 0.3s; }
+        .close-btn:hover { color: var(--tx-red); transform: rotate(90deg); text-shadow: 0 0 10px var(--tx-red);}
+        
+        .modal-body { padding: 25px; overflow-y: auto; flex: 1; }
+        .diff-row { display: flex; align-items: center; justify-content: space-between; background: rgba(255,255,255,0.03); padding: 15px; margin-bottom: 10px; border-radius: 10px; font-family: var(--font-code); font-size: 0.95rem; border: 1px solid rgba(255,255,255,0.05); }
+        .diff-field { color: var(--tx-cyan); width: 25%; font-weight: bold; text-transform: uppercase; font-size: 0.85rem;}
+        .diff-old { color: var(--tx-red); text-decoration: line-through; width: 30%; word-break: break-all; }
+        .diff-new { color: #00ff66; font-weight: bold; width: 35%; word-break: break-all; }
+
+        @keyframes fadeScaleUp { from { opacity: 0; transform: scale(0.9) translateY(20px); } to { opacity: 1; transform: scale(1) translateY(0); } }
+        @keyframes staggerFadeUp { to { opacity: 1; transform: translateY(0); } }
+
+        #toast { position: fixed; bottom: -100px; left: 50%; transform: translateX(-50%); background: var(--tx-cyan); color: #000; padding: 16px 35px; border-radius: 10px; font-family: var(--font-head); font-weight: bold; z-index: 9999; transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); box-shadow: 0 10px 30px rgba(0,242,255,0.4); text-transform: uppercase; letter-spacing: 1px;}
+        #toast.show { bottom: 40px; }
+        #toast.error { background: var(--tx-red); color: #fff; box-shadow: 0 10px 30px rgba(255,0,85,0.4); }
+
+    </style>
+</head>
+<body>
+    <div id="particles"></div>
+
+    <div class="top-bar">
+        <div class="logo-container">
+            <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEj7b34eZ7Z8n5Z9n7Z9n7Z9n7Z9n7Z9n7Z9n7Z9n7Z9n7Z9n7Z9n7Z9n7Z9n7Z9n7Z9n7Z9/s1024/Picsart_26-02-16_14-38-46-168.jpg" alt="TX Dragon" class="dragon-logo">
+            <div class="sys-title">TOURNYX <span>CS COMMAND</span></div>
+        </div>
+        <button class="btn-outline" id="btnLogout" style="display:none;" onclick="logout()"><i class="fa-solid fa-power-off"></i> Disconnect</button>
+    </div>
+
+    <div class="auth-container" id="loginView">
+        <div class="auth-box">
+            <h2>System Access</h2>
+            <p style="color:#aaa; font-size:0.9rem; margin-bottom:25px;">Provide level-4 clearance credentials.</p>
+            <form id="formLogin">
+                <div class="input-wrapper">
+                    <input type="email" id="l_email" class="form-control" placeholder="Agent Email" required>
+                    <i class="fa-solid fa-user-shield input-icon"></i>
+                </div>
+                <div class="input-wrapper">
+                    <input type="password" id="l_pass" class="form-control" placeholder="Passcode" required>
+                    <i class="fa-solid fa-fingerprint input-icon"></i>
+                </div>
+                <button type="submit" class="btn-solid" id="btnReqOtp">Initialize Uplink</button>
+            </form>
+        </div>
+    </div>
+
+    <div class="auth-container" id="otpView" style="display:none;">
+        <div class="auth-box">
+            <h2 style="color:var(--tx-cyan)">Verify Identity</h2>
+            <p style="color:#aaa; font-size:0.9rem; margin-bottom:25px;">Enter the secure 24-Hour token sent to your email.</p>
+            <form id="formOtp">
+                <div class="input-wrapper">
+                    <input type="number" id="l_otp" class="form-control" placeholder="4-Digit Token" required style="text-align:center; padding-left:14px; font-size:1.5rem; letter-spacing:10px;">
+                </div>
+                <button type="submit" class="btn-solid" id="btnVerify" style="background:linear-gradient(135deg, #00f2ff, #0088ff); color:#000;">Verify Session</button>
+            </form>
+        </div>
+    </div>
+
+    <div id="dashboard">
+        
+        <div class="tools-grid">
+            <div class="tool-card" onclick="document.getElementById('inpSearch').focus()"><div class="tool-icon"><i class="fa-solid fa-radar"></i></div><div class="tool-text">Deep Scan Engine</div></div>
+            <div class="tool-card" onclick="triggerAction('God Mode Overwrite')"><div class="tool-icon"><i class="fa-solid fa-pen-nib"></i></div><div class="tool-text">God Mode Overwrite</div></div>
+            <div class="tool-card" onclick="triggerAction('Wallet Override')"><div class="tool-icon"><i class="fa-solid fa-wallet"></i></div><div class="tool-text">Wallet Override</div></div>
+            <div class="tool-card" onclick="triggerAction('Ban Hammer')"><div class="tool-icon" style="color:var(--tx-red)"><i class="fa-solid fa-gavel"></i></div><div class="tool-text" style="color:var(--tx-red)">The Ban Hammer</div></div>
+            <div class="tool-card" onclick="triggerAction('VIP Granter')"><div class="tool-icon" style="color:#FFD700"><i class="fa-solid fa-crown"></i></div><div class="tool-text" style="color:#FFD700">VIP Granter</div></div>
+            <div class="tool-card" onclick="triggerAction('XP Injection')"><div class="tool-icon"><i class="fa-solid fa-syringe"></i></div><div class="tool-text">Manual XP Injection</div></div>
+            <div class="tool-card" onclick="triggerAction('Clan Disband')"><div class="tool-icon"><i class="fa-solid fa-burst"></i></div><div class="tool-text">Clan Disband Protocol</div></div>
+            <div class="tool-card" onclick="triggerAction('Roster Force-Kick')"><div class="tool-icon"><i class="fa-solid fa-user-xmark"></i></div><div class="tool-text">Roster Force-Kick</div></div>
+            <div class="tool-card" onclick="triggerAction('Tourney Force-Cancel')"><div class="tool-icon"><i class="fa-solid fa-calendar-xmark"></i></div><div class="tool-text">Tourney Force-Cancel</div></div>
+            <div class="tool-card" onclick="triggerAction('Match Reversal')"><div class="tool-icon"><i class="fa-solid fa-clock-rotate-left"></i></div><div class="tool-text">Match Reversal Tool</div></div>
+            <div class="tool-card" onclick="triggerAction('System Broadcast')"><div class="tool-icon"><i class="fa-solid fa-bullhorn"></i></div><div class="tool-text">System Broadcast</div></div>
+            <div class="tool-card" onclick="triggerAction('Password Reset')"><div class="tool-icon"><i class="fa-solid fa-unlock-keyhole"></i></div><div class="tool-text">Direct Password Reset</div></div>
+            <div class="tool-card" onclick="openTicketModal()"><div class="tool-icon"><i class="fa-solid fa-headset"></i></div><div class="tool-text">Admin Escalation Ticket</div></div>
+        </div>
+
+        <div class="search-area">
+            <input type="text" id="inpSearch" placeholder="Enter Email, UID, or Exact Username..." onkeypress="if(event.key==='Enter') executeSearch()">
+            <button onclick="executeSearch()" id="btnSearch"><i class="fa-solid fa-magnifying-glass"></i> Deep Scan</button>
+        </div>
+
+        <div id="dossierArea" class="dossier-layout" style="display:none;">
+            <div class="section-card">
+                <div class="section-title"><i class="fa-solid fa-address-card"></i> Central Identity</div>
+                <div class="data-grid" id="boxProfile"></div>
+                
+                <div style="margin-top: 30px; padding-top: 20px; border-top: 1px solid rgba(255,255,255,0.1); text-align:right;">
+                    <button class="btn-solid" style="width:auto; padding: 14px 40px; margin:0;" onclick="reviewChanges()"><i class="fa-solid fa-upload"></i> Review & Inject Updates</button>
+                </div>
+            </div>
+
+            <div class="section-card">
+                <div class="section-title"><i class="fa-solid fa-shield-halved"></i> Associated Clans</div>
+                <div id="boxClans" style="color:#aaa;"></div>
+            </div>
+
+            <div class="section-card">
+                <div class="section-title"><i class="fa-solid fa-timeline"></i> Match Topology</div>
+                <div id="boxMatches" style="color:#aaa; max-height:300px; overflow-y:auto; padding-right:5px;"></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="reviewModal">
+        <div class="modal-box">
+            <div class="modal-header">
+                <h3><i class="fa-solid fa-file-code" style="color:var(--tx-cyan);"></i> Verify Overwrites</h3>
+                <i class="fa-solid fa-xmark close-btn" onclick="closeModal('reviewModal')"></i>
+            </div>
+            <div class="modal-body" id="reviewDiffArea">
+                </div>
+            <div class="modal-header" style="border-top: 1px solid rgba(255,255,255,0.05); border-bottom: none; display:flex; gap:15px; background: rgba(0,0,0,0.3);">
+                <button class="btn-outline" style="flex:1; border-color:#888; color:#888;" onclick="closeModal('reviewModal')">Abort</button>
+                <button class="btn-solid" style="flex:1; margin:0; background:linear-gradient(135deg, #00f2ff, #0088ff); color:#000; box-shadow: 0 5px 20px rgba(0,242,255,0.3);" id="btnCommit" onclick="commitUpdates()"><i class="fa-solid fa-check-double"></i> Commit to DB</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="ticketModal">
+        <div class="modal-box">
+            <div class="modal-header">
+                <h3 style="color:var(--tx-red);"><i class="fa-solid fa-headset"></i> Escalate to Admin</h3>
+                <i class="fa-solid fa-xmark close-btn" onclick="closeModal('ticketModal')"></i>
+            </div>
+            <div class="modal-body">
+                <p style="color:#aaa; font-size:0.95rem; margin-bottom:20px; line-height: 1.5; font-family:var(--font-code);">Use this to report severe bugs, payout disputes, or request permanent account bans.</p>
+                <div class="input-group" style="margin-bottom: 15px;">
+                    <label>Target Identifier</label>
+                    <input type="text" id="tktTarget" class="data-input" readonly style="opacity: 0.7;">
+                </div>
+                <div class="input-group">
+                    <label>Issue Description</label>
+                    <textarea id="tktIssue" class="data-input" rows="6" placeholder="Describe the exact issue in detail..." style="resize:none;" required></textarea>
+                </div>
+            </div>
+            <div class="modal-header" style="border-top: 1px solid rgba(255,255,255,0.05); border-bottom: none;">
+                <button class="btn-solid" style="background:linear-gradient(135deg, var(--tx-red), #990033); box-shadow:0 5px 20px rgba(255,0,85,0.3); margin:0;" id="btnSubmitTkt" onclick="submitTicket()">Submit Escalation</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="toast">Notification</div>
+
+    <script>
+        const API_URL = 'https://script.google.com/macros/s/AKfycbyqqTpgaflxKJ9xH0jq7mJ_jLzcoNhas3gNo0h5gvoa_6r5Ae9NFxJAJp7ZoYNnMRKl/exec';
+        let agentEmail = localStorage.getItem('tournyx_agent_email') || "";
+        let isSessionValid = localStorage.getItem('tournyx_agent_session') === "active";
+        
+        let originalDossier = null;
+
+        function showToast(msg, isError = false) {
+            const t = document.getElementById('toast');
+            t.innerText = msg;
+            if(isError) t.classList.add('error'); else t.classList.remove('error');
+            t.classList.add('show');
+            setTimeout(() => t.classList.remove('show'), 3000);
+        }
+
+        // INIT
+        document.addEventListener("DOMContentLoaded", () => {
+            if(isSessionValid && agentEmail) {
+                document.getElementById('loginView').style.display = 'none';
+                document.getElementById('dashboard').style.display = 'block';
+                document.getElementById('btnLogout').style.display = 'block';
+            }
+        });
+
+        // 1. LOGIN (Request OTP)
+        document.getElementById('formLogin').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const email = document.getElementById('l_email').value;
+            const pass = document.getElementById('l_pass').value;
+            const btn = document.getElementById('btnReqOtp');
+            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i>'; btn.disabled = true;
+
+            try {
+                const res = await fetch(API_URL, { method: 'POST', body: JSON.stringify({ action: 'support_login', email: email, password: pass }) });
+                const result = await res.json();
+                if(result.status === 'success') {
+                    agentEmail = email;
+                    document.getElementById('loginView').style.display = 'none';
+                    document.getElementById('otpView').style.display = 'flex';
+                    showToast("Credentials Accepted. Token Sent.");
+                } else { showToast(result.data, true); }
+            } catch(e) { showToast("Network Error", true); }
+            btn.innerHTML = 'Initialize Uplink'; btn.disabled = false;
+        });
+
+        // 2. VERIFY OTP
+        document.getElementById('formOtp').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const otp = document.getElementById('l_otp').value;
+            const btn = document.getElementById('btnVerify');
+            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i>'; btn.disabled = true;
+
+            try {
+                const res = await fetch(API_URL, { method: 'POST', body: JSON.stringify({ action: 'support_verify', email: agentEmail, otp: otp }) });
+                const result = await res.json();
+                if(result.status === 'success') {
+                    localStorage.setItem('tournyx_agent_email', agentEmail);
+                    localStorage.setItem('tournyx_agent_session', 'active');
+                    document.getElementById('otpView').style.display = 'none';
+                    document.getElementById('dashboard').style.display = 'block';
+                    document.getElementById('btnLogout').style.display = 'block';
+                    showToast("Secure Session Established.");
+                } else { showToast(result.data, true); }
+            } catch(e) { showToast("Network Error", true); }
+            btn.innerHTML = 'Verify Session'; btn.disabled = false;
+        });
+
+        function logout() {
+            localStorage.removeItem('tournyx_agent_email');
+            localStorage.removeItem('tournyx_agent_session');
+            window.location.reload();
+        }
+
+        // TOOL TRIGGER (UI ONLY)
+        function triggerAction(name) {
+            if(!originalDossier) {
+                showToast("Please run a Deep Scan on a user first.", true);
+                document.getElementById('inpSearch').focus();
+            } else {
+                showToast(`Accessing ${name} module... Edit directly in the Dossier.`);
+            }
+        }
+
+        // 3. SEARCH & BUILD DOSSIER
+        async function executeSearch() {
+            const query = document.getElementById('inpSearch').value.trim();
+            if(!query) return;
+
+            const btn = document.getElementById('btnSearch');
+            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Scanning...'; btn.disabled = true;
+            document.getElementById('dossierArea').style.display = 'none';
+
+            try {
+                const res = await fetch(API_URL, { method: 'POST', body: JSON.stringify({ action: 'support_global_search', query: query }) });
+                const result = await res.json();
+                
+                if(result.status === 'success') {
+                    originalDossier = result.data; 
+                    renderDossier(result.data);
+                    document.getElementById('dossierArea').style.display = 'grid';
+                    showToast("Player Record Extracted");
+                } else { showToast(result.data, true); }
+            } catch(e) { showToast("Network Error", true); }
+            
+            btn.innerHTML = '<i class="fa-solid fa-magnifying-glass"></i> Deep Scan'; btn.disabled = false;
+        }
+
+        function renderDossier(data) {
+            const profBox = document.getElementById('boxProfile');
+            profBox.innerHTML = '';
+            
+            // Protect critical columns
+            const skipFields = ['password', 'avatar', 'claimed_ms']; 
+            
+            for(let key in data.target) {
+                if(key === '_row' || skipFields.includes(key)) continue;
+                
+                let val = data.target[key];
+                
+                profBox.innerHTML += `
+                    <div class="input-group">
+                        <label>${key.replace(/_/g, ' ')}</label>
+                        <input type="text" class="data-input edit-tracker" data-sheet="Users" data-row="${data.target._row}" data-field="${key}" data-original="${String(val).replace(/"/g, '&quot;')}" value="${String(val).replace(/"/g, '&quot;')}">
+                    </div>
+                `;
+            }
+
+            const cBox = document.getElementById('boxClans');
+            cBox.innerHTML = '';
+            if(data.sheets.Clans && data.sheets.Clans.length > 0) {
+                data.sheets.Clans.forEach(c => {
+                    cBox.innerHTML += `
+                    <div class="list-card">
+                        <div style="color:var(--tx-cyan); font-family:var(--font-head); font-weight:bold; font-size:1.1rem; margin-bottom:5px; text-transform:uppercase;">${c.clan_name || c.name}</div>
+                        <div><span style="color:#888;">ID:</span> ${c.clanId || 'N/A'}</div>
+                        <div><span style="color:#888;">Game:</span> <span style="color:var(--tx-silver);">${c.game}</span></div>
+                        <div><span style="color:#888;">Status:</span> <span style="color:#00ff66;">${c.status}</span></div>
+                    </div>`;
+                });
+            } else { cBox.innerHTML = "<div style='color:#666; font-style:italic;'>No clans associated.</div>"; }
+
+            const mBox = document.getElementById('boxMatches');
+            mBox.innerHTML = '';
+            if(data.sheets.Matches && data.sheets.Matches.length > 0) {
+                data.sheets.Matches.forEach(m => {
+                    let sColor = String(m.status).toLowerCase().includes('won') ? '#00ff66' : '#fff';
+                    mBox.innerHTML += `
+                    <div class="list-card">
+                        <div style="color:var(--tx-violet); font-weight:bold; margin-bottom:5px;">Match ID: ${m.match_id}</div>
+                        <div><span style="color:#888;">Clan/Solo:</span> ${m.clan || m.username}</div>
+                        <div><span style="color:#888;">Status:</span> <span style="color:${sColor}">${m.status || 'Registered'}</span></div>
+                        <div><span style="color:#888;">Prize:</span> ${m.prize || '0'}</div>
+                    </div>`;
+                });
+            } else { mBox.innerHTML = "<div style='color:#666; font-style:italic;'>No match history found.</div>"; }
+        }
+
+        // 4. VERIFY CHANGES
+        let pendingUpdates = [];
+        
+        function reviewChanges() {
+            pendingUpdates = [];
+            const inputs = document.querySelectorAll('.edit-tracker');
+            const diffArea = document.getElementById('reviewDiffArea');
+            diffArea.innerHTML = '';
+
+            inputs.forEach(inp => {
+                let original = inp.getAttribute('data-original');
+                let current = inp.value;
+                if(original !== current) {
+                    pendingUpdates.push({
+                        sheet: inp.getAttribute('data-sheet'),
+                        row: inp.getAttribute('data-row'),
+                        field: inp.getAttribute('data-field'),
+                        value: current
+                    });
+                    
+                    diffArea.innerHTML += `
+                        <div class="diff-row">
+                            <div class="diff-field">${inp.getAttribute('data-field')}</div>
+                            <div class="diff-old">${original || '<i>Empty</i>'}</div>
+                            <i class="fa-solid fa-arrow-right" style="color:#555;"></i>
+                            <div class="diff-new">${current || '<i>Empty</i>'}</div>
+                        </div>
+                    `;
+                }
+            });
+
+            if(pendingUpdates.length === 0) { showToast("No changes detected.", true); return; }
+            document.getElementById('reviewModal').classList.add('active');
+        }
+
+        function closeModal(id) { document.getElementById(id).classList.remove('active'); }
+
+        // 5. COMMIT CHANGES
+        async function commitUpdates() {
+            const btn = document.getElementById('btnCommit');
+            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Committing...'; btn.disabled = true;
+
+            try {
+                const res = await fetch(API_URL, { 
+                    method: 'POST', 
+                    body: JSON.stringify({ action: 'support_batch_update', agent_email: agentEmail, updates: pendingUpdates }) 
+                });
+                const result = await res.json();
+                
+                if(result.status === 'success') {
+                    showToast("Database Overwritten Successfully.");
+                    closeModal('reviewModal');
+                    executeSearch(); 
+                } else { showToast(result.data, true); }
+            } catch(e) { showToast("Network Error", true); }
+            
+            btn.innerHTML = '<i class="fa-solid fa-check-double"></i> Commit to DB'; btn.disabled = false;
+        }
+
+        // 6. TICKETING
+        function openTicketModal() {
+            if(!originalDossier || !originalDossier.target) {
+                showToast("Please scan a user first.", true); return;
+            }
+            document.getElementById('tktTarget').value = `${originalDossier.target.email} | ${originalDossier.target.uid}`;
+            document.getElementById('tktIssue').value = '';
+            document.getElementById('ticketModal').classList.add('active');
+        }
+
+        async function submitTicket() {
+            const issue = document.getElementById('tktIssue').value.trim();
+            if(!issue) return;
+
+            const btn = document.getElementById('btnSubmitTkt');
+            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Submitting...'; btn.disabled = true;
+
+            try {
+                const res = await fetch(API_URL, { 
+                    method: 'POST', 
+                    body: JSON.stringify({ 
+                        action: 'support_create_ticket', 
+                        agent: agentEmail, 
+                        target: originalDossier.target.email, 
+                        issue: issue 
+                    }) 
+                });
+                const result = await res.json();
+                
+                if(result.status === 'success') {
+                    showToast(`Ticket Raised! Reference: ${result.data}`);
+                    closeModal('ticketModal');
+                } else { showToast(result.data, true); }
+            } catch(e) { showToast("Network Error", true); }
+            
+            btn.innerHTML = 'Submit Escalation'; btn.disabled = false;
+        }
+
+        // Particle background logic
+        const c = document.getElementById('particles');
+        let dots = [];
+        for(let i=0; i<40; i++) {
+            let dot = document.createElement('div');
+            dot.style.position = 'absolute';
+            dot.style.width = Math.random() * 3 + 'px'; dot.style.height = dot.style.width;
+            dot.style.background = Math.random() > 0.7 ? 'var(--tx-cyan)' : 'var(--tx-violet)';
+            dot.style.left = Math.random() * 100 + 'vw';
+            dot.style.top = Math.random() * 100 + 'vh';
+            dot.style.opacity = Math.random() * 0.5 + 0.1;
+            dot.style.borderRadius = '50%';
+            dot.style.boxShadow = `0 0 10px ${dot.style.background}`;
+            c.appendChild(dot);
+            dots.push({el: dot, speed: Math.random() * 0.5 + 0.1});
+        }
+        setInterval(() => {
+            dots.forEach(d => {
+                let currentTop = parseFloat(d.el.style.top);
+                d.el.style.top = (currentTop - d.speed) + 'vh';
+                if(currentTop < 0) d.el.style.top = '100vh';
+            });
+        }, 50);
+    </script>
+</body>
+</html>
