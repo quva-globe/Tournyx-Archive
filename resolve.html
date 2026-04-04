@@ -269,6 +269,7 @@
         
         let activeMatchId = "";
         let allPrizes = []; 
+        let singleWinnerMode = false; // Add flag to track single prize tournaments
         
         // Editable Tracking Maps
         let rankAssignments = {}; // teamName -> rank (1, 2, 3)
@@ -404,10 +405,23 @@
             cashAssignments = {};
             customCashAssignments = {};
             pointAssignments = {};
+            singleWinnerMode = false;
             updateTotalsUI();
 
             let pObj = JSON.parse(decodeURIComponent(prizeJsonStrEncoded));
             let legendHtml = "";
+            
+            // Count how many prizes exist
+            let prizeCount = 0;
+            if (pObj[1] > 0) prizeCount++;
+            if (pObj[2] > 0) prizeCount++;
+            if (pObj[3] > 0) prizeCount++;
+
+            // If only 1 prize exists (or 0 and we fallback to "Winner Takes All"), set singleWinnerMode = true
+            if (prizeCount <= 1) {
+                singleWinnerMode = true;
+            }
+
             if(pObj[1] > 0) { allPrizes.push({rank: 1, amount: pObj[1]}); legendHtml += `<div class="prize-tag p1"><i class="fa-solid fa-trophy"></i> 1st: ₹${pObj[1]}</div>`; }
             if(pObj[2] > 0) { allPrizes.push({rank: 2, amount: pObj[2]}); legendHtml += `<div class="prize-tag p2"><i class="fa-solid fa-medal"></i> 2nd: ₹${pObj[2]}</div>`; }
             if(pObj[3] > 0) { allPrizes.push({rank: 3, amount: pObj[3]}); legendHtml += `<div class="prize-tag p3"><i class="fa-solid fa-award"></i> 3rd: ₹${pObj[3]}</div>`; }
@@ -583,9 +597,16 @@
                             btn.style.background = 'var(--accent-gradient)';
                             btn.style.color = 'white';
                         } else {
-                            btn.innerHTML = `<i class="fa-solid fa-plus"></i> Custom Payout`;
-                            btn.style.background = 'rgba(255,255,255,0.1)';
-                            btn.style.color = 'white';
+                            // If it's single winner mode and the prize is already given, 
+                            // seamlessly transition all remaining buttons to custom point assignments.
+                            if (singleWinnerMode && Object.keys(rankAssignments).length > 0) {
+                                btn.style.display = 'none';
+                                ptsBox.style.display = 'flex';
+                            } else {
+                                btn.innerHTML = `<i class="fa-solid fa-plus"></i> Custom Payout`;
+                                btn.style.background = 'rgba(255,255,255,0.1)';
+                                btn.style.color = 'white';
+                            }
                         }
                     }
                 }
