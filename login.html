@@ -151,7 +151,7 @@
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: rgba(0, 0, 0, 0.5); z-index: 50; display: none;
             align-items: center; justify-content: center; backdrop-filter: blur(5px);
-            opacity: 0; transition: opacity 0.4s ease; padding: 15px;
+            opacity: 0; transition: opacity 0.3s ease; padding: 15px;
         }
         .modal-overlay.active { display: flex; opacity: 1; animation: modalBgFade 0.4s forwards; }
 
@@ -855,7 +855,8 @@
                 const rawData = Object.fromEntries(formData);
                 
                 // Format phone number specifically to prevent #NUM! issues in Sheets
-                const safePhoneStr = "'+91" + phoneDigits;
+                // Send ONLY the 10 digits (no +91, no apostrophe) to save cleanly as a standard number
+                const safePhoneStr = phoneDigits; 
 
                 const payload = {
                     action: 'signup',
