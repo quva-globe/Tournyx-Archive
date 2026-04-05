@@ -928,7 +928,7 @@
             document.getElementById('displayTotalRs').innerText = baseAmt; 
         }
 
-        function triggerRazorpay() {
+        async function triggerRazorpay() {
             let ticketCount = parseInt(document.getElementById('addAmtInput').value);
             if(isNaN(ticketCount) || ticketCount < 1) { 
                 triggerError('addAmtInput'); 
@@ -938,75 +938,87 @@
             
             let totalAmt = ticketCount * TICKET_PRICE;
             
-            // Close the Add Money Modal
-            closeAddMoney();
+            let scanner = document.getElementById('cyberScanner'); 
+            let sText = document.getElementById('scannerText'); 
+            let sDesc = document.getElementById('scannerDesc'); 
+            
+            // Show loading scanner while generating Order ID
+            scanner.classList.add('active'); 
+            sText.innerText = "CONNECTING..."; 
+            sDesc.innerText = "Generating Secure Order ID...";
+            
+            try {
+                // 1. Fetch Secure Order ID from Google Apps Script
+                let orderRes = await fetch(API_URL, {
+                    method: 'POST',
+                    body: JSON.stringify({ action: 'create_rzp_order', amount: totalAmt })
+                });
+                let orderData = await orderRes.json();
+                
+                scanner.classList.remove('active');
+                closeAddMoney();
 
-            var options = {
-                "key": RAZORPAY_KEY,
-                "amount": totalAmt * 100, // Razorpay takes amount in paise (₹1 = 100 paise)
-                "currency": "INR",
-                "name": "Tournyx Esports",
-                "description": ticketCount + " " + selectedGameName + " Pass(es)",
-                "image": "https://tournyx.in/favicon.png",
-                "handler": function (response) {
-                    // PAYMENT SUCCESS CALLBACK
-                    processSuccessfulPayment(response.razorpay_payment_id, ticketCount, totalAmt);
-                },
-                "prefill": {
-                    "name": currentUser.username,
-                    "email": currentUser.email
-                },
-                "theme": {
-                    "color": document.documentElement.classList.contains('theme-vip') ? "#FFD700" : "#bd00ff"
-                },
-                "modal": {
-                    "ondismiss": function(){
-                        // PAYMENT CANCELED / DISMISSED
-                        showTransactionFailed("You cancelled the payment process.");
-                    }
+                if (orderData.status !== 'success') {
+                    showTransactionFailed("Order Creation Failed: " + orderData.data);
+                    return;
                 }
-            };
-            
-            var rzp1 = new Razorpay(options);
-            
-            rzp1.on('payment.failed', function (response){
-                // PAYMENT FAILED CALLBACK
-                showTransactionFailed(response.error.description);
-            });
-            
-            rzp1.open();
-        }
 
-        function showTransactionFailed(reason) {
-            let rText = reason || "The transaction was canceled or declined. No money was deducted from your account.";
-            document.getElementById('txnFailReason').innerText = rText;
-            document.getElementById('txnFailedOverlay').classList.add('active');
-            triggerHaptic();
+                // 2. Open Razorpay using the generated Order ID
+                var options = {
+                    "key": RAZORPAY_KEY, // Make sure your Key ID is pasted at the top of the script!
+                    "amount": totalAmt * 100,
+                    "currency": "INR",
+                    "name": "Tournyx Esports",
+                    "description": ticketCount + " " + selectedGameName + " Pass(es)",
+                    "image": "https://tournyx.in/favicon.png",
+                    "order_id": orderData.data, // MAGIC SAUCE: The generated Order ID!
+                    "handler": function (response) {
+                        processSuccessfulPayment(response.razorpay_payment_id, ticketCount, totalAmt);
+                    },
+                    "prefill": {
+                        "name": currentUser.username,
+                        "email": currentUser.email
+                    },
+                    "theme": {
+                        "color": document.documentElement.classList.contains('theme-vip') ? "#FFD700" : "#bd00ff"
+                    },
+                    "modal": {
+                        "ondismiss": function(){
+                            showTransactionFailed("You cancelled the payment process.");
+                        }
+                    }
+                };
+                
+                var rzp1 = new Razorpay(options);
+                rzp1.on('payment.failed', function (response){
+                    showTransactionFailed(response.error.description);
+                });
+                rzp1.open();
+
+            } catch (err) {
+                scanner.classList.remove('active');
+                showTransactionFailed("Network Error connecting to gateway.");
+            }
         }
 
         function processSuccessfulPayment(paymentId, count, amount) {
-            // Show Cyber Scanner
             let scanner = document.getElementById('cyberScanner'); 
             let sText = document.getElementById('scannerText'); 
             let sDesc = document.getElementById('scannerDesc'); 
             
             scanner.classList.add('active'); 
             sText.innerText = "VERIFYING PAYMENT..."; 
-            sDesc.innerText = "Communicating with Razorpay Servers..."; 
+            sDesc.innerText = "Securing passes in your wallet..."; 
             
-            // Send payload to backend
             let payload = { 
-                action: "razorpay_success", 
+                action: "verify_rzp_payment", 
                 email: currentUser.email, 
                 amount: amount, 
                 payment_id: paymentId, 
                 gameName: selectedGameName 
             };
 
-            fetch(API_URL, { 
-                method: 'POST', 
-                body: JSON.stringify(payload) 
-            })
+            fetch(API_URL, { method: 'POST', body: JSON.stringify(payload) })
             .then(res => res.json())
             .then(data => {
                 scanner.classList.remove('active');
@@ -1014,14 +1026,15 @@
                     document.getElementById('txnSuccessOverlay').classList.add('active');
                     syncLiveTransactions(); // Force immediate sync to update UI
                 } else {
-                    showTransactionFailed("Server Error: " + data.data);
+                    showTransactionFailed("Verification Error: " + data.data);
                 }
             })
             .catch(err => {
                 scanner.classList.remove('active');
-                showTransactionFailed("Network Error. If money was deducted, it will be refunded or credited shortly.");
+                showTransactionFailed("Network Error. If money was deducted, it will be credited shortly.");
             });
         }
+
         // ==========================================
 
 
