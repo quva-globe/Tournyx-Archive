@@ -16,281 +16,319 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
     <style>
-        /* --- GLOBAL CYBER NEON VARIABLES --- */
+        /* --- GLOBAL VARIABLES & CORE --- */
         :root {
-            --primary-bg: #030008;
-            --secondary-bg: #0a021c;
-            --card-bg: rgba(15, 8, 30, 0.55);
-            --card-border: rgba(255, 255, 255, 0.07);
-            
-            --accent-cyan: #00e5ff;
-            --accent-purple: #b500ff;
-            --accent-orange: #ff5500;
+            --primary-bg: #030108;
+            --secondary-bg: #0a0718;
+            --card-bg: rgba(15, 10, 25, 0.5);
+            --card-border: rgba(255, 255, 255, 0.08);
+            --accent-cyan: #00f2ff;
+            --accent-purple: #bd00ff;
+            --accent-orange: #ff9900;
             --accent-green: #00ff7f;
-            --accent-gold: #ffd700;
-            
-            --accent-gradient: linear-gradient(135deg, #b500ff, #00e5ff);
+            --accent-red: #ff4d4d;
+            --accent-gradient: linear-gradient(135deg, #7b2cbf, #bd00ff, #00f2ff);
+            --accent-gradient-text: linear-gradient(135deg, #bd00ff, #00f2ff);
             --text-main: #ffffff;
-            --text-muted: #8e8ca3;
-            
+            --text-muted: rgba(255, 255, 255, 0.75);
             --font-head: 'Orbitron', sans-serif;
             --font-body: 'Rajdhani', sans-serif;
+            --transition-bounce: cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            --transition-smooth: cubic-bezier(0.4, 0, 0.2, 1);
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-        *::-webkit-scrollbar { display: none !important; width: 0 !important; height: 0 !important; background: transparent !important; }
+        *::-webkit-scrollbar { display: none !important; width: 0 !important; height: 0 !important; }
+        
+        html { scroll-behavior: smooth; }
 
         body {
-            background-color: var(--primary-bg);
-            color: var(--text-main);
-            font-family: var(--font-body);
-            overflow-x: hidden;
-            width: 100%;
+            background-color: var(--primary-bg); color: var(--text-main); font-family: var(--font-body);
+            overflow-x: hidden; width: 100%; position: relative;
         }
 
         a { text-decoration: none; color: inherit; }
 
-        /* --- TOURNNYX LOADER --- */
-        #tx-loader {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--primary-bg);
-            z-index: 99999; display: flex; flex-direction: column; align-items: center; justify-content: center;
-            transition: opacity 0.6s ease;
+        /* --- 70+ EFFECTS: ADVANCED BACKGROUNDS --- */
+        .cyber-grid-bg {
+            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; z-index: -20;
+            background-image: 
+                linear-gradient(to right, rgba(0, 242, 255, 0.03) 1px, transparent 1px),
+                linear-gradient(to bottom, rgba(0, 242, 255, 0.03) 1px, transparent 1px);
+            background-size: 40px 40px;
+            transform: perspective(500px) rotateX(60deg) translateY(-100px) translateZ(-200px);
+            animation: gridMove 20s linear infinite; pointer-events: none;
         }
-        .loader-icon { font-size: 4rem; color: var(--accent-cyan); animation: pulseLoader 1s infinite alternate; filter: drop-shadow(0 0 20px var(--accent-cyan)); }
-        .loader-text { font-family: var(--font-head); margin-top: 15px; font-weight: 900; letter-spacing: 3px; color: white; }
-        @keyframes pulseLoader { 0% { transform: scale(0.9); opacity: 0.7; } 100% { transform: scale(1.1); opacity: 1; } }
+        @keyframes gridMove { 0% { transform: perspective(500px) rotateX(60deg) translateY(0) translateZ(-200px); } 100% { transform: perspective(500px) rotateX(60deg) translateY(40px) translateZ(-200px); } }
 
-        /* --- DEEP BACKGROUND EFFECTS --- */
-        #particles-canvas {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -20; pointer-events: none;
-            background: radial-gradient(circle at 50% 50%, var(--secondary-bg) 0%, var(--primary-bg) 100%);
-        }
-        .bg-orb {
-            position: fixed; border-radius: 50%; filter: blur(80px); opacity: 0.25; z-index: -15; pointer-events: none;
-        }
-        .orb-1 { width: 400px; height: 400px; background: var(--accent-purple); top: -100px; left: -100px; }
-        .orb-2 { width: 500px; height: 500px; background: var(--accent-cyan); bottom: 10%; right: -150px; }
-        .orb-3 { width: 300px; height: 300px; background: var(--accent-orange); top: 40%; left: 30%; opacity: 0.15; }
+        .glow-orbs { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -15; pointer-events: none; overflow: hidden; }
+        .orb-1 { position: absolute; top: -10%; left: -10%; width: 50vw; height: 50vw; background: radial-gradient(circle, rgba(189,0,255,0.15) 0%, transparent 60%); filter: blur(50px); animation: floatOrb 15s ease-in-out infinite alternate; }
+        .orb-2 { position: absolute; bottom: -10%; right: -10%; width: 40vw; height: 40vw; background: radial-gradient(circle, rgba(0,242,255,0.1) 0%, transparent 60%); filter: blur(50px); animation: floatOrb 12s ease-in-out infinite alternate-reverse; }
+        @keyframes floatOrb { 0% { transform: translate(0,0) scale(1); } 100% { transform: translate(50px, 50px) scale(1.2); } }
+
+        #particles-canvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -10; pointer-events: none; }
 
         /* --- HEADER --- */
         .top-header {
             position: fixed; top: 0; left: 0; width: 100%; padding: calc(15px + env(safe-area-inset-top)) 20px 15px;
-            background: rgba(3, 0, 8, 0.75); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
-            border-bottom: 1px solid var(--card-border);
+            background: rgba(3, 1, 8, 0.7); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(255,255,255,0.05);
             display: flex; align-items: center; justify-content: space-between;
-            z-index: 3000; box-shadow: 0 4px 30px rgba(0,0,0,0.8);
+            z-index: 3000; box-shadow: 0 10px 30px rgba(0,0,0,0.5); transition: 0.4s var(--transition-smooth);
         }
         .header-wrapper { max-width: 1200px; margin: 0 auto; display: flex; align-items: center; justify-content: space-between; width: 100%;}
         .app-title-header {
-            font-family: var(--font-head); font-size: 1.5rem; font-weight: 900; letter-spacing: 1px;
-            background: linear-gradient(135deg, #fff, var(--accent-cyan));
-            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-            display: flex; align-items: center; gap: 8px; filter: drop-shadow(0 0 10px rgba(0, 229, 255, 0.4));
+            font-family: var(--font-head); font-size: 1.5rem; font-weight: 900; letter-spacing: 2px;
+            background: var(--accent-gradient-text); -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+            display: flex; align-items: center; gap: 10px; filter: drop-shadow(0 0 10px rgba(0, 242, 255, 0.5)); transition: 0.3s;
         }
+        .app-title-header:hover { filter: drop-shadow(0 0 20px rgba(189, 0, 255, 0.8)); transform: scale(1.05); }
+        
         .desktop-nav { display: none; gap: 25px; align-items: center; }
-        .desktop-nav a { color: var(--text-muted); font-family: var(--font-head); font-size: 0.85rem; text-transform: uppercase; font-weight: 800; transition: 0.3s; letter-spacing: 1px;}
-        .desktop-nav a:hover { color: var(--accent-cyan); text-shadow: 0 0 15px rgba(0,229,255,0.6); transform: translateY(-2px);}
+        .desktop-nav a { 
+            color: var(--text-muted); font-family: var(--font-head); font-size: 0.95rem; text-transform: uppercase; 
+            font-weight: bold; transition: 0.3s; position: relative; padding: 5px 0;
+        }
+        .desktop-nav a::after {
+            content: ''; position: absolute; bottom: 0; left: 0; width: 0; height: 2px; background: var(--accent-cyan);
+            transition: 0.3s var(--transition-smooth); box-shadow: 0 0 10px var(--accent-cyan);
+        }
+        .desktop-nav a:hover { color: white; text-shadow: 0 0 10px rgba(0,242,255,0.6); }
+        .desktop-nav a:hover::after { width: 100%; }
 
-        @media (min-width: 900px) { .desktop-nav { display: flex; } }
+        @media (min-width: 850px) { .desktop-nav { display: flex; } }
 
         /* --- HERO SECTION --- */
         .section-hero {
             min-height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center;
-            padding: calc(100px + env(safe-area-inset-top)) 20px 40px; text-align: center; position: relative;
+            padding: calc(100px + env(safe-area-inset-top)) 20px 60px; text-align: center; position: relative; z-index: 10;
         }
 
         .app-icon-container {
-            width: 110px; height: 110px; margin: 0 auto 20px;
-            border-radius: 25px; display: flex; align-items: center; justify-content: center;
-            box-shadow: 0 15px 40px rgba(0, 229, 255, 0.4), inset 0 0 20px rgba(255,255,255,0.3); 
-            border: 2px solid rgba(255,255,255,0.2);
-            overflow: hidden; background: #1a1a2e;
-            animation: floatLogo 4s ease-in-out infinite; z-index: 10;
+            width: 120px; height: 120px; margin: 0 auto 25px;
+            border-radius: 30px; display: flex; align-items: center; justify-content: center;
+            box-shadow: 0 15px 40px rgba(0, 242, 255, 0.4), inset 0 0 20px rgba(255,255,255,0.2); 
+            border: 2px solid rgba(255,255,255,0.15); overflow: hidden; background: #1a1a2e;
+            animation: floatLogo 4s ease-in-out infinite, pulseBorder 3s infinite alternate;
         }
-        @keyframes floatLogo { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-12px); box-shadow: 0 20px 50px rgba(0, 229, 255, 0.6); } }
+        @keyframes floatLogo { 0%, 100% { transform: translateY(0) rotate(0deg); } 50% { transform: translateY(-15px) rotate(3deg); } }
+        @keyframes pulseBorder { 0% { border-color: rgba(0,242,255,0.3); } 100% { border-color: rgba(189,0,255,0.6); } }
         .app-icon-container img { width: 100%; height: 100%; object-fit: cover; }
 
-        .dl-hero-info { z-index: 10; position: relative; }
         .dl-hero-info h1 {
-            font-family: var(--font-head); font-size: clamp(2.2rem, 8vw, 4rem); line-height: 1.1; margin-bottom: 5px;
+            font-family: var(--font-head); font-size: clamp(2.2rem, 8vw, 4rem); line-height: 1.1; margin-bottom: 10px;
             font-weight: 900; text-transform: uppercase; letter-spacing: -1px;
-            text-shadow: 0 0 30px rgba(255, 255, 255, 0.3);
+            background: linear-gradient(to bottom, #ffffff 30%, #888888 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+            filter: drop-shadow(0 10px 20px rgba(0,0,0,0.8));
         }
-        .dl-hero-info h2 { font-family: var(--font-head); font-size: clamp(1.2rem, 4vw, 1.8rem); color: var(--accent-cyan); margin-bottom: 15px; font-weight:900; letter-spacing: 2px; text-shadow: 0 0 15px rgba(0,229,255,0.5);}
+        .dl-hero-info h2 { 
+            font-family: var(--font-head); font-size: clamp(1.2rem, 4vw, 1.8rem); margin-bottom: 20px; font-weight: 900; 
+            background: var(--accent-gradient-text); -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+            animation: textShine 3s infinite linear; background-size: 200% auto;
+        }
+        @keyframes textShine { to { background-position: 200% center; } }
         
         .version-tag { 
-            display: inline-block; background: rgba(0, 229, 255, 0.1); border: 1px solid var(--accent-cyan);
-            color: var(--accent-cyan); font-family: var(--font-head); font-size: 0.8rem;
-            padding: 6px 18px; border-radius: 20px; margin-bottom: 25px; font-weight: 800; letter-spacing: 1px;
-            box-shadow: 0 0 20px rgba(0,229,255,0.2);
+            display: inline-flex; align-items: center; gap: 8px; background: rgba(0, 242, 255, 0.1); border: 1px solid var(--accent-cyan);
+            color: var(--accent-cyan); font-family: var(--font-head); font-size: 0.85rem;
+            padding: 6px 18px; border-radius: 20px; margin-bottom: 25px; font-weight: 700; letter-spacing: 1px;
+            box-shadow: 0 0 20px rgba(0,242,255,0.2); animation: pulseGlow 2s infinite alternate;
         }
-        .platform-intro-desc { font-size: 1.05rem; color: var(--text-muted); max-width: 600px; margin: 0 auto 35px; line-height: 1.6; }
+        @keyframes pulseGlow { to { box-shadow: 0 0 30px rgba(0,242,255,0.5); transform: scale(1.02); } }
 
-        /* --- DOWNLOAD BUTTONS --- */
-        .btn-container-hero { display: flex; flex-direction: column; gap: 15px; width: 100%; max-width: 380px; margin: 0 auto; z-index: 10; position: relative; }
+        .platform-intro-desc { font-size: 1.1rem; color: var(--text-muted); max-width: 600px; margin: 0 auto 35px; line-height: 1.6; text-shadow: 0 2px 4px rgba(0,0,0,0.8);}
+
+        /* --- BUTTONS --- */
+        .btn-container-hero { display: flex; flex-direction: column; gap: 15px; width: 100%; max-width: 400px; margin: 0 auto 40px; perspective: 1000px;}
 
         .dl-btn {
             display: flex; align-items: center; justify-content: center; gap: 15px;
-            width: 100%; padding: 18px; border-radius: 16px;
-            font-family: var(--font-head); transition: 0.3s; position: relative; overflow: hidden;
+            width: 100%; padding: 18px; border-radius: 16px; font-family: var(--font-head); 
+            transition: all 0.4s var(--transition-bounce); position: relative; overflow: hidden;
+            transform-style: preserve-3d;
         }
-        .dl-btn:active { transform: scale(0.96); }
+        .dl-btn:hover { transform: translateY(-5px) rotateX(10deg); }
+        .dl-btn:active { transform: scale(0.95); }
 
-        .dl-icon { font-size: 2.2rem; }
+        .dl-icon { font-size: 2.2rem; transition: 0.3s; }
+        .dl-btn:hover .dl-icon { transform: scale(1.2) rotate(-10deg); }
         .dl-text-stack { display: flex; flex-direction: column; align-items: flex-start; }
-        .dl-small { font-family: var(--font-body); font-size: 0.75rem; text-transform: uppercase; letter-spacing: 1px; font-weight:800; opacity:0.9;}
+        .dl-small { font-family: var(--font-body); font-size: 0.75rem; text-transform: uppercase; letter-spacing: 1.5px; font-weight:bold; opacity:0.9;}
         .dl-large { font-size: 1.4rem; font-weight: 900; letter-spacing: 1px; }
 
         .btn-android {
-            background: linear-gradient(90deg, #00d2ff 0%, #3a7bd5 100%); color: #fff;
-            box-shadow: 0 10px 30px rgba(0, 210, 255, 0.4); border: none;
+            background: linear-gradient(90deg, #00b050 0%, #00ff7f 100%); color: #000;
+            box-shadow: 0 10px 35px rgba(0, 255, 127, 0.5); border: 1px solid rgba(255,255,255,0.4);
         }
+        .btn-android .dl-icon { color: #000; }
         .btn-android::after {
             content: ''; position: absolute; top:0; left:-100%; width: 50%; height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.5), transparent);
-            transform: skewX(-20deg); animation: btnShine 3s infinite linear;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.6), transparent);
+            transform: skewX(-25deg); animation: sweepShine 3s infinite;
         }
-        @keyframes btnShine { 0% { left: -100%; } 100% { left: 200%; } }
-        .btn-android:hover { box-shadow: 0 15px 40px rgba(0, 210, 255, 0.6); transform: translateY(-3px); }
+        @keyframes sweepShine { 0% { left: -100%; } 20%, 100% { left: 200%; } }
 
         .btn-secondary {
-            background: rgba(255,255,255,0.03); border: 1px solid var(--card-border);
-            color: #777; cursor: not-allowed; backdrop-filter: blur(10px);
+            background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.1);
+            color: #888; cursor: not-allowed; backdrop-filter: blur(10px);
         }
         .btn-secondary .dl-small { color: var(--accent-orange); }
 
-        /* --- JS PARALLAX PHONE SHOWCASE --- */
+        /* --- 3D FAUX PARALLAX PHONE CLUSTER --- */
         .showcase-cluster {
-            display: flex; align-items: center; justify-content: center; width: 100%; max-width: 800px; margin: 40px auto 0; height: 380px; position: relative;
+            display: flex; align-items: center; justify-content: center; width: 100%; max-width: 800px; margin: 0 auto; height: 350px; position: relative;
         }
         .phone-mockup {
             position: absolute; border: 4px solid #222; border-radius: 24px; overflow: hidden;
             box-shadow: 0 20px 50px rgba(0,0,0,0.9); background: #000;
-            transition: transform 0.1s linear; /* JS Parallax handles movement */
+            transition: all 0.6s var(--transition-bounce);
         }
         .phone-mockup::before {
-            content: ''; position: absolute; top: 0; left: 10%; width: 80%; height: 15px; background: #222; border-radius: 0 0 10px 10px; z-index: 10;
+            content: ''; position: absolute; top: 0; left: 50%; transform: translateX(-50%); width: 40%; height: 15px; background: #222; border-radius: 0 0 10px 10px; z-index: 10;
         }
-        .phone-mockup img { width: 100%; height: 100%; object-fit: cover; }
+        .phone-mockup img { width: 100%; height: 100%; object-fit: cover; transition: 0.5s; opacity: 0.9;}
+        .phone-mockup:hover img { transform: scale(1.05); opacity: 1;}
         
-        .phone-center { width: 170px; height: 340px; z-index: 3; border-color: rgba(255,255,255,0.15); box-shadow: 0 15px 50px rgba(0,229,255,0.3); }
-        .phone-left { width: 150px; height: 300px; z-index: 2; border-color: rgba(181,0,255,0.3); opacity: 0.8;}
-        .phone-right { width: 150px; height: 300px; z-index: 2; border-color: rgba(0,229,255,0.3); opacity: 0.8;}
+        /* Mobile Scaling */
+        .phone-center { width: 160px; height: 340px; z-index: 3; border-color: rgba(0,242,255,0.4); box-shadow: 0 15px 50px rgba(0,242,255,0.3); animation: floatCenter 6s ease-in-out infinite;}
+        .phone-left { width: 140px; height: 290px; z-index: 2; transform: translateX(-80px) rotate(-8deg) translateY(20px); border-color: rgba(189,0,255,0.3); filter: brightness(0.7); animation: floatLeft 7s ease-in-out infinite;}
+        .phone-right { width: 140px; height: 290px; z-index: 2; transform: translateX(80px) rotate(8deg) translateY(20px); border-color: rgba(255,153,0,0.3); filter: brightness(0.7); animation: floatRight 8s ease-in-out infinite;}
+
+        .phone-center:hover { z-index: 10; transform: scale(1.1) translateY(-20px); border-color: var(--accent-cyan); box-shadow: 0 20px 60px rgba(0,242,255,0.6); filter: brightness(1);}
+        .phone-left:hover { z-index: 10; transform: translateX(-100px) rotate(0deg) scale(1.1) translateY(-10px); border-color: var(--accent-purple); box-shadow: 0 20px 60px rgba(189,0,255,0.6); filter: brightness(1);}
+        .phone-right:hover { z-index: 10; transform: translateX(100px) rotate(0deg) scale(1.1) translateY(-10px); border-color: var(--accent-orange); box-shadow: 0 20px 60px rgba(255,153,0,0.6); filter: brightness(1);}
+
+        @keyframes floatCenter { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-15px); } }
+        @keyframes floatLeft { 0%, 100% { transform: translateX(-80px) rotate(-8deg) translateY(20px); } 50% { transform: translateX(-80px) rotate(-8deg) translateY(5px); } }
+        @keyframes floatRight { 0%, 100% { transform: translateX(80px) rotate(8deg) translateY(20px); } 50% { transform: translateX(80px) rotate(8deg) translateY(5px); } }
 
         @media (min-width: 768px) {
-            .phone-center { width: 220px; height: 440px; }
-            .phone-left { width: 190px; height: 380px; }
-            .phone-right { width: 190px; height: 380px; }
             .showcase-cluster { height: 500px; }
+            .phone-center { width: 220px; height: 460px; }
+            .phone-left { width: 190px; height: 400px; transform: translateX(-140px) rotate(-10deg) translateY(20px); }
+            .phone-right { width: 190px; height: 400px; transform: translateX(140px) rotate(10deg) translateY(20px); }
+            @keyframes floatLeft { 0%, 100% { transform: translateX(-140px) rotate(-10deg) translateY(20px); } 50% { transform: translateX(-140px) rotate(-10deg) translateY(0px); } }
+            @keyframes floatRight { 0%, 100% { transform: translateX(140px) rotate(10deg) translateY(20px); } 50% { transform: translateX(140px) rotate(10deg) translateY(0px); } }
+            .phone-left:hover { transform: translateX(-160px) rotate(0deg) scale(1.1) translateY(-10px); }
+            .phone-right:hover { transform: translateX(160px) rotate(0deg) scale(1.1) translateY(-10px); }
         }
 
         /* --- FEATURE ROWS --- */
-        .feature-section { padding: 80px 20px; position: relative; z-index: 10; }
-        .feature-row { display: flex; flex-direction: column; align-items: center; gap: 40px; max-width: 1000px; margin: 0 auto 100px; }
+        .feature-section { padding: 80px 20px; background: linear-gradient(180deg, transparent, rgba(10,7,24,0.8), transparent); }
+        .feature-row { display: flex; flex-direction: column; align-items: center; gap: 40px; max-width: 1000px; margin: 0 auto 80px; }
         .feature-row:last-child { margin-bottom: 20px; }
         
-        @media (min-width: 800px) {
-            .feature-row { flex-direction: row; justify-content: space-between; }
+        @media (min-width: 850px) {
+            .feature-row { flex-direction: row; justify-content: space-between; gap: 60px;}
             .feature-row:nth-child(even) { flex-direction: row-reverse; }
-            .feature-text { flex: 1; padding: 0 40px; text-align: left !important; }
-            .feature-image { flex: 1; justify-content: center; }
+            .feature-text { flex: 1; text-align: left !important; }
+            .feature-image { flex: 1; }
         }
 
         .feature-text { text-align: center; }
-        .f-icon-head { font-size: 3rem; background: var(--accent-gradient-text); -webkit-background-clip: text; -webkit-text-fill-color: transparent; filter: drop-shadow(0 0 15px rgba(0,229,255,0.5)); margin-bottom: 20px;}
-        .feature-text h3 { font-family: var(--font-head); font-size: 1.8rem; color: white; text-transform: uppercase; margin-bottom: 15px; font-weight: 900; letter-spacing: 1px;}
-        .feature-text p { font-size: 1.05rem; color: var(--text-muted); line-height: 1.7; }
+        .f-icon-head { font-size: 3rem; background: var(--accent-gradient-text); -webkit-background-clip: text; -webkit-text-fill-color: transparent; filter: drop-shadow(0 0 15px rgba(0,242,255,0.4)); margin-bottom: 20px; display: inline-block; animation: pulseGlow 3s infinite alternate;}
+        .feature-text h3 { font-family: var(--font-head); font-size: clamp(1.8rem, 5vw, 2.2rem); color: white; text-transform: uppercase; margin-bottom: 15px; font-weight: 900; letter-spacing: 1px; text-shadow: 0 5px 15px rgba(0,0,0,0.5);}
+        .feature-text p { font-size: 1.1rem; color: var(--text-muted); line-height: 1.6; }
 
-        .feature-image { width: 100%; display: flex; justify-content: center; position: relative; perspective: 1000px;}
-        .tilt-card { 
-            width: 220px; height: 440px; border: 4px solid rgba(255,255,255,0.1); border-radius: 24px; 
-            box-shadow: 0 20px 50px rgba(0,0,0,0.8); overflow: hidden; background:#000;
-            transition: transform 0.1s; will-change: transform;
-        }
-        .tilt-card img { width: 100%; height: 100%; object-fit: cover; }
+        .feature-image { width: 100%; display: flex; justify-content: center; position: relative;}
+        .single-phone { width: 220px; height: 450px; border: 4px solid rgba(255,255,255,0.1); border-radius: 24px; box-shadow: 0 20px 50px rgba(0,0,0,0.8); overflow: hidden; background:#000; position: relative; transition: 0.5s var(--transition-bounce);}
+        .single-phone::before { content: ''; position: absolute; top: 0; left: 50%; transform: translateX(-50%); width: 40%; height: 15px; background: #222; border-radius: 0 0 10px 10px; z-index: 10;}
+        .single-phone img { width: 100%; height: 100%; object-fit: cover; transition: 0.5s; opacity: 0.9;}
+        .feature-row:hover .single-phone { transform: translateY(-15px) scale(1.05); }
+        .feature-row:hover .single-phone img { transform: scale(1.05); opacity: 1;}
 
-        /* --- THE 50 POINT ULTIMATE ARSENAL GRID --- */
-        .ultimate-features-section { padding: 60px 20px 100px; text-align: center; background: rgba(0,0,0,0.4); border-top: 1px solid var(--card-border);}
-        .ultimate-title { font-family: var(--font-head); font-size: 2.5rem; color: white; text-transform: uppercase; margin-bottom: 10px; font-weight: 900; letter-spacing: 1px; text-shadow: 0 0 20px rgba(255,255,255,0.3);}
-        .ultimate-subtitle { font-size: 1.2rem; color: var(--accent-cyan); margin-bottom: 50px; font-family: var(--font-head); letter-spacing: 3px; text-transform: uppercase; font-weight: bold;}
+        /* Colored glow rings behind phones */
+        .ring-glow { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 80%; height: 80%; border-radius: 50%; filter: blur(40px); z-index: -1; opacity: 0.5; transition: 0.5s;}
+        .feature-row:hover .ring-glow { opacity: 0.8; transform: translate(-50%, -50%) scale(1.2); }
+
+        /* --- THE 15-POINT ULTIMATE ARSENAL GRID (FIXED FOR OVERFLOW & ALIGNMENT) --- */
+        .ultimate-features-section { padding: 60px 20px 100px; text-align: center; position: relative; z-index: 10;}
+        .ultimate-title { font-family: var(--font-head); font-size: clamp(2rem, 6vw, 2.8rem); color: white; text-transform: uppercase; margin-bottom: 10px; font-weight: 900; letter-spacing: 2px; text-shadow: 0 10px 20px rgba(0,0,0,0.8);}
+        .ultimate-subtitle { font-size: 1.1rem; color: var(--accent-cyan); margin-bottom: 50px; font-family: var(--font-head); letter-spacing: 3px; text-transform: uppercase; font-weight: bold;}
 
         .ultra-feature-grid {
-            display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
             gap: 25px; max-width: 1200px; margin: 0 auto;
+            align-items: stretch; /* Forces equal height */
         }
         
         .uf-card {
             background: var(--card-bg); border: 1px solid var(--card-border);
-            border-radius: 18px; padding: 30px 25px; text-align: left;
-            backdrop-filter: blur(15px); transition: 0.4s var(--transition-smooth);
+            border-radius: 20px; padding: 30px 25px; text-align: left;
+            backdrop-filter: blur(15px); transition: all 0.4s var(--transition-bounce);
             position: relative; overflow: hidden;
+            display: flex; flex-direction: column; /* Key to fixing content layout */
+            height: 100%;
         }
+        /* Glass shine effect */
         .uf-card::before {
             content: ''; position: absolute; top: 0; left: -100%; width: 50%; height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.05), transparent);
-            transform: skewX(-20deg); transition: 0.6s;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.08), transparent);
+            transform: skewX(-20deg); transition: 0.6s; z-index: 1; pointer-events: none;
         }
-        .uf-card:hover { transform: translateY(-10px); border-color: rgba(255,255,255,0.2); box-shadow: 0 20px 40px rgba(0,0,0,0.8); z-index: 10;}
+        .uf-card:hover { transform: translateY(-12px); box-shadow: 0 20px 40px rgba(0,0,0,0.6); z-index: 10;}
         .uf-card:hover::before { left: 200%; }
 
-        .uf-icon { font-size: 2.5rem; margin-bottom: 20px; background: var(--accent-gradient-text); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-        .uf-title { font-family: var(--font-head); font-size: 1.2rem; color: white; margin-bottom: 10px; font-weight: 900; letter-spacing: 0.5px; text-transform: uppercase;}
-        .uf-desc { font-size: 0.95rem; color: var(--text-muted); line-height: 1.5; }
-
-        /* Dynamic Colors for Grid Icons */
-        .color-cyan .uf-icon { background: linear-gradient(135deg, #00b4d8, #00f2ff); filter: drop-shadow(0 0 10px rgba(0,229,255,0.5));}
-        .color-cyan:hover { border-color: var(--accent-cyan); box-shadow: 0 20px 40px rgba(0,229,255,0.2); }
+        .uf-icon { font-size: 2.5rem; margin-bottom: 20px; transition: 0.5s var(--transition-bounce); display: inline-block; position: relative; z-index: 2;}
+        .uf-card:hover .uf-icon { transform: scale(1.2) rotateY(180deg); }
         
-        .color-purple .uf-icon { background: linear-gradient(135deg, #7b2cbf, #b500ff); filter: drop-shadow(0 0 10px rgba(181,0,255,0.5));}
-        .color-purple:hover { border-color: var(--accent-purple); box-shadow: 0 20px 40px rgba(181,0,255,0.2); }
-        
-        .color-orange .uf-icon { background: linear-gradient(135deg, #ff6a00, #ff9900); filter: drop-shadow(0 0 10px rgba(255,153,0,0.5));}
-        .color-orange:hover { border-color: var(--accent-orange); box-shadow: 0 20px 40px rgba(255,153,0,0.2); }
-        
-        .color-green .uf-icon { background: linear-gradient(135deg, #00b050, #00ff7f); filter: drop-shadow(0 0 10px rgba(0,255,127,0.5));}
-        .color-green:hover { border-color: var(--accent-green); box-shadow: 0 20px 40px rgba(0,255,127,0.2); }
+        .uf-title { font-family: var(--font-head); font-size: 1.2rem; color: white; margin-bottom: 12px; font-weight: 800; letter-spacing: 1px; text-transform: uppercase; position: relative; z-index: 2; word-wrap: break-word;}
+        .uf-desc { font-size: 0.95rem; color: var(--text-muted); line-height: 1.5; flex-grow: 1; position: relative; z-index: 2; overflow-wrap: break-word; } /* flex-grow pushes content evenly */
 
-        .color-gold .uf-icon { background: linear-gradient(135deg, #ffaa00, #ffd700); filter: drop-shadow(0 0 10px rgba(255,215,0,0.5));}
-        .color-gold:hover { border-color: var(--accent-gold); box-shadow: 0 20px 40px rgba(255,215,0,0.2); }
-
-        /* --- FOOTER --- */
-        .footer { text-align: center; padding: 50px 20px; border-top: 1px solid rgba(255,255,255,0.05); background: #020106; position: relative; z-index: 10;}
-        .footer-logo { font-family: var(--font-head); font-size: 1.8rem; letter-spacing: 2px; color: white; margin-bottom: 15px; display: flex; align-items: center; justify-content: center; gap: 10px; font-weight: 900;}
-        .footer-logo i { color: var(--accent-cyan); text-shadow: 0 0 15px var(--accent-cyan); }
-        .footer-built { font-weight: bold; color: #aaa; text-transform: uppercase; font-size: 0.85rem; margin-bottom: 25px; letter-spacing: 2px;}
+        /* Dynamic Colors & Glows for Grid Items */
+        .color-cyan .uf-icon { color: var(--accent-cyan); filter: drop-shadow(0 0 10px rgba(0,242,255,0.6));}
+        .color-cyan:hover { border-color: var(--accent-cyan); box-shadow: 0 15px 40px rgba(0,242,255,0.25); }
         
-        .footer-links { display: flex; justify-content: center; flex-wrap: wrap; gap: 20px; margin-bottom: 25px;}
-        .footer-links a { color: var(--text-muted); font-size: 0.9rem; transition: 0.3s; font-family: var(--font-head); text-transform: uppercase; font-weight: bold; letter-spacing: 1px;}
-        .footer-links a:hover { color: var(--accent-cyan); text-shadow: 0 0 10px rgba(0,229,255,0.5); }
+        .color-purple .uf-icon { color: var(--accent-purple); filter: drop-shadow(0 0 10px rgba(189,0,255,0.6));}
+        .color-purple:hover { border-color: var(--accent-purple); box-shadow: 0 15px 40px rgba(189,0,255,0.25); }
+        
+        .color-orange .uf-icon { color: var(--accent-orange); filter: drop-shadow(0 0 10px rgba(255,153,0,0.6));}
+        .color-orange:hover { border-color: var(--accent-orange); box-shadow: 0 15px 40px rgba(255,153,0,0.25); }
+        
+        .color-green .uf-icon { color: var(--accent-green); filter: drop-shadow(0 0 10px rgba(0,255,127,0.6));}
+        .color-green:hover { border-color: var(--accent-green); box-shadow: 0 15px 40px rgba(0,255,127,0.25); }
 
-        .quva-badge { font-size: 0.8rem; color: #555; font-family: var(--font-head); letter-spacing: 2px; margin-top: 20px;}
-        .quva-badge span { background: var(--accent-gradient-text); -webkit-background-clip: text; -webkit-text-fill-color: transparent; font-weight: 900; filter: drop-shadow(0 0 5px rgba(181,0,255,0.5));}
+        .color-red .uf-icon { color: var(--accent-red); filter: drop-shadow(0 0 10px rgba(255,77,77,0.6));}
+        .color-red:hover { border-color: var(--accent-red); box-shadow: 0 15px 40px rgba(255,77,77,0.25); }
+
+        /* --- OFFICIAL FOOTER --- */
+        .footer { text-align: center; padding: 50px 20px; border-top: 1px solid rgba(255,255,255,0.05); background: #020104; position: relative; z-index: 10; }
+        .footer-logo { font-family: var(--font-head); font-size: 1.8rem; letter-spacing: 2px; color: white; margin-bottom: 15px; display: flex; align-items: center; justify-content: center; gap: 10px; filter: drop-shadow(0 0 10px rgba(0, 242, 255, 0.4));}
+        .footer-built { font-weight: bold; color: #ccc; text-transform: uppercase; font-size: 0.85rem; margin-bottom: 10px; letter-spacing: 1px;}
+        .footer-text { font-size: 0.9rem; color: #888; margin-bottom: 25px;}
+        
+        /* Footer Links */
+        .footer-links { display: flex; flex-wrap: wrap; justify-content: center; gap: 20px; margin-bottom: 30px; font-family: var(--font-head); font-size: 0.85rem; text-transform: uppercase; font-weight: bold;}
+        .footer-links a { color: #aaa; transition: 0.3s; position: relative; padding-bottom: 2px;}
+        .footer-links a::after { content: ''; position: absolute; bottom:0; left:0; width:0; height:1px; background:var(--accent-cyan); transition:0.3s; }
+        .footer-links a:hover { color: var(--accent-cyan); }
+        .footer-links a:hover::after { width: 100%; }
+
+        .powered-by { font-size: 0.8rem; color: #666; font-family: var(--font-head); letter-spacing: 1px; margin-bottom: 10px;}
+        .powered-by span { font-weight: 900; background: var(--accent-gradient-text); -webkit-background-clip: text; -webkit-text-fill-color: transparent; font-size: 1rem; letter-spacing: 2px; filter: drop-shadow(0 0 8px rgba(189,0,255,0.6));}
 
         /* --- SCROLL ANIMATION CLASSES --- */
-        .reveal-up { opacity: 0; transform: translateY(60px); transition: 0.8s var(--transition-smooth); }
-        .reveal-left { opacity: 0; transform: translateX(-60px); transition: 0.8s var(--transition-smooth); }
-        .reveal-right { opacity: 0; transform: translateX(60px); transition: 0.8s var(--transition-smooth); }
-        .reveal-scale { opacity: 0; transform: scale(0.8); transition: 0.8s var(--transition-smooth); }
+        .reveal-up { opacity: 0; transform: translateY(60px); transition: 1s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+        .reveal-left { opacity: 0; transform: translateX(-60px); transition: 1s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+        .reveal-right { opacity: 0; transform: translateX(60px); transition: 1s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+        .reveal-scale { opacity: 0; transform: scale(0.8); transition: 1s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+        
         .active-reveal { opacity: 1; transform: translate(0) scale(1); }
-
     </style>
 </head>
 <body>
 
-    <div id="tx-loader">
-        <i class="fa-solid fa-bolt loader-icon"></i>
-        <div class="loader-text">INITIALIZING TOURNYX</div>
+    <div class="cyber-grid-bg"></div>
+    <div class="glow-orbs">
+        <div class="orb-1"></div>
+        <div class="orb-2"></div>
     </div>
-
-    <div id="particles-canvas"></div>
-    <div class="glow-cyber-grid prlx" data-speed="0.1"></div>
-    <div class="bg-orb orb-1 prlx" data-speed="-0.2"></div>
-    <div class="bg-orb orb-2 prlx" data-speed="0.3"></div>
-    <div class="bg-orb orb-3 prlx" data-speed="-0.1"></div>
+    <canvas id="particles-canvas"></canvas>
 
     <header class="top-header">
         <div class="header-wrapper">
-            <a href="index.html" class="app-title-header"><i class="fa-solid fa-bolt" style="color: var(--accent-cyan);"></i> TOURNYX</a>
+            <a href="index.html" class="app-title-header"><i class="fa-solid fa-bolt" style="color: var(--accent-orange);"></i> TOURNYX</a>
             <div class="desktop-nav">
                 <a href="index.html">Home</a>
                 <a href="explore.html">Explore</a>
@@ -303,18 +341,18 @@
     </header>
 
     <section class="section-hero">
-        <div class="app-icon-container reveal-scale prlx" data-speed="-0.1">
+        <div class="app-icon-container reveal-scale active-reveal">
             <img alt="Tournyx Logo" src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEipVmqyUEA22VpntZdPCHuXoO_Rjco_cRaNl5CyFa-eehdtgXnHe6JoD8a5svxJRJYZfv_yXwww10T2cL2PHTiXLK-J-nWC1swmMs5RDxGVM8FBSlJORaRiX4YiD8gL8SyM4X1tRyQn_v8MsqQvbU4uEyHEU0qaySP1STWHaBEYuWKyF3-6QovSqJR-8xU/s1024/1000093705.png" />
         </div>
 
-        <div class="dl-hero-info reveal-up prlx" data-speed="0.2">
+        <div class="dl-hero-info reveal-up active-reveal">
             <h1>INDIA'S #1 ESPORTS HUB</h1>
-            <h2>TOURNYX ENGINE</h2>
-            <div class="version-tag">Version 12.0 (Stable)</div>
+            <h2>TOURNYX NATIVE ENGINE</h2>
+            <div class="version-tag"><i class="fa-solid fa-microchip"></i> Early Beta Version (Stable)</div>
             <p class="platform-intro-desc">Experience the ultimate competitive gaming ecosystem. From amateur custom matches to India's grandest stages, Tournyx is your native engine for seamless tournaments, powerful clans, and instant digital rewards.</p>
         </div>
 
-        <div class="btn-container-hero reveal-up prlx" data-speed="0.3" style="transition-delay: 0.1s;">
+        <div class="btn-container-hero reveal-up active-reveal" style="transition-delay: 0.1s;">
             <a class="dl-btn btn-android" download="Tournyx_v12.apk" href="https://tournyx.in/Tournyx v2.3.10.apk">
                 <i class="fa-brands fa-android dl-icon"></i>
                 <div class="dl-text-stack">
@@ -323,72 +361,65 @@
                 </div>
             </a>
 
-            <div style="display:flex; gap:10px;">
-                <a class="dl-btn btn-secondary" style="flex:1; padding:12px;" href="javascript:void(0)" onclick="alert('iOS Version is currently in development. Stay tuned!')">
-                    <i class="fa-brands fa-apple dl-icon" style="font-size:1.5rem;"></i>
-                    <div class="dl-text-stack">
-                        <span class="dl-small">APP STORE</span>
-                    </div>
-                </a>
-                <a class="dl-btn btn-secondary" style="flex:1; padding:12px;" href="javascript:void(0)" onclick="alert('Web/PC Version is currently in development.')">
-                    <i class="fa-brands fa-windows dl-icon" style="font-size:1.5rem;"></i>
-                    <div class="dl-text-stack">
-                        <span class="dl-small">PC &amp; MAC</span>
-                    </div>
-                </a>
-            </div>
+            <a class="dl-btn btn-secondary" href="javascript:void(0)" onclick="alert('iOS Version is currently in development. Stay tuned!')">
+                <i class="fa-brands fa-apple dl-icon"></i>
+                <div class="dl-text-stack">
+                    <span class="dl-small">COMING SOON</span>
+                    <span class="dl-large">APP STORE</span>
+                </div>
+            </a>
+
+            <a class="dl-btn btn-secondary" href="javascript:void(0)" onclick="alert('Web/PC Version is currently in development.')">
+                <i class="fa-brands fa-windows dl-icon"></i>
+                <div class="dl-text-stack">
+                    <span class="dl-small">COMING SOON</span>
+                    <span class="dl-large">PC &amp; MAC</span>
+                </div>
+            </a>
         </div>
 
-        <div class="showcase-cluster reveal-scale">
-            <div class="phone-mockup phone-left prlx" data-speed="0.4" style="transform: translateX(-120px) rotate(-10deg);"><img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEh_m4W9qA4T1O_M7q2V6E_Iq7-g9M1Q-Y1Y-Y1Y-Y1Y-Y1Y-Y1Y-Y1Y-Y1Y/s1024/Screenshot_Profile.png" alt="Profile"></div>
-            <div class="phone-mockup phone-right prlx" data-speed="0.5" style="transform: translateX(120px) rotate(10deg);"><img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEj_o4W9qA4T1O_M7q2V6E_Iq7-g9M1Q-Y1Y-Y1Y-Y1Y-Y1Y-Y1Y-Y1Y-Y1Y-Y1Y/s1024/Screenshot_Explore.png" alt="Explore"></div>
-            <div class="phone-mockup phone-center prlx" data-speed="0.15"><img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEi_n4W9qA4T1O_M7q2V6E_Iq7-g9M1Q-Y1Y-Y1Y-Y1Y-Y1Y-Y1Y-Y1Y-Y1Y/s1024/Screenshot_Matches.png" alt="Matches"></div>
+        <div class="showcase-cluster reveal-scale active-reveal" style="transition-delay: 0.2s;">
+            <div class="phone-mockup phone-left" style="border-color: var(--accent-purple); box-shadow: 0 0 30px rgba(189,0,255,0.4);"><img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEiUVDsqq6fAIyBYQpg2Sm-Flj6YvcBwJ6VaTsgcv0tD4D9iPLLneUuNmaYZIyg9zWUN19Y8ziyn6zad2LGxNCefsaIAJ0XzFMlsCkUMdQefoQqGwOt5IDoynY5N6-2dQB6OaNIQNT1x-40jVuSwN34eXIE3yXRIimoemEg1fpxBtwefWfc_z_CvkJq3VM4/s2780/1000116136.jpg" alt="Profile"></div>
+            <div class="phone-mockup phone-right" style="border-color: var(--accent-orange); box-shadow: 0 0 30px rgba(255,153,0,0.4);"><img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEhUVax9yRoAarlICvhNkg9-rTnsDDhOrAe7pIR4TX0VVW7RDWZ-8coVVnJID_b-pXXpP4G8fWCy9pji4L_Nbe3u0I1x9pJSbJF9h87H38aqh1lgW-OCJadFXYiIEPqf1AhctOmuL99-k_6Hs35le_rwT1NRWJ_PxWVBgVnVnDimxiZMG1gVcoyAA9v8Hug/s2780/1000114177.jpg" alt="Explore"></div>
+            <div class="phone-mockup phone-center" style="border-color: var(--accent-cyan); box-shadow: 0 0 40px rgba(0,242,255,0.5);"><img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEiMw_WtLNJeU-wU8ywDtDykRPtv_XdIvr0EVrnn11CQWC9hfBuwthftey6Yn7tsOPTD7UEQS5EOJcgHsqk58E0uceuNj8GOtd3zXIjO_KG5RdCZPEoAF_RscRwPNNc8DKm4gjafIKM3fmC4Vzyk7WRY0NtMoWSrCBJIWQ9U6-gOYofjwj2cjCRK7qPdC6w/s2780/1000116137.jpg" alt="Matches"></div>
         </div>
     </section>
 
     <section class="feature-section">
         
-        <div class="feature-row prlx" data-speed="0.1">
+        <div class="feature-row">
             <div class="feature-text reveal-left">
-                <i class="fa-solid fa-wallet f-icon-head" style="color:var(--accent-purple);"></i>
-                <h3>YOUR PRO PROFILE</h3>
+                <i class="fa-solid fa-wallet f-icon-head" style="background: linear-gradient(135deg, #bd00ff, #ff00ff); -webkit-background-clip: text; filter: drop-shadow(0 0 10px rgba(189,0,255,0.5));"></i>
+                <h3>YOUR PRO PROFILE WALLET</h3>
                 <p>Manage your gaming identity in one place. Track your secure wallet balance (Rupees & Points), view encrypted transaction histories, and analyze your win rates. Join powerful gaming clans or ascend to become a professional tournament organizer.</p>
             </div>
             <div class="feature-image reveal-right">
-                <div class="single-phone tilt-card" style="border-color: rgba(181,0,255,0.5); box-shadow: 0 20px 50px rgba(181,0,255,0.3);"><img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEh_l4W9qA4T1O_M7q2V6E_Iq7-g9M1Q-Y1Y-Y1Y-Y1Y-Y1Y-Y1Y-Y1Y-Y1Y-Y1Y/s1024/Screenshot_Wallet.png" alt="Wallet"></div>
+                <div class="ring-glow" style="background: var(--accent-purple);"></div>
+                <div class="single-phone" style="border-color: rgba(189,0,255,0.5);"><img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgib0NcLJyMrE3HxHfDuGtGc7jQ1pJsAutOyA2f8-pl4tVN0lK2SlOZEAq92fY5ZM5m6I0nTrEEFciDd-8P7_q6OsuifV5gsAFgs24SpLQKCz6Ng9i4k_Iu3dd19MNfDf1p1qNbZEZos50m_9cT3Z5ZCcC6F18tWPBpzkePKU9K9HIqSskYzQZxTWjgzpI/s2780/1000116156.jpg" alt="Wallet"></div>
             </div>
         </div>
 
-        <div class="feature-row prlx" data-speed="0.15">
+        <div class="feature-row">
             <div class="feature-text reveal-right">
-                <i class="fa-solid fa-trophy f-icon-head" style="color:var(--accent-orange);"></i>
-                <h3>THE TOURNAMENT HUB</h3>
-                <p>Explore a live hub of diverse competitive matches. View detailed prize pools, real-time slots, and live bracket generation. Register your squad instantly, or use our powerful hosting tools to create your own custom event for titles like BGMI and Free Fire.</p>
+                <i class="fa-solid fa-trophy f-icon-head" style="background: linear-gradient(135deg, #ff9900, #ffdd00); -webkit-background-clip: text; filter: drop-shadow(0 0 10px rgba(255,153,0,0.5));"></i>
+                <h3>THE EPIC WEEKLY GIVEAWAY</h3>
+                <p>Explore a live hub of diverse competitive Giveaway. View detailed Tasks, real-time Updates, and live bracket for giveaways. Register your ang get eoic giveaways, or use our powerful hosting tools to create your own custom event for titles like BGMI and Free Fire.</p>
             </div>
             <div class="feature-image reveal-left">
-                <div class="single-phone tilt-card" style="border-color: rgba(255,153,0,0.5); box-shadow: 0 20px 50px rgba(255,153,0,0.2);"><img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEi_p4W9qA4T1O_M7q2V6E_Iq7-g9M1Q-Y1Y-Y1Y-Y1Y-Y1Y-Y1Y-Y1Y-Y1Y-Y1Y/s1024/Screenshot_MatchesDetail.png" alt="Match Details"></div>
+                <div class="ring-glow" style="background: var(--accent-orange);"></div>
+                <div class="single-phone" style="border-color: rgba(255,153,0,0.5);"><img src="https://https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEg8xM_EWLuoxputUvcDJGzQqyWRkGGA3a5wbfOZ7M9cjEgEa_DBGmPwc3dn4T4AnspmhAyfCVxUdnITXhLDu2FefjpYtpN9ieslSPn9HlKf2uS82HiLg_Q9DJDB-52fRWK8ZsD1pKhx2x3fdTzoYjPxGDdT6-umiUInuTIXbQcKmUXUK0uoyEhdhHab1TI/s2780/1000116192.jpg" alt="Match Details"></div>
             </div>
         </div>
 
-        <div class="feature-row prlx" data-speed="0.1">
+        <div class="feature-row">
             <div class="feature-text reveal-left">
-                <i class="fa-solid fa-earth-asia f-icon-head" style="color:var(--accent-cyan);"></i>
-                <h3>GLOBAL ECOSYSTEM</h3>
+                <i class="fa-solid fa-earth-asia f-icon-head" style="background: linear-gradient(135deg, #00f2ff, #00b4d8); -webkit-background-clip: text; filter: drop-shadow(0 0 10px rgba(0,242,255,0.5));"></i>
+                <h3>REFERAL BONUS</h3>
                 <p>Discover a premium esports network. Participate in special community events, track global leaderboards across diverse tournament types, and access exclusive content. We are redefining esports management from the grassroots up.</p>
             </div>
             <div class="feature-image reveal-right">
-                <div class="single-phone tilt-card" style="border-color: rgba(0,229,255,0.5); box-shadow: 0 20px 50px rgba(0,229,255,0.2);"><img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEj_s4W9qA4T1O_M7q2V6E_Iq7-g9M1Q-Y1Y-Y1Y-Y1Y-Y1Y-Y1Y-Y1Y-Y1Y-Y1Y/s1024/Screenshot_ExploreLeaderboards.png" alt="Leaderboards"></div>
-            </div>
-        </div>
-
-        <div class="feature-row prlx" data-speed="0.15">
-            <div class="feature-text reveal-right">
-                <i class="fa-solid fa-shield-cat f-icon-head" style="color:var(--accent-gold);"></i>
-                <h3>ADVANCED CLAN HUB</h3>
-                <p>Build your empire. Create and manage up to 10 gaming clans, assign strict team roles (IGL, Assaulter), track clan win rates, and communicate securely within private, auto-deleting encrypted clan channels.</p>
-            </div>
-            <div class="feature-image reveal-left">
-                <div class="single-phone tilt-card" style="border-color: rgba(255,215,0,0.5); box-shadow: 0 20px 50px rgba(255,215,0,0.2);"><img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEisbA4y_QvHq1vB7y_2A7u_Q3z5y_Q3z5y_Q3z5y_Q3z5y_Q3z5y_Q3z5y_Q3z5y_Q3z5/s1024/Screenshot_2026-04-05-21-34-31-88_33cee1f36927f0344425b961ce72d5b2.jpg" alt="Clan Hub"></div>
+                <div class="ring-glow" style="background: var(--accent-cyan);"></div>
+                <div class="single-phone" style="border-color: rgba(0,242,255,0.5);"><img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjgDYWgpACS6TxEGQCRtOgnG9kYVad4dJuElYSLC2JGBV5GYSsKGGonvJsk2EddGLcvGWp9VwWtLw3mBIKf9TINmJM3GBM9_ja8XjqjrvU885lmMM8EnF0tmayyJcOhItIg51jz_nfd9Tl8YJ6jyzHze1L6nf9cZJAO7uEQ3tXzk9BV-HqwDdjdBNkxjZE/s2780/1000116191.jpg" alt="Leaderboards"></div>
             </div>
         </div>
 
@@ -396,158 +427,98 @@
 
     <section class="ultimate-features-section">
         <h2 class="ultimate-title reveal-up">THE ULTIMATE ARSENAL</h2>
-        <div class="ultimate-subtitle reveal-up" style="transition-delay: 0.1s;">25 Reasons Tournyx is India's #1 Engine</div>
+        <div class="ultimate-subtitle reveal-up" style="transition-delay: 0.1s;">15 Reasons to Upgrade Your Game</div>
 
         <div class="ultra-feature-grid">
             
-            <div class="uf-card color-cyan reveal-up">
+            <div class="uf-card color-cyan reveal-up" style="transition-delay: 0.0s;">
                 <div class="uf-icon"><i class="fa-solid fa-shield-halved"></i></div>
-                <div class="uf-title">1. 100% Secure Engine</div>
-                <div class="uf-desc">Advanced anti-cheat architecture and 256-bit encrypted digital wallets ensure your funds and gameplay remain strictly protected.</div>
+                <div class="uf-title">100% Secure Engine</div>
+                <div class="uf-desc">Play without fear. Advanced anti-cheat architecture and 256-bit encrypted digital wallets ensure your funds and gameplay remain strictly protected.</div>
             </div>
 
-            <div class="uf-card color-purple reveal-up">
+            <div class="uf-card color-purple reveal-up" style="transition-delay: 0.1s;">
                 <div class="uf-icon"><i class="fa-solid fa-bolt-lightning"></i></div>
-                <div class="uf-title">2. Native Zero-Lag UI</div>
-                <div class="uf-desc">Built purely as a native engine. Experience buttery smooth browsing, instant rendering, and zero delay on any device.</div>
+                <div class="uf-title">Native Zero-Lag UI</div>
+                <div class="uf-desc">Built purely as a native engine, not a clunky web wrapper. Experience buttery smooth browsing, instant rendering, and zero delay on any device.</div>
             </div>
 
-            <div class="uf-card color-orange reveal-up">
+            <div class="uf-card color-orange reveal-up" style="transition-delay: 0.2s;">
                 <div class="uf-icon"><i class="fa-solid fa-bell"></i></div>
-                <div class="uf-title">3. Instant Room Alerts</div>
-                <div class="uf-desc">Get server-side push notifications the exact second Room IDs and Passwords are dropped. Never miss a match.</div>
+                <div class="uf-title">Instant Room Alerts</div>
+                <div class="uf-desc">Get server-side push notifications the exact second Room IDs and Passwords are dropped. Never miss a critical match or registration window.</div>
             </div>
 
-            <div class="uf-card color-green reveal-up">
+            <div class="uf-card color-green reveal-up" style="transition-delay: 0.0s;">
                 <div class="uf-icon"><i class="fa-solid fa-crown"></i></div>
-                <div class="uf-title">4. Premier App Hosting</div>
-                <div class="uf-desc">India's most robust organizer toolkit. Effortlessly host tournaments, manage dynamic brackets, and monetize.</div>
+                <div class="uf-title">Premier App Hosting</div>
+                <div class="uf-desc">India's most robust organizer toolkit. Effortlessly host tournaments, manage dynamic brackets, and monetize your community seamlessly.</div>
             </div>
 
-            <div class="uf-card color-cyan reveal-up">
+            <div class="uf-card color-cyan reveal-up" style="transition-delay: 0.1s;">
                 <div class="uf-icon"><i class="fa-brands fa-amazon-pay"></i></div>
-                <div class="uf-title">5. Razorpay Payouts</div>
-                <div class="uf-desc">Automated prize distribution algorithms send winnings directly to your bank or UPI through the secure Razorpay network.</div>
+                <div class="uf-title">Razorpay Instant Payouts</div>
+                <div class="uf-desc">Winners get paid. Period. Automated prize distribution algorithms send winnings directly to your bank or UPI through the Razorpay network.</div>
             </div>
 
-            <div class="uf-card color-purple reveal-up">
+            <div class="uf-card color-purple reveal-up" style="transition-delay: 0.2s;">
                 <div class="uf-icon"><i class="fa-solid fa-shield-cat"></i></div>
-                <div class="uf-title">6. Advanced Clan Hub</div>
-                <div class="uf-desc">Build your empire. Utilize roster locks, assign strict team roles, and communicate in encrypted clan channels.</div>
+                <div class="uf-title">Advanced Clan Hub</div>
+                <div class="uf-desc">Build your empire. Utilize roster locks, assign strict team roles (IGL, Assaulter), and communicate securely within private clan channels.</div>
             </div>
 
-            <div class="uf-card color-orange reveal-up">
+            <div class="uf-card color-orange reveal-up" style="transition-delay: 0.0s;">
                 <div class="uf-icon"><i class="fa-solid fa-chart-line"></i></div>
-                <div class="uf-title">7. Live Match Analytics</div>
-                <div class="uf-desc">Track real-time player statistics, monitor your K/D ratios, and review historical placements to perfect strategy.</div>
+                <div class="uf-title">Live Match Analytics</div>
+                <div class="uf-desc">Numbers don't lie. Track real-time player statistics, monitor your kill-death ratios, and review historical match placements to perfect your strategy.</div>
             </div>
 
-            <div class="uf-card color-green reveal-up">
+            <div class="uf-card color-green reveal-up" style="transition-delay: 0.1s;">
                 <div class="uf-icon"><i class="fa-solid fa-globe"></i></div>
-                <div class="uf-title">8. Global Leaderboards</div>
-                <div class="uf-desc">Ascend to godhood. Rank up on local state and global ecosystem charts to earn ultimate prestige and rewards.</div>
+                <div class="uf-title">Global Leaderboards</div>
+                <div class="uf-desc">Ascend to godhood. Rank up on local state leaderboards and global ecosystem charts to earn ultimate prestige and exclusive rewards.</div>
             </div>
 
-            <div class="uf-card color-cyan reveal-up">
+            <div class="uf-card color-cyan reveal-up" style="transition-delay: 0.2s;">
                 <div class="uf-icon"><i class="fa-solid fa-gift"></i></div>
-                <div class="uf-title">9. Quests & Offers</div>
-                <div class="uf-desc">Play to earn. Complete daily tasks and interact with our offer wall to claim free TX Points for premium entry.</div>
+                <div class="uf-title">Reward Quests & Offers</div>
+                <div class="uf-desc">Play to earn. Complete daily tasks and interact with our integrated offer wall to claim free TX Points, enabling entry into premium tournaments.</div>
             </div>
 
-            <div class="uf-card color-gold reveal-up">
+            <div class="uf-card color-purple reveal-up" style="transition-delay: 0.0s;">
                 <div class="uf-icon"><i class="fa-solid fa-gem"></i></div>
-                <div class="uf-title">10. VIP Subscriptions</div>
-                <div class="uf-desc">Unlock premium tiers, display elite profile badges, and benefit from zero transaction fees on all payouts.</div>
+                <div class="uf-title">VIP Subscriptions</div>
+                <div class="uf-desc">Upgrade your status. Unlock premium platform tiers, display elite profile badges, and benefit from zero transaction fees on all payouts.</div>
             </div>
 
-            <div class="uf-card color-orange reveal-up">
+            <div class="uf-card color-orange reveal-up" style="transition-delay: 0.1s;">
                 <div class="uf-icon"><i class="fa-solid fa-ticket"></i></div>
-                <div class="uf-title">11. Digital Ticket Vault</div>
-                <div class="uf-desc">Your tournament entries are converted into encrypted digital passes, stored safely in your inventory.</div>
+                <div class="uf-title">Digital Ticket Vault</div>
+                <div class="uf-desc">Secure your spot. Your tournament entries are converted into encrypted digital passes, stored safely in your inventory for redemption.</div>
             </div>
 
-            <div class="uf-card color-green reveal-up">
+            <div class="uf-card color-green reveal-up" style="transition-delay: 0.2s;">
                 <div class="uf-icon"><i class="fa-solid fa-headset"></i></div>
-                <div class="uf-title">12. 24/7 Priority Support</div>
-                <div class="uf-desc">Access our dedicated in-app support ticketing system and connect with agents for immediate assistance.</div>
+                <div class="uf-title">24/7 Priority Support</div>
+                <div class="uf-desc">Never get stuck. Access our dedicated in-app support ticketing system and connect with real agents for immediate account and match assistance.</div>
             </div>
 
-            <div class="uf-card color-cyan reveal-up">
+            <div class="uf-card color-cyan reveal-up" style="transition-delay: 0.0s;">
                 <div class="uf-icon"><i class="fa-solid fa-palette"></i></div>
-                <div class="uf-title">13. Customization</div>
-                <div class="uf-desc">Stand out with custom animated avatars, personalized profile banners, and dynamic user bios.</div>
+                <div class="uf-title">Ultimate Customization</div>
+                <div class="uf-desc">Your identity, your rules. Stand out from the crowd with custom animated avatars, personalized profile banners, and dynamic user bios.</div>
             </div>
 
-            <div class="uf-card color-red reveal-up">
+            <div class="uf-card color-red reveal-up" style="transition-delay: 0.1s;">
                 <div class="uf-icon"><i class="fa-solid fa-video"></i></div>
-                <div class="uf-title">14. Pro Streamer Mode</div>
-                <div class="uf-desc">Protect your broadcast by automatically hiding sensitive Room IDs, passwords, and private notifications.</div>
+                <div class="uf-title">Pro Streamer Mode</div>
+                <div class="uf-desc">Protect your broadcast. Automatically hide sensitive Room IDs, passwords, and private notifications while live-streaming to your audience.</div>
             </div>
 
-            <div class="uf-card color-purple reveal-up">
+            <div class="uf-card color-purple reveal-up" style="transition-delay: 0.2s;">
                 <div class="uf-icon"><i class="fa-solid fa-gamepad"></i></div>
-                <div class="uf-title">15. Multi-Title Integration</div>
-                <div class="uf-desc">Full native platform integration designed specifically for BGMI, Free Fire, CODM, and Valorant Mobile.</div>
-            </div>
-            
-            <div class="uf-card color-orange reveal-up">
-                <div class="uf-icon"><i class="fa-solid fa-sitemap"></i></div>
-                <div class="uf-title">16. Dynamic Brackets</div>
-                <div class="uf-desc">Organizers can generate single, double, or round-robin brackets instantly with our automated backend engine.</div>
-            </div>
-            
-            <div class="uf-card color-green reveal-up">
-                <div class="uf-icon"><i class="fa-solid fa-calculator"></i></div>
-                <div class="uf-title">17. Auto-Scoring System</div>
-                <div class="uf-desc">Upload match result screenshots and let our AI calculate points for placement and kills automatically.</div>
-            </div>
-            
-            <div class="uf-card color-cyan reveal-up">
-                <div class="uf-icon"><i class="fa-solid fa-lock"></i></div>
-                <div class="uf-title">18. Secure Comms</div>
-                <div class="uf-desc">In-app messaging ensures you never have to share personal phone numbers to coordinate with random teammates.</div>
-            </div>
-            
-            <div class="uf-card color-gold reveal-up">
-                <div class="uf-icon"><i class="fa-solid fa-id-badge"></i></div>
-                <div class="uf-title">19. Profile Badges</div>
-                <div class="uf-desc">Earn verifiable achievement badges for winning majors, hosting 100+ events, or being a verified content creator.</div>
-            </div>
-            
-            <div class="uf-card color-purple reveal-up">
-                <div class="uf-icon"><i class="fa-solid fa-desktop"></i></div>
-                <div class="uf-title">20. Org Dashboards</div>
-                <div class="uf-desc">Esports organizations get dedicated desktop views to manage multiple rosters, finances, and event schedules.</div>
-            </div>
-            
-            <div class="uf-card color-red reveal-up">
-                <div class="uf-icon"><i class="fa-solid fa-gavel"></i></div>
-                <div class="uf-title">21. Match Disputes</div>
-                <div class="uf-desc">A fair-play system allowing teams to flag cheating or incorrect scores directly to Tournyx admins for review.</div>
-            </div>
-            
-            <div class="uf-card color-green reveal-up">
-                <div class="uf-icon"><i class="fa-solid fa-wifi"></i></div>
-                <div class="uf-title">22. Ping Monitor</div>
-                <div class="uf-desc">Check the real-time status and latency of game servers directly from your Tournyx profile dashboard.</div>
-            </div>
-            
-            <div class="uf-card color-orange reveal-up">
-                <div class="uf-icon"><i class="fa-solid fa-users-rays"></i></div>
-                <div class="uf-title">23. Official Clan Wars</div>
-                <div class="uf-desc">Register your 6-man roster into official Tournyx sanctioned Clan Wars for massive weekly prize pools.</div>
-            </div>
-            
-            <div class="uf-card color-cyan reveal-up">
-                <div class="uf-icon"><i class="fa-solid fa-tower-broadcast"></i></div>
-                <div class="uf-title">24. Live Scrims</div>
-                <div class="uf-desc">Find practice matches instantly with our 24/7 rolling scrim lobbies, perfect for warming up before majors.</div>
-            </div>
-            
-            <div class="uf-card color-purple reveal-up">
-                <div class="uf-icon"><i class="fa-solid fa-box-open"></i></div>
-                <div class="uf-title">25. Elite Giveaways</div>
-                <div class="uf-desc">Enter free daily raffles using your earned TX Points to win Royal Passes, Elite Passes, and physical gaming gear.</div>
+                <div class="uf-title">Multi-Title Integration</div>
+                <div class="uf-desc">The epicenter of gaming. Full native platform integration designed specifically for heavy hitters like BGMI, Free Fire, CODM, and Valorant Mobile.</div>
             </div>
 
         </div>
@@ -556,87 +527,40 @@
     <footer class="footer">
         <div class="footer-logo"><i class="fa-solid fa-bolt" style="color: var(--accent-cyan);"></i> TOURNYX</div>
         <div class="footer-built">made with 🔥 by gamers for gamers worldwide</div>
-        <div class="footer-text" style="margin-bottom: 25px;">Built for India's competitive spirit. Dominate. Earn. Win.</div>
+        <div class="footer-text">Built for India's competitive spirit. Dominate. Earn. Win.</div>
         
         <div class="footer-links">
             <a href="terms.html">Terms of Service</a>
             <a href="privacy.html">Privacy Policy</a>
             <a href="refund.html">Refund & Cancellation</a>
-            <a href="contact.html">Contact Support</a>
+            <a href="support.html">Contact Support</a>
         </div>
-
-        <div class="quva-badge">
-            © 2026 Tournyx eSports. All Rights Reserved.<br>
-            <div style="margin-top:8px;">Powered by <span>QUVA</span></div>
+        
+        <div class="footer-text" style="font-size: 0.75rem; margin-bottom: 20px;">© 2026 Tournyx eSports. All Rights Reserved.</div>
+        
+        <div class="powered-by">
+            POWERED BY<br><span>QUVA</span>
         </div>
     </footer>
 
     <script>
-        // --- 1. Remove Loader smoothly ---
-        window.addEventListener('load', () => {
-            setTimeout(() => {
-                const loader = document.getElementById('tx-loader');
-                loader.style.opacity = '0';
-                setTimeout(() => loader.style.display = 'none', 600);
-            }, 800);
-        });
-
-        // --- 2. JS Scroll Parallax Engine (Hardware Accelerated) ---
-        let lastScrollY = window.scrollY;
-        let ticking = false;
-
-        function updateParallax() {
-            const elements = document.querySelectorAll('.prlx');
-            elements.forEach(el => {
-                const speed = parseFloat(el.getAttribute('data-speed')) || 0;
-                // Calculate transform relative to scroll position
-                const yPos = lastScrollY * speed;
-                
-                // Preserve existing transforms if any (like the rotated phones)
-                let currentTransform = el.style.transform;
-                if(currentTransform.includes('translateX')) {
-                    // It's a side phone
-                    let baseTranslateX = currentTransform.match(/translateX\((.*?)\)/)[1];
-                    let baseRotate = currentTransform.match(/rotate\((.*?)\)/)[1];
-                    el.style.transform = `translateX(${baseTranslateX}) rotate(${baseRotate}) translateY(${yPos}px) translateZ(0)`;
-                } else {
-                    el.style.transform = `translateY(${yPos}px) translateZ(0)`;
-                }
-            });
-            ticking = false;
+        // --- Particles Animation ---
+        const canvas = document.getElementById('particles-canvas');
+        const ctx = canvas.getContext('2d');
+        canvas.width = window.innerWidth; canvas.height = window.innerHeight;
+        let particles = [];
+        class P {
+            constructor(){ this.x=Math.random()*canvas.width; this.y=Math.random()*canvas.height; this.s=Math.random()*2.5; this.vx=Math.random()*0.4-0.2; this.vy=Math.random()*0.4-0.2; }
+            u(){ this.x+=this.vx; this.y+=this.vy; if(this.x<0||this.x>canvas.width)this.vx*=-1; if(this.y<0||this.y>canvas.height)this.vy*=-1; }
+            d(){ ctx.fillStyle='rgba(0,242,255,0.5)'; ctx.beginPath(); ctx.arc(this.x,this.y,this.s,0,Math.PI*2); ctx.fill(); }
         }
+        for(let i=0;i<70;i++) particles.push(new P());
+        function anim(){ ctx.clearRect(0,0,canvas.width,canvas.height); particles.forEach(p=>{p.u();p.d()}); requestAnimationFrame(anim); }
+        anim();
+        
+        window.addEventListener('resize', () => { canvas.width = window.innerWidth; canvas.height = window.innerHeight; });
 
-        window.addEventListener('scroll', () => {
-            lastScrollY = window.scrollY;
-            if (!ticking) {
-                window.requestAnimationFrame(updateParallax);
-                ticking = true;
-            }
-        });
-
-        // --- 3. Interactive 3D Hover Tilt Matrix ---
-        const tiltCards = document.querySelectorAll('.tilt-card');
-        tiltCards.forEach(card => {
-            card.addEventListener('mousemove', (e) => {
-                const rect = card.getBoundingClientRect();
-                const x = e.clientX - rect.left;
-                const y = e.clientY - rect.top;
-                
-                const centerX = rect.width / 2;
-                const centerY = rect.height / 2;
-                
-                const rotateX = ((y - centerY) / centerY) * -15; // Max 15 deg tilt
-                const rotateY = ((x - centerX) / centerX) * 15;
-                
-                card.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale3d(1.05, 1.05, 1.05)`;
-            });
-            
-            card.addEventListener('mouseleave', () => {
-                card.style.transform = `perspective(1000px) rotateX(0deg) rotateY(0deg) scale3d(1, 1, 1)`;
-            });
-        });
-
-        // --- 4. Intersection Observer for Scroll Reveals ---
+        // --- Intersection Observer for Scroll Animations ---
         document.addEventListener("DOMContentLoaded", function() {
             const observerOptions = { root: null, rootMargin: '0px', threshold: 0.15 };
 
@@ -651,6 +575,18 @@
 
             const revealElements = document.querySelectorAll('.reveal-up, .reveal-left, .reveal-right, .reveal-scale');
             revealElements.forEach(el => observer.observe(el));
+            
+            // Header scroll effect
+            const header = document.querySelector('.top-header');
+            window.addEventListener('scroll', () => {
+                if(window.scrollY > 50) {
+                    header.style.background = 'rgba(3, 1, 8, 0.95)';
+                    header.style.padding = '10px 20px';
+                } else {
+                    header.style.background = 'rgba(3, 1, 8, 0.7)';
+                    header.style.padding = '15px 20px';
+                }
+            });
         });
     </script>
 </body>
