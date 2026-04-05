@@ -220,10 +220,16 @@
         .ds-header { font-family: var(--font-head); font-size: 1.15rem; color: white; margin-bottom: 15px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px;}
         
         /* ROSTER CARDS FIX FOR OVERFLOW */
-        .roster-item { display: flex; align-items: center; gap: 10px; background: rgba(255,255,255,0.03); padding: 12px; border-radius: 12px; margin-bottom: 10px; border: 1px solid rgba(255,255,255,0.05); flex-wrap: nowrap; cursor:pointer; overflow: hidden;}
+        .roster-item { display: flex; align-items: center; gap: 10px; background: rgba(255,255,255,0.03); padding: 12px; border-radius: 12px; margin-bottom: 10px; border: 1px solid rgba(255,255,255,0.05); flex-wrap: nowrap; cursor:pointer; overflow: hidden; transition: 0.3s;}
+        .roster-item:active { background: rgba(0,242,255,0.1); border-color: var(--accent-cyan); transform: scale(0.98); }
+        html.theme-vip .roster-item:active { background: rgba(255,215,0,0.1); border-color: #FFD700; }
+        
         .r-avatar { width: 45px; height: 45px; border-radius: 12px; background: var(--accent-purple); display: flex; align-items: center; justify-content: center; font-family: var(--font-head); font-weight: bold; color: white; font-size: 1.2rem; flex-shrink: 0;}
         .r-info { flex: 1; min-width: 0; overflow: hidden; display: flex; flex-direction: column; justify-content: center;}
+        
+        /* The magical truncation fix for long names */
         .r-name { font-family: var(--font-head); font-size: 1.05rem; color: white; font-weight: bold; margin-bottom: 4px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; width: 100%; display: block;}
+        
         .roster-tags-wrapper { display: flex; flex-wrap: wrap; gap: 6px; width: 100%; overflow: hidden; align-items: center; }
         .r-role-tag { font-size: 0.65rem; padding: 3px 8px; border-radius: 6px; font-weight: bold; background: rgba(255,255,255,0.1); color: #ccc; border: 1px solid rgba(255,255,255,0.2); white-space: nowrap;}
         .r-pos-tag { font-size: 0.6rem; padding: 2px 6px; border-radius: 4px; color: var(--accent-cyan); border: 1px dashed var(--accent-cyan); white-space: nowrap;}
@@ -293,8 +299,11 @@
         html.theme-vip .nav-item.active > i, html.theme-vip .nav-item.active > .tx-icon, html.theme-vip .nav-item.active > .tx-ticket-composite i { background: linear-gradient(135deg, #FFE87C, #FF8C00); -webkit-background-clip: text; -webkit-text-fill-color: transparent; filter: drop-shadow(0 0 10px rgba(212,175,55,0.8)); }
         .nav-item.active .tx-ticket-composite i { transform: translateY(0); } /* Reset inner transform */
         .nav-item.active span { transform: translateY(2px); color: white; text-shadow: 0 0 5px rgba(255,255,255,0.5);}
+        
+        /* FLOATING PLUS FIX FOR VIP */
         .fab-slot { flex: 1.2; display: flex; justify-content: center; position: relative; height: 100%; align-items: center; }
         .floating-plus { position: absolute; top: -25px; left: 50%; transform: translateX(-50%); width: 54px; height: 54px; background: linear-gradient(135deg, var(--accent-cyan), var(--accent-purple)); border-radius: 50%; display: flex; align-items: center; justify-content: center; border: 4px solid var(--primary-bg); box-shadow: 0 10px 25px rgba(189,0,255,0.5); color: #fff; font-size: 1.6rem; cursor: pointer; transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); z-index: 10; }
+        html.theme-vip .floating-plus { background: linear-gradient(135deg, #FFE87C, #D4AF37); box-shadow: 0 10px 25px rgba(212,175,55,0.5); border-color: #000; color: #000; }
         .floating-plus:hover { transform: translateX(-50%) scale(1.1) rotate(90deg); box-shadow: 0 15px 35px rgba(0,242,255,0.6); }
 
         @media (min-width: 850px) { .bottom-nav { display: none !important; } body { padding-bottom: 0; } }
@@ -629,7 +638,7 @@
     <div class="modal-overlay" id="memberDetailModal">
         <div class="modal-box">
             <div class="modal-header">
-                <div class="modal-title"><i class="fa-solid fa-id-card"></i> Player Card</div>
+                <div class="modal-title"><i class="fa-solid fa-id-card" style="color:var(--accent-cyan);"></i> Player Card</div>
                 <i class="fa-solid fa-xmark modal-close" onclick="document.getElementById('memberDetailModal').classList.remove('active')"></i>
             </div>
             <div id="memberDetailContent" style="color:white; line-height:1.6; font-size:0.9rem;"></div>
@@ -827,21 +836,42 @@
             else { triggerSyncIndicator(); }
 
             try {
+                // Ensure fresh user data is grabbed from local storage before doing anything
+                user = JSON.parse(localStorage.getItem('tournyx_user')) || user;
+
                 const res = await fetch(API_URL + "?action=get_my_clans&username=" + encodeURIComponent(user.username));
                 const data = JSON.parse(await res.text());
                 
                 if (data.status === "success" && data.data && data.data.length > 0) {
                     let parsedClans = [];
+                    let needsLiveSyncUpdate = false; // Flag to check if we updated user details and need to push back to sheet
+
                     data.data.forEach(item => {
                         try {
                             let clanObj = item;
                             if (typeof item === 'string') clanObj = JSON.parse(item);
                             else if (item.team_json) clanObj = typeof item.team_json === 'string' ? JSON.parse(item.team_json) : item.team_json;
                             
-                            if (clanObj && clanObj.roster && clanObj.roster.some(r => String(r.name).toLowerCase() === String(user.username).toLowerCase())) {
-                                // Re-inject images just in case
+                            // Check if user is in this clan
+                            let myRosterIndex = clanObj.roster ? clanObj.roster.findIndex(r => String(r.name).toLowerCase() === String(user.username).toLowerCase()) : -1;
+                            
+                            if (myRosterIndex !== -1) {
+                                // RE-INJECT IMAGES JUST IN CASE
                                 if(item.logo && item.logo.length > 20) clanObj.logo = item.logo;
                                 if(item.banner && item.banner.length > 20) clanObj.banner = item.banner;
+
+                                // --- LIVE PROFILE SYNC MECHANISM ---
+                                // If the user updated their profile (IGN, Phone, UID) in settings, sync it to the clan roster now!
+                                let currentRosterMe = clanObj.roster[myRosterIndex];
+                                let pPhone = user.phone || ""; let pIgn = user.gameName || user.username || ""; let pUid = user.uid || "";
+                                
+                                if (currentRosterMe.phone !== pPhone || currentRosterMe.gameName !== pIgn || currentRosterMe.uid !== pUid) {
+                                    clanObj.roster[myRosterIndex].phone = pPhone;
+                                    clanObj.roster[myRosterIndex].gameName = pIgn;
+                                    clanObj.roster[myRosterIndex].uid = pUid;
+                                    needsLiveSyncUpdate = true;
+                                }
+
                                 parsedClans.push(clanObj);
                             }
                         } catch(e) {}
@@ -854,6 +884,9 @@
                         let updatedClan = userLiveClans.find(c => c.clanId === activeClan.clanId);
                         if(updatedClan) { activeClan = updatedClan; renderDashboard(activeClan); calculateLiveClanStats(activeClan); }
                         else { returnToHub(); }
+                        
+                        // If we updated profile info, silently push it to the sheet so other clan members see the updated IGN/UID immediately
+                        if(needsLiveSyncUpdate) pushUpdateToLive('FULL_UPDATE', activeClan);
                     } else { renderHub(); }
                 } else {
                     userLiveClans = []; localStorage.removeItem('tournyx_my_clans_cache'); showNoClan();
@@ -1146,119 +1179,142 @@
 
             sortedRoster.forEach(member => {
                 let rColor = member.role==='Owner' ? 'var(--accent-orange)' : (member.role==='Admin'?'var(--accent-cyan)':'#ccc');
-                let actions = "";
-                
-                if(isAdmin && member.name !== user.username) {
-                    actions += `<button class="s-btn rej" style="padding:4px 8px; font-size:0.7rem; border:1px solid var(--accent-cyan); color:var(--accent-cyan);" onclick="openRoleDropdown(event, '${member.name}')">Set Role</button>`;
-                    if(isOwner && member.role === 'Player') actions += `<button class="s-btn acc" style="padding:4px 8px; font-size:0.7rem;" onclick="modRole(event, '${member.name}', 'Admin')">Make Admin</button>`;
-                    if(isOwner && member.role === 'Admin') actions += `<button class="s-btn rej" style="padding:4px 8px; font-size:0.7rem; border:1px solid #888;" onclick="modRole(event, '${member.name}', 'Player')">Demote</button>`;
-                    actions += `<button class="s-btn rej" style="color:#ff4d4d; border:1px solid #ff4d4d; padding:4px 8px; font-size:0.7rem;" onclick="kickMember(event, '${member.name}')">Kick</button>`;
-                }
-                
                 let encodedData = encodeURIComponent(JSON.stringify(member));
                 let isOnline = Math.random() > 0.5 ? 'block' : 'none'; if(member.name === user.username) isOnline = 'block'; 
 
                 let posTag = member.pos ? `<span class="r-pos-tag">${member.pos}</span>` : "";
 
+                // THE FIX: Cleaned up UI, no buttons on row. Clicking row opens the full Player Card Modal.
                 rl.innerHTML += `
-                    <div class="roster-item" onclick="openMemberCard('${encodedData}')">
+                    <div class="roster-item" onclick="openMemberCard('${encodedData}', ${isAdmin}, ${isOwner}, '${member.name}')">
                         <div class="r-avatar">${member.name.charAt(0).toUpperCase()}</div>
-                        <div class="online-dot" style="display:${isOnline};"></div>
+                        <div class="online-dot" style="display:${isOnline}; width:8px; height:8px; background:#00ff7f; border-radius:50%; margin-left:-12px; margin-top:20px; z-index:3; border:1px solid #000;"></div>
                         <div class="r-info">
-                            <div class="r-name">${member.name}</div>
+                            <div class="r-name" title="${member.name}">${member.name}</div>
                             <div class="roster-tags-wrapper">
                                 <span class="r-role-tag" style="color:${rColor}; border-color:${rColor}; margin:0;">${member.role}</span>
                                 ${posTag}
                             </div>
                         </div>
-                        <div style="display:flex; gap:5px; flex-wrap:wrap; flex-shrink:0;">${actions}</div>
+                        <i class="fa-solid fa-chevron-right" style="color:#666; font-size:0.8rem; margin-left:auto;"></i>
                     </div>`;
             });
+        }
+
+        // --- THE UPGRADED PLAYER CARD LOGIC ---
+        function openMemberCard(encodedStr, isAdminViewing, isOwnerViewing, memberName) {
+            let m = JSON.parse(decodeURIComponent(encodedStr));
+            let rColor = m.role==='Owner' ? 'var(--accent-orange)' : (m.role==='Admin'?'var(--accent-cyan)':'#ccc');
+            
+            // Build Admin Actions dynamically if viewed by Admin and the target isn't themselves
+            let adminActionsHtml = "";
+            if(isAdminViewing && m.name !== user.username) {
+                adminActionsHtml += `<div style="margin-top:20px; border-top:1px dashed rgba(255,255,255,0.2); padding-top:15px;">`;
+                adminActionsHtml += `<div style="font-family:var(--font-head); font-size:0.8rem; color:var(--accent-cyan); margin-bottom:10px; text-transform:uppercase;">Admin Controls</div>`;
+                adminActionsHtml += `<div style="display:flex; gap:10px; flex-wrap:wrap;">`;
+                
+                adminActionsHtml += `<button class="btn-secondary" style="flex:1; margin:0; padding:10px; font-size:0.85rem;" onclick="openRoleDropdown(event, '${m.name}')"><i class="fa-solid fa-crosshairs"></i> Set Role</button>`;
+                
+                if(isOwnerViewing && m.role === 'Player') {
+                    adminActionsHtml += `<button class="btn-primary" style="flex:1; margin:0; padding:10px; font-size:0.85rem; background:rgba(0,242,255,0.1); color:var(--accent-cyan); border:1px solid var(--accent-cyan); box-shadow:none;" onclick="modRole(event, '${m.name}', 'Admin')"><i class="fa-solid fa-star"></i> Make Admin</button>`;
+                }
+                if(isOwnerViewing && m.role === 'Admin') {
+                    adminActionsHtml += `<button class="btn-secondary" style="flex:1; margin:0; padding:10px; font-size:0.85rem; color:#aaa; border-color:#aaa;" onclick="modRole(event, '${m.name}', 'Player')"><i class="fa-solid fa-arrow-down"></i> Demote</button>`;
+                }
+                
+                adminActionsHtml += `<button class="btn-danger" style="flex:1; margin:0; padding:10px; font-size:0.85rem;" onclick="kickMember(event, '${m.name}')"><i class="fa-solid fa-ban"></i> Kick</button>`;
+                adminActionsHtml += `</div></div>`;
+            }
+
+            let html = `
+                <div style="text-align:center; margin-bottom:20px;">
+                    <div style="width:80px; height:80px; background:var(--accent-purple); border:2px solid var(--accent-cyan); border-radius:50%; font-size:2.5rem; color:white; font-family:var(--font-head); display:flex; align-items:center; justify-content:center; margin:0 auto 10px; box-shadow:0 0 20px rgba(0,242,255,0.3);">${m.name.charAt(0).toUpperCase()}</div>
+                    <div style="font-family:var(--font-head); font-size:1.5rem; font-weight:900; letter-spacing:1px; margin-bottom:5px;">${m.name}</div>
+                    <div style="color:${rColor}; font-size:0.9rem; font-weight:bold; letter-spacing:1px; text-transform:uppercase;">${m.role} ${m.pos ? `<span style="color:#888;">|</span> ${m.pos}` : ''}</div>
+                </div>
+                <div style="background:rgba(255,255,255,0.03); padding:15px; border-radius:15px; border:1px solid rgba(255,255,255,0.08);">
+                    <div style="margin-bottom:12px; display:flex; align-items:center; gap:10px;"><i class="fa-solid fa-gamepad" style="color:#888; width:20px; text-align:center;"></i> <span><strong>IGN:</strong> <span style="color:var(--accent-cyan); font-weight:bold;">${m.gameName || "Not provided"}</span></span></div>
+                    <div style="margin-bottom:12px; display:flex; align-items:center; gap:10px;"><i class="fa-solid fa-fingerprint" style="color:#888; width:20px; text-align:center;"></i> <span><strong>UID:</strong> <span style="font-family:monospace; color:white; font-weight:bold;">${m.uid || "Not provided"}</span></span></div>
+                    <div style="display:flex; align-items:center; gap:10px;"><i class="fa-solid fa-phone" style="color:#888; width:20px; text-align:center;"></i> <span><strong>Contact:</strong> ${m.phone || "Hidden"}</span></div>
+                </div>
+                ${adminActionsHtml}
+            `;
+            document.getElementById('memberDetailContent').innerHTML = html;
+            document.getElementById('memberDetailModal').classList.add('active');
         }
 
         function openRoleDropdown(e, name) {
             e.stopPropagation();
             document.getElementById('roleTargetPlayer').value = name;
-            
             let p = activeClan.roster.find(r => r.name === name);
             if(p && p.pos) document.getElementById('roleDropdownSelect').value = p.pos;
             else document.getElementById('roleDropdownSelect').value = "Assaulter";
 
-            document.getElementById('roleSelectModal').classList.add('active');
+            document.getElementById('memberDetailModal').classList.remove('active');
+            setTimeout(() => { document.getElementById('roleSelectModal').classList.add('active'); }, 100);
         }
 
         function confirmRoleChange() {
             triggerHaptic();
             let name = document.getElementById('roleTargetPlayer').value;
             let newPos = document.getElementById('roleDropdownSelect').value;
-            
             let p = activeClan.roster.find(r => r.name === name);
             if(p) { 
                 p.pos = newPos; 
                 pushUpdateToLive('FULL_UPDATE', activeClan); 
-                showToast("Position updated."); 
+                showToast(`${name} assigned as ${newPos}.`); 
                 document.getElementById('roleSelectModal').classList.remove('active');
             }
         }
 
-        function openTransferOwnershipModal() {
-            triggerHaptic();
-            let select = document.getElementById('transferDropdownSelect');
-            select.innerHTML = '<option value="" disabled selected>Select a member...</option>';
-            
-            let eligibleMembers = activeClan.roster.filter(r => r.name !== user.username);
-            if(eligibleMembers.length === 0) {
-                showToast("You are the only member. Just disband the clan.", true);
-                return;
+        function modRole(e, name, newRole) {
+            e.stopPropagation();
+            if (newRole === 'Admin') {
+                let currentAdmins = activeClan.roster.filter(r => r.role === 'Admin').length;
+                if (currentAdmins >= 1) { showToast("Only 1 Admin allowed. Demote the current Admin first.", true); return; }
             }
-
-            eligibleMembers.forEach(m => {
-                select.innerHTML += `<option value="${m.name}">${m.name} (${m.role})</option>`;
-            });
-
-            document.getElementById('transferOwnershipModal').classList.add('active');
-        }
-
-        function confirmOwnershipTransfer() {
-            let targetName = document.getElementById('transferDropdownSelect').value;
-            if(!targetName) { showToast("Please select a member.", true); return; }
-
-            if(confirm(`Are you sure you want to make ${targetName} the new Owner? You will be demoted to Admin.`)) {
-                triggerHaptic();
-                
-                let me = activeClan.roster.find(r => r.name === user.username);
-                let newOwner = activeClan.roster.find(r => r.name === targetName);
-                
-                if(me && newOwner) {
-                    me.role = 'Admin';
-                    newOwner.role = 'Owner';
-                    
-                    if(!activeClan.notifications) activeClan.notifications = [];
-                    activeClan.notifications.push({ msg: `<b style='color:var(--accent-orange)'>${targetName}</b> was promoted to Clan Owner!` });
-                    
-                    pushUpdateToLive('FULL_UPDATE', activeClan);
-                    showToast("Ownership transferred successfully!");
-                    document.getElementById('transferOwnershipModal').classList.remove('active');
-                }
+            let p = activeClan.roster.find(r => r.name === name);
+            if(p) { 
+                p.role = newRole; 
+                pushUpdateToLive('FULL_UPDATE', activeClan); 
+                showToast("Role updated."); 
+                document.getElementById('memberDetailModal').classList.remove('active');
             }
         }
 
-        function openMemberCard(encodedStr) {
-            let m = JSON.parse(decodeURIComponent(encodedStr));
-            let html = `
-                <div style="text-align:center; margin-bottom:15px;">
-                    <div style="width:70px; height:70px; background:var(--accent-cyan); border-radius:50%; font-size:2rem; color:#000; font-family:var(--font-head); display:flex; align-items:center; justify-content:center; margin:0 auto 10px;">${m.name.charAt(0).toUpperCase()}</div>
-                    <div style="font-family:var(--font-head); font-size:1.3rem; font-weight:bold;">${m.name}</div>
-                    <div style="color:var(--accent-orange); font-size:0.8rem; font-weight:bold; margin-top:5px;">${m.role.toUpperCase()} ${m.pos ? `| ${m.pos}` : ''}</div>
-                </div>
-                <div style="background:rgba(255,255,255,0.05); padding:15px; border-radius:10px; border:1px solid rgba(255,255,255,0.1);">
-                    <div style="margin-bottom:8px;"><i class="fa-solid fa-gamepad" style="color:#888; width:20px;"></i> <strong>IGN:</strong> <span style="color:var(--accent-cyan);">${m.gameName || "Not provided"}</span></div>
-                    <div style="margin-bottom:8px;"><i class="fa-solid fa-fingerprint" style="color:#888; width:20px;"></i> <strong>UID:</strong> <span style="font-family:monospace; color:white;">${m.uid || "Not provided"}</span></div>
-                    <div><i class="fa-solid fa-phone" style="color:#888; width:20px;"></i> <strong>Contact:</strong> ${m.phone || "Hidden"}</div>
-                </div>
-            `;
-            document.getElementById('memberDetailContent').innerHTML = html;
-            document.getElementById('memberDetailModal').classList.add('active');
+        // --- BACKEND FIX FOR LEAVING AND KICKING (SYNC TO USERS SHEET) ---
+        function kickMember(e, name) {
+            e.stopPropagation();
+            if(confirm(`Are you absolutely sure you want to kick ${name}?`)) {
+                
+                let pLoad = { action: 'leave_clan', clan_id: activeClan.clanId, target_username: name, is_kick: true, admin_name: user.username };
+                fetch(API_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify(pLoad) });
+                
+                // Optimistic UI update
+                activeClan.roster = activeClan.roster.filter(r => r.name !== name);
+                let index = userLiveClans.findIndex(c => c.clanId === activeClan.clanId);
+                if(index !== -1) userLiveClans[index] = activeClan;
+                localStorage.setItem('tournyx_my_clans_cache', JSON.stringify(userLiveClans));
+                
+                showToast(`${name} kicked.`);
+                document.getElementById('memberDetailModal').classList.remove('active');
+                renderDashboard(activeClan);
+            }
+        }
+
+        function leaveClan() {
+            if(confirm("Are you sure you want to leave this clan?")) {
+                
+                let pLoad = { action: 'leave_clan', clan_id: activeClan.clanId, target_username: user.username, is_kick: false };
+                fetch(API_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify(pLoad) });
+                
+                // Optimistic UI update
+                userLiveClans = userLiveClans.filter(c => c.clanId !== activeClan.clanId);
+                localStorage.setItem('tournyx_my_clans_cache', JSON.stringify(userLiveClans));
+                showToast("You left the clan."); 
+                renderHub();
+                setTimeout(() => { fetchLiveClanData(true); }, 3000);
+            }
         }
 
         async function calculateLiveClanStats(clan) {
@@ -1412,51 +1468,45 @@
         }
         function copyInviteLink() { navigator.clipboard.writeText(document.getElementById('inviteLinkInp').value); showToast("Invite link copied!"); document.getElementById('inviteLinkModal').classList.remove('active'); }
 
-        function modRole(e, name, newRole) {
-            e.stopPropagation();
-            if (newRole === 'Admin') {
-                let currentAdmins = activeClan.roster.filter(r => r.role === 'Admin').length;
-                if (currentAdmins >= 1) {
-                    showToast("Only 1 Admin allowed. Demote the current Admin first.", true);
-                    return;
+        function openTransferOwnershipModal() {
+            triggerHaptic();
+            let select = document.getElementById('transferDropdownSelect');
+            select.innerHTML = '<option value="" disabled selected>Select a member...</option>';
+            
+            let eligibleMembers = activeClan.roster.filter(r => r.name !== user.username);
+            if(eligibleMembers.length === 0) {
+                showToast("You are the only member. Just disband the clan.", true);
+                return;
+            }
+
+            eligibleMembers.forEach(m => {
+                select.innerHTML += `<option value="${m.name}">${m.name} (${m.role})</option>`;
+            });
+
+            document.getElementById('transferOwnershipModal').classList.add('active');
+        }
+
+        function confirmOwnershipTransfer() {
+            let targetName = document.getElementById('transferDropdownSelect').value;
+            if(!targetName) { showToast("Please select a member.", true); return; }
+
+            if(confirm(`Are you sure you want to make ${targetName} the new Owner? You will be demoted to Admin.`)) {
+                triggerHaptic();
+                
+                let me = activeClan.roster.find(r => r.name === user.username);
+                let newOwner = activeClan.roster.find(r => r.name === targetName);
+                
+                if(me && newOwner) {
+                    me.role = 'Admin';
+                    newOwner.role = 'Owner';
+                    
+                    if(!activeClan.notifications) activeClan.notifications = [];
+                    activeClan.notifications.push({ msg: `<b style='color:var(--accent-orange)'>${targetName}</b> was promoted to Clan Owner!` });
+                    
+                    pushUpdateToLive('FULL_UPDATE', activeClan);
+                    showToast("Ownership transferred successfully!");
+                    document.getElementById('transferOwnershipModal').classList.remove('active');
                 }
-            }
-            let p = activeClan.roster.find(r => r.name === name);
-            if(p) { 
-                p.role = newRole; 
-                pushUpdateToLive('FULL_UPDATE', activeClan); 
-                showToast("Role updated."); 
-            }
-        }
-
-        function kickMember(e, name) {
-            e.stopPropagation();
-            if(confirm(`Kick ${name} from the clan?`)) {
-                activeClan.roster = activeClan.roster.filter(r => r.name !== name);
-                if(!activeClan.notifications) activeClan.notifications = [];
-                activeClan.notifications.push({ msg: `<b style='color:#ff4d4d'>${name}</b> was kicked by Admin.` });
-                pushUpdateToLive('FULL_UPDATE', activeClan); 
-                showToast(`${name} kicked.`);
-            }
-        }
-
-        function leaveClan() {
-            if(confirm("Are you sure you want to leave this clan?")) {
-                activeClan.roster = activeClan.roster.filter(r => String(r.name).toLowerCase() !== String(user.username).toLowerCase());
-                if(!activeClan.notifications) activeClan.notifications = [];
-                activeClan.notifications.push({ msg: `<b style='color:#ff4d4d'>${user.username}</b> has left the clan.` });
-                
-                triggerSyncIndicator();
-                
-                let cleanClan = JSON.parse(JSON.stringify(activeClan));
-                delete cleanClan.logo; delete cleanClan.banner;
-                fetch(API_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify({ action: "update_clan", clan_id: activeClan.clanId, field: "FULL_UPDATE", value: JSON.stringify(cleanClan) }) });
-                
-                showToast("You left the clan."); 
-                userLiveClans = userLiveClans.filter(c => c.clanId !== activeClan.clanId);
-                localStorage.setItem('tournyx_my_clans_cache', JSON.stringify(userLiveClans));
-                renderHub();
-                setTimeout(() => { fetchLiveClanData(true); }, 5000);
             }
         }
 
@@ -1473,6 +1523,7 @@
             }
         }
 
+        // --- BACKEND FIX FOR SYNCING CLAN DATA TO USERS SHEET ---
         function submitClanCreation(e) {
             e.preventDefault();
             const name = document.getElementById('inpCName').value; const tag = document.getElementById('inpCTag').value; const game = document.getElementById('inpCGame').value;
@@ -1501,7 +1552,7 @@
             
             returnToHub(); renderHub(); showToast("Clan Created Successfully!"); playSuccessSound();
 
-            fetch(API_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify({ action: "create_clan", username: user.username, data: JSON.stringify(newObj) }) });
+            fetch(API_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify({ action: "create_clan", username: user.username, data: JSON.stringify(newObj), email: user.email, gameName: game }) });
             setTimeout(() => { fetchLiveClanData(true); }, 5000);
         }
 
@@ -1627,6 +1678,7 @@
 
         function closeJoinModal() { document.getElementById('joinDataModal').classList.remove('active'); pendingJoinData = {}; }
 
+        // --- BACKEND FIX FOR SYNCING JOIN DATA TO USERS SHEET ---
         function processJoinRequest(e) {
             let phone = user.phone || ""; let ign = user.gameName || user.username || ""; let uid = user.uid || "";
             let playerObj = { name: user.username, role: "Player", phone: phone, gameName: ign, uid: uid, state: user.state || "N/A", city: user.city || "N/A" };
@@ -1634,8 +1686,8 @@
             document.getElementById('btnFinalJoin').innerText = "Processing..."; document.getElementById('btnFinalJoin').disabled = true;
 
             let payload = { 
-                action: "leave_and_join", username: user.username, old_clan_id: null, 
-                new_clan_id: pendingJoinData.newClanId, player_data: playerObj, is_auto: pendingJoinData.isAuto
+                action: "handle_join_request", clan_id: pendingJoinData.newClanId, player_data: playerObj, 
+                is_accept: false, is_auto: pendingJoinData.isAuto, email: user.email
             };
 
             fetch(API_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify(payload) });
@@ -1745,32 +1797,32 @@
             }
         }
 
+        // --- BACKEND FIX FOR SYNCING ACCEPTED DATA TO USERS SHEET ---
         function handleReq(encData, isAccept, cId) {
             let reqData = JSON.parse(decodeURIComponent(encData));
-            let targetClan = userLiveClans.find(c => c.clanId === cId); if(!targetClan) return;
-
-            targetClan.requests = targetClan.requests.filter(r => { let rN = typeof r === 'string' ? r : r.name; return rN !== reqData.name; });
             
-            if(isAccept) {
-                if(targetClan.roster.length >= 6) { showToast("Roster full! Cannot accept.", true); return; }
-                targetClan.roster.push({ name: reqData.name, role: 'Player', phone: reqData.phone||"", gameName: reqData.gameName||"", uid: reqData.uid||"" });
-                if(!targetClan.notifications) targetClan.notifications=[];
-                targetClan.notifications.push({msg:`<b style='color:var(--accent-green)'>${reqData.name}</b> joined the clan!`});
-                showToast(`${reqData.name} joined!`); playSuccessSound();
-            } else { 
-                let reason = prompt("Why are you rejecting this player?", "Roster is full / Requirements not met");
-                if (reason === null) return; // User clicked Cancel
-                if(!targetClan.rejectedList) targetClan.rejectedList = [];
-                targetClan.rejectedList.push({ name: reqData.name, reason: reason });
-                showToast("Request rejected and reason sent."); 
+            let reason = "";
+            if(!isAccept) {
+                reason = prompt("Why are you rejecting this player?", "Roster is full / Requirements not met");
+                if (reason === null) return;
+            }
+
+            let payload = { 
+                action: "handle_join_request", clan_id: cId, player_data: reqData, 
+                is_accept: isAccept, is_auto: false, reject_reason: reason
+            };
+            fetch(API_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify(payload) });
+
+            let targetClan = userLiveClans.find(c => c.clanId === cId);
+            if(targetClan) {
+                targetClan.requests = targetClan.requests.filter(r => r.name !== reqData.name);
+                if(isAccept) {
+                    targetClan.roster.push({ name: reqData.name, role: 'Player', phone: reqData.phone||"", gameName: reqData.gameName||"", uid: reqData.uid||"" });
+                }
+                localStorage.setItem('tournyx_my_clans_cache', JSON.stringify(userLiveClans));
             }
             
-            triggerSyncIndicator();
-            
-            let cleanClan = JSON.parse(JSON.stringify(targetClan));
-            delete cleanClan.logo; delete cleanClan.banner;
-            fetch(API_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify({ action: "update_clan", clan_id: cId, field: "FULL_UPDATE", value: JSON.stringify(cleanClan) }) });
-            
+            showToast(isAccept ? `${reqData.name} joined!` : "Request rejected.");
             renderRequests();
         }
     </script>
