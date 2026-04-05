@@ -14,6 +14,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
 
     <style>
         /* --- GLOBAL VARIABLES --- */
@@ -197,21 +198,17 @@
         .amt-debit { color: var(--accent-red); text-shadow: 0 0 10px rgba(255,77,77,0.3); }
         .txn-status { font-size: 0.7rem; color: #aaa; text-transform: uppercase; margin-top: 3px; background: rgba(0,0,0,0.5); padding: 3px 8px; border-radius: 6px; display: inline-block; font-weight:bold;}
 
-        /* --- ADD TICKETS & MODALS --- */
+        /* --- ADD TICKETS & MODALS (RAZORPAY REFRESH) --- */
         .bottom-sheet-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); z-index: 5000; display: none; align-items: flex-end; justify-content: center; backdrop-filter: blur(8px); opacity: 0; transition: 0.4s; }
         .bottom-sheet-overlay.active { display: flex; opacity: 1; }
-        .bottom-sheet { width: 100%; max-width: 800px; background: rgba(10,5,20,0.85); border-radius: 25px 25px 0 0; border-top: 1px solid var(--card-border); border-left: 1px solid rgba(255,255,255,0.05); border-right: 1px solid rgba(255,255,255,0.05); padding: 30px 20px calc(20px + env(safe-area-inset-bottom)); transform: translateY(100%); transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); max-height: 95vh; overflow-y: auto; box-shadow: 0 -10px 40px rgba(0,0,0,0.8); backdrop-filter: blur(20px);}
+        .bottom-sheet { width: 100%; max-width: 500px; background: rgba(10,5,20,0.85); border-radius: 25px 25px 0 0; border-top: 1px solid var(--card-border); border-left: 1px solid rgba(255,255,255,0.05); border-right: 1px solid rgba(255,255,255,0.05); padding: 30px 20px calc(20px + env(safe-area-inset-bottom)); transform: translateY(100%); transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); max-height: 95vh; overflow-y: auto; box-shadow: 0 -10px 40px rgba(0,0,0,0.8); backdrop-filter: blur(20px);}
         .bottom-sheet-overlay.active .bottom-sheet { transform: translateY(0); }
         
         @media (min-width: 850px) {
             .bottom-sheet-overlay { align-items: center; justify-content: center; }
             .bottom-sheet { border-radius: 25px; transform: scale(0.9); opacity: 0; transition: all 0.3s ease; max-height:85vh;}
             .bottom-sheet-overlay.active .bottom-sheet { transform: scale(1); opacity: 1; }
-            .add-money-flex { display: flex; flex-direction: row; align-items: stretch; gap: 20px; }
-            .add-money-left { flex: 1; }
-            .add-money-right { flex: 1; display: flex; flex-direction: column; justify-content: center; border-left: 1px solid rgba(255,255,255,0.08); padding-left: 20px; }
         }
-        @media (max-width: 849px) { .add-money-flex { display: flex; flex-direction: column; gap: 20px; } }
 
         .sheet-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; }
         .sheet-title { font-family: var(--font-head); font-size: 1.3rem; color: white; display: flex; align-items: center; gap: 10px; }
@@ -239,24 +236,14 @@
         .quick-amt-btn:active { background: rgba(189,0,255,0.2); border-color: var(--accent-purple); color: white; transform:scale(0.95);}
         html.theme-vip .quick-amt-btn:active { background: rgba(255,215,0,0.2); border-color: #FFD700; }
 
-        .qr-section { background: rgba(0,0,0,0.4); border: 1px dashed var(--accent-cyan); border-radius: 15px; padding: 20px; text-align: center; margin-bottom: 20px; position: relative; overflow: hidden; display:none; transition: 0.3s; box-shadow: inset 0 0 15px rgba(0,0,0,0.5);}
-        html.theme-vip .qr-section { border-color: #FFD700; }
-        .qr-section.active { display: block; animation: fadeIn 0.5s; }
-        .qr-img-box { width: 180px; height: 180px; background: white; padding: 10px; border-radius: 10px; margin: 0 auto 15px; position: relative; box-shadow: 0 0 20px rgba(0,242,255,0.3);}
-        html.theme-vip .qr-img-box { box-shadow: 0 0 20px rgba(255,215,0,0.3); }
-        .qr-img-box img { width: 100%; height: 100%; object-fit: contain; }
-        
-        .upi-copy-box { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); display: inline-flex; align-items: center; gap: 10px; padding: 8px 15px; border-radius: 20px; font-family: var(--font-body); font-size: 0.9rem; cursor: pointer; margin-bottom:10px; transition: 0.3s;}
-        .upi-copy-box:active { background: rgba(0,242,255,0.1); border-color: var(--accent-cyan); transform: scale(0.95);}
-        html.theme-vip .upi-copy-box:active { background: rgba(255,215,0,0.1); border-color: #FFD700; }
-        
         .pay-btn { width: 100%; padding: 18px; background: var(--accent-gradient); border: none; border-radius: 12px; color: white; font-family: var(--font-head); font-size: 1.1rem; font-weight: bold; text-transform: uppercase; cursor: pointer; box-shadow: 0 5px 20px rgba(189,0,255,0.4); display: flex; justify-content: center; align-items: center; gap: 10px; margin-bottom: 10px; letter-spacing: 1px; transition: 0.3s;}
         html.theme-vip .pay-btn { background: linear-gradient(135deg, #FFD700, #FF8C00); color: black; box-shadow: 0 5px 20px rgba(255,215,0,0.4); }
         .pay-btn:active { transform: scale(0.96); box-shadow: 0 2px 10px rgba(189,0,255,0.4);}
         html.theme-vip .pay-btn:active { box-shadow: 0 2px 10px rgba(255,215,0,0.4); }
         
-        .utr-input-field { width: 100%; background: rgba(0,0,0,0.4); border: 1px solid rgba(255,255,255,0.1); padding: 16px; border-radius: 12px; color: white; font-family: var(--font-body); font-size: 1.1rem; outline: none; margin-bottom: 15px; transition: 0.3s; letter-spacing: 2px; font-weight:bold; text-align:center; box-shadow: inset 0 0 10px rgba(0,0,0,0.5);}
-        .utr-input-field:focus { border-color: var(--accent-green); background: rgba(0,0,0,0.6);}
+        /* Razorpay Secure Badge */
+        .rzp-secure-badge { display: flex; align-items: center; justify-content: center; gap: 8px; color: #888; font-size: 0.8rem; margin-top: 15px; font-family: var(--font-body); }
+        .rzp-secure-badge i { color: #3395ff; font-size: 1rem; }
 
         /* FULL LEDGER MODAL */
         .ledger-modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--primary-bg); z-index: 4000; transform: translateX(100%); transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); display: flex; flex-direction: column; overflow: hidden; }
@@ -272,6 +259,10 @@
         .rcpt-title { text-align: center; color: #888; font-size: 1rem; margin-bottom: 30px; }
         .rcpt-row { display: flex; justify-content: space-between; padding: 15px 0; border-bottom: 1px dashed rgba(255,255,255,0.1); font-size: 0.95rem; }
 
+        /* TXN FAIL/SUCCESS MODALS */
+        .txn-fail-icon { font-size: 4rem; color: var(--accent-red); margin-bottom: 15px; text-shadow: 0 0 20px rgba(255,77,77,0.6); animation: shake 0.5s ease; }
+        .txn-success-icon { font-size: 4rem; color: var(--accent-green); margin-bottom: 15px; text-shadow: 0 0 20px rgba(0,255,127,0.6); }
+
         .cyber-scanner-overlay { position: fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.95); z-index:9999; display:flex; flex-direction:column; align-items:center; justify-content:center; opacity:0; pointer-events:none; transition:0.4s; backdrop-filter:blur(10px);}
         .cyber-scanner-overlay.active { opacity:1; pointer-events:all; }
         .cyber-circle { width: 100px; height: 100px; border: 3px dashed var(--accent-cyan); border-radius: 50%; animation: spin 2s linear infinite; display: flex; align-items: center; justify-content: center; position: relative; transition: 0.3s;}
@@ -281,8 +272,6 @@
         .cyber-text { font-family: var(--font-head); color: var(--accent-cyan); font-size: 1.2rem; margin-top: 20px; letter-spacing: 2px; text-transform: uppercase; text-shadow: 0 0 10px var(--accent-cyan); transition: 0.3s; text-align: center; padding: 0 20px;}
         html.theme-vip .cyber-text { color: #FFD700; text-shadow: 0 0 10px #FFD700; }
         .cyber-desc { color:#888; font-size:0.8rem; margin-top:10px; transition: 0.3s; text-align: center; padding: 0 20px;}
-        .cyber-timer { font-family: var(--font-head); color: white; font-size: 2.5rem; font-weight: bold; margin-top: 15px; text-shadow: 0 0 20px var(--accent-cyan); transition: 0.3s; }
-        html.theme-vip .cyber-timer { text-shadow: 0 0 20px #FFD700; }
         
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
         @keyframes pulse { 0%{transform:scale(0.8); opacity:0.5;} 100%{transform:scale(1.2); opacity:1;} }
@@ -449,7 +438,7 @@
         </div>
 
         <div style="text-align:center; color:#666; font-size:0.75rem; margin-top:20px; margin-bottom: 20px; display:flex; align-items:center; justify-content:center; gap:8px;">
-            <i class="fa-solid fa-lock"></i> Secured by 256-bit Encryption • Digital Ticketing
+            <i class="fa-solid fa-lock"></i> Secured by Razorpay & 256-bit Encryption
         </div>
     </div>
 
@@ -468,61 +457,63 @@
     <div class="bottom-sheet-overlay" id="addMoneyOverlay">
         <div class="bottom-sheet">
             <div class="sheet-header">
-                <div class="sheet-title"><span class="tx-icon" style="color:var(--accent-cyan); font-size:1.4rem;">TX</span> Secure Pass</div>
+                <div class="sheet-title"><span class="tx-icon" style="color:var(--accent-cyan); font-size:1.4rem;">TX</span> Buy Pass</div>
                 <i class="fa-solid fa-xmark close-sheet" onclick="closeAddMoney()"></i>
             </div>
             
-            <div class="add-money-flex">
-                <div class="add-money-left">
-                    <div style="margin-bottom: 15px;">
-                        <div style="font-size: 0.8rem; color: #aaa; text-transform: uppercase; margin-bottom:8px; font-weight:bold;">Select Game</div>
-                        <div class="game-selector" id="gameSelector">
-                            <div class="game-card active" onclick="selectGame('Free Fire', this)">
-                                <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEiJvPTY_y_XU-0Lwbnjwm7961lCDkSlQh2MtCWHunFVX6WS7WCprCtkPyB334BU_-4vGsP0NseDQf4NPBEOIxqjk7VZQqZUHpnLb4Bw-c1UeXQy2M9DzNrNdYt_aL0GEb1AlTPupC5zEjJiP3Ci0Oxk-wdg5TF5cs8_UNSe3uTT1BE884je3iXr8QlMjx8/s240/1000094210.jpg" onerror="this.src='https://tournyx.in/favicon.png'" alt="FF">
-                                <span>Free Fire</span>
-                            </div>
-                            <div class="game-card" onclick="selectGame('BGMI', this)">
-                                <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEj3MKUI87mMK4_3DltS3LQgqfrK1sESUIMMqlENdi0dPRtOFkeDbvPsTbSaCRaJOb17QZ5s9OO5dR6kFCYiCkgUCF2zBWwvGFSb3T-9Nz51XuIzMvIiOuqwcLzyzeFmn1orKbiETP4LrlaG-RidnWAAzBwUA3aL5_z62HP4_F7R02lAK_WSYdH0U_Gn7Es/s250/1000094211.jpg" onerror="this.src='https://tournyx.in/favicon.png'" alt="BGMI">
-                                <span>BGMI</span>
-                            </div>
-                        </div>
+            <div style="margin-bottom: 15px;">
+                <div style="font-size: 0.8rem; color: #aaa; text-transform: uppercase; margin-bottom:8px; font-weight:bold;">Select Game Category</div>
+                <div class="game-selector" id="gameSelector">
+                    <div class="game-card active" onclick="selectGame('Free Fire', this)">
+                        <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEiJvPTY_y_XU-0Lwbnjwm7961lCDkSlQh2MtCWHunFVX6WS7WCprCtkPyB334BU_-4vGsP0NseDQf4NPBEOIxqjk7VZQqZUHpnLb4Bw-c1UeXQy2M9DzNrNdYt_aL0GEb1AlTPupC5zEjJiP3Ci0Oxk-wdg5TF5cs8_UNSe3uTT1BE884je3iXr8QlMjx8/s240/1000094210.jpg" onerror="this.src='https://tournyx.in/favicon.png'" alt="FF">
+                        <span>Free Fire</span>
                     </div>
-
-                    <div class="amt-input-wrapper">
-                        <div class="amt-currency"><span class="tx-icon">TX</span></div>
-                        <input type="number" id="addAmtInput" class="amt-input" placeholder="No. of Pass" oninput="updateQR()">
-                    </div>
-                    
-                    <div style="font-size:0.75rem; color:#aaa; text-align:center; margin-top:-5px; margin-bottom:15px; font-weight:bold;">1 Tournyx Pass = ₹10</div>
-
-                    <div class="quick-amt-grid" id="quickAmtGrid"></div>
-                    
-                    <div id="mobilePayBtn" style="display:none;">
-                        <button class="pay-btn" onclick="openUPIApp(); triggerHaptic();">Pay via UPI App <i class="fa-solid fa-bolt"></i></button>
-                        <div style="text-align:center; margin:15px 0; color:#888; font-family:var(--font-head); font-size:0.8rem;">OR SCAN QR / SUBMIT UTR</div>
-                    </div>
-
-                    <div style="background:rgba(0,0,0,0.4); border:1px solid rgba(255,255,255,0.08); padding:20px; border-radius:15px; margin-top:20px;">
-                        <div style="font-family:var(--font-head); color:white; margin-bottom:10px; font-size:1.1rem;"><i class="fa-solid fa-shield-halved" style="color:var(--accent-cyan);"></i> Verify Purchase</div>
-                        <p style="font-size:0.8rem; color:#aaa; margin-bottom:15px;">After paying via App or QR, paste the 12-digit UTR below to securely claim your pass.</p>
-                        <input type="number" id="utrInput" placeholder="Enter 12-digit UTR" class="utr-input-field">
-                        <button class="pay-btn" style="background: transparent; border: 1px solid var(--accent-green); color: var(--accent-green); box-shadow:none; margin-bottom:15px;" onclick="submitStrictUTR(); triggerHaptic();">Verify UTR <i class="fa-solid fa-check-double"></i></button>
-                    </div>
-                </div>
-                
-                <div class="add-money-right">
-                    <div class="qr-section" id="qrContainer">
-                        <div style="font-family:var(--font-head); color:white; margin-bottom:10px;">Scan to Pay <span id="qrAmtText" style="color:var(--accent-green);"></span></div>
-                        <div class="qr-img-box">
-                            <img id="dynamicQR" src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=tournyx">
-                        </div>
-                        <div class="upi-copy-box" onclick="copyUPI()">
-                            <span id="officialUPI">86xx9292@ula</span> <i class="fa-regular fa-copy" style="color:var(--accent-cyan);"></i>
-                        </div>
-                        <div style="font-size:0.7rem; color:#ff9900;"><i class="fa-regular fa-clock"></i> Gateway Session Expires in <span id="qrTimer">05:00</span></div>
+                    <div class="game-card" onclick="selectGame('BGMI', this)">
+                        <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEj3MKUI87mMK4_3DltS3LQgqfrK1sESUIMMqlENdi0dPRtOFkeDbvPsTbSaCRaJOb17QZ5s9OO5dR6kFCYiCkgUCF2zBWwvGFSb3T-9Nz51XuIzMvIiOuqwcLzyzeFmn1orKbiETP4LrlaG-RidnWAAzBwUA3aL5_z62HP4_F7R02lAK_WSYdH0U_Gn7Es/s250/1000094211.jpg" onerror="this.src='https://tournyx.in/favicon.png'" alt="BGMI">
+                        <span>BGMI</span>
                     </div>
                 </div>
             </div>
+
+            <div class="amt-input-wrapper">
+                <div class="amt-currency"><span class="tx-icon">TX</span></div>
+                <input type="number" id="addAmtInput" class="amt-input" placeholder="Number of Passes" oninput="updateRazorpayAmount()">
+            </div>
+            
+            <div style="font-size:0.85rem; color:var(--accent-cyan); text-align:center; margin-top:-5px; margin-bottom:15px; font-weight:bold; font-family:var(--font-head);">
+                Total Amount: ₹<span id="displayTotalRs">0</span>
+            </div>
+
+            <div class="quick-amt-grid" id="quickAmtGrid"></div>
+            
+            <button class="pay-btn" onclick="triggerRazorpay(); triggerHaptic();" id="rzpSubmitBtn">
+                SECURE CHECKOUT <i class="fa-solid fa-lock"></i>
+            </button>
+            <div class="rzp-secure-badge"><i class="fa-solid fa-shield-check"></i> 100% Secure Payments by Razorpay</div>
+        </div>
+    </div>
+
+    <div class="bottom-sheet-overlay" id="txnFailedOverlay">
+        <div class="bottom-sheet" style="text-align:center;">
+            <div class="sheet-header" style="justify-content:flex-end;">
+                <i class="fa-solid fa-xmark close-sheet" onclick="document.getElementById('txnFailedOverlay').classList.remove('active')"></i>
+            </div>
+            <i class="fa-solid fa-circle-xmark txn-fail-icon"></i>
+            <h2 style="font-family: var(--font-head); font-size: 1.5rem; margin-bottom: 10px; color: white;">Payment Failed</h2>
+            <p id="txnFailReason" style="color: #aaa; font-size: 0.95rem; margin-bottom: 25px; line-height: 1.5;">The transaction was canceled or declined. No money was deducted from your account.</p>
+            <button class="pay-btn" style="background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); box-shadow: none;" onclick="document.getElementById('txnFailedOverlay').classList.remove('active'); openAddMoney();">TRY AGAIN</button>
+        </div>
+    </div>
+
+    <div class="bottom-sheet-overlay" id="txnSuccessOverlay">
+        <div class="bottom-sheet" style="text-align:center;">
+            <div class="sheet-header" style="justify-content:flex-end;">
+                <i class="fa-solid fa-xmark close-sheet" onclick="closeSuccessModal()"></i>
+            </div>
+            <i class="fa-solid fa-circle-check txn-success-icon fa-beat-fade"></i>
+            <h2 style="font-family: var(--font-head); font-size: 1.5rem; margin-bottom: 10px; color: white;">Payment Successful!</h2>
+            <p style="color: #aaa; font-size: 0.95rem; margin-bottom: 25px; line-height: 1.5;">Your payment was verified. Your Tournyx Passes have been instantly added to your wallet inventory.</p>
+            <button class="pay-btn" onclick="closeSuccessModal()">VIEW INVENTORY</button>
         </div>
     </div>
 
@@ -561,9 +552,8 @@
 
     <div class="cyber-scanner-overlay" id="cyberScanner">
         <div class="cyber-circle" id="scannerCircle"><div class="cyber-inner" id="scannerInner"></div></div>
-        <div class="cyber-text" id="scannerText">AUTHORIZING...</div>
-        <div class="cyber-desc" id="scannerDesc">Connecting to Ticket Server</div>
-        <div class="cyber-timer" id="scannerTimer" style="display:none;">20s</div>
+        <div class="cyber-text" id="scannerText">VERIFYING PAYMENT...</div>
+        <div class="cyber-desc" id="scannerDesc">Communicating with Razorpay Servers</div>
     </div>
 
     <div id="customToast">Notification</div>
@@ -597,11 +587,13 @@
             inp.addEventListener('blur', () => { if(bNav) setTimeout(() => bNav.style.bottom = '0', 100); });
         });
 
+        // ==========================================
+        // 🔑 YOUR RAZORPAY KEY (PASTE IT HERE!)
+        // ==========================================
+        const RAZORPAY_KEY = "rzp_live_SZepeOt5YOqG07"; 
+        // ==========================================
+
         const API_URL = 'https://script.google.com/macros/s/AKfycbyqqTpgaflxKJ9xH0jq7mJ_jLzcoNhas3gNo0h5gvoa_6r5Ae9NFxJAJp7ZoYNnMRKl/exec';
-        
-        const REAL_SERVER_UPIS = { 1: "8608159825@ybl", 2: "8608159825-2@ybl", 3: "8608159825@ptaxis", 4: "8608159825@fam" };
-        const MASKED_UPIS = { 1: "touurnyx@phonepe", 2: "tournyx@phonepe-2", 3: "tournyx@paytm", 4: "tournyx@fampay" };
-        let currentServer = 1;
         
         let isGuest = true;
         let currentUser = { username: "Guest Player", rupees: "0", points: "0", email: "guest@tournyx.com", avatar: "https://tournyx.in/favicon.png", role: "player", is_premium: false };
@@ -609,15 +601,12 @@
         let transactionsData = []; 
         let activeReceiptId = "";
         let activeReceiptData = null;
-        let qrTimerInterval;
-        let currentRandomPaisa = "0.00"; 
         
         // Cache DOM updates to prevent blinking
         let lastTxnHtml = "";
         let lastLedgerHtml = "";
         let lastInvHtml = "";
         
-        // 1 Pass = Rs 10
         const TICKET_PRICE = 10;
         const TICKET_OFFERS = [1, 5, 10, 20]; 
         let selectedGameName = "Free Fire"; 
@@ -669,13 +658,7 @@
             }
 
             initializeAppData();
-
-            let isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
-            if(isMobile) { document.getElementById('mobilePayBtn').style.display = 'block'; }
-            else { document.getElementById('qrContainer').classList.add('active'); setAmt(1); } 
-            
             renderQuickAmts();
-            selectServer(1);
 
             if (!isGuest) {
                 syncLiveTransactions().finally(() => { 
@@ -683,7 +666,7 @@
                     loader.style.opacity = '0';
                     setTimeout(() => loader.classList.add('hidden'), 300);
                 });
-                setInterval(() => syncLiveTransactions(), 3000); 
+                setInterval(() => syncLiveTransactions(), 4000); 
             } else {
                 updateWalletDisplay(); 
                 let loader = document.getElementById('skeletonLoader');
@@ -906,6 +889,10 @@
             }
         }
 
+        // ==========================================
+        // 💳 RAZORPAY INTEGRATION LOGIC
+        // ==========================================
+
         function renderQuickAmts() {
             const grid = document.getElementById('quickAmtGrid');
             grid.innerHTML = "";
@@ -913,83 +900,130 @@
         }
 
         function openAddMoney() { 
-            let hr = new Date().getHours();
-            if (hr >= 3 && hr < 9) { showToast("Ticket Gateway is closed. Server opens at 9:00 AM.", true); return; }
-            currentRandomPaisa = (Math.random() * 0.98 + 0.01).toFixed(2);
-            document.getElementById('addMoneyOverlay').classList.add('active'); startQRTimer(); 
+            document.getElementById('addMoneyOverlay').classList.add('active'); 
         }
         
-        function closeAddMoney() { document.getElementById('addMoneyOverlay').classList.remove('active'); document.getElementById('addAmtInput').value = ""; document.getElementById('utrInput').value = ""; clearInterval(qrTimerInterval); }
-        function setAmt(val) { document.getElementById('addAmtInput').value = val; updateQR(); }
-        
-        function selectServer(num) {
-            currentServer = num;
-            document.getElementById('officialUPI').innerText = MASKED_UPIS[currentServer];
-            updateQR();
+        function closeAddMoney() { 
+            document.getElementById('addMoneyOverlay').classList.remove('active'); 
+            document.getElementById('addAmtInput').value = ""; 
+            updateRazorpayAmount();
         }
 
-        function updateQR() {
+        function closeSuccessModal() {
+            document.getElementById('txnSuccessOverlay').classList.remove('active');
+        }
+
+        function setAmt(val) { 
+            document.getElementById('addAmtInput').value = val; 
+            updateRazorpayAmount(); 
+        }
+        
+        function updateRazorpayAmount() {
             let ticketCount = parseInt(document.getElementById('addAmtInput').value);
-            let qrBox = document.getElementById('qrContainer');
-            let qrImg = document.getElementById('dynamicQR');
-            
             if(isNaN(ticketCount) || ticketCount < 1) { 
-                if(/Android|iPhone/i.test(navigator.userAgent)) qrBox.classList.remove('active'); 
+                document.getElementById('displayTotalRs').innerText = "0";
+                return; 
+            }
+            let baseAmt = ticketCount * TICKET_PRICE;
+            document.getElementById('displayTotalRs').innerText = baseAmt; 
+        }
+
+        function triggerRazorpay() {
+            let ticketCount = parseInt(document.getElementById('addAmtInput').value);
+            if(isNaN(ticketCount) || ticketCount < 1) { 
+                triggerError('addAmtInput'); 
+                showToast("Please enter at least 1 Pass to buy.", true); 
                 return; 
             }
             
-            let baseAmt = ticketCount * TICKET_PRICE;
-            let totalAmt = (baseAmt + parseFloat(currentRandomPaisa)).toFixed(2);
+            let totalAmt = ticketCount * TICKET_PRICE;
             
-            qrBox.classList.add('active');
-            document.getElementById('qrAmtText').innerText = `Rs. ${baseAmt}`; 
-            
-            let realUpiId = REAL_SERVER_UPIS[currentServer];
-            let upiLink = `upi://pay?pa=${realUpiId}&pn=Tournyx%20Esports&am=${totalAmt}&cu=INR`;
-            qrImg.src = `https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=${encodeURIComponent(upiLink)}`;
-        }
-        
-        function startQRTimer() {
-            let time = 300; let el = document.getElementById('qrTimer'); clearInterval(qrTimerInterval);
-            qrTimerInterval = setInterval(() => { let m = Math.floor(time/60); let s = time % 60; el.innerText = `${m < 10 ? '0'+m : m}:${s < 10 ? '0'+s : s}`; if(time <= 0) { clearInterval(qrTimerInterval); closeAddMoney(); showToast("Session Expired.", true); } time--; }, 1000);
-        }
-        
-        function openUPIApp() {
-            let ticketCount = parseInt(document.getElementById('addAmtInput').value);
-            if(isNaN(ticketCount) || ticketCount < 1) { triggerError('addAmtInput'); showToast("Minimum 1 Pass Required", true); return; }
-            
-            let baseAmt = ticketCount * TICKET_PRICE;
-            let totalAmt = (baseAmt + parseFloat(currentRandomPaisa)).toFixed(2);
-            let realUpiId = REAL_SERVER_UPIS[currentServer];
-            
-            window.location.href = `upi://pay?pa=${realUpiId}&pn=Tournyx%20Esports&am=${totalAmt}&cu=INR`;
-        }
-        
-        function copyUPI() { navigator.clipboard.writeText(REAL_SERVER_UPIS[currentServer]).then(()=>showToast("UPI ID Copied!")); triggerHaptic(); }
-
-        function submitStrictUTR() {
-            let ticketCount = parseInt(document.getElementById('addAmtInput').value);
-            let utr = document.getElementById('utrInput').value.trim();
-            if(isNaN(ticketCount) || ticketCount < 1) { triggerError('addAmtInput'); showToast("Minimum 1 Pass Required", true); return; }
-            if(!/^\d{12}$/.test(utr)) { triggerError('utrInput'); showToast("UTR must be exactly 12 digits.", true); return; }
-            
-            let baseAmt = ticketCount * TICKET_PRICE;
-            
+            // Close the Add Money Modal
             closeAddMoney();
-            let scanner = document.getElementById('cyberScanner'); let sText = document.getElementById('scannerText'); let sDesc = document.getElementById('scannerDesc'); let sCircle = document.getElementById('scannerCircle'); let sInner = document.getElementById('scannerInner');
+
+            var options = {
+                "key": RAZORPAY_KEY,
+                "amount": totalAmt * 100, // Razorpay takes amount in paise (₹1 = 100 paise)
+                "currency": "INR",
+                "name": "Tournyx Esports",
+                "description": ticketCount + " " + selectedGameName + " Pass(es)",
+                "image": "https://tournyx.in/favicon.png",
+                "handler": function (response) {
+                    // PAYMENT SUCCESS CALLBACK
+                    processSuccessfulPayment(response.razorpay_payment_id, ticketCount, totalAmt);
+                },
+                "prefill": {
+                    "name": currentUser.username,
+                    "email": currentUser.email
+                },
+                "theme": {
+                    "color": document.documentElement.classList.contains('theme-vip') ? "#FFD700" : "#bd00ff"
+                },
+                "modal": {
+                    "ondismiss": function(){
+                        // PAYMENT CANCELED / DISMISSED
+                        showTransactionFailed("You cancelled the payment process.");
+                    }
+                }
+            };
             
-            scanner.classList.add('active'); sText.innerText = "AUTHORIZING..."; sDesc.innerText = "Connecting to Ticket Server..."; sCircle.style.borderColor = "var(--accent-cyan)"; sInner.style.background = "rgba(0,242,255,0.2)";
-
-            setTimeout(() => { sText.innerText = "VERIFYING PAYMENT..."; sDesc.innerText = "Checking UTR Hash..."; }, 2500);
-            setTimeout(() => { sText.innerText = "ISSUING PASSES..."; sDesc.innerText = "Generating Digital Tickets..."; sCircle.style.borderColor = "var(--accent-purple)"; sInner.style.background = "rgba(189,0,255,0.2)"; }, 5000);
-
-            setTimeout(() => {
-                scanner.classList.remove('active');
-                showToast("Pending verification. Your tickets will be updated shortly.");
-                
-                fetch(API_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify({ action: "submit_utr", email: currentUser.email, amount: baseAmt, utr: utr, gameName: selectedGameName }) });
-            }, 6500);
+            var rzp1 = new Razorpay(options);
+            
+            rzp1.on('payment.failed', function (response){
+                // PAYMENT FAILED CALLBACK
+                showTransactionFailed(response.error.description);
+            });
+            
+            rzp1.open();
         }
+
+        function showTransactionFailed(reason) {
+            let rText = reason || "The transaction was canceled or declined. No money was deducted from your account.";
+            document.getElementById('txnFailReason').innerText = rText;
+            document.getElementById('txnFailedOverlay').classList.add('active');
+            triggerHaptic();
+        }
+
+        function processSuccessfulPayment(paymentId, count, amount) {
+            // Show Cyber Scanner
+            let scanner = document.getElementById('cyberScanner'); 
+            let sText = document.getElementById('scannerText'); 
+            let sDesc = document.getElementById('scannerDesc'); 
+            
+            scanner.classList.add('active'); 
+            sText.innerText = "VERIFYING PAYMENT..."; 
+            sDesc.innerText = "Communicating with Razorpay Servers..."; 
+            
+            // Send payload to backend
+            let payload = { 
+                action: "razorpay_success", 
+                email: currentUser.email, 
+                amount: amount, 
+                payment_id: paymentId, 
+                gameName: selectedGameName 
+            };
+
+            fetch(API_URL, { 
+                method: 'POST', 
+                body: JSON.stringify(payload) 
+            })
+            .then(res => res.json())
+            .then(data => {
+                scanner.classList.remove('active');
+                if(data.status === "success") {
+                    document.getElementById('txnSuccessOverlay').classList.add('active');
+                    syncLiveTransactions(); // Force immediate sync to update UI
+                } else {
+                    showTransactionFailed("Server Error: " + data.data);
+                }
+            })
+            .catch(err => {
+                scanner.classList.remove('active');
+                showTransactionFailed("Network Error. If money was deducted, it will be refunded or credited shortly.");
+            });
+        }
+        // ==========================================
+
 
         async function syncLiveTransactions() {
             try {
