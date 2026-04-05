@@ -1,235 +1,466 @@
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" name="viewport">
-    <title>Download Tournyx - eSports App</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     
-    <link href="https://fonts.googleapis.com" rel="preconnect">
-    <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect">
-    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700;900&family=Rajdhani:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <title>Download Tournyx - eSports App (India's No. 1 Platform)</title>
+    <meta name="description" content="Experience the ultimate competitive gaming ecosystem in India. Download Tournyx, the native engine for seamless tournaments, powerful clans, and instant digital rewards.">
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700;900&family=Rajdhani:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
     <style>
         /* --- GLOBAL VARIABLES --- */
         :root {
             --primary-bg: #050511;
-            --card-bg: rgba(20, 20, 35, 0.65);
-            --card-border: rgba(255, 255, 255, 0.1);
+            --secondary-bg: #0d0a21;
+            --card-bg: rgba(20, 20, 35, 0.45);
+            --card-border: rgba(255, 255, 255, 0.08);
             --accent-cyan: #00f2ff;
             --accent-purple: #bd00ff;
             --accent-orange: #ff9900;
             --accent-green: #00ff7f;
             --accent-gradient: linear-gradient(90deg, #bd00ff, #00f2ff);
+            --accent-gradient-text: linear-gradient(135deg, #bd00ff, #00f2ff);
             --text-main: #ffffff;
             --text-muted: #a0a0b0;
             --font-head: 'Orbitron', sans-serif;
             --font-body: 'Rajdhani', sans-serif;
+            --transition-smooth: cubic-bezier(0.175, 0.885, 0.32, 1.275);
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+        *::-webkit-scrollbar { display: none !important; width: 0 !important; height: 0 !important; background: transparent !important; }
 
         body {
             background-color: var(--primary-bg);
             color: var(--text-main);
             font-family: var(--font-body);
             overflow-x: hidden;
-            padding-bottom: 20px; /* Removed the extra space since there is no bottom nav anymore */
-            padding-top: 70px;
+            overflow-y: auto;
+            width: 100%;
+            /* Critical performant parallax setup derived from video analysis */
+            perspective: 1px;
+            transform-style: preserve-3d;
+            height: 100vh;
+            padding-bottom: constant(safe-area-inset-bottom);
+            padding-bottom: env(safe-area-inset-bottom);
         }
 
-        /* --- BACKGROUND --- */
+        a { text-decoration: none; color: inherit; }
+
+        /* --- ADVANCED BACKGROUND & PARTICLES --- */
         #particles-canvas {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1;
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -20;
             background: radial-gradient(circle at 50% 50%, #1a0b2e 0%, #050511 100%);
+            pointer-events: none;
+            will-change: transform;
         }
 
-        /* --- HEADER (Browser Style) --- */
+        /* Define shared parallax layers with hardware acceleration */
+        .px-layer { will-change: transform; pointer-events: none; }
+        .px-layer-deep-bg { transform: translateZ(-3px) scale(4.01); z-index: -10; }
+        .px-layer-bg { transform: translateZ(-2px) scale(3.01); z-index: -5; }
+        .px-layer-mid { transform: translateZ(-1px) scale(2.01); z-index: 1; }
+        .px-layer-fg { transform: translateZ(0); z-index: 10; pointer-events: auto; }
+
+        /* Shared deep visuals */
+        .px-layer-deep-bg.deep-arena-bg {
+            background: url('https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEhqL-q8lE7D0b8T64Y2t5i4vW20S0n3kC-0eH2WlV9eL1D_Y9U_Y9U_Y9U/s1024/Deep_Arena_Blurred.jpg') center/cover no-repeat;
+            opacity: 0.15; filter: blur(10px); width: 100%; height: 100%; position: absolute; top:0; left:0;
+        }
+        .px-layer-bg.glow-cyber-grid {
+            background-image: linear-gradient(0deg, transparent 24%, var(--secondary-bg) 25%, var(--secondary-bg) 26%, transparent 27%, transparent 74%, var(--secondary-bg) 75%, var(--secondary-bg) 76%, transparent 77%, transparent), linear-gradient(90deg, transparent 24%, var(--secondary-bg) 25%, var(--secondary-bg) 26%, transparent 27%, transparent 74%, var(--secondary-bg) 75%, var(--secondary-bg) 76%, transparent 77%, transparent);
+            background-size: 50px 50px; opacity: 0.3; width: 100%; height: 100%; position: absolute; top:0; left:0;
+        }
+
+        /* --- HEADER (Clean Desktop Style) --- */
         .top-header {
-            position: fixed; top: 0; left: 0; width: 100%; padding: 15px 20px;
-            background: rgba(5, 5, 17, 0.95); backdrop-filter: blur(10px);
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-            display: flex; align-items: center; justify-content: center; /* Centered for browser view */
-            z-index: 2000;
+            position: fixed; top: 0; left: 0; width: 100%; padding: calc(15px + env(safe-area-inset-top)) 20px 15px;
+            background: rgba(5, 5, 17, 0.85); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--card-border);
+            display: flex; align-items: center; justify-content: space-between;
+            z-index: 3000;
         }
-        .app-title {
-            font-family: var(--font-head); font-size: 1.5rem; font-weight: 900; letter-spacing: 2px;
-            background: linear-gradient(90deg, #fff, var(--accent-cyan));
+        .app-title-header {
+            font-family: var(--font-head); font-size: 1.6rem; font-weight: 900; letter-spacing: 2px;
+            background: var(--accent-gradient-text);
             -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-            display: flex; align-items: center; gap: 10px;
+            display: flex; align-items: center; gap: 8px; filter: drop-shadow(0 0 10px rgba(0, 242, 255, 0.4));
         }
+        .desktop-nav { display: none; gap: 20px; align-items: center; }
+        .desktop-nav a { color: var(--text-muted); font-family: var(--font-head); font-size: 0.9rem; text-transform: uppercase; font-weight: bold; transition: 0.3s; }
+        .desktop-nav a:hover, .desktop-nav a.active { color: white; filter: drop-shadow(0 0 5px rgba(255, 255, 255, 0.6)); }
 
-        /* --- HERO & APP ICON --- */
-        .download-hero { text-align: center; padding: 30px 20px 20px; }
+        @media (min-width: 850px) { .desktop-nav { display: flex; } .top-header { padding: 15px calc(20px + (100% - 800px) / 2); } }
+
+        /* --- HERO & PARALLAX SECTIONS --- */
+        .dl-section {
+            width: 100%; position: relative; display: flex; align-items: center; justify-content: center;
+            overflow: hidden; padding: 20px; transform-style: preserve-3d;
+        }
         
+        /* Section 1: Hero Parallax (Deep Background + Midground Phones + Foreground Title) */
+        .section-hero {
+            height: auto; min-height: 85vh; text-align: center;
+            padding: calc(75px + env(safe-area-inset-top) + 20px) 20px 30px;
+        }
+        .hero-content-wrapper { display: flex; flex-direction: column; align-items: center; justify-content: center; }
+
         .app-icon-container {
-            width: 110px; height: 110px; margin: 0 auto 20px;
-            border-radius: 25px; display: flex; align-items: center; justify-content: center;
-            box-shadow: 0 10px 30px rgba(0, 242, 255, 0.3); border: 2px solid rgba(255,255,255,0.2);
+            width: 120px; height: 120px; margin: 0 auto 20px;
+            border-radius: 28px; display: flex; align-items: center; justify-content: center;
+            box-shadow: 0 10px 30px rgba(0, 242, 255, 0.3), 0 0 15px rgba(189, 0, 255, 0.2); 
+            border: 2px solid rgba(255,255,255,0.15);
             position: relative; overflow: hidden; background: #1a1a2e;
+            transform: translateZ(0); transition: 0.3s var(--transition-smooth);
         }
-        
-        /* The custom image logo */
-        .app-icon-container img {
-            width: 100%; height: 100%; object-fit: cover;
-        }
+        .app-icon-container:hover { transform: translateY(-5px) scale(1.05); }
+        .app-icon-container img { width: 100%; height: 100%; object-fit: cover; }
 
-        .download-hero h1 { font-family: var(--font-head); font-size: 1.8rem; margin-bottom: 5px; letter-spacing: 1px; }
-        .version-tag { 
-            display: inline-block; background: rgba(0, 242, 255, 0.1); border: 1px solid var(--accent-cyan);
-            color: var(--accent-cyan); font-family: var(--font-head); font-size: 0.75rem;
-            padding: 3px 10px; border-radius: 12px; margin-bottom: 15px; font-weight: 700;
+        .dl-hero-info h1 {
+            font-family: var(--font-head); font-size: clamp(2rem, 8vw, 3.2rem); line-height: 1; margin-bottom: 8px;
+            font-weight: 900; text-transform: uppercase; letter-spacing: -2px;
+            background: linear-gradient(135deg, #fff 0%, #aaa 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+            filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.2));
         }
-        .download-hero p { font-size: 0.95rem; color: var(--text-muted); max-width: 350px; margin: 0 auto 25px; line-height: 1.4; }
+        .dl-hero-info h2 { font-family: var(--font-head); font-size: 1.1rem; color: #aaa; margin-bottom: 15px; font-weight:bold;}
+        
+        .version-tag { 
+            display: inline-block; background: rgba(0, 242, 255, 0.05); border: 1px solid var(--card-border);
+            color: var(--accent-cyan); font-family: var(--font-head); font-size: 0.8rem;
+            padding: 4px 12px; border-radius: 14px; margin-bottom: 20px; font-weight: 700; letter-spacing: 1px;
+            box-shadow: inset 0 0 10px rgba(0,242,255,0.2);
+        }
+        .platform-intro-desc { font-size: 1.1rem; color: var(--text-muted); max-width: 500px; margin: 0 auto 30px; line-height: 1.4; }
+
+        /* Hero Midground: Floating tilted phones derived from video inspiration */
+        .midground-planes { display: none; width: 100%; max-width: 800px; height: 300px; margin-top: -100px; transform-style: preserve-3d; }
+        @media (min-width: 750px) { .midground-planes { display: flex; align-items: center; justify-content: center; gap: 30px; margin-top: 0; height: 400px; } }
+
+        .dl-plane-3d {
+            width: 180px; height: 320px; background: rgba(0,0,0,0.7); border: 1px solid var(--card-border);
+            border-radius: 18px; box-shadow: 0 10px 30px rgba(0,0,0,0.8);
+            position: relative; overflow: hidden; transform: rotateX(15deg) rotateY(10deg) translateZ(0); 
+            transition: 0.5s ease; cursor: pointer; display: none;
+        }
+        @media (min-width: 750px) { .dl-plane-3d { display: block; } }
+        .dl-plane-3d.plane-active { border-color: var(--accent-cyan); box-shadow: 0 10px 40px rgba(0, 242, 255, 0.3); }
+        .dl-plane-3d:hover { transform: rotateX(10deg) rotateY(5deg) scale(1.05); border-color: var(--accent-purple); box-shadow: 0 10px 40px rgba(189, 0, 255, 0.3); }
+
+        .dl-plane-3d img { width: 100%; height: 100%; object-fit: cover; }
+        .phone-frame-img { position: absolute; top:0; left:0; width:100%; height:100%; z-index: 2; pointer-events: none; opacity: 0.8;}
 
         /* --- DOWNLOAD BUTTONS --- */
-        .btn-container { display: flex; flex-direction: column; gap: 15px; max-width: 400px; margin: 0 auto 30px; padding: 0 20px; }
+        .btn-container-hero { 
+            display: flex; flex-direction: column; gap: 15px; width: 100%; max-width: 400px; 
+            margin: 0 auto 10px; padding: 0 20px; transform: translateZ(0); position: relative; z-index: 20; 
+        }
 
         .dl-btn {
             display: flex; align-items: center; justify-content: center; gap: 15px;
-            width: 100%; padding: 16px; border-radius: 16px; text-decoration: none;
-            font-family: var(--font-head); transition: transform 0.2s, box-shadow 0.2s;
+            width: 100%; padding: 18px; border-radius: 18px; text-decoration: none;
+            font-family: var(--font-head); transition: transform 0.2s var(--transition-smooth), box-shadow 0.3s;
             position: relative; overflow: hidden;
         }
-        .dl-btn:active { transform: scale(0.98); }
+        .dl-btn:active { transform: scale(0.97); }
 
-        .dl-icon { font-size: 2rem; }
+        .dl-icon { font-size: 2.2rem; filter: drop-shadow(0 0 5px rgba(255, 255, 255, 0.4)); }
         .dl-text-stack { display: flex; flex-direction: column; align-items: flex-start; }
-        .dl-small { font-family: var(--font-body); font-size: 0.75rem; text-transform: uppercase; letter-spacing: 1px; opacity: 0.9; }
-        .dl-large { font-size: 1.2rem; font-weight: 700; letter-spacing: 1px; }
+        .dl-small { font-family: var(--font-body); font-size: 0.8rem; text-transform: uppercase; letter-spacing: 1px; opacity: 0.95; }
+        .dl-large { font-size: 1.3rem; font-weight: bold; letter-spacing: 1px; }
 
-        /* Android Button (Primary) */
+        /* Android Button (Primary) with Pulsing background effect inspired by video end-CTA */
         .btn-android {
-            background: linear-gradient(90deg, #00b050, #00ff7f); color: #000;
-            box-shadow: 0 10px 25px rgba(0, 255, 127, 0.3); border: none;
+            background: linear-gradient(90deg, #00b050 0%, #00ff7f 100%); color: #000;
+            box-shadow: 0 10px 30px rgba(0, 255, 127, 0.4); border: none;
         }
-        .btn-android .dl-icon { color: #000; }
+        .btn-android .dl-icon { color: #000; filter: drop-shadow(0 0 5px rgba(0, 0, 0, 0.2)); }
+        .btn-android::after {
+            content: ''; position: absolute; top:0; left:-100%; width: 200%; height: 100%;
+            background: linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.2) 50%, transparent 100%);
+            transform: skewX(-20deg); animation: buttonPulse 3s infinite linear;
+        }
+        @keyframes buttonPulse { 0% { left: -100%; } 100% { left: 100%; } }
+        .btn-android:hover { box-shadow: 0 10px 40px rgba(0, 255, 127, 0.6); }
 
         /* iOS & PC Buttons (Secondary / Disabled) */
         .btn-secondary {
-            background: rgba(255,255,255,0.05); border: 1px solid var(--card-border);
-            color: #888; cursor: not-allowed;
+            background: rgba(255,255,255,0.03); border: 1px solid var(--card-border);
+            color: #777; cursor: not-allowed;
         }
-        .btn-secondary .dl-small { color: var(--accent-orange); font-weight: bold; }
+        .btn-secondary .dl-small { color: var(--accent-orange); font-weight: 800; opacity: 1; }
+        .btn-secondary:hover { background: rgba(255,255,255,0.05); }
 
-        /* --- FEATURES GRID --- */
-        .features-section { padding: 10px 20px 30px; max-width: 600px; margin: 0 auto; }
-        .section-title { font-family: var(--font-head); font-size: 1.1rem; text-align: center; margin-bottom: 20px; color: white; letter-spacing: 1px; }
+        /* --- SCREENSHOTS & FEATURE BLOCKS --- */
+        .showcase-wrapper { width: 100%; max-width: 800px; margin: 0 auto; display: flex; flex-direction: column; gap: 40px; padding: 20px 0; }
         
-        .feature-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+        .showcase-block-px {
+            position: relative; transform-style: preserve-3d; display: grid; gap: 20px; align-items: center; justify-content: center;
+        }
+        @media (min-width: 750px) { .showcase-block-px { grid-template-columns: 1fr 1.2fr; gap: 40px; } }
+
+        /* Define text layer (Fg) and phone layer (Bg) */
+        .px-element-text { transform: translateZ(0); pointer-events: auto; }
+        .px-element-phones { 
+            transform: translateZ(-1px) scale(2.01); filter: drop-shadow(0 5px 20px rgba(0,0,0,0.5));
+            pointer-events: none; 
+            margin-bottom: -50px; margin-top: -50px;
+        }
+        @media (min-width: 750px) { .px-element-phones { margin-bottom: 0; margin-top: 0; } }
+
+        /* Correct layer stacking for even/odd blocks */
+        .showcase-block-px.block-even .px-element-text { order: 1; }
+        .showcase-block-px.block-even .px-element-phones { order: 2; }
+        .showcase-block-px.block-odd .px-element-text { order: 2; }
+        .showcase-block-px.block-odd .px-element-phones { order: 1; }
+
+        .f-showcase-text { max-width: 400px; margin: 0 auto; text-align: center; }
+        @media (min-width: 750px) { .f-showcase-text { text-align: left; max-width: auto; margin: 0; } }
+        .f-title-showcase { 
+            font-family: var(--font-head); font-size: 1.2rem; color: white; margin-bottom: 10px; 
+            text-transform: uppercase; font-weight: 900; letter-spacing: -1px; display: flex; align-items: center; gap: 8px;
+        }
+        .f-title-showcase i { color: var(--accent-purple); font-size: 1.4rem;}
+        .f-desc-showcase { font-size: 0.95rem; color: var(--text-muted); line-height: 1.4; }
+
+        .f-phones-wrapper { display: flex; gap: 15px; width: 100%; max-width: 600px; margin: 0 auto; padding-right: 5px; }
+        @media (min-width: 750px) { .f-phones-wrapper { padding-right: 0; margin: 0; } }
+        .phone-3d-showcase { 
+            flex: 1; border: 1px solid var(--card-border); border-radius: 12px; overflow: hidden; position: relative;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.6); transform: rotateX(5deg) rotateY(5deg);
+        }
+        .phone-3d-showcase img { width: 100%; height: 100%; object-fit: cover; }
+        .phone-frame-showcase { position: absolute; top:0; left:0; width:100%; height:100%; z-index: 2; pointer-events: none; opacity: 0.6;}
+
+        /* --- PREVIEW FEATURES SECTION --- */
+        .features-section { padding: 40px 20px; }
+        .features-wrapper { width: 100%; max-width: 600px; margin: 0 auto; display: flex; flex-direction: column; gap: 30px; }
+        .features-title-header { font-family: var(--font-head); font-size: 1.4rem; color: white; margin-bottom: 25px; text-align: center; font-weight: bold; letter-spacing: 1px;}
         
-        .f-card {
+        .f-card-px {
+            transform-style: preserve-3d;
             background: var(--card-bg); border: 1px solid var(--card-border);
-            border-radius: 16px; padding: 15px; text-align: center;
-            backdrop-filter: blur(10px);
+            border-radius: 20px; padding: 25px; display: flex; align-items: center; gap: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.4); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+            transition: 0.3s;
         }
-        .f-icon { font-size: 1.8rem; margin-bottom: 10px; background: var(--accent-gradient); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-        .f-title { font-family: var(--font-head); font-size: 0.9rem; color: white; margin-bottom: 5px; }
-        .f-desc { font-size: 0.75rem; color: #aaa; line-height: 1.3; }
+        .f-card-px:hover { border-color: var(--accent-cyan); box-shadow: 0 10px 40px rgba(0, 242, 255, 0.3); transform: translateY(-5px); }
+        .f-icon-feature { 
+            font-size: 2.8rem; background: var(--accent-gradient-text); -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+            width: 70px; height: 70px; display: flex; align-items: center; justify-content: center; filter: drop-shadow(0 0 10px rgba(189, 0, 255, 0.4));
+        }
+        .f-card-px .f-title { font-family: var(--font-head); font-size: 1rem; color: white; margin-bottom: 5px; font-weight: bold; }
+        .f-card-px .f-desc { font-size: 0.85rem; color: #aaa; line-height: 1.4; }
 
-        /* Full width card for the last feature */
-        .f-card-full { grid-column: span 2; display: flex; align-items: center; gap: 15px; text-align: left; padding: 15px 20px; }
-        .f-card-full .f-icon { margin-bottom: 0; font-size: 2.2rem; }
+        /* Expanded description and final CTA for platform, India focus, etc. */
+        .platform-expanded-desc { background: transparent; border:none; box-shadow:none; text-align:center; padding: 20px 0; margin-top: 20px;}
+        .f-medal-feature-icon { font-size: 3.5rem; background: var(--accent-gradient-text); -webkit-background-clip: text; -webkit-text-fill-color: transparent; filter: drop-shadow(0 0 10px rgba(189, 0, 255, 0.4)); margin-bottom: 20px;}
+        .f-platform-title { font-family: var(--font-head); font-size: 1.3rem; color: white; margin-bottom: 15px; font-weight: 900;}
+        .f-platform-expanded-text { font-size: 1rem; color: var(--text-muted); line-height: 1.5; max-width: 500px; margin: 0 auto 30px;}
 
         /* --- FOOTER CREDITS --- */
         .footer {
-            text-align: center; padding: 20px; margin-top: 10px;
-            border-top: 1px solid rgba(255,255,255,0.05);
+            width: 100%; max-width: 800px; margin: 0 auto;
+            text-align: center; padding: 30px 20px;
+            border-top: 1px solid var(--card-border);
         }
         .footer-logo {
-            font-family: var(--font-head); font-size: 1.2rem; letter-spacing: 2px;
-            color: white; margin-bottom: 5px; display: inline-flex; align-items: center; gap: 8px;
+            font-family: var(--font-head); font-size: 1.3rem; letter-spacing: 2px;
+            color: white; margin-bottom: 8px; display: inline-flex; align-items: center; gap: 8px;
+            filter: drop-shadow(0 0 8px rgba(0, 242, 255, 0.6));
         }
-        .footer-text { font-size: 0.8rem; color: #666; }
+        .footer-text { font-size: 0.85rem; color: #666; font-weight: 500; }
+        .footer-built { font-weight: bold; color: #aaa; text-transform: uppercase; font-size: 0.75rem;}
+
+        /* Perfect scrolling area for content */
+        .scrolling-content-px {
+            width: 100%; height: auto; position: relative; transform-style: preserve-3d;
+            padding-bottom: 10px;
+        }
+
     </style>
 </head>
 <body>
 
     <canvas id="particles-canvas"></canvas>
 
-    <header class="top-header">
-        <div class="app-title"><i class="fa-solid fa-bolt" style="color: var(--accent-orange);"></i> TOURNYX</div>
+    <header class="top-header px-element-fg">
+        <a href="index.html" class="app-title-header"><i class="fa-solid fa-bolt" style="color: var(--accent-orange);"></i> TOURNYX</a>
+        <div class="desktop-nav">
+            <a href="index.html">Home</a>
+            <a href="explore.html">Explore</a>
+            <a href="matches.html">Matches</a>
+            <a href="tickets.html">Tickets</a>
+            <a href="redeem.html">Redeem</a>
+            <a href="profile.html">Profile</a>
+        </div>
+        <div class="header-actions">
+            </div>
     </header>
 
-    <section class="download-hero">
-        <div class="app-icon-container">
-            <img alt="Tournyx Logo" src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEipVmqyUEA22VpntZdPCHuXoO_Rjco_cRaNl5CyFa-eehdtgXnHe6JoD8a5svxJRJYZfv_yXwww10T2cL2PHTiXLK-J-nWC1swmMs5RDxGVM8FBSlJORaRiX4YiD8gL8SyM4X1tRyQn_v8MsqQvbU4uEyHEU0qaySP1STWHaBEYuWKyF3-6QovSqJR-8xU/s1024/1000093705.png" />
-        </div>
-
-        <h1>TOURNYX ESPORTS</h1>
-        <div class="version-tag">Version 12.0 (Stable)</div>
-        <p>Experience the ultimate competitive gaming platform. Play tournaments, complete offers, and earn rewards instantly.</p>
-    </section>
-
-    <div class="btn-container">
-        <a class="dl-btn btn-android" download="Tournyx_v12.apk" href="https://tournyx.in/Tournyx v2.3.10.apk">
-            <i class="fa-brands fa-android dl-icon"></i>
-            <div class="dl-text-stack">
-                <span class="dl-small">Download APK For</span>
-                <span class="dl-large">ANDROID</span>
-            </div>
-        </a>
-
-        <a class="dl-btn btn-secondary" href="javascript:void(0)" onclick="alert('iOS Version is currently in development. Stay tuned!')">
-            <i class="fa-brands fa-apple dl-icon"></i>
-            <div class="dl-text-stack">
-                <span class="dl-small">Coming Soon</span>
-                <span class="dl-large">APP STORE</span>
-            </div>
-        </a>
-
-        <a class="dl-btn btn-secondary" href="javascript:void(0)" onclick="alert('Web/PC Version is currently in development.')">
-            <i class="fa-brands fa-windows dl-icon"></i>
-            <div class="dl-text-stack">
-                <span class="dl-small">Coming Soon</span>
-                <span class="dl-large">PC &amp; MAC</span>
-            </div>
-        </a>
-    </div>
-
-    <section class="features-section">
-        <h3 class="section-title">WHY DOWNLOAD TOURNYX?</h3>
+    <div class="scrolling-content-px">
         
-        <div class="feature-grid">
-            <div class="f-card">
-                <i class="fa-solid fa-shield-halved f-icon"></i>
-                <div class="f-title">100% Secure</div>
-                <div class="f-desc">Advanced anti-cheat and secure wallets.</div>
+        <div class="px-layer-deep-bg deep-arena-bg"></div>
+        <div class="px-layer-bg glow-cyber-grid"></div>
+        <section class="dl-section section-hero">
+            
+            <div class="px-layer-mid midground-planes">
+                <div class="dl-plane-3d" style="transform: rotateX(15deg) rotateY(15deg) translateZ(0);"><img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEh_m4W9qA4T1O_M7q2V6E_Iq7-g9M1Q-Y1Y-Y1Y-Y1Y-Y1Y-Y1Y-Y1Y/s1024/Screenshot_Profile.png" alt="Profile"><img src="https://i.ibb.co/phone-frame.png" class="phone-frame-img" alt="frame"></div>
+                <div class="dl-plane-3d plane-active" style="transform: rotateX(15deg) rotateY(0deg) translateZ(0);"><img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEi_n4W9qA4T1O_M7q2V6E_Iq7-g9M1Q-Y1Y-Y1Y-Y1Y-Y1Y-Y1Y-Y1Y-Y1Y/s1024/Screenshot_Matches.png" alt="Matches"><img src="https://i.ibb.co/phone-frame.png" class="phone-frame-img" alt="frame"></div>
+                <div class="dl-plane-3d" style="transform: rotateX(15deg) rotateY(-15deg) translateZ(0);"><img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEj_o4W9qA4T1O_M7q2V6E_Iq7-g9M1Q-Y1Y-Y1Y-Y1Y-Y1Y-Y1Y-Y1Y-Y1Y/s1024/Screenshot_Explore.png" alt="Explore"><img src="https://i.ibb.co/phone-frame.png" class="phone-frame-img" alt="frame"></div>
             </div>
             
-            <div class="f-card">
-                <i class="fa-solid fa-bolt-lightning f-icon"></i>
-                <div class="f-title">Zero Lag</div>
-                <div class="f-desc">Native app performance for smooth browsing.</div>
-            </div>
+            <div class="px-layer-fg hero-content-wrapper">
+                <div class="app-icon-container">
+                    <img alt="Tournyx Logo" src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEipVmqyUEA22VpntZdPCHuXoO_Rjco_cRaNl5CyFa-eehdtgXnHe6JoD8a5svxJRJYZfv_yXwww10T2cL2PHTiXLK-J-nWC1swmMs5RDxGVM8FBSlJORaRiX4YiD8gL8SyM4X1tRyQn_v8MsqQvbU4uEyHEU0qaySP1STWHaBEYuWKyF3-6QovSqJR-8xU/s1024/1000093705.png" />
+                </div>
 
-            <div class="f-card-full">
-                <i class="fa-solid fa-bell f-icon"></i>
-                <div>
-                    <div class="f-title">Instant Room Alerts</div>
-                    <div class="f-desc">Get push notifications the second Room IDs and Passwords are dropped so you never miss a match!</div>
+                <div class="dl-hero-info">
+                    <h1>INDIA'S #1 ESPORTS PLATFORM</h1>
+                    <h2>TOURNYX ESPORTS</h2>
+                    <div class="version-tag">Version 12.0 (Stable)</div>
+                    <p class="platform-intro-desc">Experience the ultimate competitive gaming ecosystem. From amateur custom matches to India's grandest stages, Tournyx is your **native engine** for seamless tournaments, powerful clans, and instant digital rewards.</p>
+                </div>
+
+                <div class="btn-container-hero">
+                    <a class="dl-btn btn-android" download="Tournyx_v12.apk" href="https://tournyx.in/Tournyx v2.3.10.apk">
+                        <i class="fa-brands fa-android dl-icon"></i>
+                        <div class="dl-text-stack">
+                            <span class="dl-small">DOWNLOAD APK FOR</span>
+                            <span class="dl-large">ANDROID</span>
+                        </div>
+                    </a>
+
+                    <a class="dl-btn btn-secondary" href="javascript:void(0)" onclick="alert('iOS Version is currently in development. Stay tuned!')">
+                        <i class="fa-brands fa-apple dl-icon"></i>
+                        <div class="dl-text-stack">
+                            <span class="dl-small">COMING SOON</span>
+                            <span class="dl-large">APP STORE</span>
+                        </div>
+                    </a>
+
+                    <a class="dl-btn btn-secondary" href="javascript:void(0)" onclick="alert('Web/PC Version is currently in development.')">
+                        <i class="fa-brands fa-windows dl-icon"></i>
+                        <div class="dl-text-stack">
+                            <span class="dl-small">COMING SOON</span>
+                            <span class="dl-large">PC &amp; MAC</span>
+                        </div>
+                    </a>
                 </div>
             </div>
-        </div>
-    </section>
+        </section>
 
-    <footer class="footer">
-        <div class="footer-logo"><i class="fa-solid fa-bolt" style="color: var(--accent-cyan);"></i> TOURNYX</div>
-        <div class="footer-text">Built for Gamers, By Gamers.</div>
-        <div class="footer-text" style="font-size: 0.7rem; margin-top: 10px;">© 2026 Tournyx eSports. All Rights Reserved.</div>
-    </footer>
+        <section class="scrolling-content-px" style="background:var(--secondary-bg); padding:40px 20px;">
+            <div class="showcase-wrapper">
+                
+                <div class="showcase-block-px block-even">
+                    <div class="f-phones-wrapper px-element-phones">
+                        <div class="phone-3d-showcase"><img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEh_m4W9qA4T1O_M7q2V6E_Iq7-g9M1Q-Y1Y-Y1Y-Y1Y-Y1Y-Y1Y-Y1Y-Y1Y/s1024/Screenshot_Profile.png" alt="Profile"><img src="https://i.ibb.co/phone-frame.png" class="phone-frame-showcase" alt="frame"></div>
+                        <div class="phone-3d-showcase"><img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEh_l4W9qA4T1O_M7q2V6E_Iq7-g9M1Q-Y1Y-Y1Y-Y1Y-Y1Y-Y1Y-Y1Y-Y1Y-Y1Y/s1024/Screenshot_Wallet.png" alt="Wallet"><img src="https://i.ibb.co/phone-frame.png" class="phone-frame-showcase" alt="frame"></div>
+                    </div>
+                    <div class="f-showcase-text px-element-text animate-slide-right">
+                        <div class="f-title-showcase"><i class="fa-solid fa-user-tie"></i> YOUR PRO PROFILE</div>
+                        <div class="f-desc-showcase">Manage your gaming profile, track **wallet balance (Rupees & Points)**, and view secure transaction history. Join powerful gaming clans or become a professional organizer.</div>
+                    </div>
+                </div>
 
-    <script>
-        // --- Particles Animation ---
+                <div class="showcase-block-px block-odd">
+                    <div class="f-showcase-text px-element-text animate-slide-left">
+                        <div class="f-title-showcase"><i class="fa-solid fa-trophy"></i> TOURNAMENT HUB</div>
+                        <div class="f-desc-showcase">Explore a live hub of diverse competitive matches with detailed **prize pools and brackets**. Find open registration, analyze real-time statistics, and register single-handedly or **host your own custom event** for titles like BGMI and Free Fire.</div>
+                    </div>
+                    <div class="f-phones-wrapper px-element-phones">
+                        <div class="phone-3d-showcase"><img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEi_n4W9qA4T1O_M7q2V6E_Iq7-g9M1Q-Y1Y-Y1Y-Y1Y-Y1Y-Y1Y-Y1Y-Y1Y/s1024/Screenshot_Matches.png" alt="Matches Hub"><img src="https://i.ibb.co/phone-frame.png" class="phone-frame-showcase" alt="frame"></div>
+                        <div class="phone-3d-showcase"><img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEi_p4W9qA4T1O_M7q2V6E_Iq7-g9M1Q-Y1Y-Y1Y-Y1Y-Y1Y-Y1Y-Y1Y-Y1Y-Y1Y/s1024/Screenshot_MatchesDetail.png" alt="Match Details"><img src="https://i.ibb.co/phone-frame.png" class="phone-frame-showcase" alt="frame"></div>
+                        <div class="phone-3d-showcase"><img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEj_r4W9qA4T1O_M7q2V6E_Iq7-g9M1Q-Y1Y-Y1Y-Y1Y-Y1Y-Y1Y-Y1Y-Y1Y-Y1Y/s1024/Screenshot_MatchRegistration.png" alt="Match Registration"><img src="https://i.ibb.co/phone-frame.png" class="phone-frame-showcase" alt="frame"></div>
+                    </div>
+                </div>
+
+                <div class="showcase-block-px block-even">
+                    <div class="f-phones-wrapper px-element-phones">
+                        <div class="phone-3d-showcase"><img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEj_o4W9qA4T1O_M7q2V6E_Iq7-g9M1Q-Y1Y-Y1Y-Y1Y-Y1Y-Y1Y-Y1Y-Y1Y-Y1Y/s1024/Screenshot_Explore.png" alt="Explore Ecosystem"><img src="https://i.ibb.co/phone-frame.png" class="phone-frame-showcase" alt="frame"></div>
+                        <div class="phone-3d-showcase"><img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEj_q4W9qA4T1O_M7q2V6E_Iq7-g9M1Q-Y1Y-Y1Y-Y1Y-Y1Y-Y1Y-Y1Y-Y1Y-Y1Y/s1024/Screenshot_ExploreSpecial.png" alt="Explore Special"><img src="https://i.ibb.co/phone-frame.png" class="phone-frame-showcase" alt="frame"></div>
+                        <div class="phone-3d-showcase"><img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEj_s4W9qA4T1O_M7q2V6E_Iq7-g9M1Q-Y1Y-Y1Y-Y1Y-Y1Y-Y1Y-Y1Y-Y1Y-Y1Y/s1024/Screenshot_ExploreLeaderboards.png" alt="Global Leaderboards"><img src="https://i.ibb.co/phone-frame.png" class="phone-frame-showcase" alt="frame"></div>
+                    </div>
+                    <div class="f-showcase-text px-element-text animate-slide-right">
+                        <div class="f-title-showcase"><i class="fa-solid fa-gamepad"></i> GLOBAL ECOSYSTEM</div>
+                        <div class="f-desc-showcase">Discover a premium esports ecosystem. Participate in **special community events**, track global leaderboards across diverse tournament types, and access exclusive content. We are redefining esports management from the grassroots up.</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="scrolling-content-px features-section">
+            <div class="features-wrapper">
+                <h3 class="features-title-header px-element-fg">WHY DOWNLOAD TOURNYX?</h3>
+                
+                <div class="f-card-px px-layer-mid" style="animation-delay: 0s;">
+                    <div class="f-icon-feature"><i class="fa-solid fa-shield-halved"></i></div>
+                    <div>
+                        <div class="f-title">100% SECURE ENGINE</div>
+                        <div class="f-desc">Utilize advanced **anti-cheat** systems and manage your funds with an **encrypted digital wallet**. Security is our number one priority.</div>
+                    </div>
+                </div>
+                
+                <div class="f-card-px px-layer-mid" style="animation-delay: 0.1s;">
+                    <div class="f-icon-feature"><i class="fa-solid fa-bolt-lightning"></i></div>
+                    <div>
+                        <div class="f-title">NATIVE PERFORMANCE (ZERO LAG)</div>
+                        <div class="f-desc">Our platform is a **native engine**, not a web wrapper. Experience buttery smooth browsing, zero lag, and instant loading on any device.</div>
+                    </div>
+                </div>
+
+                <div class="f-card-px px-layer-mid Platform Description Block" style="animation-delay: 0.2s;">
+                    <div class="f-icon-feature"><i class="fa-solid fa-bell"></i></div>
+                    <div>
+                        <div class="f-title">INSTANT ROOM ALERTS</div>
+                        <div class="f-desc">Receive real-time **push notifications for Room IDs & Passwords** the second they are dropped. Never miss a critical match or registration window.</div>
+                    </div>
+                </div>
+                
+                <div class="f-card-px platform-expanded-desc px-element-fg">
+                    <div class="f-medal-feature-icon"><i class="fa-solid fa-medal"></i></div>
+                    <div>
+                        <div class="f-platform-title">INDIA'S NATIVE ESPORTS HOSTING ENGINE</div>
+                        <div class="f-desc-concise f-platform-expanded-text">Built specifically for the Indian gaming community, Tournyx is a complete native platform. Effortlessly **host tournaments, create custom matches, manage diverse bracket styles, and utilize live bracket tracking** across titles like BGMI and Free Fire. We are redefining esports, grassroots to grand finals.</div>
+                    </div>
+                </div>
+                
+                <div class="px-element-fg">
+                    <a class="dl-btn btn-android" download="Tournyx_v12.apk" href="https://tournyx.in/Tournyx v2.3.10.apk" style="max-width: 400px; margin: 0 auto;">
+                        <i class="fa-brands fa-android dl-icon"></i>
+                        <div class="dl-text-stack">
+                            <span class="dl-large">GET NATIVE APK</span>
+                            <span class="dl-small">INSTALL INSTANTLY</span>
+                        </div>
+                    </a>
+                </div>
+            </div>
+        </section>
+
+        <footer class="footer px-element-fgScrolledPast">
+            <div class="footer-logo"><i class="fa-solid fa-bolt" style="color: var(--accent-cyan);"></i> TOURNYX</div>
+            <div class="footer-built">made with 🔥 by gamers for gamers worldwide</div>
+            <div class="footer-text">Built for India's competitive spirit. Dominate. Earn. Win.</div>
+            <div class="footer-text" style="font-size: 0.7rem; margin-top: 10px;">© 2026 Tournyx eSports. All Rights Reserved.</div>
+        </footer>
+
+    </div> <script>
+        // --- Particles Animation (Hardware Accelerated) ---
         const canvas = document.getElementById('particles-canvas');
         const ctx = canvas.getContext('2d');
         canvas.width = window.innerWidth; canvas.height = window.innerHeight;
         let particles = [];
         class P {
-            constructor(){ this.x=Math.random()*canvas.width; this.y=Math.random()*canvas.height; this.s=Math.random()*2; this.vx=Math.random()*0.5-0.25; this.vy=Math.random()*0.5-0.25; }
+            constructor(){ this.x=Math.random()*canvas.width; this.y=Math.random()*canvas.height; this.s=Math.random()*3; this.vx=Math.random()*0.3-0.15; this.vy=Math.random()*0.3-0.15; }
             u(){ this.x+=this.vx; this.y+=this.vy; if(this.x<0||this.x>canvas.width)this.vx*=-1; if(this.y<0||this.y>canvas.height)this.vy*=-1; }
-            d(){ ctx.fillStyle='rgba(0,242,255,0.3)'; ctx.beginPath(); ctx.arc(this.x,this.y,this.s,0,Math.PI*2); ctx.fill(); }
+            d(){ ctx.fillStyle='rgba(0,242,255,0.4)'; ctx.beginPath(); ctx.arc(this.x,this.y,this.s,0,Math.PI*2); ctx.fill(); }
         }
-        for(let i=0;i<50;i++) particles.push(new P());
+        for(let i=0;i<60;i++) particles.push(new P());
         function anim(){ ctx.clearRect(0,0,canvas.width,canvas.height); particles.forEach(p=>{p.u();p.d()}); requestAnimationFrame(anim); }
         anim();
     </script>
