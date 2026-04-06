@@ -146,7 +146,7 @@
             transition: none !important;
             scroll-behavior: auto !important;
         }
-        html.psm-active .bg-orbs, html.psm-active #particles-canvas, html.psm-active .warp-bg {
+        html.psm-active .optimized-bg {
             display: none !important;
         }
         html.psm-active .glow-section {
@@ -196,28 +196,36 @@
             max-width: 1000px; margin-left: auto !important; margin-right: auto !important; width: 100%;
         }
 
-        /* --- EXTRAORDINARY WARP BACKGROUND --- */
-        .warp-bg { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -3; overflow: hidden; pointer-events: none; }
-        .warp-star { position: absolute; width: 2px; height: 35px; background: linear-gradient(to bottom, rgba(0,242,255,0), rgba(0,242,255,1)); animation: warpStarAnim linear infinite; filter: drop-shadow(0 0 5px var(--accent-cyan)); border-radius: 2px;}
-        html.theme-vip .warp-star { background: linear-gradient(to bottom, rgba(255,215,0,0), rgba(255,215,0,1)); filter: drop-shadow(0 0 5px #FFD700); }
-        @keyframes warpStarAnim { 0% { transform: translateY(-100px); opacity: 0; } 10% { opacity: 0.8; } 90% { opacity: 0.8; } 100% { transform: translateY(110vh); opacity: 0; } }
-
-        /* --- BRIGHTER BACKGROUND ORBS & PARTICLES --- */
-        .bg-orbs { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -2; overflow: hidden; background: transparent; pointer-events: none; }
-        .orb { position: absolute; border-radius: 50%; opacity: 0.45; animation: floatOrb 12s infinite ease-in-out alternate; will-change: transform; transform: translate3d(0,0,0); filter: blur(40px); }
-        .orb1 { width: 500px; height: 500px; background: radial-gradient(circle, rgba(189,0,255,0.7) 0%, transparent 60%); top: -100px; left: -100px; }
-        .orb2 { width: 600px; height: 600px; background: radial-gradient(circle, rgba(0,242,255,0.6) 0%, transparent 60%); bottom: -150px; right: -150px; animation-delay: -5s; opacity: 0.4; }
-        .orb3 { width: 400px; height: 400px; background: radial-gradient(circle, rgba(255,153,0,0.5) 0%, transparent 60%); top: 40%; left: 20%; animation: floatOrb2 15s infinite linear; opacity: 0.3; }
-        
-        html.theme-vip .orb1 { background: radial-gradient(circle, rgba(255,215,0,0.5) 0%, transparent 60%); }
-        html.theme-vip .orb2 { background: radial-gradient(circle, rgba(255,140,0,0.4) 0%, transparent 60%); }
-        html.theme-vip .orb3 { background: radial-gradient(circle, rgba(255,255,255,0.2) 0%, transparent 60%); }
-
-        @keyframes floatOrb { 0% { transform: translate3d(0, 0, 0) scale(1); } 100% { transform: translate3d(50px, 50px, 0) scale(1.1); } }
-        @keyframes floatOrb2 { 0% { transform: translate3d(0, 0, 0) rotate(0deg); } 50% { transform: translate3d(-30px, 60px, 0) rotate(180deg); } 100% { transform: translate3d(0, 0, 0) rotate(360deg); } }
-
-        #particles-canvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; pointer-events: none; transform: translateZ(0); filter: drop-shadow(0 0 5px rgba(0,242,255,0.8)); }
-        html.theme-vip #particles-canvas { filter: drop-shadow(0 0 5px rgba(255,215,0,0.8)); }
+        /* --- PERFECT OPTIMIZED CYBER GRID BACKGROUND --- */
+        .optimized-bg { 
+            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; z-index: -2; 
+            overflow: hidden; pointer-events: none; 
+            background: radial-gradient(circle at center, #0a0514 0%, #05020c 100%); 
+        }
+        .grid-layer { 
+            position: absolute; width: 200%; height: 200%; top: -50%; left: -50%; 
+            background-image: linear-gradient(rgba(0,242,255,0.03) 1px, transparent 1px), 
+                              linear-gradient(90deg, rgba(0,242,255,0.03) 1px, transparent 1px); 
+            background-size: 40px 40px; 
+            transform: perspective(500px) rotateX(60deg); 
+            animation: bgGridScroll 15s linear infinite; 
+        }
+        html.theme-vip .grid-layer {
+            background-image: linear-gradient(rgba(255,215,0,0.03) 1px, transparent 1px), 
+                              linear-gradient(90deg, rgba(255,215,0,0.03) 1px, transparent 1px); 
+        }
+        @keyframes bgGridScroll { 
+            0% { transform: perspective(500px) rotateX(60deg) translateY(0); } 
+            100% { transform: perspective(500px) rotateX(60deg) translateY(40px); } 
+        }
+        /* Hardware accelerated radial gradients instead of heavy blur filters */
+        .glow-orb { position: absolute; border-radius: 50%; opacity: 0.25; }
+        .g-purple { width: 80vw; height: 80vw; background: radial-gradient(circle, var(--accent-purple) 0%, transparent 70%); top: -20vh; left: -20vw; animation: orbFloat1 20s ease-in-out infinite alternate; }
+        .g-cyan { width: 70vw; height: 70vw; background: radial-gradient(circle, var(--accent-cyan) 0%, transparent 70%); bottom: -20vh; right: -20vw; animation: orbFloat2 15s ease-in-out infinite alternate; }
+        html.theme-vip .g-purple { background: radial-gradient(circle, #FFA500 0%, transparent 70%); }
+        html.theme-vip .g-cyan { background: radial-gradient(circle, #FFD700 0%, transparent 70%); }
+        @keyframes orbFloat1 { 100% { transform: translate3d(10vw, 10vh, 0); } }
+        @keyframes orbFloat2 { 100% { transform: translate3d(-10vw, -10vh, 0); } }
 
         /* --- WELCOME BETA LAUNCH POPUP --- */
         .beta-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 9999; display: none; align-items: center; justify-content: center; backdrop-filter: blur(10px); }
@@ -641,8 +649,19 @@
         .pay-head { font-family: var(--font-head); font-size: 1.2rem; margin-bottom: 6px; color: white; text-shadow: 0 0 5px rgba(255,255,255,0.2); }
         .pay-desc { font-size: 0.95rem; color: #a0a0b0; line-height: 1.4; }
 
-        /* --- FOOTER --- */
+        /* --- FOOTER & ABOUT US --- */
         .app-footer { background: #020106; padding: 60px 20px 0px; border-top: 1px solid rgba(255,255,255,0.05); font-family: var(--font-body); position: relative; z-index: 2; }
+        
+        .footer-about-box { margin-bottom: 40px; padding: 25px; border-left: 4px solid var(--accent-cyan); position: relative; overflow: hidden; }
+        html.theme-vip .footer-about-box { border-left-color: #FFD700; }
+        .footer-about-box::before { content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: linear-gradient(90deg, rgba(0,242,255,0.05), transparent); z-index: -1; animation: sweep 3s linear infinite; }
+        html.theme-vip .footer-about-box::before { background: linear-gradient(90deg, rgba(255,215,0,0.05), transparent); }
+        @keyframes sweep { 0% { transform: translateX(-100%); } 100% { transform: translateX(100%); } }
+        .about-title { font-family: var(--font-head); font-size: 1.4rem; color: white; margin-bottom: 15px; text-transform: uppercase; letter-spacing: 1px; }
+        .about-title span { color: var(--accent-cyan); text-shadow: 0 0 10px rgba(0,242,255,0.5); }
+        html.theme-vip .about-title span { color: #FFD700; text-shadow: 0 0 10px rgba(255,215,0,0.5); }
+        .footer-about-box p { color: #a0a0b0; font-size: 0.95rem; line-height: 1.6; margin: 0; }
+
         .footer-logo-area { display: flex; align-items: center; gap: 15px; margin-bottom: 25px; }
         .footer-logo-area img { width: 45px; border-radius: 50%; box-shadow: 0 0 15px var(--accent-cyan);}
         html.theme-vip .footer-logo-area img { box-shadow: 0 0 15px #FFD700; }
@@ -734,14 +753,11 @@
         <div class="loader-text">INITIALIZING BATTLEGROUNDS...</div>
     </div>
 
-    <div class="warp-bg" id="warpBg"></div>
-
-    <div class="bg-orbs">
-        <div class="orb orb1"></div>
-        <div class="orb orb2"></div>
-        <div class="orb orb3"></div>
+    <div class="optimized-bg">
+        <div class="grid-layer"></div>
+        <div class="glow-orb g-purple"></div>
+        <div class="glow-orb g-cyan"></div>
     </div>
-    <canvas id="particles-canvas"></canvas>
 
     <div class="menu-backdrop" id="menuBackdrop" onclick="toggleMenu()"></div>
 
@@ -1030,6 +1046,12 @@
     </section>
 
     <footer class="app-footer fade-up">
+        
+        <div class="footer-about-box glass-panel">
+            <h3 class="about-title">About <span>Us</span></h3>
+            <p>Tournyx is forged by gamers, for gamers. We are dedicated to eliminating the chaos of unorganized esports. By combining state-of-the-art automated brackets, instant secure payouts, and a blazing-fast native engine, we provide the ultimate battleground for players to turn their skills into real-world glory and revenue.</p>
+        </div>
+
         <div class="footer-logo-area">
             <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEg_20wCR-WBMpQmw3vxcYUf-vxIO1PYDJoQN_Sid3UDjA9tf0cuX0eH40jbzHoJad4cxbnjhPjqfCw1Z5V1LhgN9zFuIQC0fJjecTy3D9PFu5WjR2H1wHwTD1bUGnXY_NiApWn5gMs6velcQngSzKoP1yHzX0cVsFSUFM8zIefcbiPayY7680Kz0V0ZAAE/s1264/1000093706.png" alt="Tournyx Icon">
             <h2>TOURNYX</h2>
@@ -1122,36 +1144,7 @@
         // --- 1. CONFIGURATION ---
         const API_URL = "https://script.google.com/macros/s/AKfycbyqqTpgaflxKJ9xH0jq7mJ_jLzcoNhas3gNo0h5gvoa_6r5Ae9NFxJAJp7ZoYNnMRKl/exec";
         
-        // --- HARDWARE ACCELERATED CANVAS PARTICLES ---
-        const canvas = document.getElementById('particles-canvas');
-        const ctx = canvas.getContext('2d');
-        canvas.width = window.innerWidth; canvas.height = window.innerHeight;
-        let pArray = [];
-        class P { constructor(){ this.x=Math.random()*canvas.width; this.y=Math.random()*canvas.height; this.s=Math.random()*2; this.v=Math.random()*0.5 + 0.1;} u(){ this.y-=this.v; if(this.y<0)this.y=canvas.height; } d(){ ctx.fillStyle='rgba(255, 215, 0, 0.15)'; ctx.beginPath(); ctx.arc(this.x,this.y,this.s,0,Math.PI*2); ctx.fill(); } }
-        for(let i=0; i<30; i++) pArray.push(new P());
-        function anim(){ ctx.clearRect(0,0,canvas.width,canvas.height); pArray.forEach(p=>{p.u();p.d()}); requestAnimationFrame(anim); }
-        
-        // Tie Canvas resizing and animation to PSM directly
         let animPaused = localStorage.getItem('tournyx_psm') === 'true';
-        if(animPaused) {
-            ctx.clearRect(0,0,canvas.width,canvas.height);
-        } else {
-            anim();
-        }
-        window.addEventListener('resize', () => { canvas.width = window.innerWidth; canvas.height = window.innerHeight; });
-
-        // ADD EXTRAORDINARY WARP STARS
-        if(!animPaused) {
-            const warp = document.getElementById('warpBg');
-            for(let j=0; j<25; j++) {
-                let star = document.createElement('div');
-                star.className = 'warp-star';
-                star.style.left = Math.random() * 100 + 'vw';
-                star.style.animationDelay = Math.random() * 3 + 's';
-                star.style.animationDuration = (Math.random() * 1 + 1) + 's';
-                warp.appendChild(star);
-            }
-        }
 
         // --- AUTH CHECKER FOR GUESTS ---
         function checkAuth(e) {
@@ -1287,16 +1280,22 @@
                     if (entry.isIntersecting) {
                         entry.target.classList.add('visible');
                         
-                        if(entry.target.classList.contains('stats-area') && !animPaused) {
+                        // ULTIMATE PSM FIX: Decoupled animPaused so counters set instantly if PSM is on
+                        if(entry.target.classList.contains('stats-area')) {
                             document.querySelectorAll('.count-up').forEach(counter => {
                                 let target = +counter.getAttribute('data-target');
-                                let count = 0;
-                                let speed = target / 30;
-                                let int = setInterval(() => {
-                                    count += speed;
-                                    if(count >= target) { counter.innerText = target; clearInterval(int); }
-                                    else { counter.innerText = Math.floor(count); }
-                                }, 30);
+                                
+                                if (animPaused) {
+                                    counter.innerText = target;
+                                } else {
+                                    let count = 0;
+                                    let speed = target / 30;
+                                    let int = setInterval(() => {
+                                        count += speed;
+                                        if(count >= target) { counter.innerText = target; clearInterval(int); }
+                                        else { counter.innerText = Math.floor(count); }
+                                    }, 30);
+                                }
                                 counter.classList.remove('count-up'); 
                             });
                         }
