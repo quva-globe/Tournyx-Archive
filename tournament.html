@@ -988,5 +988,35 @@
             triggerHaptic();
         }
     </script>
+    <script>
+    function tournyxOneSignalSetup() {
+        let user = JSON.parse(localStorage.getItem('tournyx_user'));
+        
+        if (user && user.email && typeof median !== 'undefined' && median.onesignal) {
+            let cleanEmail = user.email.toLowerCase().trim();
+            
+            // 1. Set the Official External ID
+            if(median.onesignal.setExternalUserId) {
+                median.onesignal.setExternalUserId({ externalId: cleanEmail });
+            }
+
+            // 2. Set an Email TAG (The Ultimate Failsafe)
+            if(median.onesignal.sendTags) {
+                median.onesignal.sendTags({
+                    tags: { 
+                        "user_email": cleanEmail,
+                        "user_status": "active" 
+                    }
+                });
+            }
+        }
+    }
+
+    // Fire when Median bridge is fully loaded inside the app
+    document.addEventListener("median_library_ready", tournyxOneSignalSetup);
+    
+    // Fallback for regular web browsers
+    document.addEventListener("DOMContentLoaded", tournyxOneSignalSetup);
+</script>
 </body>
 </html>
