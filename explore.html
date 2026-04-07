@@ -80,7 +80,7 @@
         *::-webkit-scrollbar { display: none !important; width: 0 !important; height: 0 !important; background: transparent !important; -webkit-appearance: none !important; }
         
         /* TOP GAP PERFECTLY FIXED */
-        body { background-color: var(--primary-bg); color: white; font-family: var(--font-body); padding-bottom: calc(90px + env(safe-area-inset-bottom, 0px)); padding-top: 70px; overflow-x: hidden; min-height: 100vh;}
+        body { background-color: var(--primary-bg); color: white; font-family: var(--font-body); padding-bottom: calc(90px + env(safe-area-inset-bottom, 0px)); padding-top: 70px; overflow-x: hidden; min-height: 100vh; overscroll-behavior-y: none;}
 
         /* --- THE NEON TX TICKET BADGE --- */
         .tx-badge {
@@ -219,6 +219,8 @@
         .tourney-card.is-full { opacity: 0.65; filter: grayscale(70%); animation: none !important; background-image: linear-gradient(var(--card-bg), var(--card-bg)), linear-gradient(90deg, #444, #666) !important; box-shadow: 0 5px 15px rgba(0,0,0,0.5) !important; }
 
         @keyframes slideUp { from { transform: translateY(40px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+        
+        @keyframes pulseAlert { from { transform: scale(1); } to { transform: scale(1.05); } }
 
         .t-banner-wrapper { position: relative; height: 160px; width: 100%; background: #000; overflow: hidden; }
         .t-banner-wrapper::after { content: ''; position: absolute; bottom: 0; left: 0; width: 100%; height: 60px; background: linear-gradient(to bottom, transparent, var(--card-bg)); z-index: 1; }
@@ -242,7 +244,7 @@
         .t-info-box { padding: 5px 15px 15px 15px; position: relative; z-index: 2; }
         .t-title { 
             font-family: var(--font-head); 
-            font-size: 1rem; 
+            font-size: 0.95rem; 
             color: white; 
             margin-bottom: 12px; 
             display: -webkit-box;
@@ -255,19 +257,19 @@
             width: 100%;
             text-shadow: 0 0 5px rgba(255,255,255,0.3); 
         }
-        .verified-badge { color: #1da1f2; font-size: 0.9rem; flex-shrink:0; margin-left: 5px; vertical-align: middle; filter: drop-shadow(0 0 3px rgba(29,161,242,0.5));}
+        .verified-badge { color: #1da1f2; font-size: 0.9rem; flex-shrink:0; margin-left: 5px; vertical-align: middle;}
         
-        .t-details-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 15px; }
-        .t-detail-item { display: flex; align-items: flex-start; gap: 8px; font-size: 0.8rem; color: #b0b0cc; line-height: 1.3; }
+        .t-details-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 15px; font-size: 0.8rem; }
+        .t-detail-item { display: flex; align-items: flex-start; gap: 8px; color: #b0b0cc; line-height: 1.3; }
         .t-detail-item i { color: var(--accent-purple); width: 15px; text-align: center; margin-top: 2px; flex-shrink: 0;}
         html.theme-vip .t-detail-item i { color: #FFD700; }
 
         .progress-container { width: 100%; background: rgba(255,255,255,0.1); border-radius: 10px; height: 8px; margin-top: 6px; overflow: hidden; border: 1px solid rgba(255,255,255,0.05); }
-        .progress-bar { height: 100%; background: linear-gradient(90deg, var(--accent-purple), var(--accent-cyan)); border-radius: 10px; transition: width 0.4s ease-out, background 0.3s; box-shadow: 0 0 10px rgba(0,242,255,0.5); }
-        html.theme-vip .progress-bar { background: linear-gradient(90deg, #FFA500, #FFD700); box-shadow: 0 0 10px rgba(255,215,0,0.5); }
-        .progress-bar.filling { background: linear-gradient(90deg, #ff9900, #ff4d4d); box-shadow: 0 0 10px rgba(255,153,0,0.5); }
-        .progress-bar.full { background: #ff4d4d; box-shadow: 0 0 10px rgba(255,77,77,0.5); }
-        .slot-text { font-family: var(--font-head); font-size: 0.8rem; color: white; font-weight: bold; letter-spacing: 0.5px; }
+        .progress-bar { height: 100%; background: linear-gradient(90deg, transparent, var(--accent-cyan)); border-radius: 10px; transition: width 0.4s ease-out, background 0.3s; box-shadow: 0 0 10px var(--accent-cyan), inset 0 0 5px rgba(255,255,255,0.5); }
+        html.theme-vip .progress-bar { background: linear-gradient(90deg, transparent, #FFD700); box-shadow: 0 0 10px #FFD700, inset 0 0 5px rgba(255,255,255,0.5); }
+        .progress-bar.filling { background: linear-gradient(90deg, transparent, var(--accent-orange)); box-shadow: 0 0 10px var(--accent-orange), inset 0 0 5px rgba(255,255,255,0.5); }
+        .progress-bar.full { background: linear-gradient(90deg, transparent, #ff4d4d); box-shadow: 0 0 10px #ff4d4d, inset 0 0 5px rgba(255,255,255,0.5); }
+        .slot-text { font-family: var(--font-head); font-size: 0.85rem; color: white; font-weight: bold; letter-spacing: 0.5px; }
         
         .t-action-row { display: flex; justify-content: space-between; align-items: center; border-top: 1px solid rgba(255,255,255,0.05); padding-top: 15px; margin-top: 10px; }
         .t-prize-area { display: flex; flex-direction: column; }
@@ -275,7 +277,7 @@
         .t-prize-val { font-size: 1.1rem; font-weight: 900; color: var(--accent-green); text-shadow: 0 0 5px rgba(0,255,127,0.3);}
         
         /* SHINING REGISTER BUTTON */
-        .join-btn-card { position: relative; overflow: hidden; background: transparent; border: 1px solid var(--accent-cyan); color: var(--accent-cyan); padding: 8px 18px; border-radius: 8px; font-weight: bold; font-size: 0.85rem; font-family: var(--font-head); transition: 0.3s; box-shadow: 0 0 10px rgba(0,242,255,0.2); cursor: pointer; z-index: 1;}
+        .join-btn-card { position: relative; overflow: hidden; background: transparent; border: 1px solid var(--accent-cyan); color: var(--accent-cyan); padding: 8px 18px; border-radius: 50px; font-weight: bold; font-size: 0.85rem; font-family: var(--font-head); transition: 0.3s; box-shadow: 0 0 10px rgba(0,242,255,0.2); cursor: pointer; z-index: 1;}
         html.theme-vip .join-btn-card { border-color: #FFD700; color: #FFD700; box-shadow: 0 0 10px rgba(255,215,0,0.2); }
         .join-btn-card::before { content: ''; position: absolute; top: 0; left: -100%; width: 50%; height: 100%; background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent); transform: skewX(-20deg); animation: shine 3s infinite; z-index: -1; }
         .join-btn-card:hover { box-shadow: 0 0 20px rgba(0,242,255,0.6); background: var(--accent-cyan); color: #000; }
@@ -436,25 +438,23 @@
 
         #securePaymentLoader { display:none; position:fixed; top:0; left:0; width:100%; height:100%; z-index:9999; background: rgba(5, 2, 12, 0.95); backdrop-filter:blur(15px); flex-direction:column; align-items:center; justify-content:center; opacity: 0; transition: opacity 0.5s ease;}
         #securePaymentLoader.active { opacity: 1; }
-        .cycle-logos { position: relative; width: 90px; height: 90px; margin-bottom: 25px; transition: 0.3s;}
-        .cycle-logos img { position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: contain; border-radius: 50%; opacity: 0; animation: cyberSpin 4s infinite cubic-bezier(0.68, -0.55, 0.265, 1.55); box-shadow: 0 0 20px rgba(0, 242, 255, 0.4); border: 2px solid var(--accent-cyan); background: rgba(0,0,0,0.5);}
-        html.theme-vip .cycle-logos img { box-shadow: 0 0 20px rgba(255,215,0,0.4); border-color: #FFD700; }
-        .cycle-logos img:nth-child(1) { animation-delay: 0s; }
-        .cycle-logos img:nth-child(2) { animation-delay: 1s; }
-        .cycle-logos img:nth-child(3) { animation-delay: 2s; }
-        .cycle-logos img:nth-child(4) { animation-delay: 3s; }
-        @keyframes cyberSpin { 
-            0% { opacity: 0; transform: scale(0.5) rotate(-180deg); } 
-            15% { opacity: 1; transform: scale(1) rotate(0deg); } 
-            25% { opacity: 1; transform: scale(1) rotate(0deg); }
-            35% { opacity: 0; transform: scale(1.5) rotate(180deg); }
-            100% { opacity: 0; }
+        .cycle-logos { position: relative; width: 100px; height: 100px; margin-bottom: 25px; transition: 0.3s;}
+        .cycle-logos img { position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; border-radius: 20px; opacity: 0; animation: cyberSpinFade 8s infinite; box-shadow: 0 0 25px rgba(0, 242, 255, 0.3); border: 2px solid rgba(255,255,255,0.1); transform: scale(0.8); }
+        html.theme-vip .cycle-logos img { box-shadow: 0 0 25px rgba(255,215,0,0.3); }
+        .cycle-logos img:nth-child(1) { animation-delay: 0s; border-radius: 50%; box-shadow: 0 0 25px var(--accent-purple); border-color: var(--accent-purple); object-fit: contain;}
+        .cycle-logos img:nth-child(2) { animation-delay: 2s; }
+        .cycle-logos img:nth-child(3) { animation-delay: 4s; }
+        .cycle-logos img:nth-child(4) { animation-delay: 6s; }
+        @keyframes cyberSpinFade { 
+            0%, 20% { opacity: 1; transform: scale(0.8) rotate(0deg); } 
+            25%, 95% { opacity: 0; transform: scale(0.5) rotate(90deg); } 
+            100% { opacity: 1; transform: scale(0.8) rotate(360deg); } 
         }
         
-        .glitch-text { color: white; font-family: var(--font-head); font-size: 1.5rem; font-weight: 900; text-transform: uppercase; letter-spacing: 2px; text-shadow: 2px 2px 0px var(--accent-cyan), -2px -2px 0px var(--accent-purple); margin-bottom: 10px; text-align: center; }
+        .glitch-text { color: white; font-family: var(--font-head); font-size: 1.8rem; font-weight: 900; text-transform: uppercase; letter-spacing: 2px; text-shadow: 2px 2px 0px var(--accent-cyan), -2px -2px 0px var(--accent-purple); margin-bottom: 10px; text-align: center; }
         html.theme-vip .glitch-text { text-shadow: 2px 2px 0px #FFD700, -2px -2px 0px #FFA500; }
         
-        .cyber-bar-container { width: 260px; height: 8px; background: rgba(255,255,255,0.1); border: 1px solid rgba(0,242,255,0.3); border-radius: 8px; margin-top: 15px; overflow: hidden; box-shadow: inset 0 0 10px rgba(0,0,0,0.5); }
+        .cyber-bar-container { width: 260px; height: 10px; background: rgba(255,255,255,0.1); border: 1px solid rgba(0,242,255,0.3); border-radius: 8px; margin-top: 15px; overflow: hidden; box-shadow: inset 0 0 10px rgba(0,0,0,0.5); }
         html.theme-vip .cyber-bar-container { border-color: rgba(255,215,0,0.3); }
         .cyber-bar-fill { height: 100%; width: 0%; background: var(--accent-cyan); box-shadow: 0 0 15px var(--accent-cyan); transition: width 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), background 0.4s; }
         .cyber-bar-fill.blast { animation: barBlast 0.5s ease-out; }
@@ -464,17 +464,26 @@
         .org-other-card:active { transform: scale(0.96); }
 
         .locked-footer { background: rgba(7, 3, 17, 0.95); backdrop-filter: blur(10px); padding: 15px 20px calc(15px + env(safe-area-inset-bottom, 0px)); border-top: 1px solid rgba(var(--dynamic-t-color), 0.2); display: flex; gap: 10px; flex-shrink: 0; box-shadow: 0 -5px 20px rgba(0,0,0,0.5); z-index: 50; transition: border-color 0.4s ease;}
-        .btn-primary { flex: 1; background: var(--accent-gradient); color: white; border: none; padding: 12px; border-radius: 12px; font-family: var(--font-head); font-weight: bold; font-size: 0.95rem; cursor: pointer; box-shadow: 0 5px 15px rgba(189,0,255,0.4); text-transform: uppercase; transition: 0.3s; display:flex; align-items:center; justify-content:center; gap:8px;}
-        .btn-primary:active { transform: scale(0.95); }
-        .btn-primary:disabled { background: #2a2a3a; color: #666; border: 1px solid #444; box-shadow: none; cursor: default; }
-        html.theme-vip .btn-primary { background: linear-gradient(90deg, #FFD700, #FF8C00); color: black; box-shadow: 0 5px 15px rgba(255,215,0,0.4); }
+        .btn-primary { flex: 1; background: var(--accent-gradient); color: white; border: none; padding: 12px 20px; border-radius: 50px; font-family: var(--font-head); font-weight: bold; font-size: 0.9rem; cursor: pointer; box-shadow: 0 5px 15px rgba(189,0,255,0.4); text-transform: uppercase; transition: 0.3s; display:flex; align-items:center; justify-content:center; gap:8px; animation: pulsePill 2s infinite alternate;}
+        .btn-primary:active { transform: scale(0.98); }
+        .btn-primary:disabled { background: #2a2a3a; color: #666; border: 1px solid #444; box-shadow: none; cursor: default; animation: none;}
+        html.theme-vip .btn-primary { background: linear-gradient(90deg, #FFD700, #FF8C00); color: black; box-shadow: 0 5px 15px rgba(255,215,0,0.4); animation: pulsePillVip 2s infinite alternate;}
         
-        .btn-secondary { background: transparent; border: 1px solid var(--accent-orange); color: var(--accent-orange); padding: 12px; border-radius: 12px; font-family: var(--font-head); font-weight: bold; font-size: 0.9rem; cursor: pointer; transition: 0.3s; display: flex; align-items: center; justify-content: center; gap: 8px; text-transform: uppercase; }
-        .btn-secondary:active { background: rgba(255,153,0,0.1); transform: scale(0.95); }
+        @keyframes pulsePill {
+            0% { box-shadow: 0 0 10px rgba(0,242,255,0.3); }
+            100% { box-shadow: 0 0 25px rgba(0,242,255,0.7); }
+        }
+        @keyframes pulsePillVip {
+            0% { box-shadow: 0 0 10px rgba(255,215,0,0.3); }
+            100% { box-shadow: 0 0 25px rgba(255,215,0,0.7); }
+        }
+        
+        .btn-secondary { background: transparent; border: 1px solid var(--accent-orange); color: var(--accent-orange); padding: 12px 20px; border-radius: 50px; font-family: var(--font-head); font-weight: bold; font-size: 0.9rem; cursor: pointer; transition: 0.3s; display: flex; align-items: center; justify-content: center; gap: 8px; text-transform: uppercase; }
+        .btn-secondary:active { background: rgba(255,153,0,0.1); }
         html.theme-vip .btn-secondary { border-color: #FFD700; color: #FFD700; }
         html.theme-vip .btn-secondary:active { background: rgba(255,215,0,0.1); }
         
-        #masterJoinBtn { position: relative; overflow: hidden; }
+        #masterJoinBtn { position: relative; overflow: hidden; font-size: 0.95rem; }
         #masterJoinBtn::after { content: ''; position: absolute; top: 0; left: -100%; width: 50%; height: 100%; background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent); transform: skewX(-20deg); animation: shine 3s infinite 1.5s; z-index: 1; }
 
         /* REGISTRATION & PAYMENT OVERLAYS */
@@ -513,7 +522,7 @@
         .app-footer { text-align: center; padding: 40px 20px 100px 20px; color: #555; font-size: 0.75rem; font-family: var(--font-body); letter-spacing: 1px; border-top: 1px solid var(--card-border); margin-top: 20px; }
 
         /* --- PERFECT BOTTOM NAVIGATION (MOBILE OPTIMIZED) --- */
-        .bottom-nav { position: fixed; bottom: 0; left: 0; width: 100%; height: calc(65px + env(safe-area-inset-bottom, 0px)); background: rgba(5, 2, 12, 0.75); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); display: flex; justify-content: space-between; align-items: flex-start; padding: 10px 2px env(safe-area-inset-bottom, 0px); border-top: 1px solid rgba(255,255,255,0.05); z-index: 1000; box-shadow: 0 -10px 30px rgba(0,0,0,0.5); transform: translateZ(0);}
+        .bottom-nav { position: fixed; bottom: 0; left: 0; width: 100%; height: calc(65px + env(safe-area-inset-bottom, 0px)); background: rgba(5, 2, 12, 0.75); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); display: flex; justify-content: space-between; align-items: flex-start; padding: 10px 2px env(safe-area-inset-bottom, 0px); border-top: 1px solid rgba(255,255,255,0.05); z-index: 2000; box-shadow: 0 -10px 30px rgba(0,0,0,0.5); transform: translateZ(0);}
         .nav-item { display: flex; flex-direction: column; align-items: center; justify-content: flex-start; color: #666; text-decoration: none; font-size: 0.6rem; font-family: var(--font-head); font-weight: bold; flex: 1; transition: 0.3s; position: relative; padding: 0 2px; text-align: center;}
         .nav-item span { margin-top: 4px; transition: 0.3s; letter-spacing: -0.3px;}
         .nav-item i, .nav-item .tx-icon, .nav-item .tx-ticket-composite { font-size: 1.2rem; transition: 0.3s; color: #666; background: none; -webkit-text-fill-color: #666; filter: none; font-style: normal; }
@@ -721,7 +730,7 @@
                         <div style="flex:1;">
                             <div style="color: #a0a0b0; font-size: 0.75rem;">Organized by</div>
                             <div style="color:white; font-weight:bold; font-family:var(--font-head); display:flex; align-items:center; gap:5px;">
-                                <span id="dtOrgName">Verified Organizer</span> <span id="dtOrgVerifiedBadge"></span>
+                                <span id="dtOrgName">Verified Organizer</span> <span id="dtVerifiedBadgeArea"></span>
                             </div>
                         </div>
                         <div style="text-align:right;">
@@ -787,17 +796,17 @@
                         </div>
                     </div>
 
-                    <div class="tournyx-ad-slot">
+                    <div class="tournyx-ad-slot" id="detailPageAd">
                         <script type="text/javascript">
                             atOptions = {
-                                'key' : 'ADSTERRA_KEY_HERE',
+                                'key' : 'YOUR_ADSTERRA_KEY_HERE',
                                 'format' : 'iframe',
                                 'height' : 90,
                                 'width' : 728,
                                 'params' : {}
                             };
                         </script>
-                        <script type="text/javascript" src="//www.highperformanceformat.com/ADSTERRA_KEY_HERE/invoke.js"></script>
+                        <script type="text/javascript" src="//www.highperformanceformat.com/YOUR_ADSTERRA_KEY_HERE/invoke.js"></script>
                     </div>
                 </div>
 
@@ -831,14 +840,14 @@
                     <div class="tournyx-ad-slot">
                         <script type="text/javascript">
                             atOptions = {
-                                'key' : 'ADSTERRA_KEY_HERE',
+                                'key' : 'YOUR_ADSTERRA_KEY_HERE',
                                 'format' : 'iframe',
                                 'height' : 90,
                                 'width' : 728,
                                 'params' : {}
                             };
                         </script>
-                        <script type="text/javascript" src="//www.highperformanceformat.com/ADSTERRA_KEY_HERE/invoke.js"></script>
+                        <script type="text/javascript" src="//www.highperformanceformat.com/YOUR_ADSTERRA_KEY_HERE/invoke.js"></script>
                     </div>
                 </div>
 
@@ -878,7 +887,7 @@
             <div style="text-align: center; margin-bottom: 25px;">
                 <img id="hpAvatar" src="https://via.placeholder.com/80" style="width: 80px; height: 80px; border-radius: 50%; border: 3px solid var(--accent-cyan); margin-bottom: 12px; object-fit: cover; box-shadow: 0 0 15px rgba(0,242,255,0.4);">
                 <h3 id="hpName" style="color: white; font-family: var(--font-head); font-size: 1.4rem; margin-bottom: 5px;">Host Name</h3>
-                <div id="hpVerifiedText" style="color: #1da1f2; font-size: 0.9rem; font-weight:bold; display: none;"><i class="fa-solid fa-certificate"></i> Verified Tournament Organizer</div>
+                <div id="hpVerifiedStatus" style="color: #1da1f2; font-size: 0.9rem; font-weight:bold;"></div>
             </div>
 
             <div class="dm-stat-grid" style="grid-template-columns: 1fr 1fr 1fr; margin-bottom: 0;">
@@ -970,9 +979,9 @@
             <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEiJvPTY_y_XU-0Lwbnjwm7961lCDkSlQh2MtCWHunFVX6WS7WCprCtkPyB334BU_-4vGsP0NseDQf4NPBEOIxqjk7VZQqZUHpnLb4Bw-c1UeXQy2M9DzNrNdYt_aL0GEb1AlTPupC5zEjJiP3Ci0Oxk-wdg5TF5cs8_UNSe3uTT1BE884je3iXr8QlMjx8/s240/1000094210.jpg">
             <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEg8vsDFFkLAXTA234WJzc3OqsLbmB3HBlKaXhiJo-JFVcTtYmMUI2DVdk5ljTPvGPKj-vtcejjFAxZO0sapDafr6xqN7VpHLGCcxqYWWY2LIZszXhrnnO1gcXFeJzY2EclP6G1bLoea5bshOtT7Dl3p4F_l0pGDuz1j5KJ78dEnI7cQixwAeDC1vKG89N4/s460/1000094209.jpg">
         </div>
-        <h2 class="glitch-text" id="loaderTxtHead" style="font-family: var(--font-head);">AUTHENTICATING</h2>
+        <h2 class="glitch-text" id="loaderTxtHead" style="font-family: var(--font-head);">INITIALIZING</h2>
         <div class="cyber-bar-container"><div class="cyber-bar-fill" id="secureLoaderBar"></div></div>
-        <p id="loaderTxt" style="color:var(--accent-cyan); font-family:var(--font-head); margin-top:15px; font-size:1rem; font-weight:bold; text-transform:uppercase;">Validating Player Data...</p>
+        <p id="loaderTxt" style="color:var(--accent-cyan); font-family:var(--font-head); margin-top:15px; font-size:1rem; font-weight:bold; text-transform:uppercase;">Verifying player credentials...</p>
     </div>
 
     <div class="bottom-sheet-overlay" id="regOverlay">
@@ -1085,32 +1094,13 @@
         let activeCountdown = null;
         let activeTimelineInterval = null;
 
-        // Perfect IST Date & Time Formatter
         function getISTDateTime(dateInput) {
             let d = (dateInput && String(dateInput).trim() !== "") ? new Date(dateInput) : new Date();
             if (isNaN(d.getTime())) d = new Date(); 
             let options = { timeZone: 'Asia/Kolkata', month: 'short', day: '2-digit', year: 'numeric', hour: 'numeric', minute: '2-digit', hour12: true };
             return d.toLocaleString('en-IN', options).toUpperCase();
         }
-        
-        function formatMatchPeriod(periodStr) {
-            if(!periodStr || periodStr === "TBA") return "TBA";
-            if(!isNaN(periodStr) && String(periodStr).trim() !== "") {
-                return getISTDateTime(parseInt(periodStr));
-            }
-            let d = new Date(periodStr);
-            if(!isNaN(d.getTime())) return getISTDateTime(d);
-            return periodStr;
-        }
 
-        function formatImageUrl(url) {
-            if (!url) return 'https://via.placeholder.com/600x300';
-            if (url.startsWith('data:image') || url.startsWith('http')) return url;
-            if (url.includes('drive.google.com/file/d/')) { let id = url.split('/d/')[1].split('/')[0]; return `https://drive.google.com/uc?export=view&id=${id}`; }
-            return url;
-        }
-
-        // Failsafe normalizer to fix the backend column mapping bug dynamically 
         function normalizeTxn(t) {
             let norm = { ...t };
             if (t.amount === "Credit" || t.amount === "Debit") {
@@ -1425,6 +1415,14 @@
             if(hasP) return `${p} PTS Only`;
             return "Free";
         }
+        
+        function formatImageUrl(url) {
+            if (!url) return 'https://via.placeholder.com/600x300';
+            let cleanUrl = String(url).trim();
+            if (cleanUrl.startsWith('data:image')) return cleanUrl;
+            if (cleanUrl.includes('drive.google.com/file/d/')) { let id = cleanUrl.split('/d/')[1].split('/')[0]; return `https://drive.google.com/uc?export=view&id=${id}`; }
+            return cleanUrl;
+        }
 
         document.addEventListener("DOMContentLoaded", function() {
             let user = JSON.parse(localStorage.getItem('tournyx_user'));
@@ -1441,7 +1439,7 @@
                 isGuestMode = true;
                 document.getElementById('headerProfilePic').style.display = 'none';
             } else {
-                if(user.avatar) document.getElementById('headerProfilePic').src = user.avatar;
+                if(user.avatar) document.getElementById('headerProfilePic').src = formatImageUrl(user.avatar);
                 fetch(API_URL + "?action=get_matches&email=" + encodeURIComponent(user.email))
     .then(res => res.json())
     .then(data => { 
@@ -1520,7 +1518,6 @@
                     localTournamentsData = data.data; 
                     const feed = document.getElementById('tournamentContainer');
                     
-                    // IF DEEP LINK, STOP RENDERING FEED AND INSTANTLY OPEN THE TARGET
                     if(autoOpenId) {
                         let targetMatch = data.data.find(t => String(t.id || t.title).trim() === autoOpenId || t.title.replace(/\s+/g, '') === autoOpenId);
                         if(targetMatch) {
@@ -1529,7 +1526,7 @@
                                 setTimeout(() => document.getElementById('shareLoader').style.display = 'none', 400);
                                 openTournamentDetails(encodeURIComponent(JSON.stringify(targetMatch)));
                             }, 500);
-                            return; // Stop rendering the full list
+                            return; 
                         }
                     }
 
@@ -1560,7 +1557,7 @@
                         const totalSlots = parseInt(t.slots) || 48;
                         const slotsFilled = parseInt(t.filled_slots) || 0; 
                         let isFull = slotsFilled >= totalSlots;
-                        let fillPct = (slotsFilled / totalSlots) * 100;
+                        let fillPct = totalSlots > 0 ? (slotsFilled / totalSlots) * 100 : 0;
                         
                         let progColorClass = "";
                         if (fillPct >= 90) progColorClass = "full";
@@ -1602,25 +1599,25 @@
                         let baseLikeCount = (Math.abs(tIdSafe.split('').reduce((a,b)=>{a=((a<<5)-a)+b.charCodeAt(0);return a&a},0)) % 150) + 12;
                         let displayLikes = isLiked ? baseLikeCount + 1 : baseLikeCount;
 
-                        let isPremiumOrg = String(t.org_is_premium).toLowerCase() === 'true' || String(t.is_premium).toLowerCase() === 'true';
-                        let verifiedBadge = isPremiumOrg ? '<i class="fa-solid fa-circle-check verified-badge"></i>' : '';
-
-                        let slotsLeft = totalSlots - slotsFilled;
-                        let limitAlert = "";
-                        if(fillPct >= 80 && !isFull && !isRegClosed) {
-                            limitAlert = `<div style="font-size:0.75rem; color:#ff4d4d; font-weight:bold; animation: blink 1s infinite alternate; margin-top:5px;"><i class="fa-solid fa-fire"></i> HURRY! ONLY ${slotsLeft} SLOTS LEFT</div>`;
+                        let limitedSlotsHtml = "";
+                        if (!isFull && fillPct >= 80 && (totalSlots - slotsFilled <= 5)) {
+                            limitedSlotsHtml = `<div style="position:absolute; top: 40px; left: 12px; background: linear-gradient(90deg, #ff4d4d, #ff9900); color: white; padding: 4px 10px; border-radius: 6px; font-family: var(--font-head); font-size: 0.7rem; font-weight: 900; z-index: 5; box-shadow: 0 0 10px rgba(255,77,77,0.6); animation: pulseAlert 1s infinite alternate;"><i class="fa-solid fa-fire"></i> HURRY! ONLY ${totalSlots - slotsFilled} SLOTS LEFT</div>`;
                         }
+                        
+                        let isVerified = (String(t.is_premium_host).toLowerCase() === 'true' || String(t.is_premium).toLowerCase() === 'true');
+                        let verifiedBadgeHtml = isVerified ? `<i class="fa-solid fa-circle-check verified-badge"></i>` : ``;
 
                         card.innerHTML = `
                             <div class="t-banner-wrapper">
                                 <img src="${bg}" class="t-banner-img img-loading" onload="this.classList.remove('img-loading'); this.classList.add('img-loaded');">
                                 ${getStatusBadgeHtml(t.status, isFull, isRegClosed, isCancelled)} 
+                                ${limitedSlotsHtml}
                                 <div class="t-timer-badge ${timeData.isEndingSoon ? 'ending-soon' : ''}"><i class="fa-regular fa-clock"></i> ${timeData.text}</div>
                                 <div class="t-like ${isLiked ? 'liked' : ''}" onclick="toggleLike(event, '${tIdSafe}', ${baseLikeCount})"><i class="fa-solid fa-heart"></i> <span>${displayLikes}</span></div>
                                 <div class="t-plat-badge"><i class="fa-solid ${plat==='PC' ? 'fa-desktop' : 'fa-mobile-screen'}"></i> ${plat}</div>
                             </div>
                             <div class="t-info-box">
-                                <div class="t-title">${t.title || "Tournament"} ${verifiedBadge}</div>
+                                <div class="t-title">${t.title || "Tournament"} ${verifiedBadgeHtml}</div>
                                 
                                 <div class="t-details-grid">
                                     <div class="t-detail-item"><i class="fa-solid fa-gamepad"></i> <span>${t.game || "Esports"} (${t.format || "Any"})</span></div>
@@ -1633,7 +1630,6 @@
                                             <span style="font-size:0.75rem; color:var(--accent-cyan); font-weight:bold;">${Math.round(fillPct)}%</span>
                                         </div>
                                         <div class="progress-container"><div class="progress-bar ${progColorClass}" style="width:${fillPct}%"></div></div>
-                                        ${limitAlert}
                                     </div>
                                 </div>
 
@@ -1665,6 +1661,14 @@
                     this.classList.add('active');
                     document.querySelectorAll('.dm-tab-content').forEach(content => content.classList.remove('active'));
                     document.getElementById(this.getAttribute('data-tab')).classList.add('active');
+                    
+                    try {
+                        Array.from(document.querySelectorAll('.adsbygoogle')).forEach(ad => {
+                            if(ad.innerHTML === '') {
+                                (adsbygoogle = window.adsbygoogle || []).push({});
+                            }
+                        });
+                    } catch(e) {}
                 });
             });
         }
@@ -1698,7 +1702,7 @@
                     const totalSlots = parseInt(t.slots) || 48;
                     const slotsFilled = parseInt(t.filled_slots) || 0; 
                     let isFull = slotsFilled >= totalSlots;
-                    let fillPct = (slotsFilled / totalSlots) * 100;
+                    let fillPct = totalSlots > 0 ? (slotsFilled / totalSlots) * 100 : 0;
                     
                     let progColorClass = "";
                     if (fillPct >= 90) progColorClass = "full";
@@ -1743,8 +1747,8 @@
                     let baseLikeCount = (Math.abs(tIdSafe.split('').reduce((a,b)=>{a=((a<<5)-a)+b.charCodeAt(0);return a&a},0)) % 150) + 12;
                     let displayLikes = isLiked ? baseLikeCount + 1 : baseLikeCount;
 
-                    let isPremiumOrg = String(t.org_is_premium).toLowerCase() === 'true' || String(t.is_premium).toLowerCase() === 'true';
-                    let verifiedBadge = isPremiumOrg ? '<i class="fa-solid fa-circle-check verified-badge"></i>' : '';
+                    let isVerified = (String(t.is_premium_host).toLowerCase() === 'true' || String(t.is_premium).toLowerCase() === 'true');
+                    let verifiedBadgeHtml = isVerified ? `<i class="fa-solid fa-circle-check verified-badge"></i>` : ``;
 
                     card.innerHTML = `
                         <div class="t-banner-wrapper">
@@ -1755,7 +1759,7 @@
                             <div class="t-plat-badge"><i class="fa-solid ${plat==='PC' ? 'fa-desktop' : 'fa-mobile-screen'}"></i> ${plat}</div>
                         </div>
                         <div class="t-info-box">
-                            <div class="t-title">${t.title || "Tournament"} ${verifiedBadge}</div>
+                            <div class="t-title">${t.title || "Tournament"} ${verifiedBadgeHtml}</div>
                             <div class="t-details-grid">
                                 <div class="t-detail-item"><i class="fa-solid fa-gamepad"></i> <span>${t.game || "Esports"} (${t.format || "Any"})</span></div>
                                 <div class="t-detail-item"><i class="fa-solid fa-calendar-day"></i> <span>${formatDateTime(t.date).split(',')[0]}</span></div>
@@ -1805,9 +1809,10 @@
 
             document.getElementById('dtBanner').src = formatImageUrl(t.banner);
             
-            let isPremiumOrg = String(t.org_is_premium).toLowerCase() === 'true' || String(t.is_premium).toLowerCase() === 'true';
-            let verifiedBadge = isPremiumOrg ? '<i class="fa-solid fa-circle-check verified-badge"></i>' : '';
-            document.getElementById('dtTitle').innerHTML = `${t.title} ${verifiedBadge}`;
+            let isVerified = (String(t.is_premium_host).toLowerCase() === 'true' || String(t.is_premium).toLowerCase() === 'true');
+            let verifiedBadgeHtml = isVerified ? `<i class="fa-solid fa-circle-check verified-badge"></i>` : ``;
+            
+            document.getElementById('dtTitle').innerHTML = `${t.title} ${verifiedBadgeHtml}`;
             
             let badgesHTML = '';
             if (t.platform === "Mobile") badgesHTML += `<span class="esports-badge"><i class="fa-solid fa-mobile-screen"></i> Mobile Only</span>`;
@@ -1818,7 +1823,7 @@
             
             let orgId = t.org_username || t.email || 'Verified Organizer';
             document.getElementById('dtOrgName').innerHTML = `${t.org_username || 'Verified Organizer'}`;
-            document.getElementById('dtOrgVerifiedBadge').innerHTML = verifiedBadge;
+            document.getElementById('dtVerifiedBadgeArea').innerHTML = verifiedBadgeHtml;
             
             let hostAvatar = t.avatar ? formatImageUrl(t.avatar) : (t.org_avatar ? formatImageUrl(t.org_avatar) : `https://ui-avatars.com/api/?name=${encodeURIComponent(orgId)}&background=070311&color=00f2ff&bold=true&border=1`);
             document.getElementById('orgAvatarImg').src = hostAvatar;
@@ -1917,7 +1922,9 @@
                 strmSec.style.display = 'none';
             }
 
-            document.getElementById('dtMatchDateRange').innerText = formatMatchPeriod(t.match_period);
+            let matchPeriodRaw = t.match_period || "TBA";
+            let formattedMatchPeriod = matchPeriodRaw !== "TBA" && !isNaN(new Date(matchPeriodRaw).getTime()) ? formatDateTime(matchPeriodRaw) : matchPeriodRaw;
+            document.getElementById('dtMatchDateRange').innerText = formattedMatchPeriod;
             
             let isFull = parseInt(t.filled_slots) >= parseInt(t.slots);
             let timeData = calculateTimeRemaining(t.date);
@@ -2030,6 +2037,8 @@
             document.querySelector('.dm-scroll-area').scrollTo(0,0);
             document.querySelector('.dm-nav-item[data-tab="dtTabOverview"]').click();
             modalEl.classList.add('active');
+            
+            try { Array.from(document.querySelectorAll('.adsbygoogle')).forEach(ad => { if(ad.innerHTML === '') { (adsbygoogle = window.adsbygoogle || []).push({}); } }); } catch(e) {}
         }
 
         function openHostProfile() {
@@ -2044,13 +2053,15 @@
             let fallbackHosted = t.org_hosted_count ? parseInt(t.org_hosted_count) : Math.max(localTournamentsData.filter(x => x.org_username === orgId || x.email === orgId).length, 1);
             
             document.getElementById('hpName').innerText = orgId;
+            
+            let isVerified = (String(t.is_premium_host).toLowerCase() === 'true' || String(t.is_premium).toLowerCase() === 'true');
+            let verifiedBadgeHtml = isVerified ? `<i class="fa-solid fa-circle-check"></i> Verified Tournament Organizer` : ``;
+            document.getElementById('hpVerifiedStatus').innerHTML = verifiedBadgeHtml;
+
             document.getElementById('hpAvatar').src = fallbackAvatar;
             document.getElementById('hpHosted').innerText = fallbackHosted;
             document.getElementById('hpSuccess').innerText = "100%"; 
             document.getElementById('hpRating').innerText = "4.9"; 
-            
-            let isPremiumOrg = String(t.org_is_premium).toLowerCase() === 'true' || String(t.is_premium).toLowerCase() === 'true';
-            document.getElementById('hpVerifiedText').style.display = isPremiumOrg ? 'block' : 'none';
 
             let orgEmail = t.org_email || t.email || orgId;
             fetch(API_URL + "?action=get_avatar&username=" + encodeURIComponent(orgId) + "&email=" + encodeURIComponent(orgEmail))
@@ -2191,26 +2202,6 @@
             const btnArea = document.getElementById('regButtonsArea');
             let user = JSON.parse(localStorage.getItem('tournyx_user')) || {};
 
-            let rawFeeRupees = parseInt(activeTournament.fee) || 0;
-            let reqTickets = Math.ceil(rawFeeRupees / 10);
-            let rawFeePts = parseInt(activeTournament.fee_pts) || 0; 
-            
-            let isSolo = activeTournament.format && activeTournament.format.toLowerCase().includes('solo');
-
-            if(reqTickets === 0 && rawFeePts === 0) {
-                let clanName = "SOLO";
-                if(!isSolo) {
-                    let clans = JSON.parse(localStorage.getItem('tournyx_my_clans_cache')) || [];
-                    if(clans.length > 0) clanName = clans[0].name;
-                } else {
-                    let soloPayload = { username: user.username, id: user.email, phone: user.phone };
-                    clanName = JSON.stringify(soloPayload);
-                }
-                triggerSecureLoader(clanName, 0, 'free');
-                return;
-            }
-
-            // Calculate exact Passes (Universal vs Game Specific)
             let rawEarnings = String(user.earnings || user.rupees || "0");
             let baseRupees = 0; let goldenRupees = 0;
             if (rawEarnings.includes('+')) {
@@ -2261,6 +2252,10 @@
                 isSpecificValid = true;
             }
 
+            let rawFeeRupees = parseInt(activeTournament.fee) || 0;
+            let reqTickets = Math.ceil(rawFeeRupees / 10);
+            let rawFeePts = parseInt(activeTournament.fee_pts) || 0; 
+            
             let headerTxt = "";
             let pUni = document.getElementById('payOptUniversal');
             let pSpec = document.getElementById('payOptSpecific');
@@ -2305,6 +2300,7 @@
 
             document.getElementById('regOverlay').classList.add('active');
             
+            let isSolo = activeTournament.format && activeTournament.format.toLowerCase().includes('solo');
             if(isSolo) {
                 let soloPayload = { username: user.username, id: user.email, phone: user.phone };
                 clanSelectionArea.innerHTML = `
@@ -2491,14 +2487,13 @@
             bar.style.width = "0%";
             bar.style.background = "var(--accent-cyan)";
             logoBox.style.filter = "drop-shadow(0 0 15px var(--accent-cyan))";
-            logoBox.style.transform = "scale(1)";
-            head.innerText = "AUTHENTICATING";
-            txt.innerText = "Validating player clearance...";
+            head.innerText = "INITIALIZING";
+            txt.innerText = "Verifying player credentials...";
             txt.style.color = "var(--accent-cyan)";
             
-            setTimeout(() => { head.innerText = "SECURING COMMS"; txt.innerText = "Connecting squad to match server..."; bar.style.width = "40%"; }, 600);
-            setTimeout(() => { head.innerText = "ALLOCATING SLOT"; txt.innerText = "Generating encrypted entry pass..."; bar.style.width = "75%"; }, 1400);
-            setTimeout(() => { head.innerText = "INITIALIZING"; txt.innerText = "Deploying drop zone coordinates..."; bar.style.width = "90%"; bar.style.background = "var(--accent-orange)"; logoBox.style.filter = "drop-shadow(0 0 15px var(--accent-orange))"; }, 2200);
+            setTimeout(() => { head.innerText = "AUTHENTICATING"; txt.innerText = "Allocating server resources..."; bar.style.width = "40%"; }, 600);
+            setTimeout(() => { head.innerText = "SYNCING ROSTER"; txt.innerText = "Confirming match slot..."; bar.style.width = "75%"; }, 1400);
+            setTimeout(() => { head.innerText = "FINALIZING"; txt.innerText = "Securing final entry ticket..."; bar.style.width = "90%"; bar.style.background = "var(--accent-orange)"; logoBox.style.filter = "drop-shadow(0 0 15px var(--accent-orange))"; }, 2200);
             setTimeout(() => { 
                 submitFinalRegistration(clanName, cost, method, bar, txt, head, logoBox);
             }, 3000);
@@ -2547,9 +2542,8 @@
                 bar.classList.add('blast');
                 bar.style.background = "#00ff7f";
                 logoBox.style.filter = "drop-shadow(0 0 40px #00ff7f)";
-                logoBox.style.transform = "scale(1.15)"; 
-                head.innerText = "ACCESS GRANTED"; 
-                txt.innerText = "Slot Confirmed. Welcome to the Arena!"; 
+                head.innerText = "REGISTRATION SUCCESS"; 
+                txt.innerText = "You are ready for the tournament."; 
                 txt.style.color = "#00ff7f";
                 
                 setTimeout(() => {
@@ -2557,7 +2551,6 @@
                     loaderOverlay.classList.remove('active');
                     setTimeout(() => loaderOverlay.style.display = 'none', 500); 
                     
-                    logoBox.style.transform = "scale(1)"; 
                     closeRegistrationFlow();
                     showToast(cost > 0 ? "Entry successful! Welcome to the Arena." : "Registration Confirmed! GLHF.");
                     
@@ -2815,10 +2808,8 @@
 
 <script>
     document.addEventListener("DOMContentLoaded", function() {
-        // 1. Mobile Browser Detection (Checks user agent AND screen size)
         const isMobileBrowser = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) || window.innerWidth <= 850;
 
-        // 2. Advanced Median App & PWA Detection (Ensures it stays hidden in the actual app)
         const isMedianApp = (typeof median !== 'undefined') || 
                             (typeof gonative !== 'undefined') || 
                             (navigator.userAgent.toLowerCase().indexOf('median') > -1) || 
@@ -2826,7 +2817,6 @@
                             (window.matchMedia('(display-mode: standalone)').matches) ||
                             (navigator.standalone === true);
         
-        // 3. Logic: ONLY show if it's a Mobile Browser AND NOT inside the App
         if (isMobileBrowser && !isMedianApp) {
             setTimeout(() => {
                 const appPrompt = document.getElementById('nativeAppPrompt');
@@ -2834,7 +2824,7 @@
                     appPrompt.style.display = 'flex';
                     try { if(navigator.vibrate) navigator.vibrate(30); } catch(e){}
                 }
-            }, 1500); // Smooth 1.5s delay
+            }, 1500);
         }
     });
 </script>
@@ -2845,12 +2835,10 @@
         if (user && user.email && typeof median !== 'undefined' && median.onesignal) {
             let cleanEmail = user.email.toLowerCase().trim();
             
-            // 1. Set the Official External ID
             if(median.onesignal.setExternalUserId) {
                 median.onesignal.setExternalUserId({ externalId: cleanEmail });
             }
 
-            // 2. Set an Email TAG (The Ultimate Failsafe)
             if(median.onesignal.sendTags) {
                 median.onesignal.sendTags({
                     tags: { 
@@ -2862,10 +2850,7 @@
         }
     }
 
-    // Fire when Median bridge is fully loaded inside the app
     document.addEventListener("median_library_ready", tournyxOneSignalSetup);
-    
-    // Fallback for regular web browsers
     document.addEventListener("DOMContentLoaded", tournyxOneSignalSetup);
 </script>
 </body>
