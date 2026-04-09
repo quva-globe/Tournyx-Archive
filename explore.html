@@ -187,8 +187,8 @@
         .tourney-list { padding: 0 15px; display: flex; flex-direction: column; gap: 18px; min-height: 400px; }
         .tourney-card { 
             background: var(--card-bg); 
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
+            backdrop-filter: blur(25px);
+            -webkit-backdrop-filter: blur(25px);
             border-radius: 18px; 
             overflow: hidden; 
             animation: slideUp 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) backwards; 
@@ -482,7 +482,7 @@
         
         .cyber-bar-container { width: 260px; height: 10px; background: rgba(0,0,0,0.5); border: 1px solid rgba(0,242,255,0.3); border-radius: 20px; margin-top: 15px; overflow: hidden; box-shadow: inset 0 0 10px rgba(0,0,0,0.8); }
         html.theme-vip .cyber-bar-container { border-color: rgba(255,215,0,0.3); }
-        .cyber-bar-fill { height: 100%; width: 0%; background: var(--accent-cyan); border-radius: 20px; box-shadow: 0 0 15px var(--accent-cyan); transition: width 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), background 0.4s; }
+        .cyber-bar-fill { height: 100%; width: 0%; background: var(--accent-cyan); border-radius: 20px; box-shadow: 0 0 15px var(--accent-cyan); transition: width 0.15s cubic-bezier(0.175, 0.885, 0.32, 1.275), background 0.4s; } /* UPGRADED: Fast glitchy timing */
         .cyber-bar-fill.blast { animation: barBlast 0.5s ease-out; }
         @keyframes barBlast { 0% { box-shadow: 0 0 15px #00ff7f; } 50% { box-shadow: 0 0 50px #00ff7f, 0 0 100px #00ff7f; filter: brightness(1.5); } 100% { box-shadow: 0 0 15px #00ff7f; } }
 
@@ -595,7 +595,7 @@
 
         .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); z-index: 5000; display: none; align-items: center; justify-content: center; backdrop-filter: blur(8px); }
         .modal-overlay.active { display: flex; animation: popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
-        .modal-box { background: rgba(15, 7, 30, 0.95); backdrop-filter: blur(20px); width: 90%; max-width: 400px; border-radius: 25px; border: 1px solid var(--card-border); padding: 25px; box-shadow: 0 10px 40px rgba(0,0,0,0.8); text-align: center; position: relative;}
+        .modal-box { background: rgba(15, 7, 30, 0.95); backdrop-filter: blur(25px); width: 90%; max-width: 400px; border-radius: 25px; border: 1px solid var(--card-border); padding: 25px; box-shadow: 0 10px 40px rgba(0,0,0,0.8); text-align: center; position: relative;}
         .modal-close { position: absolute; top: 15px; right: 15px; color: #888; font-size: 1.3rem; cursor: pointer; transition: 0.3s;}
         .modal-close:hover { color: white; transform: rotate(90deg); }
     </style>
@@ -1106,6 +1106,20 @@
             } catch(e) { return dateStr; }
         }
 
+        // --- UPGRADE: Match Period Date Formatter (Handles "2026-04-22 to 2026-04-24") ---
+        function formatMatchPeriod(dateStr) {
+            if (!dateStr || dateStr === "TBD") return "TBD";
+            if (dateStr.includes(" to ")) {
+                let parts = dateStr.split(" to ");
+                return formatTournamentDateStrict(parts[0]) + " - " + formatTournamentDateStrict(parts[1]);
+            }
+            if (dateStr.includes(" - ")) {
+                let parts = dateStr.split(" - ");
+                return formatTournamentDateStrict(parts[0]) + " - " + formatTournamentDateStrict(parts[1]);
+            }
+            return formatTournamentDateStrict(dateStr);
+        }
+
         // Perfect IST Date & Time Formatter
         function getISTDateTime(dateInput) {
             let d = (dateInput && String(dateInput).trim() !== "") ? new Date(dateInput) : new Date();
@@ -1252,7 +1266,7 @@
         function startLandingPageTimers() {
             setInterval(() => {
                 let now = new Date().getTime();
-                document.querySelectorAll('.tourney-card').forEach(card => {
+                document.querySelectorAll('.tourney-card, .org-other-card').forEach(card => {
                     let dateStr = card.getAttribute('data-date');
                     if(!dateStr || dateStr === "TBD") return;
 
@@ -1430,13 +1444,16 @@
             return "Free";
         }
         
-        // UPGRADED BASE64 FETCHER FIX
+        // --- UPGRADED BASE64 & IMGBB FETCHER ---
         function formatImageUrl(url) {
             if (!url) return 'https://via.placeholder.com/600x300';
-            let strUrl = String(url).trim().replace(/[\r\n\t]/g, ''); // Fix line breaks in base64 string from sheet fetching
-            if (strUrl.startsWith('data:image')) return strUrl; // Base64 direct return seamlessly
-            if (strUrl.includes('drive.google.com/file/d/')) { let id = strUrl.split('/d/')[1].split('/')[0]; return `https://drive.google.com/uc?export=view&id=${id}`; }
-            return strUrl;
+            let strUrl = String(url).trim().replace(/[\r\n\t]/g, ''); 
+            if (strUrl.startsWith('data:image')) return strUrl; 
+            if (strUrl.includes('drive.google.com/file/d/')) { 
+                let id = strUrl.split('/d/')[1].split('/')[0]; 
+                return `https://drive.google.com/uc?export=view&id=${id}`; 
+            }
+            return strUrl; 
         }
 
         document.addEventListener("DOMContentLoaded", function() {
@@ -1618,6 +1635,12 @@
                         // Premium verification dynamically checking 't.is_premium' OR similar boolean properties representing verified columns
                         let isVerifiedPremium = (String(t.is_premium).toLowerCase() === 'true' || String(t.is_verified).toLowerCase() === 'true' || String(t.is_official).toLowerCase() === 'true') ? '<i class="fa-solid fa-circle-check verified-badge"></i>' : '';
 
+                        // --- LIVE SYNC JOINED CHECK ---
+                        let isJoined = userLiveMatches.some(m => m.tournament_title === t.title || m.match_id === tIdSafe);
+                        let actionBtnHTML = isJoined 
+                            ? `<button class="join-btn-card" style="background: rgba(0,255,127,0.1); border-color: var(--accent-green); color: var(--accent-green);"><i class="fa-solid fa-check"></i> JOINED</button>`
+                            : `<button class="join-btn-card">REGISTER</button>`;
+
                         card.innerHTML = `
                             <div class="t-banner-wrapper">
                                 <img src="${bg}" class="t-banner-img img-loading" onload="this.classList.remove('img-loading'); this.classList.add('img-loaded');">
@@ -1633,7 +1656,7 @@
                                     <div class="t-detail-item"><i class="fa-solid fa-gamepad"></i> <span>${t.game || "Esports"} (${t.format || "Any"})</span></div>
                                     <div class="t-detail-item"><i class="fa-solid fa-ticket"></i> <span style="color:${entryTxt === "Free" ? '#00ff7f' : 'inherit'}; font-weight:bold; display:flex; align-items:center; gap:5px;">Entry: ${entryTxt}</span></div>
                                     <div class="t-detail-item" style="grid-column: 1 / -1;"><i class="fa-solid fa-calendar-day"></i> <span>Reg Ends: ${formatTournamentDateStrict(t.date)}</span></div>
-                                    <div class="t-detail-item" style="grid-column: 1 / -1;"><i class="fa-solid fa-clock"></i> <span style="color:var(--accent-cyan);">Match Period: ${formatTournamentDateStrict(t.match_period || t.date)}</span></div>
+                                    <div class="t-detail-item" style="grid-column: 1 / -1;"><i class="fa-solid fa-clock"></i> <span style="color:var(--accent-cyan);">Match Period: ${formatMatchPeriod(t.match_period || t.date)}</span></div>
                                     
                                     <div class="t-detail-item slot-tracker" style="grid-column: 1 / -1; flex-direction:column; align-items:flex-start; gap:4px; margin-top: 5px;">
                                         <div style="display:flex; justify-content:space-between; width:100%; align-items:center;">
@@ -1646,7 +1669,7 @@
 
                                 <div class="t-action-row">
                                     <div class="t-prize-area"><div class="t-prize-label">Prize Pool</div><div class="t-prize-val">${getPrizeText(t.prize, t.prize_pts)}</div></div>
-                                    <button class="join-btn-card">REGISTER</button>
+                                    ${actionBtnHTML}
                                 </div>
                             </div>`;
                         feed.appendChild(card);
@@ -1760,6 +1783,12 @@
                     
                     let isVerifiedPremium = (String(t.is_premium).toLowerCase() === 'true' || String(t.is_verified).toLowerCase() === 'true' || String(t.is_official).toLowerCase() === 'true') ? '<i class="fa-solid fa-circle-check verified-badge"></i>' : '';
 
+                    // --- LIVE SYNC JOINED CHECK ---
+                    let isJoined = userLiveMatches.some(m => m.tournament_title === t.title || m.match_id === tIdSafe);
+                    let actionBtnHTML = isJoined 
+                        ? `<button class="join-btn-card" style="background: rgba(0,255,127,0.1); border-color: var(--accent-green); color: var(--accent-green);"><i class="fa-solid fa-check"></i> JOINED</button>`
+                        : `<button class="join-btn-card">REGISTER</button>`;
+
                     card.innerHTML = `
                         <div class="t-banner-wrapper">
                             <img src="${bg}" class="t-banner-img img-loading" onload="this.classList.remove('img-loading'); this.classList.add('img-loaded');">
@@ -1774,7 +1803,7 @@
                                 <div class="t-detail-item"><i class="fa-solid fa-gamepad"></i> <span>${t.game || "Esports"} (${t.format || "Any"})</span></div>
                                 <div class="t-detail-item"><i class="fa-solid fa-ticket"></i> <span style="color:${entryTxt === "Free" ? '#00ff7f' : 'inherit'}; font-weight:bold; display:flex; align-items:center; gap:5px;">Entry: ${entryTxt}</span></div>
                                 <div class="t-detail-item" style="grid-column: 1 / -1;"><i class="fa-solid fa-calendar-day"></i> <span>Reg Ends: ${formatTournamentDateStrict(t.date)}</span></div>
-                                <div class="t-detail-item" style="grid-column: 1 / -1;"><i class="fa-solid fa-clock"></i> <span style="color:var(--accent-cyan);">Match Period: ${formatTournamentDateStrict(t.match_period || t.date)}</span></div>
+                                <div class="t-detail-item" style="grid-column: 1 / -1;"><i class="fa-solid fa-clock"></i> <span style="color:var(--accent-cyan);">Match Period: ${formatMatchPeriod(t.match_period || t.date)}</span></div>
                                 
                                 <div class="t-detail-item slot-tracker" style="grid-column: 1 / -1; flex-direction:column; align-items:flex-start; gap:4px; margin-top: 5px;">
                                     <div style="display:flex; justify-content:space-between; width:100%; align-items:center;">
@@ -1786,7 +1815,7 @@
                             </div>
                             <div class="t-action-row">
                                 <div class="t-prize-area"><div class="t-prize-label">Prize Pool</div><div class="t-prize-val">${getPrizeText(t.prize, t.prize_pts)}</div></div>
-                                <button class="join-btn-card">REGISTER</button>
+                                ${actionBtnHTML}
                             </div>
                         </div>
                     `;
@@ -1866,7 +1895,7 @@
             const prizeArea = document.getElementById('prizeDistributionArea');
             document.getElementById('dtPrizeTotalHead').innerText = getPrizeText(t.prize, t.prize_pts);
 
-            // UPGRADED JSON PRIZE LOGIC FOR FIRST 3 PRIZES + CUSTOM WORDS WITH GLOW
+            // --- UPGRADED JSON PRIZE LOGIC WITH MVP/KILL DETECTOR ---
             let prizeData = [];
             try {
                 let pData = t.prize_json || t.prize_distribution_image || t.prize_distribution || t.prize_image || "";
@@ -1877,12 +1906,14 @@
                         let rankStr = "";
                         let cardClass = "glass-premium";
                         let iconColor = "var(--accent-cyan)";
-                        let icon = "fa-award"; // Generic icon for words like MVP
+                        let icon = "fa-award"; // Generic icon for words
 
                         if (k === "1" || k === "1st") { rankStr = "1st Place"; cardClass = "gold"; iconColor = "#FFD700"; icon = "fa-medal"; }
                         else if (k === "2" || k === "2nd") { rankStr = "2nd Place"; cardClass = "silver"; iconColor = "#C0C0C0"; icon = "fa-medal"; }
                         else if (k === "3" || k === "3rd") { rankStr = "3rd Place"; cardClass = "bronze"; iconColor = "#CD7F32"; icon = "fa-medal"; }
-                        else { rankStr = key.toUpperCase(); } // Keep dynamic words like MVP as provided
+                        else if (k.includes("mvp")) { rankStr = "MVP"; iconColor = "#FFD700"; icon = "fa-star"; }
+                        else if (k.includes("kill") || k.includes("most kills")) { rankStr = key.toUpperCase(); iconColor = "#ff4d4d"; icon = "fa-skull-crossbones"; }
+                        else { rankStr = key.toUpperCase(); } 
 
                         prizeData.push({ rank: rankStr, val: parsed[key], class: cardClass, iconColor: iconColor, icon: icon });
                     });
@@ -1942,7 +1973,7 @@
                 strmSec.style.display = 'none';
             }
 
-            document.getElementById('dtMatchDateRange').innerText = formatTournamentDateStrict(t.match_period || t.date);
+            document.getElementById('dtMatchDateRange').innerText = formatMatchPeriod(t.match_period || t.date);
             
             let isFull = parseInt(t.filled_slots) >= parseInt(t.slots);
             let timeData = calculateTimeRemaining(t.date);
@@ -2538,6 +2569,7 @@
             
             bar.classList.remove('blast');
             bar.style.width = "0%";
+            bar.style.transition = "width 0.15s cubic-bezier(0.175, 0.885, 0.32, 1.275), background 0.4s";
             bar.style.background = "var(--accent-cyan)";
             logoBox.style.filter = "drop-shadow(0 0 15px var(--accent-cyan))";
             logoBox.style.transform = "scale(1)";
@@ -2545,12 +2577,12 @@
             txt.innerText = "Equipping armor & loadout...";
             txt.style.color = "var(--accent-cyan)";
             
-            setTimeout(() => { head.innerText = "TACTICAL SYNC"; txt.innerText = "Connecting squad to server..."; bar.style.width = "40%"; }, 600);
-            setTimeout(() => { head.innerText = "DROPPING IN"; txt.innerText = "Deploying to the battleground..."; bar.style.width = "75%"; }, 1400);
-            setTimeout(() => { head.innerText = "LOCKING TARGET"; txt.innerText = "Securing your drop zone..."; bar.style.width = "90%"; bar.style.background = "var(--accent-orange)"; logoBox.style.filter = "drop-shadow(0 0 15px var(--accent-orange))"; }, 2200);
+            setTimeout(() => { head.innerText = "TACTICAL SYNC"; txt.innerText = "Connecting squad to server..."; bar.style.width = "40%"; }, 250);
+            setTimeout(() => { head.innerText = "DROPPING IN"; txt.innerText = "Deploying to the battleground..."; bar.style.width = "75%"; }, 500);
+            setTimeout(() => { head.innerText = "LOCKING TARGET"; txt.innerText = "Securing your drop zone..."; bar.style.width = "90%"; bar.style.background = "var(--accent-orange)"; logoBox.style.filter = "drop-shadow(0 0 15px var(--accent-orange))"; }, 750);
             setTimeout(() => { 
                 submitFinalRegistration(clanName, cost, method, bar, txt, head, logoBox);
-            }, 3000);
+            }, 1000);
         }
 
         function submitFinalRegistration(clanName, cost, method, bar, txt, head, logoBox) {
