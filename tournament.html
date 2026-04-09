@@ -32,10 +32,10 @@
         /* --- GLOBAL VARIABLES --- */
         :root {
             --primary-bg: #070311;
-            --secondary-bg: #0d061e;
+            --secondary-bg: rgba(13, 6, 30, 0.6);
             --card-bg: rgba(20, 10, 35, 0.4);
-            --input-bg: rgba(17, 8, 34, 0.7);
-            --card-border: rgba(189, 0, 255, 0.2);
+            --input-bg: rgba(17, 8, 34, 0.6);
+            --card-border: rgba(255, 255, 255, 0.08);
             --accent-cyan: #00f2ff;
             --accent-purple: #bd00ff;
             --accent-orange: #ff9900;
@@ -50,157 +50,164 @@
         * { -ms-overflow-style: none !important; scrollbar-width: none !important; box-sizing: border-box; -webkit-tap-highlight-color: transparent; margin: 0; padding: 0; }
         *::-webkit-scrollbar { display: none !important; width: 0 !important; height: 0 !important; background: transparent !important; }
 
-        body { background-color: var(--primary-bg); color: white; font-family: var(--font-body); overflow-x: hidden; width: 100%; padding-bottom: env(safe-area-inset-bottom); padding-top: calc(65px + env(safe-area-inset-top)); }
+        body { background-color: var(--primary-bg); color: white; font-family: var(--font-body); overflow-x: hidden; width: 100%; padding-bottom: env(safe-area-inset-bottom); padding-top: calc(65px + env(safe-area-inset-top)); transition: filter 0.5s ease; }
 
         #particles-canvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; background: radial-gradient(circle at 50% 0%, #15062e 0%, #070311 100%); }
 
         /* --- TOP PROGRESS BAR --- */
-        .top-progress-bar { position: fixed; top: 0; left: 0; width: 100%; height: 4px; background: rgba(255,255,255,0.1); z-index: 3000; }
-        .progress-fill { height: 100%; width: 0%; background: var(--accent-cyan); transition: width 0.4s ease; box-shadow: 0 0 10px var(--accent-cyan); }
+        .top-progress-bar { position: fixed; top: 0; left: 0; width: 100%; height: 4px; background: rgba(255,255,255,0.05); z-index: 3000; }
+        .progress-fill { height: 100%; width: 0%; background: var(--accent-cyan); transition: width 0.4s ease; box-shadow: 0 0 15px var(--accent-cyan); }
 
         /* --- HEADER --- */
-        .top-header { position: fixed; top: 4px; left: 0; width: 100%; padding: env(safe-area-inset-top) 15px 15px; background: rgba(7, 3, 17, 0.95); backdrop-filter: blur(15px); border-bottom: 1px solid var(--card-border); z-index: 2000; box-shadow: 0 4px 30px rgba(0,0,0,0.5); }
+        .top-header { position: fixed; top: 4px; left: 0; width: 100%; padding: env(safe-area-inset-top) 15px 15px; background: rgba(7, 3, 17, 0.85); backdrop-filter: blur(25px); -webkit-backdrop-filter: blur(25px); border-bottom: 1px solid var(--card-border); z-index: 2000; box-shadow: 0 4px 30px rgba(0,0,0,0.5); }
         .header-wrapper { display: flex; align-items: center; justify-content: space-between; max-width: 800px; margin: 0 auto; width: 100%; }
         .header-left { display: flex; align-items: center; gap: 15px; }
         .back-btn { font-size: 1.2rem; color: white; cursor: pointer; text-decoration: none; transition: 0.3s; }
         .back-btn:active { color: var(--accent-cyan); transform: scale(0.9); }
-        .app-title { font-family: var(--font-head); font-size: 1.1rem; font-weight: 700; color: white; letter-spacing: 1px; display: flex; flex-direction: column; }
+        .app-title { font-family: var(--font-head); font-size: 1.1rem; font-weight: 700; color: white; letter-spacing: 1px; display: flex; flex-direction: column; text-shadow: 0 0 10px rgba(255,255,255,0.2); }
         .draft-status { font-size: 0.65rem; color: var(--accent-green); font-family: var(--font-body); font-style: italic; }
         
         .header-actions { display: flex; gap: 15px; color: #888; font-size: 1.1rem; }
         .header-actions i { cursor: pointer; transition: 0.3s; }
         .header-actions i:active { color: var(--accent-red); transform: scale(0.9); }
 
-        /* --- FORM CONTAINER --- */
-        .form-container { padding: 20px 15px 150px 15px; max-width: 800px; margin: 0 auto; width: 100%; }
+        /* --- FORM CONTAINER & ZOOM ANIMATION --- */
+        .form-container { padding: 20px 15px 150px 15px; max-width: 800px; margin: 0 auto; width: 100%; transition: all 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275); transform-origin: center top; }
+        body.zoomed-out .form-container { transform: scale(0.92); opacity: 0.4; filter: blur(3px); pointer-events: none; }
 
         /* Form Sections */
-        .form-section { background: rgba(13, 6, 30, 0.85); backdrop-filter: blur(20px); border: 1px solid rgba(255, 255, 255, 0.05); border-radius: 16px; padding: 25px 20px; margin-bottom: 25px; box-shadow: 0 10px 40px rgba(0,0,0,0.4); animation: slideUp 0.5s ease both; transition: border-color 0.3s, transform 0.3s; overflow: hidden; }
-        .form-section:focus-within { border-color: rgba(0, 242, 255, 0.4); box-shadow: 0 0 20px rgba(0,242,255,0.1); transform: translateY(-2px); }
+        .form-section { background: var(--secondary-bg); backdrop-filter: blur(25px); -webkit-backdrop-filter: blur(25px); border: 1px solid var(--card-border); border-radius: 18px; padding: 25px 20px; margin-bottom: 25px; box-shadow: 0 10px 40px rgba(0,0,0,0.4); animation: slideUp 0.6s ease both; transition: all 0.3s; overflow: hidden; }
+        .form-section:hover { border-color: rgba(0, 242, 255, 0.3); box-shadow: 0 15px 45px rgba(0, 242, 255, 0.1); transform: translateY(-2px); }
+        .form-section:focus-within { border-color: var(--accent-cyan); box-shadow: 0 0 25px rgba(0,242,255,0.15); }
         .form-section.collapsed .section-content { display: none; }
         .form-section:nth-child(1) { animation-delay: 0.1s; } .form-section:nth-child(2) { animation-delay: 0.2s; } .form-section:nth-child(3) { animation-delay: 0.3s; } .form-section:nth-child(4) { animation-delay: 0.4s; } .form-section:nth-child(5) { animation-delay: 0.5s; }
-        @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes slideUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
 
-        .section-header { font-family: var(--font-head); font-size: 1.1rem; margin-bottom: 20px; display: flex; align-items: center; justify-content: space-between; color: white; padding-bottom: 10px; border-bottom: 1px solid rgba(255,255,255,0.05); cursor: pointer; user-select: none; }
-        .sh-left { display: flex; align-items: center; gap: 10px; }
-        .sh-left i { color: var(--accent-cyan); font-size: 1.3rem; text-shadow: 0 0 10px rgba(0,242,255,0.4); }
-        .collapse-icon { font-size: 0.9rem; color: #888; transition: 0.3s; }
-        .form-section.collapsed .collapse-icon { transform: rotate(-90deg); }
+        .section-header { font-family: var(--font-head); font-size: 1.15rem; margin-bottom: 20px; display: flex; align-items: center; justify-content: space-between; color: white; padding-bottom: 12px; border-bottom: 1px solid rgba(255,255,255,0.08); cursor: pointer; user-select: none; transition: 0.3s; }
+        .section-header:hover { color: var(--accent-cyan); }
+        .sh-left { display: flex; align-items: center; gap: 12px; }
+        .sh-left i { color: var(--accent-purple); font-size: 1.3rem; filter: drop-shadow(0 0 8px rgba(189,0,255,0.5)); transition: 0.3s; }
+        .section-header:hover .sh-left i { color: var(--accent-cyan); filter: drop-shadow(0 0 8px rgba(0,242,255,0.5)); }
+        .collapse-icon { font-size: 0.9rem; color: #888; transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+        .form-section.collapsed .collapse-icon { transform: rotate(-90deg); color: var(--accent-cyan); }
 
         /* --- INPUT GROUPS --- */
-        .input-group { margin-bottom: 20px; width: 100%; position: relative; }
-        .row { display: flex; gap: 15px; margin-bottom: 20px; flex-wrap: wrap; width: 100%; }
-        .col { flex: 1 1 120px; min-width: 0; }
+        .input-group { margin-bottom: 22px; width: 100%; position: relative; }
+        .row { display: flex; gap: 15px; margin-bottom: 22px; flex-wrap: wrap; width: 100%; }
+        .col { flex: 1 1 140px; min-width: 0; }
         
-        .input-label { display: flex; align-items: center; gap: 5px; font-size: 0.85rem; color: #ccc; margin-bottom: 8px; font-family: var(--font-head); font-weight: bold; letter-spacing: 0.5px; text-transform: uppercase; }
-        .tooltip-icon { font-size: 0.8rem; color: var(--accent-cyan); cursor: pointer; }
-        .input-sublabel { font-size: 0.75rem; color: #888; margin-top: 5px; font-style: italic; display: flex; justify-content: space-between; }
+        .input-label { display: flex; align-items: center; gap: 6px; font-size: 0.85rem; color: white; margin-bottom: 10px; font-family: var(--font-head); font-weight: bold; letter-spacing: 0.5px; text-transform: uppercase; }
+        .tooltip-icon { font-size: 0.85rem; color: var(--accent-cyan); cursor: pointer; transition: 0.3s; }
+        .tooltip-icon:hover { filter: drop-shadow(0 0 5px var(--accent-cyan)); }
+        .input-sublabel { font-size: 0.75rem; color: #888; margin-top: 6px; font-style: italic; display: flex; justify-content: space-between; }
         
-        /* Premium Input Styling */
-        .form-control { width: 100%; background: var(--input-bg); backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 12px; padding: 14px 15px; color: white; font-family: var(--font-body); font-size: 1rem; outline: none; transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); box-shadow: inset 0 0 5px rgba(0,0,0,0.5); }
+        .form-control { width: 100%; background: var(--input-bg); border: 1px solid var(--card-border); border-radius: 12px; padding: 15px 18px; color: white; font-family: var(--font-body); font-size: 1.05rem; outline: none; transition: 0.3s; backdrop-filter: blur(10px); }
         .form-control::placeholder { color: #555; }
-        .form-control:focus { border-color: var(--accent-cyan); box-shadow: 0 0 15px rgba(0,242,255,0.3), inset 0 0 8px rgba(0,242,255,0.1); transform: translateY(-2px); background: rgba(17, 8, 34, 0.9); }
-        .form-control.error { border-color: var(--accent-red); box-shadow: 0 0 10px rgba(255,77,77,0.2); animation: shake 0.4s; }
+        .form-control:focus { border-color: var(--accent-cyan); box-shadow: 0 0 20px rgba(0,242,255,0.2), inset 0 0 10px rgba(0,242,255,0.05); background: rgba(0, 0, 0, 0.5); }
+        .form-control.error { border-color: var(--accent-red); box-shadow: 0 0 15px rgba(255,77,77,0.3); animation: shake 0.4s; }
         @keyframes shake { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-5px); } 75% { transform: translateX(5px); } }
         
-        select.form-control { appearance: none; background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23888'%3e%3cpath d='M7 10l5 5 5-5z'/%3e%3c/svg%3e"); background-repeat: no-repeat; background-position: right 15px center; background-size: 20px; }
+        select.form-control { appearance: none; background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%2300f2ff'%3e%3cpath d='M7 10l5 5 5-5z'/%3e%3c/svg%3e"); background-repeat: no-repeat; background-position: right 18px center; background-size: 22px; cursor: pointer; }
 
         /* Quick Presets */
-        .preset-row { display: flex; gap: 8px; margin-top: 8px; }
-        .preset-badge { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); color: #ccc; font-size: 0.75rem; padding: 4px 12px; border-radius: 20px; cursor: pointer; transition: 0.2s; font-weight: bold; }
+        .preset-row { display: flex; gap: 8px; margin-top: 10px; }
+        .preset-badge { background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.1); color: #ccc; font-size: 0.8rem; padding: 4px 12px; border-radius: 50px; cursor: pointer; transition: 0.3s; font-family: var(--font-head); font-weight: bold; letter-spacing: 0.5px; }
         .preset-badge:hover { background: rgba(0,242,255,0.1); border-color: var(--accent-cyan); color: white; }
         .preset-badge:active { background: var(--accent-cyan); color: black; border-color: var(--accent-cyan); transform: scale(0.95); }
 
         /* Image Uploader */
-        .upload-box-wrapper { border: 2px dashed rgba(0,242,255,0.3); border-radius: 16px; padding: 30px 15px; text-align: center; margin-bottom: 20px; position: relative; overflow: hidden; background: rgba(0,0,0,0.3); transition: 0.3s; cursor: pointer; }
-        .upload-box-wrapper:hover { border-color: var(--accent-cyan); background: rgba(0,242,255,0.05); }
+        .upload-box-wrapper { border: 2px dashed rgba(189,0,255,0.4); border-radius: 18px; padding: 40px 20px; text-align: center; margin-bottom: 20px; position: relative; overflow: hidden; background: rgba(0,0,0,0.3); transition: 0.3s; cursor: pointer; backdrop-filter: blur(10px); }
+        .upload-box-wrapper:hover { border-color: var(--accent-cyan); background: rgba(0,242,255,0.05); box-shadow: 0 0 20px rgba(0,242,255,0.1); }
         .upload-box-wrapper.error { border-color: var(--accent-red); animation: shake 0.4s; }
-        .upload-icon-circle { width: 60px; height: 60px; background: var(--accent-gradient); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; color: white; margin: 0 auto 15px; box-shadow: 0 5px 15px rgba(0,242,255,0.4); pointer-events: none;}
-        .upload-title { font-family: var(--font-head); font-weight: bold; color: white; font-size: 1rem; margin-bottom: 5px; pointer-events: none;}
-        .upload-desc { font-size: 0.8rem; color: #888; pointer-events: none;}
+        .upload-icon-circle { width: 70px; height: 70px; background: var(--accent-gradient); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.8rem; color: white; margin: 0 auto 15px; box-shadow: 0 5px 20px rgba(189,0,255,0.5); pointer-events: none; transition: 0.3s;}
+        .upload-box-wrapper:hover .upload-icon-circle { transform: scale(1.1); box-shadow: 0 5px 25px rgba(0,242,255,0.6); }
+        .upload-title { font-family: var(--font-head); font-weight: bold; color: white; font-size: 1.1rem; margin-bottom: 6px; pointer-events: none;}
+        .upload-desc { font-size: 0.85rem; color: #888; pointer-events: none;}
         .file-input { display: none; }
-        .preview-img { width: 100%; height: 180px; object-fit: contain; border-radius: 12px; display: none; margin-top: 10px; border: 1px solid var(--accent-cyan); box-shadow: 0 5px 15px rgba(0,242,255,0.2); background: #000; }
-        .remove-img { background: rgba(255,77,77,0.1); color: var(--accent-red); border: 1px solid rgba(255,77,77,0.3); padding: 8px 15px; border-radius: 8px; font-size: 0.85rem; cursor: pointer; display: none; margin: 15px auto 0; text-align: center; font-weight: bold; width: max-content; transition: 0.3s; }
+        .preview-img { width: 100%; height: 200px; object-fit: contain; border-radius: 15px; display: none; margin-top: 10px; border: 1px solid var(--accent-cyan); box-shadow: 0 10px 30px rgba(0,242,255,0.2); background: #000; }
+        .remove-img { background: rgba(255,77,77,0.1); color: var(--accent-red); border: 1px solid rgba(255,77,77,0.3); padding: 10px 20px; border-radius: 50px; font-size: 0.85rem; font-family: var(--font-head); cursor: pointer; display: none; margin: 15px auto 0; text-align: center; font-weight: bold; width: max-content; transition: 0.3s; }
+        .remove-img:hover { background: var(--accent-red); color: white; box-shadow: 0 5px 15px rgba(255,77,77,0.4); }
 
         /* --- NEW SCHEDULE BUILDER CSS --- */
-        .sch-block { background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; padding: 15px; margin-bottom: 15px; position: relative; transition: 0.3s; }
-        .sch-block:focus-within { border-color: var(--accent-cyan); box-shadow: inset 0 0 10px rgba(0,242,255,0.05); transform: translateY(-2px); }
-        .sch-remove { position: absolute; top: -10px; right: -10px; background: var(--accent-red); color: white; width: 24px; height: 24px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; font-size: 0.7rem; box-shadow: 0 2px 10px rgba(255,77,77,0.5); z-index: 5; transition: 0.3s; }
-        .sch-remove:active { transform: scale(0.8); }
+        .sch-block { background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; padding: 18px; margin-bottom: 18px; position: relative; transition: 0.3s; backdrop-filter: blur(10px); }
+        .sch-block:focus-within { border-color: var(--accent-cyan); box-shadow: inset 0 0 15px rgba(0,242,255,0.05); transform: scale(1.01); }
+        .sch-remove { position: absolute; top: -12px; right: -12px; background: var(--accent-red); color: white; width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; font-size: 0.8rem; box-shadow: 0 5px 10px rgba(255,77,77,0.4); z-index: 5; transition: 0.3s; }
+        .sch-remove:hover { transform: scale(1.1); }
+        .sch-remove:active { transform: scale(0.9); }
 
         /* --- NATIVE RICH TEXT EDITOR --- */
-        .rich-text-wrapper { border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; background: var(--input-bg); overflow: hidden; transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); width: 100%; }
-        .rich-text-wrapper:focus-within { border-color: var(--accent-cyan); box-shadow: 0 0 15px rgba(0,242,255,0.3), inset 0 0 8px rgba(0,242,255,0.1); transform: translateY(-2px); }
-        .rich-text-wrapper.error { border-color: var(--accent-red); box-shadow: 0 0 10px rgba(255,77,77,0.2); animation: shake 0.4s; }
-        .rt-toolbar { padding: 12px 15px; border-bottom: 1px solid rgba(255,255,255,0.05); display: flex; gap: 15px; color: #888; font-size: 1.1rem; background: rgba(0,0,0,0.3); overflow-x: auto; backdrop-filter: blur(5px); }
-        .rt-toolbar i { cursor: pointer; transition: 0.2s; padding: 5px 8px; border-radius: 6px; }
-        .rt-toolbar i:hover { color: var(--accent-cyan); background: rgba(0,242,255,0.1); }
-        .rt-toolbar i:active { color: white; background: var(--accent-cyan); transform:scale(0.9);}
+        .rich-text-wrapper { border: 1px solid var(--card-border); border-radius: 12px; background: var(--input-bg); overflow: hidden; transition: 0.3s; width: 100%; backdrop-filter: blur(10px); }
+        .rich-text-wrapper:focus-within { border-color: var(--accent-cyan); box-shadow: 0 0 20px rgba(0,242,255,0.2); }
+        .rich-text-wrapper.error { border-color: var(--accent-red); box-shadow: 0 0 15px rgba(255,77,77,0.3); animation: shake 0.4s; }
+        .rt-toolbar { padding: 12px 18px; border-bottom: 1px solid var(--card-border); display: flex; gap: 15px; color: #888; font-size: 1.1rem; background: rgba(0,0,0,0.4); overflow-x: auto; }
+        .rt-toolbar i { cursor: pointer; transition: 0.2s; padding: 6px 10px; border-radius: 8px; }
+        .rt-toolbar i:hover { color: white; background: rgba(255,255,255,0.1); }
+        .rt-toolbar i:active { color: white; background: rgba(189,0,255,0.6); transform:scale(0.9);}
         
-        .rt-textarea { width: 100%; background: transparent; border: none; color: white; padding: 15px; font-family: var(--font-body); font-size: 1rem; outline: none; min-height: 150px; line-height: 1.6; overflow-y: auto; }
+        .rt-textarea { width: 100%; background: transparent; border: none; color: white; padding: 18px; font-family: var(--font-body); font-size: 1.05rem; outline: none; min-height: 160px; line-height: 1.7; overflow-y: auto; }
         .rt-textarea:empty:before { content: attr(data-placeholder); color: #555; pointer-events: none; display: block; animation: pulsePlaceholder 4s infinite; }
         @keyframes pulsePlaceholder { 0%, 100% { opacity: 0.5; } 50% { opacity: 1; } }
 
         /* Selection Cards & Platforms */
-        .selection-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 10px; width: 100%; }
-        .sel-card { background: var(--input-bg); border: 1px solid rgba(255,255,255,0.1); padding: 15px 10px; border-radius: 12px; text-align: center; cursor: pointer; transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px; box-shadow: inset 0 0 5px rgba(0,0,0,0.5); }
-        .sel-card i { font-size: 1.5rem; color: #666; transition: 0.3s; }
-        .sel-card span { font-family: var(--font-head); font-size: 0.9rem; font-weight: bold; color: #888; transition: 0.3s; }
-        .sel-card:hover { border-color: rgba(0,242,255,0.3); background: rgba(0,242,255,0.05); }
-        .sel-card.active { border-color: var(--accent-cyan); background: rgba(0,242,255,0.1); box-shadow: 0 0 15px rgba(0,242,255,0.2), inset 0 0 8px rgba(0,242,255,0.1); transform: translateY(-2px); }
-        .sel-card.active i { color: var(--accent-cyan); text-shadow: 0 0 10px rgba(0,242,255,0.4); }
+        .selection-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 12px; width: 100%; }
+        .sel-card { background: rgba(0,0,0,0.3); border: 1px solid var(--card-border); padding: 18px 12px; border-radius: 15px; text-align: center; cursor: pointer; transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 10px; backdrop-filter: blur(10px); }
+        .sel-card i { font-size: 1.8rem; color: #666; transition: 0.3s; }
+        .sel-card span { font-family: var(--font-head); font-size: 0.95rem; font-weight: bold; color: #888; transition: 0.3s; text-transform: uppercase; }
+        .sel-card:hover { border-color: rgba(0,242,255,0.3); background: rgba(0,242,255,0.05); transform: translateY(-3px); }
+        .sel-card.active { border-color: var(--accent-cyan); background: rgba(0,242,255,0.1); box-shadow: 0 10px 20px rgba(0,242,255,0.2); transform: translateY(-3px); }
+        .sel-card.active i { color: var(--accent-cyan); filter: drop-shadow(0 0 10px rgba(0,242,255,0.6)); }
         .sel-card.active span { color: white; }
         .platform-grid { grid-template-columns: 1fr 1fr 1fr; }
-        .platform-grid .sel-card { padding: 12px 5px; }
 
         /* Game Grid */
-        .search-game-box { position: relative; margin-bottom: 15px; width: 100%; }
-        .search-game-box i { position: absolute; left: 15px; top: 50%; transform: translateY(-50%); color: #888; z-index: 2; }
-        .game-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)); gap: 12px; width: 100%; }
-        .game-card { position: relative; border-radius: 12px; overflow: hidden; height: 120px; cursor: pointer; border: 2px solid transparent; transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); background: #110822; }
-        .game-card img { width: 100%; height: 100%; object-fit: cover; opacity: 0.5; transition: 0.3s; }
-        .game-card.active { border-color: var(--accent-cyan); box-shadow: 0 0 20px rgba(0,242,255,0.4); transform: scale(1.05); z-index: 2; }
+        .search-game-box { position: relative; margin-bottom: 18px; width: 100%; }
+        .search-game-box i { position: absolute; left: 18px; top: 50%; transform: translateY(-50%); color: #888; font-size: 1.1rem; }
+        .game-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(110px, 1fr)); gap: 15px; width: 100%; }
+        .game-card { position: relative; border-radius: 15px; overflow: hidden; height: 120px; cursor: pointer; border: 2px solid transparent; transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); background: #000; }
+        .game-card img { width: 100%; height: 100%; object-fit: cover; opacity: 0.4; transition: 0.4s; }
+        .game-card:hover { transform: translateY(-3px); border-color: rgba(255,153,0,0.4); }
+        .game-card:hover img { opacity: 0.7; }
+        .game-card.active { border-color: var(--accent-orange); box-shadow: 0 10px 25px rgba(255,153,0,0.5); transform: translateY(-5px) scale(1.02); z-index: 2; }
         .game-card.active img { opacity: 1; }
-        .game-label { position: absolute; bottom: 0; left: 0; width: 100%; text-align: center; font-family: var(--font-head); font-weight: bold; font-size: 0.8rem; padding: 25px 5px 8px; background: linear-gradient(transparent, rgba(0,0,0,0.9)); z-index: 2; pointer-events: none; }
-        .platform-tag { position: absolute; top: 5px; right: 5px; background: rgba(0,0,0,0.8); padding: 3px 6px; border-radius: 4px; font-size: 0.6rem; font-weight: bold; color: var(--accent-cyan); border: 1px solid rgba(0,242,255,0.3); backdrop-filter: blur(5px); }
+        .game-label { position: absolute; bottom: 0; left: 0; width: 100%; text-align: center; font-family: var(--font-head); font-weight: bold; font-size: 0.85rem; padding: 30px 5px 10px; background: linear-gradient(transparent, rgba(0,0,0,0.95)); z-index: 2; pointer-events: none; text-shadow: 0 0 5px rgba(0,0,0,0.8); }
+        .platform-tag { position: absolute; top: 6px; right: 6px; background: rgba(0,0,0,0.8); padding: 4px 8px; border-radius: 6px; font-size: 0.65rem; font-weight: bold; color: var(--accent-cyan); border: 1px solid rgba(0,242,255,0.4); backdrop-filter: blur(5px); }
 
         /* Live Calculator */
-        .calc-box { background: rgba(0,242,255,0.05); border: 1px solid var(--accent-cyan); border-radius: 12px; padding: 15px; margin-top: 15px; display: flex; justify-content: space-between; align-items: center; width: 100%; transition: 0.3s; box-shadow: 0 0 15px rgba(0,242,255,0.1); }
-        .calc-lbl { font-size: 0.8rem; color: #ccc; font-family: var(--font-head); }
-        .calc-val { font-size: 1.3rem; font-weight: bold; color: var(--accent-cyan); text-shadow: 0 0 5px rgba(0,242,255,0.4); }
+        .calc-box { background: rgba(0,242,255,0.05); border: 1px solid var(--accent-cyan); border-radius: 15px; padding: 20px; margin-top: 15px; display: flex; justify-content: space-between; align-items: center; width: 100%; transition: 0.3s; box-shadow: 0 10px 30px rgba(0,242,255,0.1); backdrop-filter: blur(10px); }
+        .calc-lbl { font-size: 0.85rem; color: #ccc; font-family: var(--font-head); text-transform: uppercase; letter-spacing: 0.5px; }
+        .calc-val { font-size: 1.5rem; font-weight: bold; color: var(--accent-cyan); text-shadow: 0 0 10px rgba(0,242,255,0.5); }
 
         /* --- SUBMIT BUTTON --- */
-        .submit-wrapper { position: fixed; bottom: 0; left: 0; width: 100%; padding: 15px; background: rgba(7,3,17,0.95); backdrop-filter: blur(15px); border-top: 1px solid var(--card-border); z-index: 1000; box-shadow: 0 -10px 30px rgba(0,0,0,0.8); padding-bottom: calc(15px + env(safe-area-inset-bottom)); }
-        .submit-btn { width: 100%; max-width: 800px; margin: 0 auto; padding: 16px; background: var(--accent-gradient); border: none; border-radius: 12px; color: white; font-family: var(--font-head); font-size: 1.1rem; font-weight: bold; text-transform: uppercase; cursor: pointer; box-shadow: 0 5px 20px rgba(0, 242, 255, 0.4); transition: 0.3s; letter-spacing: 1px; display: flex; justify-content: center; align-items: center; gap: 10px; position: relative; overflow: hidden; }
-        .submit-btn:hover { box-shadow: 0 8px 25px rgba(0, 242, 255, 0.6); filter: brightness(1.1); transform: translateY(-2px); }
-        .submit-btn:active { transform: scale(0.98); box-shadow: 0 2px 10px rgba(0, 242, 255, 0.4); }
-        .submit-btn:disabled { background: #2a2a3a; color: #888; box-shadow: none; cursor: default; transform: none; filter: none; }
+        .submit-wrapper { position: fixed; bottom: 0; left: 0; width: 100%; padding: 15px; background: rgba(7,3,17,0.85); backdrop-filter: blur(25px); -webkit-backdrop-filter: blur(25px); border-top: 1px solid var(--card-border); z-index: 1000; box-shadow: 0 -10px 40px rgba(0,0,0,0.6); padding-bottom: calc(15px + env(safe-area-inset-bottom)); transition: transform 0.5s; }
+        body.zoomed-out .submit-wrapper { transform: translateY(100%); }
+        .submit-btn { width: 100%; max-width: 800px; margin: 0 auto; padding: 18px; background: var(--accent-gradient); border: none; border-radius: 50px; color: white; font-family: var(--font-head); font-size: 1.2rem; font-weight: 900; text-transform: uppercase; cursor: pointer; box-shadow: 0 10px 30px rgba(189, 0, 255, 0.5); transition: 0.3s; letter-spacing: 1.5px; display: flex; justify-content: center; align-items: center; gap: 12px; position: relative; overflow: hidden; }
+        .submit-btn:hover { box-shadow: 0 15px 40px rgba(189, 0, 255, 0.7); filter: brightness(1.1); transform: translateY(-2px); }
+        .submit-btn:active { transform: scale(0.97); box-shadow: 0 5px 15px rgba(189, 0, 255, 0.4); }
+        .submit-btn:disabled { background: rgba(255,255,255,0.05); color: #666; border: 1px solid rgba(255,255,255,0.1); box-shadow: none; cursor: default; transform: none; filter: none; }
         
         /* Ripple Effect */
-        .ripple { position: absolute; border-radius: 50%; transform: scale(0); animation: ripple-anim 0.6s linear; background-color: rgba(255, 255, 255, 0.4); }
+        .ripple { position: absolute; border-radius: 50%; transform: scale(0); animation: ripple-anim 0.6s linear; background-color: rgba(255, 255, 255, 0.3); pointer-events: none; }
         @keyframes ripple-anim { to { transform: scale(4); opacity: 0; } }
 
-        /* Cinematic Loading & Success Overlay */
-        .loading-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(7,3,17,0.98); backdrop-filter: blur(20px); display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 4000; opacity: 0; transform: scale(1.1); pointer-events: none; transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
-        .loading-overlay.active { opacity: 1; transform: scale(1); pointer-events: auto; }
-        .loader-ring { width: 70px; height: 70px; border: 4px solid rgba(255,255,255,0.1); border-top: 4px solid var(--accent-cyan); border-radius: 50%; animation: spin 1s cubic-bezier(0.175, 0.885, 0.32, 1.275) infinite; margin-bottom: 20px; box-shadow: 0 0 20px rgba(0,242,255,0.5); }
+        /* LOADING & SUCCESS OVERLAY */
+        .loading-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(7,3,17,0.85); backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px); display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 4000; opacity: 0; pointer-events: none; transition: 0.5s ease-in-out; }
+        .loading-overlay.active { opacity: 1; pointer-events: auto; }
+        .loader-ring { width: 80px; height: 80px; border: 4px solid rgba(255,255,255,0.05); border-top: 4px solid var(--accent-cyan); border-radius: 50%; animation: spin 1s cubic-bezier(0.175, 0.885, 0.32, 1.275) infinite; margin-bottom: 25px; box-shadow: 0 0 30px rgba(0,242,255,0.4); }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
         
-        .success-icon-anim { display: none; font-size: 5rem; color: var(--accent-green); margin-bottom: 20px; text-shadow: 0 0 30px rgba(0,255,127,0.6); }
-        .success-zoom { animation: cinematicZoom 1.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; }
-        @keyframes cinematicZoom { 
-            0% { transform: scale(0.5); opacity: 0; filter: blur(10px); } 
-            50% { transform: scale(1.2); opacity: 1; filter: blur(0px); } 
-            100% { transform: scale(1); opacity: 1; } 
-        }
+        .success-icon-anim { display: none; font-size: 6rem; color: var(--accent-green); margin-bottom: 20px; text-shadow: 0 0 40px rgba(0,255,127,0.7); animation: popScale 0.7s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; transform: scale(0); }
+        @keyframes popScale { 0% { transform: scale(0); opacity: 0; } 50% { transform: scale(1.4); } 100% { transform: scale(1); opacity: 1; } }
         
-        #customToast { visibility: hidden; min-width: 250px; background-color: var(--accent-cyan); color: #000; text-align: center; border-radius: 10px; padding: 14px; position: fixed; z-index: 9999; left: 50%; bottom: -50px; transform: translateX(-50%); font-family: var(--font-head); font-weight: bold; transition: 0.4s; box-shadow: 0 5px 20px rgba(0,242,255,0.5);}
-        #customToast.show { visibility: visible; bottom: 100px; }
+        .status-msg { font-family: var(--font-head); font-size: 1.8rem; font-weight: bold; color: white; text-shadow: 0 0 15px rgba(255,255,255,0.4); text-transform: uppercase; letter-spacing: 2px; text-align: center; }
+        .status-sub { font-size: 1rem; color: #aaa; margin-top: 10px; text-align: center; max-width: 80%; line-height: 1.5; }
+        
+        #customToast { visibility: hidden; min-width: 250px; background-color: var(--accent-cyan); color: #000; text-align: center; border-radius: 50px; padding: 16px 20px; position: fixed; z-index: 9999; left: 50%; bottom: -50px; transform: translateX(-50%); font-family: var(--font-head); font-weight: bold; transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); box-shadow: 0 10px 30px rgba(0,242,255,0.5); letter-spacing: 0.5px;}
+        #customToast.show { visibility: visible; bottom: 110px; }
 
         /* Stream Badge */
-        .stream-status { position: absolute; right: 15px; top: 40px; font-size: 1.2rem; display: none; }
-        .stream-status.valid { display: block; color: var(--accent-green); animation: popIn 0.3s; }
-        .stream-status.invalid { display: block; color: var(--accent-red); animation: shake 0.3s; }
+        .stream-status { position: absolute; right: 18px; top: 40px; font-size: 1.3rem; display: none; }
+        .stream-status.valid { display: block; color: var(--accent-green); animation: popIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); filter: drop-shadow(0 0 8px rgba(0,255,127,0.6)); }
+        .stream-status.invalid { display: block; color: var(--accent-red); animation: shake 0.4s; filter: drop-shadow(0 0 8px rgba(255,77,77,0.6)); }
         
         /* Median override to ensure visibility */
         .median-active .top-header { display: flex !important; }
@@ -256,7 +263,7 @@
                 <div class="input-group">
                     <label class="input-label">Tournament Title *</label>
                     <input type="text" name="tournament_name" id="inpTitle" class="form-control" placeholder="e.g., WarHawks Esports Championship" maxlength="60" required oninput="updateCharCount(this, 'titleCount')">
-                    <div class="input-sublabel"><span>Letters, numbers, special chars allowed.</span> <span id="titleCount">0/60</span></div>
+                    <div class="input-sublabel"><span>Letters, numbers, special chars allowed.</span> <span id="titleCount" style="color:var(--accent-cyan); font-weight:bold;">0/60</span></div>
                 </div>
 
                 <div class="input-group">
@@ -270,7 +277,7 @@
                         <div class="rt-textarea" id="editor" contenteditable="true" data-placeholder="Detail the rules, format, and requirements here..." oninput="updateWordCount()"></div>
                         <input type="hidden" name="rules" id="hiddenRules" required>
                     </div>
-                    <div class="input-sublabel" style="justify-content: flex-end;"><span id="wordCount">0 words</span></div>
+                    <div class="input-sublabel" style="justify-content: flex-end;"><span id="wordCount" style="color:var(--accent-purple); font-weight:bold;">0 words</span></div>
                 </div>
             </div>
         </div>
@@ -288,7 +295,7 @@
                             <i class="fa-solid fa-mobile-screen"></i><span>Mobile</span>
                         </div>
                         <div class="sel-card" onclick="setPlatform('PC', this)">
-                            <i class="fa-solid fa-desktop"></i><span>PC</span>
+                            <i class="fa-solid fa-desktop"></i><span>PC (Emu)</span>
                         </div>
                         <div class="sel-card" onclick="setPlatform('Console', this)">
                             <i class="fa-solid fa-gamepad"></i><span>Console</span>
@@ -297,43 +304,33 @@
                     <input type="hidden" id="inpPlatform" value="Mobile">
                 </div>
                 
-                <label class="input-label" style="margin-top:20px;">Select Game *</label>
+                <label class="input-label" style="margin-top:25px;">Select Game *</label>
                 <div class="search-game-box">
                     <i class="fa-solid fa-magnifying-glass"></i>
-                    <input type="text" class="form-control" style="padding-left:40px;" id="gameSearch" placeholder="Search games..." onkeyup="filterGames()">
+                    <input type="text" class="form-control" style="padding-left:45px;" id="gameSearch" placeholder="Search games..." onkeyup="filterGames()">
                 </div>
                 
                 <div class="game-grid" id="gameGrid">
-                    <div class="game-card active" data-platform="Mobile" data-name="bgmi battlegrounds" onclick="selectGame('BGMI', this)">
+                    <div class="game-card active" data-name="bgmi" onclick="selectGame('BGMI', this)">
                         <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEj3MKUI87mMK4_3DltS3LQgqfrK1sESUIMMqlENdi0dPRtOFkeDbvPsTbSaCRaJOb17QZ5s9OO5dR6kFCYiCkgUCF2zBWwvGFSb3T-9Nz51XuIzMvIiOuqwcLzyzeFmn1orKbiETP4LrlaG-RidnWAAzBwUA3aL5_z62HP4_F7R02lAK_WSYdH0U_Gn7Es/s250/1000094211.jpg">
-                        <div class="platform-tag">MOBILE</div>
+                        <div class="platform-tag">ESPORTS</div>
                         <div class="game-label">BGMI</div>
                     </div>
-                    <div class="game-card" data-platform="Mobile" data-name="free fire ff max" onclick="selectGame('Free Fire', this)">
+                    <div class="game-card" data-name="free fire" onclick="selectGame('Free Fire', this)">
                         <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEiJvPTY_y_XU-0Lwbnjwm7961lCDkSlQh2MtCWHunFVX6WS7WCprCtkPyB334BU_-4vGsP0NseDQf4NPBEOIxqjk7VZQqZUHpnLb4Bw-c1UeXQy2M9DzNrNdYt_aL0GEb1AlTPupC5zEjJiP3Ci0Oxk-wdg5TF5cs8_UNSe3uTT1BE884je3iXr8QlMjx8/s240/1000094210.jpg">
-                        <div class="platform-tag">MOBILE</div>
+                        <div class="platform-tag">ESPORTS</div>
                         <div class="game-label">Free Fire</div>
                     </div>
-                    <div class="game-card" data-platform="Mobile" data-name="codm call of duty" onclick="selectGame('COD Mobile', this)">
+                    <div class="game-card" data-name="codm call of duty" onclick="selectGame('COD Mobile', this)">
                         <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEg8vsDFFkLAXTA234WJzc3OqsLbmB3HBlKaXhiJo-JFVcTtYmMUI2DVdk5ljTPvGPKj-vtcejjFAxZO0sapDafr6xqN7VpHLGCcxqYWWY2LIZszXhrnnO1gcXFeJzY2EclP6G1bLoea5bshOtT7Dl3p4F_l0pGDuz1j5KJ78dEnI7cQixwAeDC1vKG89N4/s460/1000094209.jpg">
-                        <div class="platform-tag">MOBILE</div>
+                        <div class="platform-tag">ESPORTS</div>
                         <div class="game-label">COD Mobile</div>
-                    </div>
-                    <div class="game-card" data-platform="PC" data-name="valorant" style="display:none;" onclick="selectGame('Valorant', this)">
-                        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/f/fc/Valorant_logo_-_pink_color_version.svg/1200px-Valorant_logo_-_pink_color_version.svg.png" style="object-fit: contain; padding: 15px;">
-                        <div class="platform-tag" style="color:var(--accent-purple); border-color:var(--accent-purple);">PC</div>
-                        <div class="game-label">Valorant</div>
-                    </div>
-                    <div class="game-card" data-platform="PC" data-name="csgo counter strike" style="display:none;" onclick="selectGame('CS:GO 2', this)">
-                        <img src="https://cdn.akamai.steamgames.com/steam/apps/730/capsule_616x353.jpg" style="object-fit: cover;">
-                        <div class="platform-tag" style="color:var(--accent-purple); border-color:var(--accent-purple);">PC</div>
-                        <div class="game-label">CS:GO 2</div>
                     </div>
                 </div>
                 <input type="hidden" id="selectedGame" value="BGMI">
                 <input type="hidden" name="game" id="finalGamePayload" value="BGMI [Mobile]">
 
-                <div class="input-group" style="margin-top: 25px;">
+                <div class="input-group" style="margin-top: 30px;">
                     <label class="input-label">Participation Format *</label>
                     <div class="selection-grid">
                         <div class="sel-card active" onclick="toggleSelCard(this, '.part-card', 'formatInput', 'Squad')">
@@ -349,11 +346,11 @@
                 <div class="row">
                     <div class="col">
                         <label class="input-label">Max Slots * <i class="fa-solid fa-circle-info tooltip-icon" onclick="showToast('Total number of teams/players allowed')"></i></label>
-                        <input type="number" name="slots" class="form-control" placeholder="e.g. 48" required onkeyup="updateCalc()" onfocus="triggerHaptic()">
+                        <input type="number" name="slots" class="form-control" placeholder="e.g. 48" required onkeyup="updateCalc()">
                     </div>
                     <div class="col">
                         <label class="input-label">Region</label>
-                        <select class="form-control" name="region" onfocus="triggerHaptic()">
+                        <select class="form-control" name="region">
                             <option>India</option>
                             <option>Asia</option>
                             <option>Global</option>
@@ -372,8 +369,8 @@
                 <div class="row">
                     <div class="col">
                         <label class="input-label">Entry Fee (TX Passes)</label>
-                        <input type="number" name="entry_fee" id="inpFee" class="form-control" placeholder="e.g. 1, 2, 5" value="0" onkeyup="updateCalc()" onfocus="triggerHaptic()">
-                        <div style="font-size: 0.75rem; color: var(--accent-cyan); margin-top: 5px; font-weight: bold;">1 Pass = ₹10</div>
+                        <input type="number" name="entry_fee" id="inpFee" class="form-control" placeholder="e.g. 1, 2, 5" value="0" onkeyup="updateCalc()">
+                        <div style="font-size: 0.75rem; color: var(--accent-cyan); margin-top: 6px; font-weight: bold; letter-spacing: 0.5px;">1 Pass = ₹10</div>
                         <div class="preset-row">
                             <span class="preset-badge" onclick="applyPreset('inpFee', 0)">Free</span>
                             <span class="preset-badge" onclick="applyPreset('inpFee', 1)">1 Pass</span>
@@ -381,9 +378,9 @@
                         </div>
                     </div>
                     <div class="col">
-                        <label class="input-label"><i class="fa-solid fa-coins" style="color:var(--accent-orange); margin-right:4px;"></i> Entry Fee (PTS)</label>
-                        <input type="number" name="entry_fee_pts" id="inpFeePts" class="form-control" placeholder="0 for Free" value="0" onkeyup="updateCalc()" onfocus="triggerHaptic()">
-                        <div class="preset-row">
+                        <label class="input-label"><i class="fa-solid fa-coins" style="color:var(--accent-cyan); margin-right:6px;"></i> Entry Fee (PTS)</label>
+                        <input type="number" name="entry_fee_pts" id="inpFeePts" class="form-control" placeholder="0 for Free" value="0" onkeyup="updateCalc()">
+                        <div class="preset-row" style="margin-top: 24px;">
                             <span class="preset-badge" onclick="applyPreset('inpFeePts', 0)">Free</span>
                             <span class="preset-badge" onclick="applyPreset('inpFeePts', 500)">500</span>
                             <span class="preset-badge" onclick="applyPreset('inpFeePts', 2500)">2.5k</span>
@@ -394,7 +391,7 @@
                 <div class="row">
                     <div class="col">
                         <label class="input-label">Total Prize Pool *</label>
-                        <input type="number" name="prize_pool" id="inpPrize" class="form-control" placeholder="e.g. 5000" required onkeyup="updateCalc()" onfocus="triggerHaptic()">
+                        <input type="number" name="prize_pool" id="inpPrize" class="form-control" placeholder="e.g. 5000" required onkeyup="updateCalc()">
                         <div class="preset-row">
                             <span class="preset-badge" onclick="applyPreset('inpPrize', 1000)">1k</span>
                             <span class="preset-badge" onclick="applyPreset('inpPrize', 5000)">5k</span>
@@ -410,33 +407,26 @@
                     </div>
                     <div style="text-align: right;">
                         <div class="calc-val" id="calcRev">0 Rs.</div>
-                        <div class="calc-val" id="calcRevPts" style="font-size: 0.95rem; color: var(--accent-cyan); text-shadow: none; margin-top: 2px;">0 PTS</div>
+                        <div class="calc-val" id="calcRevPts" style="font-size: 1.1rem; color: var(--accent-orange); text-shadow: 0 0 10px rgba(255,153,0,0.4); margin-top: 4px;">0 PTS</div>
                     </div>
                 </div>
 
-                <div style="margin-top: 25px; padding-top: 20px; border-top: 1px solid rgba(255,255,255,0.05);">
-                    <label class="input-label">Prize Distribution (Optional)</label>
-                    <div class="input-sublabel" style="margin-bottom: 10px;">Specify individual rewards (e.g., '5000 Rs' or '1000 PTS'). Leave blank if not applicable.</div>
+                <div style="margin-top: 30px; padding-top: 25px; border-top: 1px solid rgba(255,255,255,0.08);">
+                    <label class="input-label">Advanced Prize Distribution (Optional)</label>
+                    <div class="input-sublabel" style="margin-bottom: 15px;">Build custom prize tiers. Leave blank if not applicable.</div>
                     
-                    <div class="row" style="margin-bottom: 10px;">
-                        <div class="col">
-                            <input type="text" id="inpPrize1" class="form-control" placeholder="1st Place Prize" oninput="calculateProgress()" onfocus="triggerHaptic()">
+                    <div id="prizeBuilder">
+                        <div class="row">
+                            <div class="col"><input type="text" id="inpPrize1" class="form-control" placeholder="1st Place (e.g. 2000 Rs)" oninput="buildPrizeJson()"></div>
+                            <div class="col"><input type="text" id="inpPrize2" class="form-control" placeholder="2nd Place (e.g. 1000 Rs)" oninput="buildPrizeJson()"></div>
+                            <div class="col"><input type="text" id="inpPrize3" class="form-control" placeholder="3rd Place (e.g. 500 Rs)" oninput="buildPrizeJson()"></div>
                         </div>
-                        <div class="col">
-                            <input type="text" id="inpPrize2" class="form-control" placeholder="2nd Place Prize" oninput="calculateProgress()" onfocus="triggerHaptic()">
-                        </div>
-                        <div class="col" style="flex-grow: 1;">
-                            <input type="text" id="inpPrize3" class="form-control" placeholder="3rd Place Prize" oninput="calculateProgress()" onfocus="triggerHaptic()">
+                        <div class="row">
+                            <div class="col"><input type="text" id="inpPrizeOther" class="form-control" placeholder="4th-7th (e.g. 100 Rs Each)" oninput="buildPrizeJson()"></div>
+                            <div class="col"><input type="text" id="inpPrizeMVP" class="form-control" placeholder="MVP (e.g. 500 Rs)" oninput="buildPrizeJson()"></div>
+                            <div class="col"><input type="text" id="inpPrizeKill" class="form-control" placeholder="Highest Kills (e.g. 300 Rs)" oninput="buildPrizeJson()"></div>
                         </div>
                     </div>
-                    
-                    <div class="row" style="margin-bottom: 10px;">
-                        <div class="col"><input type="text" id="inpPrize4" class="form-control" placeholder="4th Place" oninput="calculateProgress()" onfocus="triggerHaptic()"></div>
-                        <div class="col"><input type="text" id="inpPrize5" class="form-control" placeholder="5th Place" oninput="calculateProgress()" onfocus="triggerHaptic()"></div>
-                        <div class="col"><input type="text" id="inpPrize6" class="form-control" placeholder="6th Place" oninput="calculateProgress()" onfocus="triggerHaptic()"></div>
-                        <div class="col"><input type="text" id="inpPrize7" class="form-control" placeholder="7th Place" oninput="calculateProgress()" onfocus="triggerHaptic()"></div>
-                    </div>
-                    
                     <input type="hidden" name="prize_distribution_image" id="prizeBase64"> 
                 </div>
 
@@ -451,31 +441,31 @@
             <div class="section-content">
                 <div class="input-group">
                     <label class="input-label">Registration Deadline *</label>
-                    <input type="datetime-local" name="date" id="inpRegDate" class="form-control" required onchange="validateDates()" onfocus="triggerHaptic()">
+                    <input type="datetime-local" name="date" id="inpRegDate" class="form-control" required onchange="validateDates()">
                     <div class="input-sublabel" id="timeRemainingText">Registrations close at this time.</div>
                 </div>
 
                 <div class="input-group">
                     <label class="input-label">Tournament Date *</label>
-                    <input type="date" name="match_period" class="form-control" required onfocus="triggerHaptic()">
+                    <input type="date" name="match_period" class="form-control" required>
                     <div class="input-sublabel">Shows exactly when the matches will take place.</div>
                 </div>
 
-                <div style="margin-top: 25px; padding-top: 20px; border-top: 1px solid rgba(255,255,255,0.05);">
-                    <div style="display:flex; justify-content:space-between; align-items:center;">
+                <div style="margin-top: 30px; padding-top: 25px; border-top: 1px solid rgba(255,255,255,0.08);">
+                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 5px;">
                         <label class="input-label" style="margin:0;">Match Schedule (Max 7)</label>
-                        <span class="preset-badge" onclick="addScheduleBlock()" style="background:var(--accent-cyan); color:black; border:none; padding: 6px 14px; font-size:0.85rem;"><i class="fa-solid fa-plus"></i> Add Match</span>
+                        <span class="preset-badge" onclick="addScheduleBlock()" style="background:var(--accent-cyan); color:black; border:none; padding: 6px 15px; font-size:0.85rem;"><i class="fa-solid fa-plus"></i> Add Match</span>
                     </div>
-                    <div class="input-sublabel" style="margin-bottom: 15px;">Build a live interactive timeline for players.</div>
+                    <div class="input-sublabel" style="margin-bottom: 20px;">Build a live interactive timeline for players.</div>
                     
                     <div id="scheduleContainer">
                         </div>
                     <input type="hidden" name="bracket_image" id="bracketBase64"> 
                 </div>
 
-                <div class="input-group" style="margin-top:25px; position:relative;">
-                    <label class="input-label"><i class="fa-brands fa-youtube" style="color:#FF0000; margin-right:5px;"></i> Live Stream URL (Optional)</label>
-                    <input type="url" name="stream_url" id="inpStream" class="form-control" placeholder="https://youtube.com/..." onkeyup="validateStreamUrl()" onfocus="triggerHaptic()">
+                <div class="input-group" style="margin-top:30px; position:relative;">
+                    <label class="input-label"><i class="fa-brands fa-youtube" style="color:#FF0000; font-size: 1.2rem;"></i> Live Stream URL (Optional)</label>
+                    <input type="url" name="stream_url" id="inpStream" class="form-control" placeholder="https://youtube.com/..." onkeyup="validateStreamUrl()">
                     <i class="fa-solid fa-circle-check stream-status" id="streamIcon"></i>
                     <div class="input-sublabel">Valid YouTube or Twitch link for the "Watch Live" button.</div>
                 </div>
@@ -493,9 +483,9 @@
     <div class="loading-overlay" id="loadingOverlay">
         <div class="loader-ring" id="spinnerEl"></div>
         <i class="fa-solid fa-circle-check success-icon-anim" id="successIcon"></i>
-        <h3 class="status-msg" id="loadingText" style="font-family: var(--font-head); color: white; font-size: 1.5rem; margin-top: 10px; letter-spacing: 1px;">Forging Tournament...</h3>
-        <p class="status-sub" id="successSub" style="display: none; color: #aaa; font-size: 0.9rem; text-align: center; max-width: 80%; line-height: 1.5; margin-top: 10px;">Your tournament has been successfully created and synced to the global server.</p>
-        <button class="btn-primary" id="closeLoading" style="display: none; margin-top: 20px; border-radius: 50px; padding: 10px 25px;" onclick="window.location.href='explore.html'">Go to Explore</button>
+        <h3 class="status-msg" id="loadingText">Forging Tournament...</h3>
+        <p class="status-sub" id="successSub" style="display: none;">Your tournament has been successfully created and synced to the global server.</p>
+        <button class="preset-badge" id="closeLoading" style="display: none; margin-top: 25px; padding: 10px 25px; font-size: 1rem; border-color: var(--accent-cyan); color: var(--accent-cyan);" onclick="window.location.href='explore.html'">View in Explore</button>
     </div>
 
     <div id="customToast">Notification</div>
@@ -523,7 +513,7 @@
 
         // --- 2. ADVANCED UI FEATURES ---
         function triggerHaptic() {
-            if(navigator.vibrate) { navigator.vibrate(50); }
+            if(navigator.vibrate) { navigator.vibrate(40); }
         }
 
         function showToast(msg, isError = false) {
@@ -556,8 +546,6 @@
             
             // Trigger autosave mock
             document.getElementById('draftStatus').innerText = "Draft saved: Just now";
-            document.getElementById('draftStatus').style.color = "var(--accent-green)";
-            setTimeout(() => { document.getElementById('draftStatus').style.color = "#888"; }, 1000);
         }
 
         function updateCharCount(el, countId) {
@@ -599,19 +587,11 @@
             document.getElementById('inpPlatform').value = platform;
             triggerHaptic();
             
-            // Filter Game Grid by Platform
-            let firstMatch = null;
-            document.querySelectorAll('.game-card').forEach(c => {
-                if(c.dataset.platform === platform) {
-                    c.style.display = 'block';
-                    if(!firstMatch) firstMatch = c;
-                } else {
-                    c.style.display = 'none';
-                    c.classList.remove('active');
-                }
-            });
-            
-            if(firstMatch) selectGame(firstMatch.querySelector('.game-label').innerText, firstMatch);
+            // Allow all games (BGMI, FF, COD) to be selected across PC/Mobile/Console to accommodate emulators
+            let activeGameEl = document.querySelector('.game-card.active');
+            if(activeGameEl) {
+                selectGame(activeGameEl.querySelector('.game-label').innerText, activeGameEl);
+            }
         }
 
         function toggleSelCard(el, groupClass, inputId, val) {
@@ -634,11 +614,9 @@
 
         function filterGames() {
             let q = document.getElementById('gameSearch').value.toLowerCase();
-            let currentPlatform = document.getElementById('inpPlatform').value;
             document.querySelectorAll('.game-card').forEach(c => {
                 let matchesSearch = c.dataset.name.includes(q);
-                let matchesPlatform = c.dataset.platform === currentPlatform;
-                c.style.display = (matchesSearch && matchesPlatform) ? 'block' : 'none';
+                c.style.display = matchesSearch ? 'block' : 'none';
             });
         }
 
@@ -696,6 +674,27 @@
             calculateProgress();
         }
 
+        // --- DYNAMIC PRIZE BUILDER LOGIC ---
+        function buildPrizeJson() {
+            let p1 = document.getElementById('inpPrize1').value.trim();
+            let p2 = document.getElementById('inpPrize2').value.trim();
+            let p3 = document.getElementById('inpPrize3').value.trim();
+            let pOther = document.getElementById('inpPrizeOther').value.trim();
+            let pMVP = document.getElementById('inpPrizeMVP').value.trim();
+            let pKill = document.getElementById('inpPrizeKill').value.trim();
+            
+            let prizeJson = {};
+            if(p1) prizeJson["1st Place"] = p1;
+            if(p2) prizeJson["2nd Place"] = p2;
+            if(p3) prizeJson["3rd Place"] = p3;
+            if(pOther) prizeJson["4th-7th Place"] = pOther;
+            if(pMVP) prizeJson["MVP"] = pMVP;
+            if(pKill) prizeJson["High Kill"] = pKill;
+            
+            document.getElementById('prizeBase64').value = Object.keys(prizeJson).length > 0 ? JSON.stringify(prizeJson) : "";
+            calculateProgress();
+        }
+
         // --- 5. NEW SCHEDULE BUILDER LOGIC ---
         let scheduleCount = 0;
         function addScheduleBlock() {
@@ -706,23 +705,23 @@
             let html = `
                 <div class="sch-block" id="sch-${id}">
                     <div class="sch-remove" onclick="removeScheduleBlock('sch-${id}')"><i class="fa-solid fa-xmark"></i></div>
-                    <div class="input-group" style="margin-bottom:10px;">
-                        <input type="text" class="form-control sch-title" placeholder="Match Title (e.g. Group A / Finals)" required oninput="calculateProgress()" onfocus="triggerHaptic()">
+                    <div class="input-group" style="margin-bottom:12px;">
+                        <input type="text" class="form-control sch-title" placeholder="Match Title (e.g. Group A / Finals)" required oninput="calculateProgress()">
                     </div>
                     <div class="row" style="margin-bottom:0;">
                         <div class="col">
                             <label class="input-sublabel" style="margin-top:0;">Start Time</label>
-                            <input type="datetime-local" class="form-control sch-start" required onchange="calculateProgress()" onfocus="triggerHaptic()">
+                            <input type="datetime-local" class="form-control sch-start" required onchange="calculateProgress()">
                         </div>
                         <div class="col">
                             <label class="input-sublabel" style="margin-top:0;">End Time</label>
-                            <input type="datetime-local" class="form-control sch-end" required onchange="calculateProgress()" onfocus="triggerHaptic()">
+                            <input type="datetime-local" class="form-control sch-end" required onchange="calculateProgress()">
                         </div>
                     </div>
                 </div>
             `;
             document.getElementById('scheduleContainer').insertAdjacentHTML('beforeend', html);
-            calculateProgress(); // Update progress bar with new required fields
+            calculateProgress(); 
         }
 
         function removeScheduleBlock(id) {
@@ -781,13 +780,11 @@
 
             const reader = new FileReader();
             reader.onload = function(e) {
-                // Compress slightly using canvas before upload to save bandwidth
                 const img = new Image();
                 img.onload = function() {
                     const canvas = document.createElement('canvas');
                     const ctx = canvas.getContext('2d');
                     
-                    // Max width 1280 to maintain 16:9 quality without massive file sizes
                     const MAX_WIDTH = 1280;
                     let width = img.width;
                     let height = img.height;
@@ -803,7 +800,6 @@
 
                     const compressedBase64 = canvas.toDataURL('image/jpeg', 0.8);
                     
-                    // Upload to ImgBB
                     const base64Data = compressedBase64.split(',')[1];
                     const formData = new FormData();
                     formData.append("image", base64Data);
@@ -829,7 +825,6 @@
                         }
                     })
                     .catch(error => {
-                        // Fallback to raw base64 if API fails
                         document.getElementById('bannerBase64').value = compressedBase64;
                         document.getElementById('bannerPreview').src = compressedBase64;
                         
@@ -864,7 +859,7 @@
             if(confirm("Are you sure you want to clear the entire form?")) {
                 document.getElementById('createForm').reset();
                 document.getElementById('editor').innerHTML = "";
-                document.getElementById('scheduleContainer').innerHTML = ""; // Clear schedule
+                document.getElementById('scheduleContainer').innerHTML = "";
                 scheduleCount = 0;
                 removeImage('bannerInput', 'bannerBase64', 'bannerArea', 'bannerPreview', 'removeBanner');
                 updateCalc();
@@ -876,30 +871,12 @@
         // --- 8. FORM SUBMISSION ---
         async function submitTournamentForm(e) {
             e.preventDefault();
-            triggerHaptic();
             const form = document.getElementById('createForm');
             
             // Sync Rich Text
             document.getElementById('hiddenRules').value = document.getElementById('editor').innerHTML;
             
-            // Generate NEW JSON Payloads for Prizes (UPGRADED for 1st-7th places)
-            let p1 = document.getElementById('inpPrize1').value.trim();
-            let p2 = document.getElementById('inpPrize2').value.trim();
-            let p3 = document.getElementById('inpPrize3').value.trim();
-            let p4 = document.getElementById('inpPrize4').value.trim();
-            let p5 = document.getElementById('inpPrize5').value.trim();
-            let p6 = document.getElementById('inpPrize6').value.trim();
-            let p7 = document.getElementById('inpPrize7').value.trim();
-            let prizeJson = {};
-            if(p1) prizeJson["1"] = p1;
-            if(p2) prizeJson["2"] = p2;
-            if(p3) prizeJson["3"] = p3;
-            if(p4) prizeJson["4"] = p4;
-            if(p5) prizeJson["5"] = p5;
-            if(p6) prizeJson["6"] = p6;
-            if(p7) prizeJson["7"] = p7;
-            document.getElementById('prizeBase64').value = Object.keys(prizeJson).length > 0 ? JSON.stringify(prizeJson) : "";
-
+            // Schedule array builder
             let scheduleArr = [];
             document.querySelectorAll('.sch-block').forEach(block => {
                 let title = block.querySelector('.sch-title').value.trim();
@@ -920,7 +897,7 @@
                     if(r.id === 'hiddenRules') {
                         document.getElementById('rtContainer').classList.add('error');
                         if(!firstError) firstError = document.getElementById('rtContainer');
-                    } else if (r.id === 'bannerBase64') { // Changed check to base64 hidden input
+                    } else if (r.id === 'bannerBase64') {
                         document.getElementById('bannerArea').classList.add('error');
                         if(!firstError) firstError = document.getElementById('bannerArea');
                     } else {
@@ -940,6 +917,9 @@
                 return; 
             }
 
+            // --- ZOOM OUT ANIMATION ---
+            document.body.classList.add('zoomed-out');
+            
             // Lock UI
             const publishBtn = document.getElementById('publishBtn');
             publishBtn.disabled = true;
@@ -965,7 +945,6 @@
                 rules: rawData.rules, 
                 banner: rawData.banner_base64 || 'https://via.placeholder.com/1200x380/15062e/00f2ff?text=Tournament+Banner',
                 
-                // BUNDLED JSON STRINGS EXACTLY MATCHING BACKEND
                 prize_json: rawData.prize_distribution_image || "",
                 bracket_json: rawData.bracket_image || "",
 
@@ -986,41 +965,25 @@
             } catch (error) {
                 console.error('Error:', error);
                 document.getElementById('loadingText').innerText = "Network Error.";
-                document.getElementById('loadingText').style.color = "var(--accent-red)";
                 document.getElementById('successSub').innerText = "Tournament draft saved locally.";
-                document.getElementById('successSub').style.display = "block";
                 setTimeout(() => { showSuccess(true); }, 1500); 
             }
         }
 
         function showSuccess(isError = false) {
-            triggerHaptic();
-            let overlay = document.getElementById('loadingOverlay');
             document.getElementById('spinnerEl').style.display = 'none';
+            document.getElementById('successIcon').style.display = 'block';
             
             if(!isError) {
                 document.getElementById('loadingText').innerText = "Tournament Published!";
-                document.getElementById('loadingText').style.color = "var(--accent-cyan)";
+                document.getElementById('loadingText').style.color = "var(--accent-green)";
                 document.getElementById('successSub').style.display = 'block';
-                
-                // Trigger Cinematic Zoom Animation
-                let icon = document.getElementById('successIcon');
-                icon.style.display = 'block';
-                icon.classList.add('success-zoom');
-                overlay.style.background = "rgba(7, 3, 17, 1)";
-                
-                // Cinematic auto-redirect to explore.html
-                setTimeout(() => { 
-                    overlay.style.opacity = "0"; // Fade out before changing page
-                    setTimeout(() => { window.location.href = 'explore.html'; }, 500);
-                }, 2000);
+                // Auto-redirect to explore.html perfectly
+                setTimeout(() => { window.location.href = 'explore.html'; }, 2000);
             } else {
-                document.getElementById('successIcon').className = "fa-solid fa-circle-xmark";
-                document.getElementById('successIcon').style.color = "var(--accent-red)";
-                document.getElementById('successIcon').style.display = 'block';
-                // Show button ONLY if there's an error so the user isn't stuck
                 document.getElementById('closeLoading').style.display = 'inline-block';
             }
+            triggerHaptic();
         }
     </script>
     <script>
@@ -1029,28 +992,11 @@
         
         if (user && user.email && typeof median !== 'undefined' && median.onesignal) {
             let cleanEmail = user.email.toLowerCase().trim();
-            
-            // 1. Set the Official External ID
-            if(median.onesignal.setExternalUserId) {
-                median.onesignal.setExternalUserId({ externalId: cleanEmail });
-            }
-
-            // 2. Set an Email TAG (The Ultimate Failsafe)
-            if(median.onesignal.sendTags) {
-                median.onesignal.sendTags({
-                    tags: { 
-                        "user_email": cleanEmail,
-                        "user_status": "active" 
-                    }
-                });
-            }
+            if(median.onesignal.setExternalUserId) { median.onesignal.setExternalUserId({ externalId: cleanEmail }); }
+            if(median.onesignal.sendTags) { median.onesignal.sendTags({ tags: { "user_email": cleanEmail, "user_status": "active" } }); }
         }
     }
-
-    // Fire when Median bridge is fully loaded inside the app
     document.addEventListener("median_library_ready", tournyxOneSignalSetup);
-    
-    // Fallback for regular web browsers
     document.addEventListener("DOMContentLoaded", tournyxOneSignalSetup);
 </script>
 </body>
