@@ -236,8 +236,15 @@
             0% { box-shadow: 0 0 5px rgba(255,153,0,0.5); background: rgba(255,153,0,0.7); border-color: rgba(255,153,0,0.5); }
             100% { box-shadow: 0 0 15px rgba(255,77,77,0.9); background: rgba(255,77,77,0.9); border-color: rgba(255,77,77,1); }
         }
-        .t-timer-badge { position: absolute; top: 10px; right: 10px; background: rgba(0,0,0,0.7); border: 1px solid rgba(255,255,255,0.1); color: white; font-family: var(--font-head); font-size: 0.65rem; font-weight: bold; padding: 4px 10px; border-radius: 50px; backdrop-filter: blur(8px); z-index: 2; letter-spacing: 0.5px;}
+        
+        @keyframes vipPulse {
+            0% { box-shadow: 0 0 5px rgba(255,215,0,0.3); background: rgba(255,215,0,0.2); border-color: rgba(255,215,0,0.5); }
+            100% { box-shadow: 0 0 15px rgba(255,215,0,0.8); background: rgba(255,215,0,0.4); border-color: rgba(255,215,0,1); }
+        }
+        
+        .t-timer-badge { position: absolute; top: 10px; right: 10px; background: rgba(0,0,0,0.7); border: 1px solid rgba(255,255,255,0.1); color: white; font-family: var(--font-head); font-size: 0.65rem; font-weight: bold; padding: 4px 10px; border-radius: 50px; backdrop-filter: blur(8px); z-index: 2; letter-spacing: 0.5px; transition: 0.3s;}
         .t-timer-badge.ending-soon { animation: softPulse 1.5s alternate infinite ease-in-out; border: 1px solid rgba(255,255,255,0.2); text-shadow: 0 0 5px #fff; }
+        .t-timer-badge.vip-glow { animation: vipPulse 1.5s alternate infinite ease-in-out; color: #FFD700; text-shadow: 0 0 5px #000; }
         
         .t-like { position: absolute; bottom: 10px; left: 10px; background: rgba(0,0,0,0.7); color: white; padding: 4px 10px; border-radius: 50px; display: flex; align-items: center; justify-content: center; gap: 5px; backdrop-filter: blur(8px); transition: 0.3s; border: 1px solid rgba(255,255,255,0.1); font-family: var(--font-head); font-size: 0.75rem; font-weight: bold; cursor: pointer; z-index: 5; }
         .t-like.liked { color: #ff4d4d; border-color: rgba(255,77,77,0.4); background: rgba(255,77,77,0.15); box-shadow: 0 0 10px rgba(255,77,77,0.3); }
@@ -294,14 +301,15 @@
         /* SHINING REGISTER BUTTON */
         .join-btn-card { position: relative; overflow: hidden; background: rgba(0,242,255,0.05); border: 1px solid var(--accent-cyan); color: var(--accent-cyan); padding: 8px 18px; border-radius: 50px; font-weight: bold; font-size: 0.8rem; font-family: var(--font-head); transition: 0.3s; box-shadow: 0 0 10px rgba(0,242,255,0.1); cursor: pointer; z-index: 1;}
         html.theme-vip .join-btn-card { border-color: #FFD700; color: #FFD700; box-shadow: 0 0 10px rgba(255,215,0,0.1); }
-        .join-btn-card::before { content: ''; position: absolute; top: 0; left: -100%; width: 50%; height: 100%; background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent); transform: skewX(-20deg); animation: shine 3s infinite; z-index: -1; }
+        .join-btn-card::before { content: ''; position: absolute; top: 0; width: 50%; height: 100%; background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent); animation: shineBtn 3s infinite; z-index: -1; }
         .join-btn-card:hover { box-shadow: 0 0 20px rgba(0,242,255,0.6); background: var(--accent-cyan); color: #000; transform: translateY(-2px);}
         html.theme-vip .join-btn-card:hover { box-shadow: 0 0 20px rgba(255,215,0,0.6); background: #FFD700; color: #000; }
-        @keyframes shine { 0% { left: -100%; } 20% { left: 200%; } 100% { left: 200%; } }
+        .join-btn-card.locked-vip { border-color: #FFD700; color: #FFD700; background: rgba(255,215,0,0.05); box-shadow: 0 0 10px rgba(255,215,0,0.2); }
+        @keyframes shineBtn { 0% { transform: translateX(-200%) skewX(-20deg); } 20% { transform: translateX(200%) skewX(-20deg); } 100% { transform: translateX(200%) skewX(-20deg); } }
 
         /* --- SKELETON LOADER --- */
         .skeleton-wrapper { padding: 0; display: flex; flex-direction: column; gap: 20px; width: 100%; }
-        .skeleton { background: linear-gradient(90deg, rgba(255,255,255,0.02) 25%, rgba(255,255,255,0.05) 50%, rgba(255,255,255,0.02) 75%); background-size: 200% 100%; animation: shimmer 1.5s infinite linear; border-radius: 8px;}
+        .skeleton { background: linear-gradient(90deg, rgba(255,255,255,0.02) 25%, rgba(255,255,255,0.06) 50%, rgba(255,255,255,0.02) 75%); background-size: 200% 100%; animation: shimmer 1.5s infinite linear; border-radius: 8px;}
         @keyframes shimmer { 0% { background-position: -200% 0; } 100% { background-position: 200% 0; } }
         
         .s-card { background: var(--card-bg); backdrop-filter: blur(20px); border-radius: 18px; overflow: hidden; border: 1px solid var(--card-border); display: flex; flex-direction: column; }
@@ -335,7 +343,7 @@
             position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
             z-index: 3000; 
             transform: translateY(100%); 
-            transition: transform 0.5s cubic-bezier(0.2, 0.8, 0.2, 1), opacity 0.4s;
+            transition: transform 0.4s cubic-bezier(0.2, 0.8, 0.2, 1), opacity 0.3s;
             display: flex; flex-direction: column; overflow: hidden; opacity: 0;
             --dynamic-t-color: 0, 242, 255;
         }
@@ -350,7 +358,7 @@
         .dm-share { font-size: 1.3rem; color: rgb(var(--dynamic-t-color)); cursor: pointer; padding: 5px 0 5px 10px; transition: 0.3s; }
         .dm-share:active { transform: scale(0.9); }
 
-        .dm-scroll-area { flex: 1; overflow-y: auto; padding-bottom: 20px; animation: fadeIn 0.4s; transition: opacity 0.3s ease-in-out; scroll-behavior: smooth;}
+        .dm-scroll-area { flex: 1; overflow-y: auto; padding-bottom: 20px; transition: opacity 0.3s ease-in-out; scroll-behavior: smooth;}
         .dm-scroll-content { width: 100%; position: relative; padding-bottom: 80px;} 
         
         .dm-banner { width: 100%; height: 220px; object-fit: cover; }
@@ -363,12 +371,14 @@
         .dm-nav-item i { font-size: 1.1rem; }
         .dm-nav-item.active { color: rgb(var(--dynamic-t-color)); border-bottom-color: rgb(var(--dynamic-t-color)); text-shadow: 0 0 8px rgba(var(--dynamic-t-color), 0.5); }
 
-        .dm-tab-content { display: none; padding: 20px 15px; animation: fadeIn 0.4s; }
+        .dm-tab-content { display: none; padding: 20px 15px; animation: fadeIn 0.3s ease-out; }
         .dm-tab-content.active { display: block; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
         
         .esports-badge { padding: 4px 10px; border-radius: 50px; font-size: 0.7rem; font-family: var(--font-head); font-weight: bold; margin-right: 5px; margin-bottom: 5px; display: inline-flex; align-items: center; gap: 4px; text-transform: uppercase; border: 1px solid rgba(255,255,255,0.2); background: rgba(0,0,0,0.5); backdrop-filter: blur(5px);}
         .b-fast { color: var(--accent-orange); border-color: var(--accent-orange); }
         .b-free { color: var(--accent-green); border-color: var(--accent-green); }
+        .b-vip { color: #FFD700; border-color: #FFD700; box-shadow: 0 0 10px rgba(255,215,0,0.3); }
 
         .dm-stat-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 25px; }
         /* GLASSMORPHISM STAT BOX */
@@ -425,32 +435,46 @@
         /* Premium Custom Words (MVP, Kill) Shimmer Effect */
         .prize-card.glass-premium { border: 1px solid rgba(0, 242, 255, 0.4); background: rgba(0, 242, 255, 0.05); box-shadow: 0 8px 32px 0 rgba(0, 242, 255, 0.15); }
         .prize-card.glass-premium::before {
-            content: ''; position: absolute; top: 0; left: -150%; width: 100%; height: 100%;
+            content: ''; position: absolute; top: 0; width: 100%; height: 100%;
             background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
-            transform: skewX(-20deg); animation: shimmerGlass 3s infinite ease-in-out; pointer-events: none;
+            animation: shimmerGlass 3s infinite ease-in-out; pointer-events: none;
         }
-        @keyframes shimmerGlass { 0% { left: -150%; } 100% { left: 150%; } }
+        @keyframes shimmerGlass { 0% { transform: translateX(-150%) skewX(-20deg); } 100% { transform: translateX(150%) skewX(-20deg); } }
 
         .pc-rank { font-family: var(--font-head); font-weight: bold; font-size: 1rem; display: flex; align-items: center; gap: 10px; z-index: 2; text-transform: uppercase; letter-spacing: 0.5px;}
         .pc-val { font-size: 1.1rem; font-weight: bold; color: var(--accent-cyan); text-shadow: 0 0 5px rgba(0,242,255,0.3); z-index: 2; }
         html.theme-vip .pc-val { color: #FFD700; text-shadow: 0 0 5px rgba(255,215,0,0.4);}
 
-        .prize-card::after { content: ''; position: absolute; top: -50%; left: -50%; width: 200%; height: 200%; background: linear-gradient(to right, transparent, rgba(255,255,255,0.03), transparent); transform: rotate(45deg); animation: shimmerSweep 3s infinite linear; pointer-events: none; }
+        .prize-card::after { content: ''; position: absolute; top: -50%; left: -50%; width: 200%; height: 200%; background: linear-gradient(to right, transparent, rgba(255,255,255,0.03), transparent); animation: shimmerSweep 3s infinite linear; pointer-events: none; }
         @keyframes shimmerSweep { 0% { transform: translateX(-100%) rotate(45deg); } 100% { transform: translateX(100%) rotate(45deg); } }
 
-        .prize-high { box-shadow: 0 0 20px rgba(var(--dynamic-t-color), 0.4); animation: highPulse 2s infinite alternate; }
-        @keyframes highPulse { 0% { box-shadow: 0 0 10px rgba(var(--dynamic-t-color), 0.2); } 100% { box-shadow: 0 0 25px rgba(var(--dynamic-t-color), 0.6); } }
+        .prize-high { box-shadow: 0 0 20px rgba(0,242,255,0.4); animation: highPulse 2s infinite alternate; border-color: rgba(0,242,255,0.5); }
+        @keyframes highPulse { 0% { box-shadow: 0 0 10px rgba(0,242,255,0.2); } 100% { box-shadow: 0 0 25px rgba(0,242,255,0.6); } }
         
         .prize-mega { border: 2px solid #FFD700 !important; background: rgba(255,215,0,0.15) !important; animation: megaPulse 1.5s infinite alternate; }
         .prize-mega .pc-val { color: #FFD700 !important; text-shadow: 0 0 10px rgba(255,215,0,0.8) !important; font-size: 1.3rem; }
         @keyframes megaPulse { 0% { transform: scale(1); box-shadow: 0 0 20px rgba(255,215,0,0.4); } 100% { transform: scale(1.02); box-shadow: 0 0 40px rgba(255,215,0,0.8); } }
 
-        .clan-item { display: flex; flex-direction: column; align-items: flex-start; gap: 12px; background: rgba(255, 255, 255, 0.05); backdrop-filter: blur(20px); border: 1px solid rgba(255, 255, 255, 0.1); padding: 12px; border-radius: 16px; margin-bottom: 10px; transition: 0.3s; cursor: pointer; box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.2); }
+        /* MULTI-CLAN ROSTER EXPANSION */
+        .clan-item { display: flex; flex-direction: column; align-items: flex-start; gap: 12px; background: rgba(255, 255, 255, 0.05); backdrop-filter: blur(20px); border: 1px solid rgba(255, 255, 255, 0.1); padding: 12px; border-radius: 16px; margin-bottom: 10px; transition: 0.3s; cursor: pointer; box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.2); overflow: hidden;}
         .clan-item.my-clan { border: 1px solid rgb(var(--dynamic-t-color)); background: rgba(var(--dynamic-t-color), 0.1); box-shadow: 0 0 15px rgba(var(--dynamic-t-color), 0.3); }
+        
+        /* Premium Solo VIP Glow */
+        .clan-item.vip-solo { border: 1px solid #FFD700; background: rgba(255,215,0,0.05); box-shadow: 0 0 15px rgba(255,215,0,0.3); }
+        .clan-item.vip-solo .clan-item-icon { border-color: #FFD700; box-shadow: 0 0 10px rgba(255,215,0,0.4); }
+
         .clan-item-header { display: flex; align-items: center; width: 100%; gap: 12px; }
         .clan-item-icon { width: 35px; height: 35px; border-radius: 50px; background: rgba(var(--dynamic-t-color), 0.1); color: rgb(var(--dynamic-t-color)); display: flex; align-items: center; justify-content: center; font-size: 1.1rem; overflow: hidden; border: 1px solid rgba(255,255,255,0.2);}
         .clan-item-icon img { width: 100%; height: 100%; border-radius: 50px; object-fit: cover; }
-        .clan-item-name { font-family: var(--font-head); font-size: 1rem; color: white; flex: 1; }
+        .clan-item-name { font-family: var(--font-head); font-size: 1rem; color: white; flex: 1; display: flex; align-items: center; gap: 6px; flex-wrap: wrap;}
+        
+        .clan-roster-dropdown { max-height: 0; opacity: 0; transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); width: 100%; border-top: 1px dashed transparent; margin-top: 0; padding-top: 0;}
+        .clan-item.expanded .clan-roster-dropdown { max-height: 300px; opacity: 1; margin-top: 10px; padding-top: 10px; border-top-color: rgba(255,255,255,0.1); }
+        
+        .roster-player { display: flex; align-items: center; justify-content: space-between; padding: 6px 0; font-size: 0.85rem; color: #ccc; border-bottom: 1px solid rgba(255,255,255,0.02);}
+        .roster-player:last-child { border-bottom: none; }
+        .roster-player-name { font-weight: bold; color: white; }
+        .roster-player-uid { font-family: monospace; color: var(--accent-cyan); font-size: 0.8rem; }
 
         /* ADS NATIVE INTEGRATION */
         .tournyx-ad-slot { min-height: 90px; margin: 20px 0; border-radius: 18px; background: rgba(255,255,255,0.02); border: 1px dashed rgba(var(--dynamic-t-color, 255,255,255), 0.3); display:flex; align-items:center; justify-content:center; overflow:hidden; backdrop-filter: blur(10px); position: relative; }
@@ -504,7 +528,7 @@
         html.theme-vip .btn-secondary:hover { background: rgba(255,215,0,0.1); box-shadow: 0 0 15px rgba(255,215,0,0.2); }
         
         #masterJoinBtn { position: relative; overflow: hidden; font-size: 1rem;}
-        #masterJoinBtn::after { content: ''; position: absolute; top: 0; left: -100%; width: 50%; height: 100%; background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent); transform: skewX(-20deg); animation: shine 3s infinite 1.5s; z-index: 1; }
+        #masterJoinBtn::after { content: ''; position: absolute; top: 0; width: 50%; height: 100%; background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent); animation: shineBtn 3s infinite 1.5s; z-index: 1; }
 
         /* REGISTRATION & PAYMENT OVERLAYS */
         #payFeeRupees, #payFeePts { font-weight: bold; font-family: var(--font-head); font-size: 1.1rem; }
@@ -595,6 +619,7 @@
 
         .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); z-index: 5000; display: none; align-items: center; justify-content: center; backdrop-filter: blur(8px); }
         .modal-overlay.active { display: flex; animation: popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+        @keyframes popIn { from { opacity: 0; transform: scale(0.9); } to { opacity: 1; transform: scale(1); } }
         .modal-box { background: rgba(15, 7, 30, 0.95); backdrop-filter: blur(25px); width: 90%; max-width: 400px; border-radius: 25px; border: 1px solid var(--card-border); padding: 25px; box-shadow: 0 10px 40px rgba(0,0,0,0.8); text-align: center; position: relative;}
         .modal-close { position: absolute; top: 15px; right: 15px; color: #888; font-size: 1.3rem; cursor: pointer; transition: 0.3s;}
         .modal-close:hover { color: white; transform: rotate(90deg); }
@@ -792,10 +817,17 @@
                         <div class="dm-sec-title"><i class="fa-solid fa-calendar-check"></i> Tournament Timeline</div>
                         <div class="timeline-item">
                             <div class="tl-left">
-                                <div class="tl-lbl">Registration Period Ends</div>
+                                <div class="tl-lbl" id="dtRegLimitTitle">Registration Period Ends</div>
                                 <div class="tl-val" id="dtRegDateRange">Loading...</div>
                             </div>
                             <div class="tl-status" id="dtRegStatus">Open</div>
+                        </div>
+                        <div class="timeline-item" id="vipTimelineItem" style="display: none;">
+                            <div class="tl-left">
+                                <div class="tl-lbl" style="color: #FFD700;"><i class="fa-solid fa-crown"></i> VIP Early Access</div>
+                                <div class="tl-val" id="dtVipRegDateRange" style="color: white; font-family: var(--font-head); font-size: 0.85rem;">Loading...</div>
+                            </div>
+                            <div class="tl-status" id="dtVipRegStatus" style="background: rgba(255,215,0,0.1); color: #FFD700; border-color: #FFD700;">Locked</div>
                         </div>
                         <div class="timeline-item">
                             <div class="tl-left">
@@ -889,7 +921,7 @@
             <div style="text-align: center; margin-bottom: 25px;">
                 <img id="hpAvatar" src="https://via.placeholder.com/80" style="width: 80px; height: 80px; border-radius: 50%; border: 3px solid var(--accent-cyan); margin-bottom: 12px; object-fit: cover; box-shadow: 0 0 15px rgba(0,242,255,0.4);">
                 <h3 id="hpName" style="color: white; font-family: var(--font-head); font-size: 1.4rem; margin-bottom: 5px;">Host Name</h3>
-                <div style="color: #1da1f2; font-size: 0.9rem; font-weight:bold;"><i class="fa-solid fa-certificate"></i> Verified Tournament Organizer</div>
+                <div id="hpPremiumBadge" style="color: #1da1f2; font-size: 0.9rem; font-weight:bold;"><i class="fa-solid fa-certificate"></i> Tournyx Organizer</div>
             </div>
 
             <div class="dm-stat-grid" style="grid-template-columns: 1fr 1fr 1fr; margin-bottom: 0;">
@@ -1095,6 +1127,8 @@
         let localTournamentsData = []; 
         let activeCountdown = null;
         let activeTimelineInterval = null;
+        let roomTabInterval = null;
+        let currentOpenTeamDropdown = null;
 
         // Perfect Strict Date Formatter (e.g. "Oct 25")
         function formatTournamentDateStrict(dateStr) {
@@ -1106,7 +1140,7 @@
             } catch(e) { return dateStr; }
         }
 
-        // --- UPGRADE: Match Period Date Formatter (Handles "2026-04-22 to 2026-04-24") ---
+        // --- UPGRADE: Match Period Date Formatter ---
         function formatMatchPeriod(dateStr) {
             if (!dateStr || dateStr === "TBD") return "TBD";
             if (dateStr.includes(" to ")) {
@@ -1128,7 +1162,6 @@
             return d.toLocaleString('en-IN', options).toUpperCase();
         }
 
-        // Failsafe normalizer to fix the backend column mapping bug dynamically 
         function normalizeTxn(t) {
             let norm = { ...t };
             if (t.amount === "Credit" || t.amount === "Debit") {
@@ -1149,6 +1182,7 @@
                 modal.classList.remove('active');
                 if(activeCountdown) clearInterval(activeCountdown);
                 if(activeTimelineInterval) clearInterval(activeTimelineInterval);
+                if(roomTabInterval) clearInterval(roomTabInterval);
             }
         });
 
@@ -1313,7 +1347,6 @@
 
                 let el = document.getElementById(textElementId);
                 let badge = document.getElementById(badgeElementId);
-                let btn = document.getElementById('masterJoinBtn');
 
                 if (distance < 0) {
                     clearInterval(activeCountdown);
@@ -1323,10 +1356,6 @@
                         badge.style.color = "#ff4d4d"; 
                         badge.style.background = "rgba(255,77,77,0.1)"; 
                         badge.style.borderColor = "#ff4d4d";
-                    }
-                    if(btn && btn.innerText === "Register Now") {
-                        btn.innerHTML = "<i class='fa-solid fa-clock'></i> REGISTRATION CLOSED";
-                        btn.disabled = true;
                     }
                     return;
                 }
@@ -1352,6 +1381,89 @@
                     else el.style.color = "white";
                 }
             }, 1000);
+        }
+
+        // --- DYNAMIC ROOM ID STATE MACHINE ---
+        function renderRoomTabDynamic(t, isJoined) {
+            let roomArea = document.getElementById('roomDetailsArea');
+            if(!roomArea) return;
+
+            if (!isJoined) {
+                roomArea.innerHTML = `
+                    <div class="dm-section" style="border-color: var(--accent-orange) !important; border-style: dashed !important; text-align: center;">
+                        <i class="fa-solid fa-lock" style="font-size: 2rem; color: var(--accent-orange); margin-bottom: 10px;"></i>
+                        <div style="font-family: var(--font-head); font-weight: bold; color: white; margin-bottom: 5px;">ID & Password Locked</div>
+                        <div style="font-size: 0.85rem; color: #ccc;">Details are only visible to securely registered players. Confirm your slot to get access to the Room.</div>
+                    </div>
+                `;
+                return;
+            }
+
+            let now = Date.now();
+            let start = new Date(t.date).getTime();
+            if (isNaN(start)) {
+                roomArea.innerHTML = `<div class="dm-section" style="border-style: dashed !important; text-align: center;"><div style="color: #ccc;">Invalid Date. Waiting for Organizer</div></div>`;
+                return;
+            }
+
+            let limit15 = start + (15 * 60 * 1000);
+            let limit30 = start + (30 * 60 * 1000);
+
+            if (now < start) {
+                roomArea.innerHTML = `
+                    <div class="dm-section" style="border-style: dashed !important; text-align: center;">
+                        <i class="fa-solid fa-clock-rotate-left" style="font-size: 2rem; color: var(--accent-cyan); margin-bottom: 10px;"></i>
+                        <div style="font-family: var(--font-head); font-weight: bold; color: white; margin-bottom: 5px;">Waiting for Organizer</div>
+                        <div style="font-size: 0.85rem; color: #ccc;">You are successfully registered! Room ID and Password will be fetched securely from the server once the match timer begins.</div>
+                    </div>
+                `;
+            } else if (now >= start && now < limit15) {
+                if (t.room_id != null && String(t.room_id).trim() !== "") {
+                    roomArea.innerHTML = `
+                        <div class="dm-section" style="border-color: var(--accent-green) !important; box-shadow: 0 0 20px rgba(0,255,127,0.3);">
+                            <div style="text-align:center; color:var(--accent-green); font-family:var(--font-head); font-weight:bold; margin-bottom: 15px; animation: pulse 2s infinite;"><i class="fa-solid fa-bolt"></i> YOUR MATCH HAS BEEN CREATED</div>
+                            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px; padding-bottom:15px; border-bottom:1px solid rgba(0,255,127,0.2);">
+                                <div>
+                                    <div style="font-size:0.75rem; color:#888; text-transform:uppercase; letter-spacing:1px;">Room ID</div>
+                                    <div style="font-family:var(--font-head); font-size:1.4rem; color:white; font-weight:bold; letter-spacing:1px;">${t.room_id}</div>
+                                </div>
+                                <button class="btn-secondary" style="padding:8px 15px; font-size:0.8rem; border-color:var(--accent-green); color:var(--accent-green); background: rgba(0,255,127,0.1);" onclick="navigator.clipboard.writeText('${t.room_id}'); showToast('Room ID Copied!'); triggerHaptic();"><i class="fa-solid fa-copy"></i></button>
+                            </div>
+                            <div style="display:flex; justify-content:space-between; align-items:center;">
+                                <div>
+                                    <div style="font-size:0.75rem; color:#888; text-transform:uppercase; letter-spacing:1px;">Password</div>
+                                    <div style="font-family:var(--font-head); font-size:1.2rem; color:var(--accent-cyan); font-weight:bold; letter-spacing:1px;">${t.room_pass != null && t.room_pass !== '' ? t.room_pass : 'No Password Needed'}</div>
+                                </div>
+                                <button class="btn-secondary" style="padding:8px 15px; font-size:0.8rem; border-color:var(--accent-cyan); color:var(--accent-cyan); background: rgba(0,242,255,0.1);" onclick="navigator.clipboard.writeText('${t.room_pass || ''}'); showToast('Password Copied!'); triggerHaptic();"><i class="fa-solid fa-copy"></i></button>
+                            </div>
+                        </div>
+                    `;
+                } else {
+                    roomArea.innerHTML = `
+                        <div class="dm-section" style="border-style: dashed !important; border-color: var(--accent-cyan) !important; text-align: center;">
+                            <i class="fa-solid fa-spinner fa-spin" style="font-size: 2rem; color: var(--accent-cyan); margin-bottom: 10px;"></i>
+                            <div style="font-family: var(--font-head); font-weight: bold; color: white; margin-bottom: 5px;">Fetching Room Details...</div>
+                            <div style="font-size: 0.85rem; color: #ccc;">The match is starting! Waiting for organizer to post Room details to the server.</div>
+                        </div>
+                    `;
+                }
+            } else if (now >= limit15 && now < limit30) {
+                roomArea.innerHTML = `
+                    <div class="dm-section" style="background: rgba(0,255,127,0.05); border-color: var(--accent-green) !important; text-align: center;">
+                        <i class="fa-solid fa-gamepad" style="font-size: 2.5rem; color: var(--accent-green); margin-bottom: 10px;"></i>
+                        <div style="font-family: var(--font-head); font-size: 1.3rem; font-weight: bold; color: white; margin-bottom: 5px;">MATCH STARTED</div>
+                        <div style="font-size: 0.85rem; color: #ccc;">The battle is live! Good luck on the battleground.</div>
+                    </div>
+                `;
+            } else {
+                roomArea.innerHTML = `
+                    <div class="dm-section" style="background: rgba(255,255,255,0.02); border-color: #555 !important; text-align: center;">
+                        <i class="fa-solid fa-flag-checkered" style="font-size: 2.5rem; color: #888; margin-bottom: 10px;"></i>
+                        <div style="font-family: var(--font-head); font-size: 1.3rem; font-weight: bold; color: white; margin-bottom: 5px;">MATCH COMPLETED</div>
+                        <div style="font-size: 0.85rem; color: #ccc;">The room has been closed and the match has concluded.</div>
+                    </div>
+                `;
+            }
         }
 
         function renderTimeline(scheduleArr, container) {
@@ -1444,11 +1556,11 @@
             return "Free";
         }
         
-        // --- UPGRADED BASE64 & IMGBB FETCHER ---
+        // --- UPGRADED IMGBB & DRIVE FETCHER ---
         function formatImageUrl(url) {
             if (!url) return 'https://via.placeholder.com/600x300';
             let strUrl = String(url).trim().replace(/[\r\n\t]/g, ''); 
-            if (strUrl.startsWith('data:image')) return strUrl; 
+            if (strUrl.startsWith('data:image') || strUrl.includes('imgbb') || strUrl.includes('ibb.co')) return strUrl; 
             if (strUrl.includes('drive.google.com/file/d/')) { 
                 let id = strUrl.split('/d/')[1].split('/')[0]; 
                 return `https://drive.google.com/uc?export=view&id=${id}`; 
@@ -1550,7 +1662,6 @@
                     localTournamentsData = data.data; 
                     const feed = document.getElementById('tournamentContainer');
                     
-                    // IF DEEP LINK, STOP RENDERING FEED AND INSTANTLY OPEN THE TARGET
                     if(autoOpenId) {
                         let targetMatch = data.data.find(t => String(t.id || t.title).trim() === autoOpenId || t.title.replace(/\s+/g, '') === autoOpenId);
                         if(targetMatch) {
@@ -1559,7 +1670,7 @@
                                 setTimeout(() => document.getElementById('shareLoader').style.display = 'none', 400);
                                 openTournamentDetails(encodeURIComponent(JSON.stringify(targetMatch)));
                             }, 500);
-                            return; // Stop rendering the full list
+                            return;
                         }
                     }
 
@@ -1632,10 +1743,8 @@
                         let baseLikeCount = (Math.abs(tIdSafe.split('').reduce((a,b)=>{a=((a<<5)-a)+b.charCodeAt(0);return a&a},0)) % 150) + 12;
                         let displayLikes = isLiked ? baseLikeCount + 1 : baseLikeCount;
 
-                        // Premium verification dynamically checking 't.is_premium' OR similar boolean properties representing verified columns
                         let isVerifiedPremium = (String(t.is_premium).toLowerCase() === 'true' || String(t.is_verified).toLowerCase() === 'true' || String(t.is_official).toLowerCase() === 'true') ? '<i class="fa-solid fa-circle-check verified-badge"></i>' : '';
 
-                        // --- LIVE SYNC JOINED CHECK ---
                         let isJoined = userLiveMatches.some(m => m.tournament_title === t.title || m.match_id === tIdSafe);
                         let actionBtnHTML = isJoined 
                             ? `<button class="join-btn-card" style="background: rgba(0,255,127,0.1); border-color: var(--accent-green); color: var(--accent-green);"><i class="fa-solid fa-check"></i> JOINED</button>`
@@ -1783,7 +1892,6 @@
                     
                     let isVerifiedPremium = (String(t.is_premium).toLowerCase() === 'true' || String(t.is_verified).toLowerCase() === 'true' || String(t.is_official).toLowerCase() === 'true') ? '<i class="fa-solid fa-circle-check verified-badge"></i>' : '';
 
-                    // --- LIVE SYNC JOINED CHECK ---
                     let isJoined = userLiveMatches.some(m => m.tournament_title === t.title || m.match_id === tIdSafe);
                     let actionBtnHTML = isJoined 
                         ? `<button class="join-btn-card" style="background: rgba(0,255,127,0.1); border-color: var(--accent-green); color: var(--accent-green);"><i class="fa-solid fa-check"></i> JOINED</button>`
@@ -1849,18 +1957,25 @@
 
             document.getElementById('dtBanner').src = formatImageUrl(t.banner);
             
-            let isVerifiedPremium = (String(t.is_premium).toLowerCase() === 'true' || String(t.is_verified).toLowerCase() === 'true' || String(t.is_official).toLowerCase() === 'true') ? '<i class="fa-solid fa-circle-check verified-badge"></i>' : '';
-            document.getElementById('dtTitle').innerHTML = `${t.title} ${isVerifiedPremium}`;
+            let isVerifiedPremium = (String(t.is_premium).toLowerCase() === 'true' || String(t.is_verified).toLowerCase() === 'true' || String(t.is_official).toLowerCase() === 'true');
+            let isVerifiedHTML = isVerifiedPremium ? '<i class="fa-solid fa-circle-check verified-badge"></i>' : '';
+            document.getElementById('dtTitle').innerHTML = `${t.title} ${isVerifiedHTML}`;
             
             let badgesHTML = '';
             if (t.platform === "Mobile") badgesHTML += `<span class="esports-badge"><i class="fa-solid fa-mobile-screen"></i> Mobile Only</span>`;
             if (t.format) badgesHTML += `<span class="esports-badge"><i class="fa-solid fa-users-viewfinder"></i> ${t.format}</span>`;
             if (parseInt(t.fee) === 0 && parseInt(t.fee_pts) === 0) badgesHTML += `<span class="esports-badge b-free"><i class="fa-solid fa-bolt"></i> Free Entry</span>`;
             if ((parseInt(t.filled_slots) / parseInt(t.slots)) > 0.8) badgesHTML += `<span class="esports-badge b-fast"><i class="fa-solid fa-fire"></i> Fast Filling</span>`;
+            
+            // VIP Badge Check
+            if(String(t.is_vip_early_access).toLowerCase() === "true") {
+                badgesHTML += `<span class="esports-badge b-vip"><i class="fa-solid fa-crown"></i> VIP Early Access</span>`;
+            }
+            
             document.getElementById('dynamicBadgesArea').innerHTML = badgesHTML;
             
             let orgId = t.org_username || t.email || 'Verified Organizer';
-            document.getElementById('dtOrgName').innerHTML = `${t.org_username || 'Verified Organizer'} ${isVerifiedPremium}`;
+            document.getElementById('dtOrgName').innerHTML = `${t.org_username || (isVerifiedPremium ? 'Verified Organizer' : 'Tournyx Organizer')} ${isVerifiedHTML}`;
             
             let hostAvatar = t.avatar ? formatImageUrl(t.avatar) : (t.org_avatar ? formatImageUrl(t.org_avatar) : `https://ui-avatars.com/api/?name=${encodeURIComponent(orgId)}&background=070311&color=00f2ff&bold=true&border=1`);
             document.getElementById('orgAvatarImg').src = hostAvatar;
@@ -1895,7 +2010,6 @@
             const prizeArea = document.getElementById('prizeDistributionArea');
             document.getElementById('dtPrizeTotalHead').innerText = getPrizeText(t.prize, t.prize_pts);
 
-            // --- UPGRADED JSON PRIZE LOGIC WITH MVP/KILL DETECTOR ---
             let prizeData = [];
             try {
                 let pData = t.prize_json || t.prize_distribution_image || t.prize_distribution || t.prize_image || "";
@@ -1906,7 +2020,7 @@
                         let rankStr = "";
                         let cardClass = "glass-premium";
                         let iconColor = "var(--accent-cyan)";
-                        let icon = "fa-award"; // Generic icon for words
+                        let icon = "fa-award"; 
 
                         if (k === "1" || k === "1st") { rankStr = "1st Place"; cardClass = "gold"; iconColor = "#FFD700"; icon = "fa-medal"; }
                         else if (k === "2" || k === "2nd") { rankStr = "2nd Place"; cardClass = "silver"; iconColor = "#C0C0C0"; icon = "fa-medal"; }
@@ -1981,10 +2095,40 @@
             let isCancelled = sLower.includes("cancel");
             let isCompleted = sLower.includes('completed') || sLower.includes('past');
             
+            // VIP Engine Validation
+            let isVipActive = String(t.is_vip_early_access).toLowerCase() === "true";
+            let vipTimeData = { isClosed: true };
+            if(isVipActive && t.vip_early_access_date) {
+                vipTimeData = calculateTimeRemaining(t.vip_early_access_date);
+            }
+            
             if(activeCountdown) clearInterval(activeCountdown);
-            if(!isCancelled && !isCompleted && !isFull && !isRegClosed) {
-                updateLiveCountdown(t.date, 'dtRegDateRange', 'dtRegStatus');
+            if(!isCancelled && !isCompleted && !isFull) {
+                if(isVipActive && !vipTimeData.isClosed) {
+                    // VIP Early Access is currently ticking
+                    document.getElementById('vipTimelineItem').style.display = 'flex';
+                    document.getElementById('dtRegLimitTitle').innerText = "General Registration Opens";
+                    document.getElementById('dtRegStatus').innerText = "Waiting";
+                    document.getElementById('dtRegStatus').style.background = "rgba(255,153,0,0.1)";
+                    document.getElementById('dtRegStatus').style.color = "var(--accent-orange)";
+                    document.getElementById('dtRegStatus').style.borderColor = "var(--accent-orange)";
+                    
+                    document.getElementById('dtVipRegStatus').innerText = "OPEN";
+                    document.getElementById('dtVipRegStatus').style.background = "rgba(0,255,127,0.1)";
+                    document.getElementById('dtVipRegStatus').style.color = "var(--accent-green)";
+                    document.getElementById('dtVipRegStatus').style.borderColor = "var(--accent-green)";
+                    
+                    updateLiveCountdown(t.vip_early_access_date, 'dtVipRegDateRange', 'dtVipRegStatus');
+                    document.getElementById('dtRegDateRange').innerText = formatTournamentDateStrict(t.date);
+                } else {
+                    // Standard Registration is ticking
+                    document.getElementById('vipTimelineItem').style.display = 'none';
+                    document.getElementById('dtRegLimitTitle').innerText = "Registration Period Ends";
+                    updateLiveCountdown(t.date, 'dtRegDateRange', 'dtRegStatus');
+                }
             } else {
+                document.getElementById('vipTimelineItem').style.display = 'none';
+                document.getElementById('dtRegLimitTitle').innerText = "Registration Period Ends";
                 document.getElementById('dtRegDateRange').innerText = formatTournamentDateStrict(t.date);
             }
 
@@ -1996,7 +2140,7 @@
                 regStatus.style.background = "rgba(255,77,77,0.1)"; 
                 regStatus.style.borderColor = "#ff4d4d";
                 document.getElementById('dtRegDateRange').style.color = "white"; 
-            } else {
+            } else if (!isVipActive || vipTimeData.isClosed) {
                 regStatus.innerText = sLower.includes("live") ? "LIVE NOW" : "OPEN"; 
                 regStatus.style.color = "var(--accent-green)"; 
                 regStatus.style.background = "rgba(0,255,127,0.1)"; 
@@ -2010,68 +2154,47 @@
             let btn = document.getElementById('masterJoinBtn');
             let isJoined = userLiveMatches.some(m => m.tournament_title === t.title || m.match_id === (t.id || t.title)); 
             
-            let roomArea = document.getElementById('roomDetailsArea');
-            if (isJoined) {
-                if (t.room_id != null && String(t.room_id).trim() !== "") {
-                    roomArea.innerHTML = `
-                        <div class="dm-section" style="border-color: var(--accent-green) !important;">
-                            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px; padding-bottom:15px; border-bottom:1px solid rgba(0,255,127,0.2);">
-                                <div>
-                                    <div style="font-size:0.75rem; color:#888; text-transform:uppercase; letter-spacing:1px;">Room ID</div>
-                                    <div style="font-family:var(--font-head); font-size:1.3rem; color:white; font-weight:bold; letter-spacing:1px;" id="dispRoomId">${t.room_id}</div>
-                                </div>
-                                <button class="btn-secondary" style="padding:8px 15px; font-size:0.8rem; border-color:var(--accent-green); color:var(--accent-green);" onclick="navigator.clipboard.writeText('${t.room_id}'); showToast('Room ID Copied!'); triggerHaptic();"><i class="fa-solid fa-copy"></i></button>
-                            </div>
-                            <div style="display:flex; justify-content:space-between; align-items:center;">
-                                <div>
-                                    <div style="font-size:0.75rem; color:#888; text-transform:uppercase; letter-spacing:1px;">Password</div>
-                                    <div style="font-family:var(--font-head); font-size:1.1rem; color:var(--accent-cyan); font-weight:bold; letter-spacing:1px;" id="dispRoomPass">${t.room_pass != null ? t.room_pass : 'No Password Needed'}</div>
-                                </div>
-                                <button class="btn-secondary" style="padding:8px 15px; font-size:0.8rem; border-color:var(--accent-cyan); color:var(--accent-cyan);" onclick="navigator.clipboard.writeText('${t.room_pass || ''}'); showToast('Password Copied!'); triggerHaptic();"><i class="fa-solid fa-copy"></i></button>
-                            </div>
-                        </div>
-                    `;
-                } else {
-                    roomArea.innerHTML = `
-                        <div class="dm-section" style="border-style: dashed !important; text-align: center;">
-                            <i class="fa-solid fa-clock-rotate-left" style="font-size: 2rem; color: var(--accent-cyan); margin-bottom: 10px;"></i>
-                            <div style="font-family: var(--font-head); font-weight: bold; color: white; margin-bottom: 5px;">Waiting for Organizer</div>
-                            <div style="font-size: 0.85rem; color: #ccc;">You are successfully registered! Room ID and Password will be fetched securely from the server once the organizer provides them.</div>
-                        </div>
-                    `;
-                }
-            } else {
-                roomArea.innerHTML = `
-                    <div class="dm-section" style="border-color: var(--accent-orange) !important; border-style: dashed !important; text-align: center;">
-                        <i class="fa-solid fa-lock" style="font-size: 2rem; color: var(--accent-orange); margin-bottom: 10px;"></i>
-                        <div style="font-family: var(--font-head); font-weight: bold; color: white; margin-bottom: 5px;">ID & Password Locked</div>
-                        <div style="font-size: 0.85rem; color: #ccc;">Details are only visible to securely registered players. Confirm your slot to get access to the Room.</div>
-                    </div>
-                `;
-            }
+            if (roomTabInterval) clearInterval(roomTabInterval);
+            renderRoomTabDynamic(t, isJoined);
+            roomTabInterval = setInterval(() => renderRoomTabDynamic(t, isJoined), 1000);
+            
+            let currentUser = JSON.parse(localStorage.getItem('tournyx_user'));
+            let isUserPremium = currentUser && String(currentUser.is_premium).toLowerCase() === 'true';
 
             if(isGuestMode) {
                 btn.innerHTML = "<i class='fa-solid fa-user-plus'></i> LOGIN TO REGISTER";
                 btn.classList.add('guest-mode-btn');
+                btn.className = "btn-primary";
                 btn.disabled = false;
             } else if(isJoined) {
-                btn.innerHTML = "<i class='fa-solid fa-check'></i> ALREADY JOINED";
-                btn.disabled = true;
+                // Check if they can join with ANOTHER clan
+                btn.innerHTML = "<i class='fa-solid fa-plus'></i> REGISTER ANOTHER CLAN";
+                btn.className = "btn-primary";
+                btn.disabled = false;
             } else if (isCancelled) {
                 btn.innerHTML = "<i class='fa-solid fa-ban'></i> CANCELLED";
+                btn.className = "btn-primary";
                 btn.disabled = true;
             } else if(isFull) {
                 btn.innerHTML = "<i class='fa-solid fa-users-slash'></i> SLOT FILLED";
+                btn.className = "btn-primary";
                 btn.disabled = true;
             } else if (isCompleted) {
                 btn.innerText = "COMPLETED";
+                btn.className = "btn-primary";
+                btn.disabled = true;
+            } else if (isVipActive && !vipTimeData.isClosed && !isUserPremium) {
+                // VIP Lock Triggered for Non-Premium User
+                btn.innerHTML = "<i class='fa-solid fa-lock'></i> VIP EARLY ACCESS";
+                btn.className = "btn-primary locked-vip";
                 btn.disabled = true;
             } else if (isRegClosed) {
                 btn.innerHTML = "<i class='fa-solid fa-clock'></i> REGISTRATION CLOSED";
+                btn.className = "btn-primary";
                 btn.disabled = true;
             } else {
                 btn.innerText = "REGISTER NOW";
-                btn.classList.remove('guest-mode-btn');
+                btn.className = "btn-primary";
                 btn.disabled = false;
             }
 
@@ -2101,8 +2224,22 @@
             let fallbackAvatar = t.avatar ? formatImageUrl(t.avatar) : (t.org_avatar ? formatImageUrl(t.org_avatar) : `https://ui-avatars.com/api/?name=${encodeURIComponent(orgId)}&background=070311&color=00f2ff&bold=true&border=1`);
             let fallbackHosted = t.org_hosted_count ? parseInt(t.org_hosted_count) : Math.max(localTournamentsData.filter(x => x.org_username === orgId || x.email === orgId).length, 1);
             
+            let isVerifiedPremium = (String(t.is_premium).toLowerCase() === 'true' || String(t.is_verified).toLowerCase() === 'true' || String(t.is_official).toLowerCase() === 'true');
+            
             document.getElementById('hpName').innerText = orgId;
-            document.getElementById('hpAvatar').src = fallbackAvatar;
+            document.getElementById('hpPremiumBadge').innerHTML = isVerifiedPremium ? '<i class="fa-solid fa-certificate"></i> Verified Organizer' : '<i class="fa-solid fa-shield"></i> Tournyx Organizer';
+            document.getElementById('hpPremiumBadge').style.color = isVerifiedPremium ? '#1da1f2' : 'var(--accent-cyan)';
+            
+            let avatarEl = document.getElementById('hpAvatar');
+            avatarEl.src = fallbackAvatar;
+            if(isVerifiedPremium) {
+                avatarEl.style.borderColor = '#FFD700';
+                avatarEl.style.boxShadow = '0 0 15px rgba(255,215,0,0.5)';
+            } else {
+                avatarEl.style.borderColor = 'var(--accent-cyan)';
+                avatarEl.style.boxShadow = '0 0 15px rgba(0,242,255,0.4)';
+            }
+
             document.getElementById('hpHosted').innerText = fallbackHosted;
             document.getElementById('hpSuccess').innerText = "100%"; 
             document.getElementById('hpRating').innerText = "4.9"; 
@@ -2138,6 +2275,25 @@
                 if (modal) modal.classList.remove('active'); 
                 if(activeCountdown) clearInterval(activeCountdown);
                 if(activeTimelineInterval) clearInterval(activeTimelineInterval); 
+                if(roomTabInterval) clearInterval(roomTabInterval);
+            }
+        }
+
+        function toggleTeamDropdown(el) {
+            triggerHaptic();
+            if(currentOpenTeamDropdown && currentOpenTeamDropdown !== el) {
+                currentOpenTeamDropdown.classList.remove('expanded');
+                currentOpenTeamDropdown.querySelector('.fa-chevron-down').style.transform = 'rotate(0deg)';
+            }
+            
+            el.classList.toggle('expanded');
+            let icon = el.querySelector('.fa-chevron-down');
+            if(el.classList.contains('expanded')) {
+                icon.style.transform = 'rotate(-180deg)';
+                currentOpenTeamDropdown = el;
+            } else {
+                icon.style.transform = 'rotate(0deg)';
+                currentOpenTeamDropdown = null;
             }
         }
 
@@ -2152,15 +2308,24 @@
             ])
             .then(([data, clansData]) => {
                 container.innerHTML = "";
+                let user = JSON.parse(localStorage.getItem('tournyx_user')) || {};
                 let userClans = JSON.parse(localStorage.getItem('tournyx_my_clans_cache')) || [];
                 let userClanNames = userClans.map(c => String(c.name).toLowerCase().trim());
+                let isUserPremium = String(user.is_premium).toLowerCase() === 'true';
                 
                 let clanMap = {};
+                let clanStateMap = {};
+                
                 if (clansData.status === 'success' && clansData.data) {
                     clansData.data.forEach(c => {
                         let cName = c.name || c.Tag || c.tag || c[1];
                         let rawLogo = c.logo || c.Logo || c[4];
-                        if (cName && rawLogo) clanMap[String(cName).toLowerCase().trim()] = rawLogo;
+                        let cState = c.state || c.city || c.location || c.region; // Try to extract location data
+                        
+                        if (cName) {
+                            if(rawLogo) clanMap[String(cName).toLowerCase().trim()] = rawLogo;
+                            if(cState) clanStateMap[String(cName).toLowerCase().trim()] = cState;
+                        }
                     });
                 }
 
@@ -2179,12 +2344,10 @@
                     
                     let activeTeams = Array.from(uniqueTeamsMap.values());
                     
-                    // --- SIMULTANEOUS ROSTER COUNTING & PROGRESS BAR UPDATE MAGIC ---
                     let liveCount = activeTeams.length;
                     let totalSlots = parseInt(activeTournament.slots) || 48;
                     document.getElementById('dtRegistrations').innerText = `${liveCount}/${totalSlots}`;
                     
-                    // Sync the UI dynamic bar perfectly with the live fetched array
                     let fillPct = Math.min((liveCount / totalSlots) * 100, 100);
                     let progBar = document.querySelector('.slot-tracker .progress-bar');
                     let pctText = document.querySelector('.slot-tracker span:last-child');
@@ -2199,7 +2362,6 @@
                         else progBar.className = "progress-bar";
                     }
                     
-                    // Update Local tournament object to prevent UI jump
                     activeTournament.filled_slots = liveCount;
                     let existingCard = document.querySelector(`.tourney-card[data-id="${activeTournament.id || activeTournament.title}"]`);
                     if (existingCard) {
@@ -2215,17 +2377,34 @@
                             else cardProgBar.className = "progress-bar";
                         }
                     }
-                    // --- END SYNC MAGIC ---
 
                     if(activeTeams.length > 0) {
                         activeTeams.forEach((team, i) => {
                             let currentTeamStr = String(team.clan).toLowerCase().trim();
-                            let isMyClan = userClanNames.includes(currentTeamStr) || (team.username === JSON.parse(localStorage.getItem('tournyx_user'))?.username);
-                            let highlightClass = isMyClan ? "my-clan" : "";
+                            let isMyClan = userClanNames.includes(currentTeamStr) || (team.username === user.username);
                             
                             let displayClanName = team.clan;
+                            let rosterHTML = "";
+                            let hasRoster = false;
+                            
                             if(displayClanName.startsWith("{")) {
-                                try { let sd = JSON.parse(displayClanName); displayClanName = sd.username; } catch(e){}
+                                try { 
+                                    let sd = JSON.parse(displayClanName); 
+                                    displayClanName = sd.username || sd.name || "Unknown Clan"; 
+                                    
+                                    // Build inner roster if JSON data exists and holds player logic
+                                    if(sd.players && Array.isArray(sd.players)) {
+                                        hasRoster = true;
+                                        sd.players.forEach(p => {
+                                            rosterHTML += `
+                                                <div class="roster-player">
+                                                    <span class="roster-player-name"><i class="fa-solid fa-user-ninja" style="color:#888; font-size:0.7rem; margin-right:5px;"></i> ${p.name || p.username || 'Player'}</span>
+                                                    <span class="roster-player-uid">UID: ${p.uid || p.id || 'N/A'}</span>
+                                                </div>
+                                            `;
+                                        });
+                                    }
+                                } catch(e){}
                             }
 
                             if (isSolo) {
@@ -2233,10 +2412,17 @@
                                 let safePlayerName = encodeURIComponent(playerName);
                                 let fallbackAvatar = team.avatar ? formatImageUrl(team.avatar) : `https://ui-avatars.com/api/?name=${safePlayerName}&background=070311&color=00f2ff&bold=true`;
                                 
+                                // Premium Check for Solo Glow
+                                let isPremiumSolo = (isMyClan && isUserPremium) || (String(team.is_premium).toLowerCase() === 'true');
+                                let highlightClass = isMyClan ? "my-clan" : "";
+                                if(isPremiumSolo) highlightClass += " vip-solo";
+                                
+                                let premiumBadge = isPremiumSolo ? '<i class="fa-solid fa-crown" style="color: #FFD700; margin-left: 5px; font-size: 0.85rem;" title="Tournyx VIP"></i>' : '';
+                                
                                 container.innerHTML += `
                                     <div class="clan-item ${highlightClass}" style="flex-direction: row; align-items: center;">
                                         <div class="clan-item-icon" style="overflow: hidden;"><img id="solo-avatar-${i}" src="${fallbackAvatar}"></div>
-                                        <div class="clan-item-name">${playerName} ${isMyClan ? '(You)' : ''}</div>
+                                        <div class="clan-item-name">${playerName} ${isMyClan ? '(You)' : ''} ${premiumBadge}</div>
                                         <div style="font-size:0.75rem; color:var(--accent-cyan); font-weight: bold; background: rgba(0,242,255,0.1); padding: 4px 10px; border-radius: 50px; border: 1px solid rgba(0,242,255,0.2);">Solo</div>
                                     </div>
                                 `;
@@ -2248,15 +2434,22 @@
                                         }
                                 }).catch(e => {});
                             } else {
+                                let highlightClass = isMyClan ? "my-clan" : "";
                                 let mappedLogo = clanMap[String(displayClanName).toLowerCase().trim()];
                                 let clanLogo = mappedLogo ? formatImageUrl(mappedLogo) : (team.logo ? formatImageUrl(team.logo) : (team.clan_logo ? formatImageUrl(team.clan_logo) : `https://ui-avatars.com/api/?name=${encodeURIComponent(displayClanName)}&background=070311&color=00ff7f&bold=true`));
                                 
+                                let mappedState = clanStateMap[String(displayClanName).toLowerCase().trim()];
+                                let stateBadge = mappedState ? `<span style="font-size:0.6rem; color:#aaa; font-family:var(--font-body); font-weight:normal; border:1px solid rgba(255,255,255,0.2); padding:2px 6px; border-radius:4px; margin-left:6px;"><i class="fa-solid fa-location-dot" style="font-size:0.5rem;"></i> ${mappedState}</span>` : '';
+
+                                let expandIcon = hasRoster ? `<i class="fa-solid fa-chevron-down" style="color:#888; font-size:0.9rem; transition:0.3s; margin-left:auto;"></i>` : ``;
+
                                 container.innerHTML += `
-                                    <div class="clan-item ${highlightClass}">
+                                    <div class="clan-item ${highlightClass}" ${hasRoster ? `onclick="toggleTeamDropdown(this)"` : ''}>
                                         <div class="clan-item-header">
                                             <div class="clan-item-icon"><img src="${clanLogo}"></div>
-                                            <div class="clan-item-name">${displayClanName} ${isMyClan ? '(You)' : ''}</div>
+                                            <div class="clan-item-name">${displayClanName} ${isMyClan ? '<span style="font-size:0.7rem; color:var(--accent-cyan); font-weight:normal;">(Your Clan)</span>' : ''} ${stateBadge} ${expandIcon}</div>
                                         </div>
+                                        ${hasRoster ? `<div class="clan-roster-dropdown">${rosterHTML}</div>` : ''}
                                     </div>
                                 `;
                             }
@@ -2283,7 +2476,6 @@
             const btnArea = document.getElementById('regButtonsArea');
             let user = JSON.parse(localStorage.getItem('tournyx_user')) || {};
 
-            // Calculate exact Passes (Universal vs Game Specific)
             let rawEarnings = String(user.earnings || user.rupees || "0");
             let baseRupees = 0; let goldenRupees = 0;
             if (rawEarnings.includes('+')) {
@@ -2315,7 +2507,6 @@
             let identified = ffCount + bgmiCount;
             let uniDisplay = goldenTickets, ffDisplay = 0, bgmiDisplay = 0;
             
-            // If identified is 0, we default the base tickets to Free Fire to prevent them leaking into Universal.
             if (identified === 0) {
                 ffDisplay = baseTickets;
             } else {
@@ -2335,7 +2526,6 @@
                 isSpecificValid = true;
             }
 
-            // Setup Payment Overlay Text
             let rawFeeRupees = parseInt(activeTournament.fee) || 0;
             let reqTickets = Math.ceil(rawFeeRupees / 10);
             let rawFeePts = parseInt(activeTournament.fee_pts) || 0; 
@@ -2445,8 +2635,8 @@
                     clanSelectionArea.innerHTML = `
                         <div style="text-align:center; padding: 15px;">
                             <i class="fa-solid fa-check-double" style="font-size:3.5rem; color:var(--accent-green); margin-bottom:15px;"></i>
-                            <h3 style="color:white; font-family:var(--font-head); text-transform:uppercase; text-shadow:0 0 10px rgba(0,255,127,0.5);">Already Registered!</h3>
-                            <p style="color:#ccc; font-size:0.85rem; margin-top:10px; line-height:1.5;">Your clan has already secured a slot in this tournament. Go to the Matches tab for details!</p>
+                            <h3 style="color:white; font-family:var(--font-head); text-transform:uppercase; text-shadow:0 0 10px rgba(0,255,127,0.5);">All Clans Registered!</h3>
+                            <p style="color:#ccc; font-size:0.85rem; margin-top:10px; line-height:1.5;">All your eligible clans have already secured a slot in this tournament. Go to the Matches tab for details!</p>
                         </div>
                     `;
                     let masterBtn = document.getElementById('masterJoinBtn');
@@ -2464,7 +2654,11 @@
                     btnArea.style.display = 'flex';
                     
                     const select = document.getElementById('formSelectClan');
-                    availableClans.forEach(c => { select.innerHTML += `<option value="${c.name}">${c.name} (${c.game})</option>`; });
+                    availableClans.forEach(c => { 
+                        // Using JSON payload if roster is needed, otherwise just name
+                        let payload = c.team_json ? c.team_json : c.name;
+                        select.innerHTML += `<option value='${payload}'>${c.name} (${c.game})</option>`; 
+                    });
                     document.getElementById('regClanLabel').innerHTML = `Select ${activeTournament.game} Roster *`;
                     
                     document.getElementById('finalSubmitBtn').innerText = "Proceed";
@@ -2556,7 +2750,6 @@
             }
         }
 
-        // --- UPGRADED PROFESSIONAL REGISTRATION LOADER ---
         function triggerSecureLoader(clanName, cost, method) {
             let loaderOverlay = document.getElementById('securePaymentLoader');
             loaderOverlay.style.display = 'flex';
@@ -2569,7 +2762,6 @@
             
             bar.classList.remove('blast');
             bar.style.width = "0%";
-            bar.style.transition = "width 0.15s cubic-bezier(0.175, 0.885, 0.32, 1.275), background 0.4s";
             bar.style.background = "var(--accent-cyan)";
             logoBox.style.filter = "drop-shadow(0 0 15px var(--accent-cyan))";
             logoBox.style.transform = "scale(1)";
@@ -2589,12 +2781,14 @@
             const t = activeTournament;
             let user = JSON.parse(localStorage.getItem('tournyx_user'));
 
+            let entryPaidPts = method === 'points' ? cost : 0;
+
             fetch(API_URL, {
                 method: 'POST', mode: 'no-cors', headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
                     action: "join", match_id: t.id || t.title, game: t.game, title: t.title,
                     date: t.date, prize: t.prize, email: user.email, username: user.username, phone: user.phone, 
-                    clan: clanName, entry_paid: cost, method: method,
+                    clan: clanName, entry_paid: method !== 'points' ? cost : 0, entry_paid_pts: entryPaidPts, method: method,
                     org_email: t.org_email || t.email || ""
                 })
             }).then(() => {
@@ -2642,9 +2836,10 @@
                     closeRegistrationFlow();
                     showToast(cost > 0 ? "Entry successful! Welcome to the Arena." : "Registration Confirmed! GLHF.");
                     
+                    // Do not fully lock the button, allow registering another clan
                     let btn = document.getElementById('masterJoinBtn');
-                    btn.innerHTML = "<i class='fa-solid fa-check'></i> ALREADY JOINED";
-                    btn.disabled = true;
+                    btn.innerHTML = "<i class='fa-solid fa-plus'></i> REGISTER ANOTHER CLAN";
+                    btn.disabled = false;
                     
                     let currentFilled = parseInt(t.filled_slots) || 0;
                     let newFilled = currentFilled + 1;
@@ -2654,35 +2849,10 @@
                     let dtRegs = document.getElementById('dtRegistrations');
                     if (dtRegs) { dtRegs.innerText = `${newFilled}/${totalSlots}`; }
                     
-                    let roomArea = document.getElementById('roomDetailsArea');
-                    if (t.room_id != null && String(t.room_id).trim() !== "") {
-                        roomArea.innerHTML = `
-                            <div class="dm-section" style="border-color: var(--accent-green) !important;">
-                                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px; padding-bottom:15px; border-bottom:1px solid rgba(0,255,127,0.2);">
-                                    <div>
-                                        <div style="font-size:0.75rem; color:#888; text-transform:uppercase; letter-spacing:1px;">Room ID</div>
-                                        <div style="font-family:var(--font-head); font-size:1.3rem; color:white; font-weight:bold; letter-spacing:1px;" id="dispRoomId">${t.room_id}</div>
-                                    </div>
-                                    <button class="btn-secondary" style="padding:8px 15px; font-size:0.8rem; border-color:var(--accent-green); color:var(--accent-green);" onclick="navigator.clipboard.writeText('${t.room_id}'); showToast('Room ID Copied!'); triggerHaptic();"><i class="fa-solid fa-copy"></i></button>
-                                </div>
-                                <div style="display:flex; justify-content:space-between; align-items:center;">
-                                    <div>
-                                        <div style="font-size:0.75rem; color:#888; text-transform:uppercase; letter-spacing:1px;">Password</div>
-                                        <div style="font-family:var(--font-head); font-size:1.1rem; color:var(--accent-cyan); font-weight:bold; letter-spacing:1px;" id="dispRoomPass">${t.room_pass != null ? t.room_pass : 'No Password Needed'}</div>
-                                    </div>
-                                    <button class="btn-secondary" style="padding:8px 15px; font-size:0.8rem; border-color:var(--accent-cyan); color:var(--accent-cyan);" onclick="navigator.clipboard.writeText('${t.room_pass || ''}'); showToast('Password Copied!'); triggerHaptic();"><i class="fa-solid fa-copy"></i></button>
-                                </div>
-                            </div>
-                        `;
-                    } else {
-                        roomArea.innerHTML = `
-                            <div class="dm-section" style="border-style: dashed !important; text-align: center;">
-                                <i class="fa-solid fa-clock-rotate-left" style="font-size: 2rem; color: var(--accent-cyan); margin-bottom: 10px;"></i>
-                                <div style="font-family: var(--font-head); font-weight: bold; color: white; margin-bottom: 5px;">Waiting for Organizer</div>
-                                <div style="font-size: 0.85rem; color: #ccc;">You are successfully registered! Room ID and Password will be fetched securely from the server once the organizer provides them.</div>
-                            </div>
-                        `;
-                    }
+                    renderRoomTabDynamic(t, true);
+                    
+                    // Refresh Teams Tab slightly in background to get new data
+                    setTimeout(fetchLiveTeams, 2000);
                 }, 1800);
             }).catch(e => {
                 txt.innerText = "Connection Failed! Try Again.";
@@ -2697,7 +2867,7 @@
             });
         }
 
-        // --- CONTRIBUTE ENGINE WITH DYNAMIC CASH CONVERSION ---
+        // --- CONTRIBUTE ENGINE WITH SECURE BACKEND PAYLOAD ---
         function openContributeModal() {
             if(isGuestMode) { document.getElementById('guestLoginModal').classList.add('active'); return; }
             document.getElementById('contributeOverlay').classList.add('active');
@@ -2871,9 +3041,9 @@
     }
 </style>
 
-<div id="nativeAppPrompt" style="display: none; position: fixed; top: calc(15px + env(safe-area-inset-top)); left: 50%; transform: translateX(-50%); width: 95%; max-width: 500px; background: rgba(10, 5, 20, 0.95); border: 1px solid var(--accent-cyan); border-radius: 16px; padding: 10px 15px; z-index: 9999; backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px); box-shadow: 0 15px 35px rgba(0,0,0,0.8), 0 0 20px rgba(0, 242, 255, 0.2); align-items: center; justify-content: space-between; animation: slideDownAppPrompt 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);">
+<div id="nativeAppPromptMobile" style="display: none; position: fixed; top: calc(15px + env(safe-area-inset-top)); left: 50%; transform: translateX(-50%); width: 95%; max-width: 500px; background: rgba(10, 5, 20, 0.95); border: 1px solid var(--accent-cyan); border-radius: 16px; padding: 10px 15px; z-index: 9999; backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px); box-shadow: 0 15px 35px rgba(0,0,0,0.8), 0 0 20px rgba(0, 242, 255, 0.2); align-items: center; justify-content: space-between; animation: slideDownAppPrompt 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);">
     <div style="display: flex; align-items: center; gap: 12px; flex: 1; min-width: 0;">
-        <i class="fa-solid fa-xmark" style="color: #888; font-size: 1.2rem; cursor: pointer; padding: 5px 10px 5px 0; transition: 0.3s;" onclick="document.getElementById('nativeAppPrompt').style.display='none'" onmouseover="this.style.color='white'"></i>
+        <i class="fa-solid fa-xmark" style="color: #888; font-size: 1.2rem; cursor: pointer; padding: 5px 10px 5px 0; transition: 0.3s;" onclick="document.getElementById('nativeAppPromptMobile').style.display='none'" onmouseover="this.style.color='white'"></i>
         
         <div style="display: flex; align-items: center; gap: 10px; flex: 1; min-width: 0; cursor: pointer;" onclick="window.location.href='download.html'">
             <img src="https://tournyx.in/favicon.png" style="width: 40px; height: 40px; border-radius: 10px; border: 1px solid var(--accent-purple); box-shadow: 0 0 10px rgba(189,0,255,0.4);">
@@ -2896,10 +3066,7 @@
 
 <script>
     document.addEventListener("DOMContentLoaded", function() {
-        // 1. Mobile Browser Detection (Checks user agent AND screen size)
         const isMobileBrowser = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) || window.innerWidth <= 850;
-
-        // 2. Advanced Median App & PWA Detection (Ensures it stays hidden in the actual app)
         const isMedianApp = (typeof median !== 'undefined') || 
                             (typeof gonative !== 'undefined') || 
                             (navigator.userAgent.toLowerCase().indexOf('median') > -1) || 
@@ -2907,7 +3074,6 @@
                             (window.matchMedia('(display-mode: standalone)').matches) ||
                             (navigator.standalone === true);
         
-        // 3. Logic: ONLY show if it's a Mobile Browser AND NOT inside the App
         if (isMobileBrowser && !isMedianApp) {
             setTimeout(() => {
                 const appPrompt = document.getElementById('nativeAppPrompt');
@@ -2915,7 +3081,7 @@
                     appPrompt.style.display = 'flex';
                     try { if(navigator.vibrate) navigator.vibrate(30); } catch(e){}
                 }
-            }, 1500); // Smooth 1.5s delay
+            }, 1500); 
         }
     });
 </script>
@@ -2925,13 +3091,9 @@
         
         if (user && user.email && typeof median !== 'undefined' && median.onesignal) {
             let cleanEmail = user.email.toLowerCase().trim();
-            
-            // 1. Set the Official External ID
             if(median.onesignal.setExternalUserId) {
                 median.onesignal.setExternalUserId({ externalId: cleanEmail });
             }
-
-            // 2. Set an Email TAG (The Ultimate Failsafe)
             if(median.onesignal.sendTags) {
                 median.onesignal.sendTags({
                     tags: { 
@@ -2943,10 +3105,7 @@
         }
     }
 
-    // Fire when Median bridge is fully loaded inside the app
     document.addEventListener("median_library_ready", tournyxOneSignalSetup);
-    
-    // Fallback for regular web browsers
     document.addEventListener("DOMContentLoaded", tournyxOneSignalSetup);
 </script>
 </body>
