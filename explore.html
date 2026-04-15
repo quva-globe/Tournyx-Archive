@@ -163,8 +163,9 @@
         
         .t-like { position: absolute; bottom: 10px; left: 10px; background: rgba(0,0,0,0.8); color: white; padding: 4px 10px; border-radius: 50px; display: flex; align-items: center; justify-content: center; gap: 5px; border: 1px solid rgba(255,255,255,0.1); font-family: var(--font-head); font-size: 0.75rem; font-weight: bold; cursor: pointer; z-index: 5; transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
         .t-like:active { transform: scale(0.8); }
-        .t-like.liked { color: #ff4d4d; border-color: rgba(255,77,77,0.4); background: rgba(255,77,77,0.15); animation: pulseLike 0.4s ease-in-out; }
-        @keyframes pulseLike { 0% { transform: scale(1); } 50% { transform: scale(1.2); } 100% { transform: scale(1); } }
+        .t-like.liked i { color: #ff4d4d; animation: pulseLike 0.4s ease-in-out; }
+        .t-like.liked { border-color: rgba(255,77,77,0.4); background: rgba(255,77,77,0.15); }
+        @keyframes pulseLike { 0% { transform: scale(1); } 50% { transform: scale(1.3); } 100% { transform: scale(1); } }
         
         .t-plat-badge { position: absolute; bottom: 10px; right: 10px; background: rgba(0,0,0,0.8); border: 1px solid rgba(255,255,255,0.15); color: white; padding: 4px 8px; border-radius: 50px; font-size: 0.65rem; font-family: var(--font-head); font-weight: bold; z-index: 2; letter-spacing: 0.5px; display: flex; align-items: center; gap: 4px;}
         
@@ -177,16 +178,14 @@
         .t-detail-item i { color: var(--accent-purple); width: 14px; text-align: center; margin-top: 2px; flex-shrink: 0;}
         html.theme-vip .t-detail-item i { color: #FFD700; }
 
-        /* Hardware Accelerated Shimmer Progress Bar */
+        /* Hardware Accelerated Flowing Progress Bar */
         .progress-container { width: 100%; background: rgba(0,0,0,0.4); border-radius: 20px; height: 8px; margin-top: 4px; overflow: hidden; border: 1px solid rgba(255,255,255,0.05); position: relative; }
-        .progress-bar { height: 100%; border-radius: 20px; background: linear-gradient(90deg, #00f2ff, #bd00ff); position: relative; overflow: hidden; transition: width 0.4s ease-out; }
-        .progress-bar::after { content: ''; position: absolute; top: 0; left: 0; width: 200%; height: 100%; background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent); animation: shimmerFlow 2.5s infinite linear; transform: translateZ(0);}
-        @keyframes shimmerFlow { 0% { transform: translateX(-100%); } 100% { transform: translateX(100%); } }
+        .progress-bar { height: 100%; border-radius: 20px; background: linear-gradient(90deg, #00f2ff, #bd00ff, #00f2ff); background-size: 200% 100%; animation: gradientFlow 2s linear infinite; position: relative; overflow: hidden; transition: width 0.4s ease-out; }
+        @keyframes gradientFlow { 0% { background-position: 100% 0; } 100% { background-position: -100% 0; } }
         
-        html.theme-vip .progress-bar { background: linear-gradient(90deg, #FFD700, #FFA500); }
-        .progress-bar.filling { background: linear-gradient(90deg, #ff9900, #ff4d4d); }
-        .progress-bar.full { background: #ff4d4d; }
-        .progress-bar.full::after { display: none; }
+        html.theme-vip .progress-bar { background: linear-gradient(90deg, #FFD700, #FFA500, #FFD700); }
+        .progress-bar.filling { background: linear-gradient(90deg, #ff9900, #ff4d4d, #ff9900); }
+        .progress-bar.full { background: #ff4d4d; animation: none;}
         
         .slot-text { font-family: var(--font-head); font-size: 0.8rem; color: white; font-weight: bold; letter-spacing: 0.5px;}
         .t-action-row { display: flex; justify-content: space-between; align-items: center; border-top: 1px solid rgba(255,255,255,0.05); padding-top: 10px; margin-top: 8px; }
@@ -317,6 +316,10 @@
         .prize-card.silver { border-color: rgba(192, 192, 192, 0.5); background: linear-gradient(135deg, rgba(192,192,192,0.15), rgba(128,128,128,0.1)); }
         .prize-card.bronze { border-color: rgba(205, 127, 50, 0.5); background: linear-gradient(135deg, rgba(205,127,50,0.15), rgba(139,69,19,0.1)); }
         
+        .prize-card.points-card { border-color: rgba(189,0,255,0.6); background: linear-gradient(135deg, rgba(189,0,255,0.15), rgba(0,242,255,0.1)); box-shadow: 0 0 20px rgba(189,0,255,0.3); animation: pulsePoints 2s infinite ease-in-out; }
+        @keyframes pulsePoints { 0% { box-shadow: 0 0 10px rgba(189,0,255,0.2); } 50% { box-shadow: 0 0 25px rgba(189,0,255,0.5); } 100% { box-shadow: 0 0 10px rgba(189,0,255,0.2); } }
+        .prize-card.points-card .pc-val { color: var(--accent-purple); text-shadow: 0 0 8px rgba(189,0,255,0.5); }
+
         .prize-card.glass-premium { border: 1px solid rgba(0, 242, 255, 0.4); background: linear-gradient(135deg, rgba(0,242,255,0.1), rgba(189,0,255,0.05)); }
         .pc-rank { font-family: var(--font-head); font-weight: bold; font-size: 1rem; display: flex; align-items: center; gap: 10px; z-index: 2; text-transform: uppercase; letter-spacing: 0.5px;}
         .pc-val { font-size: 1.1rem; font-weight: bold; color: var(--accent-cyan); text-shadow: 0 0 5px rgba(0,242,255,0.3); z-index: 2; word-wrap: break-word;}
@@ -339,9 +342,9 @@
         .clan-item-icon img { width: 100%; height: 100%; border-radius: 50px; object-fit: cover; }
         .clan-item-name { font-family: var(--font-head); font-size: 1rem; color: white; flex: 1; display: flex; align-items: center; gap: 6px; flex-wrap: wrap;}
         
-        .clan-roster-dropdown { max-height: 0; opacity: 0; transition: max-height 0.4s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.3s ease, margin-top 0.3s ease; width: 100%; border-top: 1px dashed transparent; margin-top: 0; padding-top: 0; overflow: hidden; word-wrap: break-word;}
+        .clan-roster-dropdown { max-height: 0; opacity: 0; transition: max-height 0.5s ease-in-out, opacity 0.3s ease, margin-top 0.3s ease; width: 100%; border-top: 1px dashed transparent; margin-top: 0; padding-top: 0; overflow: hidden; word-wrap: break-word;}
         .clan-item.expanded { transform: scale(1.02); box-shadow: 0 8px 25px rgba(0,0,0,0.6); border-color: var(--accent-cyan); background: rgba(0,242,255,0.05);}
-        .clan-item.expanded .clan-roster-dropdown { max-height: 500px; opacity: 1; margin-top: 10px; padding-top: 10px; border-top-color: rgba(255,255,255,0.1); }
+        .clan-item.expanded .clan-roster-dropdown { max-height: 800px; opacity: 1; margin-top: 10px; padding-top: 10px; border-top-color: rgba(255,255,255,0.1); }
         
         .roster-player { display: flex; align-items: center; justify-content: space-between; padding: 6px 0; font-size: 0.85rem; color: #ccc; border-bottom: 1px solid rgba(255,255,255,0.02); word-wrap: break-word;}
         .roster-player:last-child { border-bottom: none; }
@@ -372,8 +375,8 @@
         .cycle-logos img:nth-child(4) { animation-delay: 6s; }
         @keyframes logoFadeCycle { 0%, 20% { opacity: 1; transform: scale(1.1); } 25%, 95% { opacity: 0; transform: scale(1); } 100% { opacity: 1; transform: scale(1.1); } }
         
-        .glitch-text { color: white; font-family: var(--font-head); font-size: 1.8rem; font-weight: 900; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 10px; text-align: center; position: relative; display: inline-block; }
-        .glitch-text::before, .glitch-text::after { content: 'GEARING UP'; position: absolute; left: 0; top: 0; opacity: 0.8; }
+        .glitch-text { color: white; font-family: var(--font-head); font-size: 1.8rem; font-weight: 900; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 10px; text-align: center; position: relative; display: inline-block; transition: all 0.3s ease; }
+        .glitch-text::before, .glitch-text::after { content: attr(data-text); position: absolute; left: 0; top: 0; opacity: 0.8; }
         .glitch-text::before { color: #0ff; z-index: -1; animation: glitch-anim 2s infinite linear alternate-reverse; }
         .glitch-text::after { color: #f0f; z-index: -2; animation: glitch-anim 3s infinite linear alternate-reverse; }
         @keyframes glitch-anim { 0% { transform: translate(0) } 20% { transform: translate(-2px, 2px) } 40% { transform: translate(-2px, -2px) } 60% { transform: translate(2px, 2px) } 80% { transform: translate(2px, -2px) } 100% { transform: translate(0) } }
@@ -637,15 +640,18 @@
                 
                     <h2 id="dtTitle" class="t-title" style="font-size: 1.4rem !important; white-space: normal; word-wrap: break-word; margin-bottom: 5px;">Tournament Title</h2>
                     
-                    <div class="dm-section" style="padding:15px; margin-bottom: 20px; display:flex; flex-direction:column; gap:8px; border-color: var(--accent-cyan) !important;">
-                         <div style="color: #a0a0b0; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 1px;">Organized by</div>
-                         <div style="display:flex; justify-content:space-between; align-items:center;">
-                             <div style="color:white; font-weight:bold; font-size:1.3rem; font-family:var(--font-head); display:flex; align-items:center; gap:5px; flex-wrap:wrap;">
-                                 <span id="dtOrgName">Verified Organizer</span>
-                             </div>
-                             <div id="dtOrgStats" style="font-size:0.9rem; color:#ccc; font-weight:bold;"><i class="fa-solid fa-star" style="color:#FFD700;"></i> Hosted: Loading...</div>
-                         </div>
-                         <div id="dtOrgSuccessRate" style="color:var(--accent-green); font-size:0.8rem; font-weight:bold;"><i class="fa-solid fa-check-double"></i> Success Rate: 100%</div>
+                    <div class="dm-section" style="padding:12px 15px; margin-bottom: 20px; display:flex; align-items:center; gap:12px; border-color: var(--accent-cyan) !important; cursor:pointer;" onclick="openHostProfile()">
+                        <img id="orgAvatarImg" src="https://via.placeholder.com/40" style="width:50px; height:50px; border-radius:50%; border:2px solid var(--accent-cyan); object-fit: cover;">
+                        <div style="flex:1;">
+                            <div style="color: #a0a0b0; font-size: 0.7rem; text-transform: uppercase;">Organized by</div>
+                            <div style="color:white; font-weight:bold; font-size:1.1rem; font-family:var(--font-head); display:flex; align-items:center; gap:5px; flex-wrap:wrap;">
+                                <span id="dtOrgName">Verified Organizer</span>
+                            </div>
+                        </div>
+                        <div style="text-align:right;">
+                            <div id="dtOrgSuccessRate" style="color:var(--accent-green); font-size:0.75rem; font-weight:bold;"><i class="fa-solid fa-check-double"></i> 100%</div>
+                            <div id="dtOrgStats" style="font-size:0.75rem; color:#ccc;"><i class="fa-solid fa-star" style="color:#FFD700;"></i> Hosted: ...</div>
+                        </div>
                     </div>
                     
                     <div class="dm-stat-grid">
@@ -844,9 +850,9 @@
             <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEiJvPTY_y_XU-0Lwbnjwm7961lCDkSlQh2MtCWHunFVX6WS7WCprCtkPyB334BU_-4vGsP0NseDQf4NPBEOIxqjk7VZQqZUHpnLb4Bw-c1UeXQy2M9DzNrNdYt_aL0GEb1AlTPupC5zEjJiP3Ci0Oxk-wdg5TF5cs8_UNSe3uTT1BE884je3iXr8QlMjx8/s240/1000094210.jpg">
             <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEg8vsDFFkLAXTA234WJzc3OqsLbmB3HBlKaXhiJo-JFVcTtYmMUI2DVdk5ljTPvGPKj-vtcejjFAxZO0sapDafr6xqN7VpHLGCcxqYWWY2LIZszXhrnnO1gcXFeJzY2EclP6G1bLoea5bshOtT7Dl3p4F_l0pGDuz1j5KJ78dEnI7cQixwAeDC1vKG89N4/s460/1000094209.jpg">
         </div>
-        <h2 class="glitch-text" id="loaderTxtHead" style="font-family: var(--font-head);">GEARING UP</h2>
+        <h2 class="glitch-text" id="loaderTxtHead" data-text="GEARING UP" style="font-family: var(--font-head);">GEARING UP</h2>
         <div class="cyber-bar-container"><div class="cyber-bar-fill" id="secureLoaderBar"></div></div>
-        <p id="loaderTxt" style="color:var(--accent-cyan); font-family:var(--font-head); margin-top:15px; font-size:1rem; font-weight:bold; text-transform:uppercase;">Equipping loadout...</p>
+        <p id="loaderTxt" style="color:var(--accent-cyan); font-family:var(--font-head); margin-top:15px; font-size:1rem; font-weight:bold; text-transform:uppercase; transition: opacity 0.2s;">Equipping loadout...</p>
     </div>
 
     <div class="bottom-sheet-overlay" id="regOverlay">
@@ -1393,7 +1399,7 @@
             let hasT = reqTickets > 0;
             let hasP = pFee > 0;
             let txIconHtml = `<span class="tx-badge" style="font-size:1em; margin:0 2px; transform:translateY(1px);">TX</span>`;
-            let ptsHtml = `<span style="color:var(--accent-cyan); font-weight:bold; display:flex; align-items:center; gap:3px;"><i class="fa-solid fa-coins"></i> ${pFee}</span>`;
+            let ptsHtml = `<span style="color:var(--accent-cyan); font-weight:bold; display:flex; align-items:center; justify-content:center; gap:3px;"><i class="fa-solid fa-coins"></i> ${pFee}</span>`;
             
             if(hasT && hasP) return `<div style="display:flex; align-items:center; justify-content:center; gap:6px; flex-wrap:wrap; width:100%;"><div style="display:flex; align-items:center;"><span>${reqTickets}</span>${txIconHtml}</div> <span style="font-size:0.7rem; color:#888;">OR</span> ${ptsHtml}</div>`;
             if(hasT) return `<div style="display:flex; align-items:center; justify-content:center; width:100%;"><span>${reqTickets}</span>${txIconHtml}</div>`;
@@ -1842,6 +1848,18 @@
             let hostedCount = t.org_hosted_count ? parseInt(t.org_hosted_count) : Math.max(localTournamentsData.filter(x => x.org_username === orgId || x.email === orgId).length, 1);
             document.getElementById('dtOrgStats').innerHTML = `<i class="fa-solid fa-star" style="color:#FFD700;"></i> Hosted: ${hostedCount} Match${hostedCount > 1 ? 'es' : ''}`;
 
+            let orgEmail = t.org_email || t.email || orgId;
+            fetch(API_URL + "?action=get_avatar&username=" + encodeURIComponent(orgId) + "&email=" + encodeURIComponent(orgEmail))
+            .then(res => res.json())
+            .then(data => {
+                if(data.status === 'success') {
+                    let avatarUrl = data.data || data.avatar;
+                    if(avatarUrl) {
+                        document.getElementById('orgAvatarImg').src = formatImageUrl(avatarUrl);
+                    }
+                }
+            }).catch(e => console.log(e));
+
             let reqTickets = (rFee >= 10 && rFee % 10 === 0) ? rFee / 10 : rFee; 
 
             document.getElementById('dtPrize').innerText = getPrizeText(t.prize, t.prize_pts);
@@ -1868,12 +1886,22 @@
                         let iconColor = "var(--accent-cyan)";
                         let icon = "fa-award"; 
 
-                        if (k === "1" || k === "1st") { rankStr = "1st Place"; cardClass = "gold"; iconColor = "#FFD700"; icon = "fa-medal"; }
-                        else if (k === "2" || k === "2nd") { rankStr = "2nd Place"; cardClass = "silver"; iconColor = "#C0C0C0"; icon = "fa-medal"; }
-                        else if (k === "3" || k === "3rd") { rankStr = "3rd Place"; cardClass = "bronze"; iconColor = "#CD7F32"; icon = "fa-medal"; }
-                        else if (k.includes("mvp")) { rankStr = "MVP"; iconColor = "#FFD700"; icon = "fa-star"; }
-                        else if (k.includes("kill") || k.includes("most kills")) { rankStr = key.toUpperCase(); iconColor = "#ff4d4d"; icon = "fa-skull-crossbones"; }
-                        else { rankStr = key.toUpperCase(); } 
+                        let valStr = String(parsed[key]).toLowerCase();
+                        let isPts = valStr.includes('pts') || valStr.includes('points') || valStr.includes('pt');
+
+                        if (isPts) {
+                            rankStr = key.toUpperCase();
+                            cardClass = "points-card";
+                            iconColor = "var(--accent-purple)";
+                            icon = "fa-coins";
+                        } else {
+                            if (k === "1" || k === "1st") { rankStr = "1st Place"; cardClass = "gold"; iconColor = "#FFD700"; icon = "fa-medal"; }
+                            else if (k === "2" || k === "2nd") { rankStr = "2nd Place"; cardClass = "silver"; iconColor = "#C0C0C0"; icon = "fa-medal"; }
+                            else if (k === "3" || k === "3rd") { rankStr = "3rd Place"; cardClass = "bronze"; iconColor = "#CD7F32"; icon = "fa-medal"; }
+                            else if (k.includes("mvp")) { rankStr = "MVP"; iconColor = "#FFD700"; icon = "fa-star"; }
+                            else if (k.includes("kill") || k.includes("most kills")) { rankStr = key.toUpperCase(); iconColor = "#ff4d4d"; icon = "fa-skull-crossbones"; }
+                            else { rankStr = key.toUpperCase(); } 
+                        }
 
                         prizeData.push({ rank: rankStr, val: parsed[key], class: cardClass, iconColor: iconColor, icon: icon });
                     });
@@ -1886,12 +1914,11 @@
                 if(t.prize3) prizeData.push({ rank: "3rd Place", val: t.prize3, class: "bronze", iconColor: "#CD7F32", icon: "fa-medal" });
             }
 
-            // Enhanced prize logic: sort to show larger RS values if needed, though they usually come sorted.
             let prizeHTML = '';
             if (prizeData.length > 0) {
                 prizeData.forEach(p => {
                     let valNum = parseInt(String(p.val).replace(/[^0-9]/g, '')) || 0;
-                    let extraClass = valNum >= 5000 ? 'prize-mega' : (valNum >= 1000 ? 'prize-high' : '');
+                    let extraClass = valNum >= 5000 && !p.class.includes('points') ? 'prize-mega' : (valNum >= 1000 && !p.class.includes('points') ? 'prize-high' : '');
                     prizeHTML += `<div class="prize-card ${p.class} ${extraClass}">
                                     <div class="pc-rank"><i class="fa-solid ${p.icon}" style="color:${p.iconColor}; font-size:1.5rem;"></i> ${p.rank}</div>
                                     <div class="pc-val">${p.val}</div>
@@ -1899,12 +1926,13 @@
                 });
             } else {
                 let textToDisplay = getPrizeText(t.prize, t.prize_pts);
+                let isPtsOnly = String(textToDisplay).toLowerCase().includes('pts');
                 let valNum = parseInt(String(textToDisplay).replace(/[^0-9]/g, '')) || 0;
-                let extraClass = valNum >= 5000 ? 'prize-mega' : (valNum >= 1000 ? 'prize-high' : '');
+                let extraClass = valNum >= 5000 && !isPtsOnly ? 'prize-mega' : (valNum >= 1000 && !isPtsOnly ? 'prize-high' : '');
                 
                 prizeHTML = `
-                    <div class="prize-card gold ${extraClass}" style="justify-content: center; flex-direction: column; gap: 10px; text-align: center; padding: 25px;">
-                        <i class="fa-solid fa-trophy" style="color:#FFD700; font-size:3.5rem; filter: drop-shadow(0 0 15px rgba(255,215,0,0.5)); margin-bottom: 10px; z-index:2;"></i>
+                    <div class="prize-card ${isPtsOnly ? 'points-card' : 'gold'} ${extraClass}" style="justify-content: center; flex-direction: column; gap: 10px; text-align: center; padding: 25px;">
+                        <i class="fa-solid ${isPtsOnly ? 'fa-coins' : 'fa-trophy'}" style="color:${isPtsOnly ? 'var(--accent-purple)' : '#FFD700'}; font-size:3.5rem; filter: drop-shadow(0 0 15px rgba(${isPtsOnly ? '189,0,255' : '255,215,0'},0.5)); margin-bottom: 10px; z-index:2;"></i>
                         <div style="font-family: var(--font-head); font-size: 1.5rem; font-weight: bold; color: white; z-index:2;">${textToDisplay}</div>
                         <div style="font-size: 0.85rem; color: #ccc; text-transform: uppercase; letter-spacing: 1px; z-index:2;">Ultimate Reward</div>
                     </div>`;
@@ -2067,6 +2095,12 @@
                 if(activeTimelineInterval) clearInterval(activeTimelineInterval); 
                 if(roomTabInterval) clearInterval(roomTabInterval);
             }
+        }
+
+        function openHostProfile() {
+            triggerHaptic();
+            // Redirects to organizer profile search in production, functionally keeping clean.
+            showToast("Opening Organizer Profile...");
         }
 
         function toggleTeamDropdown(el) {
@@ -2536,13 +2570,14 @@
             if (!isSolo) {
                 try {
                     let parsedClan = JSON.parse(clanNameStr);
-                    if (parsedClan.players) {
-                        if (parsedClan.players.length < 4 || parsedClan.players.length > 6) {
-                            showToast("Clan must have 4 to 6 players to register!", true);
-                            return; 
-                        }
+                    if (!parsedClan.players || parsedClan.players.length < 4 || parsedClan.players.length > 6) {
+                        showToast("Strict Rule: Clan must have exactly 4 to 6 players! Please update your roster.", true);
+                        return; 
                     }
-                } catch(err) {} 
+                } catch(err) {
+                    showToast("Invalid clan data.", true);
+                    return;
+                } 
             }
 
             submitBtn.disabled = true;
@@ -2579,16 +2614,38 @@
             bar.style.background = "var(--accent-cyan)";
             logoBox.style.filter = "drop-shadow(0 0 15px var(--accent-cyan))";
             logoBox.style.transform = "scale(1)";
-            head.innerText = "GEARING UP";
-            txt.innerText = "Equipping armor & loadout...";
-            txt.style.color = "var(--accent-cyan)";
             
-            setTimeout(() => { head.innerText = "TACTICAL SYNC"; txt.innerText = "Connecting squad to server..."; bar.style.width = "40%"; }, 250);
-            setTimeout(() => { head.innerText = "DROPPING IN"; txt.innerText = "Deploying to the battleground..."; bar.style.width = "75%"; }, 500);
-            setTimeout(() => { head.innerText = "LOCKING TARGET"; txt.innerText = "Securing your drop zone..."; bar.style.width = "90%"; bar.style.background = "var(--accent-orange)"; logoBox.style.filter = "drop-shadow(0 0 15px var(--accent-orange))"; }, 750);
+            head.setAttribute('data-text', 'GEARING UP');
+            head.innerText = "GEARING UP";
+            
+            txt.style.opacity = '0';
+            setTimeout(() => {
+                txt.innerText = "Equipping armor & loadout...";
+                txt.style.color = "var(--accent-cyan)";
+                txt.style.opacity = '1';
+            }, 100);
+            
+            setTimeout(() => { 
+                head.setAttribute('data-text', 'TACTICAL SYNC'); head.innerText = "TACTICAL SYNC"; 
+                txt.style.opacity = '0';
+                setTimeout(() => { txt.innerText = "Connecting squad to server..."; txt.style.opacity = '1'; }, 100);
+                bar.style.width = "40%"; 
+            }, 300);
+            setTimeout(() => { 
+                head.setAttribute('data-text', 'DROPPING IN'); head.innerText = "DROPPING IN"; 
+                txt.style.opacity = '0';
+                setTimeout(() => { txt.innerText = "Deploying to the battleground..."; txt.style.opacity = '1'; }, 100);
+                bar.style.width = "75%"; 
+            }, 600);
+            setTimeout(() => { 
+                head.setAttribute('data-text', 'LOCKING TARGET'); head.innerText = "LOCKING TARGET"; 
+                txt.style.opacity = '0';
+                setTimeout(() => { txt.innerText = "Securing your drop zone..."; txt.style.opacity = '1'; }, 100);
+                bar.style.width = "90%"; bar.style.background = "var(--accent-orange)"; logoBox.style.filter = "drop-shadow(0 0 15px var(--accent-orange))"; 
+            }, 900);
             setTimeout(() => { 
                 submitFinalRegistration(clanName, cost, method, bar, txt, head, logoBox);
-            }, 1000);
+            }, 1200);
         }
 
         function submitFinalRegistration(clanName, cost, method, bar, txt, head, logoBox) {
@@ -2616,9 +2673,9 @@
                     let txns = JSON.parse(localStorage.getItem('tournyx_txns')) || [];
                     let dateStr = getISTDateTime();
                     let newTxn = { 
-                        id: "ENTRY-" + Math.floor(Math.random() * 1000000), 
+                        id: (method === 'points' ? "ENTRY-PTS-" : "ENTRY-") + Math.floor(Math.random() * 1000000), 
                         title: "Joined: " + (t.title || "Tournament"), 
-                        amount: cost, 
+                        amount: method === 'points' ? (cost + " PTS") : cost, 
                         type: "Debit", 
                         status: "Success", 
                         category: "Tournament Entry", 
@@ -2637,8 +2694,9 @@
                 bar.style.background = "#00ff7f";
                 logoBox.style.filter = "drop-shadow(0 0 40px #00ff7f)";
                 logoBox.style.transform = "scale(1.15)"; 
-                head.innerText = "BATTLE READY"; 
-                txt.innerText = "Slot Secured. GLHF!"; 
+                head.setAttribute('data-text', 'BATTLE READY'); head.innerText = "BATTLE READY"; 
+                txt.style.opacity = '0';
+                setTimeout(() => { txt.innerText = "Slot Secured. GLHF!"; txt.style.opacity = '1'; }, 100); 
                 txt.style.color = "#00ff7f";
                 
                 setTimeout(() => {
@@ -2668,7 +2726,8 @@
                     setTimeout(fetchLiveTeams, 1500);
                 }, 1800);
             }).catch(e => {
-                txt.innerText = "Connection Failed! Try Again.";
+                txt.style.opacity = '0';
+                setTimeout(() => { txt.innerText = "Connection Failed! Try Again."; txt.style.opacity = '1'; }, 100);
                 txt.style.color = "#ff4d4d";
                 bar.style.background = "#ff4d4d";
                 logoBox.style.filter = "drop-shadow(0 0 15px #ff4d4d)";
@@ -2764,12 +2823,17 @@
             };
             txns.unshift(newTxn);
             localStorage.setItem('tournyx_txns', JSON.stringify(txns));
+            
+            let balEl = document.getElementById('contributeWalletBal');
+            balEl.style.transform = 'scale(1.5)';
+            balEl.style.color = 'var(--accent-green)';
+            setTimeout(() => { balEl.style.transform = 'scale(1)'; balEl.style.color = 'white'; }, 300);
 
-            document.getElementById('contributeWalletBal').innerText = Math.floor((baseRupees + goldenRupees) / 10);
+            balEl.innerText = Math.floor((baseRupees + goldenRupees) / 10);
             document.getElementById('contributeRsVal').innerText = (baseRupees + goldenRupees);
             
             showToast("Successfully contributed ₹" + val + " to " + (activeTournament.title || "the event") + "!");
-            closeContributeModal();
+            setTimeout(closeContributeModal, 800);
         }
 
         function openAdvancedFilter() { triggerHaptic(); document.getElementById('advancedFilterOverlay').classList.add('active'); }
