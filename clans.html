@@ -165,6 +165,11 @@
         .edit-logo-btn:hover { transform:scale(1.1); }
         
         .c-name { font-family: var(--font-head); font-size: 1.6rem; color: white; margin-top: 10px; text-shadow: 0 0 10px rgba(255,255,255,0.2); display: flex; align-items: center; justify-content: center; gap: 8px; flex-wrap: wrap; width: 100%; }
+        
+        /* THE PREMIUM EMBLEM - Automatically assigned to clans founded by VIPs */
+        .clan-premium-emblem { color: #FFD700; font-size: 1.3rem; filter: drop-shadow(0 0 8px rgba(255,215,0,0.8)); margin-left: 5px; animation: emblemShine 3s infinite; }
+        @keyframes emblemShine { 0% { filter: drop-shadow(0 0 8px rgba(255,215,0,0.4)); transform: scale(1); } 50% { filter: drop-shadow(0 0 15px rgba(255,215,0,0.9)); transform: scale(1.1); } 100% { filter: drop-shadow(0 0 8px rgba(255,215,0,0.4)); transform: scale(1); } }
+        
         .verified-badge { color: #1da1f2; font-size: 1.1rem; flex-shrink: 0; }
         .c-tag { font-size: 0.9rem; color: var(--accent-cyan); font-weight: bold; margin-bottom: 5px; letter-spacing: 1px; display:flex; gap:8px; align-items:center; justify-content:center; flex-wrap: wrap;}
         html.theme-vip .c-tag { color: #FFD700; }
@@ -414,6 +419,7 @@
                         <div class="c-name">
                             <span id="dashName"></span> 
                             <i class="fa-solid fa-circle-check verified-badge"></i>
+                            <span id="dashPremiumEmblem" style="display:none;" class="clan-premium-emblem" title="Tournyx Premium Clan"><i class="fa-solid fa-crown"></i></span>
                         </div>
                         
                         <div class="c-tag">
@@ -443,7 +449,7 @@
                         <i class="fa-solid fa-khanda" style="color:var(--accent-orange);"></i>
                         <span class="cmd-lbl">Clan Wars</span>
                     </div>
-                    <div class="cmd-btn edit-admin" onclick="showToast('Earnings distribution panel locked.')">
+                    <div class="cmd-btn edit-admin" onclick="window.location.href='withdraw.html'">
                         <i class="fa-solid fa-money-bill-transfer" style="color:#ffd700;"></i>
                         <span class="cmd-lbl">Payouts</span>
                     </div>
@@ -660,12 +666,7 @@
                 <i class="fa-solid fa-xmark modal-close" onclick="document.getElementById('roleSelectModal').classList.remove('active')"></i>
             </div>
             <input type="hidden" id="roleTargetPlayer">
-            <select class="form-control" id="roleDropdownSelect">
-                <option value="IGL">IGL (In-Game Leader)</option>
-                <option value="Sniper">Sniper</option>
-                <option value="Assaulter">Assaulter</option>
-                <option value="Support">Support</option>
-            </select>
+            <div id="dynamicRoleDropdownArea"></div>
             <button class="btn-primary" onclick="confirmRoleChange()">Save Role</button>
         </div>
     </div>
@@ -766,15 +767,7 @@
         }
 
         function playClickSound() {
-            try {
-                const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-                const oscillator = audioCtx.createOscillator(); const gainNode = audioCtx.createGain();
-                oscillator.connect(gainNode); gainNode.connect(audioCtx.destination);
-                oscillator.type = 'square'; oscillator.frequency.setValueAtTime(150, audioCtx.currentTime);
-                oscillator.frequency.exponentialRampToValueAtTime(40, audioCtx.currentTime + 0.05);
-                gainNode.gain.setValueAtTime(0.1, audioCtx.currentTime); gainNode.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.05);
-                oscillator.start(); oscillator.stop(audioCtx.currentTime + 0.05);
-            } catch(e) {}
+            // Disabled per user request
         }
 
         function triggerSyncIndicator() {
@@ -843,6 +836,12 @@
                                 // Add external images explicitly so they display flawlessly in find tab
                                 if(item.logo) cObj.externalLogo = item.logo;
                                 if(item.banner) cObj.externalBanner = item.banner;
+                                
+                                // Fetch claim status for premium badges
+                                if (String(item.claimed_premium).toLowerCase() === 'true' || cObj.isPremiumClan) {
+                                    cObj.isPremiumClan = true;
+                                }
+                                
                                 allParsed.push(cObj);
                             }
                         } catch(e){}
@@ -881,6 +880,11 @@
                                 // Extract and normalize external images
                                 if(item.logo && item.logo.length > 20) clanObj.logo = item.logo;
                                 if(item.banner && item.banner.length > 20) clanObj.banner = item.banner;
+                                
+                                // Inject premium status if fetched from sheet
+                                if (String(item.claimed_premium).toLowerCase() === 'true') {
+                                    clanObj.isPremiumClan = true;
+                                }
 
                                 // --- LIVE PROFILE SYNC MECHANISM ---
                                 let currentRosterMe = clanObj.roster[myRosterIndex];
@@ -930,12 +934,14 @@
                 let firstChar = clan.name.charAt(0).toUpperCase();
                 let finalLogo = clan.logo && clan.logo.length > 20 ? clan.logo : `https://ui-avatars.com/api/?name=${encodeURIComponent(clan.name)}&background=110822&color=00f2ff`;
                 let rCount = clan.roster ? clan.roster.length : 1;
+                
+                let premiumBadge = clan.isPremiumClan ? `<span class="clan-premium-emblem" style="font-size:0.9rem;"><i class="fa-solid fa-crown"></i></span>` : '';
 
                 grid.innerHTML += `
                     <div class="hub-card" onclick="openClanDashboard(${i})">
                         <img src="${finalLogo}" class="hc-logo">
                         <div class="hc-info">
-                            <div class="hc-name">${clan.name} <i class="fa-solid fa-circle-check" style="color:#1da1f2; font-size:0.8rem;"></i></div>
+                            <div class="hc-name">${clan.name} <i class="fa-solid fa-circle-check" style="color:#1da1f2; font-size:0.8rem;"></i> ${premiumBadge}</div>
                             <div style="font-size:0.75rem; color:#888;">#${clan.tag || "TNYX"} • <i class="fa-solid fa-users"></i> ${rCount}/6</div>
                             <div class="hc-game"><i class="fa-solid fa-gamepad"></i> ${clan.game || "Esports"}</div>
                         </div>
@@ -1144,6 +1150,41 @@
             return { level, nextXp, prevXp, progress, currentXp: xp };
         }
 
+        function claimPremiumBadge() {
+            triggerHaptic();
+            let currentUser = JSON.parse(localStorage.getItem('tournyx_user'));
+            if (!currentUser || String(currentUser.is_premium).toLowerCase() !== 'true') {
+                showToast("You must be a Tournyx VIP to claim this badge.", true);
+                return;
+            }
+
+            if(activeClan.isPremiumClan) {
+                showToast("This clan already has the Premium Badge.");
+                return;
+            }
+
+            if(confirm("Claim a Premium Badge for this clan? (This requires you to be a VIP member).")) {
+                activeClan.isPremiumClan = true;
+                
+                let cleanClan = JSON.parse(JSON.stringify(activeClan));
+                delete cleanClan.logo; delete cleanClan.banner;
+                
+                // We sync the FULL_UPDATE to the user sheet as usual. 
+                // But we ALSO send a separate instruction to mark the Clan Master row as claimed_premium.
+                let payload = { action: "update_clan", clan_id: activeClan.clanId, field: "FULL_UPDATE", value: JSON.stringify(cleanClan), set_premium_badge: true };
+                
+                fetch(API_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify(payload) });
+                
+                let index = userLiveClans.findIndex(c => c.clanId === activeClan.clanId);
+                if(index !== -1) userLiveClans[index] = activeClan;
+                localStorage.setItem('tournyx_my_clans_cache', JSON.stringify(userLiveClans));
+                
+                showToast("Premium Badge Claimed successfully!");
+                playSuccessSound();
+                renderDashboard(activeClan);
+            }
+        }
+
         function renderDashboard(clan) {
             if(!clan || !clan.name) { returnToHub(); return; }
 
@@ -1152,6 +1193,14 @@
             document.getElementById('dashId').innerText = clan.clanId || "N/A";
             document.getElementById('dashMotto').innerText = clan.motto || '"Tap to add clan motto"';
             
+            // Check for Premium Clan Status
+            let premiumEmblem = document.getElementById('dashPremiumEmblem');
+            if (clan.isPremiumClan) {
+                premiumEmblem.style.display = 'inline-block';
+            } else {
+                premiumEmblem.style.display = 'none';
+            }
+
             // Banner Fallback logic if missing or default
             let gameFallbackBanner = "https://via.placeholder.com/600x200/110822/bd00ff?text=Clan+Banner";
             let cGameLower = (clan.game || "").toLowerCase();
@@ -1302,8 +1351,31 @@
             e.stopPropagation();
             document.getElementById('roleTargetPlayer').value = name;
             let p = activeClan.roster.find(r => r.name === name);
+            
+            // Build dynamic dropdown based on Game
+            let cGameLower = (activeClan.game || "").toLowerCase();
+            let ddHTML = `<select class="form-control" id="roleDropdownSelect">`;
+            
+            if (cGameLower.includes("free fire") || cGameLower.includes("bgmi") || cGameLower.includes("codm") || cGameLower.includes("valorant")) {
+                 ddHTML += `
+                    <option value="IGL">IGL (In-Game Leader)</option>
+                    <option value="Assaulter">Assaulter / Fragger</option>
+                    <option value="Support">Support</option>
+                    <option value="Sniper">Sniper</option>
+                    <option value="Flanker">Flanker</option>
+                    <option value="Substitute">Substitute</option>
+                 `;
+            } else {
+                 ddHTML += `
+                    <option value="Captain">Captain</option>
+                    <option value="Player">Player</option>
+                    <option value="Substitute">Substitute</option>
+                 `;
+            }
+            ddHTML += `</select>`;
+            document.getElementById('dynamicRoleDropdownArea').innerHTML = ddHTML;
+            
             if(p && p.pos) document.getElementById('roleDropdownSelect').value = p.pos;
-            else document.getElementById('roleDropdownSelect').value = "Assaulter";
 
             document.getElementById('memberDetailModal').classList.remove('active');
             setTimeout(() => { document.getElementById('roleSelectModal').classList.add('active'); }, 100);
@@ -1702,6 +1774,12 @@
                             if(cObj && cObj.clanId) {
                                 if(item.logo) cObj.externalLogo = item.logo;
                                 if(item.banner) cObj.externalBanner = item.banner;
+                                
+                                // Parse claim status
+                                if (String(item.claimed_premium).toLowerCase() === 'true') {
+                                    cObj.isPremiumClan = true;
+                                }
+                                
                                 allParsed.push(cObj);
                             }
                         } catch(e){}
@@ -1782,12 +1860,17 @@
                 let btnHtml = isRequested ? 
                     `<button class="s-btn req" disabled>REQUESTED</button>` : 
                     `<button class="s-btn acc" onclick="triggerJoinFlow('${c.clanId}', '${c.name}', '${cGame}', ${c.autoAccept}, this)">JOIN</button>`;
+                    
+                let premiumBadge = c.isPremiumClan ? `<span class="clan-premium-emblem" style="font-size:1.1rem; position:absolute; top:-5px; right:-5px; z-index:3;"><i class="fa-solid fa-crown"></i></span>` : '';
 
                 html += `
                 <div class="search-card" style="padding:0; flex-direction:column; align-items:stretch;">
                     <img src="${safeBanner}" class="sc-banner">
-                    <div class="sc-body">
-                        <img src="${finalLogo}" class="sc-img">
+                    <div class="sc-body" style="position:relative;">
+                        <div style="position:relative;">
+                            <img src="${finalLogo}" class="sc-img">
+                            ${premiumBadge}
+                        </div>
                         <div class="sc-info">
                             <div class="sc-name">${c.name} <span style="font-size:0.7rem; color:#888;">#${cTag}</span></div>
                             <div class="sc-motto">${c.motto || '"Ready for Battle"'}</div>
