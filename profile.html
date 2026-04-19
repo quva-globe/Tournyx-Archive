@@ -649,18 +649,6 @@
                     <span class="stat-label" id="valRatingText" style="font-size:0.65rem;">Rating: 0.0</span>
                 </div>
             </div>
-            <div class="stat-card">
-                <div class="stat-card-inner">
-                    <span class="stat-val" style="color:var(--accent-purple)"><span id="valFollowers">0</span></span>
-                    <span class="stat-label">Followers</span>
-                </div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-card-inner">
-                    <span class="stat-val" style="color:#E1306C">₹<span id="valTotalDist">0</span></span>
-                    <span class="stat-label">Prize Distributed</span>
-                </div>
-            </div>
         </div>
 
         <a href="tournament.html" class="action-card" onclick="triggerHaptic();">
@@ -1340,7 +1328,6 @@
                 .then(res => res.json())
                 .then(data => {
                     if (data.status === "success") {
-                        // LIVE ROLE SYNC LOGIC
                         if (data.data.role && userData.role !== data.data.role) {
                             userData.role = data.data.role;
                             localStorage.setItem('tournyx_user', JSON.stringify(userData));
@@ -1576,7 +1563,6 @@
                     if(document.getElementById('valHosted')) animateValue('valHosted', 0, hostedCount, 1000);
                     if(document.getElementById('valPlayerEarnings')) animateValue('valPlayerEarnings', 0, displayWinnings, 1200);
                     if(document.getElementById('valEarnings')) animateValue('valEarnings', 0, displayEarnings, 1200);
-                    
                     if(document.getElementById('valWinRate')) document.getElementById('valWinRate').innerHTML = winRate; 
                     if(document.getElementById('valSuccessRate')) document.getElementById('valSuccessRate').innerHTML = successRate; 
                 } else {
@@ -1586,7 +1572,6 @@
                     if(document.getElementById('valHosted')) document.getElementById('valHosted').innerHTML = hostedCount;
                     if(document.getElementById('valPlayerEarnings')) document.getElementById('valPlayerEarnings').innerHTML = displayWinnings.toLocaleString();
                     if(document.getElementById('valEarnings')) document.getElementById('valEarnings').innerHTML = displayEarnings.toLocaleString();
-                    
                     if(document.getElementById('valWinRate')) document.getElementById('valWinRate').innerHTML = winRate;
                     if(document.getElementById('valSuccessRate')) document.getElementById('valSuccessRate').innerHTML = successRate;
                 }
@@ -2381,9 +2366,10 @@
             btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Sending...';
             btn.disabled = true;
             
+            // WE NOW USE THE STANDARD OTP ENGINE FROM YOUR BACKEND
             fetch(API_URL, {
                 method: 'POST', headers: { 'Content-Type': 'text/plain' },
-                body: JSON.stringify({ action: 'send_profile_otp', email: userData.email.trim().toLowerCase() })
+                body: JSON.stringify({ action: 'send_otp', email: userData.email.trim().toLowerCase() })
             }).then(res => res.json()).then(data => {
                 if(data.status === 'success') {
                     document.getElementById('emailStep1').style.display = 'none';
@@ -2403,9 +2389,10 @@
             
             let otpCode = document.getElementById('oe1').value + document.getElementById('oe2').value + document.getElementById('oe3').value + document.getElementById('oe4').value;
             
+            // WE NOW USE THE STANDARD OTP ENGINE FROM YOUR BACKEND
             fetch(API_URL, {
                 method: 'POST', headers: { 'Content-Type': 'text/plain' },
-                body: JSON.stringify({ action: 'verify_profile_otp', email: userData.email.trim().toLowerCase(), otp: otpCode })
+                body: JSON.stringify({ action: 'verify_otp', email: userData.email.trim().toLowerCase(), otp: otpCode })
             }).then(res => res.json()).then(data => {
                 if(data.status === 'success') {
                     document.getElementById('emailStep2').style.display = 'none';
@@ -2519,9 +2506,10 @@
             const btn = document.getElementById('btnSendPassOtpEmail');
             btn.style.opacity = '0.5'; btn.style.pointerEvents = 'none';
             
+            // WE NOW USE THE STANDARD OTP ENGINE FROM YOUR BACKEND
             fetch(API_URL, {
                 method: 'POST', headers: { 'Content-Type': 'text/plain' },
-                body: JSON.stringify({ action: 'send_profile_otp', email: userData.email.trim().toLowerCase() })
+                body: JSON.stringify({ action: 'send_otp', email: userData.email.trim().toLowerCase() })
             }).then(res => res.json()).then(data => {
                 if(data.status === 'success') {
                     document.getElementById('passStep1').style.display = 'none';
@@ -2541,9 +2529,10 @@
             
             let otpCode = document.getElementById('pe1').value + document.getElementById('pe2').value + document.getElementById('pe3').value + document.getElementById('pe4').value;
 
+            // WE NOW USE THE STANDARD OTP ENGINE FROM YOUR BACKEND
             fetch(API_URL, {
                 method: 'POST', headers: { 'Content-Type': 'text/plain' },
-                body: JSON.stringify({ action: 'verify_profile_otp', email: userData.email.trim().toLowerCase(), otp: otpCode })
+                body: JSON.stringify({ action: 'verify_otp', email: userData.email.trim().toLowerCase(), otp: otpCode })
             }).then(res => res.json()).then(data => {
                 if(data.status === 'success') {
                     document.getElementById('passStep2').style.display = 'none';
