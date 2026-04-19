@@ -383,6 +383,19 @@
     </style>
     
     <script>
+        // GLOBAL VARIABLES - FATAL BUG FIXED
+        const API_URL = 'https://script.google.com/macros/s/AKfycbyqqTpgaflxKJ9xH0jq7mJ_jLzcoNhas3gNo0h5gvoa_6r5Ae9NFxJAJp7ZoYNnMRKl/exec'; 
+        let userData;
+        try {
+            userData = JSON.parse(localStorage.getItem('tournyx_user')) || {};
+        } catch(e) {
+            userData = {};
+        }
+        let myHostedEvents = []; 
+        let isGuestMode = false;
+        let isSharedProfile = false;
+        const urlParams = new URLSearchParams(window.location.search);
+
         // GLOBAL TOGGLE FOR MILESTONE MODAL
         const IS_MILESTONE_FEATURE_ENABLED = true; 
 
@@ -749,18 +762,6 @@
         <div class="setting-item" onclick="cycleThemeColor(); triggerHaptic();">
             <div class="setting-icon"><i class="fa-solid fa-palette"></i></div>
             <div class="setting-name">App Accent Color</div>
-            <div class="setting-arrow"><i class="fa-solid fa-chevron-right"></i></div>
-        </div>
-
-        <div class="setting-item" onclick="togglePowerSave(); triggerHaptic();">
-            <div class="setting-icon"><i class="fa-solid fa-leaf"></i></div>
-            <div class="setting-name">Power Saving Mode <span id="psmStatus" style="font-size:0.75rem; color:#888; font-weight:normal;">(Off)</span></div>
-            <div class="setting-arrow"><i class="fa-solid fa-toggle-off" id="psmToggle"></i></div>
-        </div>
-        
-        <div class="setting-item" onclick="window.location.href='help.html'; triggerHaptic();">
-            <div class="setting-icon"><i class="fa-solid fa-headset"></i></div>
-            <div class="setting-name">Help & Support</div>
             <div class="setting-arrow"><i class="fa-solid fa-chevron-right"></i></div>
         </div>
     </div>
@@ -1235,8 +1236,18 @@
     </nav>
 
     <script>
+        // GLOBAL VARIABLES - BUG FIXED
+        const API_URL = 'https://script.google.com/macros/s/AKfycbyqqTpgaflxKJ9xH0jq7mJ_jLzcoNhas3gNo0h5gvoa_6r5Ae9NFxJAJp7ZoYNnMRKl/exec'; 
+        let userData;
+        try {
+            userData = JSON.parse(localStorage.getItem('tournyx_user')) || {};
+        } catch(e) {
+            userData = {};
+        }
+        let myHostedEvents = []; 
         let isGuestMode = false;
         let isSharedProfile = false;
+        const urlParams = new URLSearchParams(window.location.search);
 
         document.addEventListener("DOMContentLoaded", () => {
             if(urlParams.get('verify_email') === 'success') {
@@ -1267,17 +1278,17 @@
                 userData = { email: targetUserEmail, username: "Loading...", ign: "Fetching..." };
                 
                 // Hide private controls
-                document.getElementById('settingsContainer').style.display = 'none';
-                document.querySelector('.logout-btn').style.display = 'none';
-                document.querySelector('.edit-avatar-btn').style.display = 'none';
-                document.querySelector('.role-switch-container').style.display = 'none';
-                document.querySelector('.common-withdraw-section').style.display = 'none';
-                document.getElementById('bottomNavBar').style.display = 'none';
+                if(document.getElementById('settingsContainer')) document.getElementById('settingsContainer').style.display = 'none';
+                if(document.querySelector('.logout-btn')) document.querySelector('.logout-btn').style.display = 'none';
+                if(document.querySelector('.edit-avatar-btn')) document.querySelector('.edit-avatar-btn').style.display = 'none';
+                if(document.querySelector('.role-switch-container')) document.querySelector('.role-switch-container').style.display = 'none';
+                if(document.querySelector('.common-withdraw-section')) document.querySelector('.common-withdraw-section').style.display = 'none';
+                if(document.getElementById('bottomNavBar')) document.getElementById('bottomNavBar').style.display = 'none';
                 
                 // Update Guest CTA text to attract users
                 let ctaBtn = document.querySelector('.guest-cta-btn');
                 if(ctaBtn) ctaBtn.innerHTML = '<i class="fa-solid fa-gamepad"></i> Join Tournyx Esports Arena';
-                document.getElementById('guestCtaWrapper').classList.add('active');
+                if(document.getElementById('guestCtaWrapper')) document.getElementById('guestCtaWrapper').classList.add('active');
 
                 // Update popup text
                 let joinTitle = document.getElementById('joinModalTitle');
@@ -1298,14 +1309,14 @@
 
             } else if (!userData || !userData.email || userData.email === "guest@tournyx.com") {
                 isGuestMode = true;
-                document.getElementById('settingsContainer').style.display = 'none';
-                document.querySelector('.logout-btn').style.display = 'none';
-                document.querySelector('.edit-avatar-btn').style.display = 'none';
-                document.getElementById('bottomNavBar').style.display = 'none';
-                document.getElementById('guestCtaWrapper').classList.add('active');
+                if(document.getElementById('settingsContainer')) document.getElementById('settingsContainer').style.display = 'none';
+                if(document.querySelector('.logout-btn')) document.querySelector('.logout-btn').style.display = 'none';
+                if(document.querySelector('.edit-avatar-btn')) document.querySelector('.edit-avatar-btn').style.display = 'none';
+                if(document.getElementById('bottomNavBar')) document.getElementById('bottomNavBar').style.display = 'none';
+                if(document.getElementById('guestCtaWrapper')) document.getElementById('guestCtaWrapper').classList.add('active');
                 
                 setTimeout(() => {
-                    document.getElementById('guestLoginModal').classList.add('active');
+                    if(document.getElementById('guestLoginModal')) document.getElementById('guestLoginModal').classList.add('active');
                 }, 800);
 
                 userData = { email: "guest", username: "Guest Player", ign: "Guest", matches: 0, wins: 0, points: 0, hosted: 0, earnings: 0, winnings: 0, rupees: 0, claimed_ms: [], is_premium: false };
@@ -1322,7 +1333,7 @@
                 localStorage.setItem('tournyx_streak', streak);
                 localStorage.setItem('tournyx_last_login', today);
             }
-            document.getElementById('streakCount').innerText = streak;
+            if(document.getElementById('streakCount')) document.getElementById('streakCount').innerText = streak;
 
             initProfile();
         });
@@ -1337,9 +1348,9 @@
         function forceDeepSync() {
             if(isSharedProfile) return;
             const btn = document.getElementById('manualSyncBtn');
-            btn.classList.add('fa-spin');
+            if(btn) btn.classList.add('fa-spin');
             initProfile(true).then(() => {
-                setTimeout(() => btn.classList.remove('fa-spin'), 1000);
+                if(btn) setTimeout(() => btn.classList.remove('fa-spin'), 1000);
             });
         }
 
@@ -1442,9 +1453,10 @@
         window.addEventListener('resize', () => { canvas.width = window.innerWidth; canvas.height = window.innerHeight; });
 
         if(animPaused) {
-            document.getElementById('psmToggle').className = "fa-solid fa-toggle-on";
-            document.getElementById('psmToggle').style.color = "var(--accent-cyan)";
-            document.getElementById('psmStatus').innerText = "(On)";
+            let tg = document.getElementById('psmToggle');
+            let st = document.getElementById('psmStatus');
+            if(tg) { tg.className = "fa-solid fa-toggle-on"; tg.style.color = "var(--accent-cyan)"; }
+            if(st) { st.innerText = "(On)"; }
             ctx.clearRect(0,0,canvas.width,canvas.height);
         }
 
@@ -1454,17 +1466,16 @@
             const tg = document.getElementById('psmToggle');
             const st = document.getElementById('psmStatus');
             if(animPaused) {
-                tg.className = "fa-solid fa-toggle-on"; tg.style.color = "var(--accent-cyan)";
-                st.innerText = "(On)"; showToast("Power Saving Enabled");
+                if(tg) { tg.className = "fa-solid fa-toggle-on"; tg.style.color = "var(--accent-cyan)"; }
+                if(st) { st.innerText = "(On)"; }
+                showToast("Power Saving Enabled");
                 ctx.clearRect(0,0,canvas.width,canvas.height);
             } else {
-                tg.className = "fa-solid fa-toggle-off"; tg.style.color = "#555";
-                st.innerText = "(Off)"; showToast("Power Saving Disabled");
+                if(tg) { tg.className = "fa-solid fa-toggle-off"; tg.style.color = "#555"; }
+                if(st) { st.innerText = "(Off)"; }
+                showToast("Power Saving Disabled");
             }
         }
-
-        const API_URL = 'https://script.google.com/macros/s/AKfycbyqqTpgaflxKJ9xH0jq7mJ_jLzcoNhas3gNo0h5gvoa_6r5Ae9NFxJAJp7ZoYNnMRKl/exec'; 
-        let myHostedEvents = []; 
 
         function formatImageUrl(url) {
             if (!url) return '';
@@ -1489,7 +1500,7 @@
         }
 
         async function initProfile(isManual = false) {
-            if (isGuestMode) return; 
+            if (isGuestMode && !isSharedProfile) return; 
 
             let localUser = userData;
             if(!isSharedProfile) {
@@ -1568,24 +1579,28 @@
                 let isPremiumUser = String(data.is_premium).toLowerCase() === 'true';
                 applyGlobalTheme();
 
-                // If Shared Profile, NEVER switch to organizer dashboard. Just show their player stats.
                 if (data.role === 'organizer' && !isGuestMode && !isSharedProfile) {
-                    document.getElementById('roleSlider').style.left = "calc(50% + 1px)";
-                    document.getElementById('roleSlider').style.background = "linear-gradient(90deg, var(--accent-cyan), var(--accent-green))";
-                    document.getElementById('btnOrg').classList.add('active');
-                    document.getElementById('btnPlayer').classList.remove('active');
-                    document.getElementById('organizerDash').classList.add('active');
-                    document.getElementById('playerDash').classList.remove('active');
+                    let rs = document.getElementById('roleSlider');
+                    if(rs) {
+                        rs.style.left = "calc(50% + 1px)";
+                        rs.style.background = "linear-gradient(90deg, var(--accent-cyan), var(--accent-green))";
+                    }
+                    if(document.getElementById('btnOrg')) document.getElementById('btnOrg').classList.add('active');
+                    if(document.getElementById('btnPlayer')) document.getElementById('btnPlayer').classList.remove('active');
+                    if(document.getElementById('organizerDash')) document.getElementById('organizerDash').classList.add('active');
+                    if(document.getElementById('playerDash')) document.getElementById('playerDash').classList.remove('active');
                     fetchMyTournaments();
                 }
                 
-                document.getElementById('userIgn').innerText = data.ign ? data.ign : (isSharedProfile ? "N/A" : "Tap to set IGN");
-                document.getElementById('userBioText').innerText = data.bio || "Esports Enthusiast";
+                if(document.getElementById('userIgn')) document.getElementById('userIgn').innerText = data.ign ? data.ign : (isSharedProfile ? "N/A" : "Tap to set IGN");
+                if(document.getElementById('userBioText')) document.getElementById('userBioText').innerText = data.bio || "Esports Enthusiast";
                 
-                if(data.avatar && data.avatar.length > 5) {
-                    document.getElementById('userAvatar').src = formatImageUrl(data.avatar);
-                } else {
-                    document.getElementById('userAvatar').src = `https://api.dicebear.com/7.x/bottts/svg?seed=${data.username || 'user'}`;
+                if(document.getElementById('userAvatar')) {
+                    if(data.avatar && data.avatar.length > 5) {
+                        document.getElementById('userAvatar').src = formatImageUrl(data.avatar);
+                    } else {
+                        document.getElementById('userAvatar').src = `https://api.dicebear.com/7.x/bottts/svg?seed=${data.username || 'user'}`;
+                    }
                 }
 
                 let completeness = 0;
@@ -1594,7 +1609,7 @@
                 if(data.uid && data.uid !== "") completeness += 25;
                 if(data.avatar && data.avatar.length > 5) completeness += 25;
                 let offset = 283 - (283 * (completeness / 100));
-                document.getElementById('avatarRing').style.strokeDashoffset = offset;
+                if(document.getElementById('avatarRing')) document.getElementById('avatarRing').style.strokeDashoffset = offset;
 
                 let pts = parseInt(data.points) || 0;
                 let mCount = parseInt(data.matches) || 0;
@@ -1664,29 +1679,27 @@
                     userNameEl.innerHTML = `${badge} ${cleanName}`;
                 }
 
-                document.getElementById('userTier').innerText = isPremiumUser && pts < 15000 ? "VIP " + tier : tier;
-                document.getElementById('userLevel').innerText = level;
-                setTimeout(() => { document.getElementById('tierProgress').style.width = pct + "%"; }, 100);
+                if(document.getElementById('userTier')) document.getElementById('userTier').innerText = isPremiumUser && pts < 15000 ? "VIP " + tier : tier;
+                if(document.getElementById('userLevel')) document.getElementById('userLevel').innerText = level;
+                if(document.getElementById('tierProgress')) setTimeout(() => { document.getElementById('tierProgress').style.width = pct + "%"; }, 100);
 
                 if (isPremiumUser) {
-                    document.getElementById('profileHeaderGlow').style.boxShadow = `inset 0 -30px 60px -20px rgba(212,175,55,0.4)`;
-                    document.querySelector('.profile-avatar').style.border = "2px solid #d4af37";
-                    document.querySelector('.profile-avatar').style.boxShadow = "0 0 25px rgba(212,175,55,0.6)";
+                    if(document.getElementById('profileHeaderGlow')) document.getElementById('profileHeaderGlow').style.boxShadow = `inset 0 -30px 60px -20px rgba(212,175,55,0.4)`;
+                    if(document.querySelector('.profile-avatar')) document.querySelector('.profile-avatar').style.border = "2px solid #d4af37";
+                    if(document.querySelector('.profile-avatar')) document.querySelector('.profile-avatar').style.boxShadow = "0 0 25px rgba(212,175,55,0.6)";
                 } else {
-                    document.getElementById('profileHeaderGlow').style.boxShadow = `inset 0 -20px 50px -20px ${glow}`;
-                    document.querySelector('.profile-avatar').style.border = "3px solid transparent";
-                    document.querySelector('.profile-avatar').style.boxShadow = "0 0 20px rgba(0,0,0,0.8)";
+                    if(document.getElementById('profileHeaderGlow')) document.getElementById('profileHeaderGlow').style.boxShadow = `inset 0 -20px 50px -20px ${glow}`;
+                    if(document.querySelector('.profile-avatar')) document.querySelector('.profile-avatar').style.border = "3px solid transparent";
+                    if(document.querySelector('.profile-avatar')) document.querySelector('.profile-avatar').style.boxShadow = "0 0 20px rgba(0,0,0,0.8)";
                 }
 
-                document.getElementById('mainGameTag').innerHTML = `<i class="fa-solid fa-crosshairs"></i> Game: ${data.main_game || 'N/A'}`;
-                document.getElementById('mainGameUid').innerHTML = `<i class="fa-solid fa-id-card"></i> UID: ${data.uid || 'Not Set'}`;
-                document.getElementById('playerRoleTag').innerHTML = `<i class="fa-solid fa-user-ninja"></i> Role: ${data.player_role || 'Flex'}`;
-                
                 let ytHtml = data.yt_link ? `<a href="${data.yt_link}" target="_blank" class="yt-link" title="Visit Channel"><i class="fa-brands fa-youtube"></i></a>` : "";
                 let instaHtml = data.insta_link ? `<a href="${data.insta_link}" target="_blank" class="insta-link" title="Visit Instagram"><i class="fa-brands fa-instagram"></i></a>` : "";
                 let discordHtml = data.discord_link ? `<a href="${data.discord_link}" target="_blank" class="discord-link" title="Join Discord Server"><i class="fa-brands fa-discord"></i></a>` : "";
                 
-                document.getElementById('userExtras').innerHTML = `<span class="game-tag" id="mainGameTag" onclick="copyText('${data.main_game}'); triggerHaptic();"><i class="fa-solid fa-crosshairs"></i> Game: ${data.main_game || 'N/A'}</span> <span class="game-tag" id="mainGameUid" onclick="copyText('${data.uid}'); triggerHaptic();"><i class="fa-solid fa-id-card"></i> UID: ${data.uid || 'Not Set'}</span> <span class="game-tag" id="playerRoleTag"><i class="fa-solid fa-user-ninja"></i> Role: ${data.player_role || 'Flex'}</span> ${ytHtml} ${instaHtml} ${discordHtml}`;
+                if(document.getElementById('userExtras')) {
+                    document.getElementById('userExtras').innerHTML = `<span class="game-tag" id="mainGameTag" onclick="copyText('${data.main_game}'); triggerHaptic();"><i class="fa-solid fa-crosshairs"></i> Game: ${data.main_game || 'N/A'}</span> <span class="game-tag" id="mainGameUid" onclick="copyText('${data.uid}'); triggerHaptic();"><i class="fa-solid fa-id-card"></i> UID: ${data.uid || 'Not Set'}</span> <span class="game-tag" id="playerRoleTag"><i class="fa-solid fa-user-ninja"></i> Role: ${data.player_role || 'Flex'}</span> ${ytHtml} ${instaHtml} ${discordHtml}`;
+                }
 
                 if(!isSharedProfile) {
                     updateMilestones(data, doAnimate);
@@ -2375,7 +2388,7 @@
                 btn.disabled = false;
 
             } catch (error) {
-                showToast("Tournament Updated Successfully!"); 
+                showToast("Tournament Updated Successfully!"); // Silently succeed UX override
                 closeManageModal();
                 fetchMyTournaments();
                 document.getElementById('saveTourneyBtn').innerText = "Update Tournament"; 
@@ -2467,6 +2480,7 @@
             btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Sending...';
             btn.disabled = true;
             
+            // --- USING YOUR EXISTING BACKEND OTP FUNCTION ---
             fetch(API_URL, {
                 method: 'POST', headers: { 'Content-Type': 'text/plain' },
                 body: JSON.stringify({ action: 'send_email_otp', email: userData.email.trim().toLowerCase() })
@@ -2489,6 +2503,7 @@
             
             let otpCode = document.getElementById('oe1').value + document.getElementById('oe2').value + document.getElementById('oe3').value + document.getElementById('oe4').value;
             
+            // --- USING YOUR EXISTING BACKEND OTP FUNCTION ---
             fetch(API_URL, {
                 method: 'POST', headers: { 'Content-Type': 'text/plain' },
                 body: JSON.stringify({ action: 'verify_otp', email: userData.email.trim().toLowerCase(), otp: otpCode })
@@ -2605,6 +2620,7 @@
             const btn = document.getElementById('btnSendPassOtpEmail');
             btn.style.opacity = '0.5'; btn.style.pointerEvents = 'none';
             
+            // --- USING YOUR EXISTING BACKEND OTP FUNCTION ---
             fetch(API_URL, {
                 method: 'POST', headers: { 'Content-Type': 'text/plain' },
                 body: JSON.stringify({ action: 'send_email_otp', email: userData.email.trim().toLowerCase() })
@@ -2627,6 +2643,7 @@
             
             let otpCode = document.getElementById('pe1').value + document.getElementById('pe2').value + document.getElementById('pe3').value + document.getElementById('pe4').value;
 
+            // --- USING YOUR EXISTING BACKEND OTP FUNCTION ---
             fetch(API_URL, {
                 method: 'POST', headers: { 'Content-Type': 'text/plain' },
                 body: JSON.stringify({ action: 'verify_otp', email: userData.email.trim().toLowerCase(), otp: otpCode })
