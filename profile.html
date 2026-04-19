@@ -7,7 +7,7 @@
 
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>Profile Hub - Tournyx</title>
+    <title>Player Profile & Stats - Tournyx</title>
     <meta name="description" content="View your Tournyx player profile, track your esports tournament stats, update your in-game name (IGN), and manage your account settings.">
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700;900&family=Rajdhani:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -360,18 +360,20 @@
     <script>
         const IS_MILESTONE_FEATURE_ENABLED = true; 
 
-        // UTILITY: Invisible Haptic & Audio Default Enablers
+        // UTILITY FIX: Haptic Feedback definition
         let hapticsEnabled = true;
-        let audioEnabled = true;
-        
         function triggerHaptic() {
             if (hapticsEnabled && navigator.vibrate) {
                 navigator.vibrate(15);
             }
         }
+
+        // UTILITY FIX: Audio Feedback definition
+        let audioEnabled = true;
         function playSuccessSound() {
             if(!audioEnabled) return;
             try {
+                // Short synthesized beep for success
                 const context = new (window.AudioContext || window.webkitAudioContext)();
                 const osc = context.createOscillator();
                 const gain = context.createGain();
@@ -386,6 +388,7 @@
             } catch(e) {}
         }
 
+        // UTILITY FIX: Toast Notification Definition
         let toastTimeout;
         function showToast(msg, isError = false) {
             let toast = document.getElementById('customToast');
@@ -455,7 +458,7 @@
     <header class="top-header">
         <div class="header-wrapper">
             <div class="header-left">
-                <img src="https://tournyx.in/favicon.png" class="app-logo" alt="Logo" onerror="this.src='https://api.dicebear.com/7.x/shapes/svg?seed=tournyx'">
+                <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEg_20wCR-WBMpQmw3vxcYUf-vxIO1PYDJoQN_Sid3UDjA9tf0cuX0eH40jbzHoJad4cxbnjhPjqfCw1Z5V1LhgN9zFuIQC0fJjecTy3D9PFu5WjR2H1wHwTD1bUGnXY_NiApWn5gMs6velcQngSzKoP1yHzX0cVsFSUFM8zIefcbiPayY7680Kz0V0ZAAE/s1264/1000093706.png" class="app-logo" alt="Logo">
                 <div class="app-title">PROFILE</div>
             </div>
             
@@ -480,16 +483,16 @@
     </div>
 
     <div class="profile-header" id="profileHeaderGlow">
-        <div class="avatar-container" onclick="document.getElementById('avatarUploadInp').click(); triggerHaptic();" id="avatarBoxContainer">
+        <div class="avatar-container" onclick="document.getElementById('avatarUploadInp').click(); triggerHaptic();">
             <svg class="completion-ring" viewBox="0 0 100 100">
                 <circle class="ring-bg" cx="50" cy="50" r="46"></circle>
                 <circle class="ring-fill" id="avatarRing" cx="50" cy="50" r="46"></circle>
             </svg>
             <img src="https://via.placeholder.com/90" alt="Avatar" class="profile-avatar" id="userAvatar">
-            <div class="edit-avatar-btn" id="editAvatarBtnEl"><i class="fa-solid fa-camera"></i></div>
+            <div class="edit-avatar-btn"><i class="fa-solid fa-camera"></i></div>
             
             <div class="vip-verified-badge">
-                <img src="https://tournyx.in/favicon.png" style="width: 75%; height: 75%; object-fit: contain; filter: sepia(100%) saturate(500%) brightness(1.2) hue-rotate(10deg) contrast(1.5) drop-shadow(0 0 2px rgba(255,215,0,0.8));" onerror="this.style.display='none'">
+                <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEg_20wCR-WBMpQmw3vxcYUf-vxIO1PYDJoQN_Sid3UDjA9tf0cuX0eH40jbzHoJad4cxbnjhPjqfCw1Z5V1LhgN9zFuIQC0fJjecTy3D9PFu5WjR2H1wHwTD1bUGnXY_NiApWn5gMs6velcQngSzKoP1yHzX0cVsFSUFM8zIefcbiPayY7680Kz0V0ZAAE/s1264/1000093706.png" style="width: 75%; height: 75%; object-fit: contain; filter: sepia(100%) saturate(500%) brightness(1.2) hue-rotate(10deg) contrast(1.5) drop-shadow(0 0 2px rgba(255,215,0,0.8));">
             </div>
         </div>
         <input type="file" id="avatarUploadInp" accept="image/*" onchange="processAvatarUpload(event)">
@@ -507,19 +510,13 @@
                 <span class="game-tag" id="mainGameUid"><i class="fa-solid fa-id-card"></i> UID: N/A</span>
                 <span class="game-tag" id="playerRoleTag"><i class="fa-solid fa-user-ninja"></i> Role: N/A</span>
             </div>
-
-            <div id="followBtnContainer" style="display:none; margin-top: 10px;">
-                <button id="followOrgBtn" onclick="toggleFollow(); triggerHaptic();" style="background: var(--accent-gradient); border: none; padding: 8px 20px; border-radius: 8px; color: white; font-family: var(--font-head); font-weight: bold; cursor: pointer; transition: 0.3s; display: inline-flex; align-items: center; gap: 8px; box-shadow: 0 5px 15px rgba(0,242,255,0.3);">
-                    <i class="fa-solid fa-user-plus"></i> Follow
-                </button>
-            </div>
         </div>
-        <div class="logout-btn" id="logoutBtnEl" onclick="logout(); triggerHaptic();">
+        <div class="logout-btn" onclick="logout(); triggerHaptic();">
             <i class="fa-solid fa-power-off"></i>
         </div>
     </div>
 
-    <div class="tier-container" id="tierContainerEl">
+    <div class="tier-container">
         <div class="tier-header">
             <span>Level <span id="userLevel">1</span></span>
             <span class="tier-rank" id="userTier">Bronze</span>
@@ -529,7 +526,7 @@
         </div>
     </div>
 
-    <div class="role-switch-container" id="roleSwitchEl">
+    <div class="role-switch-container">
         <div class="role-switch">
             <div class="role-slider" id="roleSlider"></div>
             <div class="role-btn active" id="btnPlayer" onclick="switchRole('player'); triggerHaptic();">Player</div>
@@ -537,7 +534,7 @@
         </div>
     </div>
 
-    <div class="common-withdraw-section" id="withdrawSectionEl">
+    <div class="common-withdraw-section">
         <a href="withdraw.html" class="action-card ac-orange" onclick="triggerHaptic();" style="margin-bottom: 0;">
             <div class="action-text">
                 <h4 style="color: var(--accent-orange);">Withdraw Wallet</h4>
@@ -595,14 +592,14 @@
             </div>
         </div>
 
-        <a href="explore.html" class="action-card" onclick="triggerHaptic();" id="findTourneyBtnEl">
+        <a href="explore.html" class="action-card" onclick="triggerHaptic();">
             <div class="action-text">
                 <h4>Find Tournaments</h4>
                 <p>Browse active events and secure your slot.</p>
             </div>
             <div class="action-icon"><i class="fa-solid fa-magnifying-glass"></i></div>
         </a>
-        <a href="matches.html" class="action-card ac-purple" onclick="triggerHaptic();" id="upcMatchBtnEl">
+        <a href="matches.html" class="action-card ac-purple" onclick="triggerHaptic();">
             <div class="action-text">
                 <h4>Upcoming Matches</h4>
                 <p>View room IDs and schedule.</p>
@@ -633,7 +630,7 @@
                     <span class="stat-label">Hosted</span>
                 </div>
             </div>
-            <div class="stat-card" id="orgEarningsCard">
+            <div class="stat-card">
                 <div class="stat-card-inner">
                     <span class="stat-val" style="color:var(--accent-cyan)">₹<span id="valEarnings">0</span></span>
                     <span class="stat-label">Earnings</span>
@@ -667,62 +664,52 @@
             </div>
         </div>
 
-        <div id="orgActionButtonsContainer">
-            <a href="tournament.html" class="action-card" onclick="triggerHaptic();">
-                <div class="action-text">
-                    <h4>Create Tournament</h4>
-                    <p>Host a new event and manage brackets.</p>
-                </div>
-                <div class="action-icon"><i class="fa-solid fa-plus"></i></div>
-            </a>
-
-            <a href="resolve.html" class="action-card" style="border-color: rgba(255,215,0,0.3); background: linear-gradient(135deg, rgba(255,215,0,0.05), rgba(0,0,0,0));" onclick="triggerHaptic();">
-                <div class="action-text">
-                    <h4 style="color: #FFD700;">Resolve Match</h4>
-                    <p>Declare winners to distribute prize pools and close matches.</p>
-                </div>
-                <div class="action-icon" style="color: #FFD700; background: rgba(255,215,0,0.1); border-color: rgba(255,215,0,0.2); box-shadow: 0 0 20px rgba(255,215,0,0.2);"><i class="fa-solid fa-crown"></i></div>
-            </a>
-
-            <div class="action-card ac-green" onclick="openAllTourneysModal(); triggerHaptic();">
-                <div class="action-text">
-                    <h4>Tournament Manager</h4>
-                    <p>View, edit, or delete all your hosted events.</p>
-                </div>
-                <div class="action-icon"><i class="fa-solid fa-list-check"></i></div>
+        <a href="tournament.html" class="action-card" onclick="triggerHaptic();">
+            <div class="action-text">
+                <h4>Create Tournament</h4>
+                <p>Host a new event and manage brackets.</p>
             </div>
-            
-            <a href="roster.html" class="action-card ac-orange" onclick="triggerHaptic();">
-                <div class="action-text">
-                    <h4 style="color: var(--accent-orange);">Team Rosters</h4>
-                    <p>Manage registered teams and tournament participants.</p>
-                </div>
-                <div class="action-icon"><i class="fa-solid fa-users-viewfinder"></i></div>
-            </a>
+            <div class="action-icon"><i class="fa-solid fa-plus"></i></div>
+        </a>
 
-            <a href="clans.html" class="action-card ac-purple" onclick="triggerHaptic();">
-                <div class="action-text">
-                    <h4>My Clan Hub</h4>
-                    <p>Manage your rosters and verify members.</p>
-                </div>
-                <div class="action-icon"><i class="fa-solid fa-shield-halved"></i></div>
-            </a>
-            
-            <a href="analytics.html" class="action-card" style="border-color: var(--accent-cyan); background: linear-gradient(135deg, rgba(0,242,255,0.05), rgba(0,0,0,0));" onclick="triggerHaptic();">
-                <div class="action-text">
-                    <h4 style="color:var(--accent-cyan);">Advanced Analytics</h4>
-                    <p>Deep dive into player retention, earnings, and engagement.</p>
-                </div>
-                <div class="action-icon"><i class="fa-solid fa-chart-pie"></i></div>
-            </a>
-
-            <div class="action-card" style="border-color: rgba(255,255,255,0.1); background: rgba(255,255,255,0.02);" onclick="shareOrgProfile(); triggerHaptic();">
-                <div class="action-text">
-                    <h4>Share Organizer Profile</h4>
-                    <p>Invite players to follow your upcoming tournaments.</p>
-                </div>
-                <div class="action-icon" style="background: rgba(255,255,255,0.05); color: #fff; box-shadow: none; border-color: rgba(255,255,255,0.1);"><i class="fa-solid fa-share-nodes"></i></div>
+        <a href="resolve.html" class="action-card" style="border-color: rgba(255,215,0,0.3); background: linear-gradient(135deg, rgba(255,215,0,0.05), rgba(0,0,0,0));" onclick="triggerHaptic();">
+            <div class="action-text">
+                <h4 style="color: #FFD700;">Resolve Match</h4>
+                <p>Declare winners to distribute prize pools and close matches.</p>
             </div>
+            <div class="action-icon" style="color: #FFD700; background: rgba(255,215,0,0.1); border-color: rgba(255,215,0,0.2); box-shadow: 0 0 20px rgba(255,215,0,0.2);"><i class="fa-solid fa-crown"></i></div>
+        </a>
+
+        <div class="action-card ac-green" onclick="openAllTourneysModal(); triggerHaptic();">
+            <div class="action-text">
+                <h4>Tournament Manager</h4>
+                <p>View, edit, or delete all your hosted events.</p>
+            </div>
+            <div class="action-icon"><i class="fa-solid fa-list-check"></i></div>
+        </div>
+        
+        <a href="roster.html" class="action-card ac-orange" onclick="triggerHaptic();">
+            <div class="action-text">
+                <h4 style="color: var(--accent-orange);">Team Rosters</h4>
+                <p>Manage registered teams and tournament participants.</p>
+            </div>
+            <div class="action-icon"><i class="fa-solid fa-users-viewfinder"></i></div>
+        </a>
+
+        <a href="clans.html" class="action-card ac-purple" onclick="triggerHaptic();">
+            <div class="action-text">
+                <h4>My Clan Hub</h4>
+                <p>Manage your rosters and verify members.</p>
+            </div>
+            <div class="action-icon"><i class="fa-solid fa-shield-halved"></i></div>
+        </a>
+
+        <div class="action-card" style="border-color: rgba(255,255,255,0.1); background: rgba(255,255,255,0.02);" onclick="shareOrgProfile(); triggerHaptic();">
+            <div class="action-text">
+                <h4>Share Organizer Profile</h4>
+                <p>Invite players to follow your upcoming tournaments.</p>
+            </div>
+            <div class="action-icon" style="background: rgba(255,255,255,0.05); color: #fff; box-shadow: none; border-color: rgba(255,255,255,0.1);"><i class="fa-solid fa-share-nodes"></i></div>
         </div>
     </div>
 
@@ -748,6 +735,12 @@
             <div class="setting-arrow"><i class="fa-solid fa-chevron-right"></i></div>
         </div>
 
+        <div class="setting-item" onclick="togglePowerSave(); triggerHaptic();">
+            <div class="setting-icon"><i class="fa-solid fa-leaf"></i></div>
+            <div class="setting-name">Power Saving Mode <span id="psmStatus" style="font-size:0.75rem; color:#888; font-weight:normal;">(Off)</span></div>
+            <div class="setting-arrow"><i class="fa-solid fa-toggle-off" id="psmToggle"></i></div>
+        </div>
+        
         <div class="setting-item" onclick="window.location.href='help.html'; triggerHaptic();">
             <div class="setting-icon"><i class="fa-solid fa-headset"></i></div>
             <div class="setting-name">Help & Support</div>
@@ -853,19 +846,26 @@
                     <div style="flex: 1;">
                         <label class="form-label">State</label>
                         <select id="editState" class="form-control">
-                            <option value="" disabled selected>Select State</option>
+                            <option value="" disabled selected>Select</option>
+                            <option value="Andaman and Nicobar Islands">Andaman and Nicobar Islands</option>
                             <option value="Andhra Pradesh">Andhra Pradesh</option>
                             <option value="Arunachal Pradesh">Arunachal Pradesh</option>
                             <option value="Assam">Assam</option>
                             <option value="Bihar">Bihar</option>
+                            <option value="Chandigarh">Chandigarh</option>
                             <option value="Chhattisgarh">Chhattisgarh</option>
+                            <option value="Dadra and Nagar Haveli and Daman and Diu">Dadra and Nagar Haveli and Daman and Diu</option>
+                            <option value="Delhi">Delhi</option>
                             <option value="Goa">Goa</option>
                             <option value="Gujarat">Gujarat</option>
                             <option value="Haryana">Haryana</option>
                             <option value="Himachal Pradesh">Himachal Pradesh</option>
+                            <option value="Jammu and Kashmir">Jammu and Kashmir</option>
                             <option value="Jharkhand">Jharkhand</option>
                             <option value="Karnataka">Karnataka</option>
                             <option value="Kerala">Kerala</option>
+                            <option value="Ladakh">Ladakh</option>
+                            <option value="Lakshadweep">Lakshadweep</option>
                             <option value="Madhya Pradesh">Madhya Pradesh</option>
                             <option value="Maharashtra">Maharashtra</option>
                             <option value="Manipur">Manipur</option>
@@ -873,6 +873,7 @@
                             <option value="Mizoram">Mizoram</option>
                             <option value="Nagaland">Nagaland</option>
                             <option value="Odisha">Odisha</option>
+                            <option value="Puducherry">Puducherry</option>
                             <option value="Punjab">Punjab</option>
                             <option value="Rajasthan">Rajasthan</option>
                             <option value="Sikkim">Sikkim</option>
@@ -882,13 +883,6 @@
                             <option value="Uttar Pradesh">Uttar Pradesh</option>
                             <option value="Uttarakhand">Uttarakhand</option>
                             <option value="West Bengal">West Bengal</option>
-                            <option value="Andaman and Nicobar">Andaman and Nicobar</option>
-                            <option value="Chandigarh">Chandigarh</option>
-                            <option value="Dadra and Nagar Haveli">Dadra and Nagar Haveli</option>
-                            <option value="Daman and Diu">Daman and Diu</option>
-                            <option value="Delhi">Delhi</option>
-                            <option value="Lakshadweep">Lakshadweep</option>
-                            <option value="Puducherry">Puducherry</option>
                         </select>
                     </div>
                     <div style="flex: 1;">
@@ -1224,20 +1218,121 @@
     </nav>
 
     <script>
+        function copyText(text) {
+            navigator.clipboard.writeText(text).then(() => {
+                showToast("Copied to clipboard!");
+            });
+        }
+
+        function forceDeepSync() {
+            const btn = document.getElementById('manualSyncBtn');
+            btn.classList.add('fa-spin');
+            initProfile(true).then(() => {
+                setTimeout(() => btn.classList.remove('fa-spin'), 1000);
+            });
+        }
+
+        setInterval(() => {
+            const start = performance.now();
+            fetch(API_URL + "?action=ping", { mode: 'no-cors', cache: 'no-store' }).then(() => {
+                const duration = Math.floor(performance.now() - start);
+                const pingEl = document.getElementById('pingValue');
+                if(pingEl) {
+                    pingEl.innerText = duration < 5 ? 14 : duration; 
+                }
+            }).catch(() => {});
+        }, 5000);
+
+        function openQrModal() {
+            if(isGuestMode) { showToast("Login to view QR", true); return; }
+            document.getElementById('qrModal').classList.add('active');
+            let encodedEmail = btoa(userData.email);
+            document.getElementById('dynamicQrImg').src = `https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https://tournyx.in/profile.html?user=${encodedEmail}`;
+            document.getElementById('qrName').innerText = userData.username || "Player";
+            document.getElementById('qrIgn').innerText = userData.ign || "IGN Not Set";
+        }
+        
+        function closeQrModal() { 
+            document.getElementById('qrModal').classList.remove('active'); 
+        }
+
+        function shareOrgProfile() {
+            if(isGuestMode) { showToast("Login to share profile", true); return; }
+            let encodedEmail = btoa(userData.email);
+            let url = `https://tournyx.in/profile.html?user=${encodedEmail}`;
+            let uName = userData.username || "Player";
+            let msg = `Check out my Organizer Profile on Tournyx and join my upcoming tournaments! 🎮\n${url}`;
+            
+            if (navigator.share) {
+                navigator.share({ title: `${uName}'s Tournyx Profile`, text: msg }).catch(() => showToast("Share cancelled"));
+            } else {
+                navigator.clipboard.writeText(msg).then(() => showToast("Profile Link Copied to Clipboard!"));
+            }
+        }
+
+        function cycleThemeColor() {
+            if (String(userData.is_premium).toLowerCase() === 'true') {
+                showToast("VIP Golden Theme Locked! 👑");
+                return;
+            }
+            let tIndex = parseInt(localStorage.getItem('tournyx_theme_index')) || 0;
+            tIndex = (tIndex + 1) % THEMES.length;
+            localStorage.setItem('tournyx_theme_index', tIndex);
+            applyGlobalTheme();
+            showToast("App Accent Color Updated!");
+        }
+
+        const canvas = document.getElementById('particles-canvas');
+        const ctx = canvas.getContext('2d');
+        canvas.width = window.innerWidth; canvas.height = window.innerHeight;
+        let pArray = [];
+        let animPaused = localStorage.getItem('tournyx_psm') === 'true';
+
+        class P { constructor(){ this.x=Math.random()*canvas.width; this.y=Math.random()*canvas.height; this.s=Math.random()*2; this.c=Math.random()>0.5?'#bd00ff':'#00f2ff'; } u(){ this.y-=0.5; if(this.y<0)this.y=canvas.height; } d(){ ctx.fillStyle=this.c; ctx.globalAlpha=0.3; ctx.beginPath(); ctx.arc(Math.floor(this.x),Math.floor(this.y),this.s,0,Math.PI*2); ctx.fill(); } }
+        for(let i=0; i<30; i++) pArray.push(new P());
+        
+        function anim(){ 
+            if(!animPaused) {
+                ctx.clearRect(0,0,canvas.width,canvas.height); 
+                pArray.forEach(p=>{p.u();p.d()}); 
+            }
+            requestAnimationFrame(anim); 
+        }
+        anim();
+        window.addEventListener('resize', () => { canvas.width = window.innerWidth; canvas.height = window.innerHeight; });
+
+        if(animPaused) {
+            document.getElementById('psmToggle').className = "fa-solid fa-toggle-on";
+            document.getElementById('psmToggle').style.color = "var(--accent-cyan)";
+            document.getElementById('psmStatus').innerText = "(On)";
+            ctx.clearRect(0,0,canvas.width,canvas.height);
+        }
+
+        function togglePowerSave() {
+            animPaused = !animPaused;
+            localStorage.setItem('tournyx_psm', animPaused);
+            const tg = document.getElementById('psmToggle');
+            const st = document.getElementById('psmStatus');
+            if(animPaused) {
+                tg.className = "fa-solid fa-toggle-on"; tg.style.color = "var(--accent-cyan)";
+                st.innerText = "(On)"; showToast("Power Saving Enabled");
+                ctx.clearRect(0,0,canvas.width,canvas.height);
+            } else {
+                tg.className = "fa-solid fa-toggle-off"; tg.style.color = "#555";
+                st.innerText = "(Off)"; showToast("Power Saving Disabled");
+            }
+        }
+
         const API_URL = 'https://script.google.com/macros/s/AKfycbyqqTpgaflxKJ9xH0jq7mJ_jLzcoNhas3gNo0h5gvoa_6r5Ae9NFxJAJp7ZoYNnMRKl/exec'; 
         
         let userData = JSON.parse(localStorage.getItem('tournyx_user')) || {};
         let myHostedEvents = []; 
         let isGuestMode = false;
         
-        // --- PUBLIC PROFILE VIEW LOGIC ---
         const urlParams = new URLSearchParams(window.location.search);
-        let viewingPublicProfile = false;
-        let targetEmail = "";
-        let isFollowing = false;
 
         setInterval(() => {
-            if (!isGuestMode && userData && userData.email && !viewingPublicProfile) {
+            if (!isGuestMode && userData && userData.email) {
                 fetch(API_URL, {
                     method: 'POST',
                     headers: { 'Content-Type': 'text/plain' },
@@ -1246,13 +1341,25 @@
                 .then(res => res.json())
                 .then(data => {
                     if (data.status === "success") {
+                        // LIVE ROLE SYNC LOGIC
+                        if (data.data.role && userData.role !== data.data.role) {
+                            userData.role = data.data.role;
+                            localStorage.setItem('tournyx_user', JSON.stringify(userData));
+                            switchRole(userData.role);
+                            showToast("Your account role was updated by Admin!");
+                            playSuccessSound();
+                        }
+                        
                         userData.points = safeParseNum(data.data.points, userData.points || 0);
                         userData.rupees = safeParseNum(data.data.rupees, userData.rupees || 0);
+                        
                         userData.winnings = safeParseNum(data.data.winnings, userData.winnings || 0);
                         userData.earnings = safeParseNum(data.data.earnings, userData.earnings || 0);
+                        
                         userData.matches = safeParseNum(data.data.matches, userData.matches || 0);
                         userData.wins = safeParseNum(data.data.wins, userData.wins || 0);
                         userData.hosted = safeParseNum(data.data.hosted, userData.hosted || 0);
+                        
                         userData.is_premium = String(data.data.is_premium).toLowerCase() === 'true';
                         
                         localStorage.setItem('tournyx_user', JSON.stringify(userData));
@@ -1266,7 +1373,11 @@
             if(urlParams.get('verify_email') === 'success') {
                 showToast("Email Verified & Updated Successfully!");
                 setTimeout(() => {
-                    window.location.href = (document.body.classList.contains('median-active') || navigator.userAgent.indexOf('gonative') > -1) ? '/index.html' : 'index.html';
+                    if (document.body.classList.contains('median-active') || navigator.userAgent.indexOf('gonative') > -1) {
+                        window.location.href = '/index.html'; 
+                    } else {
+                        window.location.href = 'index.html';
+                    }
                 }, 2000);
             }
 
@@ -1275,7 +1386,7 @@
             if(hr < 12) greet = "Good Morning,";
             else if(hr < 17) greet = "Good Afternoon,";
             document.getElementById('timeGreeting').innerText = greet;
-            
+
             initProfile();
         });
 
@@ -1287,8 +1398,18 @@
             document.getElementById('bottomNavBar').style.display = 'none';
             document.getElementById('guestCtaWrapper').classList.add('active');
             
-            if(!urlParams.has('user')) {
-                setTimeout(() => { document.getElementById('guestLoginModal').classList.add('active'); }, 800);
+            setTimeout(() => {
+                document.getElementById('guestLoginModal').classList.add('active');
+            }, 800);
+
+            if(urlParams.has('user')) {
+                try {
+                    let targetUserEmail = atob(decodeURIComponent(urlParams.get('user')));
+                    userData = { email: targetUserEmail, username: "Player", ign: "", matches: 0, wins: 0, points: 0, hosted: 0, earnings: 0, winnings: 0, rupees: 0, claimed_ms: [], is_premium: false };
+                } catch(e) {
+                    userData = { email: "error", username: "Pro Gamer", ign: "Unknown", matches: 0, wins: 0, points: 0, hosted: 0, earnings: 0, winnings: 0, rupees: 0, claimed_ms: [], is_premium: false };
+                }
+            } else {
                 userData = { email: "guest", username: "Guest Player", ign: "Guest", matches: 0, wins: 0, points: 0, hosted: 0, earnings: 0, winnings: 0, rupees: 0, claimed_ms: [], is_premium: false };
             }
         }
@@ -1329,64 +1450,16 @@
         }
 
         async function initProfile(isManual = false) {
-            
-            if(urlParams.has('user')) {
-                // --- PUBLIC PROFILE LOGIC ---
-                viewingPublicProfile = true;
-                try {
-                    targetEmail = atob(decodeURIComponent(urlParams.get('user')));
-                } catch(e) { showToast("Invalid Profile Link", true); return; }
-                
-                // Hide Personal UI Elements
-                document.getElementById('settingsContainer').style.display = 'none';
-                document.getElementById('logoutBtnEl').style.display = 'none';
-                document.getElementById('editAvatarBtnEl').style.display = 'none';
-                document.getElementById('avatarBoxContainer').onclick = null; // remove click upload
-                document.getElementById('withdrawSectionEl').style.display = 'none';
-                document.getElementById('roleSwitchEl').style.display = 'none'; // Lock them into their primary view
-                document.getElementById('orgActionButtonsContainer').style.display = 'none'; // Hide organizer buttons
-                document.getElementById('findTourneyBtnEl').style.display = 'none';
-                document.getElementById('upcMatchBtnEl').style.display = 'none';
-                document.getElementById('orgEarningsCard').style.display = 'none'; // Hide their wallet
-                document.getElementById('followBtnContainer').style.display = 'block';
-
-                document.getElementById('userName').innerHTML = '<div class="skeleton" style="width:140px; height:28px;"></div>';
-                document.getElementById('timeGreeting').innerText = "Viewing Profile";
-
-                fetch(API_URL, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'text/plain' },
-                    body: JSON.stringify({ action: 'get_public_profile', target_email: targetEmail, my_email: userData.email || "" })
-                })
-                .then(res => res.json())
-                .then(data => {
-                    if (data.status === "success") {
-                        let pData = data.data;
-                        isFollowing = pData.is_following;
-                        updateFollowButtonUI();
-                        
-                        // Force Organizer View if they host, otherwise Player view
-                        if(pData.hosted > 0) {
-                            document.getElementById('organizerDash').classList.add('active');
-                            document.getElementById('playerDash').classList.remove('active');
-                        } else {
-                            document.getElementById('playerDash').classList.add('active');
-                            document.getElementById('organizerDash').classList.remove('active');
-                        }
-                        renderUserInfo(pData, true);
-                    } else {
-                        showToast("Profile not found.", true);
-                    }
-                }).catch(() => showToast("Failed to load profile.", true));
-                return;
-            }
-
-            // --- PRIVATE PROFILE LOGIC ---
             let localUser = userData;
+            
             try {
                 let cacheStr = localStorage.getItem('tournyx_user');
-                if(cacheStr && cacheStr !== "undefined") { localUser = JSON.parse(cacheStr); }
-            } catch(e) { localStorage.removeItem('tournyx_user'); }
+                if(cacheStr && cacheStr !== "undefined") {
+                    localUser = JSON.parse(cacheStr);
+                }
+            } catch(e) {
+                localStorage.removeItem('tournyx_user');
+            }
 
             if (!localUser || typeof localUser !== 'object') {
                 localUser = { username: "Player", ign: "", matches: 0, wins: 0, points: 0, hosted: 0, earnings: 0, winnings: 0, rupees: 0, claimed_ms: [], is_premium: false };
@@ -1421,7 +1494,6 @@
                     userData.insta_link = data.data.insta_link || localUser.insta_link || "";
                     userData.discord_link = data.data.discord_link || localUser.discord_link || "";
                     userData.player_role = data.data.player_role || localUser.player_role || "Flex";
-                    userData.dashboard_role = data.data.dashboard_role || localUser.dashboard_role || "player";
                     
                     userData.points = safeParseNum(data.data.points, localUser.points || 0);
                     userData.rupees = safeParseNum(data.data.rupees, localUser.rupees || 0);
@@ -1437,6 +1509,7 @@
 
                     userData.main_game = data.data.main_game || localUser.main_game || "N/A";
                     userData.yt_link = data.data.yt_link || localUser.yt_link || "";
+                    userData.role = data.data.role || localUser.role || "player";
                     
                     if(data.data.claimed_ms && Array.isArray(data.data.claimed_ms)) {
                         userData.claimed_ms = data.data.claimed_ms;
@@ -1453,48 +1526,13 @@
             renderUserInfo(userData, true); 
             if(isManual) showToast("Profile fully synced!");
         }
-        
-        function updateFollowButtonUI() {
-            let btn = document.getElementById('followOrgBtn');
-            if(!btn) return;
-            btn.innerHTML = isFollowing ? '<i class="fa-solid fa-check"></i> Following' : '<i class="fa-solid fa-user-plus"></i> Follow';
-            btn.style.background = isFollowing ? 'rgba(255,255,255,0.1)' : 'var(--accent-gradient)';
-            btn.style.color = isFollowing ? 'var(--accent-cyan)' : 'white';
-        }
-
-        function toggleFollow() {
-            if(isGuestMode) { showToast("Login to follow organizers!", true); return; }
-            let btn = document.getElementById('followOrgBtn');
-            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i>';
-            
-            fetch(API_URL, {
-                method: 'POST', headers: { 'Content-Type': 'text/plain' },
-                body: JSON.stringify({
-                    action: 'toggle_follow',
-                    target_email: targetEmail,
-                    my_email: userData.email
-                })
-            }).then(res=>res.json()).then(data => {
-                if(data.status==='success') {
-                    isFollowing = data.data.is_following;
-                    updateFollowButtonUI();
-                    playSuccessSound();
-                    showToast(isFollowing ? "Followed successfully!" : "Unfollowed.");
-                    document.getElementById('valFollowers').innerText = data.data.follower_count;
-                } else {
-                    showToast("Failed to follow.", true);
-                    updateFollowButtonUI();
-                }
-            }).catch(() => { showToast("Network Error", true); updateFollowButtonUI(); });
-        }
 
         function renderUserInfo(data, doAnimate) {
             try {
                 let isPremiumUser = String(data.is_premium).toLowerCase() === 'true';
                 applyGlobalTheme();
 
-                // Apply Dashboard Role Preference if viewing own profile
-                if (!viewingPublicProfile && data.dashboard_role === 'organizer' && !isGuestMode) {
+                if (data.role === 'organizer' && !isGuestMode) {
                     document.getElementById('roleSlider').style.left = "calc(50% + 1px)";
                     document.getElementById('roleSlider').style.background = "linear-gradient(90deg, var(--accent-cyan), var(--accent-green))";
                     document.getElementById('btnOrg').classList.add('active');
@@ -1529,13 +1567,8 @@
                 let displayWinnings = parseInt(data.winnings) || 0; 
                 let displayEarnings = parseInt(data.earnings) || 0; 
                 
-                // Advanced Stats added
                 let successRate = hostedCount > 0 ? Math.min(100, 85 + (hostedCount * 1.5)).toFixed(1) : 0; 
                 let winRate = mCount > 0 ? ((wCount / mCount) * 100).toFixed(1) : 0;
-                
-                // If viewing public profile, the backend sends exact follower count. Else use data.
-                let orgFollowers = data.follower_count !== undefined ? data.follower_count : (hostedCount > 0 ? Math.floor(hostedCount * (Math.random() * 5 + 10)) : 0); 
-                let orgTotalDist = Math.floor(displayEarnings * 4.5); // Logic representation of distribution
                 
                 if(doAnimate) {
                     if(document.getElementById('valMatches')) animateValue('valMatches', 0, mCount, 1000);
@@ -1547,8 +1580,6 @@
                     
                     if(document.getElementById('valWinRate')) document.getElementById('valWinRate').innerHTML = winRate; 
                     if(document.getElementById('valSuccessRate')) document.getElementById('valSuccessRate').innerHTML = successRate; 
-                    if(document.getElementById('valFollowers')) animateValue('valFollowers', 0, orgFollowers, 1000);
-                    if(document.getElementById('valTotalDist')) animateValue('valTotalDist', 0, orgTotalDist, 1000);
                 } else {
                     if(document.getElementById('valMatches')) document.getElementById('valMatches').innerHTML = mCount;
                     if(document.getElementById('valWins')) document.getElementById('valWins').innerHTML = wCount;
@@ -1559,8 +1590,6 @@
                     
                     if(document.getElementById('valWinRate')) document.getElementById('valWinRate').innerHTML = winRate;
                     if(document.getElementById('valSuccessRate')) document.getElementById('valSuccessRate').innerHTML = successRate;
-                    if(document.getElementById('valFollowers')) document.getElementById('valFollowers').innerHTML = orgFollowers;
-                    if(document.getElementById('valTotalDist')) document.getElementById('valTotalDist').innerHTML = orgTotalDist.toLocaleString();
                 }
                 
                 let starsHTML = ""; let ratingNum = 0.0;
@@ -1709,7 +1738,7 @@
                 
                 let claimBtn = "";
                 if (isUnlocked && i > 0 && !isClaimed) {
-                    if(!viewingPublicProfile) claimBtn = `<button class="claim-btn" onclick="claimMilestoneReward('${type}', ${i}, this); triggerHaptic();">Claim ${t.reward}</button>`;
+                    claimBtn = `<button class="claim-btn" onclick="claimMilestoneReward('${type}', ${i}, this); triggerHaptic();">Claim ${t.reward}</button>`;
                 } else if (isClaimed && i > 0) {
                     claimBtn = `<span style="color:var(--accent-green); font-size: 0.8rem; font-family: var(--font-head); font-weight:bold; margin-top:5px; display:inline-block;"><i class="fa-solid fa-check"></i> Claimed</span>`;
                 }
@@ -1787,6 +1816,10 @@
                 showToast("Access Denied: Register as an Organizer to host events!", true);
                 return; 
             }
+            if (role === 'player' && userData.role === 'organizer') {
+                showToast("Access Denied: Organizers are locked to the Organizer tab.", true);
+                return;
+            }
 
             const s = document.getElementById('roleSlider');
             const dashP = document.getElementById('playerDash');
@@ -1806,13 +1839,6 @@
                 dashO.classList.add('active'); dashP.classList.remove('active');
                 if(!isGuestMode) fetchMyTournaments(); 
             }
-
-            // Sync to backend silently
-            if (!isGuestMode && userData.dashboard_role !== role && !viewingPublicProfile) {
-                userData.dashboard_role = role;
-                localStorage.setItem('tournyx_user', JSON.stringify(userData));
-                fetch(API_URL, { method: 'POST', body: JSON.stringify({ action: 'update_profile', email: userData.email.trim().toLowerCase(), dashboard_role: role }) }).catch(()=>{});
-            }
         }
 
         function openAllTourneysModal() {
@@ -1828,7 +1854,7 @@
                 container.innerHTML = `
                     <div style='text-align:center; padding:30px 20px; color:#666; background:rgba(0,0,0,0.3); border-radius:15px; border:1px dashed var(--card-border);'>
                         <i class="fa-solid fa-ghost" style="font-size:2rem; margin-bottom:10px; opacity:0.5;"></i><br>
-                        No active tournaments found.
+                        You haven't hosted any active tournaments yet.
                     </div>`;
             } else {
                 myHostedEvents.forEach(t => {
@@ -1838,12 +1864,6 @@
                     let title = t.title || "Untitled Event";
                     
                     let sColor = String(statusText).toLowerCase().includes('live') ? 'var(--accent-green)' : (String(statusText).toLowerCase().includes('completed') ? '#888' : 'var(--accent-cyan)');
-                    
-                    let manageBtnHtml = viewingPublicProfile ? "" : `
-                        <button class="mi-share" style="background:rgba(255,153,0,0.1); border-color:var(--accent-orange); color:var(--accent-orange);" onclick="showToast('Clone feature initiating...'); triggerHaptic();" title="Clone Event"><i class="fa-solid fa-copy"></i></button>
-                        <button class="mi-btn" onclick="openManageModal('${matchId}'); triggerHaptic();">Manage</button>
-                    `;
-
                     container.innerHTML += `
                         <div class="managed-item">
                             <div class="mi-info">
@@ -1851,8 +1871,9 @@
                                 <p>${datePeriod} • <span style="color:${sColor}; font-weight:bold;">${statusText}</span></p>
                             </div>
                             <div class="mi-btn-group">
-                                ${manageBtnHtml}
+                                <button class="mi-share" style="background:rgba(255,153,0,0.1); border-color:var(--accent-orange); color:var(--accent-orange);" onclick="showToast('Clone feature initiating...'); triggerHaptic();" title="Clone Event"><i class="fa-solid fa-copy"></i></button>
                                 <button class="mi-share" onclick="shareSpecificTournament('${title.replace(/'/g, "\\'")}'); triggerHaptic();" title="Share Invite"><i class="fa-solid fa-share-nodes"></i></button>
+                                <button class="mi-btn" onclick="openManageModal('${matchId}'); triggerHaptic();">Manage</button>
                             </div>
                         </div>
                     `;
@@ -1873,7 +1894,7 @@
             const container = document.getElementById('orgTourneysList');
             const refBtn = document.getElementById('refreshTourneysBtn');
             
-            container.innerHTML = `<div style="text-align:center; padding:30px 20px; color:#888; font-size:0.95rem;"><i class="fa-solid fa-spinner fa-spin" style="color:var(--accent-purple); font-size:1.5rem; margin-bottom:10px; display:block;"></i> Fetching events...</div>`;
+            container.innerHTML = `<div style="text-align:center; padding:30px 20px; color:#888; font-size:0.95rem;"><i class="fa-solid fa-spinner fa-spin" style="color:var(--accent-purple); font-size:1.5rem; margin-bottom:10px; display:block;"></i> Fetching your events...</div>`;
             if(refBtn) { refBtn.classList.add('fa-spin'); setTimeout(()=>refBtn.classList.remove('fa-spin'), 1000); }
             
             fetch(API_URL, {
@@ -1883,7 +1904,7 @@
             .then(res => res.json())
             .then(data => {
                 if(data && data.status === "success") {
-                    let emailToQuery = viewingPublicProfile ? targetEmail : String(userData.email).toLowerCase().trim();
+                    let myEmailStr = String(userData.email).toLowerCase().trim();
                     let rawEvents = Array.isArray(data.data) ? data.data : [];
                     
                     myHostedEvents = rawEvents.filter(t => {
@@ -1892,7 +1913,7 @@
                         if (dbStatus === 'deleted') return false;
 
                         let backendEmail = String(t.org_email || t.organizer_email || t.email || "").toLowerCase().trim();
-                        return backendEmail === emailToQuery;
+                        return backendEmail === myEmailStr;
                     });
                     
                     renderTournamentsList(container); 
