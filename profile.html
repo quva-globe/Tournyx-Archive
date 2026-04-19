@@ -358,6 +358,7 @@
     </style>
     
     <script>
+        // GLOBAL TOGGLE FOR MILESTONE MODAL
         const IS_MILESTONE_FEATURE_ENABLED = true; 
 
         // UTILITY: Hardcoded Enabled Haptics
@@ -2366,10 +2367,10 @@
             btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Sending...';
             btn.disabled = true;
             
-            // WE NOW USE THE STANDARD OTP ENGINE FROM YOUR BACKEND
+            // --- USING YOUR EXISTING BACKEND OTP FUNCTION ---
             fetch(API_URL, {
                 method: 'POST', headers: { 'Content-Type': 'text/plain' },
-                body: JSON.stringify({ action: 'send_otp', email: userData.email.trim().toLowerCase() })
+                body: JSON.stringify({ action: 'send_email_otp', email: userData.email.trim().toLowerCase() })
             }).then(res => res.json()).then(data => {
                 if(data.status === 'success') {
                     document.getElementById('emailStep1').style.display = 'none';
@@ -2389,7 +2390,7 @@
             
             let otpCode = document.getElementById('oe1').value + document.getElementById('oe2').value + document.getElementById('oe3').value + document.getElementById('oe4').value;
             
-            // WE NOW USE THE STANDARD OTP ENGINE FROM YOUR BACKEND
+            // --- USING YOUR EXISTING BACKEND OTP FUNCTION ---
             fetch(API_URL, {
                 method: 'POST', headers: { 'Content-Type': 'text/plain' },
                 body: JSON.stringify({ action: 'verify_otp', email: userData.email.trim().toLowerCase(), otp: otpCode })
@@ -2506,10 +2507,10 @@
             const btn = document.getElementById('btnSendPassOtpEmail');
             btn.style.opacity = '0.5'; btn.style.pointerEvents = 'none';
             
-            // WE NOW USE THE STANDARD OTP ENGINE FROM YOUR BACKEND
+            // --- USING YOUR EXISTING BACKEND OTP FUNCTION ---
             fetch(API_URL, {
                 method: 'POST', headers: { 'Content-Type': 'text/plain' },
-                body: JSON.stringify({ action: 'send_otp', email: userData.email.trim().toLowerCase() })
+                body: JSON.stringify({ action: 'send_email_otp', email: userData.email.trim().toLowerCase() })
             }).then(res => res.json()).then(data => {
                 if(data.status === 'success') {
                     document.getElementById('passStep1').style.display = 'none';
@@ -2529,7 +2530,7 @@
             
             let otpCode = document.getElementById('pe1').value + document.getElementById('pe2').value + document.getElementById('pe3').value + document.getElementById('pe4').value;
 
-            // WE NOW USE THE STANDARD OTP ENGINE FROM YOUR BACKEND
+            // --- USING YOUR EXISTING BACKEND OTP FUNCTION ---
             fetch(API_URL, {
                 method: 'POST', headers: { 'Content-Type': 'text/plain' },
                 body: JSON.stringify({ action: 'verify_otp', email: userData.email.trim().toLowerCase(), otp: otpCode })
