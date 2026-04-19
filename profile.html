@@ -360,7 +360,7 @@
     <script>
         const IS_MILESTONE_FEATURE_ENABLED = true; 
 
-        // UTILITY FIX: Haptic Feedback definition
+        // UTILITY: Hardcoded Enabled Haptics
         let hapticsEnabled = true;
         function triggerHaptic() {
             if (hapticsEnabled && navigator.vibrate) {
@@ -368,12 +368,11 @@
             }
         }
 
-        // UTILITY FIX: Audio Feedback definition
+        // UTILITY: Hardcoded Enabled Audio 
         let audioEnabled = true;
         function playSuccessSound() {
             if(!audioEnabled) return;
             try {
-                // Short synthesized beep for success
                 const context = new (window.AudioContext || window.webkitAudioContext)();
                 const osc = context.createOscillator();
                 const gain = context.createGain();
@@ -388,7 +387,7 @@
             } catch(e) {}
         }
 
-        // UTILITY FIX: Toast Notification Definition
+        // UTILITY: Toast Notification 
         let toastTimeout;
         function showToast(msg, isError = false) {
             let toast = document.getElementById('customToast');
@@ -2384,7 +2383,7 @@
             
             fetch(API_URL, {
                 method: 'POST', headers: { 'Content-Type': 'text/plain' },
-                body: JSON.stringify({ action: 'send_otp', email: userData.email.trim().toLowerCase() })
+                body: JSON.stringify({ action: 'send_profile_otp', email: userData.email.trim().toLowerCase() })
             }).then(res => res.json()).then(data => {
                 if(data.status === 'success') {
                     document.getElementById('emailStep1').style.display = 'none';
@@ -2406,7 +2405,7 @@
             
             fetch(API_URL, {
                 method: 'POST', headers: { 'Content-Type': 'text/plain' },
-                body: JSON.stringify({ action: 'verify_otp', email: userData.email.trim().toLowerCase(), otp: otpCode })
+                body: JSON.stringify({ action: 'verify_profile_otp', email: userData.email.trim().toLowerCase(), otp: otpCode })
             }).then(res => res.json()).then(data => {
                 if(data.status === 'success') {
                     document.getElementById('emailStep2').style.display = 'none';
@@ -2522,7 +2521,7 @@
             
             fetch(API_URL, {
                 method: 'POST', headers: { 'Content-Type': 'text/plain' },
-                body: JSON.stringify({ action: 'send_otp', email: userData.email.trim().toLowerCase() })
+                body: JSON.stringify({ action: 'send_profile_otp', email: userData.email.trim().toLowerCase() })
             }).then(res => res.json()).then(data => {
                 if(data.status === 'success') {
                     document.getElementById('passStep1').style.display = 'none';
@@ -2544,7 +2543,7 @@
 
             fetch(API_URL, {
                 method: 'POST', headers: { 'Content-Type': 'text/plain' },
-                body: JSON.stringify({ action: 'verify_otp', email: userData.email.trim().toLowerCase(), otp: otpCode })
+                body: JSON.stringify({ action: 'verify_profile_otp', email: userData.email.trim().toLowerCase(), otp: otpCode })
             }).then(res => res.json()).then(data => {
                 if(data.status === 'success') {
                     document.getElementById('passStep2').style.display = 'none';
