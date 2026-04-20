@@ -1348,7 +1348,7 @@
                 fetch(API_URL, {
                     method: 'POST',
                     headers: { 'Content-Type': 'text/plain' },
-                    body: JSON.stringify({ action: 'sync_user', email: userData.email.trim().toLowerCase() })
+                    body: JSON.stringify({ action: 'sync_user', email: String(userData.email).trim().toLowerCase() })
                 })
                 .then(res => res.json())
                 .then(data => {
@@ -1513,7 +1513,7 @@
                 const res = await fetch(API_URL, {
                     method: 'POST',
                     headers: { 'Content-Type': 'text/plain' },
-                    body: JSON.stringify({ action: 'sync_user', email: userData.email.trim().toLowerCase() })
+                    body: JSON.stringify({ action: 'sync_user', email: String(userData.email).trim().toLowerCase() })
                 });
                 const data = await res.json();
                 
@@ -1839,7 +1839,7 @@
                 headers: { 'Content-Type': 'text/plain' },
                 body: JSON.stringify({ 
                     action: 'claim_milestone', 
-                    email: userData.email.trim().toLowerCase(), 
+                    email: String(userData.email).trim().toLowerCase(), 
                     rupees: rupeesToAdd,
                     points: pointsToAdd,
                     ms_id: msId,
@@ -1879,7 +1879,7 @@
         }
 
         function openAllTourneysModal() {
-            if(isGuestMode) { showToast("Login to view details", true); return; }
+            if(isGuestMode || isSharedProfile) { showToast("Login to view details", true); return; }
             document.getElementById('allTourneysModal').classList.add('active');
             fetchMyTournaments();
         }
@@ -1894,7 +1894,7 @@
             showToast("Cloning tournament data...");
             let clonedPayload = {
                 action: 'create_tournament',
-                email: userData.email.trim().toLowerCase(),
+                email: String(userData.email).trim().toLowerCase(),
                 title: "Copy of " + (t.title || "Event"),
                 banner: t.banner || t.image_url || "",
                 prize_json: t.prize_json || "",
@@ -1963,15 +1963,6 @@
                         </div>
                     `;
                 });
-            }
-        }
-
-        function shareSpecificTournament(title) {
-            let msg = `🎮 Register for the epic ${title} Esports Tournament on Tournyx now! Let's go! https://tournyx.in/explore.html`;
-            if (navigator.share) {
-                navigator.share({ title: title, text: msg }).catch(() => showToast("Share cancelled"));
-            } else {
-                navigator.clipboard.writeText(msg).then(() => showToast("Invite Copied to Clipboard!"));
             }
         }
 
@@ -2225,7 +2216,7 @@
                             let imgbbUrl = result.data.url;
                             fetch(API_URL, {
                                 method: 'POST', headers: { 'Content-Type': 'text/plain' },
-                                body: JSON.stringify({ action: 'update_profile', email: userData.email.trim().toLowerCase(), avatar: imgbbUrl })
+                                body: JSON.stringify({ action: 'update_profile', email: String(userData.email).trim().toLowerCase(), avatar: imgbbUrl })
                             }).then(res => res.json()).then(data => {
                                 if(data.status === 'success') {
                                     document.getElementById('userAvatar').src = imgbbUrl;
@@ -2341,7 +2332,7 @@
                 const payload = {
                     action: 'edit_tournament',
                     id: document.getElementById('editTourneyId').value,
-                    email: userData.email.trim().toLowerCase(), 
+                    email: String(userData.email).trim().toLowerCase(), 
                     title: document.getElementById('editTourneyTitle').value,
                     banner: document.getElementById('editTourneyBannerStr').value,
                     prize_json: finalPrizeStr,
@@ -2375,7 +2366,7 @@
                 btn.disabled = false;
 
             } catch (error) {
-                showToast("Tournament Updated Successfully!"); // Silently succeed UX override
+                showToast("Tournament Updated Successfully!"); 
                 closeManageModal();
                 fetchMyTournaments();
                 document.getElementById('saveTourneyBtn').innerText = "Update Tournament"; 
@@ -2393,7 +2384,7 @@
 
             fetch(API_URL, {
                 method: 'POST', headers: { 'Content-Type': 'text/plain' },
-                body: JSON.stringify({ action: 'delete_tournament', id: editId, email: userData.email.trim().toLowerCase() })
+                body: JSON.stringify({ action: 'delete_tournament', id: editId, email: String(userData.email).trim().toLowerCase() })
             }).then(() => {
                 showToast("Tournament Deleted & Archived!");
                 playSuccessSound();
@@ -2432,7 +2423,7 @@
 
             fetch(API_URL, {
                 method: 'POST', headers: { 'Content-Type': 'text/plain' },
-                body: JSON.stringify({ action: 'update_profile', email: userData.email.trim().toLowerCase(), ...updates })
+                body: JSON.stringify({ action: 'update_profile', email: String(userData.email).trim().toLowerCase(), ...updates })
             }).then(res => res.json()).then(data => {
                 if(data.status === 'success') {
                     const merged = { ...userData, ...updates };
@@ -2469,7 +2460,7 @@
             
             fetch(API_URL, {
                 method: 'POST', headers: { 'Content-Type': 'text/plain' },
-                body: JSON.stringify({ action: 'send_email_otp', email: userData.email.trim().toLowerCase() })
+                body: JSON.stringify({ action: 'send_email_otp', email: String(userData.email).trim().toLowerCase() })
             }).then(res => res.json()).then(data => {
                 if(data.status === 'success') {
                     document.getElementById('emailStep1').style.display = 'none';
@@ -2491,7 +2482,7 @@
             
             fetch(API_URL, {
                 method: 'POST', headers: { 'Content-Type': 'text/plain' },
-                body: JSON.stringify({ action: 'verify_otp', email: userData.email.trim().toLowerCase(), otp: otpCode })
+                body: JSON.stringify({ action: 'verify_otp', email: String(userData.email).trim().toLowerCase(), otp: otpCode })
             }).then(res => res.json()).then(data => {
                 if(data.status === 'success') {
                     document.getElementById('emailStep2').style.display = 'none';
@@ -2515,7 +2506,7 @@
 
             fetch(API_URL, {
                 method: 'POST', headers: { 'Content-Type': 'text/plain' },
-                body: JSON.stringify({ action: 'update_account_email', old_email: userData.email.trim().toLowerCase(), new_email: targetNewEmail })
+                body: JSON.stringify({ action: 'update_account_email', old_email: String(userData.email).trim().toLowerCase(), new_email: targetNewEmail })
             }).then(res => res.json()).then(data => {
                 if(data.status === 'success') {
                     document.getElementById('emailStep3').style.display = 'none';
@@ -2588,7 +2579,7 @@
 
             fetch(API_URL, {
                 method: 'POST', headers: { 'Content-Type': 'text/plain' },
-                body: JSON.stringify({ action: 'change_password_with_current', email: userData.email.trim().toLowerCase(), current_pass: currentPass, new_pass: newPass })
+                body: JSON.stringify({ action: 'change_password_with_current', email: String(userData.email).trim().toLowerCase(), current_pass: currentPass, new_pass: newPass })
             }).then(res => res.json()).then(data => {
                 if(data.status === 'success') {
                     showToast("Password updated securely!");
@@ -2607,7 +2598,7 @@
             
             fetch(API_URL, {
                 method: 'POST', headers: { 'Content-Type': 'text/plain' },
-                body: JSON.stringify({ action: 'send_email_otp', email: userData.email.trim().toLowerCase() })
+                body: JSON.stringify({ action: 'send_email_otp', email: String(userData.email).trim().toLowerCase() })
             }).then(res => res.json()).then(data => {
                 if(data.status === 'success') {
                     document.getElementById('passStep1').style.display = 'none';
@@ -2629,7 +2620,7 @@
 
             fetch(API_URL, {
                 method: 'POST', headers: { 'Content-Type': 'text/plain' },
-                body: JSON.stringify({ action: 'verify_otp', email: userData.email.trim().toLowerCase(), otp: otpCode })
+                body: JSON.stringify({ action: 'verify_otp', email: String(userData.email).trim().toLowerCase(), otp: otpCode })
             }).then(res => res.json()).then(data => {
                 if(data.status === 'success') {
                     document.getElementById('passStep2').style.display = 'none';
@@ -2654,7 +2645,7 @@
 
             fetch(API_URL, {
                 method: 'POST', headers: { 'Content-Type': 'text/plain' },
-                body: JSON.stringify({ action: 'force_change_password', email: userData.email.trim().toLowerCase(), new_pass: p1 })
+                body: JSON.stringify({ action: 'force_change_password', email: String(userData.email).trim().toLowerCase(), new_pass: p1 })
             }).then(res => res.json()).then(data => {
                 if(data.status === 'success') {
                     showToast("Password updated securely!");
