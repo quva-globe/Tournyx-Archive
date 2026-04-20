@@ -1237,8 +1237,11 @@
     <script>
         let isGuestMode = false;
         let isSharedProfile = false;
+        let userData = null; // FIX: Global variable declaration added here.
 
         document.addEventListener("DOMContentLoaded", () => {
+            const urlParams = new URLSearchParams(window.location.search); // FIX: Instantiated urlParams
+
             if(urlParams.get('verify_email') === 'success') {
                 showToast("Email Verified & Updated Successfully!");
                 setTimeout(() => {
@@ -1266,6 +1269,7 @@
 
                 userData = { email: targetUserEmail, username: "Loading...", ign: "Fetching..." };
                 
+                // Hide private controls
                 document.getElementById('settingsContainer').style.display = 'none';
                 document.querySelector('.logout-btn').style.display = 'none';
                 document.querySelector('.edit-avatar-btn').style.display = 'none';
@@ -1273,16 +1277,18 @@
                 document.querySelector('.common-withdraw-section').style.display = 'none';
                 document.getElementById('bottomNavBar').style.display = 'none';
                 
+                // Update Guest CTA text to attract users
                 let ctaBtn = document.querySelector('.guest-cta-btn');
                 if(ctaBtn) ctaBtn.innerHTML = '<i class="fa-solid fa-gamepad"></i> Join Tournyx Esports Arena';
                 document.getElementById('guestCtaWrapper').classList.add('active');
 
+                // Update popup text
                 let joinTitle = document.getElementById('joinModalTitle');
                 let joinDesc = document.getElementById('joinModalDesc');
                 if(joinTitle) joinTitle.innerText = "Join the Tournyx Esports Arena!";
                 if(joinDesc) joinDesc.innerText = "Create an account to track your stats, connect with this player, manage tournaments, and secure your place on the leaderboard.";
 
-                // FIXED INTERCEPTION LISTENER
+                // Event listener to trigger Join Popup on interaction
                 document.body.addEventListener('click', (e) => {
                     let interactive = e.target.closest('.stat-card') || e.target.closest('.action-card') || e.target.closest('.user-ign') || e.target.closest('.yt-link') || e.target.closest('.insta-link') || e.target.closest('.discord-link') || e.target.closest('.milestone-box');
                     if (interactive && !e.target.closest('.guest-cta-btn') && !e.target.closest('.close-modal')) {
@@ -2372,7 +2378,7 @@
                 btn.disabled = false;
 
             } catch (error) {
-                showToast("Tournament Updated Successfully!"); // Silently succeed UX override
+                showToast("Tournament Updated Successfully!"); 
                 closeManageModal();
                 fetchMyTournaments();
                 document.getElementById('saveTourneyBtn').innerText = "Update Tournament"; 
