@@ -1936,38 +1936,31 @@
         }
 
         function cloneTournament(matchId) {
-            if(!confirm("Clone the tournament yes or no?")) return;
-            
-            let t = myHostedEvents.find(x => String(x.id) === String(matchId) || String(x.match_id) === String(matchId));
-            if(!t) return;
+        if(!confirm("Clone the tournament yes or no?")) return;
 
-            showToast("Cloning tournament...", false);
-
-            let clonedData = { ...t };
-            delete clonedData.id;
-            delete clonedData.match_id;
-            clonedData.title = clonedData.title + " (Clone)";
-            clonedData.status = "Upcoming";
-            clonedData.action = "create_tournament"; 
-            clonedData.email = userData.email.trim().toLowerCase();
-            
-            fetch(API_URL, {
-                method: 'POST',
-                headers: { 'Content-Type': 'text/plain' },
-                body: JSON.stringify(clonedData)
-            }).then(res => res.json()).then(data => {
-                if(data.status === 'success') {
-                    showToast("Tournament Cloned Successfully!");
-                    playSuccessSound();
-                    fetchMyTournaments();
-                } else {
-                    showToast("Failed to clone tournament.", true);
-                }
-            }).catch(() => {
-                showToast("Tournament Clone Sent. Check list.", false);
-                setTimeout(() => fetchMyTournaments(), 2000);
-            });
-        }
+        showToast("Cloning tournament...", false);
+        
+        // Trigger the specialized Apps Script Clone Function
+        fetch(API_URL, {
+            method: 'POST',
+            headers: { 'Content-Type': 'text/plain' },
+            body: JSON.stringify({ 
+                action: 'clone_tournament', 
+                id: matchId, 
+                email: userData.email.trim().toLowerCase() 
+            })
+        }).then(res => res.json()).then(data => {
+            if(data.status === 'success') {
+                showToast("Tournament Cloned Successfully!");
+                playSuccessSound();
+                fetchMyTournaments(); // Refresh the list automatically
+            } else {
+                showToast(data.message || "Failed to clone tournament.", true);
+            }
+        }).catch(() => {
+            showToast("Network Error.", true);
+        });
+    }
 
         function shareSpecificTournament(title) {
             let msg = `🎮 Register for the epic ${title} Esports Tournament on Tournyx now! Let's go! https://tournyx.in/explore.html`;
