@@ -61,12 +61,9 @@
 
         .top-header { position: fixed; top: 0; left: 0; width: 100%; padding: calc(12px + env(safe-area-inset-top)) 10px 12px; background: rgba(7, 3, 17, 0.85); backdrop-filter: blur(15px); border-bottom: 1px solid var(--card-border); z-index: 2000; box-shadow: 0 4px 30px rgba(0,0,0,0.5); transform: translateZ(0); }
         .header-wrapper { display: flex; align-items: center; justify-content: space-between; gap: 5px; }
-        
         .header-left { display: flex; align-items: center; gap: 8px; flex: 1; min-width: 0; }
-        .desktop-back-btn { font-size: 1.3rem; color: var(--accent-cyan); cursor: pointer; transition: 0.3s; padding-right: 5px; }
-        .desktop-back-btn:hover { transform: translateX(-3px); text-shadow: 0 0 10px var(--accent-cyan); }
-        html.theme-vip .desktop-back-btn { color: #FFD700; }
-        
+        .back-icon-btn { color: var(--accent-cyan); font-size: 1.3rem; margin-right: 8px; cursor: pointer; transition: 0.3s; }
+        .back-icon-btn:active { transform: scale(0.8); }
         .app-logo { width: 28px; height: 28px; border-radius: 50%; object-fit: contain; box-shadow: 0 0 15px var(--accent-purple); border: 1px solid rgba(255,255,255,0.2); flex-shrink: 0; }
         html.theme-vip .app-logo { box-shadow: 0 0 15px #FFD700; border-color: #FFD700;}
         .app-title { font-family: var(--font-head); font-size: 0.9rem; font-weight: 700; background: var(--accent-gradient); -webkit-background-clip: text; -webkit-text-fill-color: transparent; letter-spacing: 0px; }
@@ -213,9 +210,6 @@
         html.theme-vip .btn-secondary { border-color: #FFD700; color: #FFD700; }
         .btn-danger { width: 100%; padding: 14px; background: rgba(255,77,77,0.1); border: 1px solid var(--accent-red); border-radius: 12px; color: var(--accent-red); font-family: var(--font-head); font-weight: bold; cursor: pointer; margin-bottom: 10px; transition:0.3s; transform: translateZ(0);}
 
-        .tournament-ready-banner { background: rgba(0, 255, 127, 0.1); border: 1px solid var(--accent-green); padding: 10px; border-radius: 10px; text-align: center; color: white; font-family: var(--font-head); font-size: 0.85rem; margin-bottom: 15px; animation: slideInUp 0.4s ease-out; }
-        .priority-recruit-banner { background: rgba(255, 77, 77, 0.1); border: 1px solid var(--accent-red); padding: 10px; border-radius: 10px; text-align: center; color: white; font-family: var(--font-head); font-size: 0.85rem; margin-bottom: 15px; animation: slideInUp 0.4s ease-out; }
-
         /* UPGRADED FIND TAB CARDS WITH ANIMATIONS */
         @keyframes slideInStagger {
             from { opacity: 0; transform: translateY(30px) scale(0.95); }
@@ -223,7 +217,9 @@
         }
         .search-card { background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 15px; margin: 0 auto 15px auto; width: 100%; max-width: 100%; overflow: hidden; transition:0.3s; display: flex; flex-direction: column; animation: slideInStagger 0.4s ease-out backwards; transform: translateZ(0); position: relative;}
         .search-card:hover { border-color: var(--accent-cyan); transform: translateY(-4px); box-shadow: 0 8px 25px rgba(0,242,255,0.2);}
-        html.theme-vip .search-card:hover { border-color: #FFD700; box-shadow: 0 8px 25px rgba(255,215,0,0.2);}
+        
+        .theme-vip-card { background: linear-gradient(135deg, rgba(212,175,55,0.1), rgba(0,0,0,0.8)); border: 1px solid rgba(212,175,55,0.5) !important; box-shadow: 0 10px 30px rgba(212,175,55,0.2) !important; backdrop-filter: blur(10px); }
+        .theme-vip-card:hover { border-color: #FFD700 !important; box-shadow: 0 15px 40px rgba(255,215,0,0.3) !important; transform: translateY(-4px); }
         
         .pulse-recruiting { position: absolute; top: 10px; right: 10px; background: rgba(0, 242, 255, 0.2); color: var(--accent-cyan); border: 1px solid var(--accent-cyan); padding: 4px 8px; font-size: 0.65rem; font-family: var(--font-head); font-weight: bold; border-radius: 6px; animation: priorityPulse 1.5s infinite; z-index: 5; backdrop-filter: blur(5px); }
         @keyframes priorityPulse { 0% { box-shadow: 0 0 0 0 rgba(0, 242, 255, 0.4); transform: scale(1); } 50% { box-shadow: 0 0 10px 5px rgba(0, 242, 255, 0); transform: scale(1.05); } 100% { box-shadow: 0 0 0 0 rgba(0, 242, 255, 0); transform: scale(1); } }
@@ -231,7 +227,7 @@
         .sc-banner { width: 100%; height: 95px; object-fit: cover; border-bottom: 1px solid rgba(255,255,255,0.05); opacity: 0.8; }
         .sc-body { padding: 15px; display: flex; align-items: center; gap: 15px; }
         .sc-img { width: 60px; height: 60px; border-radius: 12px; object-fit: cover; background: var(--accent-purple); border: 2px solid var(--accent-cyan); flex-shrink: 0; margin-top: -35px; z-index: 2; box-shadow: 0 5px 15px rgba(0,0,0,0.5);}
-        html.theme-vip .sc-img { border-color: #FFD700; }
+        .theme-vip-card .sc-img { border-color: #FFD700; }
         .sc-info { flex: 1; min-width: 0; display: flex; flex-direction: column; justify-content: center;}
         
         .sc-name-wrapper { display:flex; align-items:center; gap:8px; margin-bottom: 4px; flex-wrap: wrap; }
@@ -292,6 +288,9 @@
 
         @media (min-width: 850px) { .bottom-nav { display: none !important; } body { padding-bottom: 0; } }
         .median-active .top-header { display: none !important; } .median-active { padding-top: 15px !important; }
+
+        .tournament-ready-banner { background: rgba(0, 255, 127, 0.1); border: 1px solid var(--accent-green); padding: 10px; border-radius: 10px; text-align: center; color: white; font-family: var(--font-head); font-size: 0.85rem; margin-bottom: 15px; animation: slideInUp 0.4s ease-out; }
+        .priority-recruit-banner { background: rgba(255, 77, 77, 0.1); border: 1px solid var(--accent-red); padding: 10px; border-radius: 10px; text-align: center; color: white; font-family: var(--font-head); font-size: 0.85rem; margin-bottom: 15px; animation: slideInUp 0.4s ease-out; }
     </style>
 </head>
 <body>
@@ -300,7 +299,7 @@
     <header class="top-header">
         <div class="header-wrapper">
             <div class="header-left">
-                <i class="fa-solid fa-arrow-left desktop-back-btn" onclick="window.history.back(); triggerHaptic();" title="Go Back"></i>
+                <i class="fa-solid fa-arrow-left back-icon-btn" onclick="window.history.back(); triggerHaptic();" title="Go Back"></i>
                 <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEg_20wCR-WBMpQmw3vxcYUf-vxIO1PYDJoQN_Sid3UDjA9tf0cuX0eH40jbzHoJad4cxbnjhPjqfCw1Z5V1LhgN9zFuIQC0fJjecTy3D9PFu5WjR2H1wHwTD1bUGnXY_NiApWn5gMs6velcQngSzKoP1yHzX0cVsFSUFM8zIefcbiPayY7680Kz0V0ZAAE/s1264/1000093706.png" class="app-logo" alt="Logo">
                 <div class="app-title">CLAN HUB</div>
             </div>
@@ -560,7 +559,7 @@
     </div>
 
     <div class="modal-overlay" id="publicClanModal">
-        <div class="modal-box" id="publicClanModalBox" style="padding:0; overflow:hidden; width:95%; max-width:500px; max-height:85vh; display:flex; flex-direction:column; border: 1px solid var(--accent-cyan); transition: 0.4s;">
+        <div class="modal-box" style="padding:0; overflow:hidden; width:95%; max-width:500px; max-height:85vh; display:flex; flex-direction:column; border: 1px solid var(--accent-cyan);">
             <div style="position:relative;">
                 <img src="" id="pubClanBanner" style="width:100%; height:140px; object-fit:cover; opacity:0.8;">
                 <i class="fa-solid fa-xmark modal-close" style="position:absolute; top:15px; right:15px; background:rgba(0,0,0,0.5); width:30px; height:30px; border-radius:50%; display:flex; align-items:center; justify-content:center; color:white; z-index:10;" onclick="document.getElementById('publicClanModal').classList.remove('active')"></i>
@@ -570,11 +569,11 @@
             </div>
             <div style="padding: 40px 20px 20px 20px; flex:1; overflow-y:auto;">
                 <div style="display:flex; justify-content:space-between; align-items:flex-start;">
-                    <div style="flex:1; min-width:0; padding-right:10px;">
-                        <div style="font-family:var(--font-head); font-size:clamp(1.1rem, 5vw, 1.4rem); color:white; font-weight:bold; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden;" id="pubClanName">Clan Name</div>
+                    <div style="flex:1; min-width:0;">
+                        <div style="font-family:var(--font-head); font-size:1.4rem; color:white; font-weight:bold; display:flex; align-items:center; gap:8px; line-height:1.2;" id="pubClanName">Clan Name</div>
                         <div style="color:var(--accent-cyan); font-weight:bold; font-size:0.85rem; margin-top:3px;" id="pubClanTag">#TAG</div>
                     </div>
-                    <div id="pubClanLevel" style="text-align:right; color:#FFD700; font-family:var(--font-head); font-weight:bold; font-size:1.1rem; flex-shrink:0;"><i class="fa-solid fa-fire"></i> Lvl X</div>
+                    <div id="pubClanLevel" style="text-align:right; color:#FFD700; font-family:var(--font-head); font-weight:bold; font-size:1.1rem; flex-shrink:0; margin-left:10px;"><i class="fa-solid fa-fire"></i> Lvl X</div>
                 </div>
                 <div style="color:#aaa; font-size:0.9rem; font-style:italic; margin-top:15px; border-left:3px solid var(--accent-purple); padding-left:10px;" id="pubClanMotto">Motto</div>
                 
@@ -656,7 +655,7 @@
             
             <label class="form-label">Manual Add by Email or UID</label>
             <div style="display:flex; gap:10px; margin-bottom:20px;">
-                <input type="text" id="manualInviteInp" class="form-control" placeholder="Player's email or game UID..." style="margin:0;">
+                <input type="text" id="manualInviteInp" class="form-control" placeholder="Player's email, username, or game UID..." style="margin:0;">
                 <button type="button" class="btn-primary" id="btnManualInvite" style="width:auto; margin:0; padding:0 15px; border-radius:8px;" onclick="sendManualInvite()"><i class="fa-solid fa-paper-plane"></i></button>
             </div>
             <div id="manualInviteStatus" style="font-size:0.8rem; margin-top:-10px; margin-bottom:15px; text-align:center;"></div>
@@ -827,14 +826,15 @@
                 showNoClan();
             }
 
-            // APP DEEP LINKING LOGIC FOR INVITES
-            let inviteCode = new URLSearchParams(window.location.search).get('invite');
-            if (inviteCode) {
-                let checkInterval = setInterval(() => {
+            // --- DEEP LINK LOGIC ON LOAD ---
+            let urlParams = new URLSearchParams(window.location.search);
+            let inviteId = urlParams.get('invite');
+            if (inviteId) {
+                let waitLoad = setInterval(() => {
                     if (globalClans.length > 0) {
-                        clearInterval(checkInterval);
+                        clearInterval(waitLoad);
                         switchTab('searchClanTab', document.querySelectorAll('.tab')[1]);
-                        openPublicClanModal(inviteCode);
+                        openPublicClanModal(inviteId);
                     }
                 }, 500);
             }
@@ -1187,6 +1187,8 @@
             let premiumEmblem = document.getElementById('dashPremiumEmblem');
             if (clan.isPremiumClan) {
                 premiumEmblem.style.display = 'inline-block';
+                let claimBtn = document.getElementById('btnClaimVip');
+                if(claimBtn) claimBtn.style.display = 'none';
             } else {
                 premiumEmblem.style.display = 'none';
             }
@@ -1218,9 +1220,9 @@
             
             // PRIORITY RECRUITING / TOURNAMENT READY WARNINGS
             let rWarningHtml = "";
-            if (clan.roster.length < 4) {
-                rWarningHtml = `<div class="priority-recruit-banner"><i class="fa-solid fa-fire"></i> <b>RECRUITING PRIORITY:</b> Need at least 4 players to join tournaments!</div>`;
-            } else if (clan.roster.length >= 4) {
+            if (clan.roster.length < 5) {
+                rWarningHtml = `<div class="priority-recruit-banner"><i class="fa-solid fa-fire"></i> <b>HIGH PRIORITY RECRUITMENT:</b> Need at least 5 players to register for tournaments!</div>`;
+            } else if (clan.roster.length >= 5) {
                 rWarningHtml = `<div class="tournament-ready-banner"><i class="fa-solid fa-check-circle"></i> <b>TOURNAMENT READY:</b> You have enough players to register in the Explore tab!</div>`;
             }
             document.getElementById('rosterWarningBannerArea').innerHTML = rWarningHtml;
@@ -1241,9 +1243,6 @@
             document.querySelectorAll('.edit-admin').forEach(el => el.style.display = isAdmin ? '' : 'none');
             document.querySelectorAll('.edit-owner').forEach(el => el.style.display = isOwner ? 'block' : 'none');
             document.querySelectorAll('.edit-player-only').forEach(el => el.style.display = isOwner ? 'none' : 'block');
-            
-            let claimVipBtn = document.getElementById('btnClaimVip');
-            if(claimVipBtn) claimVipBtn.style.display = clan.isPremiumClan ? 'none' : 'inline-block';
             
             let inviteBtn = document.getElementById('btnInviteLink');
             if (inviteBtn) inviteBtn.style.display = (isAdmin && !isFull) ? 'inline-block' : 'none';
@@ -1625,11 +1624,19 @@
             }
         }
         
+        // --- NEW FEATURE: NATIVE & MEDIAN UNIVERSAL DEEP LINK SHARING ---
         function nativeShare() {
             triggerHaptic();
-            const msg = `Join my ${activeClan.game} Clan [${activeClan.name}] on Tournyx! Clan ID: ${activeClan.clanId}`;
-            if(navigator.share) { navigator.share({ title: 'Tournyx Clan', text: msg }).catch(e=>console.log(e)); } 
-            else { navigator.clipboard.writeText(msg).then(()=>showToast("Invite text copied!")); }
+            let inviteUrl = window.location.origin + window.location.pathname + "?invite=" + activeClan.clanId;
+            const msg = `Join my ${activeClan.game} Clan [${activeClan.name}] on Tournyx! Clan ID: ${activeClan.clanId} \n\nClick to join: ${inviteUrl}`;
+            
+            if (typeof median !== 'undefined' && median.share) {
+                median.share({url: inviteUrl, text: msg});
+            } else if (navigator.share) { 
+                navigator.share({ title: 'Tournyx Clan Invite', text: msg }).catch(e=>console.log(e)); 
+            } else { 
+                navigator.clipboard.writeText(msg).then(()=>showToast("Invite text copied!")); 
+            }
         }
         
         function copyClanId() { triggerHaptic(); navigator.clipboard.writeText(activeClan.clanId).then(()=>showToast("Clan ID Copied!")); }
@@ -1643,13 +1650,19 @@
             document.getElementById('manualInviteStatus').innerHTML = "";
             document.getElementById('inviteLinkModal').classList.add('active');
         }
-        function copyInviteLink() { triggerHaptic(); navigator.clipboard.writeText(document.getElementById('inviteLinkInp').value); showToast("Invite link copied!"); document.getElementById('inviteLinkModal').classList.remove('active'); }
+        
+        function copyInviteLink() { 
+            triggerHaptic(); 
+            navigator.clipboard.writeText(document.getElementById('inviteLinkInp').value); 
+            showToast("Invite link copied!"); 
+            document.getElementById('inviteLinkModal').classList.remove('active'); 
+        }
 
         // --- NEW FEATURE: MANUAL INVITE FETCH BY EMAIL OR UID ---
         function sendManualInvite() {
             triggerHaptic();
             let inp = document.getElementById('manualInviteInp').value.trim();
-            if(!inp) { showToast("Enter an email or UID.", true); return; }
+            if(!inp) { showToast("Enter an email, username, or UID.", true); return; }
             
             let statusEl = document.getElementById('manualInviteStatus');
             statusEl.innerHTML = `<i class="fa-solid fa-spinner fa-spin" style="color:var(--accent-cyan);"></i> Searching registry...`;
@@ -1924,15 +1937,6 @@
 
             document.getElementById('pubClanActionBtn').innerHTML = btnActionHtml;
 
-            let modalBox = document.getElementById('publicClanModalBox');
-            if (c.isPremiumClan) {
-                modalBox.style.boxShadow = "0 10px 40px rgba(255,215,0,0.4)";
-                modalBox.style.borderColor = "#FFD700";
-            } else {
-                modalBox.style.boxShadow = "0 10px 40px rgba(0,0,0,0.8)";
-                modalBox.style.borderColor = "var(--accent-cyan)";
-            }
-
             document.getElementById('publicClanModal').classList.add('active');
         }
 
@@ -1970,8 +1974,16 @@
                 // Animated Card glows based on level
                 let cardGlowCSS = "";
                 let lvlColor = "var(--accent-purple)";
-                if (lvlData.level >= 5) { cardGlowCSS = "border-color: rgba(255,215,0,0.5); box-shadow: 0 0 15px rgba(255,215,0,0.1);"; lvlColor = "#FFD700"; }
-                else if (lvlData.level >= 3) { cardGlowCSS = "border-color: rgba(0,242,255,0.4);"; lvlColor = "var(--accent-cyan)"; }
+                let vipClass = "";
+                if (c.isPremiumClan) {
+                    vipClass = "theme-vip-card";
+                    lvlColor = "#FFD700";
+                } else if (lvlData.level >= 5) { 
+                    cardGlowCSS = "border-color: rgba(255,215,0,0.5); box-shadow: 0 0 15px rgba(255,215,0,0.1);"; lvlColor = "#FFD700"; 
+                }
+                else if (lvlData.level >= 3) { 
+                    cardGlowCSS = "border-color: rgba(0,242,255,0.4);"; lvlColor = "var(--accent-cyan)"; 
+                }
                 
                 let isRequested = reqListCache.includes(c.clanId);
                 let btnHtml = isRequested ? 
@@ -1980,10 +1992,7 @@
                     
                 let premiumBadge = c.isPremiumClan ? `<span class="clan-premium-emblem" style="font-size:1.3rem; position:absolute; top:-10px; right:-10px; z-index:3;"><i class="fa-solid fa-crown"></i></span>` : '';
                 
-                // High Priority Pulse for small clans
-                let pulseBadge = rCount < 4 ? `<div class="pulse-recruiting">🔥 HIGH PRIORITY</div>` : "";
-
-                // Find Tab Missing Roles detection logic
+                // Find Tab Missing Roles detection logic (ATTRACTIVE DISPLAY)
                 let hasIGL = c.roster && c.roster.some(r => r.pos === 'IGL' || r.pos === 'Sub - IGL');
                 let hasSupp = c.roster && c.roster.some(r => r.pos === 'Support' || r.pos === 'Sub - Support');
                 let missingRoles = [];
@@ -1992,18 +2001,13 @@
                 
                 let missingHtml = "";
                 if(rCount < 6 && missingRoles.length > 0) {
-                    missingHtml = `<div style="display:flex; gap:5px; margin-top:5px; flex-wrap:wrap;">`;
-                    missingRoles.forEach(r => {
-                        missingHtml += `<span style="font-size:0.65rem; background:rgba(255,153,0,0.15); border:1px solid var(--accent-orange); color:var(--accent-orange); padding:2px 8px; border-radius:12px; font-family:var(--font-head); font-weight:bold;">WANTED: ${r.toUpperCase()}</span>`;
-                    });
-                    missingHtml += `</div>`;
+                    missingHtml = `<div style="font-size:0.7rem; color:#fff; margin-top:6px; font-weight:bold; background:rgba(0,0,0,0.4); padding:4px 8px; border-radius:6px; display:inline-block; border: 1px solid var(--accent-purple);">🎯 WANTED: <span style="color:var(--accent-cyan);">${missingRoles.join(', ')}</span></div>`;
                 }
 
                 let animDelay = (index * 0.1) + "s";
 
                 html += `
-                <div class="search-card" style="padding:0; flex-direction:column; align-items:stretch; animation-delay: ${animDelay}; cursor:pointer; ${cardGlowCSS}" onclick="openPublicClanModal('${c.clanId}')">
-                    ${pulseBadge}
+                <div class="search-card ${vipClass}" style="padding:0; flex-direction:column; align-items:stretch; animation-delay: ${animDelay}; cursor:pointer; ${cardGlowCSS}" onclick="openPublicClanModal('${c.clanId}')">
                     <img src="${safeBanner}" class="sc-banner">
                     <div class="sc-body" style="position:relative;">
                         <div style="position:relative;">
