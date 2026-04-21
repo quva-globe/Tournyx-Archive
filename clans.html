@@ -852,16 +852,23 @@
             let payload = { action: "handle_join_request", clan_id: cId, player_data: {name: user.username}, is_accept: false, is_auto: false, is_decline_invite: true };
             fetch(API_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify(payload) });
 
-            if(btnEl) {
-                let card = btnEl.closest('.search-card');
-                let cName = card ? card.querySelector('.sc-name').innerText.replace(/'/g, "\\'") : "";
-                let cGame = card ? card.querySelector('.fa-gamepad').nextSibling.textContent.trim() : "Esports";
-                btnEl.outerHTML = `<button class="s-btn acc" onclick="event.stopPropagation(); triggerJoinFlow('${cId}', '${cName}', '${cGame}', false, this)">JOIN</button>`;
-            }
+            // INSTANTLY UPDATE ALL BUTTONS FOR THIS CLAN ID IN THE DOM
+            document.querySelectorAll(`button[onclick*="${cId}"]`).forEach(btn => {
+                if (btn.innerText.includes("REQUESTED")) {
+                    let card = btn.closest('.search-card');
+                    let cName = card ? card.querySelector('.sc-name').innerText.replace(/'/g, "\\'") : "";
+                    let cGame = card ? card.querySelector('.fa-gamepad').nextSibling.textContent.trim() : "Esports";
+                    btn.outerHTML = `<button class="s-btn acc" onclick="event.stopPropagation(); triggerJoinFlow('${cId}', '${cName}', '${cGame}', false, this)">JOIN</button>`;
+                }
+            });
             
+            // Remove from RAM memory array to keep sync
             let gIndex = globalClans.findIndex(c => c.clanId === cId);
             if(gIndex !== -1 && globalClans[gIndex].requests) {
-                globalClans[gIndex].requests = globalClans[gIndex].requests.filter(r => r.name !== user.username);
+                globalClans[gIndex].requests = globalClans[gIndex].requests.filter(r => {
+                    let nm = typeof r === 'string' ? r : r.name;
+                    return nm !== user.username;
+                });
             }
             showToast("Request Cancelled");
         }
@@ -1862,7 +1869,7 @@
             if(c.rejectedList && c.rejectedList.some(x => x.name === user.username)) isRejected = true;
             if(c.rejected && c.rejected.includes(user.username)) isRejected = true;
 
-            // Direct Cloud Array sync check
+            // Strict Cloud Sync state
             let isRequested = c.requests && c.requests.some(r => r.name === user.username);
             
             let btnActionHtml = "";
@@ -1921,7 +1928,6 @@
                 if (c.rejectedList && c.rejectedList.some(r => r.name === user.username)) isRejected = true;
                 if (c.rejected && c.rejected.includes(user.username)) isRejected = true;
 
-                // Live cloud array check
                 let isRequested = c.requests && c.requests.some(r => r.name === user.username);
                 
                 let btnHtml = "";
@@ -1999,32 +2005,23 @@
             triggerHaptic();
             
             // STRICT PAYLOAD PARSING FIX - Extracted perfectly to prevent backend dropping fields
-            let phone = user.phone || "Not Set"; 
-            let ign = user.gameName || user.ign || user.username || "Not Set"; 
-            let uid = user.uid || user.gameUid || "Not Set";
+            let phone = user.phone || user.mobile || "Not Set"; 
+            let ign = user.gameName || user.ign || user.inGameName || user.username || "Not Set"; 
+            let uid = user.uid || user.gameUid || user.playerId || "Not Set";
             let playerObj = { name: user.username, role: "Player", phone: phone, gameName: ign, uid: uid, state: user.state || "N/A", city: user.city || "N/A" };
             
             document.getElementById('btnFinalJoin').innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Processing...`; document.getElementById('btnFinalJoin').disabled = true;
 
             let payload;
-            
             if (pendingJoinData.isAuto) {
                 payload = { 
-                    action: "handle_join_request", 
-                    clan_id: pendingJoinData.newClanId, 
-                    player_data: playerObj, 
-                    is_accept: true, 
-                    is_auto: true, 
-                    email: user.email,
-                    target_username: user.username
+                    action: "handle_join_request", clan_id: pendingJoinData.newClanId, player_data: playerObj, 
+                    is_accept: true, is_auto: true, email: user.email, target_username: user.username
                 };
             } else {
                 payload = { 
-                    action: "send_request", 
-                    clan_id: pendingJoinData.newClanId, 
-                    player_data: playerObj, 
-                    username: user.username,
-                    email: user.email
+                    action: "send_request", clan_id: pendingJoinData.newClanId, player_data: playerObj, 
+                    username: user.username, email: user.email
                 };
             }
 
@@ -2032,7 +2029,11 @@
             
             // INSTANT UI UPDATE WITHOUT LOCAL STORAGE
             if (pendingJoinData.btnRef && !pendingJoinData.isAuto) {
-                pendingJoinData.btnRef.outerHTML = `<button class="s-btn req" onclick="cancelJoinRequest('${pendingJoinData.newClanId}', this, event)">REQUESTED</button>`;
+                document.querySelectorAll(`button[onclick*="${pendingJoinData.newClanId}"]`).forEach(btn => {
+                    if (btn.innerText.includes("JOIN") || btn.innerText.includes("RE-APPLY")) {
+                        btn.outerHTML = `<button class="s-btn req" onclick="event.stopPropagation(); cancelJoinRequest('${pendingJoinData.newClanId}', this, event)">REQUESTED</button>`;
+                    }
+                });
                 
                 let gIndex = globalClans.findIndex(c => c.clanId === pendingJoinData.newClanId);
                 if (gIndex !== -1) {
@@ -2099,6 +2100,7 @@
             totalBadgeCount += reqs.length;
 
             let rejectionsHtml = "";
+            let dismissed = window.dismissedRejects || [];
             
             globalClans.forEach(c => {
                 let freshRej = filterLast7Days(c.rejectedList || []);
@@ -2124,7 +2126,7 @@
             if(isAdminInAny) {
                 document.getElementById('adminRequestsZone').style.display = 'block';
                 let html = "";
-                if(reqs.length === 0) { html = "<div style='text-align:center; color:#666; font-style:italic;'>No pending join requests.</div>"; } 
+                if(reqs.length === 0) { html = "<div style='text-align:center; color:#666; font-style:italic; padding:20px;'>No pending join requests.</div>"; } 
                 else {
                     reqs.forEach(reqObj => {
                         let rName = typeof reqObj.reqData === 'string' ? reqObj.reqData : reqObj.reqData.name;
@@ -2190,48 +2192,27 @@
 
         function handleReq(encData, isAccept, cId, btnElement) {
             triggerHaptic();
-            let reqData = JSON.parse(decodeURIComponent(encData));
             
             let reason = "";
             if(!isAccept) {
                 reason = prompt("Why are you rejecting this player?", "Roster is full / Requirements not met");
-                if (reason === null) return;
+                if (reason === null) return; // User cancelled
             }
 
-            let payload = { 
-                action: "handle_join_request", clan_id: cId, player_data: reqData, 
-                is_accept: isAccept, is_auto: false, reject_reason: reason
-            };
-            fetch(API_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify(payload) });
-
-            let targetClan = userLiveClans.find(c => c.clanId === cId);
-            if(targetClan) {
-                targetClan.requests = targetClan.requests.filter(r => r.name !== reqData.name);
-                if(isAccept) {
-                    targetClan.roster.push({ name: reqData.name, role: 'Player', phone: reqData.phone||"", gameName: reqData.gameName||"", uid: reqData.uid||"" });
-                    if(!targetClan.notifications) targetClan.notifications = [];
-                    targetClan.notifications.push({ msg: `<b style='color:var(--accent-green)'>${reqData.name}</b> joined the clan!` });
-                } else {
-                    if(!targetClan.notifications) targetClan.notifications = [];
-                    targetClan.notifications.push({ msg: `Rejected join request from <b style='color:var(--accent-red)'>${reqData.name}</b>.` });
-                }
-                pushUpdateToLive('FULL_UPDATE', targetClan); 
-            }
-
-            // INBOX AUTO-DISSOLVE ANIMATION FIX
+            // 1. INSTANT DOM CLEANUP FIX
             if (btnElement) {
                 let card = btnElement.closest('.search-card');
                 if (card) {
-                    card.style.transition = '0.4s ease-out';
+                    card.style.transition = '0.3s ease-out';
                     card.style.transform = 'translateX(100%)';
                     card.style.opacity = '0';
                     setTimeout(() => {
                         card.remove();
                         let list = document.getElementById('requestsList');
                         if (list && list.children.length === 0) {
-                            list.innerHTML = "<div style='text-align:center; color:#666; font-style:italic;'>No pending join requests.</div>";
+                            list.innerHTML = "<div style='text-align:center; color:#666; font-style:italic; padding:20px;'>No pending join requests.</div>";
                         }
-                    }, 400);
+                    }, 300);
                 }
             }
             
@@ -2239,7 +2220,44 @@
             let currentCount = parseInt(badge.innerText);
             if(currentCount > 0) badge.innerText = currentCount - 1;
 
-            showToast(isAccept ? `${reqData.name} joined!` : "Request rejected.");
+            try {
+                let reqData = JSON.parse(decodeURIComponent(encData));
+                
+                // Fallback safeguards to prevent backend from saving missing fields
+                if (!reqData.gameName) reqData.gameName = reqData.ign || reqData.name || "Not Set";
+                if (!reqData.uid) reqData.uid = reqData.playerId || "Not Set";
+                if (!reqData.phone) reqData.phone = "Not Set";
+                if (!reqData.role) reqData.role = "Player";
+
+                let payload = { 
+                    action: "handle_join_request", clan_id: cId, player_data: reqData, 
+                    is_accept: isAccept, is_auto: false, reject_reason: reason
+                };
+                fetch(API_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify(payload) });
+
+                let targetClan = userLiveClans.find(c => c.clanId === cId);
+                if(targetClan) {
+                    // Safe filter regardless of string/object state
+                    targetClan.requests = targetClan.requests.filter(r => {
+                        let nm = typeof r === 'string' ? r : r.name;
+                        return nm !== reqData.name;
+                    });
+
+                    if(isAccept) {
+                        targetClan.roster.push({ name: reqData.name, role: reqData.role, phone: reqData.phone, gameName: reqData.gameName, uid: reqData.uid });
+                        if(!targetClan.notifications) targetClan.notifications = [];
+                        targetClan.notifications.push({ msg: `<b style='color:var(--accent-green)'>${reqData.name}</b> joined the clan!` });
+                    } else {
+                        if(!targetClan.notifications) targetClan.notifications = [];
+                        targetClan.notifications.push({ msg: `Rejected join request from <b style='color:var(--accent-red)'>${reqData.name}</b>.` });
+                    }
+                    pushUpdateToLive('FULL_UPDATE', targetClan); 
+                }
+
+                showToast(isAccept ? `${reqData.name} joined!` : "Request rejected.");
+            } catch(e) {
+                console.error("Error processing request", e);
+            }
         }
     </script>
     <div id="nativeAppPrompt" style="display: none; position: fixed; top: calc(15px + env(safe-area-inset-top)); left: 50%; transform: translateX(-50%); width: 95%; max-width: 500px; background: rgba(10, 5, 20, 0.95); border: 1px solid var(--accent-cyan); border-radius: 16px; padding: 10px 15px; z-index: 9999; backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px); box-shadow: 0 15px 35px rgba(0,0,0,0.8), 0 0 20px rgba(0, 242, 255, 0.2); align-items: center; justify-content: space-between; animation: slideDownAppPrompt 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);">
