@@ -41,11 +41,12 @@
             --accent-gradient: linear-gradient(90deg, #7b2cbf, #bd00ff, #00f2ff);
             --font-head: 'Orbitron', sans-serif; --font-body: 'Rajdhani', sans-serif;
             --glass-blur: blur(15px);
+            --gold-gradient: linear-gradient(135deg, #FFE87C 0%, #D4AF37 50%, #FF8C00 100%);
         }
         
         html.theme-vip {
             --accent-cyan: #FFD700; --accent-purple: #FFA500;
-            --accent-gradient: linear-gradient(135deg, #FFE87C, #D4AF37, #FF8C00);
+            --accent-gradient: var(--gold-gradient);
             --card-border: rgba(212, 175, 55, 0.3);
         }
         
@@ -125,30 +126,45 @@
         .hc-game { font-size: 0.75rem; color: var(--accent-orange); font-weight: bold; background: rgba(255,153,0,0.1); padding: 3px 8px; border-radius: 6px; display: inline-block; margin-top: 5px; white-space: nowrap; border: 1px solid rgba(255,153,0,0.3);}
 
         .clan-hero { position: relative; border-radius: 20px; overflow: hidden; margin-bottom: 20px; border: 1px solid var(--card-border); background: var(--card-bg); backdrop-filter: var(--glass-blur); -webkit-backdrop-filter: var(--glass-blur); box-shadow: 0 10px 30px rgba(0,0,0,0.4); transition: 0.5s; transform: translateZ(0); }
-        .clan-hero.vip-glow { box-shadow: 0 0 40px rgba(255, 215, 0, 0.4); border-color: rgba(255, 215, 0, 0.8); animation: goldHeroPulse 3s infinite alternate;}
-        @keyframes goldHeroPulse { from { box-shadow: 0 0 20px rgba(255, 215, 0, 0.2); } to { box-shadow: 0 0 50px rgba(255, 215, 0, 0.5); } }
+        
+        /* 🔥 UPGRADE: VIP EXTREME GLOW CSS */
+        .clan-hero.vip-glow { 
+            box-shadow: 0 0 50px rgba(255, 215, 0, 0.4), inset 0 0 30px rgba(255, 215, 0, 0.1); 
+            border: 2px solid #FFD700; 
+            animation: breatheGold 3s infinite alternate; 
+        }
+        @keyframes breatheGold { 
+            0% { box-shadow: 0 0 30px rgba(255, 215, 0, 0.3), inset 0 0 20px rgba(255, 215, 0, 0.1); } 
+            100% { box-shadow: 0 0 60px rgba(255, 215, 0, 0.6), inset 0 0 40px rgba(255, 215, 0, 0.2); border-color: #FFF5B0; } 
+        }
+
         .c-banner { width: 100%; height: 160px; object-fit: cover; opacity: 0.7; background: #000; transition: 0.4s; }
         .edit-banner-btn { position: absolute; top: 10px; right: 10px; background: rgba(0,0,0,0.7); color: white; width: 35px; height: 35px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; border: 1px solid var(--accent-cyan); z-index: 2; backdrop-filter: blur(5px); transition:0.3s;}
         .edit-banner-btn:hover { background:var(--accent-cyan); color:black; }
         
         .c-profile-area { padding: 0 20px 20px; margin-top: -55px; z-index: 2; position: relative; display: flex; flex-direction: column; align-items: center; text-align: center; }
         .c-logo-wrapper { position: relative; }
-        .c-logo { width: 110px; height: 110px; border-radius: 25px; border: 4px solid var(--primary-bg); background: var(--accent-purple); box-shadow: 0 5px 20px rgba(0,0,0,0.6); object-fit: cover; position: relative;}
+        .c-logo { width: 110px; height: 110px; border-radius: 25px; border: 4px solid var(--primary-bg); background: var(--accent-purple); box-shadow: 0 5px 20px rgba(0,0,0,0.6); object-fit: cover; position: relative; transition: 0.3s;}
+        .vip-glow .c-logo { border-color: #FFD700; box-shadow: 0 0 25px rgba(255,215,0,0.6); }
+
         .edit-logo-btn { position: absolute; bottom: -5px; right: -5px; background: var(--accent-cyan); color: #000; width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; border: 2px solid var(--primary-bg); transition:0.3s;}
         .edit-logo-btn:hover { transform:scale(1.1); }
         
         .c-name { font-family: var(--font-head); font-size: 1.6rem; color: white; margin-top: 10px; text-shadow: 0 0 10px rgba(255,255,255,0.2); display: flex; align-items: center; justify-content: center; gap: 8px; flex-wrap: wrap; width: 100%; }
         
-        .clan-premium-emblem { position: absolute; bottom: -8px; right: -8px; background: linear-gradient(135deg, #FFE87C, #D4AF37); color: #000; font-size: 1.1rem; width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center; border: 3px solid var(--primary-bg); box-shadow: 0 0 15px rgba(255,215,0,0.8); z-index: 5; animation: emblemShine 3s infinite; }
-        .clan-premium-emblem-small { background: linear-gradient(135deg, #FFE87C, #D4AF37); color: #000; font-size: 0.65rem; padding: 2px 6px; border-radius: 10px; display: inline-flex; align-items: center; gap: 3px; border: 1px solid #000; box-shadow: 0 0 10px rgba(255,215,0,0.8); font-family: var(--font-head); font-weight: 900;}
-        @keyframes emblemShine { 0% { box-shadow: 0 0 10px rgba(255,215,0,0.6); transform: scale(1); } 50% { box-shadow: 0 0 25px rgba(255,215,0,1); transform: scale(1.05); } 100% { box-shadow: 0 0 10px rgba(255,215,0,0.6); transform: scale(1); } }
+        .clan-premium-emblem { position: absolute; bottom: -10px; left: -10px; background: var(--gold-gradient); color: #000; font-size: 1.3rem; width: 42px; height: 42px; border-radius: 50%; display: flex; align-items: center; justify-content: center; border: 3px solid var(--primary-bg); box-shadow: 0 0 25px rgba(255,215,0,1); z-index: 5; animation: emblemShine 2s infinite; }
+        .clan-premium-emblem-small { background: var(--gold-gradient); color: #000; font-size: 0.65rem; padding: 2px 6px; border-radius: 10px; display: inline-flex; align-items: center; gap: 3px; border: 1px solid #000; box-shadow: 0 0 10px rgba(255,215,0,0.8); font-family: var(--font-head); font-weight: 900;}
+        @keyframes emblemShine { 0% { box-shadow: 0 0 15px rgba(255,215,0,0.6); transform: scale(1); } 50% { box-shadow: 0 0 35px rgba(255,215,0,1); transform: scale(1.1); } 100% { box-shadow: 0 0 15px rgba(255,215,0,0.6); transform: scale(1); } }
         
         .verified-badge { color: #1da1f2; font-size: 1.1rem; flex-shrink: 0; }
-        .c-tag { font-size: 0.9rem; color: var(--accent-cyan); font-weight: bold; margin-bottom: 5px; letter-spacing: 1px; display:flex; gap:8px; align-items:center; justify-content:center; flex-wrap: wrap;}
-        html.theme-vip .c-tag { color: #FFD700; }
-        .c-motto { font-size: 0.85rem; color: #aaa; font-style: italic; margin-bottom: 15px; cursor: pointer; word-break: break-word; max-width: 90%; }
+        .vip-glow .verified-badge { color: #FFD700; text-shadow: 0 0 10px rgba(255,215,0,0.8); }
 
-        .level-container { width: 100%; max-width: 400px; margin: 10px auto; background: rgba(0,0,0,0.5); padding: 10px 15px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.05); }
+        .c-tag { font-size: 0.9rem; color: var(--accent-cyan); font-weight: bold; margin-bottom: 5px; letter-spacing: 1px; display:flex; gap:8px; align-items:center; justify-content:center; flex-wrap: wrap;}
+        html.theme-vip .c-tag, .vip-glow .c-tag { color: #FFD700; }
+        .c-motto { font-size: 0.85rem; color: #aaa; font-style: italic; margin-bottom: 15px; cursor: pointer; word-break: break-word; max-width: 90%; transition: 0.3s; }
+        .c-motto:hover { color: white; }
+
+        .level-container { width: 100%; max-width: 400px; margin: 10px auto; background: rgba(0,0,0,0.5); padding: 10px 15px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.05); position: relative; overflow: hidden;}
         .lvl-header { display: flex; justify-content: space-between; font-family: var(--font-head); font-size: 0.85rem; margin-bottom: 5px; color: var(--accent-orange); }
         .xp-bar-bg { width: 100%; height: 8px; background: rgba(255,255,255,0.1); border-radius: 5px; overflow: hidden; }
         .xp-bar-fill { height: 100%; background: linear-gradient(90deg, var(--accent-orange), #ffdd00); width: 0%; border-radius: 5px; box-shadow: 0 0 10px var(--accent-orange); transition: width 1.5s ease-in-out; }
@@ -168,17 +184,14 @@
         .recruit-badge.closed { background: rgba(255,77,77,0.1); color: #ff4d4d; border: 1px solid #ff4d4d; }
         .recruit-badge { padding: 4px 10px; border-radius: 20px; font-size: 0.7rem; font-family: var(--font-head); font-weight: bold; text-transform: uppercase; cursor: pointer; flex-shrink: 0;}
 
-        /* 25 PRO ESPORTS FEATURES HORIZONTAL SCROLL */
-        .pro-esports-wrapper { display: flex; overflow-x: auto; gap: 10px; padding-bottom: 10px; scrollbar-width: none; margin-bottom: 20px;}
-        .pro-esports-wrapper::-webkit-scrollbar { display: none; }
-        .esports-cmd-grid { display: flex; flex-wrap: nowrap; gap: 10px; }
-        .cmd-btn { background: rgba(255,255,255,0.05); backdrop-filter: var(--glass-blur); border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; padding: 12px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px; cursor: pointer; transition: 0.3s; position: relative; overflow: hidden; transform: translateZ(0); min-width: 90px;}
+        .esports-cmd-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 20px; }
+        .cmd-btn { background: rgba(255,255,255,0.05); backdrop-filter: var(--glass-blur); border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; padding: 12px 5px; display: flex; flex-direction: column; align-items: center; gap: 8px; cursor: pointer; transition: 0.3s; position: relative; overflow: hidden; transform: translateZ(0);}
         .cmd-btn:hover { background: rgba(0,242,255,0.1); border-color: var(--accent-cyan); transform: translateY(-3px); }
         html.theme-vip .cmd-btn:hover { background: rgba(255,215,0,0.1); border-color: #FFD700; }
         .cmd-btn i { font-size: 1.4rem; color: var(--accent-cyan); }
         html.theme-vip .cmd-btn i { color: #FFD700; }
         .cmd-lbl { font-family: var(--font-body); font-size: 0.65rem; font-weight: bold; text-align: center; color: white; white-space: nowrap; }
-        .cmd-pro-tag { position: absolute; top: 0; right: 0; background: var(--accent-orange); color: #000; font-size: 0.4rem; font-weight: bold; padding: 2px 4px; border-bottom-left-radius: 5px; font-family: var(--font-head); }
+        .cmd-pro-tag { position: absolute; top: 0; right: 0; background: var(--accent-orange); color: #000; font-size: 0.45rem; font-weight: bold; padding: 2px 5px; border-bottom-left-radius: 5px; font-family: var(--font-head); }
 
         .social-grid { display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 8px; margin-bottom: 10px; }
         .social-btn { padding: 12px 5px; border-radius: 10px; text-align: center; color: white; font-weight: bold; font-size: 1rem; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 5px; transition:0.3s; overflow: hidden;}
@@ -204,20 +217,22 @@
         
         .r-avatar { width: 45px; height: 45px; border-radius: 12px; background: var(--accent-purple); display: flex; align-items: center; justify-content: center; font-family: var(--font-head); font-weight: bold; color: white; font-size: 1.2rem; flex-shrink: 0; object-fit: cover;}
         .r-info { flex: 1; min-width: 0; overflow: hidden; display: flex; flex-direction: column; justify-content: center;}
-        .r-name { font-family: var(--font-head); font-size: 1.05rem; color: white; font-weight: bold; margin-bottom: 4px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; width: 100%; display: block;}
+        .r-name { font-family: var(--font-head); font-size: 1.05rem; color: white; font-weight: bold; margin-bottom: 4px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; width: 100%; display: flex; align-items: center; gap: 5px;}
         
+        /* 🔥 UPGRADE: Advanced Roles UI */
         .roster-tags-wrapper { display: flex; flex-wrap: wrap; gap: 6px; width: 100%; overflow: hidden; align-items: center; }
         .r-role-tag { font-size: 0.65rem; padding: 3px 8px; border-radius: 6px; font-weight: bold; background: rgba(255,255,255,0.1); color: #ccc; border: 1px solid rgba(255,255,255,0.2); white-space: nowrap;}
-        .r-pos-tag { font-size: 0.6rem; padding: 2px 6px; border-radius: 4px; color: var(--accent-cyan); border: 1px dashed var(--accent-cyan); white-space: nowrap;}
+        .r-pos-tag { font-size: 0.6rem; padding: 2px 6px; border-radius: 4px; color: var(--accent-cyan); border: 1px dashed var(--accent-cyan); white-space: nowrap; display: flex; align-items: center; gap: 4px;}
         html.theme-vip .r-pos-tag { color: #FFD700; border-color: #FFD700;}
         
         .btn-primary { position: relative; overflow: hidden; width: 100%; padding: 14px; background: var(--accent-gradient); border: none; border-radius: 12px; color: white; font-family: var(--font-head); font-size: 1rem; font-weight: bold; cursor: pointer; box-shadow: 0 5px 15px rgba(189,0,255,0.4); margin-bottom: 10px; transition:0.3s; transform: translateZ(0);}
         .btn-primary::after { content: ''; position: absolute; top: 50%; left: 50%; width: 0; height: 0; background: rgba(255,255,255,0.2); border-radius: 50%; transform: translate(-50%, -50%); transition: width 0.4s, height 0.4s; }
         .btn-primary:active::after { width: 300px; height: 300px; }
         .btn-primary:active { transform: scale(0.96); }
-        html.theme-vip .btn-primary { background: linear-gradient(90deg, #FFD700, #FF8C00); color: black; box-shadow: 0 5px 15px rgba(255,215,0,0.4); }
+        html.theme-vip .btn-primary, .vip-glow .btn-primary { background: var(--gold-gradient); color: black; box-shadow: 0 5px 15px rgba(255,215,0,0.4); }
+        
         .btn-secondary { width: 100%; padding: 14px; background: rgba(20, 10, 35, 0.4); backdrop-filter: var(--glass-blur); border: 1px solid var(--accent-purple); border-radius: 12px; color: var(--accent-purple); font-family: var(--font-head); font-size: 1rem; font-weight: bold; cursor: pointer; margin-bottom: 10px; transition:0.3s; transform: translateZ(0);}
-        html.theme-vip .btn-secondary { border-color: #FFD700; color: #FFD700; }
+        html.theme-vip .btn-secondary, .vip-glow .btn-secondary { border-color: #FFD700; color: #FFD700; }
         .btn-danger { width: 100%; padding: 14px; background: rgba(255,77,77,0.1); border: 1px solid var(--accent-red); border-radius: 12px; color: var(--accent-red); font-family: var(--font-head); font-weight: bold; cursor: pointer; margin-bottom: 10px; transition:0.3s; transform: translateZ(0);}
 
         /* UPGRADED FIND TAB CARDS WITH ANIMATIONS & FLUID SIZES */
@@ -234,22 +249,22 @@
         }
         .search-card:hover { border-color: var(--accent-cyan); transform: translateY(-4px); box-shadow: 0 8px 25px rgba(0,242,255,0.2);}
         
-        .theme-vip-card { background: linear-gradient(135deg, rgba(212,175,55,0.15), rgba(0,0,0,0.8)); border: 1px solid rgba(212,175,55,0.6) !important; box-shadow: 0 10px 30px rgba(212,175,55,0.2) !important; }
-        .theme-vip-card:hover { border-color: #FFD700 !important; box-shadow: 0 15px 40px rgba(255,215,0,0.3) !important; transform: translateY(-4px); }
+        /* 🔥 UPGRADE: VIP CARD EXTREME VISUALS */
+        .theme-vip-card { background: linear-gradient(135deg, rgba(212,175,55,0.15), rgba(0,0,0,0.8)); border: 1px solid rgba(212,175,55,0.6) !important; box-shadow: 0 10px 30px rgba(212,175,55,0.2) !important; position: relative; }
+        .theme-vip-card::after { content: ''; position: absolute; top:0; left:0; width:100%; height:100%; border-radius: 15px; box-shadow: inset 0 0 15px rgba(255,215,0,0.2); pointer-events: none; }
+        .theme-vip-card:hover { border-color: #FFD700 !important; box-shadow: 0 15px 40px rgba(255,215,0,0.4) !important; transform: translateY(-4px); }
 
         .sc-banner { width: 100%; height: 45px; object-fit: cover; border-bottom: 1px solid rgba(255,255,255,0.05); opacity: 0.8; transition: opacity 0.3s; border-radius: 15px 15px 0 0;}
         .search-card:hover .sc-banner { opacity: 1; }
         .sc-body { padding: 10px 15px 5px 15px; display: flex; align-items: flex-start; gap: 15px; flex: 1; }
         .sc-img { width: 60px; height: 60px; border-radius: 12px; object-fit: cover; background: var(--accent-purple); border: 2px solid var(--accent-cyan); flex-shrink: 0; margin-top: -25px; z-index: 2; box-shadow: 0 5px 15px rgba(0,0,0,0.5);}
-        .theme-vip-card .sc-img { border-color: #FFD700; }
+        .theme-vip-card .sc-img { border-color: #FFD700; box-shadow: 0 0 15px rgba(255,215,0,0.5); }
         .sc-info { flex: 1; min-width: 0; display: flex; flex-direction: column; justify-content: center;}
         
         .sc-name-wrapper { display:flex; align-items:center; gap:8px; margin-bottom: 4px; flex-wrap: wrap; }
         .sc-name { font-family: var(--font-head); font-size: clamp(1.1rem, 4vw, 1.3rem); font-weight: bold; color: white; line-height: 1.2; white-space: normal !important; overflow: visible !important; text-overflow: unset !important; display: block;}
         .sc-tag-badge { background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); padding: 2px 6px; border-radius: 4px; font-size: 0.7rem; color: var(--accent-cyan); font-weight: bold; white-space: nowrap; flex-shrink: 0;}
-        
-        .sc-vip-badge { position: absolute; top: -10px; right: -10px; background: linear-gradient(135deg, #FFD700, #FFA500); color: black; font-weight: 900; font-size: 0.65rem; padding: 3px 8px; border-radius: 10px; box-shadow: 0 0 15px rgba(255, 215, 0, 0.8); border: 2px solid #000; animation: vipPulse 1.5s infinite alternate; z-index: 5; display: flex; align-items: center; gap: 4px; font-family: var(--font-head);}
-        @keyframes vipPulse { from { box-shadow: 0 0 10px rgba(255, 215, 0, 0.5); transform: scale(1); } to { box-shadow: 0 0 25px rgba(255, 215, 0, 1); transform: scale(1.05); } }
+        .sc-vip-logo { position: absolute; top: -12px; right: -8px; width: 28px; height: 28px; object-fit: contain; border-radius: 50%; box-shadow: 0 0 10px rgba(255,215,0,0.8); border: 2px solid var(--primary-bg); background: black; z-index: 4; }
         
         .sc-motto { font-size: 0.8rem; color: #aaa; font-style: italic; white-space: normal !important; margin-bottom: 8px; line-height: 1.3; overflow: visible !important; text-overflow: unset !important;}
         .wanted-role-badge { font-size:0.75rem; color:var(--accent-cyan); font-weight:bold; background:rgba(0,242,255,0.05); padding:4px 8px; border-radius:6px; display:inline-block; border: 1px solid rgba(0,242,255,0.3); white-space: normal !important; margin-top: 5px; line-height: 1.3;}
@@ -308,9 +323,6 @@
 
         @media (min-width: 850px) { .bottom-nav { display: none !important; } body { padding-bottom: 0; } }
         .median-active .top-header { display: none !important; } .median-active { padding-top: 15px !important; }
-        
-        .priority-recruit-banner.glow-red { border: 1px solid var(--accent-red); box-shadow: 0 0 15px rgba(255, 77, 77, 0.6); animation: pulseRed 2s infinite alternate; }
-        @keyframes pulseRed { from { box-shadow: 0 0 10px rgba(255, 77, 77, 0.3); } to { box-shadow: 0 0 20px rgba(255, 77, 77, 0.8); } }
     </style>
 </head>
 <body>
@@ -439,6 +451,22 @@
                     </div>
                 </div>
 
+                <div class="esports-cmd-grid">
+                    <div class="cmd-btn" onclick="showToast('Live Scrims Finder opening soon!')">
+                        <i class="fa-solid fa-satellite-dish" style="color:var(--accent-green);"></i>
+                        <span class="cmd-lbl">Live Scrims</span>
+                        <div class="cmd-pro-tag">PRO</div>
+                    </div>
+                    <div class="cmd-btn" onclick="showToast('Clan Wars ranking system syncing...')">
+                        <i class="fa-solid fa-khanda" style="color:var(--accent-orange);"></i>
+                        <span class="cmd-lbl">Clan Wars</span>
+                    </div>
+                    <div class="cmd-btn edit-admin" onclick="window.location.href='withdraw.html'">
+                        <i class="fa-solid fa-money-bill-transfer" style="color:#ffd700;"></i>
+                        <span class="cmd-lbl">Payouts</span>
+                    </div>
+                </div>
+
                 <div class="stats-grid">
                     <div class="stat-box">
                         <div class="live-indicator"><i class="fa-solid fa-satellite-dish"></i> LIVE</div>
@@ -459,57 +487,6 @@
                         <div class="stat-lbl">Win Rate</div>
                     </div>
                 </div>
-                
-                <div style="font-family:var(--font-head); font-size:1.1rem; margin-bottom:10px; color:white;"><i class="fa-solid fa-rocket" style="color:var(--accent-orange);"></i> eSports Pro Suite</div>
-                <div class="pro-esports-wrapper">
-                    <div class="esports-cmd-grid">
-                        <div class="cmd-btn" onclick="showToast('Live Scrims Finder opening soon!')">
-                            <i class="fa-solid fa-satellite-dish" style="color:var(--accent-green);"></i>
-                            <span class="cmd-lbl">Live Scrims</span>
-                            <div class="cmd-pro-tag">PRO</div>
-                        </div>
-                        <div class="cmd-btn" onclick="showToast('Clan Wars ranking syncing...')">
-                            <i class="fa-solid fa-khanda" style="color:var(--accent-orange);"></i>
-                            <span class="cmd-lbl">Clan Wars</span>
-                        </div>
-                        <div class="cmd-btn edit-admin" onclick="window.location.href='withdraw.html'">
-                            <i class="fa-solid fa-money-bill-transfer" style="color:#ffd700;"></i>
-                            <span class="cmd-lbl">Payouts</span>
-                        </div>
-                        <div class="cmd-btn" onclick="showToast('Roster Analytics module locked.')">
-                            <i class="fa-solid fa-chart-pie" style="color:var(--accent-cyan);"></i>
-                            <span class="cmd-lbl">Analytics</span>
-                        </div>
-                        <div class="cmd-btn edit-admin" onclick="showToast('Contracts manager coming in Season 2.')">
-                            <i class="fa-solid fa-file-signature" style="color:white;"></i>
-                            <span class="cmd-lbl">Contracts</span>
-                        </div>
-                        <div class="cmd-btn" onclick="showToast('VOD Review room is offline.')">
-                            <i class="fa-solid fa-video" style="color:var(--accent-purple);"></i>
-                            <span class="cmd-lbl">VOD Review</span>
-                        </div>
-                        <div class="cmd-btn" onclick="showToast('Sponsor Deck builder requires VIP.')">
-                            <i class="fa-solid fa-handshake-angle" style="color:#FFD700;"></i>
-                            <span class="cmd-lbl">Sponsors</span>
-                        </div>
-                        <div class="cmd-btn" onclick="showToast('Jersey Generator booting up...')">
-                            <i class="fa-solid fa-shirt" style="color:var(--accent-red);"></i>
-                            <span class="cmd-lbl">Jerseys</span>
-                        </div>
-                        <div class="cmd-btn" onclick="showToast('Clan Calendar syncing...')">
-                            <i class="fa-solid fa-calendar-check" style="color:var(--accent-green);"></i>
-                            <span class="cmd-lbl">Calendar</span>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="action-card ac-green" onclick="openChat();" style="margin-bottom: 20px; background: linear-gradient(135deg, rgba(0,255,127,0.1), rgba(0,0,0,0)); border: 1px solid rgba(0,255,127,0.3); border-radius: 15px; padding: 20px; display: flex; align-items: center; justify-content: space-between; cursor: pointer; transition: 0.3s; box-shadow: 0 5px 15px rgba(0,0,0,0.3);">
-                    <div class="action-text">
-                        <h4 style="font-family: var(--font-head); font-size: 1.1rem; color: white; margin-bottom: 5px;">Clan Chat</h4>
-                        <p style="font-size: 0.85rem; color: #888;">Communicate securely with your roster. (7-Day Auto Delete)</p>
-                    </div>
-                    <div class="action-icon" style="color: var(--accent-green); background: rgba(0,255,127,0.15); box-shadow: 0 0 20px rgba(0,255,127,0.4); width: 50px; height: 50px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.5rem;"><i class="fa-solid fa-message"></i></div>
-                </div>
 
                 <div class="notification-box">
                     <div class="notification-header">
@@ -519,6 +496,14 @@
                     <div class="notification-list" id="dashNotifications">
                         <div class="notif-item">No recent activity.</div>
                     </div>
+                </div>
+
+                <div class="action-card ac-green" onclick="openChat();" style="margin-bottom: 20px; background: linear-gradient(135deg, rgba(0,255,127,0.1), rgba(0,0,0,0)); border: 1px solid rgba(0,255,127,0.3); border-radius: 15px; padding: 20px; display: flex; align-items: center; justify-content: space-between; cursor: pointer; transition: 0.3s; box-shadow: 0 5px 15px rgba(0,0,0,0.3);">
+                    <div class="action-text">
+                        <h4 style="font-family: var(--font-head); font-size: 1.1rem; color: white; margin-bottom: 5px;">Clan Chat</h4>
+                        <p style="font-size: 0.85rem; color: #888;">Communicate securely with your roster. (7-Day Auto Delete)</p>
+                    </div>
+                    <div class="action-icon" style="color: var(--accent-green); background: rgba(0,255,127,0.15); box-shadow: 0 0 20px rgba(0,255,127,0.4); width: 50px; height: 50px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.5rem;"><i class="fa-solid fa-message"></i></div>
                 </div>
 
                 <div class="info-row">
@@ -651,10 +636,10 @@
                 <i class="fa-solid fa-xmark modal-close" onclick="document.getElementById('inviteLinkModal').classList.remove('active')"></i>
             </div>
             
-            <div style="font-size:0.85rem; color:#aaa; margin-bottom:20px; line-height:1.5;">Share this secure link with players. They can tap it on mobile to join directly via the Tournyx App automatically.</div>
+            <div style="font-size:0.85rem; color:#aaa; margin-bottom:20px; line-height:1.5;">Share this secure link with players. They can join directly via the app without manual searching.</div>
 
             <div style="display:flex; gap:10px; margin-bottom:15px;">
-                <input type="text" id="inviteLinkInp" class="form-control" readonly style="margin:0; background:rgba(0,0,0,0.6); color:var(--accent-cyan); font-size:0.8rem;">
+                <input type="text" id="inviteLinkInp" class="form-control" readonly style="margin:0; background:rgba(0,0,0,0.6); color:var(--accent-cyan);">
                 <button type="button" class="btn-primary" style="width:auto; margin:0; padding:0 15px; border-radius:8px;" onclick="copyInviteLink()"><i class="fa-regular fa-copy"></i></button>
             </div>
         </div>
@@ -784,7 +769,7 @@
         let activeFilterGame = 'All';
         
         let chatSyncInterval = null;
-        let findTabSyncInterval = null;
+        let globalFindSyncInterval = null; // UPGRADE: Real-time background sync
 
         function showToast(msg, isError = false) {
             const t = document.getElementById('customToast'); t.innerText = msg;
@@ -792,8 +777,6 @@
             t.style.color = isError ? "white" : "#000"; t.className = "show";
             setTimeout(() => t.className = "", 3000);
         }
-        function playSuccessSound() {}
-        function playClickSound() {}
 
         function triggerSyncIndicator() {
             const sync = document.getElementById('syncTag');
@@ -825,8 +808,11 @@
             if(id === 'searchClanTab') {
                 document.getElementById('clanGameFilter').style.display = 'flex';
                 fetchAllClans();
+                // START REALTIME SYNC FOR FIND TAB
+                if(!globalFindSyncInterval) globalFindSyncInterval = setInterval(fetchGlobalClansBackgroundSync, 5000);
             } else {
                 document.getElementById('clanGameFilter').style.display = 'none';
+                if(globalFindSyncInterval) { clearInterval(globalFindSyncInterval); globalFindSyncInterval = null; }
             }
 
             if(id === 'requestsTab') {
@@ -862,52 +848,40 @@
                     }
                 }, 500);
             }
-            
-            // Background Live Sync Engine (8s poll)
-            findTabSyncInterval = setInterval(silentGlobalSync, 8000);
         });
-        
-        async function silentGlobalSync() {
-            if(document.getElementById('searchClanTab').classList.contains('active')) {
-                try {
-                    let oldStr = JSON.stringify(globalClans);
-                    let res = await fetch(API_URL + "?action=get_all_clans");
-                    let data = await res.json();
-                    if(data.status === 'success') {
-                        let allParsed = [];
-                        data.data.forEach(item => {
-                            try {
-                                let cObj = typeof item === 'string' ? JSON.parse(item) : (item.team_json ? (typeof item.team_json === 'string' ? JSON.parse(item.team_json) : item.team_json) : item);
-                                if(cObj && cObj.clanId) {
-                                    if(item.logo) cObj.externalLogo = item.logo;
-                                    if(item.banner) cObj.externalBanner = item.banner;
-                                    if (String(item.claimed_premium).toLowerCase() === 'true' || cObj.isPremiumClan) cObj.isPremiumClan = true;
-                                    allParsed.push(cObj);
-                                }
-                            } catch(e){}
-                        });
-                        
-                        let newStr = JSON.stringify(allParsed);
-                        if(oldStr !== newStr) {
-                            globalClans = allParsed;
-                            let scrollPos = window.scrollY;
-                            searchGlobalClans();
-                            window.scrollTo(0, scrollPos);
-                        }
+
+        // UPGRADE: Find Tab Background Sync
+        async function fetchGlobalClansBackgroundSync() {
+            try {
+                let res = await fetch(API_URL + "?action=get_all_clans");
+                let data = JSON.parse(await res.text());
+                if(data.status==='success') { 
+                    let allParsed = [];
+                    data.data.forEach(item => {
+                        try {
+                            let cObj = typeof item === 'string' ? JSON.parse(item) : (item.team_json ? (typeof item.team_json === 'string' ? JSON.parse(item.team_json) : item.team_json) : item);
+                            if(cObj && cObj.clanId) {
+                                if(item.logo) cObj.externalLogo = item.logo;
+                                if(item.banner) cObj.externalBanner = item.banner;
+                                if (String(item.claimed_premium).toLowerCase() === 'true' || cObj.isPremiumClan) cObj.isPremiumClan = true;
+                                allParsed.push(cObj);
+                            }
+                        } catch(e){}
+                    });
+                    
+                    // Diff checker before re-rendering (Prevents flashing)
+                    if(JSON.stringify(globalClans) !== JSON.stringify(allParsed)) {
+                        globalClans = allParsed;
+                        searchGlobalClans(true); // true = silent render
                     }
-                }catch(e){}
-            }
+                }
+            } catch(e){}
         }
 
         function openInviteModal() {
             triggerHaptic();
             if(!activeClan) return;
-            
-            let webUrl = window.location.origin + window.location.pathname + "?invite=" + activeClan.clanId;
-            let encodedWebUrl = encodeURIComponent(webUrl);
-            let intentUrl = `intent://tournyx.in/clans.html?invite=${activeClan.clanId}#Intent;scheme=https;package=com.tournyx.app;S.browser_fallback_url=${encodedWebUrl};end`;
-            
-            document.getElementById('inviteLinkInp').value = intentUrl;
+            document.getElementById('inviteLinkInp').value = window.location.origin + window.location.pathname + "?invite=" + activeClan.clanId;
             document.getElementById('inviteLinkModal').classList.add('active');
         }
 
@@ -915,10 +889,10 @@
             triggerHaptic();
             let link = document.getElementById('inviteLinkInp').value;
             if(navigator.clipboard && window.isSecureContext) {
-                navigator.clipboard.writeText(link).then(() => showToast("Intent App Link Copied!"));
+                navigator.clipboard.writeText(link).then(() => showToast("Invite Link Copied!"));
             } else {
                 let el = document.getElementById('inviteLinkInp');
-                el.select(); document.execCommand("copy"); showToast("Intent App Link Copied!");
+                el.select(); document.execCommand("copy"); showToast("Invite Link Copied!");
             }
         }
 
@@ -960,11 +934,7 @@
                             if(cObj && cObj.clanId) {
                                 if(item.logo) cObj.externalLogo = item.logo;
                                 if(item.banner) cObj.externalBanner = item.banner;
-                                
-                                if (String(item.claimed_premium).toLowerCase() === 'true' || cObj.isPremiumClan) {
-                                    cObj.isPremiumClan = true;
-                                }
-                                
+                                if (String(item.claimed_premium).toLowerCase() === 'true' || cObj.isPremiumClan) cObj.isPremiumClan = true;
                                 allParsed.push(cObj);
                             }
                         } catch(e){}
@@ -1005,10 +975,7 @@
                                 }
 
                                 let currentRosterMe = clanObj.roster[myRosterIndex];
-                                
-                                let pPhone = String(user.phone || user.mobile || user.contact || "Not Set");
-                                let pIgn = String(user.gameName || user.ign || user.inGameName || user.username || "Not Set");
-                                let pUid = String(user.uid || user.gameUid || user.playerId || user.game_id || "Not Set");
+                                let pPhone = user.phone || ""; let pIgn = user.gameName || user.ign || user.username || ""; let pUid = user.uid || user.gameUid || "";
                                 
                                 if (currentRosterMe.phone !== pPhone || currentRosterMe.gameName !== pIgn || currentRosterMe.uid !== pUid) {
                                     clanObj.roster[myRosterIndex].phone = pPhone;
@@ -1016,7 +983,6 @@
                                     clanObj.roster[myRosterIndex].uid = pUid;
                                     needsLiveSyncUpdate = true;
                                 }
-
                                 parsedClans.push(clanObj);
                             }
                         } catch(e) {}
@@ -1328,9 +1294,9 @@
             
             let rWarningHtml = "";
             if (clan.roster.length < 4) {
-                rWarningHtml = `<div class="priority-recruit-banner glow-red"><i class="fa-solid fa-fire"></i> <b>HIGH PRIORITY RECRUITMENT:</b> Need at least 4 players to register for tournaments!</div>`;
+                rWarningHtml = `<div class="priority-recruit-banner" style="background:rgba(255,153,0,0.1); border:1px solid var(--accent-orange); padding:10px; border-radius:10px; color:white; font-size:0.85rem; margin-bottom:15px; animation: pulseReq 2s infinite;"><i class="fa-solid fa-fire" style="color:var(--accent-orange);"></i> <b>HIGH PRIORITY RECRUITMENT:</b> Need at least 4 players to register for tournaments!</div>`;
             } else if (clan.roster.length >= 4) {
-                rWarningHtml = `<div class="tournament-ready-banner"><i class="fa-solid fa-check-circle"></i> <b>TOURNAMENT READY:</b> You have enough players to register in the Explore tab!</div>`;
+                rWarningHtml = `<div class="tournament-ready-banner" style="background:rgba(0,255,127,0.1); border:1px solid var(--accent-green); padding:10px; border-radius:10px; color:white; font-size:0.85rem; margin-bottom:15px;"><i class="fa-solid fa-check-circle" style="color:var(--accent-green);"></i> <b>TOURNAMENT READY:</b> You have enough players to register in the Explore tab!</div>`;
             }
             document.getElementById('rosterWarningBannerArea').innerHTML = rWarningHtml;
             
@@ -1363,13 +1329,19 @@
                 let encodedData = encodeURIComponent(JSON.stringify(member));
                 let isOnline = Math.random() > 0.5 ? 'block' : 'none'; if(member.name === user.username) isOnline = 'block'; 
 
-                let posTag = member.pos ? `<span class="r-pos-tag">${member.pos}</span>` : "";
+                // UPGRADE: Visual Role Icons
+                let roleIcon = '<i class="fa-solid fa-user-ninja"></i>';
+                if(member.pos && member.pos.includes('IGL')) roleIcon = '<i class="fa-solid fa-brain"></i>';
+                else if(member.pos && member.pos.includes('Sniper')) roleIcon = '<i class="fa-solid fa-crosshairs"></i>';
+                else if(member.pos && member.pos.includes('Support')) roleIcon = '<i class="fa-solid fa-hand-holding-medical"></i>';
+
+                let posTag = member.pos ? `<span class="r-pos-tag">${roleIcon} ${member.pos}</span>` : "";
                 let pStateTag = member.state && member.state !== "N/A" ? `<span class="state-badge"><i class="fa-solid fa-location-dot" style="font-size:0.5rem;"></i> ${member.state}</span>` : "";
 
                 rl.innerHTML += `
                     <div class="roster-item" onclick="openMemberCard('${encodedData}', ${isAdmin}, ${isOwner}, '${member.name}')">
                         <img src="https://ui-avatars.com/api/?name=${encodeURIComponent(member.name)}&background=110822&color=00f2ff" class="r-avatar" id="avatar-${member.name.replace(/\s+/g,'')}">
-                        <div class="online-dot" style="display:${isOnline}; width:8px; height:8px; background:#00ff7f; border-radius:50%; margin-left:-16px; margin-top:20px; z-index:3; border:1px solid #000;"></div>
+                        <div class="online-dot" style="display:${isOnline}; width:10px; height:10px; background:#00ff7f; border-radius:50%; margin-left:-16px; margin-top:30px; z-index:3; border:2px solid var(--primary-bg); box-shadow: 0 0 5px #00ff7f;"></div>
                         <div class="r-info">
                             <div class="r-name" title="${member.name}">${member.name}</div>
                             <div class="roster-tags-wrapper">
@@ -1724,16 +1696,18 @@
             }
         }
         
+        /* 🔥 UPGRADE: Native Force Median Share Link Implementation */
         function nativeShare() {
             triggerHaptic();
-            let inviteUrl = window.location.origin + window.location.pathname + "?invite=" + activeClan.clanId;
-            let intentUrl = `intent://tournyx.in/clans.html?invite=${activeClan.clanId}#Intent;scheme=https;package=com.tournyx.app;S.browser_fallback_url=${encodeURIComponent(inviteUrl)};end`;
+            let pureUrl = window.location.origin + window.location.pathname + "?invite=" + activeClan.clanId;
+            let intentUrl = `intent://${pureUrl.replace(/^https?:\/\//, '')}#Intent;scheme=https;package=in.tournyx.esports;S.browser_fallback_url=${encodeURIComponent(pureUrl)};end`;
+            
             const msg = `Join my ${activeClan.game} Clan [${activeClan.name}] on Tournyx!\n\nClick to join via App: ${intentUrl}`;
             
             if (navigator.share) { 
                 navigator.share({ title: 'Tournyx Clan Invite', text: msg, url: intentUrl }).catch(e=>console.log(e)); 
             } else { 
-                navigator.clipboard.writeText(msg).then(()=>showToast("Invite link copied!")); 
+                navigator.clipboard.writeText(msg).then(()=>showToast("App intent link copied!")); 
             }
         }
         
@@ -1799,11 +1773,10 @@
             triggerHaptic();
             const name = document.getElementById('inpCName').value; const tag = document.getElementById('inpCTag').value; const game = document.getElementById('inpCGame').value;
             
-            // STRICT PAYLOAD BUILDER FOR CLAN CREATION
-            const pPhone = String(user.phone || user.mobile || user.contact || "Not Set"); 
-            const pIgn = String(user.gameName || user.ign || user.inGameName || user.username || "Not Set"); 
-            const pUid = String(user.uid || user.gameUid || user.playerId || user.game_id || "Not Set");
-            const pState = String(user.state || "N/A"); const pCity = String(user.city || "N/A");
+            const phone = user.phone || "Not Set"; 
+            const ign = user.gameName || user.ign || user.username || "Not Set"; 
+            const uid = user.uid || user.gameUid || "Not Set";
+            const userState = user.state || "N/A"; const userCity = user.city || "N/A";
             
             if(userLiveClans.filter(c => c.game === game).length >= 3) { showToast(`Max 3 clans allowed for ${game}!`, true); return; }
             if(globalClans.some(c => String(c.name).toLowerCase() === name.toLowerCase())) { showToast(`Clan name "${name}" is already taken globally!`, true); return; }
@@ -1813,9 +1786,9 @@
 
             let newObj = {
                 clanId: id, name: name, tag: tag, game: game, bio: "Welcome to our new clan!", status: "OPEN", region: "🌍", motto: "We play to win", minRank: "None", autoAccept: false,
-                state: pState, city: pCity,
+                state: userState, city: userCity,
                 captain: user.username, 
-                roster: [{name: user.username, role: 'Owner', phone: pPhone, gameName: pIgn, uid: pUid, state: pState, city: pCity}], 
+                roster: [{name: user.username, role: 'Owner', phone: phone, gameName: ign, uid: uid, state: userState, city: userCity}], 
                 requests: [], notifications: [{msg: `Clan founded by ${user.username}!`}]
             };
 
@@ -1864,7 +1837,7 @@
             searchGlobalClans();
         }
 
-        function searchGlobalClans() {
+        function searchGlobalClans(silentRender = false) {
             let q = document.getElementById('searchClanInput').value;
             
             let availableClans = globalClans.filter(gClan => 
@@ -1887,7 +1860,7 @@
                 });
             }
 
-            renderClans(availableClans);
+            renderClans(availableClans, silentRender);
         }
 
         function openPublicClanModal(cId) {
@@ -1946,11 +1919,9 @@
             document.getElementById('pubClanRosterList').innerHTML = rosterHtml;
 
             let isRejected = false;
-            let dismissed = window.dismissedRejects || [];
-            if(c.rejectedList && c.rejectedList.some(x => x.name === user.username) && !dismissed.includes(c.clanId)) isRejected = true;
-            if(c.rejected && c.rejected.includes(user.username) && !dismissed.includes(c.clanId)) isRejected = true;
+            if(c.rejectedList && c.rejectedList.some(x => x.name === user.username)) isRejected = true;
+            if(c.rejected && c.rejected.includes(user.username)) isRejected = true;
 
-            // Direct Cloud Array sync check
             let isRequested = c.requests && c.requests.some(r => r.name === user.username);
             
             let btnActionHtml = "";
@@ -1967,9 +1938,8 @@
             document.getElementById('publicClanModal').classList.add('active');
         }
 
-        function renderClans(list) {
+        function renderClans(list, isSilent = false) {
             let html = "";
-            let dismissed = window.dismissedRejects || [];
 
             list.forEach((c, index) => {
                 if(!c.name) return;
@@ -2007,22 +1977,21 @@
                 }
                 
                 let isRejected = false;
-                if (c.rejectedList && c.rejectedList.some(r => r.name === user.username) && !dismissed.includes(c.clanId)) isRejected = true;
-                if (c.rejected && c.rejected.includes(user.username) && !dismissed.includes(c.clanId)) isRejected = true;
+                if (c.rejectedList && c.rejectedList.some(r => r.name === user.username)) isRejected = true;
+                if (c.rejected && c.rejected.includes(user.username)) isRejected = true;
 
-                // Live cloud array check
                 let isRequested = c.requests && c.requests.some(r => r.name === user.username);
                 
                 let btnHtml = "";
                 if (isRejected) {
-                    btnHtml = `<button class="s-btn acc" onclick="event.stopPropagation(); dismissRejection('${c.clanId}'); triggerJoinFlow('${c.clanId}', '${c.name.replace(/'/g, "\\'")}', '${cGame}', ${c.autoAccept}, this)">RE-APPLY</button>`;
+                    btnHtml = `<button class="s-btn acc" onclick="event.stopPropagation(); triggerJoinFlow('${c.clanId}', '${c.name.replace(/'/g, "\\'")}', '${cGame}', ${c.autoAccept}, this)">RE-APPLY</button>`;
                 } else if (isRequested) {
                     btnHtml = `<button class="s-btn req" onclick="cancelJoinRequest('${c.clanId}', this, event)">REQUESTED</button>`;
                 } else {
                     btnHtml = `<button class="s-btn acc" onclick="event.stopPropagation(); triggerJoinFlow('${c.clanId}', '${c.name.replace(/'/g, "\\'")}', '${cGame}', ${c.autoAccept}, this)">JOIN</button>`;
                 }
                     
-                let premiumBadge = c.isPremiumClan ? `<div class="sc-vip-badge"><i class="fa-solid fa-crown"></i> VIP ELITE</div>` : '';
+                let premiumBadge = c.isPremiumClan ? `<img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEg_20wCR-WBMpQmw3vxcYUf-vxIO1PYDJoQN_Sid3UDjA9tf0cuX0eH40jbzHoJad4cxbnjhPjqfCw1Z5V1LhgN9zFuIQC0fJjecTy3D9PFu5WjR2H1wHwTD1bUGnXY_NiApWn5gMs6velcQngSzKoP1yHzX0cVsFSUFM8zIefcbiPayY7680Kz0V0ZAAE/s1264/1000093706.png" class="sc-vip-logo" title="Tournyx Premium">` : '';
                 
                 let hasIGL = c.roster && c.roster.some(r => r.pos && r.pos.includes('IGL'));
                 let hasSupp = c.roster && c.roster.some(r => r.pos && r.pos.includes('Support'));
@@ -2039,10 +2008,10 @@
                     }
                 }
 
-                let animDelay = (index * 0.1) + "s";
+                let animDelay = isSilent ? "0s" : ((index * 0.1) + "s");
 
                 html += `
-                <div class="search-card ${vipClass}" style="padding:0; flex-direction:column; align-items:stretch; animation-delay: ${animDelay}; cursor:pointer; ${cardGlowCSS}" onclick="openPublicClanModal('${c.clanId}')" id="card-${c.clanId}">
+                <div class="search-card ${vipClass}" style="padding:0; flex-direction:column; align-items:stretch; animation-delay: ${animDelay}; cursor:pointer; ${cardGlowCSS}" onclick="openPublicClanModal('${c.clanId}')">
                     <img src="${safeBanner}" class="sc-banner">
                     <div class="sc-body" style="position:relative;">
                         <div style="position:relative;">
@@ -2084,18 +2053,14 @@
 
         function closeJoinModal() { triggerHaptic(); document.getElementById('joinDataModal').classList.remove('active'); pendingJoinData = {}; }
 
+        // EXTREME FIX: Ensure Player Object is explicitly constructed correctly here.
         function processJoinRequest(e) {
             triggerHaptic();
             
-            // SUPER AGGRESSIVE PAYLOAD PARSING FIX
-            let pName = String(user.username || user.name || "Unknown Player");
-            let pPhone = String(user.phone || user.mobile || user.contact || "Not Set"); 
-            let pIgn = String(user.gameName || user.ign || user.inGameName || user.username || "Not Set"); 
-            let pUid = String(user.uid || user.gameUid || user.playerId || user.game_id || "Not Set");
-            let pState = String(user.state || "N/A");
-            let pCity = String(user.city || "N/A");
-
-            let playerObj = { name: pName, role: "Player", phone: pPhone, gameName: pIgn, uid: pUid, state: pState, city: pCity };
+            let phone = user.phone || user.mobile || "Not Set"; 
+            let ign = user.gameName || user.ign || user.inGameName || user.username || "Not Set"; 
+            let uid = user.uid || user.gameUid || user.playerId || "Not Set";
+            let playerObj = { name: user.username, role: "Player", phone: phone, gameName: ign, uid: uid, state: user.state || "N/A", city: user.city || "N/A" };
             
             document.getElementById('btnFinalJoin').innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Processing...`; document.getElementById('btnFinalJoin').disabled = true;
 
@@ -2103,12 +2068,12 @@
             if (pendingJoinData.isAuto) {
                 payload = { 
                     action: "handle_join_request", clan_id: pendingJoinData.newClanId, player_data: playerObj, 
-                    is_accept: true, is_auto: true, email: user.email, target_username: pName
+                    is_accept: true, is_auto: true, email: user.email, target_username: user.username
                 };
             } else {
                 payload = { 
                     action: "send_request", clan_id: pendingJoinData.newClanId, player_data: playerObj, 
-                    username: pName, email: user.email
+                    username: user.username, email: user.email
                 };
             }
 
@@ -2125,14 +2090,13 @@
                 let gIndex = globalClans.findIndex(c => c.clanId === pendingJoinData.newClanId);
                 if (gIndex !== -1) {
                     if (!globalClans[gIndex].requests) globalClans[gIndex].requests = [];
-                    globalClans[gIndex].requests.push({name: pName});
+                    globalClans[gIndex].requests.push(playerObj);
                 }
             }
             
             closeJoinModal(); showToast(pendingJoinData.isAuto ? "Clan Joined successfully!" : "Request Sent! Check Inbox.");
             document.getElementById('btnFinalJoin').innerText = "Confirm Request"; document.getElementById('btnFinalJoin').disabled = false;
             
-            // Re-sync cloud data in background
             setTimeout(() => { fetchAllClansSilent(); fetchLiveClanData(true); }, 2000);
         }
 
@@ -2187,13 +2151,12 @@
             totalBadgeCount += reqs.length;
 
             let rejectionsHtml = "";
-            let dismissed = window.dismissedRejects || [];
             
             globalClans.forEach(c => {
                 let freshRej = filterLast7Days(c.rejectedList || []);
                 if(freshRej.length > 0) {
                     let rejObj = freshRej.find(x => x.name === user.username);
-                    if(rejObj && !dismissed.includes(c.clanId)) {
+                    if(rejObj) {
                         totalBadgeCount++;
                         rejectionsHtml += `
                         <div class="search-card" style="border-color:var(--accent-red); padding:10px; margin-bottom:15px; display:flex; justify-content:space-between; align-items:center; height:auto; min-height:0;">
@@ -2201,7 +2164,7 @@
                                 <i class="fa-solid fa-triangle-exclamation" style="color:var(--accent-red);"></i> The clan <strong style="color:var(--accent-cyan);">${c.name}</strong> rejected your request. <br>
                                 <span style="color:#aaa; font-style:italic; margin-top:5px; display:block;">Reason: "${rejObj.reason}"</span>
                             </div>
-                            <i class="fa-solid fa-xmark" style="color:#888; cursor:pointer; padding:5px 0 5px 15px;" onclick="dismissRejection('${c.clanId}')"></i>
+                            <button class="btn-secondary" style="border-color:var(--accent-cyan); color:var(--accent-cyan); padding: 5px 10px; height:auto; width:auto; font-size:0.7rem; margin:0;" onclick="triggerJoinFlow('${c.clanId}', '${c.name.replace(/'/g, "\\'")}', '${c.game || "Esports"}', ${c.autoAccept}, this);">RE-APPLY</button>
                         </div>`;
                     }
                 } 
@@ -2277,6 +2240,7 @@
             renderRequests();
         }
 
+        // EXTREME FIX: Complete data processing on Admin Side
         function handleReq(encData, isAccept, cId, btnElement) {
             triggerHaptic();
             
@@ -2286,12 +2250,11 @@
                 if (reason === null) return; // User cancelled
             }
 
-            // INSTANT DOM CLEANUP ANIMATION FIX
             if (btnElement) {
                 let card = btnElement.closest('.search-card');
                 if (card) {
-                    card.style.transition = '0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275)';
-                    card.style.transform = 'translateX(100%) scale(0.9)';
+                    card.style.transition = '0.3s ease-out';
+                    card.style.transform = 'translateX(100%)';
                     card.style.opacity = '0';
                     setTimeout(() => {
                         card.remove();
@@ -2310,7 +2273,7 @@
             try {
                 let reqData = JSON.parse(decodeURIComponent(encData));
                 
-                // Fallback safeguards to prevent backend from saving missing fields
+                // BACKUP DATA SAFEGUARDS - NEVER LET THEM BE EMPTY
                 if (!reqData.gameName) reqData.gameName = reqData.ign || reqData.name || "Not Set";
                 if (!reqData.uid) reqData.uid = reqData.playerId || "Not Set";
                 if (!reqData.phone) reqData.phone = "Not Set";
