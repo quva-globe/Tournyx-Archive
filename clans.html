@@ -40,7 +40,7 @@
             --accent-orange: #ff9900; --accent-green: #00ff7f; --accent-red: #ff4d4d;
             --accent-gradient: linear-gradient(90deg, #7b2cbf, #bd00ff, #00f2ff);
             --font-head: 'Orbitron', sans-serif; --font-body: 'Rajdhani', sans-serif;
-            --glass-blur: blur(12px);
+            --glass-blur: blur(15px);
         }
         
         html.theme-vip {
@@ -93,7 +93,7 @@
         html.theme-vip .tab.active { color: #FFD700; text-shadow: 0 0 10px rgba(255,215,0,0.6); }
         .tab.active::after { content: ''; position: absolute; bottom: -1px; left: 10%; width: 80%; height: 3px; background: var(--accent-cyan); border-radius: 3px 3px 0 0; }
         html.theme-vip .tab.active::after { background: #FFD700; }
-        .badge { background: var(--accent-orange); color: #000; padding: 2px 6px; border-radius: 10px; font-size: 0.6rem; font-weight: bold; }
+        .badge { background: var(--accent-orange); color: #000; padding: 2px 6px; border-radius: 10px; font-size: 0.6rem; font-weight: bold; transition: 0.3s; }
 
         .filter-scroll-wrapper { display: none; gap: 10px; overflow-x: auto; padding: 0 15px 15px; scrollbar-width: none; margin-bottom: 5px; animation: slideInUp 0.3s ease-out; }
         .filter-pill { background: rgba(255,255,255,0.05); backdrop-filter: var(--glass-blur); border: 1px solid rgba(255,255,255,0.1); padding: 8px 16px; border-radius: 20px; font-family: var(--font-head); font-size: 0.8rem; font-weight: bold; color: #888; cursor: pointer; white-space: nowrap; transition: 0.3s; display: flex; align-items: center; gap: 6px; }
@@ -121,7 +121,7 @@
         .hub-card::before { content: ''; position: absolute; left: 0; top: 0; width: 4px; height: 100%; background: var(--accent-gradient); }
         .hc-logo { width: 65px; height: 65px; border-radius: 15px; object-fit: cover; border: 2px solid var(--accent-purple); flex-shrink: 0; background: var(--primary-bg); }
         .hc-info { flex: 1; min-width: 0; } 
-        .hc-name { font-family: var(--font-head); font-size: 1.2rem; font-weight: bold; color: white; margin-bottom: 3px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; display:flex; align-items:center; gap:6px; }
+        .hc-name { font-family: var(--font-head); font-size: 1.2rem; font-weight: bold; color: white; margin-bottom: 3px; white-space: normal; display:flex; align-items:center; gap:6px; flex-wrap: wrap;}
         .hc-game { font-size: 0.75rem; color: var(--accent-orange); font-weight: bold; background: rgba(255,153,0,0.1); padding: 3px 8px; border-radius: 6px; display: inline-block; margin-top: 5px; white-space: nowrap; border: 1px solid rgba(255,153,0,0.3);}
 
         .clan-hero { position: relative; border-radius: 20px; overflow: hidden; margin-bottom: 20px; border: 1px solid var(--card-border); background: var(--card-bg); backdrop-filter: var(--glass-blur); -webkit-backdrop-filter: var(--glass-blur); box-shadow: 0 10px 30px rgba(0,0,0,0.4); transition: 0.5s; transform: translateZ(0); }
@@ -216,7 +216,7 @@
         html.theme-vip .btn-secondary { border-color: #FFD700; color: #FFD700; }
         .btn-danger { width: 100%; padding: 14px; background: rgba(255,77,77,0.1); border: 1px solid var(--accent-red); border-radius: 12px; color: var(--accent-red); font-family: var(--font-head); font-weight: bold; cursor: pointer; margin-bottom: 10px; transition:0.3s; transform: translateZ(0);}
 
-        /* UPGRADED FIND TAB CARDS WITH ANIMATIONS & FIXED SIZES */
+        /* UPGRADED FIND TAB CARDS WITH ANIMATIONS & FLUID SIZES */
         @keyframes slideInStagger {
             from { opacity: 0; transform: translateY(30px) scale(0.95); }
             to { opacity: 1; transform: translateY(0) scale(1); }
@@ -226,7 +226,7 @@
             border: 1px solid var(--card-border); border-radius: 15px; margin: 0 auto 15px auto; width: 100%; 
             overflow: hidden; transition:0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); display: flex; flex-direction: column; 
             animation: slideInStagger 0.4s ease-out backwards; transform: translateZ(0); position: relative; 
-            height: 140px; /* FIXED HEIGHT TO PREVENT OVERFLOW & UNEVEN SIZES */
+            height: auto !important; min-height: 140px;
         }
         .search-card:hover { border-color: var(--accent-cyan); transform: translateY(-4px); box-shadow: 0 8px 25px rgba(0,242,255,0.2);}
         
@@ -235,20 +235,20 @@
 
         .sc-banner { width: 100%; height: 45px; object-fit: cover; border-bottom: 1px solid rgba(255,255,255,0.05); opacity: 0.8; transition: opacity 0.3s;}
         .search-card:hover .sc-banner { opacity: 1; }
-        .sc-body { padding: 10px 15px; display: flex; align-items: center; gap: 15px; flex: 1; min-height: 0;}
+        .sc-body { padding: 10px 15px 15px 15px; display: flex; align-items: center; gap: 15px; flex: 1; }
         .sc-img { width: 60px; height: 60px; border-radius: 12px; object-fit: cover; background: var(--accent-purple); border: 2px solid var(--accent-cyan); flex-shrink: 0; margin-top: -35px; z-index: 2; box-shadow: 0 5px 15px rgba(0,0,0,0.5);}
         .theme-vip-card .sc-img { border-color: #FFD700; }
         .sc-info { flex: 1; min-width: 0; display: flex; flex-direction: column; justify-content: center;}
         
-        .sc-name-wrapper { display:flex; align-items:center; gap:8px; margin-bottom: 2px; flex-wrap: nowrap; overflow: hidden; white-space: nowrap;}
-        .sc-name { font-family: var(--font-head); font-size: clamp(1rem, 4vw, 1.2rem); font-weight: bold; color: white; line-height: 1.1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;}
+        .sc-name-wrapper { display:flex; align-items:center; gap:8px; margin-bottom: 4px; flex-wrap: wrap; }
+        .sc-name { font-family: var(--font-head); font-size: clamp(1.1rem, 4vw, 1.3rem); font-weight: bold; color: white; line-height: 1.2; white-space: normal !important; overflow: visible !important; text-overflow: unset !important; display: block;}
         .sc-tag-badge { background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); padding: 2px 6px; border-radius: 4px; font-size: 0.7rem; color: var(--accent-cyan); font-weight: bold; white-space: nowrap; flex-shrink: 0;}
         .sc-vip-logo { position: absolute; top: -12px; right: -8px; width: 28px; height: 28px; object-fit: contain; border-radius: 50%; box-shadow: 0 0 10px rgba(255,215,0,0.8); border: 2px solid var(--primary-bg); background: black; z-index: 4; }
         
-        .sc-motto { font-size: 0.8rem; color: #aaa; font-style: italic; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-bottom: 5px;}
-        .wanted-role-badge { font-size:0.7rem; color:var(--accent-cyan); font-weight:bold; background:rgba(0,242,255,0.05); padding:3px 6px; border-radius:6px; display:inline-block; border: 1px solid rgba(0,242,255,0.3); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; max-width:100%;}
+        .sc-motto { font-size: 0.8rem; color: #aaa; font-style: italic; white-space: normal !important; margin-bottom: 8px; line-height: 1.3; overflow: visible !important; text-overflow: unset !important;}
+        .wanted-role-badge { font-size:0.75rem; color:var(--accent-cyan); font-weight:bold; background:rgba(0,242,255,0.05); padding:4px 8px; border-radius:6px; display:inline-block; border: 1px solid rgba(0,242,255,0.3); white-space: normal !important; margin-top: 5px; line-height: 1.3;}
         
-        .s-btn { position: relative; overflow: hidden; padding: 8px 15px; border-radius: 8px; font-family: var(--font-head); font-size: 0.8rem; font-weight: bold; cursor: pointer; border: none; white-space: nowrap; transition: 0.3s;}
+        .s-btn { position: relative; overflow: hidden; padding: 8px 15px; border-radius: 8px; font-family: var(--font-head); font-size: 0.85rem; font-weight: bold; cursor: pointer; border: none; white-space: nowrap; transition: 0.3s;}
         .s-btn:active { transform: scale(0.95); }
         .s-btn.acc { background: var(--accent-green); color: black; box-shadow: 0 0 10px rgba(0,255,127,0.3); }
         .s-btn.rej { background: rgba(255,255,255,0.1); color: white; border: 1px solid #666; cursor: default; }
@@ -302,9 +302,6 @@
 
         @media (min-width: 850px) { .bottom-nav { display: none !important; } body { padding-bottom: 0; } }
         .median-active .top-header { display: none !important; } .median-active { padding-top: 15px !important; }
-
-        .tournament-ready-banner { background: rgba(0, 255, 127, 0.1); border: 1px solid var(--accent-green); padding: 10px; border-radius: 10px; text-align: center; color: white; font-family: var(--font-head); font-size: 0.85rem; margin-bottom: 15px; animation: slideInUp 0.4s ease-out; }
-        .priority-recruit-banner { background: rgba(255, 77, 77, 0.1); border: 1px solid var(--accent-red); padding: 10px; border-radius: 10px; text-align: center; color: white; font-family: var(--font-head); font-size: 0.85rem; margin-bottom: 15px; animation: slideInUp 0.4s ease-out; }
     </style>
 </head>
 <body>
@@ -574,7 +571,7 @@
     </div>
 
     <div class="modal-overlay" id="publicClanModal">
-        <div class="modal-box" style="padding:0; overflow:hidden; width:95%; max-width:500px; max-height:85vh; display:flex; flex-direction:column; border: 1px solid var(--accent-cyan);">
+        <div class="modal-box" style="padding:0; overflow:hidden; width:95%; max-width:600px; max-height:85vh; display:flex; flex-direction:column; border: 1px solid var(--accent-cyan);">
             <div style="position:relative;">
                 <img src="" id="pubClanBanner" style="width:100%; height:140px; object-fit:cover; opacity:0.8;">
                 <i class="fa-solid fa-xmark modal-close" style="position:absolute; top:15px; right:15px; background:rgba(0,0,0,0.5); width:30px; height:30px; border-radius:50%; display:flex; align-items:center; justify-content:center; color:white; z-index:10;" onclick="document.getElementById('publicClanModal').classList.remove('active')"></i>
@@ -585,12 +582,12 @@
             <div style="padding: 40px 20px 20px 20px; flex:1; overflow-y:auto;">
                 <div style="display:flex; justify-content:space-between; align-items:flex-start;">
                     <div style="flex:1; min-width:0;">
-                        <div style="font-family:var(--font-head); font-size:1.4rem; color:white; font-weight:bold; display:flex; align-items:center; gap:8px; line-height:1.2;" id="pubClanName">Clan Name</div>
+                        <div style="font-family:var(--font-head); font-size:1.4rem; color:white; font-weight:bold; display:flex; align-items:center; gap:8px; line-height:1.2; white-space:normal;" id="pubClanName">Clan Name</div>
                         <div style="color:var(--accent-cyan); font-weight:bold; font-size:0.85rem; margin-top:3px;" id="pubClanTag">#TAG</div>
                     </div>
                     <div id="pubClanLevel" style="text-align:right; color:#FFD700; font-family:var(--font-head); font-weight:bold; font-size:1.1rem; flex-shrink:0; margin-left:10px;"><i class="fa-solid fa-fire"></i> Lvl X</div>
                 </div>
-                <div style="color:#aaa; font-size:0.9rem; font-style:italic; margin-top:15px; border-left:3px solid var(--accent-purple); padding-left:10px;" id="pubClanMotto">Motto</div>
+                <div style="color:#aaa; font-size:0.9rem; font-style:italic; margin-top:15px; border-left:3px solid var(--accent-purple); padding-left:10px; white-space:normal;" id="pubClanMotto">Motto</div>
                 
                 <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-top:20px;">
                     <div style="background:rgba(255,255,255,0.05); padding:10px; border-radius:10px; text-align:center;">
@@ -617,13 +614,6 @@
                 <div class="modal-title"><i class="fa-solid fa-link" style="color:var(--accent-cyan);"></i> Invite Player</div>
                 <i class="fa-solid fa-xmark modal-close" onclick="document.getElementById('inviteLinkModal').classList.remove('active')"></i>
             </div>
-            
-            <label class="form-label">Manual Add by Game ID or Name</label>
-            <div style="display:flex; gap:10px; margin-bottom:20px;">
-                <input type="text" id="manualInviteInp" class="form-control" placeholder="Player's username or UID..." style="margin:0;">
-                <button type="button" class="btn-primary" id="btnManualInvite" style="width:auto; margin:0; padding:0 15px; border-radius:8px;" onclick="sendManualInvite()"><i class="fa-solid fa-paper-plane"></i></button>
-            </div>
-            <div id="manualInviteStatus" style="font-size:0.8rem; margin-top:-10px; margin-bottom:15px; text-align:center;"></div>
 
             <label class="form-label">Unique Clan Invite Link</label>
             <div style="display:flex; gap:10px; margin-bottom:15px;">
@@ -750,11 +740,14 @@
         let user = JSON.parse(localStorage.getItem('tournyx_user')) || {};
         let isGuestMode = !user || !user.username;
 
-        let userLiveClans = JSON.parse(localStorage.getItem('tournyx_my_clans_cache')) || []; 
+        let userLiveClans = []; 
         let activeClan = null;  
         let globalClans = [];
         let pendingJoinData = {};
         let activeFilterGame = 'All';
+        
+        // REPLACED DISMISS LOCALSTORAGE WITH RAM ARRAY FOR SESSION-ONLY PERSISTENCE
+        window.dismissedRejects = [];
         
         let chatSyncInterval = null;
 
@@ -815,12 +808,7 @@
             
             fetchAllClansSilent();
 
-            if (!isGuestMode && userLiveClans.length > 0) {
-                document.getElementById('mainContent').style.display = 'block';
-                document.getElementById('skeletonLoader').classList.remove('active');
-                renderHub();
-                fetchLiveClanData(true); 
-            } else if (!isGuestMode) { 
+            if (!isGuestMode) { 
                 fetchLiveClanData(false); 
             } else {
                 document.getElementById('skeletonLoader').classList.remove('active');
@@ -841,7 +829,7 @@
             }
         });
 
-        // ========================== MISSING FUNCTIONS ADDED ==========================
+        // ========================== UPGRADED INVITE SYSTEM ==========================
         function openInviteModal() {
             triggerHaptic();
             if(!activeClan) return;
@@ -855,41 +843,30 @@
             if(navigator.clipboard && window.isSecureContext) {
                 navigator.clipboard.writeText(link).then(() => showToast("Invite Link Copied!"));
             } else {
-                // fallback
                 let el = document.getElementById('inviteLinkInp');
                 el.select(); document.execCommand("copy"); showToast("Invite Link Copied!");
             }
         }
 
-        function sendManualInvite() {
-            triggerHaptic();
-            let target = document.getElementById('manualInviteInp').value.trim();
-            if(!target) return;
-            document.getElementById('manualInviteStatus').innerHTML = `<span style="color:var(--accent-cyan)"><i class="fa-solid fa-spinner fa-spin"></i> Sending invite to ${target}...</span>`;
-            
-            let payload = { action: "send_direct_invite", clan_id: activeClan.clanId, target: target, inviter: user.username };
-            fetch(API_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify(payload) });
-            
-            setTimeout(() => {
-                document.getElementById('manualInviteStatus').innerHTML = `<span style="color:var(--accent-green)"><i class="fa-solid fa-check-circle"></i> Invite sent to ${target}!</span>`;
-                document.getElementById('manualInviteInp').value = "";
-            }, 1200);
-        }
-
         function cancelJoinRequest(cId, btnEl, event) {
             if(event) event.stopPropagation();
             triggerHaptic();
-            let reqs = JSON.parse(localStorage.getItem('tournyx_join_requests')) || [];
-            reqs = reqs.filter(id => id !== cId);
-            localStorage.setItem('tournyx_join_requests', JSON.stringify(reqs));
 
             let payload = { action: "handle_join_request", clan_id: cId, player_data: {name: user.username}, is_accept: false, is_auto: false, is_decline_invite: true };
             fetch(API_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify(payload) });
 
+            // INSTANTLY UPDATE DOM TO JOIN
             if(btnEl) {
                 let card = btnEl.closest('.search-card');
                 let cName = card ? card.querySelector('.sc-name').innerText.replace(/'/g, "\\'") : "";
-                btnEl.outerHTML = `<button class="s-btn acc" onclick="event.stopPropagation(); triggerJoinFlow('${cId}', '${cName}', '', false, this)">JOIN</button>`;
+                let cGame = card ? card.querySelector('.fa-gamepad').nextSibling.textContent.trim() : "Esports";
+                btnEl.outerHTML = `<button class="s-btn acc" onclick="event.stopPropagation(); triggerJoinFlow('${cId}', '${cName}', '${cGame}', false, this)">JOIN</button>`;
+            }
+            
+            // Remove from RAM memory array
+            let gIndex = globalClans.findIndex(c => c.clanId === cId);
+            if(gIndex !== -1 && globalClans[gIndex].requests) {
+                globalClans[gIndex].requests = globalClans[gIndex].requests.filter(r => r.name !== user.username);
             }
             showToast("Request Cancelled");
         }
@@ -952,7 +929,7 @@
                                 }
 
                                 let currentRosterMe = clanObj.roster[myRosterIndex];
-                                let pPhone = user.phone || ""; let pIgn = user.gameName || user.username || ""; let pUid = user.uid || "";
+                                let pPhone = user.phone || ""; let pIgn = user.gameName || user.ign || user.username || ""; let pUid = user.uid || user.gameUid || "";
                                 
                                 if (currentRosterMe.phone !== pPhone || currentRosterMe.gameName !== pIgn || currentRosterMe.uid !== pUid) {
                                     clanObj.roster[myRosterIndex].phone = pPhone;
@@ -967,7 +944,6 @@
                     });
 
                     userLiveClans = parsedClans;
-                    localStorage.setItem('tournyx_my_clans_cache', JSON.stringify(userLiveClans));
                     
                     if(activeClan) {
                         let updatedClan = userLiveClans.find(c => c.clanId === activeClan.clanId);
@@ -977,7 +953,7 @@
                         if(needsLiveSyncUpdate) pushUpdateToLive('FULL_UPDATE', activeClan);
                     } else { renderHub(); }
                 } else {
-                    userLiveClans = []; localStorage.removeItem('tournyx_my_clans_cache'); showNoClan();
+                    userLiveClans = []; showNoClan();
                 }
             } catch (err) { if(!isSilent) showNoClan(); } 
             finally {
@@ -1080,7 +1056,6 @@
                                 let index = userLiveClans.findIndex(c => c.clanId === activeClan.clanId);
                                 if(index !== -1) {
                                     userLiveClans[index].messages = newMsgs;
-                                    localStorage.setItem('tournyx_my_clans_cache', JSON.stringify(userLiveClans));
                                 }
                                 
                                 const box = document.getElementById('chatMessages');
@@ -1221,7 +1196,6 @@
                 
                 let index = userLiveClans.findIndex(c => c.clanId === activeClan.clanId);
                 if(index !== -1) userLiveClans[index] = activeClan;
-                localStorage.setItem('tournyx_my_clans_cache', JSON.stringify(userLiveClans));
                 
                 showToast("Premium Badge Claimed successfully!");
                 renderDashboard(activeClan);
@@ -1516,7 +1490,6 @@
                 fetch(API_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify({ action: "update_clan", clan_id: activeClan.clanId, field: "FULL_UPDATE", value: JSON.stringify(activeClan) }) });
 
                 userLiveClans = userLiveClans.filter(c => c.clanId !== activeClan.clanId);
-                localStorage.setItem('tournyx_my_clans_cache', JSON.stringify(userLiveClans));
                 
                 showToast("You left the clan."); 
                 renderHub();
@@ -1564,7 +1537,6 @@
 
             let index = userLiveClans.findIndex(c => c.clanId === activeClan.clanId);
             if(index !== -1) userLiveClans[index] = activeClan;
-            localStorage.setItem('tournyx_my_clans_cache', JSON.stringify(userLiveClans));
             
             renderDashboard(activeClan); 
 
@@ -1651,7 +1623,6 @@
                             
                             let index = userLiveClans.findIndex(c => c.clanId === activeClan.clanId);
                             if(index !== -1) userLiveClans[index] = activeClan;
-                            localStorage.setItem('tournyx_my_clans_cache', JSON.stringify(userLiveClans));
                             renderDashboard(activeClan);
                             showToast("Image Saved Perfectly!"); 
                         } else {
@@ -1738,7 +1709,6 @@
                 
                 showToast("Clan disbanded permanently.", true); 
                 userLiveClans = userLiveClans.filter(c => c.clanId !== activeClan.clanId);
-                localStorage.setItem('tournyx_my_clans_cache', JSON.stringify(userLiveClans));
                 renderHub();
                 setTimeout(() => { fetchLiveClanData(true); }, 5000);
             }
@@ -1749,7 +1719,9 @@
             triggerHaptic();
             const name = document.getElementById('inpCName').value; const tag = document.getElementById('inpCTag').value; const game = document.getElementById('inpCGame').value;
             
-            const phone = user.phone || ""; const ign = user.gameName || user.username || ""; const uid = user.uid || "";
+            const phone = user.phone || "Not Set"; 
+            const ign = user.gameName || user.ign || user.username || "Not Set"; 
+            const uid = user.uid || user.gameUid || "Not Set";
             const userState = user.state || "N/A"; const userCity = user.city || "N/A";
             
             if(userLiveClans.filter(c => c.game === game).length >= 3) { showToast(`Max 3 clans allowed for ${game}!`, true); return; }
@@ -1767,7 +1739,6 @@
             };
 
             userLiveClans.push(newObj);
-            localStorage.setItem('tournyx_my_clans_cache', JSON.stringify(userLiveClans));
             document.getElementById('createClanForm').reset();
             document.getElementById('btnCreateClan').innerText = "Create Clan";
             
@@ -1893,14 +1864,13 @@
             }
             document.getElementById('pubClanRosterList').innerHTML = rosterHtml;
 
-            let reqListCache = JSON.parse(localStorage.getItem('tournyx_join_requests')) || [];
-            
             let isRejected = false;
-            let dismissed = JSON.parse(localStorage.getItem('tournyx_dismissed_rejects')) || [];
+            let dismissed = window.dismissedRejects || [];
             if(c.rejectedList && c.rejectedList.some(x => x.name === user.username) && !dismissed.includes(c.clanId)) isRejected = true;
             if(c.rejected && c.rejected.includes(user.username) && !dismissed.includes(c.clanId)) isRejected = true;
 
-            let isRequested = reqListCache.includes(c.clanId);
+            // Direct Array sync
+            let isRequested = c.requests && c.requests.some(r => r.name === user.username);
             
             let btnActionHtml = "";
             if (isRejected) {
@@ -1918,8 +1888,7 @@
 
         function renderClans(list) {
             let html = "";
-            let reqListCache = JSON.parse(localStorage.getItem('tournyx_join_requests')) || [];
-            let dismissed = JSON.parse(localStorage.getItem('tournyx_dismissed_rejects')) || [];
+            let dismissed = window.dismissedRejects || [];
 
             list.forEach((c, index) => {
                 if(!c.name) return;
@@ -1960,11 +1929,11 @@
                 if (c.rejectedList && c.rejectedList.some(r => r.name === user.username) && !dismissed.includes(c.clanId)) isRejected = true;
                 if (c.rejected && c.rejected.includes(user.username) && !dismissed.includes(c.clanId)) isRejected = true;
 
-                let isRequested = reqListCache.includes(c.clanId);
+                // Replaced local storage check with true cloud state
+                let isRequested = c.requests && c.requests.some(r => r.name === user.username);
                 
                 let btnHtml = "";
                 if (isRejected) {
-                    // Changed to allow Re-apply
                     btnHtml = `<button class="s-btn acc" onclick="event.stopPropagation(); dismissRejection('${c.clanId}'); triggerJoinFlow('${c.clanId}', '${c.name.replace(/'/g, "\\'")}', '${cGame}', ${c.autoAccept}, this)">RE-APPLY</button>`;
                 } else if (isRequested) {
                     btnHtml = `<button class="s-btn req" onclick="cancelJoinRequest('${c.clanId}', this, event)">REQUESTED</button>`;
@@ -2005,7 +1974,7 @@
                                 <span class="sc-tag-badge">#${cTag.toUpperCase()}</span>
                             </div>
                             <div class="sc-motto">"${c.motto || 'Ready for Battle'}"</div>
-                            <div style="font-size:0.8rem; color:var(--accent-cyan); display:flex; gap:10px; align-items:center; flex-wrap:nowrap; overflow:hidden;">
+                            <div style="font-size:0.8rem; color:var(--accent-cyan); display:flex; gap:10px; align-items:center; flex-wrap:wrap;">
                                 <span style="white-space:nowrap;"><i class="fa-solid fa-location-dot"></i> ${cLoc}</span>
                                 <span style="white-space:nowrap;"><i class="fa-solid fa-users"></i> ${rCount}/6</span>
                                 <span style="color:${lvlColor}; font-weight:bold; font-size:0.75rem; white-space:nowrap;"><i class="fa-solid fa-fire"></i> Lvl ${lvlData.level}</span>
@@ -2036,7 +2005,11 @@
 
         function processJoinRequest(e) {
             triggerHaptic();
-            let phone = user.phone || ""; let ign = user.gameName || user.username || ""; let uid = user.uid || "";
+            
+            // STRICT PAYLOAD PARSING FIX - Check all possible key mappings
+            let phone = user.phone || "Not Set"; 
+            let ign = user.gameName || user.ign || user.username || "Not Set"; 
+            let uid = user.uid || user.gameUid || "Not Set";
             let playerObj = { name: user.username, role: "Player", phone: phone, gameName: ign, uid: uid, state: user.state || "N/A", city: user.city || "N/A" };
             
             document.getElementById('btnFinalJoin').innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Processing...`; document.getElementById('btnFinalJoin').disabled = true;
@@ -2067,23 +2040,20 @@
             
             if (pendingJoinData.btnRef && !pendingJoinData.isAuto) {
                 pendingJoinData.btnRef.outerHTML = `<button class="s-btn req" onclick="cancelJoinRequest('${pendingJoinData.newClanId}', this, event)">REQUESTED</button>`;
-                let cachedReqs = JSON.parse(localStorage.getItem('tournyx_join_requests')) || [];
-                cachedReqs.push(pendingJoinData.newClanId);
-                localStorage.setItem('tournyx_join_requests', JSON.stringify(cachedReqs));
             }
             
             closeJoinModal(); showToast(pendingJoinData.isAuto ? "Clan Joined successfully!" : "Request Sent! Check Inbox.");
             document.getElementById('btnFinalJoin').innerText = "Confirm Request"; document.getElementById('btnFinalJoin').disabled = false;
-            setTimeout(() => { fetchLiveClanData(true); }, 5000);
+            
+            // Re-fetch all clans to push changes to RAM array instantly
+            setTimeout(() => { fetchAllClansSilent(); fetchLiveClanData(true); }, 2000);
         }
 
         function dismissRejection(clanId) {
             triggerHaptic();
-            let dismissed = JSON.parse(localStorage.getItem('tournyx_dismissed_rejects')) || [];
-            if(!dismissed.includes(clanId)) dismissed.push(clanId);
-            localStorage.setItem('tournyx_dismissed_rejects', JSON.stringify(dismissed));
+            if(!window.dismissedRejects.includes(clanId)) window.dismissedRejects.push(clanId);
             renderRequests(); 
-            searchGlobalClans(); // Re-render find tab UI
+            searchGlobalClans();
         }
 
         function renderRequests() {
@@ -2101,7 +2071,7 @@
                 let cGame = c.game || "Esports";
                 
                 clanMailHtml += `
-                <div class="search-card" style="padding:12px; margin-bottom:10px; border-color:var(--accent-green); height:auto;">
+                <div class="search-card" style="padding:12px; margin-bottom:10px; border-color:var(--accent-green); height:auto; min-height:0;">
                     <div style="font-size:0.85rem; color:white; margin-bottom:10px;">
                         <i class="fa-solid fa-envelope-open-text" style="color:var(--accent-green);"></i> 
                         <strong style="color:var(--accent-orange);">${invData.inviter}</strong> invited you to join <strong style="color:var(--accent-cyan);">${c.name}</strong>!
@@ -2137,7 +2107,7 @@
             totalBadgeCount += reqs.length;
 
             let rejectionsHtml = "";
-            let dismissed = JSON.parse(localStorage.getItem('tournyx_dismissed_rejects')) || [];
+            let dismissed = window.dismissedRejects || [];
             
             globalClans.forEach(c => {
                 let freshRej = filterLast7Days(c.rejectedList || []);
@@ -2146,7 +2116,7 @@
                     if(rejObj && !dismissed.includes(c.clanId)) {
                         totalBadgeCount++;
                         rejectionsHtml += `
-                        <div class="search-card" style="border-color:var(--accent-red); padding:10px; margin-bottom:15px; display:flex; justify-content:space-between; align-items:center; height:auto;">
+                        <div class="search-card" style="border-color:var(--accent-red); padding:10px; margin-bottom:15px; display:flex; justify-content:space-between; align-items:center; height:auto; min-height:0;">
                             <div style="font-size:0.85rem; color:white;">
                                 <i class="fa-solid fa-triangle-exclamation" style="color:var(--accent-red);"></i> The clan <strong style="color:var(--accent-cyan);">${c.name}</strong> rejected your request. <br>
                                 <span style="color:#aaa; font-style:italic; margin-top:5px; display:block;">Reason: "${rejObj.reason}"</span>
@@ -2170,9 +2140,9 @@
                         let rDataEnc = encodeURIComponent(JSON.stringify(typeof reqObj.reqData === 'string' ? {name: rName} : reqObj.reqData));
                         
                         html += `
-                        <div class="search-card" style="height:auto;">
+                        <div class="search-card" style="height:auto; min-height:0;">
                             <div class="sc-info" style="padding: 15px;">
-                                <div class="sc-name" style="color:var(--accent-orange);"><i class="fa-solid fa-user-astronaut"></i> ${rName}</div>
+                                <div class="sc-name" style="color:var(--accent-orange); white-space:normal;"><i class="fa-solid fa-user-astronaut"></i> ${rName}</div>
                                 <div style="font-size:0.8rem; color:#ccc; margin-bottom:10px;">Wants to join <strong style="color:white">${reqObj.clan.name}</strong></div>
                                 <div class="sc-btn-group" style="display:flex; gap:10px;">
                                     <button class="s-btn acc" style="flex:1;" onclick="handleReq('${rDataEnc}', true, '${reqObj.clan.clanId}', this)"><i class="fa-solid fa-check"></i> Accept</button>
@@ -2257,13 +2227,20 @@
                 pushUpdateToLive('FULL_UPDATE', targetClan); 
             }
 
-            // INSTANT DOM CLEANUP: Remove request card so it doesn't linger
+            // INBOX AUTO-DISSOLVE ANIMATION FIX
             if (btnElement) {
                 let card = btnElement.closest('.search-card');
                 if (card) {
+                    card.style.transition = '0.4s ease-out';
+                    card.style.transform = 'translateX(100%)';
                     card.style.opacity = '0';
-                    card.style.transform = 'scale(0.9)';
-                    setTimeout(() => card.remove(), 300);
+                    setTimeout(() => {
+                        card.remove();
+                        let list = document.getElementById('requestsList');
+                        if (list && list.children.length === 0) {
+                            list.innerHTML = "<div style='text-align:center; color:#666; font-style:italic;'>No pending join requests.</div>";
+                        }
+                    }, 400);
                 }
             }
             
