@@ -141,12 +141,12 @@
         }
         .tourney-card:active { transform: scale(0.98); }
         
-        /* Glow Logic */
-        .tourney-card.upcoming-glow { border-color: rgba(0, 242, 255, 0.4); box-shadow: 0 0 15px rgba(0, 242, 255, 0.1); }
-        .tourney-card.live-glow { border-color: rgba(0, 255, 127, 0.6); box-shadow: 0 0 20px rgba(0, 255, 127, 0.3); animation: cardPulseLive 2s infinite ease-in-out; }
-        @keyframes cardPulseLive { 0% { box-shadow: 0 0 15px rgba(0,255,127,0.2); } 50% { box-shadow: 0 0 25px rgba(0,255,127,0.5); } 100% { box-shadow: 0 0 15px rgba(0,255,127,0.2); } }
-        .tourney-card.mega-event { border-color: rgba(255, 215, 0, 0.6); box-shadow: 0 0 25px rgba(255, 215, 0, 0.3); animation: cardPulseMega 2s infinite ease-in-out; }
-        @keyframes cardPulseMega { 0% { box-shadow: 0 0 15px rgba(255,215,0,0.2); } 50% { box-shadow: 0 0 30px rgba(255,215,0,0.6); } 100% { box-shadow: 0 0 15px rgba(255,215,0,0.2); } }
+        /* Glow Logic - Optimized for 0 Lag */
+        .tourney-card.upcoming-glow { border-color: rgba(0, 242, 255, 0.4); }
+        .tourney-card.live-glow { border-color: rgba(0, 255, 127, 0.6); animation: cardPulseLive 2s infinite alternate ease-in-out; }
+        @keyframes cardPulseLive { 0% { box-shadow: 0 0 5px rgba(0,255,127,0.2); } 100% { box-shadow: 0 0 20px rgba(0,255,127,0.4); } }
+        .tourney-card.mega-event { border-color: rgba(255, 215, 0, 0.6); animation: cardPulseMega 2s infinite alternate ease-in-out; }
+        @keyframes cardPulseMega { 0% { box-shadow: 0 0 5px rgba(255,215,0,0.2); } 100% { box-shadow: 0 0 25px rgba(255,215,0,0.5); } }
         .tourney-card.is-full { opacity: 0.65; filter: grayscale(70%); background: rgba(30, 30, 30, 0.5) !important; border-color: rgba(255, 255, 255, 0.1) !important; box-shadow: none !important; animation: none !important;}
 
         .t-banner-wrapper { position: relative; height: 135px; width: 100%; background: #000; overflow: hidden; }
@@ -158,8 +158,8 @@
         @keyframes pulseBlue { from { opacity:0.5; transform: scale(1); } to { opacity:1; transform: scale(1.2); } }
         
         .t-timer-badge { position: absolute; top: 10px; right: 10px; background: rgba(0,0,0,0.8); border: 1px solid rgba(255,255,255,0.1); color: white; font-family: var(--font-head); font-size: 0.65rem; font-weight: bold; padding: 4px 10px; border-radius: 50px; z-index: 2; letter-spacing: 0.5px; transition: 0.3s;}
-        .t-timer-badge.ending-soon { color: #ff4d4d; border-color: rgba(255,77,77,0.5); animation: urgentPulse 1.5s infinite; }
-        @keyframes urgentPulse { 0% { box-shadow: 0 0 0 rgba(255,77,77,0); } 50% { box-shadow: 0 0 10px rgba(255,77,77,0.5); } 100% { box-shadow: 0 0 0 rgba(255,77,77,0); } }
+        .t-timer-badge.ending-soon { color: #ff4d4d; border-color: rgba(255,77,77,0.5); animation: urgentPulse 1.5s infinite alternate; }
+        @keyframes urgentPulse { 0% { box-shadow: 0 0 0 rgba(255,77,77,0); } 100% { box-shadow: 0 0 15px rgba(255,77,77,0.6); } }
         
         .t-like { position: absolute; bottom: 10px; left: 10px; background: rgba(0,0,0,0.8); color: white; padding: 4px 10px; border-radius: 50px; display: flex; align-items: center; justify-content: center; gap: 5px; border: 1px solid rgba(255,255,255,0.1); font-family: var(--font-head); font-size: 0.75rem; font-weight: bold; cursor: pointer; z-index: 5; transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
         .t-like:active { transform: scale(0.8); }
@@ -194,7 +194,7 @@
         .t-prize-val { font-size: 1rem; font-weight: 900; color: var(--accent-green); text-shadow: 0 0 5px rgba(0,255,127,0.3);}
         
         /* Animated Register Button */
-        .join-btn-card { position: relative; overflow: hidden; background: rgba(0,242,255,0.05); border: 1px solid var(--accent-cyan); color: var(--accent-cyan); padding: 8px 18px; border-radius: 50px; font-weight: bold; font-size: 0.8rem; font-family: var(--font-head); transition: 0.2s; cursor: pointer; z-index: 1;}
+        .join-btn-card { position: relative; overflow: hidden; background: rgba(0,242,255,0.05); border: 1px solid var(--accent-cyan); color: var(--accent-cyan); padding: 8px 18px; border-radius: 50px; font-weight: bold; font-size: 0.8rem; font-family: var(--font-head); transition: 0.2s; cursor: pointer; z-index: 1; white-space: nowrap;}
         .join-btn-card::after { content: ''; position: absolute; top: 0; left: -100%; width: 50%; height: 100%; background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent); animation: btnShine 3s infinite 1s; z-index: -1; }
         @keyframes btnShine { 0% { left: -100%; } 20% { left: 200%; } 100% { left: 200%; } }
         .join-btn-card:hover { background: rgba(0,242,255,0.2); box-shadow: 0 0 10px rgba(0,242,255,0.4); transform: translateY(-2px); }
@@ -316,8 +316,8 @@
         .prize-card.silver { border-color: rgba(192, 192, 192, 0.5); background: linear-gradient(135deg, rgba(192,192,192,0.15), rgba(128,128,128,0.1)); }
         .prize-card.bronze { border-color: rgba(205, 127, 50, 0.5); background: linear-gradient(135deg, rgba(205,127,50,0.15), rgba(139,69,19,0.1)); }
         
-        .prize-card.points-card { border-color: rgba(189,0,255,0.6); background: linear-gradient(135deg, rgba(189,0,255,0.15), rgba(0,242,255,0.1)); box-shadow: 0 0 20px rgba(189,0,255,0.3); animation: pulsePoints 2s infinite ease-in-out; }
-        @keyframes pulsePoints { 0% { box-shadow: 0 0 10px rgba(189,0,255,0.2); } 50% { box-shadow: 0 0 25px rgba(189,0,255,0.5); } 100% { box-shadow: 0 0 10px rgba(189,0,255,0.2); } }
+        .prize-card.points-card { border-color: rgba(189,0,255,0.6); background: linear-gradient(135deg, rgba(189,0,255,0.15), rgba(0,242,255,0.1)); will-change: filter; animation: pulsePoints 2s infinite alternate ease-in-out; }
+        @keyframes pulsePoints { 0% { filter: drop-shadow(0 0 5px rgba(189,0,255,0.2)); } 100% { filter: drop-shadow(0 0 15px rgba(189,0,255,0.6)); } }
         .prize-card.points-card .pc-val { color: var(--accent-purple); text-shadow: 0 0 8px rgba(189,0,255,0.5); }
 
         .prize-card.glass-premium { border: 1px solid rgba(0, 242, 255, 0.4); background: linear-gradient(135deg, rgba(0,242,255,0.1), rgba(189,0,255,0.05)); }
@@ -326,8 +326,8 @@
         html.theme-vip .pc-val { color: #FFD700; text-shadow: 0 0 5px rgba(255,215,0,0.4);}
 
         .prize-high { border-color: rgba(0,242,255,0.6); box-shadow: 0 2px 15px rgba(0,242,255,0.3); }
-        .prize-mega { border: 2px solid #FFD700 !important; background: linear-gradient(135deg, rgba(255,215,0,0.2), rgba(255,140,0,0.15)) !important; box-shadow: 0 0 25px rgba(255,215,0,0.4); animation: megaPrizePulse 2s infinite ease-in-out;}
-        @keyframes megaPrizePulse { 0% { box-shadow: 0 0 15px rgba(255,215,0,0.3); } 50% { box-shadow: 0 0 35px rgba(255,215,0,0.6); } 100% { box-shadow: 0 0 15px rgba(255,215,0,0.3); } }
+        .prize-mega { border: 2px solid #FFD700 !important; background: linear-gradient(135deg, rgba(255,215,0,0.2), rgba(255,140,0,0.15)) !important; will-change: filter; animation: megaPrizePulse 2s infinite alternate ease-in-out;}
+        @keyframes megaPrizePulse { 0% { filter: drop-shadow(0 0 5px rgba(255,215,0,0.2)); } 100% { filter: drop-shadow(0 0 20px rgba(255,215,0,0.6)); } }
         .prize-mega .pc-val { color: #FFD700 !important; text-shadow: 0 0 10px rgba(255,215,0,0.8) !important; font-size: 1.3rem; }
 
         /* MULTI-CLAN ROSTER EXPANSION PERFECTED */
@@ -338,8 +338,8 @@
         .clan-item.vip-solo .clan-item-icon { border-color: #FFD700; box-shadow: 0 0 10px rgba(255,215,0,0.4); }
 
         .clan-item-header { display: flex; align-items: center; width: 100%; gap: 12px; word-wrap: break-word;}
-        .clan-item-icon { width: 35px; height: 35px; border-radius: 50px; background: rgba(var(--dynamic-t-color), 0.1); color: rgb(var(--dynamic-t-color)); display: flex; align-items: center; justify-content: center; font-size: 1.1rem; overflow: hidden; border: 1px solid rgba(255,255,255,0.2);}
-        .clan-item-icon img { width: 100%; height: 100%; border-radius: 50px; object-fit: cover; }
+        .clan-item-icon { width: 35px; height: 35px; border-radius: 50px; background: rgba(var(--dynamic-t-color), 0.1); color: rgb(var(--dynamic-t-color)); display: flex; align-items: center; justify-content: center; font-size: 1.1rem; overflow: hidden; border: 1px solid rgba(255,255,255,0.2); flex-shrink: 0;}
+        .clan-item-icon img { width: 100%; height: 100%; border-radius: 50px; object-fit: cover; aspect-ratio: 1/1; }
         .clan-item-name { font-family: var(--font-head); font-size: 1rem; color: white; flex: 1; display: flex; align-items: center; gap: 6px; flex-wrap: wrap;}
         
         .clan-roster-dropdown { max-height: 0; opacity: 0; transition: max-height 0.5s ease-in-out, opacity 0.3s ease, margin-top 0.3s ease; width: 100%; border-top: 1px dashed transparent; margin-top: 0; padding-top: 0; overflow: hidden; word-wrap: break-word;}
@@ -353,11 +353,16 @@
         .state-badge { font-size:0.6rem; color:#aaa; font-family:var(--font-body); font-weight:normal; border:1px solid rgba(255,255,255,0.2); padding:2px 6px; border-radius:4px; margin-left:6px; white-space:nowrap;}
         .level-badge { font-size:0.6rem; color:#FFD700; font-family:var(--font-head); font-weight:bold; background:rgba(255,215,0,0.1); padding:2px 6px; border-radius:4px; border:1px solid #FFD700; margin-left:6px; white-space:nowrap; box-shadow: 0 0 5px rgba(255,215,0,0.3);}
 
-        /* ADS NATIVE INTEGRATION */
-        .tournyx-ad-slot { min-height: 90px; margin: 20px 0; border-radius: 18px; background: rgba(255,255,255,0.02); border: 1px dashed rgba(var(--dynamic-t-color, 255,255,255), 0.3); display:flex; align-items:center; justify-content:center; position: relative; overflow: hidden;}
-        .tournyx-ad-slot::before { content: ''; position: absolute; top: 0; left: -100%; width: 50%; height: 100%; background: linear-gradient(90deg, transparent, rgba(255,255,255,0.05), transparent); animation: adShimmer 4s infinite linear; z-index: 1;}
-        @keyframes adShimmer { 0% { left: -100%; } 100% { left: 200%; } }
-        .tournyx-ad-slot::after { content: 'SPONSORED'; position: absolute; bottom: 5px; right: 10px; font-size: 0.5rem; color: #666; font-family: var(--font-head); pointer-events: none;}
+        /* ADS NATIVE INTEGRATION & BOOST FEATURE */
+        .tournyx-ad-slot { min-height: 90px; margin: 20px 0; border-radius: 18px; background: rgba(255,255,255,0.02); border: 1px dashed rgba(var(--dynamic-t-color, 255,255,255), 0.3); display:flex; align-items:center; justify-content:center; position: relative; overflow: hidden; transition: 0.3s;}
+        .tournyx-ad-slot.boosted-active { border: 1px solid var(--accent-orange); background: rgba(255,153,0,0.05); cursor: pointer; display: block; padding: 0; box-shadow: 0 5px 15px rgba(255,153,0,0.2);}
+        
+        /* SPONSOR CARD STYLING */
+        .sponsor-boost-card { position: relative; width: 100%; height: 100%; display: flex; align-items: center; padding: 10px; gap: 12px; }
+        .sponsor-boost-card img { width: 70px; height: 70px; border-radius: 12px; object-fit: cover; border: 1px solid var(--accent-orange); }
+        .sponsor-boost-card .sp-details { flex: 1; display: flex; flex-direction: column; justify-content: center; }
+        .sponsor-boost-card .sp-title { font-family: var(--font-head); font-size: 0.9rem; color: white; font-weight: bold; margin-bottom: 4px; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+        .sponsor-boost-card .sp-badge { position: absolute; top: 0; right: 0; background: var(--accent-orange); color: black; font-size: 0.6rem; font-family: var(--font-head); font-weight: 900; padding: 3px 10px; border-radius: 0 18px 0 10px; text-transform: uppercase; letter-spacing: 1px; }
 
         .crosshair-target { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%) scale(5); opacity: 0; color: var(--accent-cyan); font-size: 8rem; z-index: 10000; pointer-events: none;}
         html.theme-vip .crosshair-target { color: #FFD700; }
@@ -390,14 +395,15 @@
         .org-other-card:active { transform: scale(0.96); }
 
         .locked-footer { background: rgba(7, 3, 17, 0.95); padding: 15px 20px calc(15px + env(safe-area-inset-bottom, 0px)); border-top: 1px solid rgba(var(--dynamic-t-color), 0.2); display: flex; gap: 10px; flex-shrink: 0; box-shadow: 0 -5px 20px rgba(0,0,0,0.5); z-index: 50; backdrop-filter: blur(10px);}
-        .btn-primary { flex: 1; background: var(--accent-gradient); color: white; border: none; padding: 12px 20px; border-radius: 50px; font-family: var(--font-head); font-weight: bold; font-size: 0.95rem; cursor: pointer; box-shadow: 0 5px 15px rgba(189,0,255,0.4); text-transform: uppercase; transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275); display:flex; align-items:center; justify-content:center; gap:8px; position: relative; overflow: hidden;}
+        /* PERFECT TEXT SIZES AND NO OVERFLOW */
+        .btn-primary { flex: 1; background: var(--accent-gradient); color: white; border: none; padding: 12px 10px; border-radius: 50px; font-family: var(--font-head); font-weight: bold; font-size: clamp(0.75rem, 3.5vw, 0.95rem); cursor: pointer; box-shadow: 0 5px 15px rgba(189,0,255,0.4); text-transform: uppercase; transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275); display:flex; align-items:center; justify-content:center; gap:6px; position: relative; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; max-width: 100%; box-sizing: border-box;}
         .btn-primary::after { content: ''; position: absolute; top: 0; left: -100%; width: 50%; height: 100%; background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent); animation: btnShineCore 2.5s infinite 1.5s; z-index: 1; }
         @keyframes btnShineCore { 0% { left: -100%; } 20% { left: 200%; } 100% { left: 200%; } }
         .btn-primary:active { transform: scale(0.95); box-shadow: 0 2px 10px rgba(189,0,255,0.4); }
         .btn-primary:disabled { background: rgba(255,255,255,0.05); color: #666; border: 1px solid rgba(255,255,255,0.1); box-shadow: none; cursor: default; transform: none; filter: none;}
         html.theme-vip .btn-primary { background: linear-gradient(90deg, #FFD700, #FF8C00); color: black; box-shadow: 0 5px 15px rgba(255,215,0,0.4); }
         
-        .btn-secondary { background: transparent; border: 1px solid var(--accent-orange); color: var(--accent-orange); padding: 12px 20px; border-radius: 50px; font-family: var(--font-head); font-weight: bold; font-size: 0.95rem; cursor: pointer; transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275); display: flex; align-items: center; justify-content: center; gap: 8px; text-transform: uppercase; }
+        .btn-secondary { background: transparent; border: 1px solid var(--accent-orange); color: var(--accent-orange); padding: 12px 10px; border-radius: 50px; font-family: var(--font-head); font-weight: bold; font-size: clamp(0.75rem, 3.5vw, 0.95rem); cursor: pointer; transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275); display: flex; align-items: center; justify-content: center; gap: 6px; text-transform: uppercase; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 100%; box-sizing: border-box;}
         .btn-secondary:hover { background: rgba(255,153,0,0.1); transform: translateY(-2px); box-shadow: 0 5px 15px rgba(255,153,0,0.2); }
         .btn-secondary:active { background: rgba(255,153,0,0.2); transform: scale(0.95);}
         html.theme-vip .btn-secondary { border-color: #FFD700; color: #FFD700; }
@@ -530,7 +536,7 @@
 
             <div class="header-right">
                 <i class="fa-solid fa-users header-community-icon" onclick="window.location.href='community.html'"></i>
-                <img src="https://via.placeholder.com/40" class="header-profile-img" id="headerProfilePic" onclick="if(isGuestMode) { document.getElementById('guestLoginModal').classList.add('active'); } else { window.location.href='profile.html'; }">
+                <img src="https://via.placeholder.com/40" class="header-profile-img" id="headerProfilePic" onclick="if(isGuestMode) { document.getElementById('guestLoginModal').classList.add('active'); } else { window.location.href='profile.html'; }" onerror="this.src='https://ui-avatars.com/api/?name=User&background=070311&color=00f2ff&bold=true'">
             </div>
         </div>
     </header>
@@ -640,8 +646,7 @@
                 
                     <h2 id="dtTitle" class="t-title" style="font-size: 1.4rem !important; white-space: normal; word-wrap: break-word; margin-bottom: 5px;">Tournament Title</h2>
                     
-                    <div class="dm-section" style="padding:12px 15px; margin-bottom: 20px; display:flex; align-items:center; gap:12px; border-color: var(--accent-cyan) !important; cursor:pointer;" onclick="openHostProfile()">
-                        <img id="orgAvatarImg" src="https://via.placeholder.com/40" style="width:50px; height:50px; border-radius:50%; border:2px solid var(--accent-cyan); object-fit: cover;">
+                    <div class="dm-section" style="padding:12px 15px; margin-bottom: 20px; display:flex; align-items:center; justify-content:space-between; border-color: var(--accent-cyan) !important; cursor:pointer;" onclick="openHostProfile()">
                         <div style="flex:1;">
                             <div style="color: #a0a0b0; font-size: 0.7rem; text-transform: uppercase;">Organized by</div>
                             <div style="color:white; font-weight:bold; font-size:1.1rem; font-family:var(--font-head); display:flex; align-items:center; gap:5px; flex-wrap:wrap;">
@@ -718,9 +723,8 @@
                         </div>
                     </div>
 
-                    <div class="tournyx-ad-slot">
-                        <div style="color:#555; font-size:0.8rem;"><i class="fa-solid fa-rectangle-ad"></i> Adsterra Placeholder</div>
-                    </div>
+                    <div class="tournyx-ad-slot" id="overviewAdSlot">
+                        </div>
                 </div>
 
                 <div class="dm-tab-content" id="dtTabMatches">
@@ -750,9 +754,8 @@
 
                     <div id="prizeDistributionArea"></div>
 
-                    <div class="tournyx-ad-slot">
-                         <div style="color:#555; font-size:0.8rem;"><i class="fa-solid fa-rectangle-ad"></i> Adsterra Placeholder</div>
-                    </div>
+                    <div class="tournyx-ad-slot" id="prizeAdSlot">
+                        </div>
                 </div>
 
                 <div class="dm-tab-content" id="dtTabRules">
@@ -1049,6 +1052,32 @@
             } catch(e) {}
         }
 
+        function triggerCoinAnimation() {
+            const container = document.createElement('div');
+            container.style.position = 'fixed';
+            container.style.top = '0'; container.style.left = '0';
+            container.style.width = '100vw'; container.style.height = '100vh';
+            container.style.pointerEvents = 'none';
+            container.style.zIndex = '99999';
+            document.body.appendChild(container);
+            
+            for(let i=0; i<30; i++) {
+                let coin = document.createElement('div');
+                coin.innerHTML = '<i class="fa-solid fa-coins" style="color:#FFD700; font-size:1.5rem; filter:drop-shadow(0 0 5px #FFD700);"></i>';
+                coin.style.position = 'absolute';
+                coin.style.left = Math.random() * 100 + 'vw';
+                coin.style.top = '-50px';
+                coin.style.transition = 'transform ' + (1 + Math.random() * 1.5) + 's cubic-bezier(0.25, 0.46, 0.45, 0.94), opacity 1.5s';
+                container.appendChild(coin);
+                
+                setTimeout(() => {
+                    coin.style.transform = `translateY(${window.innerHeight + 100}px) rotate(${Math.random() * 360}deg)`;
+                    coin.style.opacity = '0';
+                }, 50);
+            }
+            setTimeout(() => container.remove(), 2500);
+        }
+
         function showToast(msg, isError = false) {
             var x = document.getElementById("customToast");
             x.innerText = msg;
@@ -1225,7 +1254,6 @@
             }, 1000);
         }
 
-        // --- DYNAMIC ROOM ID STATE MACHINE ---
         function renderRoomTabDynamic(t, isJoined) {
             let roomArea = document.getElementById('roomDetailsArea');
             if(!roomArea) return;
@@ -1418,6 +1446,49 @@
             return strUrl; 
         }
 
+        /* --- ADSTERRA AND BOOST FEATURE INJECTOR --- */
+        function renderSponsorAdSlots() {
+            let adSlots = [document.getElementById('overviewAdSlot'), document.getElementById('prizeAdSlot')];
+            let boostedTournaments = localTournamentsData.filter(t => 
+                String(t.boosted || t.is_boosted).toLowerCase() === 'true' || parseInt(t.prize) >= 10000 
+            );
+
+            adSlots.forEach((slot, index) => {
+                if(!slot) return;
+                slot.innerHTML = ''; // clear
+
+                // Provide a mix of Adsterra and Sponsored Boosts
+                // Let's say 50/50 chance if boosted tournaments exist
+                if(boostedTournaments.length > 0 && Math.random() > 0.4) {
+                    // Pick random boosted tournament
+                    let sp = boostedTournaments[Math.floor(Math.random() * boostedTournaments.length)];
+                    let bg = formatImageUrl(sp.banner);
+                    slot.classList.add('boosted-active');
+                    slot.innerHTML = `
+                        <div class="sponsor-boost-card" onclick="openTournamentDetails('${encodeURIComponent(JSON.stringify(sp))}')">
+                            <div class="sp-badge">Sponsored</div>
+                            <img src="${bg}" alt="Sponsor Banner">
+                            <div class="sp-details">
+                                <div class="sp-title">${sp.title}</div>
+                                <div style="font-size: 0.75rem; color: #aaa;"><i class="fa-solid fa-trophy" style="color:#FFD700;"></i> ${getPrizeText(sp.prize, sp.prize_pts)}</div>
+                            </div>
+                        </div>
+                    `;
+                } else {
+                    // Inject Adsterra Script
+                    slot.classList.remove('boosted-active');
+                    slot.innerHTML = `
+                        <div style="color:#555; font-size:0.8rem; text-align:center;"><i class="fa-solid fa-rectangle-ad"></i> Partner Ad Space</div>
+                        <script type="text/javascript">
+                            // atOptions = { ... }
+                            // document.write('<scr' + 'ipt type="text/javascript" src="..."></scr' + 'ipt>');
+                        <\/script>
+                        `;
+                }
+            });
+        }
+
+
         document.addEventListener("DOMContentLoaded", function() {
             let user = JSON.parse(localStorage.getItem('tournyx_user'));
             const urlParams = new URLSearchParams(window.location.search);
@@ -1599,7 +1670,6 @@
                         let baseLikeCount = (Math.abs(tIdSafe.split('').reduce((a,b)=>{a=((a<<5)-a)+b.charCodeAt(0);return a&a},0)) % 150) + 12;
                         let displayLikes = isLiked ? baseLikeCount + 1 : baseLikeCount;
 
-                        // Fetch verified/premium details directly from mapped user sheet (Column X logical map) or DB properties
                         let isVerifiedPremium = (String(t.is_premium).toLowerCase() === 'true' || String(t.is_verified).toLowerCase() === 'true' || String(t.is_official).toLowerCase() === 'true') ? '<i class="fa-solid fa-circle-check verified-badge"></i>' : '';
 
                         let isJoined = userLiveMatches.some(m => m.tournament_title === t.title || m.match_id === tIdSafe);
@@ -1661,14 +1731,6 @@
                     this.classList.add('active');
                     document.querySelectorAll('.dm-tab-content').forEach(content => content.classList.remove('active'));
                     document.getElementById(this.getAttribute('data-tab')).classList.add('active');
-                    
-                    try {
-                        Array.from(document.querySelectorAll('.adsbygoogle')).forEach(ad => {
-                            if(ad.innerHTML === '') {
-                                (adsbygoogle = window.adsbygoogle || []).push({});
-                            }
-                        });
-                    } catch(e) {}
                 });
             });
         }
@@ -1848,18 +1910,6 @@
             let hostedCount = t.org_hosted_count ? parseInt(t.org_hosted_count) : Math.max(localTournamentsData.filter(x => x.org_username === orgId || x.email === orgId).length, 1);
             document.getElementById('dtOrgStats').innerHTML = `<i class="fa-solid fa-star" style="color:#FFD700;"></i> Hosted: ${hostedCount} Match${hostedCount > 1 ? 'es' : ''}`;
 
-            let orgEmail = t.org_email || t.email || orgId;
-            fetch(API_URL + "?action=get_avatar&username=" + encodeURIComponent(orgId) + "&email=" + encodeURIComponent(orgEmail))
-            .then(res => res.json())
-            .then(data => {
-                if(data.status === 'success') {
-                    let avatarUrl = data.data || data.avatar;
-                    if(avatarUrl) {
-                        document.getElementById('orgAvatarImg').src = formatImageUrl(avatarUrl);
-                    }
-                }
-            }).catch(e => console.log(e));
-
             let reqTickets = (rFee >= 10 && rFee % 10 === 0) ? rFee / 10 : rFee; 
 
             document.getElementById('dtPrize').innerText = getPrizeText(t.prize, t.prize_pts);
@@ -2031,8 +2081,6 @@
             } else if(isJoined) {
                 btn.innerHTML = "<i class='fa-solid fa-plus'></i> ADD ANOTHER CLAN";
                 btn.className = "btn-primary";
-                btn.style.fontSize = "0.75rem";
-                btn.style.padding = "8px 15px";
                 btn.disabled = false;
             } else if (isCancelled) {
                 btn.innerHTML = "<i class='fa-solid fa-ban'></i> CANCELLED";
@@ -2057,8 +2105,6 @@
             } else {
                 btn.innerText = "REGISTER NOW";
                 btn.className = "btn-primary";
-                btn.style.fontSize = "0.9rem";
-                btn.style.padding = "10px 20px";
                 btn.disabled = false;
             }
 
@@ -2069,12 +2115,12 @@
             fetch(API_URL + "?action=increment_view&match_id=" + encodeURIComponent(t.id || t.title), { mode: 'no-cors' }).catch(e=>{});
 
             loadOtherTournaments(orgId, t.id || t.title);
+            renderSponsorAdSlots(); // Inject dynamic Sponsor / Ads into the modal
 
             document.querySelector('.dm-scroll-area').scrollTo(0,0);
             document.querySelector('.dm-nav-item[data-tab="dtTabOverview"]').click();
             modalEl.classList.add('active');
             
-            try { Array.from(document.querySelectorAll('.adsbygoogle')).forEach(ad => { if(ad.innerHTML === '') { (adsbygoogle = window.adsbygoogle || []).push({}); } }); } catch(e) {}
         }
 
         function closeDetailModal() { 
@@ -2272,7 +2318,7 @@
                                 container.innerHTML += `
                                     <div class="clan-item ${highlightClass}" ${hasRoster ? `onclick="toggleTeamDropdown(this)"` : ''}>
                                         <div class="clan-item-header">
-                                            <div class="clan-item-icon"><img src="${clanLogo}"></div>
+                                            <div class="clan-item-icon"><img src="${clanLogo}" onerror="this.src='https://ui-avatars.com/api/?name=${encodeURIComponent(displayClanName)}&background=070311&color=00ff7f&bold=true'"></div>
                                             <div class="clan-item-name">${displayClanName} ${isMyClan ? '<span style="font-size:0.7rem; color:var(--accent-cyan); font-weight:normal;">(Your Clan)</span>' : ''} ${levelBadge} ${stateBadge} ${expandIcon}</div>
                                         </div>
                                         ${hasRoster ? `<div class="clan-roster-dropdown">${rosterHTML}</div>` : ''}
@@ -2739,7 +2785,7 @@
             });
         }
 
-        // --- CONTRIBUTE ENGINE WITH SECURE BACKEND PAYLOAD ---
+        // --- CONTRIBUTE ENGINE WITH SECURE BACKEND PAYLOAD & COIN ANIMATION ---
         function openContributeModal() {
             if(isGuestMode) { document.getElementById('guestLoginModal').classList.add('active'); return; }
             document.getElementById('contributeOverlay').classList.add('active');
@@ -2805,6 +2851,7 @@
                 body: JSON.stringify({ action: 'update_wallet', email: user.email, rupees: user.rupees, points: user.points })
             });
 
+            // This hits the backend AppScript snippet discussed above for Column V
             fetch(API_URL, {
                 method: 'POST', mode: 'no-cors', headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ action: 'add_donation', match_id: activeTournament.id || activeTournament.title, amount: val, user: user.email })
@@ -2832,6 +2879,7 @@
             balEl.innerText = Math.floor((baseRupees + goldenRupees) / 10);
             document.getElementById('contributeRsVal').innerText = (baseRupees + goldenRupees);
             
+            triggerCoinAnimation();
             showToast("Successfully contributed ₹" + val + " to " + (activeTournament.title || "the event") + "!");
             setTimeout(closeContributeModal, 800);
         }
