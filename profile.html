@@ -244,7 +244,7 @@
         .stat-val { font-family: var(--font-head); font-size: 1.8rem; display: flex; justify-content: center; margin-bottom: 5px; font-weight: bold; text-shadow: 0 0 15px rgba(255,255,255,0.2); }
         .stat-label { font-size: 0.8rem; color: #888; text-transform: uppercase; font-weight: bold; letter-spacing: 0.5px; }
         
-        .action-card { background: linear-gradient(135deg, rgba(0,242,255,0.05), rgba(0,0,0,0)); border: 1px solid rgba(0,242,255,0.2); border-radius: 18px; padding: 25px 20px; display: flex; align-items: center; justify-content: space-between; margin-bottom: 15px; cursor: pointer; text-decoration: none; color: white; transition: 0.3s; box-shadow: 0 5px 20px rgba(0,0,0,0.3); will-change: transform; backdrop-filter: blur(10px); gap: 15px;}
+        .action-card { background: linear-gradient(135deg, rgba(0,242,255,0.05), rgba(0,0,0,0)); border: 1px solid rgba(0,242,255,0.2); border-radius: 18px; padding: 25px 20px; display: flex; align-items: center; justify-content: center; margin-bottom: 15px; cursor: pointer; text-decoration: none; color: white; transition: 0.3s; box-shadow: 0 5px 20px rgba(0,0,0,0.3); will-change: transform; backdrop-filter: blur(10px); gap: 15px;}
         .action-card:active { transform: scale(0.98); border-color: var(--accent-cyan); box-shadow: 0 10px 30px rgba(0,242,255,0.2);}
         .action-text { flex: 1; min-width: 0;}
         .action-text h4 { font-family: var(--font-head); font-size: 1.15rem; margin-bottom: 5px; text-shadow: 0 0 5px rgba(255,255,255,0.2); white-space: nowrap; overflow: hidden; text-overflow: ellipsis;}
@@ -1918,6 +1918,20 @@
                     let title = t.title || "Untitled Event";
                     
                     let sColor = String(statusText).toLowerCase().includes('live') ? 'var(--accent-green)' : (String(statusText).toLowerCase().includes('completed') ? '#888' : 'var(--accent-cyan)');
+                    
+                    // BOOST LOGIC INTEGRATION
+                    let isBoosted = String(t.boosted || t.is_boosted).toLowerCase() === 'true';
+                    let boostExpiry = t.boost_expiry ? new Date(t.boost_expiry) : null;
+                    let now = new Date();
+                    let boostActionHtml = "";
+                    
+                    if (isBoosted && boostExpiry && boostExpiry > now) {
+                        let daysLeft = Math.ceil((boostExpiry - now) / (1000 * 60 * 60 * 24));
+                        boostActionHtml = `<div style="background:rgba(255,153,0,0.1); border:1px solid var(--accent-orange); color:var(--accent-orange); padding:5px 10px; border-radius:10px; font-size:0.75rem; font-family:var(--font-head); font-weight:bold; display:flex; align-items:center; gap:5px;"><i class="fa-solid fa-fire fa-beat"></i> Boosted (${daysLeft}d left)</div>`;
+                    } else {
+                        boostActionHtml = `<button class="mi-btn" style="background:linear-gradient(90deg, #ff9900, #ff4d4d); box-shadow:0 0 15px rgba(255,153,0,0.4); color:white;" onclick="window.location.href='boosttournaments.html?id=${matchId}'; triggerHaptic();"><i class="fa-solid fa-rocket"></i> Boost</button>`;
+                    }
+
                     container.innerHTML += `
                         <div class="managed-item">
                             <div class="mi-info">
@@ -1925,6 +1939,7 @@
                                 <p>${datePeriod} • <span style="color:${sColor}; font-weight:bold;">${statusText}</span></p>
                             </div>
                             <div class="mi-btn-group">
+                                ${boostActionHtml}
                                 <button class="mi-share" style="background:rgba(255,153,0,0.1); border-color:var(--accent-orange); color:var(--accent-orange);" onclick="cloneTournament('${matchId}'); triggerHaptic();" title="Clone Event"><i class="fa-solid fa-copy"></i></button>
                                 <button class="mi-share" onclick="shareSpecificTournament('${title.replace(/'/g, "\\'")}'); triggerHaptic();" title="Share Invite"><i class="fa-solid fa-share-nodes"></i></button>
                                 <button class="mi-btn" onclick="openManageModal('${matchId}'); triggerHaptic();">Manage</button>
