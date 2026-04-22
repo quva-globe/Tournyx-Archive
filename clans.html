@@ -219,7 +219,6 @@
         .r-info { flex: 1; min-width: 0; overflow: hidden; display: flex; flex-direction: column; justify-content: center;}
         .r-name { font-family: var(--font-head); font-size: 1.05rem; color: white; font-weight: bold; margin-bottom: 4px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; width: 100%; display: flex; align-items: center; gap: 5px;}
         
-        /* 🔥 UPGRADE: Advanced Roles UI */
         .roster-tags-wrapper { display: flex; flex-wrap: wrap; gap: 6px; width: 100%; overflow: hidden; align-items: center; }
         .r-role-tag { font-size: 0.65rem; padding: 3px 8px; border-radius: 6px; font-weight: bold; background: rgba(255,255,255,0.1); color: #ccc; border: 1px solid rgba(255,255,255,0.2); white-space: nowrap;}
         .r-pos-tag { font-size: 0.6rem; padding: 2px 6px; border-radius: 4px; color: var(--accent-cyan); border: 1px dashed var(--accent-cyan); white-space: nowrap; display: flex; align-items: center; gap: 4px;}
@@ -569,13 +568,8 @@
                     <input type="checkbox" id="dashAutoAccept" onchange="toggleAutoAccept()" style="accent-color:var(--accent-cyan); width:18px; height:18px;">
                 </div>
 
-                <div class="social-grid">
-                    <div class="social-btn discord-btn edit-admin" onclick="editSocial('discord')"><i class="fa-brands fa-discord"></i></div>
-                    <div class="social-btn wa-btn edit-admin" onclick="editSocial('whatsapp')"><i class="fa-brands fa-whatsapp"></i></div>
-                    <div class="social-btn insta-btn edit-admin" onclick="editSocial('instagram')"><i class="fa-brands fa-instagram"></i></div>
-                    <div class="social-btn yt-btn edit-admin" onclick="editSocial('youtube')"><i class="fa-brands fa-youtube"></i></div>
-                    <div class="social-btn" id="btnShareClan" style="background:#1da1f2; grid-column: span 4;" onclick="nativeShare()"><i class="fa-solid fa-share-nodes"></i> Share Clan</div>
-                </div>
+                <div class="social-grid" id="dashSocialGrid" style="margin-bottom:20px;">
+                    </div>
 
                 <div class="dash-section">
                     <div id="rosterWarningBannerArea"></div>
@@ -673,6 +667,23 @@
             </div>
             <div style="padding:15px 20px; border-top:1px solid rgba(255,255,255,0.1); background:rgba(0,0,0,0.4);" id="pubClanActionBtn">
             </div>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="editSocialsModal">
+        <div class="modal-box">
+            <div class="modal-header">
+                <div class="modal-title"><i class="fa-solid fa-link" style="color:var(--accent-cyan);"></i> Edit Social Links</div>
+                <i class="fa-solid fa-xmark modal-close" onclick="document.getElementById('editSocialsModal').classList.remove('active')"></i>
+            </div>
+            <div style="font-size:0.85rem; color:#aaa; margin-bottom:15px; line-height: 1.4;">Add your community links so your roster can connect.</div>
+            
+            <button class="btn-secondary" style="color:white; border-color:#5865F2;" onclick="editSocial('discord')"><i class="fa-brands fa-discord"></i> Set Discord Link</button>
+            <button class="btn-secondary" style="color:white; border-color:#25D366;" onclick="editSocial('whatsapp')"><i class="fa-brands fa-whatsapp"></i> Set WhatsApp Link</button>
+            <button class="btn-secondary" style="color:white; border-color:#cc2366;" onclick="editSocial('instagram')"><i class="fa-brands fa-instagram"></i> Set Instagram Link</button>
+            <button class="btn-secondary" style="color:white; border-color:#FF0000;" onclick="editSocial('youtube')"><i class="fa-brands fa-youtube"></i> Set YouTube Link</button>
+            
+            <button class="btn-primary" style="margin-top:10px;" onclick="document.getElementById('editSocialsModal').classList.remove('active')">Done</button>
         </div>
     </div>
 
@@ -815,6 +826,7 @@
         let pendingJoinData = {};
         let activeFilterGame = 'All';
         let activeModalClanId = null; // UPGRADE: Track modal for silent sync
+        let localRequestedClans = new Set(); // 🔥 UPGRADE: Cache requested states locally
         
         let chatSyncInterval = null;
         let globalFindSyncInterval = null;
@@ -964,13 +976,16 @@
 
             let payload = { action: "handle_join_request", clan_id: cId, player_data: {name: user.username}, is_accept: false, is_auto: false, is_decline_invite: true };
             fetch(API_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify(payload) });
+            
+            // Remove from local optimistic cache
+            localRequestedClans.delete(cId);
 
             document.querySelectorAll(`button[onclick*="${cId}"]`).forEach(btn => {
                 if (btn.innerText.includes("REQUESTED")) {
                     let card = btn.closest('.search-card');
                     let cName = card ? card.querySelector('.sc-name').innerText.replace(/'/g, "\\'") : "";
-                    let cGame = card ? card.querySelector('.fa-gamepad').nextSibling.textContent.trim() : "Esports";
-                    btn.outerHTML = `<button class="s-btn acc" onclick="event.stopPropagation(); triggerJoinFlow('${cId}', '${cName}', '${cGame}', false, this)">JOIN</button>`;
+                    let cGame = card ? (card.querySelector('.fa-gamepad') ? card.querySelector('.fa-gamepad').nextSibling.textContent.trim() : "Esports") : "Esports";
+                    btn.outerHTML = `<button class="s-btn acc" onclick="event.stopPropagation(); triggerJoinFlow('${cId}', '${cName}', '${cGame}', false, this)">JOIN SQUAD</button>`;
                 }
             });
             
@@ -1309,10 +1324,15 @@
             }
         }
 
+        function openSocialEditModal() {
+            triggerHaptic();
+            document.getElementById('editSocialsModal').classList.add('active');
+        }
+
         function renderDashboard(clan) {
             if(!clan || !clan.name) { returnToHub(); return; }
             
-            // 🔥 AUTO-SYNC TRIGGER: Forces backend to rewrite JSON with updated UIDs/Phones instantly!
+            // 🔥 AUTO-SYNC TRIGGER: Forces backend to fetch real data from Users sheet instantly!
             fetch(API_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify({ action: "sync_clan_roster", clan_id: clan.clanId }) });
 
             document.getElementById('hubState').style.display = 'none'; document.getElementById('hasClanState').style.display = 'block';
@@ -1383,8 +1403,28 @@
             document.querySelectorAll('.edit-owner').forEach(el => el.style.display = isOwner ? 'block' : 'none');
             document.querySelectorAll('.edit-player-only').forEach(el => el.style.display = isOwner ? 'none' : 'block');
             
-            let shareBtn = document.getElementById('btnShareClan');
-            if (shareBtn) shareBtn.style.display = isFull ? 'none' : 'flex';
+            // 🔥 UPGRADE: Private Social Grid (Visible to all, editable by Admins)
+            let socialHtml = '';
+            const platforms = ['discord', 'whatsapp', 'instagram', 'youtube'];
+            const icons = {'discord': 'fa-discord', 'whatsapp': 'fa-whatsapp', 'instagram': 'fa-instagram', 'youtube': 'fa-youtube'};
+            const classes = {'discord': 'discord-btn', 'whatsapp': 'wa-btn', 'instagram': 'insta-btn', 'youtube': 'yt-btn'};
+
+            platforms.forEach(p => {
+                if(clan[`${p}Link`]) {
+                    socialHtml += `<div class="social-btn ${classes[p]}" onclick="window.open('${clan[`${p}Link`]}', '_blank')"><i class="fa-brands ${icons[p]}"></i></div>`;
+                }
+            });
+
+            if(socialHtml === '' && !isAdmin) {
+                socialHtml = `<div style="grid-column: 1 / -1; text-align:center; color:#666; font-size:0.8rem; padding: 10px; border: 1px dashed rgba(255,255,255,0.1); border-radius: 10px;">No social links added by admin.</div>`;
+            }
+            if(isAdmin) {
+                socialHtml += `<div class="social-btn" style="background:rgba(255,255,255,0.05); border:1px dashed #666; color:#aaa; grid-column: 1 / -1;" onclick="openSocialEditModal()"><i class="fa-solid fa-pen"></i> Edit Social Links</div>`;
+            }
+            
+            socialHtml += `<div class="social-btn" style="background:#1da1f2; grid-column: 1 / -1;" onclick="nativeShare()"><i class="fa-solid fa-share-nodes"></i> Share Clan</div>`;
+            document.getElementById('dashSocialGrid').innerHTML = socialHtml;
+
 
             const rl = document.getElementById('rosterList'); rl.innerHTML = "";
             let sortedRoster = [...clan.roster].sort((a,b) => { const ranks = {"Owner": 1, "Admin": 2, "Player": 3}; return (ranks[a.role] || 4) - (ranks[b.role] || 4); });
@@ -1394,6 +1434,7 @@
                 let encodedData = encodeURIComponent(JSON.stringify(member));
                 let isOnline = Math.random() > 0.5 ? 'block' : 'none'; if(member.name === user.username) isOnline = 'block'; 
 
+                // UPGRADE: Visual Role Icons
                 let roleIcon = '<i class="fa-solid fa-user-ninja"></i>';
                 if(member.pos && member.pos.includes('IGL')) roleIcon = '<i class="fa-solid fa-brain"></i>';
                 else if(member.pos && member.pos.includes('Sniper')) roleIcon = '<i class="fa-solid fa-crosshairs"></i>';
@@ -1757,6 +1798,7 @@
                 activeClan[`${platform}Link`] = link;
                 pushUpdateToLive('FULL_UPDATE', activeClan); 
                 showToast(`Linked ${platform}!`); 
+                document.getElementById('editSocialsModal').classList.remove('active');
             }
         }
         
@@ -2024,7 +2066,7 @@
             if(c.rejectedList && c.rejectedList.some(x => x.name === user.username)) isRejected = true;
             if(c.rejected && c.rejected.includes(user.username)) isRejected = true;
 
-            let isRequested = c.requests && c.requests.some(r => r.name === user.username);
+            let isRequested = (c.requests && c.requests.some(r => r.name === user.username)) || localRequestedClans.has(c.clanId);
             
             let btnActionHtml = "";
             if(isMember) {
@@ -2089,7 +2131,7 @@
                 if (c.rejectedList && c.rejectedList.some(r => r.name === user.username)) isRejected = true;
                 if (c.rejected && c.rejected.includes(user.username)) isRejected = true;
 
-                let isRequested = c.requests && c.requests.some(r => r.name === user.username);
+                let isRequested = (c.requests && c.requests.some(r => r.name === user.username)) || localRequestedClans.has(c.clanId);
                 
                 let btnHtml = "";
                 if (isRejected) {
@@ -2191,6 +2233,9 @@
             
             // INSTANT UI UPDATE WITHOUT LOCAL STORAGE
             if (pendingJoinData.btnRef && !pendingJoinData.isAuto) {
+                
+                localRequestedClans.add(pendingJoinData.newClanId);
+
                 document.querySelectorAll(`button[onclick*="${pendingJoinData.newClanId}"]`).forEach(btn => {
                     if (btn.innerText.includes("JOIN") || btn.innerText.includes("RE-APPLY")) {
                         btn.outerHTML = `<button class="s-btn req" onclick="event.stopPropagation(); cancelJoinRequest('${pendingJoinData.newClanId}', this, event)">REQUESTED</button>`;
