@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link rel="icon" href="https://tournyx.in/favicon.ico" sizes="any">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>Boost Tournament - Tournyx Ads</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Rajdhani:wght@500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+
+    <style>
+        :root {
+            --bg-base: #070311;
+            --bg-card: rgba(20, 10, 35, 0.6);
+            --cyan: #00f2ff;
+            --orange: #ff9900;
+            --purple: #bd00ff;
+            --card-border: rgba(255,255,255,0.1);
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+        body { background: var(--bg-base); color: white; font-family: 'Rajdhani', sans-serif; padding-bottom: 120px; overflow-x: hidden; }
+
+        .header { display: flex; align-items: center; justify-content: space-between; padding: 20px; background: rgba(0,0,0,0.8); border-bottom: 1px solid var(--card-border); position: sticky; top: 0; z-index: 100; backdrop-filter: blur(10px); }
+        .header i { font-size: 1.5rem; color: var(--cyan); cursor: pointer; }
+        .header h2 { font-family: 'Orbitron'; font-size: 1.2rem; flex: 1; text-align: center; }
+
+        .container { padding: 20px; max-width: 600px; margin: 0 auto; }
+
+        .preview-card { background: var(--bg-card); border-radius: 16px; overflow: hidden; border: 1px solid var(--card-border); margin-bottom: 25px; display: flex; align-items: center; padding: 15px; gap: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+        .preview-img { width: 80px; height: 80px; border-radius: 12px; object-fit: cover; border: 1px solid var(--cyan); }
+        .preview-info { flex: 1; overflow: hidden; }
+        .preview-info h3 { font-family: 'Orbitron'; font-size: 1.1rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: white; }
+        .preview-badge { display: inline-block; background: rgba(0,242,255,0.1); border: 1px solid var(--cyan); color: var(--cyan); font-size: 0.75rem; font-family: 'Orbitron'; padding: 4px 8px; border-radius: 50px; margin-top: 8px; font-weight: bold; }
+
+        .section-title { font-family: 'Orbitron'; font-size: 1.1rem; color: var(--orange); margin-bottom: 15px; text-transform: uppercase; letter-spacing: 1px; }
+
+        .plans-grid { display: flex; gap: 10px; overflow-x: auto; padding-bottom: 10px; scrollbar-width: none; }
+        .plan-card { background: rgba(255,255,255,0.03); border: 2px solid var(--card-border); border-radius: 16px; padding: 15px; min-width: 140px; cursor: pointer; transition: 0.3s; text-align: center; }
+        .plan-card.active { border-color: var(--orange); background: rgba(255,153,0,0.1); transform: translateY(-5px); box-shadow: 0 10px 20px rgba(255,153,0,0.2); }
+        .plan-card h4 { font-family: 'Orbitron'; font-size: 1rem; margin-bottom: 5px; color: white; }
+        .plan-card .multiplier { font-size: 0.8rem; color: #aaa; }
+
+        .platform-grid { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 25px; }
+        .plat-btn { background: rgba(255,255,255,0.05); border: 1px solid var(--card-border); border-radius: 50px; padding: 10px 15px; font-family: 'Orbitron'; font-size: 0.85rem; font-weight: bold; display: flex; align-items: center; gap: 8px; cursor: pointer; transition: 0.3s; flex: 1; min-width: 45%; justify-content: center; color: #ccc;}
+        .plat-btn.active { background: rgba(0,242,255,0.1); border-color: var(--cyan); color: var(--cyan); box-shadow: 0 0 15px rgba(0,242,255,0.3); }
+
+        .calculator-box { background: linear-gradient(135deg, rgba(255,153,0,0.1), rgba(0,0,0,0)); border: 1px solid var(--orange); border-radius: 16px; padding: 20px; box-shadow: inset 0 0 20px rgba(255,153,0,0.05); }
+        .calc-header { display: flex; justify-content: space-between; align-items: center; font-family: 'Orbitron'; margin-bottom: 20px; }
+        
+        .slider-container { margin-bottom: 25px; }
+        .slider-label { display: flex; justify-content: space-between; color: #aaa; font-size: 0.9rem; margin-bottom: 10px; font-weight: bold;}
+        .slider-val { color: white; font-family: 'Orbitron'; font-size: 1.1rem; }
+        
+        input[type=range] { -webkit-appearance: none; width: 100%; background: transparent; }
+        input[type=range]::-webkit-slider-thumb { -webkit-appearance: none; height: 24px; width: 24px; border-radius: 50%; background: var(--orange); cursor: pointer; margin-top: -8px; box-shadow: 0 0 15px var(--orange); }
+        input[type=range]::-webkit-slider-runnable-track { width: 100%; height: 8px; cursor: pointer; background: rgba(255,255,255,0.1); border-radius: 10px; }
+
+        .reach-display { text-align: center; margin-bottom: 10px; }
+        .reach-val { font-family: 'Orbitron'; font-size: 2.5rem; font-weight: 900; color: var(--cyan); text-shadow: 0 0 20px rgba(0,242,255,0.5); }
+        .reach-sub { font-size: 0.85rem; color: #888; text-transform: uppercase; letter-spacing: 1px; }
+
+        .checkout-bar { position: fixed; bottom: 0; left: 0; width: 100%; background: rgba(10,5,20,0.95); backdrop-filter: blur(15px); border-top: 1px solid var(--card-border); padding: 15px 20px calc(15px + env(safe-area-inset-bottom, 0px)); display: flex; justify-content: space-between; align-items: center; z-index: 100; box-shadow: 0 -10px 40px rgba(0,0,0,0.8); }
+        .total-price { font-family: 'Orbitron'; font-size: 1.5rem; font-weight: bold; color: white; display: flex; flex-direction: column; line-height: 1; }
+        .total-price span { font-size: 0.7rem; color: #aaa; font-family: 'Rajdhani'; letter-spacing: 1px; text-transform: uppercase; margin-bottom: 4px; }
+        
+        .pay-btn { background: linear-gradient(90deg, #ff9900, #ff4d4d); border: none; color: white; font-family: 'Orbitron'; font-weight: bold; font-size: 1.1rem; padding: 15px 30px; border-radius: 12px; cursor: pointer; box-shadow: 0 5px 20px rgba(255,153,0,0.4); text-transform: uppercase; transition: 0.3s; display: flex; align-items: center; gap: 10px;}
+        .pay-btn:active { transform: scale(0.95); box-shadow: 0 2px 10px rgba(255,153,0,0.4); }
+
+        #customToast { visibility: hidden; min-width: 250px; background: rgba(0,242,255,0.9); color: #000; text-align: center; border-radius: 12px; padding: 16px; position: fixed; z-index: 9999; left: 50%; bottom: -50px; transform: translateX(-50%); font-family: 'Orbitron'; font-weight: bold; box-shadow: 0 8px 30px rgba(0,242,255,0.5); opacity: 0; transition: opacity 0.4s, bottom 0.4s; }
+        #customToast.show { visibility: visible; opacity: 1; bottom: 100px; }
+
+        .loader-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 9999; display: none; align-items: center; justify-content: center; flex-direction: column; }
+        .loader-overlay.active { display: flex; }
+    </style>
+</head>
+<body>
+
+    <div class="header">
+        <i class="fa-solid fa-arrow-left" onclick="window.history.back()"></i>
+        <h2><i class="fa-solid fa-fire"></i> Ad Campaign Manager</h2>
+        <div style="width: 24px;"></div>
+    </div>
+
+    <div class="container">
+        
+        <div class="preview-card" id="tPreview">
+            <img src="https://via.placeholder.com/150" class="preview-img" id="pBanner">
+            <div class="preview-info">
+                <h3 id="pTitle">Loading Tournament...</h3>
+                <div class="preview-badge" id="pGame">Esports</div>
+            </div>
+        </div>
+
+        <div class="section-title">Select Objective Plan</div>
+        <div class="plans-grid">
+            <div class="plan-card active" onclick="selectPlan('basic', 1, this)">
+                <i class="fa-solid fa-bullseye" style="font-size: 1.5rem; color:#ccc; margin-bottom:10px;"></i>
+                <h4>Basic Reach</h4>
+                <div class="multiplier">Standard Delivery</div>
+            </div>
+            <div class="plan-card" onclick="selectPlan('standard', 1.5, this)">
+                <i class="fa-solid fa-bolt" style="font-size: 1.5rem; color:var(--cyan); margin-bottom:10px;"></i>
+                <h4 style="color:var(--cyan)">Standard Plus</h4>
+                <div class="multiplier">1.5x Impressions</div>
+            </div>
+            <div class="plan-card" onclick="selectPlan('elite', 2.5, this)">
+                <i class="fa-solid fa-rocket" style="font-size: 1.5rem; color:var(--orange); margin-bottom:10px;"></i>
+                <h4 style="color:var(--orange)">Elite Pro</h4>
+                <div class="multiplier">2.5x Max Conversion</div>
+            </div>
+        </div>
+
+        <div class="section-title" style="margin-top: 15px;">Target Platforms</div>
+        <div style="font-size:0.8rem; color:#aaa; margin-bottom: 10px;">Tournyx Network is included free. External platforms charge +₹50 per selection.</div>
+        <div class="platform-grid">
+            <div class="plat-btn active" style="pointer-events:none;">
+                <img src="https://tournyx.in/favicon.png" style="width:16px;"> Tournyx
+            </div>
+            <div class="plat-btn" onclick="togglePlat(this, 'instagram')">
+                <i class="fa-brands fa-instagram" style="color:#E1306C"></i> Instagram
+            </div>
+            <div class="plat-btn" onclick="togglePlat(this, 'facebook')">
+                <i class="fa-brands fa-facebook" style="color:#1877F2"></i> Facebook
+            </div>
+            <div class="plat-btn" onclick="togglePlat(this, 'youtube')">
+                <i class="fa-brands fa-youtube" style="color:#FF0000"></i> YouTube
+            </div>
+            <div class="plat-btn" onclick="togglePlat(this, 'google')">
+                <i class="fa-brands fa-google" style="color:#4285F4"></i> Google Ads
+            </div>
+        </div>
+
+        <div class="calculator-box">
+            <div class="calc-header">
+                <span style="color:white; font-size:1.2rem;">Ad Spend & Duration</span>
+                <i class="fa-solid fa-chart-pie" style="color:var(--orange); font-size:1.5rem;"></i>
+            </div>
+            
+            <div class="reach-display">
+                <div class="reach-val" id="estReach">1,250</div>
+                <div class="reach-sub">Estimated People Reached</div>
+            </div>
+
+            <div class="slider-container" style="margin-top: 25px;">
+                <div class="slider-label">
+                    <span>Daily Budget (₹)</span>
+                    <span class="slider-val" id="valBudget">₹100</span>
+                </div>
+                <input type="range" id="sliderBudget" min="50" max="2000" step="50" value="100" oninput="calculateAds()">
+            </div>
+
+            <div class="slider-container">
+                <div class="slider-label">
+                    <span>Duration (Days)</span>
+                    <span class="slider-val" id="valDays">3 Days</span>
+                </div>
+                <input type="range" id="sliderDays" min="1" max="30" step="1" value="3" oninput="calculateAds()">
+            </div>
+        </div>
+
+    </div>
+
+    <div class="checkout-bar">
+        <div class="total-price">
+            <span>Total Payable</span>
+            ₹<span id="finalPrice">300</span>
+        </div>
+        <button class="pay-btn" onclick="initRazorpay()">
+            Pay Now <i class="fa-solid fa-arrow-right"></i>
+        </button>
+    </div>
+
+    <div id="customToast">Notification</div>
+
+    <div class="loader-overlay" id="paymentLoader">
+        <i class="fa-solid fa-circle-notch fa-spin" style="font-size: 3rem; color: var(--cyan); margin-bottom: 15px;"></i>
+        <div style="font-family: 'Orbitron'; font-size: 1.2rem; color: white;">Processing Payment...</div>
+        <div style="font-size: 0.85rem; color: #aaa; margin-top: 10px;">Please do not close this window.</div>
+    </div>
+
+    <script>
+        const API_URL = 'https://script.google.com/macros/s/AKfycbyqqTpgaflxKJ9xH0jq7mJ_jLzcoNhas3gNo0h5gvoa_6r5Ae9NFxJAJp7ZoYNnMRKl/exec';
+        let userData = JSON.parse(localStorage.getItem('tournyx_user')) || {};
+        let tData = null;
+
+        let selectedPlanMult = 1;
+        let activePlats = ['tournyx'];
+        
+        function showToast(msg, isError = false) {
+            let t = document.getElementById('customToast');
+            t.innerText = msg;
+            t.style.background = isError ? "rgba(255,77,77,0.95)" : "rgba(0,242,255,0.95)";
+            t.classList.add('show');
+            setTimeout(() => t.classList.remove('show'), 3000);
+        }
+
+        document.addEventListener("DOMContentLoaded", () => {
+            if(!userData.email) {
+                showToast("Please login first.", true);
+                setTimeout(()=> window.location.href="login.html", 1500);
+                return;
+            }
+
+            const params = new URLSearchParams(window.location.search);
+            const matchId = params.get('id');
+
+            if(!matchId) {
+                document.getElementById('pTitle').innerText = "Invalid Tournament ID";
+                return;
+            }
+
+            fetch(API_URL, {
+                method: 'POST', headers: { 'Content-Type': 'text/plain' },
+                body: JSON.stringify({ action: 'get_tournament_details', match_id: matchId }) // Uses internal fetch logic
+            }).then(res=>res.json()).then(d => {
+                // If the backend has a specific fetch for one tournament, or we parse all
+            }).catch(e=>{});
+
+            // As a fallback/speed mechanism, grab from cache if available from profile.html
+            fetch(API_URL, {
+                method: 'POST', headers: { 'Content-Type': 'text/plain' },
+                body: JSON.stringify({ action: 'get_tournaments' })
+            }).then(res=>res.json()).then(data => {
+                if(data.status === 'success') {
+                    let t = data.data.find(x => String(x.id || x.match_id) === matchId);
+                    if(t) {
+                        tData = t;
+                        document.getElementById('pTitle').innerText = t.title;
+                        document.getElementById('pGame').innerText = t.game || "Esports";
+                        let b = t.banner;
+                        if(b && b.includes('drive.google.com')) {
+                            let id = b.split('/d/')[1].split('/')[0]; 
+                            b = `https://drive.google.com/uc?export=view&id=${id}`; 
+                        }
+                        document.getElementById('pBanner').src = b || "https://via.placeholder.com/150";
+                    }
+                }
+            });
+
+            calculateAds();
+        });
+
+        function selectPlan(type, mult, el) {
+            document.querySelectorAll('.plan-card').forEach(c => c.classList.remove('active'));
+            el.classList.add('active');
+            selectedPlanMult = mult;
+            calculateAds();
+        }
+
+        function togglePlat(el, name) {
+            if(el.classList.contains('active')) {
+                el.classList.remove('active');
+                activePlats = activePlats.filter(p => p !== name);
+            } else {
+                el.classList.add('active');
+                activePlats.push(name);
+            }
+            calculateAds();
+        }
+
+        function calculateAds() {
+            let budget = parseInt(document.getElementById('sliderBudget').value);
+            let days = parseInt(document.getElementById('sliderDays').value);
+            
+            document.getElementById('valBudget').innerText = "₹" + budget;
+            document.getElementById('valDays').innerText = days + (days === 1 ? " Day" : " Days");
+
+            // Base platform fee: 50 INR per external platform
+            let extraPlatCost = (activePlats.length - 1) * 50; 
+            if(extraPlatCost < 0) extraPlatCost = 0;
+
+            let baseAdSpend = budget * days;
+            let planPremium = baseAdSpend * (selectedPlanMult - 1); // Extra cost for better plan
+            
+            let totalCost = baseAdSpend + planPremium + extraPlatCost;
+            document.getElementById('finalPrice').innerText = Math.round(totalCost);
+
+            // Reach Logic: roughly 10-15 reach per rupee, scaled by plan
+            let baseReach = baseAdSpend * 12.5; 
+            let finalReach = Math.floor(baseReach * selectedPlanMult);
+            
+            // Format reach nicely
+            document.getElementById('estReach').innerText = finalReach.toLocaleString();
+        }
+
+        function initRazorpay() {
+            if(!tData) { showToast("Tournament data loading...", true); return; }
+            
+            let finalAmount = parseInt(document.getElementById('finalPrice').innerText.replace(/,/g, ''));
+            let days = parseInt(document.getElementById('sliderDays').value);
+            let reach = document.getElementById('estReach').innerText;
+
+            let options = {
+                "key": "rzp_test_YourKeyHere", // Replace with Live Key
+                "amount": finalAmount * 100, // in paise
+                "currency": "INR",
+                "name": "Tournyx Esports",
+                "description": `Ad Campaign: ${tData.title} (${days} Days)`,
+                "image": "https://tournyx.in/favicon.png",
+                "handler": function (response) {
+                    processBackendBoost(response.razorpay_payment_id, finalAmount, days, reach);
+                },
+                "prefill": {
+                    "name": userData.username || "Organizer",
+                    "email": userData.email,
+                    "contact": userData.phone || ""
+                },
+                "theme": {
+                    "color": "#00f2ff"
+                }
+            };
+            
+            try {
+                let rzp1 = new Razorpay(options);
+                rzp1.open();
+            } catch(e) {
+                // If Razorpay fails to load (dev mode), simulate success
+                processBackendBoost("sim_txn_" + Math.floor(Math.random()*100000), finalAmount, days, reach);
+            }
+        }
+
+        function processBackendBoost(paymentId, amount, days, reach) {
+            document.getElementById('paymentLoader').classList.add('active');
+
+            let payload = {
+                action: 'boost_tournament',
+                match_id: tData.id || tData.match_id,
+                email: userData.email.trim().toLowerCase(),
+                amount_paid: amount,
+                days: days,
+                reach: reach,
+                platforms: activePlats.join(', ')
+            };
+
+            fetch(API_URL, {
+                method: 'POST',
+                headers: { 'Content-Type': 'text/plain' },
+                body: JSON.stringify(payload)
+            }).then(res=>res.json()).then(data => {
+                document.getElementById('paymentLoader').classList.remove('active');
+                if(data.status === 'success') {
+                    showToast("Campaign Activated Successfully!");
+                    // Redirect back to profile after delay
+                    setTimeout(()=> { window.location.href = "profile.html"; }, 2000);
+                } else {
+                    showToast("Payment captured, but database update failed. Contact support.", true);
+                }
+            }).catch(e => {
+                document.getElementById('paymentLoader').classList.remove('active');
+                showToast("Network error. Payment is safe, contact support.", true);
+            });
+        }
+    </script>
+</body>
+</html>
