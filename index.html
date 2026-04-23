@@ -1605,20 +1605,36 @@
             tabElement.classList.add('active');
         }
 
-        // --- 8. LEADERBOARD FETCH LOGIC (LIVE CLOUD ONLY) ---
-        function loadLeaderboard() {
-            fetch(API_URL + "?action=get_community_leaderboard").then(res => res.json())
-            .then(result => {
-                if (result.status === "success" && result.data) {
-                    renderLeaderboardList('organizers', result.data.organizers, 'Tournaments Hosted', '', 'var(--accent-cyan)');
-                    renderLeaderboardList('teams', result.data.teams, 'Won', '₹ ', 'var(--accent-purple)');
-                    renderLeaderboardList('contributors', result.data.contributors, 'Contributions', '', '#ffd700');
+        // --- 8. LEADERBOARD FETCH LOGIC (LIVE CLOUD SYNCED) ---
+        async function loadLeaderboard() {
+            try {
+                // Added a cache-buster (?t=timestamp) to force a fresh pull from the live sheet every time
+                const response = await fetch(API_URL + "?action=get_community_leaderboard&t=" + new Date().getTime());
+                const apiRes = await response.json();
+                
+                // Bulletproof mapping: Automatically finds your data regardless of how your backend response() function wraps it
+                const data = apiRes.data || apiRes.message || apiRes.result || apiRes;
+
+                if ((apiRes.status === "success" || data.organizers) && data) {
+                    renderLeaderboardList('organizers', data.organizers, 'Tournaments Hosted', '', 'var(--accent-cyan)');
+                    renderLeaderboardList('teams', data.teams, 'Won', '₹ ', 'var(--accent-purple)');
+                    renderLeaderboardList('contributors', data.contributors, 'Contributions', '', '#ffd700');
+                } else {
+                    throw new Error("Leaderboard data format mismatch or empty.");
                 }
-            }).catch(e => console.log("Failed to load leaderboard"));
+            } catch (e) {
+                console.log("Leaderboard Sync Failed:", e);
+                // Triggers empty state so Skeletons don't spin forever if sheet is empty or failing
+                renderLeaderboardList('organizers', [], '', '', '');
+                renderLeaderboardList('teams', [], '', '', '');
+                renderLeaderboardList('contributors', [], '', '', '');
+            }
         }
 
         function renderLeaderboardList(containerId, list, roleText, prefix, colorStr) {
             const container = document.getElementById(containerId);
+            
+            // Safety check: if list is null, undefined, or empty
             if (!list || list.length === 0) {
                 container.innerHTML = `
                     <div style="text-align:center; padding: 40px 20px; background: rgba(255,255,255,0.02); border-radius: 15px; border: 1px dashed rgba(255,255,255,0.1); width: 100%;">
@@ -1628,23 +1644,38 @@
                     </div>`;
                 return;
             }
+
             let html = '';
+            
+            // Slice top 15 and map securely
             list.slice(0, 15).forEach((item, i) => {
                 let rankClass = ''; let medal = ''; let borderClass = '';
-                if (i === 0) { rankClass = 'rank-1'; medal = `<div class="rank-medal rank-1"><i class="fa-solid fa-medal"></i></div>`; borderClass = 'rank-1-border'; }
-                if (i === 1) { rankClass = 'rank-2'; medal = `<div class="rank-medal rank-2"><i class="fa-solid fa-medal"></i></div>`; borderClass = 'rank-2-border'; }
-                if (i === 2) { rankClass = 'rank-3'; medal = `<div class="rank-medal rank-3"><i class="fa-solid fa-medal"></i></div>`; borderClass = 'rank-3-border'; }
-                if (i >= 3) { medal = `<div class="rank-medal" style="font-size:1.5rem; color:#666; font-family:var(--font-head); font-weight:bold;">#${i+1}</div>`; }
+                
+                // Assign Medals & Glows
+                if (i === 0) { rankClass = 'rank-1'; medal = '<div class="rank-medal rank-1"><i class="fa-solid fa-medal"></i></div>'; borderClass = 'rank-1-border'; }
+                else if (i === 1) { rankClass = 'rank-2'; medal = '<div class="rank-medal rank-2"><i class="fa-solid fa-medal"></i></div>'; borderClass = 'rank-2-border'; }
+                else if (i === 2) { rankClass = 'rank-3'; medal = '<div class="rank-medal rank-3"><i class="fa-solid fa-medal"></i></div>'; borderClass = 'rank-3-border'; }
+                else { medal = '<div class="rank-medal" style="font-size:1.5rem; color:#666; font-family:var(--font-head); font-weight:bold;">#' + (i+1) + '</div>'; }
+                
+                // Fallback for missing images in Google Sheets so the UI doesn't crash
+                let imgUrl = (item.image && item.image.length > 5 && item.image !== "undefined") ? item.image : 'https://via.placeholder.com/100';
+                
+                // Safely parse values
+                let displayValue = item.value !== undefined ? item.value : 0;
+                let displayName = item.name && item.name !== "undefined" ? item.name : 'Unknown Player';
+
                 html += `
                 <div class="person-row ${borderClass} glass-panel">
                     ${medal}
-                    <img src="${item.image || 'https://via.placeholder.com/100'}" class="person-img-small" style="border-color:${colorStr}">
+                    <img src="${imgUrl}" class="person-img-small" style="border-color:${colorStr}">
                     <div class="person-info">
-                        <div class="person-name">${item.name || 'Unknown'}</div>
-                        <div class="person-role" style="color:${colorStr}">${prefix}${item.value || 0} ${roleText}</div>
+                        <div class="person-name">${displayName}</div>
+                        <div class="person-role" style="color:${colorStr}">${prefix}${displayValue} ${roleText}</div>
                     </div>
                 </div>`;
             });
+            
+            // Overwrite skeletons instantly
             container.innerHTML = html;
         }
     </script>
