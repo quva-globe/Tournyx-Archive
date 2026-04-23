@@ -1,85 +1,224 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en"> 
 <head>
     <link rel="icon" href="https://tournyx.in/favicon.ico" sizes="any">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>Boost Tournament - Tournyx Ads</title>
-    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Rajdhani:wght@500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700;900&family=Rajdhani:wght@500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
 
     <style>
         :root {
-            --bg-base: #070311;
-            --bg-card: rgba(20, 10, 35, 0.6);
+            --bg-base: #05020a;
+            --bg-card: rgba(20, 10, 35, 0.4);
             --cyan: #00f2ff;
+            --cyan-glow: rgba(0, 242, 255, 0.4);
             --orange: #ff9900;
+            --orange-glow: rgba(255, 153, 0, 0.4);
             --purple: #bd00ff;
-            --card-border: rgba(255,255,255,0.1);
+            --card-border: rgba(255, 255, 255, 0.08);
+            --glass: rgba(255, 255, 255, 0.03);
+            --transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         }
+
         * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-        body { background: var(--bg-base); color: white; font-family: 'Rajdhani', sans-serif; padding-bottom: 120px; overflow-x: hidden; }
-
-        .header { display: flex; align-items: center; justify-content: space-between; padding: 20px; background: rgba(0,0,0,0.8); border-bottom: 1px solid var(--card-border); position: sticky; top: 0; z-index: 100; backdrop-filter: blur(10px); }
-        .header i { font-size: 1.5rem; color: var(--cyan); cursor: pointer; }
-        .header h2 { font-family: 'Orbitron'; font-size: 1.2rem; flex: 1; text-align: center; }
-
-        .container { padding: 20px; max-width: 600px; margin: 0 auto; }
-
-        .preview-card { background: var(--bg-card); border-radius: 16px; overflow: hidden; border: 1px solid var(--card-border); margin-bottom: 25px; display: flex; align-items: center; padding: 15px; gap: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
-        .preview-img { width: 80px; height: 80px; border-radius: 12px; object-fit: cover; border: 1px solid var(--cyan); }
-        .preview-info { flex: 1; overflow: hidden; }
-        .preview-info h3 { font-family: 'Orbitron'; font-size: 1.1rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: white; }
-        .preview-badge { display: inline-block; background: rgba(0,242,255,0.1); border: 1px solid var(--cyan); color: var(--cyan); font-size: 0.75rem; font-family: 'Orbitron'; padding: 4px 8px; border-radius: 50px; margin-top: 8px; font-weight: bold; }
-
-        .section-title { font-family: 'Orbitron'; font-size: 1.1rem; color: var(--orange); margin-bottom: 15px; text-transform: uppercase; letter-spacing: 1px; }
-
-        .plans-grid { display: flex; gap: 10px; overflow-x: auto; padding-bottom: 10px; scrollbar-width: none; }
-        .plan-card { background: rgba(255,255,255,0.03); border: 2px solid var(--card-border); border-radius: 16px; padding: 15px; min-width: 140px; cursor: pointer; transition: 0.3s; text-align: center; }
-        .plan-card.active { border-color: var(--orange); background: rgba(255,153,0,0.1); transform: translateY(-5px); box-shadow: 0 10px 20px rgba(255,153,0,0.2); }
-        .plan-card h4 { font-family: 'Orbitron'; font-size: 1rem; margin-bottom: 5px; color: white; }
-        .plan-card .multiplier { font-size: 0.8rem; color: #aaa; }
-
-        .platform-grid { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 25px; }
-        .plat-btn { background: rgba(255,255,255,0.05); border: 1px solid var(--card-border); border-radius: 50px; padding: 10px 15px; font-family: 'Orbitron'; font-size: 0.85rem; font-weight: bold; display: flex; align-items: center; gap: 8px; cursor: pointer; transition: 0.3s; flex: 1; min-width: 45%; justify-content: center; color: #ccc;}
-        .plat-btn.active { background: rgba(0,242,255,0.1); border-color: var(--cyan); color: var(--cyan); box-shadow: 0 0 15px rgba(0,242,255,0.3); }
-
-        .calculator-box { background: linear-gradient(135deg, rgba(255,153,0,0.1), rgba(0,0,0,0)); border: 1px solid var(--orange); border-radius: 16px; padding: 20px; box-shadow: inset 0 0 20px rgba(255,153,0,0.05); }
-        .calc-header { display: flex; justify-content: space-between; align-items: center; font-family: 'Orbitron'; margin-bottom: 20px; }
         
-        .slider-container { margin-bottom: 25px; }
-        .slider-label { display: flex; justify-content: space-between; color: #aaa; font-size: 0.9rem; margin-bottom: 10px; font-weight: bold;}
-        .slider-val { color: white; font-family: 'Orbitron'; font-size: 1.1rem; }
+        body { 
+            background: var(--bg-base); 
+            background-image: 
+                radial-gradient(circle at 15% 50%, rgba(0, 242, 255, 0.05) 0%, transparent 50%),
+                radial-gradient(circle at 85% 30%, rgba(189, 0, 255, 0.05) 0%, transparent 50%);
+            color: white; 
+            font-family: 'Rajdhani', sans-serif; 
+            padding-bottom: 130px; 
+            overflow-x: hidden; 
+            min-height: 100vh;
+        }
+
+        /* Scrollbar Styling */
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: var(--bg-base); }
+        ::-webkit-scrollbar-thumb { background: var(--card-border); border-radius: 10px; }
+
+        .header { 
+            display: flex; align-items: center; justify-content: space-between; 
+            padding: 20px; background: rgba(5, 2, 10, 0.85); 
+            border-bottom: 1px solid var(--card-border); 
+            position: sticky; top: 0; z-index: 100; backdrop-filter: blur(12px); 
+            box-shadow: 0 4px 30px rgba(0,0,0,0.5);
+        }
+        .header i { font-size: 1.5rem; color: var(--cyan); cursor: pointer; transition: 0.3s; }
+        .header i:hover { text-shadow: 0 0 10px var(--cyan); transform: scale(1.1); }
+        .header h2 { font-family: 'Orbitron'; font-size: 1.2rem; flex: 1; text-align: center; letter-spacing: 1px; }
+
+        .container { 
+            padding: 20px; max-width: 650px; margin: 0 auto; 
+            display: flex; flex-direction: column; gap: 25px;
+        }
+
+        /* Tournament Preview Card */
+        .preview-card { 
+            background: var(--glass); border-radius: 16px; overflow: hidden; 
+            border: 1px solid var(--card-border); 
+            display: flex; align-items: center; padding: 15px; gap: 18px; 
+            box-shadow: 0 10px 30px rgba(0,0,0,0.4); 
+            backdrop-filter: blur(10px);
+            position: relative;
+        }
+        .preview-card::before {
+            content: ''; position: absolute; top: 0; left: -100%; width: 50%; height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.05), transparent);
+            animation: shine 3s infinite;
+        }
+        @keyframes shine { 100% { left: 200%; } }
+
+        .preview-img { width: 85px; height: 85px; border-radius: 12px; object-fit: cover; border: 2px solid var(--cyan); box-shadow: 0 0 15px var(--cyan-glow); }
+        .preview-info { flex: 1; overflow: hidden; }
+        .preview-info h3 { font-family: 'Orbitron'; font-size: 1.2rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: white; margin-bottom: 5px;}
+        .preview-badge { display: inline-block; background: rgba(0,242,255,0.1); border: 1px solid var(--cyan); color: var(--cyan); font-size: 0.75rem; font-family: 'Orbitron'; padding: 4px 10px; border-radius: 50px; font-weight: bold; text-transform: uppercase; letter-spacing: 1px;}
+
+        .section-header { display: flex; align-items: center; gap: 10px; margin-bottom: 15px; }
+        .section-header i { color: var(--orange); font-size: 1.2rem; }
+        .section-title { font-family: 'Orbitron'; font-size: 1.1rem; color: white; text-transform: uppercase; letter-spacing: 1px; }
+        .section-sub { font-size: 0.85rem; color: #888; margin-top: -10px; margin-bottom: 15px; line-height: 1.4;}
+
+        /* Objective Plans */
+        .plans-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+        .plan-card { 
+            background: rgba(255,255,255,0.02); border: 2px solid var(--card-border); 
+            border-radius: 16px; padding: 18px 10px; cursor: pointer; 
+            transition: var(--transition); text-align: center; position: relative; overflow: hidden;
+        }
+        .plan-card:hover { border-color: rgba(255,255,255,0.2); background: rgba(255,255,255,0.05); }
+        .plan-card.active { 
+            border-color: var(--orange); background: rgba(255,153,0,0.08); 
+            transform: translateY(-5px); box-shadow: 0 10px 25px var(--orange-glow); 
+        }
+        .plan-card h4 { font-family: 'Orbitron'; font-size: 0.95rem; margin-bottom: 5px; color: white; transition: 0.3s;}
+        .plan-card .multiplier { font-size: 0.75rem; color: #aaa; font-weight: 600;}
+
+        /* Target Platforms */
+        .platform-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }
+        .plat-btn { 
+            background: var(--glass); border: 1px solid var(--card-border); 
+            border-radius: 12px; padding: 15px; font-family: 'Orbitron'; 
+            font-size: 0.9rem; font-weight: bold; display: flex; align-items: center; 
+            gap: 10px; cursor: pointer; transition: var(--transition); 
+            justify-content: center; color: #aaa; position: relative;
+        }
+        .plat-btn i { font-size: 1.2rem; transition: 0.3s; }
+        .plat-btn:hover { background: rgba(255,255,255,0.05); color: white;}
+        .plat-btn.active { 
+            background: rgba(0,242,255,0.1); border-color: var(--cyan); 
+            color: var(--cyan); box-shadow: inset 0 0 15px var(--cyan-glow); 
+        }
+        .plat-btn.locked { border-color: var(--cyan); color: var(--cyan); pointer-events: none; background: rgba(0,242,255,0.05); }
+
+        /* 6 Upgraded Features Grid */
+        .features-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-bottom: 10px; }
+        .feature-item { 
+            display: flex; align-items: center; gap: 8px; font-size: 0.85rem; 
+            color: #ccc; background: rgba(0,0,0,0.3); padding: 10px; 
+            border-radius: 8px; border: 1px solid rgba(255,255,255,0.05);
+        }
+        .feature-item i { color: var(--purple); font-size: 1rem; }
+
+        /* Calculator Box */
+        .calculator-box { 
+            background: linear-gradient(145deg, rgba(20,10,35,0.8), rgba(5,2,10,0.9)); 
+            border: 1px solid var(--orange); border-radius: 16px; padding: 25px; 
+            box-shadow: 0 15px 35px rgba(0,0,0,0.6), inset 0 0 20px var(--orange-glow); 
+            position: relative;
+        }
+        .calc-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; }
+        .calc-title { font-family: 'Orbitron'; color: white; font-size: 1.2rem; }
+        
+        .reach-display { text-align: center; margin-bottom: 25px; background: rgba(0,0,0,0.4); padding: 15px; border-radius: 12px; border: 1px dashed var(--card-border);}
+        .reach-val { font-family: 'Orbitron'; font-size: 2.8rem; font-weight: 900; color: var(--cyan); text-shadow: 0 0 20px var(--cyan-glow); line-height: 1; margin-bottom: 5px;}
+        .reach-sub { font-size: 0.85rem; color: #888; text-transform: uppercase; letter-spacing: 2px; font-weight: 600;}
+
+        /* Sliders & Values */
+        .slider-container { margin-bottom: 20px; }
+        .slider-label { display: flex; justify-content: space-between; color: #bbb; font-size: 0.95rem; margin-bottom: 12px; font-weight: bold; align-items: center;}
+        .slider-val { color: white; font-family: 'Orbitron'; font-size: 1.2rem; background: rgba(255,255,255,0.1); padding: 4px 12px; border-radius: 6px;}
         
         input[type=range] { -webkit-appearance: none; width: 100%; background: transparent; }
-        input[type=range]::-webkit-slider-thumb { -webkit-appearance: none; height: 24px; width: 24px; border-radius: 50%; background: var(--orange); cursor: pointer; margin-top: -8px; box-shadow: 0 0 15px var(--orange); }
-        input[type=range]::-webkit-slider-runnable-track { width: 100%; height: 8px; cursor: pointer; background: rgba(255,255,255,0.1); border-radius: 10px; }
+        input[type=range]::-webkit-slider-thumb { 
+            -webkit-appearance: none; height: 26px; width: 26px; border-radius: 50%; 
+            background: var(--orange); cursor: pointer; margin-top: -9px; 
+            box-shadow: 0 0 15px var(--orange), inset 0 0 5px rgba(255,255,255,0.5); 
+            border: 2px solid white; transition: 0.2s;
+        }
+        input[type=range]::-webkit-slider-thumb:active { transform: scale(1.1); }
+        input[type=range]::-webkit-slider-runnable-track { width: 100%; height: 8px; cursor: pointer; background: rgba(255,255,255,0.08); border-radius: 10px; border: 1px solid rgba(255,255,255,0.05); }
 
-        .reach-display { text-align: center; margin-bottom: 10px; }
-        .reach-val { font-family: 'Orbitron'; font-size: 2.5rem; font-weight: 900; color: var(--cyan); text-shadow: 0 0 20px rgba(0,242,255,0.5); }
-        .reach-sub { font-size: 0.85rem; color: #888; text-transform: uppercase; letter-spacing: 1px; }
-
-        .checkout-bar { position: fixed; bottom: 0; left: 0; width: 100%; background: rgba(10,5,20,0.95); backdrop-filter: blur(15px); border-top: 1px solid var(--card-border); padding: 15px 20px calc(15px + env(safe-area-inset-bottom, 0px)); display: flex; justify-content: space-between; align-items: center; z-index: 100; box-shadow: 0 -10px 40px rgba(0,0,0,0.8); }
-        .total-price { font-family: 'Orbitron'; font-size: 1.5rem; font-weight: bold; color: white; display: flex; flex-direction: column; line-height: 1; }
-        .total-price span { font-size: 0.7rem; color: #aaa; font-family: 'Rajdhani'; letter-spacing: 1px; text-transform: uppercase; margin-bottom: 4px; }
+        /* Checkout Bar */
+        .checkout-bar { 
+            position: fixed; bottom: 0; left: 0; width: 100%; 
+            background: rgba(5, 2, 10, 0.95); backdrop-filter: blur(20px); 
+            border-top: 1px solid var(--card-border); 
+            padding: 15px 25px calc(15px + env(safe-area-inset-bottom, 0px)); 
+            display: flex; justify-content: space-between; align-items: center; 
+            z-index: 100; box-shadow: 0 -10px 40px rgba(0,0,0,0.8); 
+        }
+        .total-price { font-family: 'Orbitron'; font-size: 1.8rem; font-weight: 900; color: white; display: flex; flex-direction: column; line-height: 1.1; }
+        .total-price span { font-size: 0.75rem; color: #aaa; font-family: 'Rajdhani'; letter-spacing: 1px; text-transform: uppercase; margin-bottom: 4px; font-weight: bold;}
         
-        .pay-btn { background: linear-gradient(90deg, #ff9900, #ff4d4d); border: none; color: white; font-family: 'Orbitron'; font-weight: bold; font-size: 1.1rem; padding: 15px 30px; border-radius: 12px; cursor: pointer; box-shadow: 0 5px 20px rgba(255,153,0,0.4); text-transform: uppercase; transition: 0.3s; display: flex; align-items: center; gap: 10px;}
-        .pay-btn:active { transform: scale(0.95); box-shadow: 0 2px 10px rgba(255,153,0,0.4); }
+        .pay-btn { 
+            background: linear-gradient(135deg, var(--orange), #ff3300); 
+            border: none; color: white; font-family: 'Orbitron'; font-weight: bold; 
+            font-size: 1.1rem; padding: 16px 35px; border-radius: 12px; 
+            cursor: pointer; box-shadow: 0 8px 25px rgba(255,153,0,0.4); 
+            text-transform: uppercase; transition: var(--transition); 
+            display: flex; align-items: center; gap: 12px; letter-spacing: 1px;
+        }
+        .pay-btn:active { transform: scale(0.95); box-shadow: 0 4px 15px rgba(255,153,0,0.3); }
+        .pay-btn i { font-size: 1.2rem; }
 
-        #customToast { visibility: hidden; min-width: 250px; background: rgba(0,242,255,0.9); color: #000; text-align: center; border-radius: 12px; padding: 16px; position: fixed; z-index: 9999; left: 50%; bottom: -50px; transform: translateX(-50%); font-family: 'Orbitron'; font-weight: bold; box-shadow: 0 8px 30px rgba(0,242,255,0.5); opacity: 0; transition: opacity 0.4s, bottom 0.4s; }
-        #customToast.show { visibility: visible; opacity: 1; bottom: 100px; }
+        /* Status & Animation Overlays */
+        #customToast { 
+            visibility: hidden; min-width: 280px; background: rgba(0,242,255,0.95); 
+            color: #000; text-align: center; border-radius: 12px; padding: 16px 20px; 
+            position: fixed; z-index: 9999; left: 50%; bottom: -50px; 
+            transform: translateX(-50%); font-family: 'Orbitron'; font-weight: bold; 
+            box-shadow: 0 10px 40px var(--cyan-glow); opacity: 0; 
+            transition: opacity 0.4s, bottom 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); 
+        }
+        #customToast.show { visibility: visible; opacity: 1; bottom: 110px; }
 
-        .loader-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 9999; display: none; align-items: center; justify-content: center; flex-direction: column; }
+        /* Fullscreen Success/Loading Animation */
+        .loader-overlay { 
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
+            background: rgba(0,0,0,0.95); backdrop-filter: blur(15px); 
+            z-index: 10000; display: none; align-items: center; justify-content: center; flex-direction: column; 
+        }
         .loader-overlay.active { display: flex; }
+        
+        .status-icon { width: 80px; height: 80px; margin-bottom: 20px; position: relative; }
+        
+        /* Spinner */
+        .secure-spinner { width: 100%; height: 100%; border: 4px solid rgba(0,242,255,0.1); border-top-color: var(--cyan); border-radius: 50%; animation: spin 1s linear infinite; }
+        
+        /* Checkmark SVG */
+        .success-svg { width: 100%; height: 100%; display: none; }
+        .success-svg circle { stroke: #00ff88; stroke-width: 4; stroke-dasharray: 166; stroke-dashoffset: 166; fill: none; animation: stroke 0.6s cubic-bezier(0.65, 0, 0.45, 1) forwards; }
+        .success-svg path { transform-origin: 50% 50%; stroke-dasharray: 48; stroke-dashoffset: 48; stroke: #00ff88; stroke-width: 4; fill: none; animation: stroke 0.3s cubic-bezier(0.65, 0, 0.45, 1) 0.6s forwards; }
+        
+        @keyframes spin { 100% { transform: rotate(360deg); } }
+        @keyframes stroke { 100% { stroke-dashoffset: 0; } }
+
+        .loader-text { font-family: 'Orbitron'; font-size: 1.4rem; color: white; margin-top: 15px; text-shadow: 0 0 15px rgba(255,255,255,0.5); letter-spacing: 1px;}
+        .loader-sub { font-size: 0.95rem; color: #aaa; margin-top: 8px; font-weight: 600; }
     </style>
 </head>
 <body>
 
     <div class="header">
         <i class="fa-solid fa-arrow-left" onclick="window.history.back()"></i>
-        <h2><i class="fa-solid fa-fire"></i> Ad Campaign Manager</h2>
+        <h2><i class="fa-solid fa-fire" style="color:var(--orange);"></i> Ad Campaign Manager</h2>
         <div style="width: 24px;"></div>
     </div>
 
@@ -88,75 +227,103 @@
         <div class="preview-card" id="tPreview">
             <img src="https://via.placeholder.com/150" class="preview-img" id="pBanner">
             <div class="preview-info">
-                <h3 id="pTitle">Loading Tournament...</h3>
-                <div class="preview-badge" id="pGame">Esports</div>
+                <h3 id="pTitle">Fetching Details...</h3>
+                <div class="preview-badge" id="pGame"><i class="fa-solid fa-gamepad"></i> WARHERO ESPORTS</div>
             </div>
         </div>
 
-        <div class="section-title">Select Objective Plan</div>
-        <div class="plans-grid">
-            <div class="plan-card active" onclick="selectPlan('basic', 1, this)">
-                <i class="fa-solid fa-bullseye" style="font-size: 1.5rem; color:#ccc; margin-bottom:10px;"></i>
-                <h4>Basic Reach</h4>
-                <div class="multiplier">Standard Delivery</div>
+        <div>
+            <div class="section-header">
+                <i class="fa-solid fa-crown" style="color:var(--purple);"></i>
+                <div class="section-title">Included Ad Features</div>
             </div>
-            <div class="plan-card" onclick="selectPlan('standard', 1.5, this)">
-                <i class="fa-solid fa-bolt" style="font-size: 1.5rem; color:var(--cyan); margin-bottom:10px;"></i>
-                <h4 style="color:var(--cyan)">Standard Plus</h4>
-                <div class="multiplier">1.5x Impressions</div>
-            </div>
-            <div class="plan-card" onclick="selectPlan('elite', 2.5, this)">
-                <i class="fa-solid fa-rocket" style="font-size: 1.5rem; color:var(--orange); margin-bottom:10px;"></i>
-                <h4 style="color:var(--orange)">Elite Pro</h4>
-                <div class="multiplier">2.5x Max Conversion</div>
+            <div class="features-grid">
+                <div class="feature-item"><i class="fa-solid fa-brain"></i> AI Targeting</div>
+                <div class="feature-item"><i class="fa-solid fa-chart-line"></i> Live Analytics</div>
+                <div class="feature-item"><i class="fa-solid fa-bolt"></i> Priority Queue</div>
+                <div class="feature-item"><i class="fa-solid fa-mobile-screen"></i> Cross-Platform</div>
+                <div class="feature-item"><i class="fa-solid fa-bell"></i> Push Alerts</div>
+                <div class="feature-item"><i class="fa-solid fa-headset"></i> 24/7 Support</div>
             </div>
         </div>
 
-        <div class="section-title" style="margin-top: 15px;">Target Platforms</div>
-        <div style="font-size:0.8rem; color:#aaa; margin-bottom: 10px;">Tournyx Network is included free. External platforms charge +₹50 per selection.</div>
-        <div class="platform-grid">
-            <div class="plat-btn active" style="pointer-events:none;">
-                <img src="https://tournyx.in/favicon.png" style="width:16px;"> Tournyx
+        <div>
+            <div class="section-header">
+                <i class="fa-solid fa-bullseye"></i>
+                <div class="section-title">Select Objective Plan</div>
             </div>
-            <div class="plat-btn" onclick="togglePlat(this, 'instagram')">
-                <i class="fa-brands fa-instagram" style="color:#E1306C"></i> Instagram
+            <div class="plans-grid">
+                <div class="plan-card active" onclick="selectPlan('basic', 1, this)">
+                    <i class="fa-solid fa-paper-plane" style="font-size: 1.6rem; color:#ccc; margin-bottom:12px;"></i>
+                    <h4>Basic Reach</h4>
+                    <div class="multiplier">Standard</div>
+                </div>
+                <div class="plan-card" onclick="selectPlan('standard', 1.5, this)">
+                    <i class="fa-solid fa-bolt" style="font-size: 1.6rem; color:var(--cyan); margin-bottom:12px;"></i>
+                    <h4 style="color:var(--cyan)">Standard+</h4>
+                    <div class="multiplier">1.5x Traffic</div>
+                </div>
+                <div class="plan-card" onclick="selectPlan('elite', 2.5, this)">
+                    <i class="fa-solid fa-rocket" style="font-size: 1.6rem; color:var(--orange); margin-bottom:12px;"></i>
+                    <h4 style="color:var(--orange)">Elite Pro</h4>
+                    <div class="multiplier">2.5x Max ROI</div>
+                </div>
             </div>
-            <div class="plat-btn" onclick="togglePlat(this, 'facebook')">
-                <i class="fa-brands fa-facebook" style="color:#1877F2"></i> Facebook
+        </div>
+
+        <div>
+            <div class="section-header" style="margin-bottom: 5px;">
+                <i class="fa-solid fa-globe"></i>
+                <div class="section-title">Target Platforms</div>
             </div>
-            <div class="plat-btn" onclick="togglePlat(this, 'youtube')">
-                <i class="fa-brands fa-youtube" style="color:#FF0000"></i> YouTube
-            </div>
-            <div class="plat-btn" onclick="togglePlat(this, 'google')">
-                <i class="fa-brands fa-google" style="color:#4285F4"></i> Google Ads
+            <div class="section-sub">Tournyx Network is ₹79/day. External platforms are +₹189/day each. Our system calculates the best route.</div>
+            
+            <div class="platform-grid">
+                <div class="plat-btn locked active">
+                    <img src="https://tournyx.in/favicon.png" style="width:18px;"> Tournyx
+                </div>
+                <div class="plat-btn" onclick="togglePlat(this, 'instagram')">
+                    <i class="fa-brands fa-instagram" style="color:#E1306C"></i> Instagram
+                </div>
+                <div class="plat-btn" onclick="togglePlat(this, 'facebook')">
+                    <i class="fa-brands fa-facebook" style="color:#1877F2"></i> Facebook
+                </div>
+                <div class="plat-btn" onclick="togglePlat(this, 'youtube')">
+                    <i class="fa-brands fa-youtube" style="color:#FF0000"></i> YouTube
+                </div>
+                <div class="plat-btn" onclick="togglePlat(this, 'google')" style="grid-column: span 2;">
+                    <i class="fa-brands fa-google" style="color:#4285F4"></i> Google Ads Display
+                </div>
             </div>
         </div>
 
         <div class="calculator-box">
             <div class="calc-header">
-                <span style="color:white; font-size:1.2rem;">Ad Spend & Duration</span>
-                <i class="fa-solid fa-chart-pie" style="color:var(--orange); font-size:1.5rem;"></i>
+                <span class="calc-title">Ad Spend Calculator</span>
+                <i class="fa-solid fa-chart-pie" style="color:var(--orange); font-size:1.6rem;"></i>
             </div>
             
             <div class="reach-display">
-                <div class="reach-val" id="estReach">1,250</div>
-                <div class="reach-sub">Estimated People Reached</div>
+                <div class="reach-val" id="estReach">0</div>
+                <div class="reach-sub">Estimated Player Reach</div>
             </div>
 
             <div class="slider-container" style="margin-top: 25px;">
                 <div class="slider-label">
-                    <span>Daily Budget (₹)</span>
-                    <span class="slider-val" id="valBudget">₹100</span>
+                    <span>Total Daily Ad Spend (Auto-Calculated)</span>
+                    <span class="slider-val" id="valBudget">₹79</span>
                 </div>
-                <input type="range" id="sliderBudget" min="50" max="2000" step="50" value="100" oninput="calculateAds()">
+                <div style="width: 100%; height: 8px; background: rgba(255,255,255,0.1); border-radius: 10px; overflow: hidden;">
+                    <div id="spendBar" style="height: 100%; width: 10%; background: var(--cyan); transition: width 0.4s;"></div>
+                </div>
             </div>
 
-            <div class="slider-container">
+            <div class="slider-container" style="margin-top: 30px;">
                 <div class="slider-label">
-                    <span>Duration (Days)</span>
-                    <span class="slider-val" id="valDays">3 Days</span>
+                    <span>Campaign Duration</span>
+                    <span class="slider-val" id="valDays">1 Day</span>
                 </div>
-                <input type="range" id="sliderDays" min="1" max="30" step="1" value="3" oninput="calculateAds()">
+                <input type="range" id="sliderDays" min="1" max="30" step="1" value="1" oninput="calculateAds()">
             </div>
         </div>
 
@@ -165,19 +332,27 @@
     <div class="checkout-bar">
         <div class="total-price">
             <span>Total Payable</span>
-            ₹<span id="finalPrice">300</span>
+            <div style="display: flex; align-items: center; gap: 5px;">₹<span id="finalPrice">79</span></div>
         </div>
         <button class="pay-btn" onclick="initRazorpay()">
-            Pay Now <i class="fa-solid fa-arrow-right"></i>
+            Pay Securely <i class="fa-solid fa-shield-check"></i>
         </button>
     </div>
 
     <div id="customToast">Notification</div>
 
     <div class="loader-overlay" id="paymentLoader">
-        <i class="fa-solid fa-circle-notch fa-spin" style="font-size: 3rem; color: var(--cyan); margin-bottom: 15px;"></i>
-        <div style="font-family: 'Orbitron'; font-size: 1.2rem; color: white;">Processing Payment...</div>
-        <div style="font-size: 0.85rem; color: #aaa; margin-top: 10px;">Please do not close this window.</div>
+        <div class="status-icon">
+            <div class="secure-spinner" id="spinnerEl"></div>
+            
+            <svg class="success-svg" id="successEl" viewBox="0 0 52 52">
+                <circle cx="26" cy="26" r="25" />
+                <path d="M14.1 27.2l7.1 7.2 16.7-16.8" />
+            </svg>
+        </div>
+        
+        <div class="loader-text" id="loaderTitle">Establishing Secure Link...</div>
+        <div class="loader-sub" id="loaderSub">Verifying gateway credentials</div>
     </div>
 
     <script>
@@ -187,18 +362,24 @@
 
         let selectedPlanMult = 1;
         let activePlats = ['tournyx'];
+
+        // Core Pricing Logic Constraints
+        const COST_TOURNYX = 79; // Base platform cost per day
+        const COST_EXT_AD = 189; // Standard external cost per day
+        const COST_EXT_COM = 50; // Hidden Background Commission per external platform
+        const COST_EXT_TOTAL = COST_EXT_AD + COST_EXT_COM; // ₹239 total billed per external
         
         function showToast(msg, isError = false) {
             let t = document.getElementById('customToast');
             t.innerText = msg;
-            t.style.background = isError ? "rgba(255,77,77,0.95)" : "rgba(0,242,255,0.95)";
+            t.style.background = isError ? "rgba(255,50,50,0.95)" : "rgba(0,242,255,0.95)";
             t.classList.add('show');
-            setTimeout(() => t.classList.remove('show'), 3000);
+            setTimeout(() => t.classList.remove('show'), 3500);
         }
 
         document.addEventListener("DOMContentLoaded", () => {
             if(!userData.email) {
-                showToast("Please login first.", true);
+                showToast("Authentication Required.", true);
                 setTimeout(()=> window.location.href="login.html", 1500);
                 return;
             }
@@ -207,18 +388,11 @@
             const matchId = params.get('id');
 
             if(!matchId) {
-                document.getElementById('pTitle').innerText = "Invalid Tournament ID";
+                document.getElementById('pTitle').innerText = "Invalid Session ID";
                 return;
             }
 
-            fetch(API_URL, {
-                method: 'POST', headers: { 'Content-Type': 'text/plain' },
-                body: JSON.stringify({ action: 'get_tournament_details', match_id: matchId }) // Uses internal fetch logic
-            }).then(res=>res.json()).then(d => {
-                // If the backend has a specific fetch for one tournament, or we parse all
-            }).catch(e=>{});
-
-            // As a fallback/speed mechanism, grab from cache if available from profile.html
+            // Fetch caching logic from profile
             fetch(API_URL, {
                 method: 'POST', headers: { 'Content-Type': 'text/plain' },
                 body: JSON.stringify({ action: 'get_tournaments' })
@@ -228,7 +402,7 @@
                     if(t) {
                         tData = t;
                         document.getElementById('pTitle').innerText = t.title;
-                        document.getElementById('pGame').innerText = t.game || "Esports";
+                        
                         let b = t.banner;
                         if(b && b.includes('drive.google.com')) {
                             let id = b.split('/d/')[1].split('/')[0]; 
@@ -261,32 +435,57 @@
         }
 
         function calculateAds() {
-            let budget = parseInt(document.getElementById('sliderBudget').value);
             let days = parseInt(document.getElementById('sliderDays').value);
-            
-            document.getElementById('valBudget').innerText = "₹" + budget;
             document.getElementById('valDays').innerText = days + (days === 1 ? " Day" : " Days");
 
-            // Base platform fee: 50 INR per external platform
-            let extraPlatCost = (activePlats.length - 1) * 50; 
-            if(extraPlatCost < 0) extraPlatCost = 0;
-
-            let baseAdSpend = budget * days;
-            let planPremium = baseAdSpend * (selectedPlanMult - 1); // Extra cost for better plan
+            // Calculate precise Daily Base based on Platforms selected
+            // Tournyx: 79 Rs. External: 239 Rs (189 + 50 invisible commission)
+            let externalCount = activePlats.length - 1; 
+            let dailyBaseCost = COST_TOURNYX + (externalCount * COST_EXT_TOTAL);
             
-            let totalCost = baseAdSpend + planPremium + extraPlatCost;
-            document.getElementById('finalPrice').innerText = Math.round(totalCost);
+            // Apply plan multiplier to the final daily base
+            let finalDailyCost = dailyBaseCost * selectedPlanMult;
 
-            // Reach Logic: roughly 10-15 reach per rupee, scaled by plan
-            let baseReach = baseAdSpend * 12.5; 
-            let finalReach = Math.floor(baseReach * selectedPlanMult);
+            document.getElementById('valBudget').innerText = "₹" + Math.round(finalDailyCost);
             
-            // Format reach nicely
-            document.getElementById('estReach').innerText = finalReach.toLocaleString();
+            // Spend Bar animation
+            let maxExpected = COST_TOURNYX + (4 * COST_EXT_TOTAL) * 2.5; // Max possible daily
+            let barWidth = (finalDailyCost / maxExpected) * 100;
+            document.getElementById('spendBar').style.width = `${Math.min(barWidth, 100)}%`;
+
+            // Total price
+            let totalCost = finalDailyCost * days;
+            
+            // Animate number change
+            animateValue("finalPrice", parseInt(document.getElementById('finalPrice').innerText.replace(/,/g,'')), Math.round(totalCost), 300);
+
+            // Reach Logic: Advanced scaling algorithm
+            // Reach base: ~15 per rupee on Tournyx, slightly less conversion on external
+            let baseReach = (COST_TOURNYX * 16) + (externalCount * COST_EXT_AD * 12);
+            let finalReach = Math.floor(baseReach * selectedPlanMult * days);
+            
+            animateValue("estReach", parseInt(document.getElementById('estReach').innerText.replace(/,/g,'')), finalReach, 400);
+        }
+
+        // Smooth Number Counter Animation
+        function animateValue(id, start, end, duration) {
+            let obj = document.getElementById(id);
+            let range = end - start;
+            let current = start;
+            let increment = end > start ? Math.ceil(range/(duration/16)) : Math.floor(range/(duration/16));
+            if(range === 0) { obj.innerText = end.toLocaleString(); return; }
+            let timer = setInterval(function() {
+                current += increment;
+                if ((increment > 0 && current >= end) || (increment < 0 && current <= end)) {
+                    current = end;
+                    clearInterval(timer);
+                }
+                obj.innerText = current.toLocaleString();
+            }, 16);
         }
 
         function initRazorpay() {
-            if(!tData) { showToast("Tournament data loading...", true); return; }
+            if(!tData) { showToast("Syncing data... please wait.", true); return; }
             
             let finalAmount = parseInt(document.getElementById('finalPrice').innerText.replace(/,/g, ''));
             let days = parseInt(document.getElementById('sliderDays').value);
@@ -296,8 +495,8 @@
                 "key": "rzp_test_YourKeyHere", // Replace with Live Key
                 "amount": finalAmount * 100, // in paise
                 "currency": "INR",
-                "name": "Tournyx Esports",
-                "description": `Ad Campaign: ${tData.title} (${days} Days)`,
+                "name": "Tournyx Ads Network",
+                "description": `Campaign: ${tData.title} | ${days} Days`,
                 "image": "https://tournyx.in/favicon.png",
                 "handler": function (response) {
                     processBackendBoost(response.razorpay_payment_id, finalAmount, days, reach);
@@ -307,22 +506,29 @@
                     "email": userData.email,
                     "contact": userData.phone || ""
                 },
-                "theme": {
-                    "color": "#00f2ff"
-                }
+                "theme": { "color": "#ff9900" }
             };
             
             try {
                 let rzp1 = new Razorpay(options);
                 rzp1.open();
             } catch(e) {
-                // If Razorpay fails to load (dev mode), simulate success
-                processBackendBoost("sim_txn_" + Math.floor(Math.random()*100000), finalAmount, days, reach);
+                // Dev mode simulation fallback
+                processBackendBoost("sim_txn_" + Math.random().toString(36).substr(2, 9), finalAmount, days, reach);
             }
         }
 
         function processBackendBoost(paymentId, amount, days, reach) {
-            document.getElementById('paymentLoader').classList.add('active');
+            let loader = document.getElementById('paymentLoader');
+            let title = document.getElementById('loaderTitle');
+            let sub = document.getElementById('loaderSub');
+            
+            loader.classList.add('active');
+            title.innerText = "Processing Transaction...";
+            sub.innerText = "Connecting to bank gateway";
+
+            // Identify external platforms vs tournyx for the backend log
+            let platformString = activePlats.join(', ');
 
             let payload = {
                 action: 'boost_tournament',
@@ -331,7 +537,8 @@
                 amount_paid: amount,
                 days: days,
                 reach: reach,
-                platforms: activePlats.join(', ')
+                platforms: platformString,
+                payment_id: paymentId
             };
 
             fetch(API_URL, {
@@ -339,17 +546,23 @@
                 headers: { 'Content-Type': 'text/plain' },
                 body: JSON.stringify(payload)
             }).then(res=>res.json()).then(data => {
-                document.getElementById('paymentLoader').classList.remove('active');
                 if(data.status === 'success') {
-                    showToast("Campaign Activated Successfully!");
-                    // Redirect back to profile after delay
-                    setTimeout(()=> { window.location.href = "profile.html"; }, 2000);
+                    // Trigger Success Animation
+                    document.getElementById('spinnerEl').style.display = 'none';
+                    document.getElementById('successEl').style.display = 'block';
+                    
+                    title.innerText = "Campaign Boosted Successfully!";
+                    title.style.color = "#00ff88";
+                    sub.innerText = "Redirecting to Dashboard...";
+
+                    setTimeout(()=> { window.location.href = "profile.html"; }, 2500);
                 } else {
-                    showToast("Payment captured, but database update failed. Contact support.", true);
+                    loader.classList.remove('active');
+                    showToast("Database update failed. Contact support.", true);
                 }
             }).catch(e => {
-                document.getElementById('paymentLoader').classList.remove('active');
-                showToast("Network error. Payment is safe, contact support.", true);
+                loader.classList.remove('active');
+                showToast("Network error. Payment is secure, check profile.", true);
             });
         }
     </script>
