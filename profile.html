@@ -1921,17 +1921,21 @@
                     let sColor = String(statusText).toLowerCase().includes('live') ? 'var(--accent-green)' : (String(statusText).toLowerCase().includes('completed') ? '#888' : 'var(--accent-cyan)');
                     
                     // BOOST LOGIC INTEGRATION
-                    let isBoosted = String(t.boosted || t.is_boosted).toLowerCase() === 'true';
-                    let boostExpiry = t.boost_expiry ? new Date(t.boost_expiry) : null;
-                    let now = new Date();
-                    let boostActionHtml = "";
-                    
-                    if (isBoosted && boostExpiry && boostExpiry > now) {
-                        let daysLeft = Math.ceil((boostExpiry - now) / (1000 * 60 * 60 * 24));
-                        boostActionHtml = `<div style="background:rgba(255,153,0,0.1); border:1px solid var(--accent-orange); color:var(--accent-orange); padding:6px 10px; border-radius:8px; font-size:0.7rem; font-family:var(--font-head); font-weight:bold; display:flex; align-items:center; gap:5px; margin-right:auto;"><i class="fa-solid fa-fire fa-beat"></i> Boosted (${daysLeft}d left)</div>`;
-                    } else {
-                        boostActionHtml = `<button class="mi-btn" style="background:linear-gradient(90deg, #ff9900, #ff4d4d); box-shadow:0 0 10px rgba(255,153,0,0.4); color:white; margin-right:auto;" onclick="window.location.href='boosttournaments.html?id=${matchId}'; triggerHaptic();"><i class="fa-solid fa-rocket"></i> Boost</button>`;
-                    }
+    let isBoosted = String(t.Boosted || t.boosted || t.is_boosted).toLowerCase() === 'true';
+    let boostExpiry = (t.Boost_Expiry || t.boost_expiry) ? new Date(t.Boost_Expiry || t.boost_expiry) : null;
+    let now = new Date();
+    let boostActionHtml = "";
+
+    if (isBoosted && boostExpiry && boostExpiry > now) {
+        let daysLeft = Math.ceil((boostExpiry - now) / (1000 * 60 * 60 * 24));
+        // The new Cyan Neon Badge with Days Left
+        boostActionHtml = `<div style="background: rgba(0, 242, 255, 0.15); border: 1px solid #00f2ff; color: #00f2ff; padding: 6px 12px; border-radius: 8px; font-family: 'Orbitron'; font-size: 11px; font-weight: bold; box-shadow: 0 0 10px rgba(0,242,255,0.4); display: flex; align-items: center; gap: 5px;">
+             <i class="fa-solid fa-rocket"></i> ACTIVE BOOST (${daysLeft}d left)
+           </div>`;
+    } else {
+        // The standard Boost button to open the Ad Manager
+        boostActionHtml = `<button class="mi-btn" style="background:linear-gradient(90deg, #ff9900, #ff4d4d); border:none; color:white;" onclick="window.location.href='boosttournaments.html?id=${matchId}'"><i class="fa-solid fa-fire"></i> Boost</button>`;
+    }
 
                     container.innerHTML += `
                         <div class="managed-item">
