@@ -955,20 +955,33 @@
             <span>Profile</span>
         </a>
     </nav>
-
-    <script>
+         <script>
         const API_URL = 'https://script.google.com/macros/s/AKfycbyqqTpgaflxKJ9xH0jq7mJ_jLzcoNhas3gNo0h5gvoa_6r5Ae9NFxJAJp7ZoYNnMRKl/exec';
         let activeTournament = {}; 
         let pendingRegistrationData = null; 
         let userLiveMatches = []; 
         let isGuestMode = false;
         let activeFeeFilter = 'All';
-        let backgroundSyncInterval = null;
         let localTournamentsData = []; 
         let activeCountdown = null;
         let activeTimelineInterval = null;
         let roomTabInterval = null;
         let currentOpenTeamDropdown = null;
+
+        // --- SECURE POST FETCHER LOGIC ---
+        async function secureFetch(payload) {
+            try {
+                const response = await fetch(API_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'text/plain' },
+                    body: JSON.stringify(payload)
+                });
+                return await response.json();
+            } catch (error) {
+                console.error("Fetch Error:", error);
+                throw error;
+            }
+        }
 
         function formatTournamentDateStrict(dateStr) {
             if (!dateStr || dateStr === "TBD") return "TBD";
@@ -1023,9 +1036,7 @@
             }
         });
 
-        function triggerHaptic() {
-            if(navigator.vibrate) { navigator.vibrate(40); }
-        }
+        function triggerHaptic() { if(navigator.vibrate) navigator.vibrate(40); }
         
         function playGunshotSound() {
             try {
@@ -1052,32 +1063,6 @@
             } catch(e) {}
         }
 
-        function triggerCoinAnimation() {
-            const container = document.createElement('div');
-            container.style.position = 'fixed';
-            container.style.top = '0'; container.style.left = '0';
-            container.style.width = '100vw'; container.style.height = '100vh';
-            container.style.pointerEvents = 'none';
-            container.style.zIndex = '99999';
-            document.body.appendChild(container);
-            
-            for(let i=0; i<30; i++) {
-                let coin = document.createElement('div');
-                coin.innerHTML = '<i class="fa-solid fa-coins" style="color:#FFD700; font-size:1.5rem; filter:drop-shadow(0 0 5px #FFD700);"></i>';
-                coin.style.position = 'absolute';
-                coin.style.left = Math.random() * 100 + 'vw';
-                coin.style.top = '-50px';
-                coin.style.transition = 'transform ' + (1 + Math.random() * 1.5) + 's cubic-bezier(0.25, 0.46, 0.45, 0.94), opacity 1.5s';
-                container.appendChild(coin);
-                
-                setTimeout(() => {
-                    coin.style.transform = `translateY(${window.innerHeight + 100}px) rotate(${Math.random() * 360}deg)`;
-                    coin.style.opacity = '0';
-                }, 50);
-            }
-            setTimeout(() => container.remove(), 2500);
-        }
-
         function showToast(msg, isError = false) {
             var x = document.getElementById("customToast");
             x.innerText = msg;
@@ -1100,19 +1085,13 @@
                 likes.splice(idx, 1);
                 iconContainer.classList.remove('liked');
                 countSpan.innerText = currentCount - 1;
-                fetch(API_URL, {
-                    method: 'POST', mode: 'no-cors', headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ action: "like_tournament", match_id: tId, mode: "remove" })
-                }).catch(e=>{});
+                secureFetch({ action: "like_tournament", match_id: tId, mode: "remove" }).catch(()=>{});
             } else {
                 likes.push(tId);
                 iconContainer.classList.add('liked');
                 countSpan.innerText = currentCount + 1;
                 playSuccessSound();
-                fetch(API_URL, {
-                    method: 'POST', mode: 'no-cors', headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ action: "like_tournament", match_id: tId, mode: "add" })
-                }).catch(e=>{});
+                secureFetch({ action: "like_tournament", match_id: tId, mode: "add" }).catch(()=>{});
             }
             localStorage.setItem('tournyx_liked_matches', JSON.stringify(likes));
         }
@@ -1446,25 +1425,29 @@
             return strUrl; 
         }
 
-        /* --- ADSTERRA AND BOOST FEATURE INJECTOR --- */
-        function renderSponsorAdSlots() {
-            let adSlots = [document.getElementById('overviewAdSlot'), document.getElementById('prizeAdSlot')];
+        /* --- ADSTERRA AND BOOST FEATURE INJECTOR (NATIVE TOGGLE SYSTEM) --- */
+        function renderSponsorAdSlots(currentTourneyId) {
+            let wrappers = [document.getElementById('overviewAdSlotWrapper'), document.getElementById('prizeAdSlotWrapper')];
+            let sponsorDivs = [document.getElementById('overviewSponsorContent'), document.getElementById('prizeSponsorContent')];
+            let adsterraDivs = [document.getElementById('overviewAdsterraContent'), document.getElementById('prizeAdsterraContent')];
+            
             let boostedTournaments = localTournamentsData.filter(t => 
-                String(t.boosted || t.is_boosted).toLowerCase() === 'true' || parseInt(t.prize) >= 10000 
+                (String(t.boosted).toLowerCase() === 'true' || String(t.is_boosted).toLowerCase() === 'true') &&
+                String(t.id || t.title).trim() !== currentTourneyId
             );
 
-            adSlots.forEach((slot, index) => {
-                if(!slot) return;
-                slot.innerHTML = ''; // clear
+            boostedTournaments.sort(() => 0.5 - Math.random());
 
-                // Provide a mix of Adsterra and Sponsored Boosts
-                // Let's say 50/50 chance if boosted tournaments exist
-                if(boostedTournaments.length > 0 && Math.random() > 0.4) {
-                    // Pick random boosted tournament
-                    let sp = boostedTournaments[Math.floor(Math.random() * boostedTournaments.length)];
+            wrappers.forEach((wrapper, index) => {
+                if(!wrapper || !sponsorDivs[index] || !adsterraDivs[index]) return;
+
+                if(boostedTournaments.length > 0 && Math.random() > 0.3) {
+                    let sp = boostedTournaments.pop(); 
                     let bg = formatImageUrl(sp.banner);
-                    slot.classList.add('boosted-active');
-                    slot.innerHTML = `
+                    
+                    wrapper.classList.add('boosted-active');
+                    
+                    sponsorDivs[index].innerHTML = `
                         <div class="sponsor-boost-card" onclick="openTournamentDetails('${encodeURIComponent(JSON.stringify(sp))}')">
                             <div class="sp-badge">Sponsored</div>
                             <img src="${bg}" alt="Sponsor Banner">
@@ -1474,22 +1457,19 @@
                             </div>
                         </div>
                     `;
+                    
+                    sponsorDivs[index].style.display = 'block';
+                    adsterraDivs[index].style.display = 'none';
+
                 } else {
-                    // Inject Adsterra Script
-                    slot.classList.remove('boosted-active');
-                    slot.innerHTML = `
-                        <div style="color:#555; font-size:0.8rem; text-align:center;"><i class="fa-solid fa-rectangle-ad"></i> Partner Ad Space</div>
-                        <script type="text/javascript">
-                            // atOptions = { ... }
-                            // document.write('<scr' + 'ipt type="text/javascript" src="..."></scr' + 'ipt>');
-                        <\/script>
-                        `;
+                    wrapper.classList.remove('boosted-active');
+                    sponsorDivs[index].style.display = 'none';
+                    adsterraDivs[index].style.display = 'block';
                 }
             });
         }
 
-
-        document.addEventListener("DOMContentLoaded", function() {
+        document.addEventListener("DOMContentLoaded", () => {
             let user = JSON.parse(localStorage.getItem('tournyx_user'));
             const urlParams = new URLSearchParams(window.location.search);
             const targetTourneyId = urlParams.get('tournament');
@@ -1505,8 +1485,9 @@
                 document.getElementById('headerProfilePic').style.display = 'none';
             } else {
                 if(user.avatar) document.getElementById('headerProfilePic').src = formatImageUrl(user.avatar);
-                fetch(API_URL + "?action=get_matches&email=" + encodeURIComponent(user.email))
-                .then(res => res.json())
+                
+                // SECURE POST CALL INSTEAD OF GET
+                secureFetch({ action: 'get_matches', email: user.email })
                 .then(data => { 
                     if(data.status === 'success') {
                         userLiveMatches = data.data.filter(m => {
@@ -1516,9 +1497,11 @@
                     } 
                 });
                 
-                fetch(API_URL + "?action=get_my_clans&username=" + encodeURIComponent(user.username))
-                    .then(res => res.json())
-                    .then(data => { if(data.status === 'success') localStorage.setItem('tournyx_my_clans_cache', JSON.stringify(data.data)); });
+                // SECURE POST CALL INSTEAD OF GET
+                secureFetch({ action: 'get_my_clans', username: user.username })
+                .then(data => { 
+                    if(data.status === 'success') localStorage.setItem('tournyx_my_clans_cache', JSON.stringify(data.data)); 
+                });
             }
             
             localStorage.removeItem('myMatches');
@@ -1557,8 +1540,8 @@
         }
 
         function loadLiveTournaments(autoOpenId) {
-            fetch(API_URL + "?action=get_tournaments")
-            .then(res => res.json())
+            // SECURE POST CALL INSTEAD OF GET
+            secureFetch({ action: 'get_tournaments' })
             .then(data => {
                 if (data.status === "success") {
                     data.data.sort((a, b) => {
@@ -1603,10 +1586,7 @@
                         let targetDate = new Date(t.date).getTime();
                         let now = new Date().getTime();
                         if(!isNaN(targetDate) && (now > targetDate + (24 * 60 * 60 * 1000))) {
-                            fetch(API_URL, {
-                                method: 'POST', mode: 'no-cors', headers: { 'Content-Type': 'application/json' },
-                                body: JSON.stringify({ action: "auto_delete_tournament", match_id: String(t.id || t.title).trim() })
-                            });
+                            secureFetch({ action: "auto_delete_tournament", match_id: String(t.id || t.title).trim() }).catch(()=>{});
                             return; 
                         }
 
@@ -2112,10 +2092,12 @@
             
             let viewCount = t.views ? parseInt(t.views) : (Math.floor((t.title.length * 7) + ((parseInt(t.id) || 12) * 3)) % 300) + 12;
             document.getElementById('realViewerCount').innerText = viewCount;
-            fetch(API_URL + "?action=increment_view&match_id=" + encodeURIComponent(t.id || t.title), { mode: 'no-cors' }).catch(e=>{});
+            
+            // SECURE POST CALL INSTEAD OF GET
+            secureFetch({ action: 'increment_view', match_id: t.id || t.title }).catch(()=>{});
 
             loadOtherTournaments(orgId, t.id || t.title);
-            renderSponsorAdSlots(); // Inject dynamic Sponsor / Ads into the modal
+            renderSponsorAdSlots(String(t.id || t.title).trim()); 
 
             document.querySelector('.dm-scroll-area').scrollTo(0,0);
             document.querySelector('.dm-nav-item[data-tab="dtTabOverview"]').click();
@@ -2145,7 +2127,6 @@
 
         function openHostProfile() {
             triggerHaptic();
-            // Redirects to organizer profile search in production, functionally keeping clean.
             showToast("Opening Organizer Profile...");
         }
 
@@ -2173,9 +2154,10 @@
             const container = document.getElementById('liveTeamsList');
             container.innerHTML = `<div style="text-align:center; color:var(--accent-cyan); padding:40px;"><i class="fa-solid fa-spinner fa-spin"></i> Fetching roster...</div>`;
             
+            // SECURE POST CALLS INSTEAD OF GET
             Promise.all([
-                fetch(API_URL + "?action=get_tournament_details&match_id=" + encodeURIComponent(activeTournament.id || activeTournament.title)).then(res => res.json()),
-                fetch(API_URL + "?action=get_clans").then(res => res.json()).catch(() => ({status: 'error', data: []}))
+                secureFetch({ action: 'get_tournament_details', match_id: activeTournament.id || activeTournament.title }),
+                secureFetch({ action: 'get_clans' }).catch(() => ({status: 'error', data: []}))
             ])
             .then(([data, clansData]) => {
                 container.innerHTML = "";
@@ -2295,12 +2277,13 @@
                                         <div style="font-size:0.75rem; color:var(--accent-cyan); font-weight: bold; background: rgba(0,242,255,0.1); padding: 4px 10px; border-radius: 50px; border: 1px solid rgba(0,242,255,0.2);">Solo</div>
                                     </div>
                                 `;
-
-                                fetch(API_URL + "?action=get_avatar&username=" + safePlayerName)
-                                    .then(r => r.json()).then(d => {
-                                        if(d.status === 'success' && (d.data || d.avatar)) {
-                                            document.getElementById(`solo-avatar-${i}`).src = formatImageUrl(d.data || d.avatar);
-                                        }
+                                
+                                // SECURE POST CALL INSTEAD OF GET
+                                secureFetch({ action: 'get_avatar', username: playerName })
+                                .then(d => {
+                                    if(d.status === 'success' && (d.data || d.avatar)) {
+                                        document.getElementById(`solo-avatar-${i}`).src = formatImageUrl(d.data || d.avatar);
+                                    }
                                 }).catch(e => {});
                             } else {
                                 let highlightClass = isMyClan ? "my-clan" : "";
@@ -2474,9 +2457,10 @@
             clanSelectionArea.innerHTML = `<div style="text-align:center; padding:20px; color:var(--accent-cyan);"><i class="fa-solid fa-spinner fa-spin" style="font-size:2rem; margin-bottom:10px;"></i><br>Validating Roster...</div>`;
             btnArea.style.display = 'none';
             
+            // SECURE POST CALLS INSTEAD OF GET
             Promise.all([
-                fetch(API_URL + "?action=get_my_clans&username=" + encodeURIComponent(user.username)).then(res => res.json()),
-                fetch(API_URL + "?action=get_tournament_details&match_id=" + encodeURIComponent(activeTournament.id || activeTournament.title)).then(res => res.json())
+                secureFetch({ action: 'get_my_clans', username: user.username }),
+                secureFetch({ action: 'get_tournament_details', match_id: activeTournament.id || activeTournament.title })
             ])
             .then(([clansData, detailsData]) => {
                 let userClans = [];
@@ -2700,21 +2684,15 @@
 
             let entryPaidPts = method === 'points' ? cost : 0;
 
-            fetch(API_URL, {
-                method: 'POST', mode: 'no-cors', headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    action: "join", match_id: t.id || t.title, game: t.game, title: t.title,
-                    date: t.date, prize: t.prize, email: user.email, username: user.username, phone: user.phone, 
-                    clan: clanName, entry_paid: method !== 'points' ? cost : 0, entry_paid_pts: entryPaidPts, method: method,
-                    org_email: t.org_email || t.email || ""
-                })
+            secureFetch({
+                action: "join", match_id: t.id || t.title, game: t.game, title: t.title,
+                date: t.date, prize: t.prize, email: user.email, username: user.username, phone: user.phone, 
+                clan: clanName, entry_paid: method !== 'points' ? cost : 0, entry_paid_pts: entryPaidPts, method: method,
+                org_email: t.org_email || t.email || ""
             }).then(() => {
                 
                 if(cost > 0) {
-                    fetch(API_URL, {
-                        method: 'POST', mode: 'no-cors', headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ action: 'update_wallet', email: user.email, rupees: user.rupees, points: user.points })
-                    });
+                    secureFetch({ action: 'update_wallet', email: user.email, rupees: user.rupees, points: user.points }).catch(()=>{});
                     
                     let txns = JSON.parse(localStorage.getItem('tournyx_txns')) || [];
                     let dateStr = getISTDateTime();
@@ -2785,7 +2763,6 @@
             });
         }
 
-        // --- CONTRIBUTE ENGINE WITH SECURE BACKEND PAYLOAD & COIN ANIMATION ---
         function openContributeModal() {
             if(isGuestMode) { document.getElementById('guestLoginModal').classList.add('active'); return; }
             document.getElementById('contributeOverlay').classList.add('active');
@@ -2846,16 +2823,8 @@
             
             localStorage.setItem('tournyx_user', JSON.stringify(user));
             
-            fetch(API_URL, {
-                method: 'POST', mode: 'no-cors', headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ action: 'update_wallet', email: user.email, rupees: user.rupees, points: user.points })
-            });
-
-            // This hits the backend AppScript snippet discussed above for Column V
-            fetch(API_URL, {
-                method: 'POST', mode: 'no-cors', headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ action: 'add_donation', match_id: activeTournament.id || activeTournament.title, amount: val, user: user.email })
-            });
+            secureFetch({ action: 'update_wallet', email: user.email, rupees: user.rupees, points: user.points }).catch(()=>{});
+            secureFetch({ action: 'add_donation', match_id: activeTournament.id || activeTournament.title, amount: val, user: user.email }).catch(()=>{});
 
             let txns = JSON.parse(localStorage.getItem('tournyx_txns')) || [];
             let dateStr = getISTDateTime();
@@ -2879,7 +2848,6 @@
             balEl.innerText = Math.floor((baseRupees + goldenRupees) / 10);
             document.getElementById('contributeRsVal').innerText = (baseRupees + goldenRupees);
             
-            triggerCoinAnimation();
             showToast("Successfully contributed ₹" + val + " to " + (activeTournament.title || "the event") + "!");
             setTimeout(closeContributeModal, 800);
         }
@@ -2945,7 +2913,8 @@
                 card.style.display = show ? 'block' : 'none';
             });
         }
-    </script>
+    </script>                                                                                   
+    
     <div id="nativeAppPrompt" style="display: none; position: fixed; bottom: calc(80px + env(safe-area-inset-bottom)); left: 50%; transform: translateX(-50%); width: 92%; max-width: 400px; background: rgba(10, 5, 20, 0.95); border: 1px solid var(--accent-cyan); border-radius: 18px; padding: 12px 15px; z-index: 9999; backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px); box-shadow: 0 15px 35px rgba(0,0,0,0.8), inset 0 0 15px rgba(0, 242, 255, 0.15); align-items: center; justify-content: space-between; animation: slideUpAppPrompt 0.4s ease-out;">
     <div style="display: flex; align-items: center; gap: 12px; flex: 1; min-width: 0; cursor: pointer;" onclick="window.location.href='download.html'">
         <img src="https://tournyx.in/favicon.png" style="width: 45px; height: 45px; border-radius: 12px; border: 1px solid var(--accent-purple); box-shadow: 0 0 10px rgba(189,0,255,0.4);">
