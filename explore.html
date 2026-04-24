@@ -724,6 +724,21 @@
                     </div>
 
                     <div class="tournyx-ad-slot" id="overviewAdSlot">
+                        <div id="overviewAdsterraContent" style="display:none; width:100%; text-align:center; overflow:hidden; border-radius:12px; margin-top:15px;">
+    
+    <script>
+  atOptions = {
+    'key' : '3435a0d810065b1a92465c0ff9aff6e9',
+    'format' : 'iframe',
+    'height' : 50,
+    'width' : 320,
+    'params' : {}
+  };
+</script>
+<script src="https://www.highperformanceformat.com/3435a0d810065b1a92465c0ff9aff6e9/invoke.js"></script>
+
+    
+</div>
                         </div>
                 </div>
 
@@ -755,6 +770,21 @@
                     <div id="prizeDistributionArea"></div>
 
                     <div class="tournyx-ad-slot" id="prizeAdSlot">
+                        <div id="overviewAdsterraContent" style="display:none; width:100%; text-align:center; overflow:hidden; border-radius:12px; margin-top:15px;">
+    
+    <script>
+  atOptions = {
+    'key' : '3435a0d810065b1a92465c0ff9aff6e9',
+    'format' : 'iframe',
+    'height' : 50,
+    'width' : 320,
+    'params' : {}
+  };
+</script>
+<script src="https://www.highperformanceformat.com/3435a0d810065b1a92465c0ff9aff6e9/invoke.js"></script>
+
+    
+</div>
                         </div>
                 </div>
 
@@ -2516,10 +2546,13 @@
                     btnArea.style.display = 'flex';
                     
                     const select = document.getElementById('formSelectClan');
-                    availableClans.forEach(c => { 
-                        let payload = c.team_json ? c.team_json : c.name;
-                        select.innerHTML += `<option value='${payload}'>${c.name} (${c.game})</option>`; 
-                    });
+    availableClans.forEach(c => { 
+        // 1. Ensure we have a valid JSON string
+        let payload = c.team_json ? c.team_json : JSON.stringify(c);
+        // 2. Safely encode it so quotes don't break the HTML dropdown!
+        let safePayload = encodeURIComponent(payload);
+        select.innerHTML += `<option value="${safePayload}">${c.name} (${c.game})</option>`; 
+    });
                     document.getElementById('regClanLabel').innerHTML = `Select ${activeTournament.game} Roster *`;
                     
                     document.getElementById('finalSubmitBtn').innerText = "Proceed";
@@ -2594,21 +2627,29 @@
             triggerHaptic();
             
             const submitBtn = document.getElementById('finalSubmitBtn');
-            const clanNameStr = document.getElementById('formSelectClan').value;
+    let rawValue = document.getElementById('formSelectClan').value;
+    let clanNameStr = "";
+    
+    // Decode the safely passed JSON string
+    try { clanNameStr = decodeURIComponent(rawValue); } 
+    catch(e) { clanNameStr = rawValue; }
+    
+    let isSolo = activeTournament.format && activeTournament.format.toLowerCase().includes('solo');
+    if (!isSolo) {
+        try {
+            let parsedClan = JSON.parse(clanNameStr);
+            // Support both 'roster' (new system) OR 'players' (old system)
+            let rosterArray = parsedClan.roster || parsedClan.players || [];
             
-            let isSolo = activeTournament.format && activeTournament.format.toLowerCase().includes('solo');
-            if (!isSolo) {
-                try {
-                    let parsedClan = JSON.parse(clanNameStr);
-                    if (!parsedClan.players || parsedClan.players.length < 4 || parsedClan.players.length > 6) {
-                        showToast("Strict Rule: Clan must have exactly 4 to 6 players! Please update your roster.", true);
-                        return; 
-                    }
-                } catch(err) {
-                    showToast("Invalid clan data.", true);
-                    return;
-                } 
+            if (rosterArray.length < 4 || rosterArray.length > 6) {
+                showToast("Strict Rule: Clan must have exactly 4 to 6 players! Please update your roster.", true);
+                return; 
             }
+        } catch(err) {
+            showToast("Invalid clan data. Please recreate your clan.", true);
+            return;
+        } 
+    }
 
             submitBtn.disabled = true;
             submitBtn.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin"></i> Processing...';
