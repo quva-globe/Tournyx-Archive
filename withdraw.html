@@ -61,26 +61,29 @@
         .orb { position: fixed; border-radius: 50%; filter: blur(80px); opacity: 0.25; pointer-events: none; z-index: -1; animation: floatOrb 10s infinite ease-in-out alternate; }
         .orb-1 { width: 300px; height: 300px; background: var(--accent-purple); top: -50px; left: -100px; }
         .orb-2 { width: 250px; height: 250px; background: var(--accent-cyan); bottom: 10%; right: -50px; animation-delay: -5s; }
+        html.theme-vip .orb-1 { background: #FF8C00; }
+        html.theme-vip .orb-2 { background: #FFD700; }
         @keyframes floatOrb { 0% { transform: translate(0, 0) scale(1); } 100% { transform: translate(50px, 50px) scale(1.1); } }
         
-        .animate-section { animation: slideUpGlow 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275) both; }
-        @keyframes slideUpGlow { 0% { opacity: 0; transform: translateY(30px); } 100% { opacity: 1; transform: translateY(0); } }
+        .animate-section { animation: slideUpGlow 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) both; }
+        @keyframes slideUpGlow { 0% { opacity: 0; transform: translateY(20px); } 100% { opacity: 1; transform: translateY(0); } }
         .delay-1 { animation-delay: 0.1s; } .delay-2 { animation-delay: 0.2s; } .delay-3 { animation-delay: 0.3s; } .delay-4 { animation-delay: 0.4s; }
         
         /* --- HEADER --- */
         .top-header { 
             position: fixed; top: 0; left: 0; width: 100%; 
             padding: calc(12px + env(safe-area-inset-top)) 10px 12px; 
-            background: rgba(5, 2, 12, 0.6); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); 
-            border-bottom: 1px solid rgba(255, 255, 255, 0.05); z-index: 2000; box-shadow: 0 4px 30px rgba(0, 0, 0, 0.5); transform: translateZ(0);
+            background: rgba(5, 2, 12, 0.7); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); 
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05); z-index: 2000; box-shadow: 0 4px 30px rgba(0, 0, 0, 0.6); transform: translateZ(0);
         }
         .header-wrapper { display: flex; align-items: center; justify-content: space-between; gap: 5px;}
         .header-left { display: flex; align-items: center; gap: 8px; flex: 1; min-width: 0; }
         .back-btn { color: white; font-size: 1.3rem; text-decoration: none; transition: 0.3s; cursor: pointer; padding: 5px; flex-shrink:0;}
         .back-btn:active { color: var(--accent-cyan); transform: scale(0.9); }
-        .app-title { font-family: var(--font-head); font-size: 1.15rem; font-weight: 700; background: var(--accent-gradient); -webkit-background-clip: text; -webkit-text-fill-color: transparent; letter-spacing: 0px; white-space: normal; line-height: 1.1; word-break: break-word; text-transform: uppercase; margin:0;}
-        .header-greeting { font-size: 0.85rem; color: #aaa; margin-bottom: 2px; display: flex; align-items: center; }
-        .header-profile-img { width: 30px; height: 30px; border-radius: 50%; border: 2px solid var(--accent-cyan); object-fit: cover; cursor: pointer; box-shadow: 0 0 10px rgba(0,242,255,0.4); transition: 0.3s; flex-shrink: 0; background:#000; }
+        html.theme-vip .back-btn:active { color: #FFD700; }
+        .app-title { font-family: var(--font-head); font-size: 1.15rem; font-weight: 900; background: var(--accent-gradient); -webkit-background-clip: text; -webkit-text-fill-color: transparent; letter-spacing: 1px; white-space: normal; line-height: 1.1; word-break: break-word; text-transform: uppercase; margin:0;}
+        .header-greeting { font-size: 0.8rem; color: #aaa; margin-bottom: 2px; display: flex; align-items: center; font-weight: bold;}
+        .header-profile-img { width: 35px; height: 35px; border-radius: 50%; border: 2px solid var(--accent-cyan); object-fit: cover; cursor: pointer; box-shadow: 0 0 10px rgba(0,242,255,0.4); transition: 0.3s; flex-shrink: 0; background:#000; }
         html.theme-vip .header-profile-img { border-color: #FFD700; box-shadow: 0 0 10px rgba(255,215,0,0.6); }
 
         .desktop-nav { display: none !important; align-items: center; gap: 25px; }
@@ -102,149 +105,140 @@
         .form-group { margin-bottom: 20px; width: 100%; transition: all 0.3s ease; position: relative;}
         .form-label { display: flex; justify-content: space-between; color: var(--text-muted); font-size: 0.85rem; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.5px; font-family: var(--font-head); font-weight: bold; align-items: center;}
         .input-wrapper { position: relative; width: 100%; }
-        .input-prefix { position: absolute; left: 15px; top: 50%; transform: translateY(-50%); color: white; font-family: var(--font-head); font-size: 1.1rem; font-weight: bold; }
-        .form-control { width: 100%; background: rgba(0,0,0,0.4); border: 1px solid rgba(255,255,255,0.08); padding: 16px 15px 16px 50px; color: white; border-radius: 12px; font-family: var(--font-body); font-size: 1.1rem; transition: 0.3s; box-shadow: inset 0 0 10px rgba(0,0,0,0.5); outline: none; font-weight: bold; }
-        .form-control:focus { border-color: var(--accent-cyan); box-shadow: 0 0 15px rgba(0, 242, 255, 0.2), inset 0 0 10px rgba(0,0,0,0.5); background: rgba(0,0,0,0.6);}
+        .input-prefix { position: absolute; left: 15px; top: 50%; transform: translateY(-50%); color: white; font-family: var(--font-head); font-size: 1.2rem; font-weight: bold; }
+        .form-control { width: 100%; background: rgba(0,0,0,0.5); border: 1px solid rgba(255,255,255,0.08); padding: 18px 15px 18px 50px; color: white; border-radius: 12px; font-family: var(--font-body); font-size: 1.2rem; transition: 0.3s; box-shadow: inset 0 0 10px rgba(0,0,0,0.5); outline: none; font-weight: bold; }
+        .form-control:focus { border-color: var(--accent-cyan); box-shadow: 0 0 15px rgba(0, 242, 255, 0.2), inset 0 0 10px rgba(0,0,0,0.5); background: rgba(0,0,0,0.7);}
         html.theme-vip .form-control:focus { border-color: #FFD700; box-shadow: 0 0 15px rgba(255, 215, 0, 0.2), inset 0 0 10px rgba(0,0,0,0.5); }
-        .form-control.no-prefix { padding-left: 15px; }
-        @keyframes shake { 0%,100%{transform:translateX(0);} 20%,60%{transform:translateX(-10px);} 40%,80%{transform:translateX(10px);} }
+        .form-control.no-prefix { padding-left: 15px; font-size: 1rem; }
+        @keyframes shake { 0%,100%{transform:translateX(0);} 20%,60%{transform:translateX(-8px);} 40%,80%{transform:translateX(8px);} }
         .input-error { border-color: var(--accent-red) !important; animation: shake 0.4s both; box-shadow: 0 0 15px rgba(255,77,77,0.3), inset 0 0 10px rgba(0,0,0,0.5) !important; }
-        select.form-control { appearance: none; background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%2300f2ff'%3e%3cpath d='M7 10l5 5 5-5z'/%3e%3c/svg%3e"); background-repeat: no-repeat; background-position: right 15px center; background-size: 25px; }
-        
-        .promo-box { display: flex; gap: 10px; margin-top: 15px; }
-        .promo-input { flex: 1; background: rgba(255,255,255,0.05); border: 1px dashed var(--accent-purple); color: white; padding: 10px 15px; border-radius: 8px; outline: none; font-family: var(--font-head); font-size: 0.85rem; text-transform: uppercase;}
-        html.theme-vip .promo-input { border-color: #FFD700; }
-        .promo-btn { background: rgba(189,0,255,0.2); border: 1px solid var(--accent-purple); color: white; padding: 10px 15px; border-radius: 8px; font-family: var(--font-head); font-weight: bold; font-size: 0.8rem; cursor: pointer; transition: 0.3s;}
-        html.theme-vip .promo-btn { background: rgba(255,215,0,0.2); border-color: #FFD700; }
-        .promo-btn:active { transform: scale(0.95); }
+        select.form-control { appearance: none; background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%2300f2ff'%3e%3cpath d='M7 10l5 5 5-5z'/%3e%3c/svg%3e"); background-repeat: no-repeat; background-position: right 15px center; background-size: 20px; }
+        html.theme-vip select.form-control { background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23FFD700'%3e%3cpath d='M7 10l5 5 5-5z'/%3e%3c/svg%3e"); }
 
-        .fee-calculator { background: rgba(0,242,255,0.05); border: 1px solid rgba(0,242,255,0.2); padding: 12px 15px; border-radius: 10px; margin-top: 10px; display: flex; justify-content: space-between; align-items: center; font-size: 0.85rem; font-family: var(--font-body); }
-        html.theme-vip .fee-calculator { background: rgba(255,215,0,0.05); border-color: rgba(255,215,0,0.2); }
-        .fee-calculator .fee-amt { color: var(--accent-red); font-weight: bold; }
-        .fee-calculator .payout-amt { color: var(--accent-green); font-weight: bold; font-size: 1.1rem; font-family: var(--font-head); }
-        .pro-zero-fee { color: var(--accent-cyan) !important; text-shadow: 0 0 10px rgba(0,242,255,0.5); }
-        html.theme-vip .pro-zero-fee { color: #FFD700 !important; text-shadow: 0 0 10px rgba(255,215,0,0.5); }
-        
-        .quick-chips { display: flex; gap: 10px; margin-top: 12px; width: 100%; }
-        .chip { flex: 1; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08); color: var(--text-muted); padding: 10px 0; border-radius: 8px; text-align: center; font-family: var(--font-head); font-size: 0.85rem; cursor: pointer; transition: 0.3s; font-weight: bold; }
+        .quick-chips { display: flex; gap: 8px; margin-top: 15px; width: 100%; }
+        .chip { flex: 1; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08); color: var(--text-muted); padding: 12px 0; border-radius: 8px; text-align: center; font-family: var(--font-head); font-size: 0.9rem; cursor: pointer; transition: 0.3s; font-weight: bold; box-shadow: 0 5px 10px rgba(0,0,0,0.2);}
         .chip:active { background: rgba(0, 242, 255, 0.1); color: var(--accent-cyan); border-color: var(--accent-cyan); transform:scale(0.95);}
         html.theme-vip .chip:active { background: rgba(255, 215, 0, 0.1); color: #FFD700; border-color: #FFD700; }
         .chip.max { background: rgba(189, 0, 255, 0.1); color: var(--accent-purple); border-color: rgba(189, 0, 255, 0.2); }
         html.theme-vip .chip.max { background: rgba(255, 140, 0, 0.1); color: #FF8C00; border-color: rgba(255, 140, 0, 0.2); }
         
         .limit-tracker { margin-top: 25px; margin-bottom: 25px; }
-        .limit-header { display: flex; justify-content: space-between; font-size: 0.8rem; color: #aaa; margin-bottom: 6px; font-family: var(--font-head); }
-        .limit-bar-bg { width: 100%; height: 6px; background: rgba(255,255,255,0.05); border-radius: 5px; overflow: hidden; }
+        .limit-header { display: flex; justify-content: space-between; font-size: 0.85rem; color: #aaa; margin-bottom: 8px; font-family: var(--font-head); font-weight: bold;}
+        .limit-bar-bg { width: 100%; height: 8px; background: rgba(255,255,255,0.05); border-radius: 5px; overflow: hidden; box-shadow: inset 0 0 5px rgba(0,0,0,0.8);}
         .limit-bar-fill { height: 100%; background: var(--accent-cyan); border-radius: 5px; box-shadow: 0 0 10px var(--accent-cyan); transition: width 0.5s; width:0%; }
         html.theme-vip .limit-bar-fill { background: #FFD700; box-shadow: 0 0 10px #FFD700; }
         
-        .info-box { background: rgba(255,255,255,0.02); border-left: 3px solid var(--accent-purple); padding: 15px; border-radius: 0 12px 12px 0; font-size: 0.85rem; color: #ccc; margin-bottom: 25px; line-height: 1.5; backdrop-filter: blur(5px);}
+        .info-box { background: rgba(255,255,255,0.02); border-left: 4px solid var(--accent-purple); padding: 15px; border-radius: 0 12px 12px 0; font-size: 0.85rem; color: #ccc; margin-bottom: 25px; line-height: 1.5; backdrop-filter: blur(5px);}
         html.theme-vip .info-box { border-left-color: #FFD700; }
         .info-box i { color: var(--accent-purple); margin-right: 5px; font-size: 1rem; }
         html.theme-vip .info-box i { color: #FFD700; }
-        .warning-text { margin-top:10px; padding-top:10px; border-top:1px dashed rgba(255,255,255,0.1); color:var(--accent-orange); font-size:0.75rem;}
+        .warning-text { margin-top:10px; padding-top:10px; border-top:1px dashed rgba(255,255,255,0.1); color:var(--accent-orange); font-size:0.8rem; font-weight: bold;}
         
-        .withdraw-btn { width: 100%; padding: 18px; background: var(--accent-gradient); border: none; color: white; font-family: var(--font-head); font-size: 1.1rem; font-weight: bold; border-radius: 15px; cursor: pointer; box-shadow: 0 5px 20px rgba(189, 0, 255, 0.4); transition: 0.3s; display: flex; justify-content: center; align-items: center; gap: 10px; text-transform: uppercase; letter-spacing: 1px; will-change:transform; }
-        html.theme-vip .withdraw-btn { background: linear-gradient(135deg, #FFD700, #FF8C00); color: black; box-shadow: 0 5px 20px rgba(255,215,0,0.4); }
-        .withdraw-btn:active { transform: scale(0.96); box-shadow: 0 2px 10px rgba(189, 0, 255, 0.4); }
+        .withdraw-btn { width: 100%; padding: 18px; background: var(--accent-gradient); border: none; color: white; font-family: var(--font-head); font-size: 1.15rem; font-weight: 900; border-radius: 50px; cursor: pointer; box-shadow: 0 8px 25px rgba(189, 0, 255, 0.4); transition: 0.3s; display: flex; justify-content: center; align-items: center; gap: 10px; text-transform: uppercase; letter-spacing: 1px; will-change:transform; }
+        html.theme-vip .withdraw-btn { background: linear-gradient(135deg, #FFD700, #FF8C00); color: black; box-shadow: 0 8px 25px rgba(255,215,0,0.4); }
+        .withdraw-btn:active { transform: scale(0.96); box-shadow: 0 4px 15px rgba(189, 0, 255, 0.4); }
         .withdraw-btn:disabled { background: rgba(255,255,255,0.05); color: #666; box-shadow: none; cursor: not-allowed; transform: none; border: 1px solid rgba(255,255,255,0.1); }
         
         /* --- DYNAMIC ESPORTS HISTORY --- */
-        .history-section { margin-top: 30px; padding-top: 20px; border-top: 1px solid var(--card-border); }
-        .history-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
-        .history-title { font-family: var(--font-head); font-size: 1.1rem; color: white; text-shadow: 0 0 5px rgba(255,255,255,0.3); }
-        .contact-support { font-size: 0.75rem; color: var(--accent-cyan); text-decoration: none; display: flex; align-items: center; gap: 5px; background: rgba(0, 242, 255, 0.05); padding: 6px 12px; border-radius: 20px; border: 1px solid rgba(0,242,255,0.2); transition: 0.3s; cursor: pointer; font-family: var(--font-head); font-weight: bold; backdrop-filter: blur(5px);}
+        .history-section { margin-top: 30px; padding-top: 25px; border-top: 1px solid var(--card-border); }
+        .history-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+        .history-title { font-family: var(--font-head); font-size: 1.2rem; color: white; text-shadow: 0 0 5px rgba(255,255,255,0.3); font-weight: 900; text-transform: uppercase;}
+        .contact-support { font-size: 0.8rem; color: var(--accent-cyan); text-decoration: none; display: flex; align-items: center; gap: 8px; background: rgba(0, 242, 255, 0.05); padding: 8px 12px; border-radius: 20px; border: 1px solid rgba(0,242,255,0.2); transition: 0.3s; cursor: pointer; font-family: var(--font-head); font-weight: bold; backdrop-filter: blur(5px); text-transform: uppercase;}
         html.theme-vip .contact-support { color: #FFD700; background: rgba(255,215,0,0.05); border-color: rgba(255,215,0,0.2); }
-        .contact-support:active { background: var(--accent-cyan); color: #000; }
+        .contact-support:active { background: var(--accent-cyan); color: #000; transform: scale(0.95); }
         html.theme-vip .contact-support:active { background: #FFD700; color: #000; }
         
-        .txn-list { display: flex; flex-direction: column; gap: 10px; margin-bottom: 25px; }
-        .txn-item { display: flex; justify-content: space-between; align-items: center; padding: 15px; background: var(--card-bg); border-radius: 12px; border: 1px solid var(--card-border); cursor: pointer; transition: 0.3s; box-shadow: 0 5px 15px rgba(0,0,0,0.2); overflow: hidden; gap: 10px; backdrop-filter: blur(10px);}
-        .txn-item:active { background: rgba(255,255,255,0.05); border-color: var(--accent-cyan); transform: scale(0.98); }
+        .txn-list { display: flex; flex-direction: column; gap: 12px; margin-bottom: 25px; }
+        .txn-item { display: flex; justify-content: space-between; align-items: center; padding: 18px; background: var(--card-bg); border-radius: 16px; border: 1px solid var(--card-border); cursor: pointer; transition: 0.3s; box-shadow: 0 5px 15px rgba(0,0,0,0.4); overflow: hidden; gap: 10px; backdrop-filter: blur(10px);}
+        .txn-item:active { background: rgba(255,255,255,0.05); border-color: var(--accent-cyan); transform: scale(0.96); }
+        html.theme-vip .txn-item:active { border-color: #FFD700; }
         
-        .txn-left { display: flex; align-items: center; gap: 12px; min-width: 0; flex: 1; overflow: hidden;}
-        .txn-icon { width: 45px; height: 45px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.2rem; flex-shrink:0;}
-        .icon-debit { background: rgba(255,77,77,0.05); color: var(--accent-red); border: 1px solid rgba(255,77,77,0.2); }
+        .txn-left { display: flex; align-items: center; gap: 15px; min-width: 0; flex: 1; overflow: hidden;}
+        .txn-icon { width: 50px; height: 50px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.4rem; flex-shrink:0; box-shadow: 0 5px 15px rgba(0,0,0,0.3);}
+        .icon-debit { background: rgba(255,77,77,0.1); color: var(--accent-red); border: 1px solid rgba(255,77,77,0.3); }
         
         .txn-info { min-width: 0; overflow: hidden; flex: 1;}
-        .txn-info h4 { font-family: var(--font-head); font-size: 1rem; color: white; margin-bottom: 3px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-        .txn-info p { font-size: 0.75rem; color: #888; display:flex; gap:5px; align-items:center; white-space: nowrap;}
-        .cat-tag { font-size: 0.6rem; padding: 2px 6px; border-radius: 5px; background:rgba(255,255,255,0.05); text-transform:uppercase; flex-shrink: 0; border: 1px solid rgba(255,255,255,0.1);}
+        .txn-info h4 { font-family: var(--font-head); font-size: 1.05rem; color: white; margin-bottom: 4px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .txn-info p { font-size: 0.8rem; color: #888; display:flex; gap:8px; align-items:center; white-space: nowrap; font-weight: bold;}
+        .cat-tag { font-size: 0.65rem; padding: 3px 8px; border-radius: 6px; background:rgba(255,255,255,0.05); text-transform:uppercase; flex-shrink: 0; border: 1px solid rgba(255,255,255,0.1); color: white;}
         
         .txn-right { text-align: right; flex-shrink: 0; display:flex; flex-direction:column; align-items:flex-end; justify-content: center;}
-        .in-out-label { font-size: 0.65rem; text-transform: uppercase; font-family: var(--font-head); font-weight: bold; padding: 2px 6px; border-radius: 4px; margin-bottom: 4px; letter-spacing: 1px; }
-        .out-label { background: rgba(255,77,77,0.1); color: var(--accent-red); border: 1px solid rgba(255,77,77,0.2); }
+        .in-out-label { font-size: 0.7rem; text-transform: uppercase; font-family: var(--font-head); font-weight: 900; padding: 3px 8px; border-radius: 6px; margin-bottom: 5px; letter-spacing: 1px; }
+        .out-label { background: rgba(255,77,77,0.15); color: var(--accent-red); border: 1px solid rgba(255,77,77,0.3); }
         
-        .txn-amt { font-family: var(--font-head); font-size: 1.15rem; font-weight: bold; white-space: nowrap; }
-        .txn-status { font-size: 0.65rem; text-transform: uppercase; margin-top: 5px; padding: 3px 8px; border-radius: 6px; display: inline-block; font-weight:bold; letter-spacing: 0.5px; white-space: nowrap;}
+        .txn-amt { font-family: var(--font-head); font-size: 1.3rem; font-weight: 900; white-space: nowrap; text-shadow: 0 0 10px rgba(255,77,77,0.4); }
+        .txn-status { font-size: 0.7rem; text-transform: uppercase; margin-top: 6px; padding: 4px 10px; border-radius: 8px; display: inline-block; font-weight:bold; letter-spacing: 0.5px; white-space: nowrap; background: rgba(0,0,0,0.6); border: 1px solid rgba(255,255,255,0.1);}
         
-        .empty-history { text-align: center; color: var(--text-muted); font-size: 0.85rem; padding: 30px 20px; border: 1px dashed var(--card-border); border-radius: 12px; background: rgba(0,0,0,0.3); }
+        .empty-history { text-align: center; color: var(--text-muted); font-size: 0.95rem; padding: 40px 20px; border: 1px dashed var(--card-border); border-radius: 16px; background: rgba(0,0,0,0.4); font-weight: bold;}
 
         /* --- MODALS & CENTERED DESKTOP OVERRIDES --- */
-        .bottom-sheet-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); z-index: 5000; display: none; align-items: flex-end; justify-content: center; backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); opacity: 0; transition: 0.4s; }
+        .bottom-sheet-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); z-index: 5000; display: none; align-items: flex-end; justify-content: center; backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); opacity: 0; transition: 0.4s; }
         .bottom-sheet-overlay.active { display: flex; opacity: 1; }
-        .bottom-sheet { width: 100%; max-width:800px; background: rgba(10,5,20,0.85); border-radius: 25px 25px 0 0; border-top: 1px solid var(--card-border); border-left: 1px solid rgba(255,255,255,0.05); border-right: 1px solid rgba(255,255,255,0.05); padding: 25px 20px calc(20px + env(safe-area-inset-bottom)); transform: translateY(100%); transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); max-height: 90vh; overflow-y: auto; box-shadow: 0 -10px 40px rgba(0,0,0,0.8); backdrop-filter: blur(20px);}
+        .bottom-sheet { width: 100%; max-width:800px; background: rgba(10,5,20,0.95); border-radius: 30px 30px 0 0; border-top: 1px solid var(--card-border); border-left: 1px solid rgba(255,255,255,0.05); border-right: 1px solid rgba(255,255,255,0.05); padding: 30px 25px calc(25px + env(safe-area-inset-bottom)); transform: translateY(100%); transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); max-height: 90vh; overflow-y: auto; box-shadow: 0 -15px 50px rgba(0,0,0,0.9); backdrop-filter: blur(25px);}
         .bottom-sheet-overlay.active .bottom-sheet { transform: translateY(0); }
         
-        .sheet-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; }
-        .sheet-title { font-family: var(--font-head); font-size: 1.2rem; color: white; display: flex; align-items: center; gap: 8px; }
-        .close-sheet { color: #888; font-size: 1.6rem; cursor: pointer; padding: 5px; transition: 0.3s; }
-        .close-sheet:hover { color: white; transform: rotate(90deg); }
+        .sheet-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; border-bottom: 1px dashed rgba(255,255,255,0.1); padding-bottom: 15px;}
+        .sheet-title { font-family: var(--font-head); font-size: 1.3rem; color: white; display: flex; align-items: center; gap: 10px; font-weight: 900; text-transform: uppercase;}
+        .close-sheet { color: #888; font-size: 1.8rem; cursor: pointer; padding: 5px; transition: 0.3s; }
+        .close-sheet:hover { color: white; transform: rotate(90deg) scale(1.1); }
         
-        .sup-txn-item { background: rgba(0,0,0,0.4); border: 1px solid rgba(255,255,255,0.08); padding: 15px; border-radius: 12px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; cursor: pointer; transition: 0.3s; overflow:hidden; gap:10px;}
-        .sup-txn-item:active { border-color: var(--accent-cyan); background: rgba(0,242,255,0.1); transform:scale(0.98);}
+        .sup-txn-item { background: rgba(0,0,0,0.6); border: 1px solid rgba(255,255,255,0.08); padding: 18px; border-radius: 16px; margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center; cursor: pointer; transition: 0.3s; overflow:hidden; gap:12px; box-shadow: 0 5px 15px rgba(0,0,0,0.3);}
+        .sup-txn-item:active { border-color: var(--accent-cyan); background: rgba(0,242,255,0.15); transform:scale(0.96);}
         
         /* PIN SECURITY MODAL */
-        .pin-dots { display: flex; justify-content: center; gap: 15px; margin: 25px 0; }
-        .pin-dot { width: 15px; height: 15px; border-radius: 50%; border: 2px solid var(--accent-cyan); transition: 0.3s; }
+        .pin-dots { display: flex; justify-content: center; gap: 18px; margin: 30px 0; }
+        .pin-dot { width: 18px; height: 18px; border-radius: 50%; border: 2px solid var(--accent-cyan); transition: 0.3s; }
         html.theme-vip .pin-dot { border-color: #FFD700; }
-        .pin-dot.filled { background: var(--accent-cyan); box-shadow: 0 0 10px var(--accent-cyan); }
-        html.theme-vip .pin-dot.filled { background: #FFD700; box-shadow: 0 0 10px #FFD700; }
+        .pin-dot.filled { background: var(--accent-cyan); box-shadow: 0 0 15px var(--accent-cyan); }
+        html.theme-vip .pin-dot.filled { background: #FFD700; box-shadow: 0 0 15px #FFD700; }
         
-        .pin-pad { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; max-width: 250px; margin: 0 auto; }
-        .pin-btn { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 50%; width: 60px; height: 60px; display: flex; align-items: center; justify-content: center; font-family: var(--font-head); font-size: 1.5rem; color: white; margin: 0 auto; cursor: pointer; transition: 0.2s;}
-        .pin-btn:active { background: var(--accent-cyan); color: black; transform: scale(0.9); }
-        html.theme-vip .pin-btn:active { background: #FFD700; color: black; }
+        .pin-pad { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; max-width: 280px; margin: 0 auto; }
+        .pin-btn { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 50%; width: 70px; height: 70px; display: flex; align-items: center; justify-content: center; font-family: var(--font-head); font-size: 1.8rem; color: white; margin: 0 auto; cursor: pointer; transition: 0.2s; box-shadow: 0 5px 15px rgba(0,0,0,0.2);}
+        .pin-btn:active { background: var(--accent-cyan); color: black; transform: scale(0.9); box-shadow: 0 5px 20px rgba(0,242,255,0.5);}
+        html.theme-vip .pin-btn:active { background: #FFD700; color: black; box-shadow: 0 5px 20px rgba(255,215,0,0.5);}
         
         /* SAVED ACCOUNTS MODAL */
-        .saved-acc-item { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); padding: 15px; border-radius: 12px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; cursor: pointer; transition: 0.3s; }
-        .saved-acc-item:active { border-color: var(--accent-cyan); background: rgba(0,242,255,0.1); transform: scale(0.98); }
+        .saved-acc-item { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); padding: 18px; border-radius: 16px; margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center; cursor: pointer; transition: 0.3s; box-shadow: 0 5px 15px rgba(0,0,0,0.3);}
+        .saved-acc-item:active { border-color: var(--accent-cyan); background: rgba(0,242,255,0.1); transform: scale(0.96); }
         html.theme-vip .saved-acc-item:active { border-color: #FFD700; background: rgba(255,215,0,0.1); }
         
-        .cyber-scanner-overlay { position: fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.95); z-index:9999; display:flex; flex-direction:column; align-items:center; justify-content:center; opacity:0; pointer-events:none; transition:0.4s; backdrop-filter:blur(10px);}
+        .cyber-scanner-overlay { position: fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.95); z-index:9999; display:flex; flex-direction:column; align-items:center; justify-content:center; opacity:0; pointer-events:none; transition:0.4s; backdrop-filter:blur(15px);}
         .cyber-scanner-overlay.active { opacity:1; pointer-events:all; }
-        .cyber-circle { width: 100px; height: 100px; border: 3px dashed var(--accent-cyan); border-radius: 50%; animation: spin 4s linear infinite; display: flex; align-items: center; justify-content: center; position: relative;}
+        .cyber-circle { width: 120px; height: 120px; border: 4px dashed var(--accent-cyan); border-radius: 50%; animation: spin 3s linear infinite; display: flex; align-items: center; justify-content: center; position: relative; transition: 0.3s;}
         html.theme-vip .cyber-circle { border-color: #FFD700; }
-        .cyber-inner { width: 60px; height: 60px; background: rgba(0,242,255,0.2); border-radius: 50%; box-shadow: 0 0 30px var(--accent-cyan); animation: pulse 1s infinite alternate; }
-        html.theme-vip .cyber-inner { background: rgba(255,215,0,0.2); box-shadow: 0 0 30px #FFD700; }
-        .cyber-inner.success { background: var(--accent-green); box-shadow: 0 0 30px var(--accent-green); animation:none;}
-        .cyber-inner.error { background: var(--accent-red); box-shadow: 0 0 30px var(--accent-red); animation:none;}
-        .cyber-text { font-family: var(--font-head); color: var(--accent-cyan); font-size: 1.2rem; margin-top: 20px; letter-spacing: 2px; text-transform: uppercase; text-shadow: 0 0 10px var(--accent-cyan);}
-        html.theme-vip .cyber-text { color: #FFD700; text-shadow: 0 0 10px #FFD700; }
+        .cyber-inner { width: 70px; height: 70px; background: rgba(0,242,255,0.2); border-radius: 50%; box-shadow: 0 0 35px var(--accent-cyan); animation: pulse 1s infinite alternate; transition: 0.3s;}
+        html.theme-vip .cyber-inner { background: rgba(255,215,0,0.2); box-shadow: 0 0 35px #FFD700; }
+        .cyber-inner.success { background: var(--accent-green); box-shadow: 0 0 40px var(--accent-green); animation:none;}
+        .cyber-inner.error { background: var(--accent-red); box-shadow: 0 0 40px var(--accent-red); animation:none;}
+        .cyber-text { font-family: var(--font-head); color: var(--accent-cyan); font-size: 1.4rem; margin-top: 25px; letter-spacing: 3px; text-transform: uppercase; text-shadow: 0 0 15px var(--accent-cyan); transition: 0.3s; text-align: center; padding: 0 20px; font-weight: 900;}
+        html.theme-vip .cyber-text { color: #FFD700; text-shadow: 0 0 15px #FFD700; }
+        .cyber-desc { color:#888; font-size:0.9rem; margin-top:10px; transition: 0.3s; text-align: center; padding: 0 20px; font-weight: bold;}
+        
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
         @keyframes pulse { 0%{transform:scale(0.8); opacity:0.5;} 100%{transform:scale(1.2); opacity:1;} }
-        
-        #customToast { visibility: hidden; min-width: 250px; background-color: var(--accent-cyan); color: #000; text-align: center; border-radius: 12px; padding: 14px; position: fixed; z-index: 9999; left: 50%; bottom: -50px; transform: translateX(-50%); font-family: var(--font-head); font-weight: bold; box-shadow: 0 8px 25px rgba(0,242,255,0.6); opacity: 0; transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
-        html.theme-vip #customToast { background-color: #FFD700; box-shadow: 0 8px 25px rgba(255,215,0,0.6); }
-        #customToast.show { visibility: visible; opacity: 1; bottom: 100px; }
-        
-        .bottom-nav { position: fixed; bottom: 0; left: 0; width: 100%; height: calc(65px + env(safe-area-inset-bottom)); background: rgba(5, 2, 12, 0.75); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); display: flex; justify-content: space-between; align-items: flex-start; padding: 10px 2px env(safe-area-inset-bottom); border-top: 1px solid rgba(255,255,255,0.05); z-index: 1000; box-shadow: 0 -10px 30px rgba(0,0,0,0.5); transform: translateZ(0);}
+
+        #customToast { visibility: hidden; min-width: 250px; background-color: var(--accent-cyan); color: #000; text-align: center; border-radius: 50px; padding: 16px 25px; position: fixed; z-index: 9999; left: 50%; bottom: -50px; transform: translateX(-50%); font-family: var(--font-head); font-weight: 900; transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); box-shadow: 0 8px 30px rgba(0,242,255,0.6); opacity: 0; font-size: 0.95rem; text-transform: uppercase; letter-spacing: 1px;}
+        html.theme-vip #customToast { background-color: #FFD700; box-shadow: 0 8px 30px rgba(255,215,0,0.6); }
+        #customToast.show { visibility: visible; bottom: 100px; opacity: 1;}
+
+        .app-footer { text-align: center; padding: 20px 20px 110px 20px; color: #555; font-size: 0.8rem; font-family: var(--font-body); letter-spacing: 1px; border-top: 1px solid rgba(255,255,255,0.05); margin-top: 10px;}
+
+        /* --- PERFECT BOTTOM NAVIGATION --- */
+        .bottom-nav { position: fixed; bottom: 0; left: 0; width: 100%; height: calc(65px + env(safe-area-inset-bottom, 0px)); background: rgba(5, 2, 12, 0.85); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); display: flex; justify-content: space-between; align-items: flex-start; padding: 10px 2px env(safe-area-inset-bottom, 0px); border-top: 1px solid rgba(255,255,255,0.05); z-index: 1000; box-shadow: 0 -10px 40px rgba(0,0,0,0.6); transform: translateZ(0);}
         .nav-item { display: flex; flex-direction: column; align-items: center; justify-content: flex-start; color: #666; text-decoration: none; font-size: 0.6rem; font-family: var(--font-head); font-weight: bold; flex: 1; transition: 0.3s; position: relative; padding: 0 2px; text-align: center;}
         .nav-item span { margin-top: 4px; transition: 0.3s; letter-spacing: -0.3px;}
-        .nav-item > i, .nav-item > .tx-icon, .nav-item > .tx-ticket-composite { font-size: 1.2rem; transition: 0.3s; color: #666; background: none; -webkit-text-fill-color: #666; filter: none; font-style: normal; height: 24px; width: 24px; display: flex; align-items: center; justify-content: center; }
-        .tx-ticket-composite i { display: block; line-height: 1; font-size: 1.2rem; color: inherit; -webkit-text-fill-color: inherit; transition: 0.3s; background: inherit; filter: inherit; -webkit-background-clip: inherit; }
-        
+        .nav-item > i, .nav-item > .tx-icon, .nav-item > .tx-ticket-composite { font-size: 1.3rem; transition: 0.3s; color: #666; background: none; -webkit-text-fill-color: #666; filter: none; font-style: normal; height: 26px; width: 26px; display: flex; align-items: center; justify-content: center; }
+        .tx-ticket-composite i { display: block; line-height: 1; font-size: 1.3rem; color: inherit; -webkit-text-fill-color: inherit; transition: 0.3s; background: inherit; filter: inherit; -webkit-background-clip: inherit; }
         .nav-item.active { color: var(--accent-cyan); }
-        html.theme-vip .nav-item.active { color: #FFD700; }
-        .nav-item.active > .tx-ticket-composite { transform: translateY(-4px); }
-        .nav-item.active > i, .nav-item.active > .tx-icon, .nav-item.active > .tx-ticket-composite i { transform: translateY(-4px); background: linear-gradient(135deg, var(--accent-purple), var(--accent-cyan)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; filter: drop-shadow(0 0 10px var(--accent-cyan)); font-style: normal; }
+        html.theme-vip .nav-item.active { color: #d4af37; }
+        .nav-item.active > .tx-ticket-composite { transform: translateY(-5px); }
+        .nav-item.active > i, .nav-item.active > .tx-icon, .nav-item.active > .tx-ticket-composite i { transform: translateY(-5px); background: linear-gradient(135deg, var(--accent-purple), var(--accent-cyan)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; filter: drop-shadow(0 0 10px var(--accent-cyan)); font-style: normal; }
         html.theme-vip .nav-item.active > i, html.theme-vip .nav-item.active > .tx-icon, html.theme-vip .nav-item.active > .tx-ticket-composite i { background: linear-gradient(135deg, #FFE87C, #FF8C00); -webkit-background-clip: text; -webkit-text-fill-color: transparent; filter: drop-shadow(0 0 10px rgba(212,175,55,0.8)); }
         .nav-item.active .tx-ticket-composite i { transform: translateY(0); }
         .nav-item.active span { transform: translateY(2px); color: white; text-shadow: 0 0 5px rgba(255,255,255,0.5);}
-        
         .fab-slot { flex: 1.2; display: flex; justify-content: center; position: relative; height: 100%; align-items: center; }
-        .floating-plus { position: absolute; top: -25px; left: 50%; transform: translateX(-50%); width: 54px; height: 54px; background: linear-gradient(135deg, var(--accent-cyan), var(--accent-purple)); border-radius: 50%; display: flex; align-items: center; justify-content: center; border: 4px solid var(--primary-bg); box-shadow: 0 10px 25px rgba(189,0,255,0.4); color: #fff; font-size: 1.6rem; cursor: pointer; transition: 0.3s; z-index: 10; }
-        html.theme-vip .floating-plus { background: linear-gradient(135deg, #FFE87C, #D4AF37); box-shadow: 0 10px 25px rgba(212,175,55,0.4); border-color: #000; color: #000; }
+        .floating-plus { position: absolute; top: -28px; left: 50%; transform: translateX(-50%); width: 58px; height: 58px; background: linear-gradient(135deg, var(--accent-cyan), var(--accent-purple)); border-radius: 50%; display: flex; align-items: center; justify-content: center; border: 4px solid var(--primary-bg); box-shadow: 0 10px 25px rgba(189,0,255,0.5); color: #fff; font-size: 1.8rem; cursor: pointer; transition: 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); z-index: 10; }
+        html.theme-vip .floating-plus { background: linear-gradient(135deg, #FFE87C, #D4AF37); box-shadow: 0 10px 25px rgba(212,175,55,0.5); border-color: #000; color: #000; }
         .floating-plus:hover { transform: translateX(-50%) scale(1.1) rotate(90deg); box-shadow: 0 15px 35px rgba(0,242,255,0.6); }
 
         @media (min-width: 850px) { 
@@ -254,9 +248,6 @@
             .bottom-sheet-overlay.active .bottom-sheet { transform: scale(1) !important; opacity: 1; }
         }
         .median-active .top-header { display: flex !important; visibility: visible !important; }
-        .app-footer { text-align: center; padding: 20px 20px 110px 20px; color: #555; font-size: 0.75rem; font-family: var(--font-body); letter-spacing: 1px; border-top: 1px solid rgba(255,255,255,0.05); margin-top: 10px;}
-
-        #pdfContainerWrapper { position: absolute; left: -9999px; top: -9999px; width: 600px; }
     </style>
 </head>
 <body>
@@ -295,40 +286,27 @@
                 <i class="fa-solid fa-xmark close-sheet" onclick="document.getElementById('loginPromptModal').classList.remove('active')"></i>
             </div>
             <i class="fa-solid fa-user-astronaut" style="font-size: 4rem; color: var(--accent-cyan); margin-bottom: 15px; filter: drop-shadow(0 0 15px var(--accent-cyan)); animation: float 3s ease-in-out infinite;"></i>
-            <h2 style="font-family: var(--font-head); font-size: 1.5rem; margin-bottom: 10px; color: white;">Access Restricted</h2>
-            <p style="color: #aaa; font-size: 0.95rem; margin-bottom: 25px; line-height: 1.5;">Please log in or sign up to access the wallet, make secure deposits, withdraw your winnings, and view transaction history.</p>
+            <h2 style="font-family: var(--font-head); font-size: 1.6rem; margin-bottom: 10px; color: white; font-weight:900; text-transform:uppercase;">Access Restricted</h2>
+            <p style="color: #aaa; font-size: 1rem; margin-bottom: 25px; line-height: 1.5; font-weight:bold;">Please log in or sign up to access the wallet, make secure deposits, withdraw your winnings, and view transaction history.</p>
             <button class="withdraw-btn" style="margin-bottom: 15px; box-shadow: 0 5px 20px rgba(0,242,255,0.3);" onclick="window.location.href='login.html'">LOGIN TO ACCOUNT</button>
-            <button class="withdraw-btn" style="background: transparent; border: 1px solid var(--accent-purple); box-shadow: none;" onclick="window.location.href='signup.html'">CREATE NEW ACCOUNT</button>
-            <div style="margin-top: 20px; font-size: 0.8rem; color: #888; font-family: var(--font-head); letter-spacing: 1px;">
-                Powered by <span style="font-weight: 900; background: var(--accent-gradient); -webkit-background-clip: text; -webkit-text-fill-color: transparent; letter-spacing: 1px;">QUVA</span>
-            </div>
+            <button class="withdraw-btn" style="background: transparent; border: 2px solid var(--accent-purple); box-shadow: none;" onclick="window.location.href='signup.html'">CREATE NEW ACCOUNT</button>
         </div>
     </div>
 
     <div class="container">
         
         <div class="balance-card animate-section delay-1">
-            <div style="position:absolute; top:15px; left:15px; font-size:0.7rem; color:rgba(255,255,255,0.5);"><i class="fa-solid fa-shield-halved"></i> 256-bit Encrypted</div>
+            <div style="position:absolute; top:15px; left:15px; font-size:0.75rem; color:rgba(255,255,255,0.5); font-weight:bold;"><i class="fa-solid fa-shield-halved"></i> 256-bit Encrypted</div>
             <div class="balance-label" id="balanceLabelRole">Available to Withdraw</div>
-            <div class="balance-amount"><span style="font-size:1.5rem; color:var(--accent-cyan);">Rs.</span> <span id="displayBalance"><i class="fa-solid fa-spinner fa-spin" style="font-size:1.5rem;"></i></span></div>
-            <div id="etaDisplay" style="margin-top:10px; font-size:0.75rem; color:var(--accent-green); font-family:var(--font-head); font-weight:bold; background:rgba(0,255,127,0.1); padding:4px 10px; border-radius:10px; display:inline-block; border:1px solid rgba(0,255,127,0.2);"><i class="fa-solid fa-bolt"></i> Payout ETA: 24-48 Hrs</div>
+            <div class="balance-amount"><span style="font-size:1.8rem; color:var(--accent-cyan);">₹</span> <span id="displayBalance"><i class="fa-solid fa-spinner fa-spin" style="font-size:1.8rem;"></i></span></div>
+            <div id="etaDisplay" style="margin-top:10px; font-size:0.8rem; color:var(--accent-green); font-family:var(--font-head); font-weight:900; background:rgba(0,255,127,0.1); padding:6px 12px; border-radius:10px; display:inline-block; border:1px solid rgba(0,255,127,0.3); text-transform:uppercase; letter-spacing:1px;"><i class="fa-solid fa-bolt"></i> Payout ETA: 24-48 Hrs</div>
         </div>
 
         <div class="form-group animate-section delay-2">
-            <div class="form-label"><span>Withdrawal Amount</span> <span id="minMaxTag" style="color:var(--accent-cyan); font-size:0.7rem;">Min: ₹50</span></div>
+            <div class="form-label"><span>Withdrawal Amount</span> <span id="minMaxTag" style="color:var(--accent-cyan); font-size:0.75rem;">Min: ₹50</span></div>
             <div class="input-wrapper">
-                <span class="input-prefix">Rs.</span>
+                <span class="input-prefix">₹</span>
                 <input type="number" id="withdrawAmount" class="form-control" placeholder="0" oninput="validateAmount()">
-            </div>
-            
-            <div class="promo-box" id="promoBox">
-                <input type="text" id="promoInput" class="promo-input" placeholder="Promo / Coupon Code" oninput="document.getElementById('promoInput').classList.remove('input-error')">
-                <button class="promo-btn" onclick="applyPromoCode()">APPLY</button>
-            </div>
-
-            <div class="fee-calculator" id="feeCalculatorBox">
-                <div>Platform Fee <span id="feePctLabel" style="color:#aaa; font-size:0.7rem; margin-left:4px;">(5%)</span>: <span class="fee-amt" id="calcFee">Rs. 0</span></div>
-                <div>You Receive: <span class="payout-amt" id="calcPayout">Rs. 0</span></div>
             </div>
 
             <div class="quick-chips">
@@ -337,19 +315,18 @@
                 <div class="chip" onclick="setAmount(5000); triggerHaptic();">+5000</div>
                 <div class="chip max" onclick="setMaxAmount(); triggerHaptic();">MAX</div>
             </div>
-            <div id="amountError" style="color: var(--accent-red); font-size: 0.75rem; margin-top: 8px; display: none; font-weight:bold; animation:slideInUp 0.3s;"></div>
+            <div id="amountError" style="color: var(--accent-red); font-size: 0.8rem; margin-top: 10px; display: none; font-weight:bold; animation:slideInUp 0.3s;"></div>
         </div>
 
         <div class="form-group animate-section delay-3">
             <div class="form-label">
                 <span>Payment Method</span> 
-                <span style="color:var(--accent-cyan); font-size:0.75rem; cursor:pointer; background:rgba(0,242,255,0.1); padding:2px 8px; border-radius:10px; border:1px solid var(--accent-cyan);" onclick="checkVaultAccess(); triggerHaptic();"><i class="fa-solid fa-vault"></i> Saved Accounts</span>
+                <span style="color:var(--accent-cyan); font-size:0.75rem; cursor:pointer; background:rgba(0,242,255,0.1); padding:4px 10px; border-radius:10px; border:1px solid var(--accent-cyan);" onclick="checkVaultAccess(); triggerHaptic();"><i class="fa-solid fa-vault"></i> Saved Vault</span>
             </div>
             <select id="paymentMethod" class="form-control no-prefix" onchange="updatePaymentPlaceholder(); triggerHaptic();">
                 <option value="upi">UPI ID (Fastest)</option>
                 <option value="bank">Bank Transfer (IMPS/NEFT)</option>
                 <option value="wallet">Paytm Wallet Number</option>
-                <option value="coupon">Tournyx Gift Card (0% Fee)</option>
             </select>
         </div>
 
@@ -367,9 +344,9 @@
             </div>
         </div>
 
-        <div class="form-group animate-section delay-3" style="display:flex; align-items:center; gap:10px; margin-top:-10px;">
-            <input type="checkbox" id="saveAccountCheck" style="width:18px; height:18px; accent-color:var(--accent-cyan);">
-            <label for="saveAccountCheck" style="font-size:0.85rem; color:#ccc; cursor:pointer;">Save this account to Vault for next time (Max 5)</label>
+        <div class="form-group animate-section delay-3" style="display:flex; align-items:center; gap:10px; margin-top:-5px; margin-bottom: 25px;">
+            <input type="checkbox" id="saveAccountCheck" style="width:20px; height:20px; accent-color:var(--accent-cyan); cursor:pointer;">
+            <label for="saveAccountCheck" style="font-size:0.9rem; color:#ccc; cursor:pointer; font-weight:bold;">Save securely to Vault for next time (Max 5)</label>
         </div>
 
         <div class="limit-tracker animate-section delay-4">
@@ -378,8 +355,8 @@
         </div>
 
         <div class="info-box animate-section delay-4">
-            <div style="font-weight:bold; color:white; margin-bottom:5px;"><i class="fa-solid fa-scale-balanced"></i> TDS & Tax Guidelines</div>
-            As per Govt. regulations, 30% TDS is strictly deducted only on Net Winnings exceeding Rs. 10,000 in a financial year. Standard platform fees apply to all transactions, varying by your player/organizer level. High volume transactions incur additional dynamic fees.
+            <div style="font-weight:900; color:white; margin-bottom:8px; font-family:var(--font-head); font-size:1rem; text-transform:uppercase;"><i class="fa-solid fa-scale-balanced"></i> TDS & Zero Fee Policy</div>
+            <span style="font-weight:bold;">0% Platform Fee on Withdrawals!</span> As per Govt. regulations, 30% TDS is strictly deducted only on Net Winnings exceeding Rs. 10,000 in a financial year. You receive exactly what you request.
             <div class="warning-text">
                 <i class="fa-solid fa-triangle-exclamation" style="color:var(--accent-orange);"></i> 
                 <strong>Note:</strong> Failed transactions are automatically reversed within 3-5 working days.
@@ -387,20 +364,20 @@
         </div>
 
         <button class="withdraw-btn animate-section delay-4" id="withdrawBtn" onclick="processWithdrawal(); triggerHaptic();" disabled>
-            <span>Withdraw Now</span>
+            <span>WITHDRAW NOW</span>
             <i class="fa-solid fa-arrow-right"></i>
         </button>
 
         <div class="history-section animate-section delay-4">
             <div class="history-header">
                 <h3 class="history-title">Recent Withdrawals</h3>
-                <div style="display:flex; gap:10px;">
-                    <div class="contact-support" style="background: rgba(0, 242, 255, 0.1); border-color: var(--accent-cyan); color: var(--accent-cyan);" onclick="downloadLedgerPDF(); triggerHaptic();" title="Download PDF"><i class="fa-solid fa-download"></i> PDF</div>
+                <div style="display:flex; gap:12px;">
+                    <div class="contact-support" onclick="downloadLedgerPDF(); triggerHaptic();" title="Download PDF"><i class="fa-solid fa-download"></i> PDF</div>
                     <div class="contact-support" onclick="openSupportModal(); triggerHaptic();"><i class="fa-brands fa-whatsapp"></i> Support</div>
                 </div>
             </div>
-            <div class="txn-list" id="historyList" style="background: rgba(0,0,0,0.4); border-color: rgba(255,255,255,0.05); box-shadow: none;">
-                <div style="text-align: center; color: var(--text-muted); padding: 20px;"><i class="fa-solid fa-spinner fa-spin" style="font-size:1.5rem; color:var(--accent-purple);"></i><br><br>Fetching ledger...</div>
+            <div class="txn-list" id="historyList" style="background: rgba(0,0,0,0.5); border-color: rgba(255,255,255,0.08); box-shadow: none;">
+                <div style="text-align: center; color: var(--text-muted); padding: 30px; font-weight:bold;"><i class="fa-solid fa-spinner fa-spin" style="font-size:2rem; color:var(--accent-purple); margin-bottom:15px; display:block;"></i>Fetching ledger...</div>
             </div>
         </div>
 
@@ -411,9 +388,9 @@
             <div class="sheet-header" style="justify-content: flex-end; margin-bottom: 5px;">
                 <i class="fa-solid fa-xmark close-sheet" onclick="document.getElementById('securityPinModal').classList.remove('active')"></i>
             </div>
-            <i class="fa-solid fa-shield-halved" style="font-size: 3.5rem; color: var(--accent-cyan); margin-bottom: 10px; filter: drop-shadow(0 0 15px var(--accent-cyan));"></i>
-            <h2 id="pinModalTitle" style="font-family: var(--font-head); font-size: 1.4rem; color: white; margin-bottom: 5px;">Security Check</h2>
-            <p id="pinModalDesc" style="font-size: 0.85rem; color: #888;">Enter your 4-digit PIN to access saved payment credentials.</p>
+            <i class="fa-solid fa-shield-halved" style="font-size: 4rem; color: var(--accent-cyan); margin-bottom: 15px; filter: drop-shadow(0 0 20px rgba(0,242,255,0.5));"></i>
+            <h2 id="pinModalTitle" style="font-family: var(--font-head); font-size: 1.6rem; color: white; margin-bottom: 10px; font-weight:900; text-transform:uppercase;">Security Check</h2>
+            <p id="pinModalDesc" style="font-size: 0.95rem; color: #888; font-weight:bold;">Enter your 4-digit PIN to access saved payment credentials.</p>
             
             <div class="pin-dots" id="pinDots">
                 <div class="pin-dot"></div><div class="pin-dot"></div><div class="pin-dot"></div><div class="pin-dot"></div>
@@ -424,7 +401,7 @@
                 <div class="pin-btn" onclick="addPin(4)">4</div><div class="pin-btn" onclick="addPin(5)">5</div><div class="pin-btn" onclick="addPin(6)">6</div>
                 <div class="pin-btn" onclick="addPin(7)">7</div><div class="pin-btn" onclick="addPin(8)">8</div><div class="pin-btn" onclick="addPin(9)">9</div>
                 <div></div><div class="pin-btn" onclick="addPin(0)">0</div>
-                <div class="pin-btn" onclick="deletePin()" style="background:transparent; border:none; color:var(--accent-red);"><i class="fa-solid fa-delete-left"></i></div>
+                <div class="pin-btn" onclick="deletePin()" style="background:transparent; border:none; color:var(--accent-red); box-shadow:none;"><i class="fa-solid fa-delete-left"></i></div>
             </div>
         </div>
     </div>
@@ -432,7 +409,7 @@
     <div class="bottom-sheet-overlay" id="savedAccountsModal">
         <div class="bottom-sheet">
             <div class="sheet-header">
-                <div class="sheet-title"><i class="fa-solid fa-vault" style="color:var(--accent-cyan);"></i> Saved Accounts</div>
+                <div class="sheet-title"><i class="fa-solid fa-vault" style="color:var(--accent-cyan);"></i> SAVED ACCOUNTS</div>
                 <i class="fa-solid fa-xmark close-sheet" onclick="document.getElementById('savedAccountsModal').classList.remove('active');"></i>
             </div>
             <div id="accountsListArea" style="max-height: 50vh; overflow-y:auto; margin-bottom:15px;"></div>
@@ -442,27 +419,27 @@
     <div class="bottom-sheet-overlay" id="supportModalOverlay">
         <div class="bottom-sheet">
             <div class="sheet-header">
-                <div class="sheet-title"><i class="fa-solid fa-headset" style="color:var(--accent-cyan);"></i> Select Transaction</div>
+                <div class="sheet-title"><i class="fa-solid fa-headset" style="color:var(--accent-cyan);"></i> SELECT TRANSACTION</div>
                 <i class="fa-solid fa-xmark close-sheet" onclick="closeSupportModal(); triggerHaptic();"></i>
             </div>
-            <p style="font-size:0.85rem; color:#aaa; margin-bottom:15px; line-height:1.5;">Select a withdrawal to get help or send us a message via WhatsApp:</p>
-            <div id="supportTxnList" style="max-height: 40vh; overflow-y:auto; margin-bottom:15px;"></div>
-            <button class="withdraw-btn" style="background:rgba(255,255,255,0.05); color:white; border:1px solid rgba(255,255,255,0.1); box-shadow:none; padding:15px; font-size:1rem;" onclick="contactSupportGeneral(); triggerHaptic();">I have a general inquiry instead</button>
+            <p style="font-size:0.9rem; color:#aaa; margin-bottom:20px; line-height:1.5; font-weight:bold;">Select a withdrawal to get help or send us a message via WhatsApp:</p>
+            <div id="supportTxnList" style="max-height: 40vh; overflow-y:auto; margin-bottom:20px;"></div>
+            <button class="withdraw-btn" style="background:rgba(255,255,255,0.05); color:white; border:2px solid rgba(255,255,255,0.1); box-shadow:none; padding:18px; font-size:1.1rem;" onclick="contactSupportGeneral(); triggerHaptic();">I have a general inquiry instead</button>
         </div>
     </div>
 
     <div class="bottom-sheet-overlay" id="supportMsgOverlay">
         <div class="bottom-sheet">
             <div class="sheet-header">
-                <div class="sheet-title"><i class="fa-brands fa-whatsapp" style="color:var(--accent-green);"></i> Send Message</div>
+                <div class="sheet-title"><i class="fa-brands fa-whatsapp" style="color:var(--accent-green);"></i> SEND MESSAGE</div>
                 <i class="fa-solid fa-arrow-left close-sheet" onclick="backToSupportList(); triggerHaptic();"></i>
             </div>
-            <div style="background:rgba(0,0,0,0.4); border:1px solid rgba(255,255,255,0.05); padding:15px; border-radius:12px; margin-bottom:15px;">
-                <div style="font-family:var(--font-head); color:white; font-size:1rem;" id="supMsgTxnId">TXN ID</div>
-                <div style="color:var(--accent-cyan); font-size:0.85rem; margin-top:5px; font-weight:bold;" id="supMsgDetails">Details</div>
+            <div style="background:rgba(0,0,0,0.6); border:1px solid rgba(255,255,255,0.08); padding:20px; border-radius:16px; margin-bottom:20px; box-shadow:inset 0 0 15px rgba(0,0,0,0.4);">
+                <div style="font-family:var(--font-head); color:white; font-size:1.1rem; font-weight:900;" id="supMsgTxnId">TXN ID</div>
+                <div style="color:var(--accent-cyan); font-size:0.9rem; margin-top:8px; font-weight:bold;" id="supMsgDetails">Details</div>
             </div>
-            <textarea id="customSupportMsg" class="form-control no-prefix" style="height:120px; padding:15px; resize:none; margin-bottom:15px;" placeholder="Describe your issue with this withdrawal here..."></textarea>
-            <button class="withdraw-btn" style="background:var(--accent-green); color:black; text-shadow:none; box-shadow:0 5px 20px rgba(0,255,127,0.4);" onclick="sendWhatsAppMsg(); triggerHaptic();">
+            <textarea id="customSupportMsg" class="form-control no-prefix" style="height:140px; padding:20px; resize:none; margin-bottom:20px;" placeholder="Describe your issue with this withdrawal here..."></textarea>
+            <button class="withdraw-btn" style="background:var(--accent-green); color:black; text-shadow:none; box-shadow:0 8px 25px rgba(0,255,127,0.4);" onclick="sendWhatsAppMsg(); triggerHaptic();">
                 <i class="fa-brands fa-whatsapp"></i> Send to WhatsApp
             </button>
         </div>
@@ -471,10 +448,10 @@
     <div class="cyber-scanner-overlay" id="cyberScanner">
         <div class="cyber-circle" id="cyberCircle"><div class="cyber-inner" id="cyberInner"></div></div>
         <div class="cyber-text" id="scannerText">Authorizing Payout...</div>
-        <div id="scannerDesc" style="color:#888; font-size:0.8rem; margin-top:10px; text-align: center; padding: 0 20px;">Establishing secure 256-bit connection. © 2026 Tournyx Esports. All rights reserved </div>
+        <div id="scannerDesc" style="color:#888; font-size:0.85rem; margin-top:12px; text-align: center; padding: 0 20px;">Establishing secure 256-bit connection. © 2026 Tournyx Esports. All rights reserved </div>
     </div>
 
-    <div id="pdfContainerWrapper">
+    <div id="pdfContainerWrapper" style="position: fixed; left: -9999px; top: 0; width: 800px; z-index: -9999; opacity: 0; pointer-events: none;">
         <div id="pdfTemplate" style="background:#070311; color:#ffffff; padding:40px; font-family:'Helvetica Neue', Arial, sans-serif; width:800px; box-sizing:border-box;">
             <div style="text-align:center; border-bottom:2px solid #1a0a3a; padding-bottom:30px; margin-bottom:30px;">
                 <div style="background: linear-gradient(90deg, #bd00ff, #00f2ff); padding: 15px; border-radius: 8px; margin-bottom: 10px; display: inline-block; width: 100%;">
@@ -483,23 +460,26 @@
                 <p style="color:#a0a0b0; margin:8px 0 0 0; font-size:14px; letter-spacing: 1px; text-transform: uppercase;">Official Transaction Ledger</p>
             </div>
             
-            <div style="display:flex; justify-content:space-between; margin-bottom:40px; background:#110822; padding:25px; border-radius:12px; border: 1px solid #1a0a3a;">
-                <div>
-                    <p style="margin:0 0 5px 0; color:#888; font-size:12px; text-transform:uppercase; letter-spacing:1px;">Player Tag</p>
-                    <h3 style="margin:0; color:#ffffff; font-size:20px;" id="pdfUserName">Name</h3>
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:40px; background:linear-gradient(135deg, #110822, #1a0a3a); padding:25px; border-radius:12px; border: 1px solid #00f2ff;">
+                <div style="display:flex; align-items:center; gap: 15px;">
+                    <img id="pdfUserAvatar" src="https://tournyx.in/favicon.png" style="width:60px; height:60px; border-radius:50%; border:2px solid #00f2ff; object-fit: cover;" crossorigin="anonymous">
+                    <div>
+                        <p style="margin:0 0 5px 0; color:#00f2ff; font-size:12px; text-transform:uppercase; font-weight: bold;">Player Profile</p>
+                        <h3 style="margin:0; color:#ffffff; font-size:22px;" id="pdfUserName">Name</h3>
+                        <p style="margin:5px 0 0 0; color:#aaa; font-size:14px;" id="pdfUserEmail">email</p>
+                    </div>
                 </div>
                 <div style="text-align:right;">
-                    <p style="margin:0 0 5px 0; color:#888; font-size:12px; text-transform:uppercase; letter-spacing:1px;">Registered Email</p>
-                    <h3 style="margin:0; color:#ffffff; font-size:20px;" id="pdfUserEmail">email@domain.com</h3>
+                    <p style="margin:0 0 5px 0; color:#00f2ff; font-size:12px; text-transform:uppercase; font-weight: bold;">Current Balance</p>
+                    <h3 style="margin:0; color:#ffffff; font-size:24px;" id="pdfUserBal">0</h3>
                 </div>
             </div>
             
-            <div id="pdfDynamicContentArea">
-                </div>
+            <div id="pdfDynamicContentArea"></div>
             
-            <div style="text-align:center; margin-top:50px; padding-top: 20px; border-top: 1px solid #1a0a3a;">
-                <p style="color:#666; font-size:12px; margin:0 0 10px 0;">This is a computer generated cryptographic ledger and does not require a physical signature.</p>
-                <p style="color:#444; font-size:10px; margin:0; text-transform: uppercase; letter-spacing: 1px;">Secured by 256-bit Encryption • Tournyx Server</p>
+            <div style="margin-top: 40px; text-align: center; border-top: 1px dashed #333; padding-top: 20px; color: #666; font-size: 12px;">
+                This is a computer generated cryptographic ledger and does not require a physical signature.<br>
+                Secured by 256-bit Encryption • Tournyx Server
             </div>
         </div>
     </div>
@@ -508,8 +488,8 @@
 
     <div class="app-footer">
         © 2026 TOURNYX. All rights reserved.<br>
-        <div style="margin-top: 5px; font-style: italic; color: #777; font-size: 0.8rem;">made with ⚡ for gamers</div>
-        <div style="margin-top: 15px; font-size: 0.85rem; color: #888; font-family: var(--font-head); letter-spacing: 1px;">
+        <div style="margin-top: 8px; font-style: italic; color: #777; font-size: 0.85rem;">made with ⚡ for gamers</div>
+        <div style="margin-top: 18px; font-size: 0.9rem; color: #888; font-family: var(--font-head); letter-spacing: 2px;">
             Powered by <span style="font-weight: 900; background: var(--accent-gradient); -webkit-background-clip: text; -webkit-text-fill-color: transparent; letter-spacing: 2px;">QUVA</span>
         </div>
     </div>
@@ -538,11 +518,14 @@
             <i class="fa-solid fa-shield-halved"></i>
             <span>Clan</span>
         </a>
-        <a class="nav-item active" href="tickets.html" onclick="return checkAuth(event)">
-            <i class="fa-solid fa-wallet"></i>
-            <span>Wallet</span>
+        <a class="nav-item" href="tickets.html" onclick="return checkAuth(event)">
+            <div class="tx-ticket-composite">
+                <i class="fa-solid fa-ticket"></i>
+                <b class="tx-text">TX</b>
+            </div>
+            <span>Tickets</span>
         </a>
-        <a class="nav-item" href="profile.html" onclick="return checkAuth(event)">
+        <a class="nav-item active" href="profile.html" onclick="return checkAuth(event)">
             <i class="fa-solid fa-user"></i>
             <span>Profile</span>
         </a>
@@ -564,17 +547,28 @@
         let currentBalance = 0;
         let limitRemainingValue = 20000;
         let isPremiumUser = false;
-        let platformFeePercentage = 0.05;
         let isGuest = false;
-        let isCouponApplied = false;
-        let currentNetPayout = 0;
-        let currentPlatformFee = 0;
         
         // Security Vault Setup
         let userHasPin = false;
-        let pinMode = 'verify'; // 'verify', 'create_1', 'create_2'
+        let pinMode = 'verify'; 
         let tempPin = "";
         let currentPin = "";
+
+        // --- SECURE POST FETCHER LOGIC ---
+        async function secureFetch(payload) {
+            try {
+                const response = await fetch(API_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'text/plain' },
+                    body: JSON.stringify(payload)
+                });
+                return await response.json();
+            } catch (error) {
+                console.error("Fetch Error:", error);
+                throw error;
+            }
+        }
 
         function getISTDateTime() {
             let d = new Date();
@@ -587,7 +581,7 @@
         function showToast(msg, isError = false) {
             const t = document.getElementById('customToast'); t.innerText = msg; t.className = "show";
             t.style.backgroundColor = isError ? "var(--accent-red)" : "var(--accent-cyan)";
-            t.style.color = isError ? "white" : "black"; t.style.boxShadow = isError ? "0 5px 20px rgba(255,77,77,0.6)" : "0 5px 20px rgba(0,242,255,0.6)";
+            t.style.color = isError ? "white" : "black"; t.style.boxShadow = isError ? "0 8px 30px rgba(255,77,77,0.6)" : "0 8px 30px rgba(0,242,255,0.6)";
             setTimeout(() => t.className = "", 3000);
         }
         function formatNum(num) { return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ","); }
@@ -626,14 +620,15 @@
             const inner = document.getElementById('cyberInner');
             overlay.classList.add('active');
             document.getElementById('scannerText').innerText = title; document.getElementById('scannerDesc').innerText = desc;
-            if (state === 'loading') { circle.style.animation = "spin 4s linear infinite"; inner.className = 'cyber-inner'; inner.innerHTML = ''; document.getElementById('scannerText').style.color = "var(--accent-cyan)"; }
-            else if (state === 'success') { circle.style.animation = "none"; inner.className = 'cyber-inner success'; inner.innerHTML = '<i class="fa-solid fa-check" style="font-size:2rem; color:black; display:flex; align-items:center; justify-content:center; height:100%;"></i>'; document.getElementById('scannerText').style.color = "var(--accent-green)"; triggerHaptic(); }
-            else if (state === 'error') { circle.style.animation = "none"; inner.className = 'cyber-inner error'; inner.innerHTML = '<i class="fa-solid fa-xmark" style="font-size:2rem; color:white; display:flex; align-items:center; justify-content:center; height:100%;"></i>'; document.getElementById('scannerText').style.color = "var(--accent-red)"; triggerHaptic(); }
+            if (state === 'loading') { circle.style.animation = "spin 3s linear infinite"; inner.className = 'cyber-inner'; inner.innerHTML = ''; document.getElementById('scannerText').style.color = "var(--accent-cyan)"; }
+            else if (state === 'success') { circle.style.animation = "none"; inner.className = 'cyber-inner success'; inner.innerHTML = '<i class="fa-solid fa-check" style="font-size:2.5rem; color:black; display:flex; align-items:center; justify-content:center; height:100%;"></i>'; document.getElementById('scannerText').style.color = "var(--accent-green)"; triggerHaptic(); }
+            else if (state === 'error') { circle.style.animation = "none"; inner.className = 'cyber-inner error'; inner.innerHTML = '<i class="fa-solid fa-xmark" style="font-size:2.5rem; color:white; display:flex; align-items:center; justify-content:center; height:100%;"></i>'; document.getElementById('scannerText').style.color = "var(--accent-red)"; triggerHaptic(); }
         }
         function hideOverlay() { document.getElementById('cyberScanner').classList.remove('active'); }
 
         async function initPageData() {
             if(userData.avatar) document.getElementById('headerProfilePic').src = userData.avatar;
+            if(userData.avatar) document.getElementById('pdfUserAvatar').src = userData.avatar;
             
             let hosted = parseInt(userData.hostedMatches) || parseInt(userData.hosted) || 0;
             let played = parseInt(userData.matchesPlayed) || parseInt(userData.matches) || 0;
@@ -645,27 +640,27 @@
                 currentBalance = parseFloat(userData.earnings) || parseFloat(userData.rupees) || 0;
                 document.getElementById('balanceLabelRole').innerText = "Organizer Earnings";
                 
-                if (hosted >= 20) { userLevelName = "LEGEND"; platformFeePercentage = 0.05; }
-                else if (hosted >= 15) { userLevelName = "ELITE"; platformFeePercentage = 0.08; }
-                else if (hosted >= 10) { userLevelName = "PRO"; platformFeePercentage = 0.10; }
-                else if (hosted >= 5) { userLevelName = "AMATEUR"; platformFeePercentage = 0.12; }
-                else { userLevelName = "ROOKIE"; platformFeePercentage = 0.15; }
+                if (hosted >= 20) { userLevelName = "LEGEND"; }
+                else if (hosted >= 15) { userLevelName = "ELITE"; }
+                else if (hosted >= 10) { userLevelName = "PRO"; }
+                else if (hosted >= 5) { userLevelName = "AMATEUR"; }
+                else { userLevelName = "ROOKIE"; }
             } else {
                 currentBalance = parseFloat(userData.winnings) || parseFloat(userData.rupees) || 0;
                 document.getElementById('balanceLabelRole').innerText = "Player Winnings";
                 
-                if (played >= 100) { userLevelName = "MYTHIC"; platformFeePercentage = 0.05; }
-                else if (played >= 90) { userLevelName = "ELITE"; platformFeePercentage = 0.05; }
-                else if (played >= 75) { userLevelName = "CHAMPION"; platformFeePercentage = 0.06; }
-                else if (played >= 50) { userLevelName = "GLADIATOR"; platformFeePercentage = 0.07; }
-                else if (played >= 25) { userLevelName = "VETERAN"; platformFeePercentage = 0.08; }
-                else if (played >= 10) { userLevelName = "SCOUT"; platformFeePercentage = 0.09; }
-                else { userLevelName = "NEW USER"; platformFeePercentage = 0.10; }
+                if (played >= 100) { userLevelName = "MYTHIC"; }
+                else if (played >= 90) { userLevelName = "ELITE"; }
+                else if (played >= 75) { userLevelName = "CHAMPION"; }
+                else if (played >= 50) { userLevelName = "GLADIATOR"; }
+                else if (played >= 25) { userLevelName = "VETERAN"; }
+                else if (played >= 10) { userLevelName = "SCOUT"; }
+                else { userLevelName = "NEW USER"; }
             }
             
-            if (isPremiumUser) { userLevelName = "PREMIUM"; platformFeePercentage = 0.05; }
+            if (isPremiumUser) { userLevelName = "PREMIUM"; }
             
-            let tagHTML = isPremiumUser ? `<span style="background:var(--accent-purple); color:white; padding:2px 6px; border-radius:4px; font-size:0.6rem; margin-left:8px; font-family:var(--font-head); font-weight:bold; box-shadow:0 0 10px rgba(189,0,255,0.4);">${userLevelName}</span>` : `<span style="background:rgba(255,255,255,0.1); color:#ccc; padding:2px 6px; border-radius:4px; font-size:0.6rem; margin-left:8px; font-family:var(--font-head); font-weight:bold;">${userLevelName}</span>`;
+            let tagHTML = isPremiumUser ? `<span style="background:var(--accent-purple); color:white; padding:3px 8px; border-radius:6px; font-size:0.65rem; margin-left:8px; font-family:var(--font-head); font-weight:bold; box-shadow:0 0 10px rgba(189,0,255,0.4);">${userLevelName}</span>` : `<span style="background:rgba(255,255,255,0.1); color:#ccc; padding:3px 8px; border-radius:6px; font-size:0.65rem; margin-left:8px; font-family:var(--font-head); font-weight:bold;">${userLevelName}</span>`;
             document.getElementById('dynamicGreeting').innerHTML = `Withdraw Funds ${tagHTML}`;
             
             if(isPremiumUser) {
@@ -676,6 +671,7 @@
             }
 
             document.getElementById('displayBalance').innerHTML = formatNum(currentBalance);
+            document.getElementById('pdfUserBal').innerText = "₹" + formatNum(currentBalance);
 
             let cachedTxns = JSON.parse(localStorage.getItem('tournyx_txns')) || [];
             if(cachedTxns.length > 0) {
@@ -710,37 +706,10 @@
             document.getElementById('paymentDetails2').value = "";
             document.getElementById('saveAccountCheck').checked = false;
 
-            if(method === 'coupon') {
-                isCouponApplied = true;
-                label1.innerText = 'Email Address *'; input1.placeholder = 'e.g. email@tournyx.in'; group2.style.display = 'none';
-            } else {
-                isCouponApplied = false; 
-                let pCode = document.getElementById('promoInput').value.trim().toUpperCase();
-                if(pCode === "QUVAPRO" || pCode === "ZEROFEE") isCouponApplied = true;
-                
-                if(method === 'upi') { label1.innerText = 'UPI ID *'; input1.placeholder = 'e.g. yourname@oksbi'; group2.style.display = 'none'; }
-                else if(method === 'bank') { label1.innerText = 'Account Number *'; input1.placeholder = 'e.g. 123456789012'; group2.style.display = 'block'; }
-                else { label1.innerText = 'Wallet Number *'; input1.placeholder = 'e.g. 9876543210'; group2.style.display = 'none'; }
-            }
-            validateAmount();
-        }
-
-        function applyPromoCode() {
-            triggerHaptic();
-            let pInput = document.getElementById('promoInput');
-            let pCode = pInput.value.trim().toUpperCase();
+            if(method === 'upi') { label1.innerText = 'UPI ID *'; input1.placeholder = 'e.g. yourname@oksbi'; group2.style.display = 'none'; }
+            else if(method === 'bank') { label1.innerText = 'Account Number *'; input1.placeholder = 'e.g. 123456789012'; group2.style.display = 'block'; }
+            else { label1.innerText = 'Wallet Number *'; input1.placeholder = 'e.g. 9876543210'; group2.style.display = 'none'; }
             
-            if(pCode === "QUVAPRO" || pCode === "ZEROFEE") {
-                isCouponApplied = true;
-                pInput.disabled = true;
-                pInput.style.borderColor = "var(--accent-green)";
-                pInput.style.color = "var(--accent-green)";
-                showToast("Promo Code Applied! 0% Fee Activated.");
-            } else {
-                isCouponApplied = false;
-                triggerError('promoInput');
-                showToast("Invalid Promo Code", true);
-            }
             validateAmount();
         }
 
@@ -749,66 +718,36 @@
             const grossAmount = parseFloat(amountInput) || 0; 
             const errorDiv = document.getElementById('amountError');
             const btn = document.getElementById('withdrawBtn');
-            
-            let currentFeePct = platformFeePercentage;
-            
-            // Player High-Volume Tax
-            if (userData.role !== 'organizer' && !isPremiumUser) {
-                if (grossAmount > 15000) currentFeePct = 0.10;
-                else currentFeePct = 0.05;
-            }
-            
-            // Coupon Override
-            if (isCouponApplied) {
-                currentFeePct = 0.00;
-            }
-
-            currentPlatformFee = Math.ceil(grossAmount * currentFeePct);
-            currentNetPayout = grossAmount - currentPlatformFee;
-
-            let displayPct = (currentFeePct * 100).toFixed(1).replace('.0', '') + "%";
-            document.getElementById('feePctLabel').innerText = `(${displayPct})`;
-            document.getElementById('calcFee').innerText = `Rs. ${currentPlatformFee}`;
-            document.getElementById('calcFee').className = (currentFeePct === 0) ? "fee-amt pro-zero-fee" : "fee-amt";
-            document.getElementById('calcPayout').innerText = `Rs. ${currentNetPayout}`;
 
             if (!amountInput) { errorDiv.style.display = 'none'; btn.disabled = true; return false; }
-            if (grossAmount < 50) { errorDiv.innerText = "Minimum withdrawal amount is Rs. 50"; errorDiv.style.display = 'block'; btn.disabled = true; return false; }
-            else if (grossAmount > 20000) { errorDiv.innerText = "Maximum withdrawal amount is Rs. 20,000 per request."; errorDiv.style.display = 'block'; btn.disabled = true; return false; }
-            else if (grossAmount > currentBalance) { errorDiv.innerText = `Insufficient balance! (Available: Rs. ${formatNum(currentBalance)})`; errorDiv.style.display = 'block'; btn.disabled = true; return false; }
+            if (grossAmount < 50) { errorDiv.innerText = "Minimum withdrawal amount is ₹50"; errorDiv.style.display = 'block'; btn.disabled = true; return false; }
+            else if (grossAmount > 20000) { errorDiv.innerText = "Maximum withdrawal amount is ₹20,000 per request."; errorDiv.style.display = 'block'; btn.disabled = true; return false; }
+            else if (grossAmount > currentBalance) { errorDiv.innerText = `Insufficient balance! (Available: ₹${formatNum(currentBalance)})`; errorDiv.style.display = 'block'; btn.disabled = true; return false; }
             else if (grossAmount > limitRemainingValue) { errorDiv.innerText = `Daily limit reached! Please try again after 24 hours.`; errorDiv.style.display = 'block'; btn.disabled = true; return false; }
-            else if (currentNetPayout <= 0) { errorDiv.innerText = `Amount too low after platform fees.`; errorDiv.style.display = 'block'; btn.disabled = true; return false; }
             else { errorDiv.style.display = 'none'; btn.disabled = false; return true; }
         }
 
         // --- SMART CACHING: SECURITY VAULT ---
         function checkVaultStatusOnLoad() {
-            fetch(API_URL, {
-                method: 'POST', mode: 'no-cors', headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ action: 'check_vault', email: userData.email })
-            }).then(() => {
-                // Since no-cors doesn't allow reading response easily, we assume they might have a pin.
-                // The true validation happens when they actually click the vault button.
-            });
+            secureFetch({ action: 'check_vault', email: userData.email }).catch(()=>{});
         }
 
         function checkVaultAccess() {
             triggerHaptic();
             showOverlay('loading', 'Accessing Vault...', 'Secure connection established.');
             
-            // First check if they have a PIN set
-            fetch(API_URL + "?action=check_vault&email=" + encodeURIComponent(userData.email))
-            .then(r=>r.json()).then(data => {
+            secureFetch({ action: 'check_vault', email: userData.email })
+            .then(data => {
                 hideOverlay();
                 if(data.status === 'success') {
                     userHasPin = data.data.hasPin;
                     if(userHasPin) {
                         pinMode = 'verify';
-                        document.getElementById('pinModalTitle').innerText = "Vault Locked";
+                        document.getElementById('pinModalTitle').innerText = "VAULT LOCKED";
                         document.getElementById('pinModalDesc').innerText = "Enter your 4-digit PIN to access saved payment credentials.";
                     } else {
                         pinMode = 'create_1';
-                        document.getElementById('pinModalTitle').innerText = "Create PIN";
+                        document.getElementById('pinModalTitle').innerText = "CREATE PIN";
                         document.getElementById('pinModalDesc').innerText = "Create a 4-digit security PIN to protect your payment details.";
                     }
                     currentPin = "";
@@ -847,17 +786,16 @@
                 currentPin = "";
                 updatePinUI();
                 pinMode = 'create_2';
-                document.getElementById('pinModalTitle').innerText = "Confirm PIN";
+                document.getElementById('pinModalTitle').innerText = "CONFIRM PIN";
                 document.getElementById('pinModalDesc').innerText = "Re-enter your 4-digit PIN to confirm.";
             } 
             else if (pinMode === 'create_2') {
                 if (currentPin === tempPin) {
                     document.getElementById('securityPinModal').classList.remove('active');
                     showOverlay('loading', 'Securing Vault...', 'Saving your new PIN...');
-                    fetch(API_URL, {
-                        method: 'POST', mode: 'no-cors', headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ action: 'set_pin', email: userData.email, pin: currentPin })
-                    }).then(() => {
+                    
+                    secureFetch({ action: 'set_pin', email: userData.email, pin: currentPin })
+                    .then(() => {
                         setTimeout(() => {
                             hideOverlay();
                             showToast("Security PIN created! You can now save accounts.");
@@ -870,7 +808,7 @@
                     currentPin = "";
                     tempPin = "";
                     pinMode = 'create_1';
-                    document.getElementById('pinModalTitle').innerText = "Create PIN";
+                    document.getElementById('pinModalTitle').innerText = "CREATE PIN";
                     document.getElementById('pinModalDesc').innerText = "Create a 4-digit security PIN to protect your payment details.";
                     updatePinUI();
                 }
@@ -879,8 +817,8 @@
                 document.getElementById('securityPinModal').classList.remove('active');
                 showOverlay('loading', 'Verifying...', 'Checking cryptographic signature...');
                 
-                fetch(API_URL + "?action=verify_pin&email=" + encodeURIComponent(userData.email) + "&pin=" + currentPin)
-                .then(r=>r.json()).then(data => {
+                secureFetch({ action: 'verify_pin', email: userData.email, pin: currentPin })
+                .then(data => {
                     hideOverlay();
                     if(data.status === 'success') {
                         showToast("Vault Unlocked!");
@@ -898,23 +836,24 @@
             const listArea = document.getElementById('accountsListArea');
             listArea.innerHTML = "";
             if(accounts.length === 0) {
-                listArea.innerHTML = `<div style="text-align:center; padding:20px; color:#888;">Your vault is empty. Check "Save this account" when withdrawing to add one.</div>`;
+                listArea.innerHTML = `<div style="text-align:center; padding:30px; color:#888; font-weight:bold; background:rgba(0,0,0,0.4); border-radius:15px; border:1px dashed rgba(255,255,255,0.1);">Your vault is empty.<br>Check "Save this account" when withdrawing to add one.</div>`;
             } else {
                 accounts.forEach((acc, i) => {
                     let icon = "fa-building-columns";
                     if(acc.method === 'upi') icon = "fa-at";
                     else if(acc.method === 'wallet') icon = "fa-wallet";
-                    else if(acc.method === 'coupon') icon = "fa-gift";
                     
                     let masked = maskString(acc.details);
 
                     listArea.innerHTML += `
                         <div class="saved-acc-item" onclick="autoFillAccount('${acc.method}', '${acc.details}')">
-                            <div style="display:flex; align-items:center; gap:12px;">
-                                <i class="fa-solid ${icon}" style="font-size:1.5rem; color:var(--accent-cyan);"></i>
+                            <div style="display:flex; align-items:center; gap:15px;">
+                                <div style="width:45px; height:45px; background:rgba(0,242,255,0.1); border-radius:12px; display:flex; align-items:center; justify-content:center; border:1px solid rgba(0,242,255,0.2);">
+                                    <i class="fa-solid ${icon}" style="font-size:1.4rem; color:var(--accent-cyan);"></i>
+                                </div>
                                 <div>
-                                    <div style="font-family:var(--font-head); font-weight:bold; color:white; text-transform:uppercase;">${acc.method}</div>
-                                    <div style="font-size:0.85rem; color:#aaa; font-family:monospace;">${masked}</div>
+                                    <div style="font-family:var(--font-head); font-weight:900; color:white; text-transform:uppercase; font-size:1.1rem; margin-bottom:2px;">${acc.method}</div>
+                                    <div style="font-size:0.85rem; color:#aaa; font-family:monospace; font-weight:bold;">${masked}</div>
                                 </div>
                             </div>
                             <i class="fa-solid fa-chevron-right" style="color:#666;"></i>
@@ -968,7 +907,8 @@
         }
 
         function syncLiveTransactions() {
-            fetch(API_URL + "?action=sync_user&email=" + encodeURIComponent(userData.email)).then(r=>r.json()).then(data => {
+            secureFetch({ action: 'sync_user', email: userData.email })
+            .then(data => {
                 if(data.status === 'success' && data.data) {
                     if (userData.role === 'organizer') {
                         currentBalance = parseFloat(data.data.earnings) || parseFloat(data.data.rupees) || 0;
@@ -978,12 +918,13 @@
                         userData.winnings = currentBalance.toString();
                     }
                     document.getElementById('displayBalance').innerHTML = formatNum(currentBalance);
+                    document.getElementById('pdfUserBal').innerText = "₹" + formatNum(currentBalance);
                     localStorage.setItem('tournyx_user', JSON.stringify(userData));
                 }
             }).catch(e=>{});
 
-            fetch(API_URL + "?action=get_transactions&email=" + encodeURIComponent(userData.email))
-            .then(r=>r.json()).then(data => {
+            secureFetch({ action: 'get_transactions', email: userData.email })
+            .then(data => {
                 if(data.status === 'success' && data.data) {
                     localStorage.setItem('tournyx_txns', JSON.stringify(data.data));
                     renderHistoryUI(data.data);
@@ -1065,7 +1006,7 @@
                         </div>`;
                 });
             } else {
-                historyList.innerHTML = `<div class="empty-history"><i class="fa-solid fa-file-invoice" style="font-size:2rem; opacity:0.5; margin-bottom:10px;"></i><br>No withdrawal records found.</div>`;
+                historyList.innerHTML = `<div class="empty-history"><i class="fa-solid fa-file-invoice" style="font-size:2.5rem; opacity:0.5; margin-bottom:15px; color:var(--accent-purple);"></i><br>No withdrawal records found.</div>`;
             }
         }
 
@@ -1084,7 +1025,7 @@
             let finalDetails = method === 'bank' ? `A/C: ${details1} | IFSC: ${details2}` : details1;
 
             if(isSaveChecked && !userHasPin) {
-                showToast("You must set up a Security PIN to save accounts. Click 'Saved Accounts' to set it up.", true);
+                showToast("You must set up a Security PIN to save accounts. Click 'Saved Vault' to set it up.", true);
                 triggerError('saveAccountCheck');
                 return;
             }
@@ -1096,10 +1037,10 @@
                 email: userData.email,
                 role: userData.role, 
                 isPremium: isPremiumUser,
-                promo: document.getElementById('promoInput').value.trim(),
+                promo: "",
                 amount: grossAmount, 
-                netPayout: currentNetPayout, 
-                platformFee: currentPlatformFee,
+                netPayout: grossAmount, // Now perfectly matching request
+                platformFee: 0, // Zero fee update applied
                 method: method,
                 details: finalDetails,
                 saveAccount: isSaveChecked
@@ -1122,14 +1063,13 @@
                 localStorage.setItem('tournyx_txns', JSON.stringify(localTxns));
 
                 document.getElementById('displayBalance').innerText = formatNum(currentBalance);
+                document.getElementById('pdfUserBal').innerText = "₹" + formatNum(currentBalance);
                 document.getElementById('withdrawAmount').value = '';
-                document.getElementById('promoInput').value = '';
-                isCouponApplied = false;
                 document.getElementById('saveAccountCheck').checked = false;
                 validateAmount(); 
 
-                // Send to backend invisibly
-                fetch(API_URL, { method: 'POST', mode: 'no-cors', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
+                // Send to backend securely
+                secureFetch(payload).catch(()=>{});
 
                 setTimeout(() => { hideOverlay(); renderHistoryUI(localTxns); calculateDailyLimits(localTxns); }, 3500);
 
@@ -1150,12 +1090,12 @@
             let tableHtml = `
                 <table style="width:100%; border-collapse:collapse; text-align:left; font-size:12px;">
                     <thead>
-                        <tr style="border-bottom:1px solid #1a0a3a; color:#00f2ff;">
-                            <th style="padding:10px 5px;">Date & Time</th>
-                            <th style="padding:10px 5px;">Txn ID</th>
-                            <th style="padding:10px 5px;">Description</th>
-                            <th style="padding:10px 5px;">Status</th>
-                            <th style="padding:10px 5px; text-align:right;">Amount (₹)</th>
+                        <tr style="background:linear-gradient(90deg, #110822, #1a0a3a); color:#00f2ff; border-bottom: 2px solid #bd00ff;">
+                            <th style="padding:15px 12px; text-transform:uppercase;">Date & Time</th>
+                            <th style="padding:15px 12px; text-transform:uppercase;">Txn ID</th>
+                            <th style="padding:15px 12px; text-transform:uppercase;">Description</th>
+                            <th style="padding:15px 12px; text-transform:uppercase;">Status</th>
+                            <th style="padding:15px 12px; text-align:right; text-transform:uppercase;">Amount (₹)</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -1171,15 +1111,13 @@
                     else if(sLower.includes("fail") || sLower.includes("cancel")) statusColor = "#ff4d4d";
                     else if(sLower.includes("refund")) statusColor = "#00f2ff";
                     
-                    let cleanDate = t.date;
-                    
                     tableHtml += `
-                        <tr style="border-bottom:1px solid #1a0a3a;">
-                            <td style="padding:12px 5px; color:#ccc;">${cleanDate}</td>
-                            <td style="padding:12px 5px; color:#888; font-family:monospace;">${t.id}</td>
-                            <td style="padding:12px 5px; color:#fff;">${t.title}</td>
-                            <td style="padding:12px 5px; color:${statusColor}; font-weight:bold; text-transform:uppercase;">${t.status || 'Pending'}</td>
-                            <td style="padding:12px 5px; text-align:right; color:#fff; font-weight:bold;">${t.amount}</td>
+                        <tr style="border-bottom:1px solid rgba(255,255,255,0.05); background:rgba(0,0,0,0.2);">
+                            <td style="padding:15px 12px; color:#ccc;">${t.date}</td>
+                            <td style="padding:15px 12px; color:#00f2ff; font-family:monospace;">${t.id}</td>
+                            <td style="padding:15px 12px; color:#fff; font-weight:bold;">${t.title}</td>
+                            <td style="padding:15px 12px; color:${statusColor}; font-weight:bold; text-transform:uppercase;">${t.status || 'Pending'}</td>
+                            <td style="padding:15px 12px; text-align:right; color:#ff4d4d; font-weight:bold;">-${t.amount}</td>
                         </tr>
                     `;
                 });
@@ -1192,14 +1130,23 @@
             var opt = {
                 margin:       [0.5, 0.5, 0.5, 0.5],
                 filename:     'Tournyx_Ledger_' + (userData.username || 'Player').replace(/\s+/g, '_') + '.pdf',
-                image:        { type: 'jpeg', quality: 0.98 },
-                html2canvas:  { scale: 2, useCORS: true, backgroundColor: '#070311', letterRendering: true },
+                image:        { type: 'jpeg', quality: 1 },
+                html2canvas:  { scale: 2, useCORS: true, allowTaint: true, backgroundColor: '#070311', windowWidth: 800 },
                 jsPDF:        { unit: 'in', format: 'letter', orientation: 'portrait' }
             };
             
-            html2pdf().set(opt).from(element).save().then(() => {
-                showToast("Ledger Downloaded Successfully!");
-            });
+            let wrapper = document.getElementById('pdfContainerWrapper');
+            wrapper.style.left = '0';
+            wrapper.style.top = '0';
+            wrapper.style.zIndex = '-9999';
+            
+            setTimeout(() => {
+                html2pdf().set(opt).from(element).save().then(() => {
+                    wrapper.style.left = '-9999px';
+                    wrapper.style.top = '-9999px';
+                    showToast("Ledger Downloaded Successfully!");
+                });
+            }, 300);
         }
 
         // --- SUPPORT LOGIC ---
@@ -1210,7 +1157,7 @@
             let withdrawals = txns.filter(t => t.title.toLowerCase().includes("withdraw"));
             
             container.innerHTML = "";
-            if (withdrawals.length === 0) { container.innerHTML = `<div style="text-align:center; padding:10px; color:#666; font-size:0.8rem;">No recent withdrawals available.</div>`; } 
+            if (withdrawals.length === 0) { container.innerHTML = `<div style="text-align:center; padding:20px; color:#666; font-size:0.9rem; font-weight:bold; background:rgba(0,0,0,0.4); border-radius:12px;">No recent withdrawals available.</div>`; } 
             else {
                 withdrawals.forEach(t => {
                     let stat = String(t.status || "Pending").toLowerCase().trim();
@@ -1235,12 +1182,12 @@
                     container.innerHTML += `
                         <div class="sup-txn-item" onclick="openMessageInput('${t.id}', '${t.amount}', '${t.date}', '${t.status || 'Pending'}')">
                             <div style="min-width:0; overflow:hidden; flex:1;">
-                                <h5 style="white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${t.title}</h5>
-                                <p style="white-space:nowrap; font-size:0.7rem; color:#888;">ID: ${t.id} • ${t.date}</p>
+                                <h5 style="white-space:nowrap; overflow:hidden; text-overflow:ellipsis; font-family:var(--font-head); font-size:1.05rem; color:white; margin-bottom:5px;">${t.title}</h5>
+                                <p style="white-space:nowrap; font-size:0.75rem; color:#888; font-weight:bold;">ID: <span style="color:var(--accent-cyan); font-family:monospace;">${t.id}</span> • ${t.date}</p>
                             </div>
                             <div style="text-align:right; flex-shrink:0;">
-                                <div style="color:var(--accent-cyan); font-family:var(--font-head); font-weight:bold; margin-bottom:4px;">₹${t.amount}</div>
-                                <div style="font-size:0.65rem; font-weight:bold; text-transform:uppercase; color:${color}; border:1px solid ${color}; box-shadow:${borderGlow}; text-shadow:${glow}; padding:2px 6px; border-radius:4px; display:inline-block;">${t.status || 'Pending'}</div>
+                                <div style="color:white; font-family:var(--font-head); font-size:1.15rem; font-weight:900; margin-bottom:6px;">₹${t.amount}</div>
+                                <div style="font-size:0.65rem; font-weight:bold; text-transform:uppercase; color:${color}; border:1px solid ${color}; box-shadow:${borderGlow}; text-shadow:${glow}; padding:3px 8px; border-radius:6px; display:inline-block;">${t.status || 'Pending'}</div>
                             </div>
                         </div>`;
                 });
@@ -1252,8 +1199,8 @@
         function openMessageInput(txnId, amount, date, status) {
             currentSupportTxn = { txnId, amount, date, status };
             document.getElementById('supportModalOverlay').classList.remove('active');
-            document.getElementById('supMsgTxnId').innerText = "Transaction ID: " + txnId;
-            document.getElementById('supMsgDetails').innerText = "Withdrawal: Rs. " + amount + " | " + status;
+            document.getElementById('supMsgTxnId').innerText = "TXN ID: " + txnId;
+            document.getElementById('supMsgDetails').innerText = "Withdrawal: ₹" + amount + " | " + status;
             document.getElementById('customSupportMsg').value = ""; 
             document.getElementById('supportMsgOverlay').classList.add('active');
             triggerHaptic();
@@ -1272,31 +1219,13 @@
     <script>
     function tournyxOneSignalSetup() {
         let user = JSON.parse(localStorage.getItem('tournyx_user'));
-        
         if (user && user.email && typeof median !== 'undefined' && median.onesignal) {
             let cleanEmail = user.email.toLowerCase().trim();
-            
-            // 1. Set the Official External ID
-            if(median.onesignal.setExternalUserId) {
-                median.onesignal.setExternalUserId({ externalId: cleanEmail });
-            }
-
-            // 2. Set an Email TAG (The Ultimate Failsafe)
-            if(median.onesignal.sendTags) {
-                median.onesignal.sendTags({
-                    tags: { 
-                        "user_email": cleanEmail,
-                        "user_status": "active" 
-                    }
-                });
-            }
+            if(median.onesignal.setExternalUserId) { median.onesignal.setExternalUserId({ externalId: cleanEmail }); }
+            if(median.onesignal.sendTags) { median.onesignal.sendTags({ tags: { "user_email": cleanEmail, "user_status": "active" } }); }
         }
     }
-
-    // Fire when Median bridge is fully loaded inside the app
     document.addEventListener("median_library_ready", tournyxOneSignalSetup);
-    
-    // Fallback for regular web browsers
     document.addEventListener("DOMContentLoaded", tournyxOneSignalSetup);
 </script>
 </body>
