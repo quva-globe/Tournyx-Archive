@@ -3,17 +3,16 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-        <title>Refer & Earn Rewards - Tournyx</title>
+    <title>Refer & Earn Rewards - Tournyx</title>
     <meta name="description" content="Invite your squad to Tournyx and earn free wallet cash and reward points for every successful referral. Build your esports community today!">
 
-    
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700;900&family=Rajdhani:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
-   <script>
+    <script>
             (function() {
                 try {
                     const THEMES = [
@@ -27,8 +26,13 @@
                         document.documentElement.style.setProperty('--accent-purple', THEMES[tIndex].purple);
                         document.documentElement.style.setProperty('--accent-gradient', `linear-gradient(90deg, ${THEMES[tIndex].purple}, ${THEMES[tIndex].cyan})`);
                     }
+                    
+                    let user = JSON.parse(localStorage.getItem('tournyx_user'));
+                    if (user && String(user.is_premium).toLowerCase() === 'true') {
+                        document.documentElement.classList.add('theme-vip');
+                    }
                 } catch(e) {
-                    console.log("Theme setting bypassed - strict browser settings.");
+                    console.log("Theme setting bypassed.");
                 }
             })();
         </script>
@@ -37,140 +41,171 @@
         :root {
             --primary-bg: #070311;
             --secondary-bg: #0d061e;
-            --card-bg: rgba(20, 10, 35, 0.7);
-            --card-border: rgba(189, 0, 255, 0.2);
+            --card-bg: rgba(15, 7, 30, 0.85);
+            --card-border: rgba(255, 255, 255, 0.08);
             --accent-cyan: #00f2ff;
             --accent-purple: #bd00ff;
             --accent-orange: #ff9900;
             --accent-green: #00ff7f;
-            --accent-gradient: linear-gradient(90deg, #bd00ff, #00f2ff);
+            --accent-gradient: linear-gradient(135deg, #7b2cbf, #bd00ff, #00f2ff);
             --text-main: #ffffff;
-            --text-muted: #a0a0b0;
             --font-head: 'Orbitron', sans-serif;
             --font-body: 'Rajdhani', sans-serif;
         }
 
-        * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+        html.theme-vip {
+            --accent-cyan: #FFD700;
+            --accent-purple: #FFA500;
+            --accent-gradient: linear-gradient(135deg, #FFE87C, #D4AF37, #FF8C00);
+            --card-border: rgba(212, 175, 55, 0.3);
+        }
+
+        * { -ms-overflow-style: none !important; scrollbar-width: none !important; margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+        *::-webkit-scrollbar { display: none !important; width: 0 !important; height: 0 !important; background: transparent !important; }
 
         body {
             background-color: var(--primary-bg);
             color: var(--text-main);
             font-family: var(--font-body);
-            overflow-x: hidden; padding-bottom: 90px; padding-top: 70px;
+            overflow-x: hidden; padding-bottom: 100px; padding-top: 75px;
         }
+
+        /* --- RESPONSIVE WRAPPERS --- */
+        .wrapper { max-width: 600px; margin: 0 auto; width: 100%; }
 
         #particles-canvas {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1;
-            background: radial-gradient(circle at 50% 50%, #15062e 0%, #070311 100%);
+            background: radial-gradient(circle at 50% 0%, #15062e 0%, #070311 100%);
         }
+
+        /* --- TOURNYX TX COMPOSITE TICKET ICON --- */
+        .tx-ticket-composite { position: relative; display: inline-flex; align-items: center; justify-content: center; }
+        .tx-ticket-composite i { font-size: inherit; transition: inherit; }
+        .tx-ticket-composite .tx-text { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -46%); font-family: var(--font-head); font-size: 0.38em; font-weight: 900; color: var(--primary-bg) !important; -webkit-text-fill-color: var(--primary-bg) !important; letter-spacing: -0.5px; pointer-events: none; z-index: 2; transition: 0.3s; font-style: normal !important; }
 
         /* --- HEADER --- */
-        .top-header {
-            position: fixed; top: 0; left: 0; width: 100%; padding: 10px 15px; height: 65px;
-            background: rgba(7, 3, 17, 0.85); backdrop-filter: blur(15px);
-            border-bottom: 1px solid var(--card-border);
-            display: flex; align-items: center; justify-content: space-between; z-index: 2000;
-            box-shadow: 0 4px 30px rgba(0,0,0,0.5);
+        .top-header { 
+            position: fixed; top: 0; left: 0; width: 100%; height: 65px;
+            padding: 0 15px; 
+            background: rgba(5, 2, 12, 0.85); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); 
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05); z-index: 2000; box-shadow: 0 4px 30px rgba(0, 0, 0, 0.5); transform: translateZ(0); display: flex; align-items: center;
         }
-        .header-left { display: flex; align-items: center; gap: 15px; }
-        .back-btn { color: white; font-size: 1.3rem; text-decoration: none; padding: 5px; transition: 0.3s; cursor: pointer; }
+        .header-wrapper { display: flex; align-items: center; justify-content: space-between; gap: 10px; width: 100%; max-width: 1200px; margin: 0 auto; }
+        .header-left { display: flex; align-items: center; gap: 15px; flex: 1; min-width: 0; }
+        .back-btn { color: white; font-size: 1.3rem; text-decoration: none; transition: 0.3s; cursor: pointer; padding: 5px 10px 5px 0; flex-shrink:0;}
         .back-btn:active { color: var(--accent-cyan); transform: scale(0.9); }
-        .app-title {
-            font-family: var(--font-head); font-size: 1.2rem; font-weight: 700;
-            background: linear-gradient(90deg, #fff, var(--accent-cyan));
-            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-            text-transform: uppercase; letter-spacing: 1px;
-        }
+        .app-title { font-family: var(--font-head); font-size: 1.15rem; font-weight: 700; background: var(--accent-gradient); -webkit-background-clip: text; -webkit-text-fill-color: transparent; letter-spacing: 1px; white-space: nowrap; margin:0; flex-shrink: 0; text-transform: uppercase;}
 
         /* --- HERO SECTION --- */
-        .hero { text-align: center; padding: 20px 20px 10px; animation: fadeIn 0.4s ease; }
-        .hero-icon { font-size: 3rem; color: var(--accent-orange); margin-bottom: 10px; text-shadow: 0 0 25px rgba(255, 153, 0, 0.5); animation: floatIcon 3s ease-in-out infinite; }
-        @keyframes floatIcon { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
+        .hero { text-align: center; padding: 15px 20px; animation: fadeIn 0.5s ease; }
+        .hero-icon { font-size: 3.5rem; color: var(--accent-orange); margin-bottom: 12px; filter: drop-shadow(0 0 20px rgba(255, 153, 0, 0.5)); }
+        html.theme-vip .hero-icon { color: #FFD700; filter: drop-shadow(0 0 20px rgba(255, 215, 0, 0.5)); }
         
-        .hero h1 { font-family: var(--font-head); font-size: 1.7rem; line-height: 1.4; margin-bottom: 5px; text-shadow: 0 0 10px rgba(255,255,255,0.2); }
+        .hero h1 { font-family: var(--font-head); font-size: 1.8rem; line-height: 1.3; margin-bottom: 8px; color: white; text-shadow: 0 0 10px rgba(255,255,255,0.2); text-transform: uppercase;}
         .gradient-text { background: var(--accent-gradient); -webkit-background-clip: text; -webkit-text-fill-color: transparent; font-weight: 900; }
-        .hero p { color: var(--text-muted); font-size: 0.95rem; max-width: 400px; margin: 0 auto; line-height: 1.5; }
+        .hero p { color: #a0a0b0; font-size: 0.95rem; max-width: 400px; margin: 0 auto; line-height: 1.5; }
 
         @keyframes fadeIn { from{opacity:0; transform:translateY(15px);} to{opacity:1; transform:translateY(0);} }
 
-        /* --- STATS GRID --- */
-        .stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; padding: 10px 20px 20px; max-width: 500px; margin: 0 auto; }
-        .stat-card {
-            background: var(--secondary-bg); border: 1px solid var(--card-border);
-            border-radius: 15px; padding: 20px 10px; text-align: center;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.3); transition: 0.3s;
+        /* --- ESPORTS CARD CONTAINER --- */
+        .main-card {
+            background: var(--card-bg); border: 1px solid var(--card-border);
+            border-radius: 20px; padding: 25px 20px; margin: 0 20px 25px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5); backdrop-filter: blur(10px);
+            animation: fadeIn 0.6s ease backwards;
         }
-        .stat-card:active { transform: scale(0.96); }
-        .stat-card.purple { border-bottom: 4px solid var(--accent-purple); }
-        .stat-card.cyan { border-bottom: 4px solid var(--accent-cyan); }
-        .stat-val { font-family: var(--font-head); font-size: 2.2rem; color: white; display: block; margin-bottom: 2px; font-weight: 700; text-shadow: 0 0 10px rgba(255,255,255,0.2); }
-        .stat-label { font-size: 0.8rem; color: #888; text-transform: uppercase; letter-spacing: 1px; font-weight: bold; }
+
+        /* --- STATS GRID --- */
+        .stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 25px; }
+        .stat-box {
+            background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.05);
+            border-radius: 16px; padding: 20px 10px; text-align: center;
+            transition: 0.3s; position: relative; overflow: hidden;
+        }
+        .stat-box::after { content: ''; position: absolute; bottom: 0; left: 0; width: 100%; height: 4px; background: var(--accent-purple); }
+        .stat-box:nth-child(2)::after { background: var(--accent-cyan); }
+        html.theme-vip .stat-box::after { background: #FFD700; }
+        
+        .stat-val { font-family: var(--font-head); font-size: 2.2rem; color: white; display: block; margin-bottom: 5px; font-weight: 900; text-shadow: 0 0 15px rgba(255,255,255,0.2); }
+        .stat-label { font-size: 0.75rem; color: #888; text-transform: uppercase; letter-spacing: 1px; font-weight: bold; font-family: var(--font-head); }
 
         /* --- EPIC MILESTONE SYSTEM --- */
-        .milestone-container { padding: 0 20px 25px; max-width: 500px; margin: 0 auto; animation: fadeIn 0.5s ease backwards; }
-        .ms-header { display: flex; justify-content: space-between; align-items: center; font-size: 0.85rem; font-family: var(--font-head); font-weight: bold; margin-bottom: 10px; color: #ccc; text-transform: uppercase; }
-        .ms-reward { color: var(--accent-orange); text-shadow: 0 0 10px rgba(255,153,0,0.5); font-size: 0.95rem; }
+        .ms-header { display: flex; justify-content: space-between; align-items: center; font-size: 0.85rem; font-family: var(--font-head); font-weight: bold; margin-bottom: 12px; color: white; text-transform: uppercase; }
+        .ms-reward { color: var(--accent-orange); text-shadow: 0 0 10px rgba(255,153,0,0.5); font-size: 0.95rem; display: flex; align-items: center; gap: 6px;}
+        html.theme-vip .ms-reward { color: #FFD700; text-shadow: 0 0 10px rgba(255,215,0,0.5); }
         
-        .ms-bar-bg { width: 100%; height: 12px; background: rgba(0,0,0,0.5); border-radius: 10px; overflow: hidden; box-shadow: inset 0 0 10px rgba(0,0,0,0.8); border: 1px solid rgba(255,255,255,0.05); position: relative; }
-        .ms-bar-fill { height: 100%; background: linear-gradient(90deg, var(--accent-cyan), var(--accent-purple)); border-radius: 10px; transition: width 1.5s cubic-bezier(0.175, 0.885, 0.32, 1.275); width: 0%; box-shadow: 0 0 15px var(--accent-purple); position: relative; overflow: hidden; }
+        .ms-bar-bg { width: 100%; height: 16px; background: rgba(0,0,0,0.6); border-radius: 20px; overflow: hidden; box-shadow: inset 0 0 10px rgba(0,0,0,0.8); border: 1px solid rgba(255,255,255,0.05); position: relative; margin-bottom: 12px;}
+        .ms-bar-fill { height: 100%; background: var(--accent-gradient); border-radius: 20px; transition: width 1.5s cubic-bezier(0.175, 0.885, 0.32, 1.275); width: 0%; box-shadow: 0 0 15px var(--accent-purple); position: relative; overflow: hidden; }
+        html.theme-vip .ms-bar-fill { box-shadow: 0 0 15px #FFD700; }
         .ms-bar-fill::after { content: ''; position: absolute; top: 0; left: -100%; width: 50%; height: 100%; background: linear-gradient(to right, transparent, rgba(255,255,255,0.5), transparent); animation: shimmerBtn 2s infinite; }
+        @keyframes shimmerBtn { 0% { left: -100%; } 100% { left: 200%; } }
         
-        .ms-footer { text-align: center; font-size: 0.8rem; color: #aaa; margin-top: 10px; font-style: italic; }
+        .ms-footer { text-align: center; font-size: 0.85rem; color: #aaa; font-style: italic; margin-bottom: 25px; padding-bottom: 25px; border-bottom: 1px solid rgba(255,255,255,0.05);}
         .ms-highlight { color: white; font-weight: bold; font-family: var(--font-head); }
 
         /* --- REFERRAL BOX --- */
-        .referral-section { padding: 0 20px 20px; max-width: 500px; margin: 0 auto; }
-        .referral-box {
-            background: linear-gradient(135deg, rgba(0, 242, 255, 0.05), rgba(189, 0, 255, 0.05));
-            border: 1px solid var(--accent-cyan);
-            border-radius: 20px; padding: 25px; text-align: center;
-            box-shadow: 0 10px 30px rgba(0, 242, 255, 0.15); position: relative;
-        }
-        .rb-title { font-family: var(--font-head); font-size: 1.15rem; margin-bottom: 5px; color: white; }
-        .rb-subtitle { font-size: 0.9rem; color: #aaa; margin-bottom: 20px; }
+        .rb-title { font-family: var(--font-head); font-size: 1.15rem; margin-bottom: 5px; color: white; text-align: center; text-transform: uppercase; font-weight: bold;}
+        .rb-subtitle { font-size: 0.9rem; color: #aaa; margin-bottom: 20px; text-align: center;}
         
         .code-display-wrap {
-            background: #000; border: 1px dashed rgba(255,255,255,0.3);
-            border-radius: 12px; padding: 15px; display: flex; align-items: center; justify-content: space-between;
-            margin-bottom: 20px; box-shadow: inset 0 0 10px rgba(0,0,0,0.5);
+            background: rgba(0,0,0,0.5); border: 1px dashed rgba(255,255,255,0.2);
+            border-radius: 16px; padding: 15px 20px; display: flex; align-items: center; justify-content: space-between;
+            margin-bottom: 20px; box-shadow: inset 0 0 15px rgba(0,0,0,0.5); transition: 0.3s;
         }
-        .code-text { font-family: var(--font-head); font-size: 1.4rem; color: var(--accent-green); letter-spacing: 3px; font-weight: bold; text-shadow: 0 0 10px rgba(0,255,127,0.3); }
+        .code-display-wrap:active { border-color: var(--accent-cyan); background: rgba(0,242,255,0.05); }
+        html.theme-vip .code-display-wrap:active { border-color: #FFD700; background: rgba(255,215,0,0.05); }
+
+        .code-text { font-family: var(--font-head); font-size: 1.5rem; color: var(--accent-green); letter-spacing: 3px; font-weight: 900; text-shadow: 0 0 15px rgba(0,255,127,0.3); }
+        
         .copy-btn {
-            background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); color: white;
-            width: 45px; height: 45px; border-radius: 10px; font-size: 1.2rem;
+            background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); color: white;
+            width: 45px; height: 45px; border-radius: 12px; font-size: 1.2rem;
             cursor: pointer; transition: 0.3s; display: flex; align-items: center; justify-content: center;
         }
-        .copy-btn:active { background: var(--accent-cyan); color: #000; transform: scale(0.9); }
+        .copy-btn:active { background: var(--accent-cyan); color: #000; transform: scale(0.9); border-color: var(--accent-cyan); box-shadow: 0 0 15px rgba(0,242,255,0.5);}
+        html.theme-vip .copy-btn:active { background: #FFD700; border-color: #FFD700; box-shadow: 0 0 15px rgba(255,215,0,0.5);}
 
-        .share-buttons { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+        .share-buttons { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 20px;}
         .share-btn {
-            padding: 14px; border-radius: 12px; font-family: var(--font-head);
+            padding: 16px 10px; border-radius: 12px; font-family: var(--font-head);
             font-size: 0.95rem; font-weight: bold; text-decoration: none; color: white;
-            display: flex; align-items: center; justify-content: center; gap: 8px; border: none; cursor: pointer; transition: 0.3s;
+            display: flex; align-items: center; justify-content: center; gap: 10px; border: none; cursor: pointer; transition: 0.3s; text-transform: uppercase;
         }
         .share-btn:active { transform: scale(0.96); }
-        .btn-wa { background: #25D366; color: #000; box-shadow: 0 5px 15px rgba(37, 211, 102, 0.3); }
-        .btn-sys { background: var(--accent-purple); box-shadow: 0 5px 15px rgba(189, 0, 255, 0.3); }
+        .btn-wa { background: linear-gradient(135deg, #25D366, #128C7E); box-shadow: 0 8px 20px rgba(37, 211, 102, 0.3); }
+        .btn-sys { background: var(--accent-gradient); box-shadow: 0 8px 20px rgba(189, 0, 255, 0.3); color: black;}
+        html.theme-vip .btn-sys { box-shadow: 0 8px 20px rgba(255, 215, 0, 0.3); }
 
-        .qr-btn { color: var(--accent-cyan); font-size: 0.85rem; margin-top: 15px; display: inline-block; cursor: pointer; text-decoration: underline; font-family: var(--font-head); }
-
-        /* --- HOW IT WORKS (Up to 100 System) --- */
-        .how-it-works { padding: 0 20px 30px; max-width: 500px; margin: 0 auto; }
-        .section-title { font-family: var(--font-head); font-size: 1.3rem; margin-bottom: 20px; text-align: center; color: white; text-transform: uppercase; letter-spacing: 1px; }
-        
-        .step-row {
-            display: flex; align-items: flex-start; gap: 15px; margin-bottom: 15px;
-            background: var(--card-bg); padding: 15px; border-radius: 15px; border: 1px solid var(--card-border);
+        .qr-btn { 
+            background: rgba(0, 242, 255, 0.05); color: var(--accent-cyan); font-size: 0.95rem; 
+            padding: 15px; border-radius: 12px; border: 1px solid var(--accent-cyan);
+            display: flex; align-items: center; justify-content: center; gap: 10px;
+            cursor: pointer; font-family: var(--font-head); font-weight: bold; text-transform: uppercase;
             transition: 0.3s;
         }
-        .step-row:hover { border-color: var(--accent-cyan); transform: translateX(5px); }
-        .step-icon {
-            width: 45px; height: 45px; border-radius: 50%; background: rgba(0, 242, 255, 0.1);
-            color: var(--accent-cyan); display: flex; align-items: center; justify-content: center;
-            font-size: 1.2rem; flex-shrink: 0; border: 1px solid rgba(0, 242, 255, 0.3);
+        html.theme-vip .qr-btn { background: rgba(255, 215, 0, 0.05); color: #FFD700; border-color: #FFD700;}
+        .qr-btn:active { background: var(--accent-cyan); color: black; box-shadow: 0 0 15px rgba(0,242,255,0.4); transform: scale(0.98);}
+        html.theme-vip .qr-btn:active { background: #FFD700; color: black; box-shadow: 0 0 15px rgba(255,215,0,0.4);}
+
+        /* --- HOW IT WORKS --- */
+        .how-it-works { padding: 10px 20px 30px; animation: fadeIn 0.7s ease backwards;}
+        .section-title { font-family: var(--font-head); font-size: 1.3rem; margin-bottom: 25px; text-align: center; color: white; text-transform: uppercase; letter-spacing: 1px; }
+        
+        .step-row {
+            display: flex; align-items: flex-start; gap: 18px; margin-bottom: 20px;
+            background: rgba(255,255,255,0.02); padding: 20px; border-radius: 16px; border: 1px solid rgba(255,255,255,0.05);
+            transition: 0.3s;
         }
-        .step-content h4 { font-family: var(--font-head); font-size: 1.05rem; margin-bottom: 5px; color: white; }
-        .step-content p { font-size: 0.85rem; color: #aaa; line-height: 1.4; }
+        .step-row:hover { background: rgba(255,255,255,0.04); transform: translateY(-3px); box-shadow: 0 5px 15px rgba(0,0,0,0.3);}
+        .step-icon {
+            width: 50px; height: 50px; border-radius: 14px; background: rgba(0, 242, 255, 0.1);
+            color: var(--accent-cyan); display: flex; align-items: center; justify-content: center;
+            font-size: 1.4rem; flex-shrink: 0; border: 1px solid rgba(0, 242, 255, 0.3); box-shadow: inset 0 0 10px rgba(0,242,255,0.1);
+        }
+        html.theme-vip .step-icon { background: rgba(255,215,0,0.1); color: #FFD700; border-color: rgba(255,215,0,0.3); box-shadow: inset 0 0 10px rgba(255,215,0,0.1);}
+        
+        .step-content h4 { font-family: var(--font-head); font-size: 1.1rem; margin-bottom: 6px; color: white; }
+        .step-content p { font-size: 0.9rem; color: #a0a0b0; line-height: 1.5; }
 
         /* --- QR MODAL --- */
         .modal-overlay {
@@ -180,153 +215,187 @@
         }
         .modal-overlay.active { display: flex; opacity: 1; }
         .modal-content {
-            background: var(--secondary-bg); border: 1px solid var(--accent-cyan);
-            border-radius: 20px; width: 90%; max-width: 320px; padding: 25px; text-align: center;
-            position: relative; box-shadow: 0 15px 40px rgba(0,0,0,0.8);
+            background: rgba(10,5,20,0.95); border: 1px solid var(--accent-cyan);
+            border-radius: 24px; width: 90%; max-width: 340px; padding: 30px 25px; text-align: center;
+            position: relative; box-shadow: 0 20px 50px rgba(0,0,0,0.8);
             transform: scale(0.9); transition: 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         }
+        html.theme-vip .modal-content { border-color: #FFD700; }
         .modal-overlay.active .modal-content { transform: scale(1); }
-        .close-modal { position: absolute; top: 15px; right: 20px; font-size: 1.5rem; color: #888; cursor: pointer; transition: 0.3s; }
+        
+        .close-modal { position: absolute; top: 20px; right: 20px; font-size: 1.5rem; color: #888; cursor: pointer; transition: 0.3s; }
         .close-modal:hover { color: white; transform: rotate(90deg); }
         
-        #qrcode { margin: 20px auto; display: flex; justify-content: center; background: white; padding: 15px; border-radius: 10px; width: fit-content; }
-        .modal-title { font-family: var(--font-head); font-size: 1.2rem; color: white; margin-bottom: 5px; }
+        #qrcode { margin: 25px auto; display: flex; justify-content: center; background: white; padding: 15px; border-radius: 16px; width: fit-content; box-shadow: 0 0 20px rgba(255,255,255,0.2);}
+        .modal-title { font-family: var(--font-head); font-size: 1.4rem; color: white; margin-bottom: 8px; text-transform: uppercase; font-weight: bold;}
 
         /* --- TOAST NOTIFICATION --- */
-        #toast {
-            visibility: hidden; min-width: 250px; background-color: var(--accent-green);
-            color: #000; text-align: center; border-radius: 10px; padding: 14px;
-            position: fixed; z-index: 9999; left: 50%; bottom: -50px; transform: translateX(-50%);
-            font-family: var(--font-head); font-weight: 600; font-size: 0.95rem;
-            box-shadow: 0 5px 20px rgba(0, 255, 127, 0.5); transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); opacity: 0;
-        }
-        #toast.show { visibility: visible; opacity: 1; bottom: 100px; }
+        #customToast { visibility: hidden; min-width: 250px; background-color: var(--accent-cyan); color: #000; text-align: center; border-radius: 12px; padding: 16px; position: fixed; z-index: 9999; left: 50%; bottom: -50px; transform: translateX(-50%); font-family: var(--font-head); font-weight: bold; box-shadow: 0 8px 30px rgba(0,242,255,0.5); opacity: 0; transition: opacity 0.4s, bottom 0.4s; }
+        html.theme-vip #customToast { background-color: #FFD700; box-shadow: 0 8px 30px rgba(255,215,0,0.5); }
+        #customToast.show { visibility: visible; opacity: 1; bottom: 100px; }
 
         /* --- FOOTER & NAV --- */
-        .app-footer { text-align: center; padding: 20px 20px 100px 20px; color: #555; font-size: 0.75rem; font-family: var(--font-body); letter-spacing: 1px; border-top: 1px solid var(--card-border); margin-top: 10px; }
-
-        /* PERFECTLY ALIGNED BOTTOM NAVIGATION (MOBILE OPTIMIZED) */
-        .bottom-nav { position: fixed; bottom: 0; left: 0; width: 100%; height: calc(65px + env(safe-area-inset-bottom)); background: rgba(5, 2, 12, 0.75); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); display: flex; justify-content: space-between; align-items: flex-start; padding: 10px 2px env(safe-area-inset-bottom); border-top: 1px solid rgba(255,255,255,0.05); z-index: 1000; box-shadow: 0 -10px 30px rgba(0,0,0,0.5); transform: translateZ(0);}
-        .nav-item { display: flex; flex-direction: column; align-items: center; justify-content: flex-start; color: #666; text-decoration: none; font-size: 0.6rem; font-family: var(--font-head); font-weight: bold; flex: 1; transition: 0.3s; position: relative; padding: 0 2px; text-align: center;}
+        .app-footer { text-align: center; padding: 20px 20px 110px 20px; color: #555; font-size: 0.75rem; font-family: var(--font-body); letter-spacing: 1px; border-top: 1px solid rgba(255,255,255,0.05); margin-top: 10px; }
+        
+        /* PERFECTLY ALIGNED BOTTOM NAVIGATION */
+        .bottom-nav { position: fixed; bottom: 0; left: 0; width: 100%; height: calc(65px + env(safe-area-inset-bottom, 0px)); background: rgba(7, 3, 17, 0.92); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); display: flex; justify-content: space-between; align-items: flex-start; padding: 10px 2px env(safe-area-inset-bottom, 0px); border-top: 1px solid rgba(255,255,255,0.05); z-index: 1000; box-shadow: 0 -10px 30px rgba(0,0,0,0.6); }
+        .nav-item { display: flex; flex-direction: column; align-items: center; justify-content: flex-start; color: #666; text-decoration: none; font-size: 0.6rem; font-family: var(--font-head); font-weight: bold; flex: 1; transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); position: relative; padding: 0 2px; text-align: center;}
         .nav-item span { margin-top: 4px; transition: 0.3s; letter-spacing: -0.3px;}
-        .nav-item i { font-size: 1.2rem; transition: 0.3s; }
+        
+        /* Fixed Icon Alignment */
+        .nav-item > i, .nav-item > .tx-icon, .nav-item > .tx-ticket-composite { 
+            font-size: 1.2rem; transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); color: #666; background: none; -webkit-text-fill-color: #666; filter: none; font-style: normal;
+            height: 24px; width: 24px; display: flex; align-items: center; justify-content: center; 
+        }
+        .tx-ticket-composite i { display: block; line-height: 1; font-size: 1.2rem; color: inherit; -webkit-text-fill-color: inherit; transition: 0.3s; background: inherit; filter: inherit; -webkit-background-clip: inherit;}
+
         .nav-item.active { color: var(--accent-cyan); }
-        .nav-item.active i { transform: translateY(-4px); color: var(--accent-cyan); filter: drop-shadow(0 0 10px var(--accent-cyan)); }
+        html.theme-vip .nav-item.active { color: #FFD700; }
+        
+        .nav-item.active > .tx-ticket-composite { transform: translateY(-4px); }
+        .nav-item.active > i, .nav-item.active > .tx-icon, .nav-item.active > .tx-ticket-composite i { transform: translateY(-4px); background: linear-gradient(135deg, var(--accent-purple), var(--accent-cyan)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; filter: drop-shadow(0 0 10px var(--accent-cyan)); font-style: normal; }
+        html.theme-vip .nav-item.active > i, html.theme-vip .nav-item.active > .tx-icon, html.theme-vip .nav-item.active > .tx-ticket-composite i { background: linear-gradient(135deg, #FFE87C, #FF8C00); -webkit-background-clip: text; -webkit-text-fill-color: transparent; filter: drop-shadow(0 0 10px rgba(212,175,55,0.8)); }
+        .nav-item.active .tx-ticket-composite i { transform: translateY(0); } /* Reset inner transform */
+        
         .nav-item.active span { transform: translateY(2px); color: white; text-shadow: 0 0 5px rgba(255,255,255,0.5);}
         .fab-slot { flex: 1.2; display: flex; justify-content: center; position: relative; height: 100%; align-items: center; }
-        .floating-plus { position: absolute; top: -25px; left: 50%; transform: translateX(-50%); width: 54px; height: 54px; background: linear-gradient(135deg, var(--accent-cyan), var(--accent-purple)); border-radius: 50%; display: flex; align-items: center; justify-content: center; border: 4px solid var(--primary-bg); box-shadow: 0 10px 25px rgba(189,0,255,0.4); color: #fff; font-size: 1.6rem; cursor: pointer; transition: 0.3s; z-index: 10; }
+        .floating-plus { position: absolute; top: -25px; left: 50%; transform: translateX(-50%); width: 54px; height: 54px; background: linear-gradient(135deg, var(--accent-cyan), var(--accent-purple)); border-radius: 50%; display: flex; align-items: center; justify-content: center; border: 4px solid var(--primary-bg); box-shadow: 0 10px 25px rgba(189,0,255,0.5); color: #fff; font-size: 1.6rem; cursor: pointer; transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); z-index: 10; }
+        html.theme-vip .floating-plus { background: linear-gradient(135deg, #FFE87C, #FF8C00); box-shadow: 0 10px 25px rgba(255,215,0,0.4); border-color: #000; color: #000; }
         .floating-plus:hover { transform: translateX(-50%) scale(1.1) rotate(90deg); box-shadow: 0 15px 35px rgba(0,242,255,0.6); }
 
-        @media (min-width: 850px) { .bottom-nav { display: none !important; } }
+        @media (min-width: 850px) { .bottom-nav { display: none !important; } body { padding-bottom: 0; } }
     </style>
 </head>
 <body>
 
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+            const isMedian = typeof median !== 'undefined' || navigator.userAgent.includes('Median');
+            
+            // If on mobile browser (not inside the app), attempt to open app
+            if (isMobile && !isMedian) {
+                const appScheme = "intent://tournyx.in/refer.html#Intent;scheme=https;package=com.tournyx.app;end";
+                
+                // Try redirecting silently
+                let iframe = document.createElement('iframe');
+                iframe.style.display = 'none';
+                iframe.src = appScheme;
+                document.body.appendChild(iframe);
+                
+                setTimeout(() => document.body.removeChild(iframe), 2000);
+            }
+        });
+    </script>
+
     <canvas id="particles-canvas"></canvas>
 
     <header class="top-header">
-        <div class="header-left">
-            <a href="index.html" class="back-btn"><i class="fa-solid fa-arrow-left"></i></a>
-            <div class="app-title">REFER & EARN</div>
+        <div class="header-wrapper">
+            <div class="header-left">
+                <a href="profile.html" class="back-btn" onclick="triggerHaptic()"><i class="fa-solid fa-arrow-left"></i></a>
+                <div class="app-title"><i class="fa-solid fa-users-viewfinder"></i> REFER & EARN</div>
+            </div>
         </div>
     </header>
 
-    <section class="hero">
-        <div class="hero-icon"><i class="fa-solid fa-gift"></i></div>
-        <h1>Build Your Squad.<br><span class="gradient-text">Earn Huge Rewards.</span></h1>
-        <p>Invite friends to Tournyx. Unlock epic milestones up to 100 referrals!</p>
-    </section>
+    <div class="wrapper">
+        <section class="hero">
+            <div class="hero-icon"><i class="fa-solid fa-gift"></i></div>
+            <h1>Build Your Squad.<br><span class="gradient-text">Earn Huge Rewards.</span></h1>
+            <p>Invite friends to Tournyx. Unlock epic milestones up to 100 referrals!</p>
+        </section>
 
-    <section class="stats-grid">
-        <div class="stat-card purple">
-            <span class="stat-val" id="totalReferrals"><i class="fa-solid fa-spinner fa-spin" style="font-size:1.5rem; color:#888;"></i></span>
-            <span class="stat-label">Friends Invited</span>
-        </div>
-        <div class="stat-card cyan">
-            <span class="stat-val" style="color:var(--accent-cyan);" id="totalPoints"><i class="fa-solid fa-spinner fa-spin" style="font-size:1.5rem; color:#888;"></i></span>
-            <span class="stat-label">Points Earned</span>
-        </div>
-    </section>
+        <div class="main-card">
+            <section class="stats-grid">
+                <div class="stat-box">
+                    <span class="stat-val" id="totalReferrals"><i class="fa-solid fa-spinner fa-spin" style="font-size:1.5rem; color:#888;"></i></span>
+                    <span class="stat-label">Friends Invited</span>
+                </div>
+                <div class="stat-box">
+                    <span class="stat-val" style="color:var(--accent-cyan);" id="totalPoints"><i class="fa-solid fa-spinner fa-spin" style="font-size:1.5rem; color:#888;"></i></span>
+                    <span class="stat-label">Points Earned</span>
+                </div>
+            </section>
 
-    <div class="milestone-container">
-        <div class="ms-header">
-            <span>Road to Glory</span>
-            <span class="ms-reward" id="milestoneRewardText"><i class="fa-solid fa-trophy"></i> Loading...</span>
-        </div>
-        <div class="ms-bar-bg">
-            <div class="ms-bar-fill" id="milestoneBar"></div>
-        </div>
-        <div class="ms-footer">Only <span class="ms-highlight" id="invitesRemaining">...</span> invites left to unlock!</div>
-    </div>
+            <div class="ms-header">
+                <span>Road to Glory</span>
+                <span class="ms-reward" id="milestoneRewardText"><i class="fa-solid fa-trophy"></i> Loading...</span>
+            </div>
+            <div class="ms-bar-bg">
+                <div class="ms-bar-fill" id="milestoneBar"></div>
+            </div>
+            <div class="ms-footer">Only <span class="ms-highlight" id="invitesRemaining">...</span> invites left to unlock!</div>
 
-    <section class="referral-section">
-        <div class="referral-box">
             <div class="rb-title">Your Unique Invite Code</div>
             <div class="rb-subtitle">Share this link to get <span style="color:var(--accent-orange); font-weight:bold;">200 PTS</span> per referral</div>
             
-            <div class="code-display-wrap">
+            <div class="code-display-wrap" onclick="copyCode()">
                 <div class="code-text" id="inviteCode">LOADING...</div>
-                <button class="copy-btn" onclick="copyCode()"><i class="fa-regular fa-copy"></i></button>
+                <button class="copy-btn"><i class="fa-regular fa-copy"></i></button>
             </div>
 
             <div class="share-buttons">
                 <button class="share-btn btn-wa" onclick="shareWhatsApp()">
-                    <i class="fa-brands fa-whatsapp" style="font-size:1.2rem;"></i> WhatsApp
+                    <i class="fa-brands fa-whatsapp" style="font-size:1.4rem;"></i> WhatsApp
                 </button>
                 <button class="share-btn btn-sys" onclick="shareSystem()">
                     <i class="fa-solid fa-share-nodes"></i> Share App
                 </button>
             </div>
 
-            <div class="qr-btn" onclick="openQrModal()"><i class="fa-solid fa-qrcode"></i> Show App QR Code</div>
-        </div>
-    </section>
-
-    <section class="how-it-works">
-        <h2 class="section-title">How To <span style="color:var(--accent-purple)">Win Big</span></h2>
-        
-        <div class="step-row">
-            <div class="step-icon"><i class="fa-solid fa-paper-plane"></i></div>
-            <div class="step-content">
-                <h4>1. Share Your App Link</h4>
-                <p>Send your unique app invite link to your gaming buddies so they download Tournyx.</p>
-            </div>
+            <button class="qr-btn" onclick="openQrModal()"><i class="fa-solid fa-qrcode"></i> Show App QR Code</button>
         </div>
 
-        <div class="step-row">
-            <div class="step-icon" style="color:var(--accent-purple); border-color:rgba(189,0,255,0.3); background:rgba(189,0,255,0.1);"><i class="fa-solid fa-user-plus"></i></div>
-            <div class="step-content">
-                <h4>2. Friend Registers</h4>
-                <p>Your friend creates a Tournyx account using your link (which pre-fills your referral code).</p>
+        <section class="how-it-works">
+            <h2 class="section-title">How To <span style="color:var(--accent-purple)">Win Big</span></h2>
+            
+            <div class="step-row">
+                <div class="step-icon"><i class="fa-solid fa-paper-plane"></i></div>
+                <div class="step-content">
+                    <h4>1. Share Your App Link</h4>
+                    <p>Send your unique app invite link to your gaming buddies so they download Tournyx.</p>
+                </div>
             </div>
-        </div>
 
-        <div class="step-row">
-            <div class="step-icon" style="color:var(--accent-green); border-color:rgba(0,255,127,0.3); background:rgba(0,255,127,0.1);"><i class="fa-solid fa-coins"></i></div>
-            <div class="step-content">
-                <h4>3. Earn PTS & Milestones</h4>
-                <p>You instantly get 200 PTS. Keep inviting to unlock Elite Passes and Cash Prizes up to 100 referrals!</p>
+            <div class="step-row">
+                <div class="step-icon" style="color:var(--accent-purple); border-color:rgba(189,0,255,0.3); background:rgba(189,0,255,0.1);"><i class="fa-solid fa-user-plus"></i></div>
+                <div class="step-content">
+                    <h4>2. Friend Registers</h4>
+                    <p>Your friend creates a Tournyx account using your link (which pre-fills your referral code).</p>
+                </div>
             </div>
-        </div>
-    </section>
+
+            <div class="step-row">
+                <div class="step-icon" style="color:var(--accent-green); border-color:rgba(0,255,127,0.3); background:rgba(0,255,127,0.1);"><i class="fa-solid fa-coins"></i></div>
+                <div class="step-content">
+                    <h4>3. Earn PTS & Milestones</h4>
+                    <p>You instantly get 200 PTS. Keep inviting to unlock Elite Passes and Cash Prizes up to 100 referrals!</p>
+                </div>
+            </div>
+        </section>
+    </div>
 
     <div id="qrModal" class="modal-overlay">
         <div class="modal-content">
-            <i class="fa-solid fa-xmark close-modal" onclick="closeQrModal()"></i>
-            <h2 class="modal-title">Scan to Download App</h2>
-            <p style="color:#aaa; font-size:0.85rem;">Let your friend scan this code to instantly open the app download link with your code attached.</p>
+            <i class="fa-solid fa-xmark close-modal" onclick="closeQrModal(); triggerHaptic();"></i>
+            <h2 class="modal-title">Scan to Download</h2>
+            <p style="color:#aaa; font-size:0.85rem; line-height: 1.4;">Let your friend scan this code to instantly download the Tournyx APK.</p>
             
             <div id="qrcode"></div>
             
-            <button class="share-btn btn-sys" style="width:100%; margin-top:10px;" onclick="closeQrModal()">Done</button>
+            <button class="share-btn btn-sys" style="width:100%; margin-top:10px;" onclick="closeQrModal(); triggerHaptic();">Done</button>
         </div>
     </div>
 
     <div id="customToast">Notification</div>
 
     <footer class="app-footer">
-        <div class="footer-logo"><img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEg_20wCR-WBMpQmw3vxcYUf-vxIO1PYDJoQN_Sid3UDjA9tf0cuX0eH40jbzHoJad4cxbnjhPjqfCw1Z5V1LhgN9zFuIQC0fJjecTy3D9PFu5WjR2H1wHwTD1bUGnXY_NiApWn5gMs6velcQngSzKoP1yHzX0cVsFSUFM8zIefcbiPayY7680Kz0V0ZAAE/s1264/1000093706.png" style="width:20px;"> TOURNYX</div>
-        <div class="footer-text">Built for Gamers, By Gamers.</div>
+        © 2026 TOURNYX. All rights reserved.<br>
+        <div style="margin-top: 5px; font-style: italic; color: #777; font-size: 0.8rem;">made with 🔥 for gamers</div>
+        <div style="margin-top: 15px; font-size: 0.85rem; color: #888; font-family: var(--font-head); letter-spacing: 1px;">
+            Powered by <span style="font-weight: 900; background: var(--accent-gradient); -webkit-background-clip: text; -webkit-text-fill-color: transparent; letter-spacing: 1px;">QUVA</span>
+        </div>
     </footer>
 
     <nav class="bottom-nav">
@@ -344,7 +413,7 @@
         </a>
         
         <div class="fab-slot">
-            <div class="floating-plus" onclick="window.location.href='tournament.html'">
+            <div class="floating-plus" onclick="window.location.href='tournament.html'; triggerHaptic();">
                 <i class="fa-solid fa-plus"></i>
             </div>
         </div>
@@ -353,29 +422,48 @@
             <i class="fa-solid fa-shield-halved"></i>
             <span>Clan</span>
         </a>
-        <a class="nav-item" href="wallet.html">
-            <i class="fa-solid fa-wallet"></i>
-            <span>Wallet</span>
+        <a class="nav-item" href="tickets.html">
+            <div class="tx-ticket-composite">
+                <i class="fa-solid fa-ticket"></i>
+                <b class="tx-text">TX</b>
+            </div>
+            <span>Tickets</span>
         </a>
-        <a class="nav-item" href="profile.html">
+        <a class="nav-item active" href="profile.html">
             <i class="fa-solid fa-user"></i>
             <span>Profile</span>
         </a>
     </nav>
 
     <script>
-        // --- 1. CONFIGURATION & AUTH LOGIC ---
+        // --- 1. CONFIGURATION & SECURE API LOGIC ---
         const API_URL = "https://script.google.com/macros/s/AKfycbyqqTpgaflxKJ9xH0jq7mJ_jLzcoNhas3gNo0h5gvoa_6r5Ae9NFxJAJp7ZoYNnMRKl/exec"; 
         
-        // We only use localStorage to know WHO the user is, we don't save stats to it.
         let sessionUser = JSON.parse(localStorage.getItem('tournyx_user'));
 
-        // REPLACE THIS WITH YOUR ACTUAL APP DOWNLOAD OR SMART LINK
-        const APP_DOWNLOAD_LINK = "https://tournyx.live/app?ref="; 
+        // Smart Link points directly to your domain's register page with ref tag.
+        const APP_DOWNLOAD_LINK = "https://tournyx.in/register.html?ref="; 
+        
+        // Exact APK path for the QR Code
+        const DIRECT_APK_LINK = "https://tournyx.in/Tournyx Esports (Beta).apk";
         
         let dynamicShareUrl = "";
         let shareMessage = "";
         let qrGenerated = false;
+
+        async function secureFetch(payload) {
+            try {
+                const response = await fetch(API_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'text/plain' },
+                    body: JSON.stringify(payload)
+                });
+                return await response.json();
+            } catch (error) {
+                console.error("Fetch Error:", error);
+                throw error;
+            }
+        }
 
         document.addEventListener('DOMContentLoaded', () => {
             if (!sessionUser || sessionUser.email === "guest@tournyx.com") {
@@ -385,34 +473,36 @@
             }
             
             // Build Dynamic Links based on the session ID
-            let userCode = sessionUser.inviteCode || "TRNX-GUEST";
+            let userCode = sessionUser.inviteCode || "TRNX-" + Math.floor(Math.random() * 9000 + 1000);
             dynamicShareUrl = `${APP_DOWNLOAD_LINK}${userCode}`;
             
-            shareMessage = `Hey! Join me on Tournyx to play esports tournaments and win cash.\n\n🏆 Download the app and use my code *${userCode}* to get 50 Bonus Points instantly!\n\n👉 Download App: ${dynamicShareUrl}`;
+            shareMessage = `Hey! Join me on Tournyx to play esports tournaments and win cash.\n\n🏆 Download the app and use my code *${userCode}* to get Bonus Points instantly!\n\n👉 Register Here: ${dynamicShareUrl}`;
             
             document.getElementById('inviteCode').innerText = userCode;
 
-            // Fetch accurate, live referral stats securely from cloud ONLY
+            // Fetch accurate, live referral stats securely from cloud ONLY using POST
             syncLiveStats();
         });
+
+        function triggerHaptic() { if(navigator.vibrate) navigator.vibrate(40); }
 
         // --- 2. UX HELPERS ---
         function showToast(msg, isError = false) {
             const t = document.getElementById('customToast');
             t.innerHTML = `<i class="fa-solid fa-circle-check"></i> ${msg}`;
             t.className = "show";
-            t.style.backgroundColor = isError ? "var(--accent-red)" : "var(--accent-green)";
+            t.style.backgroundColor = isError ? "var(--accent-red)" : (document.documentElement.classList.contains('theme-vip') ? "#FFD700" : "var(--accent-cyan)");
             t.style.color = isError ? "white" : "#000";
+            t.style.boxShadow = isError ? "0 8px 25px rgba(255,77,77,0.6)" : (document.documentElement.classList.contains('theme-vip') ? "0 8px 25px rgba(255,215,0,0.6)" : "0 8px 25px rgba(0,242,255,0.6)");
+            triggerHaptic();
             setTimeout(() => t.className = "", 3000);
         }
 
-        // --- 3. LIVE CLOUD SYNC (NO LOCAL STORAGE SAVING) ---
+        // --- 3. LIVE CLOUD SYNC ---
         function syncLiveStats() {
-            fetch(API_URL + "?action=sync_user&email=" + encodeURIComponent(sessionUser.email))
-            .then(res => res.json())
+            secureFetch({ action: 'sync_user', email: sessionUser.email })
             .then(data => {
                 if(data.status === "success" && data.data) {
-                    // We only render from the server payload. Nothing is saved to local storage.
                     renderStats(data.data);
                 }
             }).catch(e => {
@@ -480,16 +570,19 @@
 
         // --- 4. SHARING ENGINES ---
         function copyCode() {
+            triggerHaptic();
             const code = document.getElementById('inviteCode').innerText;
             navigator.clipboard.writeText(code).then(() => showToast("Invite Code Copied!"));
         }
 
         function shareWhatsApp() {
+            triggerHaptic();
             const waUrl = `https://api.whatsapp.com/send?text=${encodeURIComponent(shareMessage)}`;
             window.open(waUrl, '_blank');
         }
 
         function shareSystem() {
+            triggerHaptic();
             if (navigator.share) {
                 navigator.share({
                     title: 'Join Tournyx Esports',
@@ -504,13 +597,14 @@
 
         // --- 5. QR CODE GENERATOR ---
         function openQrModal() {
+            triggerHaptic();
             document.getElementById('qrModal').classList.add('active');
             
-            // Only generate once to save resources
+            // Only generate once to save resources, pointing DIRECTLY to APK
             if(!qrGenerated) {
-                document.getElementById('qrcode').innerHTML = ""; // Clear loader
+                document.getElementById('qrcode').innerHTML = ""; 
                 new QRCode(document.getElementById("qrcode"), {
-                    text: dynamicShareUrl,
+                    text: DIRECT_APK_LINK,
                     width: 200,
                     height: 200,
                     colorDark : "#000000",
@@ -535,39 +629,9 @@
             u(){ this.x+=this.vx; this.y+=this.vy; if(this.x<0||this.x>canvas.width)this.vx*=-1; if(this.y<0||this.y>canvas.height)this.vy*=-1; }
             d(){ ctx.fillStyle='rgba(0,242,255,0.3)'; ctx.beginPath(); ctx.arc(this.x,this.y,this.s,0,Math.PI*2); ctx.fill(); }
         }
-        for(let i=0;i<50;i++) particles.push(new P());
+        for(let i=0;i<40;i++) particles.push(new P());
         function anim(){ ctx.clearRect(0,0,canvas.width,canvas.height); particles.forEach(p=>{p.u();p.d()}); requestAnimationFrame(anim); }
         anim();
     </script>
-    <script>
-    function tournyxOneSignalSetup() {
-        let user = JSON.parse(localStorage.getItem('tournyx_user'));
-        
-        if (user && user.email && typeof median !== 'undefined' && median.onesignal) {
-            let cleanEmail = user.email.toLowerCase().trim();
-            
-            // 1. Set the Official External ID
-            if(median.onesignal.setExternalUserId) {
-                median.onesignal.setExternalUserId({ externalId: cleanEmail });
-            }
-
-            // 2. Set an Email TAG (The Ultimate Failsafe)
-            if(median.onesignal.sendTags) {
-                median.onesignal.sendTags({
-                    tags: { 
-                        "user_email": cleanEmail,
-                        "user_status": "active" 
-                    }
-                });
-            }
-        }
-    }
-
-    // Fire when Median bridge is fully loaded inside the app
-    document.addEventListener("median_library_ready", tournyxOneSignalSetup);
-    
-    // Fallback for regular web browsers
-    document.addEventListener("DOMContentLoaded", tournyxOneSignalSetup);
-</script>
 </body>
 </html>
