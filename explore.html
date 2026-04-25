@@ -725,23 +725,10 @@
                         </div>
                     </div>
 
-                    <div class="tournyx-ad-slot" id="overviewAdSlotWrapper">
-                <div id="overviewSponsorContent" style="display:none; width:100%; height:100%;"></div>
-                <div id="overviewAdsterraContent" style="display:none; width:100%; text-align:center; overflow:hidden; border-radius:12px;">
-                    <script>
-  atOptions = {
-    'key' : '3435a0d810065b1a92465c0ff9aff6e9',
-    'format' : 'iframe',
-    'height' : 50,
-    'width' : 320,
-    'params' : {}
-  };
-</script>
-<script src="https://www.highperformanceformat.com/3435a0d810065b1a92465c0ff9aff6e9/invoke.js"></script>
-
-                </div>
+                    <div class="tournyx-ad-slot" id="overviewAdSlotWrapper">     
             </div>
-        </div> <div class="dm-tab-content" id="dtTabMatches">
+                </div> 
+         <div class="dm-tab-content" id="dtTabMatches">
                     <div class="dm-section">
                         <div class="dm-sec-title"><i class="fa-solid fa-key"></i> Room Details</div>
                         <div id="roomDetailsArea"></div>
@@ -769,22 +756,9 @@
                     <div id="prizeDistributionArea"></div>
 
                     <div class="tournyx-ad-slot" id="prizeAdSlotWrapper">
-                <div id="prizeSponsorContent" style="display:none; width:100%; height:100%;"></div>
-                <div id="prizeAdsterraContent" style="display:none; width:100%; text-align:center; overflow:hidden; border-radius:12px;">
-                    <script>
-  atOptions = {
-    'key' : '3435a0d810065b1a92465c0ff9aff6e9',
-    'format' : 'iframe',
-    'height' : 50,
-    'width' : 320,
-    'params' : {}
-  };
-</script>
-<script src="https://www.highperformanceformat.com/3435a0d810065b1a92465c0ff9aff6e9/invoke.js"></script>
-
+                  </div> 
                 </div>
-            </div>
-        </div> <div class="dm-tab-content" id="dtTabRules">
+                <div class="dm-tab-content" id="dtTabRules">
                     <div class="dm-sec-title"><i class="fa-solid fa-clipboard-list"></i> General Rules</div>
                     <div style="background:rgba(0,0,0,0.5); padding:15px; border-radius:16px; border-left: 4px solid var(--accent-cyan);">
                         <div style="font-size:0.9rem; color:#ccc; line-height:1.6; word-wrap: break-word;" id="dtRulesText"></div>
@@ -2509,7 +2483,17 @@
 
                 let registeredTeams = [];
                 if(detailsData.status === 'success') {
-                    registeredTeams = detailsData.data.map(t => String(t.clan).toLowerCase().trim());
+                    registeredTeams = detailsData.data.map(t => {
+                        let cName = String(t.clan);
+                        // Extract the real clan name out of the JSON string
+                        if (cName.startsWith("{")) {
+                            try {
+                                let parsed = JSON.parse(cName);
+                                cName = parsed.name || parsed.username || cName;
+                            } catch(e) {}
+                        }
+                        return cName.toLowerCase().trim();
+                    });
                 }
                 
                 let matchingClans = userClans.filter(c => {
