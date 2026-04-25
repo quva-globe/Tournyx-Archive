@@ -23,6 +23,11 @@
                 document.documentElement.style.setProperty('--accent-cyan', t.cyan);
                 document.documentElement.style.setProperty('--accent-purple', t.purple);
             }
+            
+            let user = JSON.parse(localStorage.getItem('tournyx_user'));
+            if (user && String(user.is_premium).toLowerCase() === 'true') {
+                document.documentElement.classList.add('theme-vip');
+            }
         })();
     </script>
 
@@ -38,11 +43,18 @@
             --accent-orange: #ff9900;
             --accent-green: #00ff7f;
             --accent-red: #ff4d4d;
-            --accent-gradient: linear-gradient(90deg, var(--accent-purple), var(--accent-cyan));
+            --accent-gradient: linear-gradient(135deg, var(--accent-purple), var(--accent-cyan));
             --text-main: #ffffff;
             --text-muted: #a0a0b0;
             --font-head: 'Orbitron', sans-serif;
             --font-body: 'Rajdhani', sans-serif;
+        }
+
+        html.theme-vip {
+            --accent-cyan: #FFD700;
+            --accent-purple: #FFA500;
+            --accent-gradient: linear-gradient(135deg, #FFE87C, #D4AF37, #FF8C00);
+            --card-border: rgba(212, 175, 55, 0.3);
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
@@ -52,11 +64,11 @@
             color: var(--text-main);
             font-family: var(--font-body);
             overflow-x: hidden;
-            padding-bottom: 100px; 
-            padding-top: 70px;
+            padding-bottom: calc(100px + env(safe-area-inset-bottom, 0px)); 
+            padding-top: calc(75px + env(safe-area-inset-top, 0px));
         }
 
-        /* --- ULTIMATE FEATURE 1: DYNAMIC BACKGROUND AURA --- */
+        /* --- DYNAMIC BACKGROUND AURA --- */
         #dynamic-aura {
             position: fixed; top: -50%; left: -50%; width: 200%; height: 200%; z-index: -2;
             background: radial-gradient(circle at 50% 50%, rgba(189,0,255,0.15) 0%, rgba(7,3,17,1) 40%);
@@ -90,8 +102,12 @@
 
         @keyframes fadeIn { from{opacity:0; transform:translateY(15px);} to{opacity:1; transform:translateY(0);} }
 
-        /* --- ULTIMATE FEATURE 9: AUTO-RENEWAL BADGE --- */
+        /* --- AUTO-RENEWAL BADGE --- */
         .no-auto-renew { display: inline-flex; align-items: center; gap: 6px; background: rgba(0,255,127,0.1); border: 1px solid rgba(0,255,127,0.3); color: var(--accent-green); padding: 6px 15px; border-radius: 20px; font-family: var(--font-head); font-size: 0.8rem; font-weight: bold; margin-bottom: 25px; box-shadow: 0 0 15px rgba(0,255,127,0.2);}
+        
+        .expiry-alert { display: none; margin-top: -15px; margin-bottom: 25px; background: rgba(255, 153, 0, 0.1); border: 1px solid rgba(255, 153, 0, 0.4); color: var(--accent-orange); padding: 10px 15px; border-radius: 12px; font-family: var(--font-head); font-size: 0.85rem; font-weight: bold; align-items: center; justify-content: center; gap: 8px; animation: popIn 0.5s ease;}
+        .expiry-alert.active { display: flex; }
+        .theme-vip .expiry-alert { color: #FFD700; border-color: rgba(255, 215, 0, 0.4); background: rgba(255, 215, 0, 0.1); }
 
         /* --- BILLING TOGGLE --- */
         .billing-toggle-wrapper { display: flex; justify-content: center; align-items: center; gap: 15px; margin-bottom: 35px; font-family: var(--font-head); font-weight: bold; font-size: 0.95rem; }
@@ -106,11 +122,10 @@
         input:checked + .slider { border-color: var(--accent-purple); }
         input:checked + .slider:before { transform: translateX(33px); background-color: var(--accent-purple); box-shadow: 0 0 10px var(--accent-purple); }
 
-        /* --- ULTIMATE FEATURE 12: SCROLL SNAP PRICING PLANS --- */
+        /* --- SCROLL SNAP PRICING PLANS --- */
         .plans-wrapper { width: 100%; overflow-x: auto; scroll-snap-type: x mandatory; padding: 10px 0 30px; display: flex; gap: 20px; }
         .plans-wrapper::-webkit-scrollbar { display: none; }
-        
-        .plan-spacer { flex: 0 0 calc(50vw - 160px); } /* Centers the first card on mobile */
+        .plan-spacer { flex: 0 0 calc(50vw - 160px); } 
 
         /* --- GLASSMORPHISM 2.0 CARDS --- */
         .plan-card {
@@ -122,7 +137,6 @@
             display: flex; flex-direction: column;
         }
         
-        /* Plan Themes */
         .plan-basic { border-top: 4px solid #666; }
         .plan-elite { 
             border: 1px solid rgba(0, 242, 255, 0.5); border-top: 4px solid var(--accent-cyan);
@@ -135,7 +149,6 @@
             background: linear-gradient(180deg, rgba(189, 0, 255, 0.08) 0%, rgba(20, 20, 35, 0.9) 100%);
         }
 
-        /* --- ULTIMATE FEATURE 7: PREMIUM SPARKLES --- */
         .sparkle-container { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; overflow: hidden; z-index: 0; opacity: 0.5;}
         .sparkle { position: absolute; width: 2px; height: 2px; background: white; border-radius: 50%; box-shadow: 0 0 5px white; animation: floatUp 3s infinite linear; }
         @keyframes floatUp { 0% { transform: translateY(100%) scale(0); opacity: 0; } 50% { opacity: 1; transform: translateY(50%) scale(1); } 100% { transform: translateY(0%) scale(0); opacity: 0; } }
@@ -161,7 +174,7 @@
 
         .feature-list { list-style: none; margin-bottom: 30px; flex-grow: 1; position: relative; z-index: 2;}
         
-        /* --- ULTIMATE FEATURE 10: INTERACTIVE TOOLTIPS --- */
+        /* INTERACTIVE TOOLTIPS */
         .feature-list li { display: flex; align-items: flex-start; gap: 12px; font-size: 0.95rem; color: #ddd; margin-bottom: 15px; transition: 0.3s; cursor: help; position: relative;}
         .feature-list li:hover { color: white; transform: translateX(5px); }
         .feature-list li i { color: var(--accent-green); font-size: 1.1rem; filter: drop-shadow(0 0 5px rgba(0,255,127,0.5)); margin-top: 2px;}
@@ -188,7 +201,7 @@
         .btn-org { background: var(--accent-purple); color: white; box-shadow: 0 5px 20px rgba(189,0,255,0.4); }
         .btn-org:hover { transform: translateY(-5px); box-shadow: 0 10px 25px rgba(189,0,255,0.6); }
         
-        /* ULTIMATE FEATURE 11: INTELLIGENT PLAN LOCK */
+        /* INTELLIGENT PLAN LOCK */
         .btn-active-plan { 
             background: rgba(0, 255, 127, 0.1) !important; 
             color: var(--accent-green) !important; 
@@ -196,6 +209,7 @@
             box-shadow: inset 0 0 15px rgba(0, 255, 127, 0.2) !important; 
             pointer-events: none; transform: none !important;
         }
+        .btn-downgrade { background: rgba(255,77,77,0.1); color: var(--accent-red); border: 1px solid var(--accent-red); box-shadow: none; }
 
         /* --- OFFERED BY TOURNYX --- */
         .perks-section { padding: 20px 20px 50px; text-align: center; max-width: 800px; margin: 0 auto; }
@@ -213,7 +227,7 @@
         .perk-item:hover i { transform: scale(1.2) rotate(5deg); }
         .perk-item span { font-family: var(--font-head); font-size: 0.85rem; color: white; font-weight: bold; text-transform: uppercase; }
 
-        /* --- ULTIMATE FEATURE 14: NEON PAYMENT OVERLAY --- */
+        /* --- NEON PAYMENT OVERLAY --- */
         .full-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(7,3,17,0.98); z-index: 9999; display: flex; flex-direction: column; align-items: center; justify-content: center; opacity: 0; pointer-events: none; transition: 0.4s; backdrop-filter: blur(10px);}
         .full-overlay.active { opacity: 1; pointer-events: all; }
         
@@ -235,17 +249,30 @@
         /* Footer */
         .app-footer { text-align: center; padding: 20px 20px 100px 20px; color: #555; font-size: 0.75rem; font-family: var(--font-body); letter-spacing: 1px; border-top: 1px solid var(--card-border); margin-top: 20px; }
 
-        /* Bottom Nav */
-        .bottom-nav { position: fixed; bottom: 0; left: 0; width: 100%; height: calc(65px + env(safe-area-inset-bottom)); background: rgba(7, 3, 17, 0.95); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); display: flex; justify-content: space-between; align-items: flex-start; padding: 10px 5px env(safe-area-inset-bottom); border-top: 1px solid var(--card-border); z-index: 1000; box-shadow: 0 -10px 30px rgba(0,0,0,0.8); transform: translateZ(0);}
-        .nav-item { display: flex; flex-direction: column; align-items: center; justify-content: flex-start; color: #666; text-decoration: none; font-size: 0.65rem; font-family: var(--font-head); font-weight: bold; flex: 1; transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); position: relative; will-change: transform, color;}
-        .nav-item span { margin-top: 4px; transition: 0.3s; }
-        .nav-item i { font-size: 1.3rem; transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+        /* --- PERFECTLY ALIGNED BOTTOM NAVIGATION --- */
+        .bottom-nav { position: fixed; bottom: 0; left: 0; width: 100%; height: calc(65px + env(safe-area-inset-bottom, 0px)); background: rgba(7, 3, 17, 0.92); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); display: flex; justify-content: space-between; align-items: flex-start; padding: 10px 2px env(safe-area-inset-bottom, 0px); border-top: 1px solid rgba(255,255,255,0.05); z-index: 1000; box-shadow: 0 -10px 30px rgba(0,0,0,0.6); transform: translateZ(0);}
+        .nav-item { display: flex; flex-direction: column; align-items: center; justify-content: flex-start; color: #666; text-decoration: none; font-size: 0.6rem; font-family: var(--font-head); font-weight: bold; flex: 1; transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); position: relative; padding: 0 2px; text-align: center;}
+        .nav-item span { margin-top: 4px; transition: 0.3s; letter-spacing: -0.3px;}
+        
+        .nav-item > i, .nav-item > .tx-icon, .nav-item > .tx-ticket-composite { 
+            font-size: 1.2rem; transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); color: #666; background: none; -webkit-text-fill-color: #666; filter: none; font-style: normal;
+            height: 24px; width: 24px; display: flex; align-items: center; justify-content: center; 
+        }
+        .tx-ticket-composite i { display: block; line-height: 1; font-size: 1.2rem; color: inherit; -webkit-text-fill-color: inherit; transition: 0.3s; background: inherit; filter: inherit; -webkit-background-clip: inherit;}
+
         .nav-item.active { color: var(--accent-cyan); }
-        .nav-item.active i { transform: translateY(-4px); color: var(--accent-cyan); filter: drop-shadow(0 0 10px var(--accent-cyan)); }
-        .nav-item.active span { transform: translateY(2px); color: white; }
+        html.theme-vip .nav-item.active { color: #FFD700; }
+        
+        .nav-item.active > .tx-ticket-composite { transform: translateY(-4px); }
+        .nav-item.active > i, .nav-item.active > .tx-icon, .nav-item.active > .tx-ticket-composite i { transform: translateY(-4px); background: linear-gradient(135deg, var(--accent-purple), var(--accent-cyan)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; filter: drop-shadow(0 0 10px var(--accent-cyan)); font-style: normal; }
+        html.theme-vip .nav-item.active > i, html.theme-vip .nav-item.active > .tx-icon, html.theme-vip .nav-item.active > .tx-ticket-composite i { background: linear-gradient(135deg, #FFE87C, #FF8C00); -webkit-background-clip: text; -webkit-text-fill-color: transparent; filter: drop-shadow(0 0 10px rgba(212,175,55,0.8)); }
+        .nav-item.active .tx-ticket-composite i { transform: translateY(0); }
+        
+        .nav-item.active span { transform: translateY(2px); color: white; text-shadow: 0 0 5px rgba(255,255,255,0.5);}
         .fab-slot { flex: 1.2; display: flex; justify-content: center; position: relative; height: 100%; align-items: center; }
-        .floating-plus { position: absolute; top: -30px; left: 50%; transform: translateX(-50%); width: 58px; height: 58px; background: linear-gradient(135deg, var(--accent-cyan), var(--accent-purple)); border-radius: 50%; display: flex; align-items: center; justify-content: center; border: 4px solid var(--primary-bg); box-shadow: 0 10px 25px rgba(189,0,255,0.5); color: #fff; font-size: 1.8rem; cursor: pointer; transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); z-index: 10; will-change: transform;}
-        .floating-plus:active { transform: translateX(-50%) scale(0.95); box-shadow: 0 5px 15px rgba(189,0,255,0.4); }
+        .floating-plus { position: absolute; top: -25px; left: 50%; transform: translateX(-50%); width: 54px; height: 54px; background: linear-gradient(135deg, var(--accent-cyan), var(--accent-purple)); border-radius: 50%; display: flex; align-items: center; justify-content: center; border: 4px solid var(--primary-bg); box-shadow: 0 10px 25px rgba(189,0,255,0.4); color: #fff; font-size: 1.6rem; cursor: pointer; transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); z-index: 10; }
+        html.theme-vip .floating-plus { background: linear-gradient(135deg, #FFE87C, #D4AF37); box-shadow: 0 10px 25px rgba(212,175,55,0.4); border-color: #000; color: #000; }
+        .floating-plus:hover { transform: translateX(-50%) scale(1.1) rotate(90deg); box-shadow: 0 15px 35px rgba(0,242,255,0.6); }
 
         @media (min-width: 850px) { .bottom-nav { display: none !important; } .plan-spacer { display: none; } .plans-wrapper { justify-content: center; overflow-x: visible; } }
     </style>
@@ -280,6 +307,10 @@
             <i class="fa-solid fa-bolt"></i> ONE-TIME SECURE PAYMENT. NO AUTO-RENEWAL.
         </div>
     </section>
+    
+    <div class="expiry-alert" id="expiryAlertBox">
+        <i class="fa-solid fa-hourglass-half"></i> <span id="expiryText">Plan expires in 14 days</span>
+    </div>
 
     <div class="billing-toggle-wrapper">
         <span class="toggle-label active" id="lblMonth">Monthly</span>
@@ -381,6 +412,20 @@
         <div class="footer-logo"><img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEg_20wCR-WBMpQmw3vxcYUf-vxIO1PYDJoQN_Sid3UDjA9tf0cuX0eH40jbzHoJad4cxbnjhPjqfCw1Z5V1LhgN9zFuIQC0fJjecTy3D9PFu5WjR2H1wHwTD1bUGnXY_NiApWn5gMs6velcQngSzKoP1yHzX0cVsFSUFM8zIefcbiPayY7680Kz0V0ZAAE/s1264/1000093706.png" style="width:20px; vertical-align:middle;"> TOURNYX PRO</div>
         <div class="footer-text" style="margin-top:5px; font-style:italic; color:#777;">Secure processing via UPI network.</div>
     </footer>
+    
+    <nav class="bottom-nav">
+        <a class="nav-item" href="index.html" onclick="triggerHaptic()"><i class="fa-solid fa-house"></i><span>Home</span></a>
+        <a class="nav-item" href="explore.html" onclick="triggerHaptic()"><i class="fa-solid fa-compass"></i><span>Explore</span></a>
+        <a class="nav-item" href="matches.html" onclick="triggerHaptic()"><i class="fa-solid fa-trophy"></i><span>Matches</span></a>
+        <div class="fab-slot">
+            <div class="floating-plus" onclick="window.location.href='tournament.html'; triggerHaptic();"><i class="fa-solid fa-plus"></i></div>
+        </div>
+        <a class="nav-item" href="clans.html" onclick="triggerHaptic()"><i class="fa-solid fa-shield-halved"></i><span>Clan</span></a>
+        <a class="nav-item" href="tickets.html" onclick="triggerHaptic()">
+            <div class="tx-ticket-composite"><i class="fa-solid fa-ticket"></i><b class="tx-text">TX</b></div><span>Tickets</span>
+        </a>
+        <a class="nav-item active" href="profile.html" onclick="triggerHaptic()"><i class="fa-solid fa-user"></i><span>Profile</span></a>
+    </nav>
 
     <script>
         // --- 1. CONFIGURATION & LINKS (COSMOFEED/SUPERPROFILE) ---
@@ -395,6 +440,20 @@
             annual_org: "https://cosmofeed.com/pay/org_annual_link_here"
         };
 
+        async function secureFetch(payload) {
+            try {
+                const response = await fetch(API_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'text/plain' },
+                    body: JSON.stringify(payload)
+                });
+                return await response.json();
+            } catch (error) {
+                console.error("Fetch Error:", error);
+                throw error;
+            }
+        }
+
         document.addEventListener("DOMContentLoaded", () => {
             if (!currentUser || currentUser.email === "guest@tournyx.com") {
                 alert("Please log in to upgrade.");
@@ -402,17 +461,14 @@
                 return;
             }
             
-            // Generate VFX Sparkles
             generateSparkles('sparklesElite');
             generateSparkles('sparklesOrg');
 
-            // Scroll aura listener
             window.addEventListener('scroll', () => {
                 let scrollY = window.scrollY;
                 document.getElementById('dynamic-aura').style.transform = `translateY(${scrollY * 0.2}px)`;
             });
 
-            // Resume flow if returning from Payment Gateway
             checkPendingTransaction();
             syncUserRole();
         });
@@ -423,7 +479,7 @@
         function showToast(msg, isError = false) {
             const t = document.getElementById('customToast');
             t.innerText = msg; t.className = "show";
-            t.style.backgroundColor = isError ? "var(--accent-red)" : "var(--accent-cyan)";
+            t.style.backgroundColor = isError ? "var(--accent-red)" : (document.documentElement.classList.contains('theme-vip') ? "#FFD700" : "var(--accent-cyan)");
             t.style.color = isError ? "white" : "#000";
             triggerHaptic();
             setTimeout(() => t.className = "", 3500);
@@ -487,6 +543,9 @@
                 document.getElementById('durElite').innerText = " / month";
                 document.getElementById('durOrg').innerText = " / month";
             }
+            
+            // Re-evaluate button states if switching between annual/monthly
+            checkUserRole(currentUser.role, currentUser.expiry_date);
         }
 
         function animateValue(id, start, end, duration) {
@@ -501,28 +560,58 @@
             window.requestAnimationFrame(step);
         }
 
-        // --- 4. LIVE SYNC & ROLE ENFORCEMENT ENGINE ---
+        // --- 4. SECURE LIVE SYNC & EXPIRY ENFORCEMENT ENGINE ---
         function syncUserRole() {
-            checkUserRole(currentUser.role);
-            fetch(API_URL + "?action=sync_user&email=" + encodeURIComponent(currentUser.email))
-            .then(res => res.json())
+            // Apply immediately from cache for perceived performance
+            checkUserRole(currentUser.role, currentUser.expiry_date);
+            
+            // Secure sync with DB
+            secureFetch({ action: 'sync_user', email: currentUser.email })
             .then(data => {
                 if(data.status === "success" && data.data) {
                     currentUser.role = data.data.role;
+                    currentUser.expiry_date = data.data.expiry_date;
                     localStorage.setItem('tournyx_user', JSON.stringify(currentUser));
-                    checkUserRole(currentUser.role);
+                    checkUserRole(currentUser.role, currentUser.expiry_date);
                 }
             }).catch(e => console.log("Offline mode - using cached role."));
         }
 
-        function checkUserRole(role) {
+        function checkUserRole(role, expiryDateStr) {
             role = role || 'player';
             const btnRookie = document.getElementById('btnRookie');
             const btnElite = document.getElementById('btnElite');
             const btnOrg = document.getElementById('btnOrg');
             
             const activeHtml = `<i class='fa-solid fa-circle-check'></i> ACTIVE PLAN`;
+            
+            // Check Expiry Logic
+            let isExpired = false;
+            let daysLeft = 0;
+            
+            if (expiryDateStr) {
+                let expiryDate = new Date(expiryDateStr).getTime();
+                let now = new Date().getTime();
+                let diff = expiryDate - now;
+                
+                if (diff <= 0) {
+                    isExpired = true;
+                    // Auto Downgrade visually if expired
+                    role = 'player';
+                    currentUser.role = 'player';
+                    document.documentElement.classList.remove('theme-vip');
+                    document.getElementById('expiryAlertBox').classList.remove('active');
+                } else {
+                    daysLeft = Math.ceil(diff / (1000 * 60 * 60 * 24));
+                    let alertBox = document.getElementById('expiryAlertBox');
+                    document.getElementById('expiryText').innerText = `Plan active. Expires in ${daysLeft} days.`;
+                    alertBox.classList.add('active');
+                }
+            } else {
+                document.getElementById('expiryAlertBox').classList.remove('active');
+            }
 
+            // Default State setup
             btnRookie.className = "btn-upgrade btn-basic"; btnRookie.innerText = "Current Plan"; 
             btnRookie.onclick = () => { triggerHaptic(); showToast("You are on the Free Rookie Tier."); };
             
@@ -534,14 +623,28 @@
 
             if (role === 'elite') {
                 btnRookie.innerText = "Downgrade";
-                btnRookie.onclick = () => { triggerHaptic(); showToast("Plan will revert when billing cycle ends.", true); };
-                btnElite.className = "btn-upgrade btn-active-plan"; btnElite.innerHTML = activeHtml; btnElite.onclick = null;
+                btnRookie.onclick = () => { triggerHaptic(); showToast("Plan will revert to free when current cycle ends.", true); };
+                
+                // Allow upgrade from monthly to yearly OR Elite to Org
+                if (!isAnnual) {
+                    btnElite.innerText = "Upgrade to Yearly";
+                    btnElite.onclick = () => initiateLinkSubscription('Elite Player Yearly', 'elite');
+                } else {
+                    btnElite.className = "btn-upgrade btn-active-plan"; btnElite.innerHTML = activeHtml; btnElite.onclick = null;
+                }
             } 
             else if (role === 'organizer') {
                 btnRookie.innerText = "Downgrade";
-                btnRookie.onclick = () => { triggerHaptic(); showToast("Plan will revert when billing cycle ends.", true); };
+                btnRookie.onclick = () => { triggerHaptic(); showToast("Plan will revert to free when current cycle ends.", true); };
+                
                 btnElite.innerText = "Included in Org Plan"; btnElite.className = "btn-upgrade btn-basic"; btnElite.onclick = null;
-                btnOrg.className = "btn-upgrade btn-active-plan"; btnOrg.innerHTML = activeHtml; btnOrg.onclick = null;
+                
+                if (!isAnnual) {
+                    btnOrg.innerText = "Upgrade to Yearly";
+                    btnOrg.onclick = () => initiateLinkSubscription('Pro Organizer Yearly', 'organizer');
+                } else {
+                    btnOrg.className = "btn-upgrade btn-active-plan"; btnOrg.innerHTML = activeHtml; btnOrg.onclick = null;
+                }
             }
         }
 
@@ -567,17 +670,23 @@
 
             showOverlay('loading', 'Securing Gateway...', 'Redirecting to UPI Payment Page.');
 
-            // Cache the intention so when the user returns, the app knows what to do
+            // Calculate Expiry Date locally
+            let newExpiry = new Date();
+            if (isAnnual) newExpiry.setFullYear(newExpiry.getFullYear() + 1);
+            else newExpiry.setMonth(newExpiry.getMonth() + 1);
+
             const pendingTxn = {
                 id: "SUB" + Date.now() + Math.floor(Math.random() * 1000),
                 role: internalRole,
                 plan: planName,
                 amount: amount,
+                duration: isAnnual ? "Annual" : "Monthly",
+                expiry: newExpiry.toISOString(),
                 timestamp: Date.now()
             };
             localStorage.setItem('tournyx_pending_upgrade', JSON.stringify(pendingTxn));
 
-            // SIMULATED DEV MODE (Bypasses link if links aren't set up yet)
+            // SIMULATED DEV MODE
             if(targetLink.includes("link_here")) {
                 setTimeout(() => {
                     hideOverlay();
@@ -595,12 +704,10 @@
         }
 
         // --- 6. RETURN VERIFICATION LOGIC ---
-        // This runs when the user comes back from Cosmofeed to the app
         function checkPendingTransaction() {
             let pending = localStorage.getItem('tournyx_pending_upgrade');
             if(pending) {
                 let txn = JSON.parse(pending);
-                // If it's been less than 30 minutes since they left, ask if they paid
                 if(Date.now() - txn.timestamp < 1800000) {
                     let didPay = confirm(`Welcome back! Did you successfully complete the payment for the ${txn.plan} plan on the external gateway?`);
                     if(didPay) {
@@ -610,7 +717,6 @@
                         showToast("Upgrade cancelled.");
                     }
                 } else {
-                    // Expired session
                     localStorage.removeItem('tournyx_pending_upgrade');
                 }
             }
@@ -624,23 +730,43 @@
 
             const dateStr = new Date().toLocaleString('en-US', { month: 'short', day: '2-digit', hour: 'numeric', minute: '2-digit', hour12: true });
 
-            const upgradePayload = { action: "upgrade_plan", email: currentUser.email, new_role: pending.role };
-            const ledgerPayload = { action: "add_transaction", email: currentUser.email, txn_id: pending.id, rzp_id: "COSMO_LINK", amount: pending.amount, currency: "INR", type: "Debit", status: "Success" };
+            // Send role and explicit expiry date to backend
+            const upgradePayload = { 
+                action: "upgrade_plan", 
+                email: currentUser.email, 
+                new_role: pending.role,
+                expiry_date: pending.expiry 
+            };
+            
+            const ledgerPayload = { 
+                action: "add_transaction", 
+                email: currentUser.email, 
+                txn_id: pending.id, 
+                rzp_id: "COSMO_LINK", 
+                amount: pending.amount, 
+                currency: "INR", 
+                type: "Debit", 
+                status: "Success" 
+            };
 
             Promise.all([
-                fetch(API_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify(upgradePayload) }),
-                fetch(API_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify(ledgerPayload) })
+                secureFetch(upgradePayload),
+                secureFetch(ledgerPayload)
             ]).then(() => {
                 
                 currentUser.role = pending.role;
+                currentUser.expiry_date = pending.expiry;
+                currentUser.is_premium = true;
                 localStorage.setItem('tournyx_user', JSON.stringify(currentUser));
+                
+                document.documentElement.classList.add('theme-vip');
                 
                 let localTxns = JSON.parse(localStorage.getItem('tournyx_txns')) || [];
                 localTxns.unshift({ id: pending.id, date: dateStr, amount: pending.amount, type: "Debit", title: `${pending.plan} Subscription` });
                 localStorage.setItem('tournyx_txns', JSON.stringify(localTxns));
                 
-                checkUserRole(pending.role); 
-                localStorage.removeItem('tournyx_pending_upgrade'); // Clear cache
+                checkUserRole(pending.role, pending.expiry); 
+                localStorage.removeItem('tournyx_pending_upgrade'); 
 
                 triggerHaptic();
                 showOverlay('success', 'Upgrade Successful!', `Welcome to ${pending.plan}. All perks are now unlocked!`);
