@@ -2,8 +2,8 @@
 <html lang="en">
 <head>
     <link rel="icon" href="https://tournyx.in/favicon.ico" sizes="any">
-<link rel="icon" href="https://tournyx.in/favicon.png" type="image/png" sizes="192x192">
-<link rel="apple-touch-icon" href="https://tournyx.in/apple-touch-icon.png">
+    <link rel="icon" href="https://tournyx.in/favicon.png" type="image/png" sizes="192x192">
+    <link rel="apple-touch-icon" href="https://tournyx.in/apple-touch-icon.png">
 
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
@@ -28,6 +28,10 @@
                     document.documentElement.style.setProperty('--accent-purple', THEMES[tIndex].purple);
                     document.documentElement.style.setProperty('--accent-gradient', `linear-gradient(90deg, ${THEMES[tIndex].purple}, ${THEMES[tIndex].cyan})`);
                 }
+                let user = JSON.parse(localStorage.getItem('tournyx_user'));
+                if (user && String(user.is_premium).toLowerCase() === 'true') {
+                    document.documentElement.classList.add('theme-vip');
+                }
             } catch(e) { console.log("Theme setting bypassed."); }
         })();
     </script>
@@ -37,18 +41,25 @@
         :root {
             --primary-bg: #070311;
             --secondary-bg: #0d061e;
-            --card-bg: rgba(20, 10, 35, 0.7);
-            --card-border: rgba(189, 0, 255, 0.2);
+            --card-bg: rgba(15, 7, 30, 0.7);
+            --card-border: rgba(0, 242, 255, 0.15);
             --accent-cyan: #00f2ff;
             --accent-purple: #bd00ff;
             --accent-orange: #ff9900;
             --accent-green: #00ff7f;
             --accent-red: #ff4d4d;
-            --accent-gradient: linear-gradient(90deg, var(--accent-purple), var(--accent-cyan));
+            --accent-gradient: linear-gradient(135deg, var(--accent-purple), var(--accent-cyan));
             --text-main: #ffffff;
             --text-muted: #a0a0b0;
             --font-head: 'Orbitron', sans-serif;
             --font-body: 'Rajdhani', sans-serif;
+        }
+
+        html.theme-vip {
+            --accent-cyan: #FFD700;
+            --accent-purple: #FFA500;
+            --accent-gradient: linear-gradient(135deg, #FFE87C, #D4AF37, #FF8C00);
+            --card-border: rgba(212, 175, 55, 0.3);
         }
 
         /* --- ULTIMATE SCROLLBAR KILLER --- */
@@ -60,14 +71,15 @@
             color: var(--text-main);
             font-family: var(--font-body);
             overflow-x: hidden;
-            padding-bottom: calc(90px + env(safe-area-inset-bottom)); 
-            padding-top: calc(65px + env(safe-area-inset-top));
+            padding-bottom: calc(100px + env(safe-area-inset-bottom, 0px)); 
+            padding-top: calc(75px + env(safe-area-inset-top, 0px));
         }
 
         /* --- BACKGROUND --- */
         #particles-canvas {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1;
-            background: radial-gradient(circle at 50% 50%, #15062e 0%, #070311 100%);
+            background: radial-gradient(circle at 50% 0%, #15062e 0%, #070311 100%);
+            pointer-events: none;
         }
 
         /* --- TOURNYX TX COMPOSITE TICKET ICON --- */
@@ -83,30 +95,33 @@
 
         /* --- HEADER --- */
         .top-header {
-            position: fixed; top: 0; left: 0; width: 100%; padding: 10px 15px; height: calc(65px + env(safe-area-inset-top));
-            padding-top: calc(10px + env(safe-area-inset-top));
-            background: rgba(7, 3, 17, 0.85); backdrop-filter: blur(15px);
-            border-bottom: 1px solid var(--card-border);
-            display: flex; align-items: center; justify-content: space-between; z-index: 2000; box-shadow: 0 4px 30px rgba(0,0,0,0.5);
+            position: fixed; top: 0; left: 0; width: 100%; height: calc(65px + env(safe-area-inset-top, 0px));
+            padding: env(safe-area-inset-top, 0px) 15px 0 15px; 
+            background: rgba(5, 2, 12, 0.85); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05); z-index: 2000; box-shadow: 0 4px 30px rgba(0,0,0,0.5);
+            display: flex; align-items: center; justify-content: space-between; box-sizing: border-box;
         }
-        .header-left { display: flex; align-items: center; gap: 15px; }
-        .back-btn { color: white; font-size: 1.3rem; text-decoration: none; padding: 5px; transition: 0.3s; cursor: pointer; }
+        .header-left { display: flex; align-items: center; gap: 15px; flex: 1; min-width: 0; max-width: 800px; margin: 0 auto; width: 100%;}
+        .back-btn { color: white; font-size: 1.3rem; text-decoration: none; transition: 0.3s; cursor: pointer; padding: 10px 10px 10px 0; flex-shrink: 0;}
         .back-btn:active { color: var(--accent-cyan); transform: scale(0.9); }
-        .app-title { font-family: var(--font-head); font-size: 1.2rem; font-weight: 700; background: var(--accent-gradient); -webkit-background-clip: text; -webkit-text-fill-color: transparent; text-transform: uppercase; letter-spacing: 1px; }
+        html.theme-vip .back-btn:active { color: #FFD700; }
+        .app-title { font-family: var(--font-head); font-size: 1.15rem; font-weight: 700; background: var(--accent-gradient); -webkit-background-clip: text; -webkit-text-fill-color: transparent; text-transform: uppercase; letter-spacing: 1px; margin: 0;}
 
         /* --- HERO SECTION --- */
-        .hero { text-align: center; padding: 30px 20px 20px; animation: fadeIn 0.4s ease; max-width: 800px; margin: 0 auto; }
-        .hero-icon { font-size: 3rem; color: var(--accent-purple); margin-bottom: 15px; text-shadow: 0 0 20px rgba(189, 0, 255, 0.5); }
-        .hero h1 { font-family: var(--font-head); font-size: 1.8rem; line-height: 1.4; margin-bottom: 5px; text-shadow: 0 0 10px rgba(255,255,255,0.2); }
-        .hero p { color: var(--text-muted); font-size: 1rem; max-width: 400px; margin: 0 auto; }
-        .last-updated { display: inline-block; margin-top: 15px; padding: 5px 15px; border-radius: 20px; background: rgba(189,0,255,0.1); border: 1px solid rgba(189,0,255,0.3); font-size: 0.75rem; color: var(--accent-purple); font-family: var(--font-head); font-weight: bold; }
+        .hero { text-align: center; padding: 25px 20px 20px; animation: fadeIn 0.4s ease; max-width: 800px; margin: 0 auto; }
+        .hero-icon { font-size: 3rem; color: var(--accent-cyan); margin-bottom: 15px; filter: drop-shadow(0 0 20px rgba(0, 242, 255, 0.5)); }
+        html.theme-vip .hero-icon { color: #FFD700; filter: drop-shadow(0 0 20px rgba(255, 215, 0, 0.5)); }
+        .hero h1 { font-family: var(--font-head); font-size: 1.8rem; line-height: 1.3; margin-bottom: 8px; color: white; text-shadow: 0 0 10px rgba(255,255,255,0.2); text-transform: uppercase; font-weight: 900;}
+        .hero p { color: var(--text-muted); font-size: 0.95rem; max-width: 400px; margin: 0 auto; line-height: 1.5;}
+        .last-updated { display: inline-flex; align-items: center; gap: 6px; margin-top: 15px; padding: 6px 15px; border-radius: 20px; background: rgba(0,242,255,0.05); border: 1px solid rgba(0,242,255,0.2); font-size: 0.75rem; color: var(--accent-cyan); font-family: var(--font-head); font-weight: bold; text-transform: uppercase; letter-spacing: 1px; box-shadow: inset 0 0 10px rgba(0,242,255,0.1);}
+        html.theme-vip .last-updated { background: rgba(255,215,0,0.05); border-color: rgba(255,215,0,0.2); color: #FFD700; box-shadow: inset 0 0 10px rgba(255,215,0,0.1); }
 
         /* --- CONTENT CARDS --- */
         .content-container { padding: 10px 20px 20px; max-width: 800px; margin: 0 auto; display: flex; flex-direction: column; gap: 20px; animation: fadeIn 0.6s ease; }
         @keyframes fadeIn { from{opacity:0; transform:translateY(15px);} to{opacity:1; transform:translateY(0);} }
         
-        .policy-card { background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 16px; padding: 25px; backdrop-filter: blur(10px); position: relative; overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.3); transition: 0.3s; }
-        .policy-card:hover { border-color: var(--accent-cyan); transform: translateY(-3px); box-shadow: 0 15px 35px rgba(0,242,255,0.15); }
+        .policy-card { background: var(--card-bg); border: 1px solid rgba(255,255,255,0.05); border-radius: 16px; padding: 25px; backdrop-filter: blur(10px); position: relative; overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.4); transition: 0.3s; }
+        .policy-card:hover { transform: translateY(-3px); box-shadow: 0 15px 35px rgba(0,0,0,0.6), inset 0 0 15px rgba(255,255,255,0.02); }
 
         /* Card Accents */
         .pc-data { border-left: 4px solid var(--accent-cyan); }
@@ -115,39 +130,48 @@
         .pc-rights { border-left: 4px solid var(--accent-orange); }
         .pc-compliance { border-left: 4px solid var(--accent-red); }
 
+        html.theme-vip .pc-data, html.theme-vip .pc-usage, html.theme-vip .pc-security, html.theme-vip .pc-rights { border-left-color: #FFD700; }
+
         .policy-header { display: flex; align-items: center; gap: 12px; margin-bottom: 15px; border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 12px; }
         .policy-icon { font-size: 1.4rem; }
-        .pc-data .policy-icon { color: var(--accent-cyan); text-shadow: 0 0 10px rgba(0,242,255,0.5); }
-        .pc-usage .policy-icon { color: var(--accent-purple); text-shadow: 0 0 10px rgba(189,0,255,0.5); }
-        .pc-security .policy-icon { color: var(--accent-green); text-shadow: 0 0 10px rgba(0,255,127,0.5); }
-        .pc-rights .policy-icon { color: var(--accent-orange); text-shadow: 0 0 10px rgba(255,153,0,0.5); }
-        .pc-compliance .policy-icon { color: var(--accent-red); text-shadow: 0 0 10px rgba(255,77,77,0.5); }
+        .pc-data .policy-icon { color: var(--accent-cyan); filter: drop-shadow(0 0 10px rgba(0,242,255,0.5)); }
+        .pc-usage .policy-icon { color: var(--accent-purple); filter: drop-shadow(0 0 10px rgba(189,0,255,0.5)); }
+        .pc-security .policy-icon { color: var(--accent-green); filter: drop-shadow(0 0 10px rgba(0,255,127,0.5)); }
+        .pc-rights .policy-icon { color: var(--accent-orange); filter: drop-shadow(0 0 10px rgba(255,153,0,0.5)); }
+        .pc-compliance .policy-icon { color: var(--accent-red); filter: drop-shadow(0 0 10px rgba(255,77,77,0.5)); }
         
-        .policy-title { font-family: var(--font-head); font-size: 1.2rem; color: white; letter-spacing: 1px; font-weight: bold; }
+        html.theme-vip .policy-card:not(.pc-compliance) .policy-icon { color: #FFD700; filter: drop-shadow(0 0 10px rgba(255,215,0,0.5)); }
+        
+        .policy-title { font-family: var(--font-head); font-size: 1.15rem; color: white; letter-spacing: 1px; font-weight: bold; text-transform: uppercase;}
         
         .policy-text { font-size: 0.95rem; color: #ccc; line-height: 1.6; margin-bottom: 10px; }
         
         .policy-list { list-style: none; margin-left: 5px; margin-top: 15px; }
-        .policy-list li { position: relative; padding-left: 20px; font-size: 0.9rem; color: #bbb; margin-bottom: 10px; line-height: 1.5; }
+        .policy-list li { position: relative; padding-left: 20px; font-size: 0.9rem; color: #a0a0b0; margin-bottom: 10px; line-height: 1.5; font-weight: 600;}
         .policy-list li::before { content: "\2022"; position: absolute; left: 0; color: var(--accent-cyan); font-weight: bold; font-size: 1.2rem; top: -4px; }
+        html.theme-vip .policy-list li::before { color: #FFD700; }
 
-        .highlight { color: white; font-weight: bold; background: rgba(255,255,255,0.1); padding: 2px 5px; border-radius: 4px; }
+        .highlight { color: white; font-weight: bold; background: rgba(255,255,255,0.08); padding: 2px 6px; border-radius: 4px; border: 1px solid rgba(255,255,255,0.1);}
 
         /* --- CONTACT SECTION --- */
-        .contact-box { text-align: center; padding: 25px; margin-top: 15px; background: linear-gradient(135deg, rgba(0,242,255,0.1), rgba(0,0,0,0)); border-radius: 16px; border: 1px dashed var(--accent-cyan); cursor: pointer; transition: 0.3s; }
-        .contact-box:active { transform: scale(0.98); background: rgba(0,242,255,0.15); }
+        .contact-box { text-align: center; padding: 25px; margin-top: 15px; background: rgba(0,242,255,0.05); border-radius: 16px; border: 1px dashed var(--accent-cyan); cursor: pointer; transition: 0.3s; box-shadow: inset 0 0 15px rgba(0,242,255,0.1);}
+        html.theme-vip .contact-box { background: rgba(255,215,0,0.05); border-color: #FFD700; box-shadow: inset 0 0 15px rgba(255,215,0,0.1); }
+        .contact-box:active { transform: scale(0.98); background: rgba(0,242,255,0.1); }
+        html.theme-vip .contact-box:active { background: rgba(255,215,0,0.1); }
         .contact-box p { font-size: 0.9rem; color: var(--text-muted); margin-bottom: 10px; }
         .contact-email { font-family: var(--font-head); font-size: 1.1rem; color: var(--accent-cyan); letter-spacing: 1px; font-weight: bold; }
+        html.theme-vip .contact-email { color: #FFD700; }
 
         /* --- FOOTER CREDITS --- */
         .app-footer { text-align: center; padding: 20px 20px 40px 20px; color: #555; font-size: 0.75rem; font-family: var(--font-body); letter-spacing: 1px; margin-top: 20px; max-width: 800px; margin-left: auto; margin-right: auto; }
         .footer-logo { font-family: var(--font-head); font-size: 1.1rem; letter-spacing: 1px; color: white; margin-bottom: 5px; display: inline-flex; align-items: center; gap: 8px; }
 
-        /* PERFECTLY ALIGNED 7-TAB BOTTOM NAVIGATION */
-        .bottom-nav { position: fixed; bottom: 0; left: 0; width: 100%; height: calc(65px + env(safe-area-inset-bottom, 0px)); background: rgba(7, 3, 17, 0.92); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); display: flex; justify-content: space-between; align-items: flex-start; padding: 10px 2px env(safe-area-inset-bottom, 0px); border-top: 1px solid rgba(255,255,255,0.05); z-index: 1000; box-shadow: 0 -10px 30px rgba(0,0,0,0.6); }
+        /* PERFECTLY ALIGNED BOTTOM NAVIGATION */
+        .bottom-nav { position: fixed; bottom: 0; left: 0; width: 100%; height: calc(65px + env(safe-area-inset-bottom, 0px)); background: rgba(7, 3, 17, 0.92); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); display: flex; justify-content: space-between; align-items: flex-start; padding: 10px 2px env(safe-area-inset-bottom, 0px); border-top: 1px solid rgba(255,255,255,0.05); z-index: 1000; box-shadow: 0 -10px 30px rgba(0,0,0,0.6); transform: translateZ(0);}
         .nav-item { display: flex; flex-direction: column; align-items: center; justify-content: flex-start; color: #666; text-decoration: none; font-size: 0.6rem; font-family: var(--font-head); font-weight: bold; flex: 1; transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); position: relative; padding: 0 2px; text-align: center;}
         .nav-item span { margin-top: 4px; transition: 0.3s; letter-spacing: -0.3px;}
         
+        /* Fixed Icon Alignment */
         .nav-item > i, .nav-item > .tx-icon, .nav-item > .tx-ticket-composite { 
             font-size: 1.2rem; transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); color: #666; background: none; -webkit-text-fill-color: #666; filter: none; font-style: normal;
             height: 24px; width: 24px; display: flex; align-items: center; justify-content: center; 
@@ -164,8 +188,8 @@
         
         .nav-item.active span { transform: translateY(2px); color: white; text-shadow: 0 0 5px rgba(255,255,255,0.5);}
         .fab-slot { flex: 1.2; display: flex; justify-content: center; position: relative; height: 100%; align-items: center; }
-        .floating-plus { position: absolute; top: -25px; left: 50%; transform: translateX(-50%); width: 54px; height: 54px; background: linear-gradient(135deg, var(--accent-cyan), var(--accent-purple)); border-radius: 50%; display: flex; align-items: center; justify-content: center; border: 4px solid var(--primary-bg); box-shadow: 0 10px 25px rgba(189,0,255,0.5); color: #fff; font-size: 1.6rem; cursor: pointer; transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); z-index: 10; }
-        html.theme-vip .floating-plus { background: linear-gradient(135deg, #FFE87C, #FF8C00); box-shadow: 0 10px 25px rgba(212,175,55,0.4); border-color: #000; color: #000; }
+        .floating-plus { position: absolute; top: -25px; left: 50%; transform: translateX(-50%); width: 54px; height: 54px; background: linear-gradient(135deg, var(--accent-cyan), var(--accent-purple)); border-radius: 50%; display: flex; align-items: center; justify-content: center; border: 4px solid var(--primary-bg); box-shadow: 0 10px 25px rgba(189,0,255,0.4); color: #fff; font-size: 1.6rem; cursor: pointer; transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); z-index: 10; }
+        html.theme-vip .floating-plus { background: linear-gradient(135deg, #FFE87C, #D4AF37); box-shadow: 0 10px 25px rgba(212,175,55,0.4); border-color: #000; color: #000; }
         .floating-plus:hover { transform: translateX(-50%) scale(1.1) rotate(90deg); box-shadow: 0 15px 35px rgba(0,242,255,0.6); }
 
         @media (min-width: 850px) { .bottom-nav { display: none !important; } body { padding-bottom: 0; } }
@@ -178,14 +202,14 @@
 
     <header class="top-header">
         <div class="header-left">
-            <a href="settings.html" class="back-btn" onclick="triggerHaptic()"><i class="fa-solid fa-arrow-left"></i></a>
+            <a href="javascript:history.back()" class="back-btn" onclick="triggerHaptic()"><i class="fa-solid fa-arrow-left"></i></a>
             <div class="app-title">LEGAL & PRIVACY</div>
         </div>
     </header>
 
     <section class="hero">
         <div class="hero-icon"><i class="fa-solid fa-user-secret"></i></div>
-        <h1>Privacy <span style="color:var(--accent-purple)">Policy</span></h1>
+        <h1>Privacy <span style="color:var(--accent-cyan)">Policy</span></h1>
         <p>Your data is your tactical advantage. We protect it.</p>
         <div class="last-updated"><i class="fa-solid fa-clock-rotate-left"></i> Last Updated: March 2026</div>
     </section>
@@ -265,37 +289,37 @@
     </div>
 
     <nav class="bottom-nav">
-        <a class="nav-item" href="index.html">
+        <a class="nav-item" href="index.html" onclick="triggerHaptic()">
             <i class="fa-solid fa-house"></i>
             <span>Home</span>
         </a>
-        <a class="nav-item" href="explore.html">
+        <a class="nav-item" href="explore.html" onclick="triggerHaptic()">
             <i class="fa-solid fa-compass"></i>
             <span>Explore</span>
         </a>
-        <a class="nav-item" href="matches.html">
+        <a class="nav-item" href="matches.html" onclick="triggerHaptic()">
             <i class="fa-solid fa-trophy"></i>
             <span>Matches</span>
         </a>
         
         <div class="fab-slot">
-            <div class="floating-plus" onclick="window.location.href='tournament.html'">
+            <div class="floating-plus" onclick="window.location.href='tournament.html'; triggerHaptic();">
                 <i class="fa-solid fa-plus"></i>
             </div>
         </div>
         
-        <a class="nav-item" href="clans.html">
+        <a class="nav-item" href="clans.html" onclick="triggerHaptic()">
             <i class="fa-solid fa-shield-halved"></i>
             <span>Clan</span>
         </a>
-        <a class="nav-item" href="tickets.html">
+        <a class="nav-item" href="tickets.html" onclick="triggerHaptic()">
             <div class="tx-ticket-composite">
                 <i class="fa-solid fa-ticket"></i>
                 <b class="tx-text">TX</b>
             </div>
             <span>Tickets</span>
         </a>
-        <a class="nav-item active" href="profile.html">
+        <a class="nav-item active" href="profile.html" onclick="triggerHaptic()">
             <i class="fa-solid fa-user"></i>
             <span>Profile</span>
         </a>
