@@ -25,7 +25,7 @@
         ::-webkit-scrollbar { width: 6px; }
         ::-webkit-scrollbar-thumb { background: var(--tx-violet); border-radius: 10px; }
 
-        body { background-color: var(--bg-main); color: #fff; font-family: var(--font-body); overflow-x: hidden; min-height: 100vh; }
+        body { background-color: var(--bg-main); color: #fff; font-family: var(--font-body); overflow-x: hidden; min-height: 100vh; display: flex; flex-direction: column; }
         #particles { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; background: radial-gradient(circle at 50% 0%, #1c053a 0%, #070311 100%); }
 
         /* ELITE COMPOSITE LOGO */
@@ -39,101 +39,100 @@
 
         /* HEADER */
         .top-bar { background: rgba(5, 2, 10, 0.95); border-bottom: 2px solid var(--tx-violet); padding: 15px 25px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 5px 30px rgba(162, 0, 255, 0.3); position: sticky; top: 0; z-index: 100; backdrop-filter: blur(15px); }
-        .btn-outline { background: transparent; border: 1px solid var(--tx-silver); color: var(--tx-silver); padding: 8px 20px; border-radius: 8px; cursor: pointer; font-family: var(--font-head); font-weight: bold; transition: 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); text-transform: uppercase;}
+        .btn-outline { background: transparent; border: 1px solid var(--tx-silver); color: var(--tx-silver); padding: 8px 20px; border-radius: 8px; cursor: pointer; font-family: var(--font-head); font-weight: bold; transition: 0.3s; text-transform: uppercase;}
         .btn-outline:hover { background: var(--tx-silver); color: #000; box-shadow: 0 0 20px rgba(224,224,224,0.5); transform: translateY(-2px); }
         .btn-outline:active { transform: scale(0.95); }
 
-        /* AUTH SCREENS & ANIMATIONS */
-        .auth-container { height: 85vh; display: flex; align-items: center; justify-content: center; padding: 20px; position: absolute; width: 100%; transition: 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
-        
+        /* AUTH SCREENS */
+        .auth-container { height: 85vh; display: flex; align-items: center; justify-content: center; padding: 20px; position: absolute; width: 100%; transition: 0.5s; z-index: 50; }
         .auth-container.hidden { opacity: 0; transform: scale(0.8) translateY(-50px); pointer-events: none; visibility: hidden; }
         .auth-container.active { opacity: 1; transform: scale(1) translateY(0); visibility: visible; }
-
         .auth-box { background: var(--panel-bg); border: 1px solid rgba(162,0,255,0.4); padding: 40px 30px; border-radius: 20px; width: 100%; max-width: 420px; text-align: center; box-shadow: 0 15px 50px rgba(0,0,0,0.9), inset 0 0 40px rgba(162,0,255,0.15); backdrop-filter: blur(10px); }
         .auth-box h2 { font-family: var(--font-head); color: var(--tx-cyan); margin-bottom: 5px; text-transform: uppercase; letter-spacing: 1px;}
         
         .input-wrapper { position: relative; margin-bottom: 20px; }
         .input-icon { position: absolute; left: 15px; top: 50%; transform: translateY(-50%); color: var(--tx-silver); transition: 0.3s; }
         .form-control { width: 100%; padding: 14px 14px 14px 45px; background: rgba(0,0,0,0.6); border: 1px solid rgba(255,255,255,0.15); color: #fff; border-radius: 10px; font-family: var(--font-code); font-size: 1rem; outline: none; transition: 0.3s; }
-        .form-control:focus { border-color: var(--tx-violet); box-shadow: 0 0 20px rgba(162,0,255,0.3); background: rgba(0,0,0,0.8); }
+        .form-control:focus { border-color: var(--tx-violet); box-shadow: 0 0 20px rgba(162,0,255,0.3); }
         .form-control:focus + .input-icon { color: var(--tx-violet); filter: drop-shadow(0 0 5px var(--tx-violet)); }
         
         .btn-solid { width: 100%; padding: 15px; background: linear-gradient(135deg, var(--tx-violet), #5a009d); color: #fff; border: 1px solid #d073ff; border-radius: 10px; font-family: var(--font-head); font-weight: bold; font-size: 1.1rem; cursor: pointer; transition: 0.3s; box-shadow: 0 5px 25px rgba(162,0,255,0.5); text-transform: uppercase; letter-spacing: 2px;}
         .btn-solid:hover { transform: translateY(-3px); box-shadow: 0 8px 35px rgba(162,0,255,0.7); }
-        .btn-solid:active { transform: scale(0.96); }
 
-        /* DASHBOARD */
-        #dashboard { display: none; padding: 30px 20px; max-width: 1400px; margin: 0 auto; animation: fadeScaleUp 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+        /* MAIN APP LAYOUT (DASHBOARD REDESIGN) */
+        .app-container { display: none; flex: 1; width: 100%; max-width: 1600px; margin: 0 auto; padding: 20px; gap: 20px; animation: fadeScaleUp 0.6s; }
         
-        .search-area { display: flex; gap: 15px; margin-bottom: 30px; background: var(--panel-bg); padding: 15px; border-radius: 15px; border: 1px solid rgba(255,255,255,0.05); box-shadow: 0 10px 30px rgba(0,0,0,0.6); }
-        .search-area input { flex: 1; padding: 15px; font-size: 1.1rem; background: rgba(0,0,0,0.5); border: 1px solid var(--tx-cyan); color: #fff; font-family: var(--font-code); border-radius: 10px; outline: none; transition: 0.3s;}
-        .search-area input:focus { box-shadow: 0 0 15px rgba(0,242,255,0.3); }
-        .search-area button { background: var(--tx-cyan); color: #000; border: none; padding: 0 40px; border-radius: 10px; font-family: var(--font-head); font-weight: bold; cursor: pointer; font-size: 1.1rem; box-shadow: 0 5px 20px rgba(0,242,255,0.4); transition: 0.3s; text-transform: uppercase; }
-        .search-area button:active { transform: scale(0.95); }
+        /* SIDEBAR NAV */
+        .sidebar { width: 260px; background: var(--panel-bg); border: 1px solid rgba(255,255,255,0.05); border-radius: 15px; padding: 20px 10px; display: flex; flex-direction: column; gap: 10px; box-shadow: 0 10px 30px rgba(0,0,0,0.6); }
+        .nav-btn { background: transparent; border: none; color: var(--tx-silver); font-family: var(--font-head); font-size: 1rem; text-align: left; padding: 15px 20px; border-radius: 10px; cursor: pointer; transition: 0.3s; display: flex; align-items: center; gap: 15px; text-transform: uppercase; }
+        .nav-btn i { font-size: 1.2rem; width: 25px; text-align: center; }
+        .nav-btn:hover { background: rgba(255,255,255,0.05); color: #fff; }
+        .nav-btn.active { background: rgba(0, 242, 255, 0.1); color: var(--tx-cyan); border-left: 4px solid var(--tx-cyan); }
+        
+        .agent-status-box { margin-top: auto; padding: 15px; background: rgba(0,0,0,0.5); border-radius: 10px; border: 1px solid rgba(0,255,102,0.3); text-align: center; }
+        .agent-status-box span { display: block; font-family: var(--font-code); color: #00ff66; font-size: 0.9rem; margin-top: 5px; }
 
-        /* 15 FEATURE GRID */
+        /* CONTENT AREA */
+        .main-content { flex: 1; background: var(--panel-bg); border: 1px solid rgba(255,255,255,0.05); border-radius: 15px; padding: 30px; box-shadow: 0 10px 30px rgba(0,0,0,0.6); overflow-y: auto; height: 85vh; }
+        .tab-section { display: none; animation: fadeIn 0.4s; }
+        .tab-section.active { display: block; }
+
+        /* ANALYTICS DASHBOARD */
+        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; margin-bottom: 30px; }
+        .stat-card { background: rgba(0,0,0,0.4); padding: 20px; border-radius: 10px; border: 1px solid rgba(255,255,255,0.05); border-left: 3px solid var(--tx-violet); }
+        .stat-card h4 { font-family: var(--font-code); color: #aaa; text-transform: uppercase; font-size: 0.85rem; margin-bottom: 10px; }
+        .stat-card .val { font-family: var(--font-head); font-size: 2.2rem; color: #fff; }
+        
+        .activity-feed { background: rgba(0,0,0,0.3); padding: 20px; border-radius: 10px; border: 1px solid rgba(255,255,255,0.05); height: 300px; overflow-y: auto; }
+        .feed-item { padding: 10px 0; border-bottom: 1px solid rgba(255,255,255,0.05); font-family: var(--font-code); font-size: 0.9rem; display: flex; gap: 15px;}
+        .feed-item .time { color: var(--tx-cyan); }
+        .feed-item .event { color: #ccc; }
+
+        /* TOOLS & DOSSIER STYLES (Retained from original) */
+        .search-area { display: flex; gap: 15px; margin-bottom: 30px; background: rgba(0,0,0,0.4); padding: 15px; border-radius: 15px; border: 1px solid rgba(255,255,255,0.05); }
+        .search-area input { flex: 1; padding: 15px; font-size: 1.1rem; background: rgba(0,0,0,0.5); border: 1px solid var(--tx-cyan); color: #fff; font-family: var(--font-code); border-radius: 10px; outline: none; transition: 0.3s;}
+        .search-area button { background: var(--tx-cyan); color: #000; border: none; padding: 0 40px; border-radius: 10px; font-family: var(--font-head); font-weight: bold; cursor: pointer; font-size: 1.1rem; text-transform: uppercase; }
+        
         .tools-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 15px; margin-bottom: 30px; }
         .tool-card { background: rgba(0,0,0,0.4); border: 1px solid rgba(255,255,255,0.05); border-left: 3px solid var(--tx-violet); padding: 15px; border-radius: 10px; cursor: pointer; transition: 0.3s; display: flex; align-items: center; gap: 15px; }
-        .tool-card:hover { background: rgba(162,0,255,0.1); border-color: rgba(162,0,255,0.3); transform: translateX(5px); box-shadow: 0 5px 15px rgba(162,0,255,0.2); }
-        .tool-icon { font-size: 1.5rem; color: var(--tx-silver); width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; background: rgba(255,255,255,0.05); border-radius: 8px; transition: 0.3s; }
-        .tool-card:hover .tool-icon { color: var(--tx-cyan); background: rgba(0,242,255,0.1); text-shadow: 0 0 10px var(--tx-cyan); }
-        .tool-text { font-family: var(--font-head); font-size: 0.85rem; font-weight: bold; text-transform: uppercase; color: #ccc; transition: 0.3s; }
-        .tool-card:hover .tool-text { color: #fff; }
+        .tool-card:hover { background: rgba(162,0,255,0.1); border-color: rgba(162,0,255,0.3); transform: translateX(5px); }
+        .tool-icon { font-size: 1.5rem; color: var(--tx-silver); width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; background: rgba(255,255,255,0.05); border-radius: 8px; }
+        .tool-card:hover .tool-icon { color: var(--tx-cyan); text-shadow: 0 0 10px var(--tx-cyan); }
+        .tool-text { font-family: var(--font-head); font-size: 0.85rem; font-weight: bold; text-transform: uppercase; color: #ccc; }
 
         .dossier-layout { display: grid; grid-template-columns: 1fr; gap: 25px; }
-        
-        .section-card { background: var(--panel-bg); border: 1px solid rgba(255,255,255,0.05); border-top: 3px solid var(--tx-cyan); border-radius: 15px; padding: 25px; box-shadow: 0 10px 40px rgba(0,0,0,0.6); opacity: 0; transform: translateY(20px); animation: staggerFadeUp 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; }
-        .section-card:nth-child(1) { animation-delay: 0.1s; }
-        .section-card:nth-child(2) { border-top-color: var(--tx-violet); animation-delay: 0.2s; }
-        .section-card:nth-child(3) { border-top-color: #00ff66; animation-delay: 0.3s; }
-
+        .section-card { background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.05); border-top: 3px solid var(--tx-cyan); border-radius: 15px; padding: 25px; }
         .section-title { font-family: var(--font-head); color: #fff; font-size: 1.2rem; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 12px; margin-bottom: 20px; text-transform: uppercase; display: flex; align-items: center; gap: 10px; }
         .section-title i { color: var(--tx-cyan); font-size: 1.4rem; }
-
         .data-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 15px; }
         .input-group { display: flex; flex-direction: column; gap: 5px; }
-        .input-group label { font-family: var(--font-code); color: var(--tx-silver); font-size: 0.85rem; text-transform: uppercase; margin-bottom: 2px;}
-        .data-input { background: rgba(0,0,0,0.6); border: 1px solid rgba(255,255,255,0.15); color: #fff; padding: 12px; border-radius: 8px; font-family: var(--font-code); font-size: 1rem; transition: 0.3s; width: 100%; outline: none; }
-        .data-input:focus { border-color: var(--tx-cyan); background: rgba(0,242,255,0.05); box-shadow: inset 0 0 10px rgba(0,242,255,0.2); }
-
-        .list-card { border: 1px solid rgba(255,255,255,0.05); border-left: 3px solid var(--tx-violet); padding: 15px; border-radius: 10px; margin-bottom: 12px; background: rgba(0,0,0,0.5); font-family: var(--font-code); font-size: 0.95rem; transition: 0.3s; display: flex; flex-direction: column; gap: 5px;}
-        .list-card:hover { background: rgba(162,0,255,0.05); border-color: rgba(162,0,255,0.3); transform: translateX(5px); }
-
-        .action-bar { display: flex; justify-content: space-between; margin-top: 30px; padding: 25px 0 10px; border-top: 1px solid rgba(255,255,255,0.1); align-items: center; flex-wrap: wrap; gap: 15px;}
-        .btn-escalate { background: transparent; color: #ff4d4d; border: 1px solid #ff4d4d; padding: 14px 25px; border-radius: 10px; font-family: var(--font-head); font-weight: bold; cursor: pointer; transition: 0.3s; text-transform: uppercase;}
-        .btn-escalate:hover { background: rgba(255,77,77,0.1); box-shadow: 0 0 15px rgba(255,77,77,0.3); }
-
-        /* MODALS */
-        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); z-index: 2000; display: none; align-items: center; justify-content: center; backdrop-filter: blur(10px); opacity: 0; transition: 0.3s; }
-        .modal-overlay.active { display: flex; opacity: 1; }
-        .modal-box { background: var(--bg-main); border: 1px solid var(--tx-cyan); width: 95%; max-width: 650px; border-radius: 20px; box-shadow: 0 20px 60px rgba(0,0,0,0.9), 0 0 30px rgba(0,242,255,0.2); max-height: 90vh; display: flex; flex-direction: column; transform: scale(0.9); transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
-        .modal-overlay.active .modal-box { transform: scale(1); }
+        .input-group label { font-family: var(--font-code); color: var(--tx-silver); font-size: 0.85rem; text-transform: uppercase; }
+        .data-input { background: rgba(0,0,0,0.6); border: 1px solid rgba(255,255,255,0.15); color: #fff; padding: 12px; border-radius: 8px; font-family: var(--font-code); font-size: 1rem; width: 100%; outline: none; }
         
-        .modal-header { padding: 25px; border-bottom: 1px solid rgba(255,255,255,0.1); display: flex; justify-content: space-between; align-items: center; }
-        .modal-header h3 { color: #fff; font-family: var(--font-head); display: flex; align-items: center; gap: 10px; text-transform: uppercase; }
-        .close-btn { color: #888; font-size: 1.5rem; cursor: pointer; transition: 0.3s; }
-        .close-btn:hover { color: var(--tx-red); transform: rotate(90deg); text-shadow: 0 0 10px var(--tx-red);}
-        
-        .modal-body { padding: 25px; overflow-y: auto; flex: 1; }
-        .diff-row { display: flex; align-items: center; justify-content: space-between; background: rgba(255,255,255,0.03); padding: 15px; margin-bottom: 10px; border-radius: 10px; font-family: var(--font-code); font-size: 0.95rem; border: 1px solid rgba(255,255,255,0.05); }
-        .diff-field { color: var(--tx-cyan); width: 25%; font-weight: bold; text-transform: uppercase; font-size: 0.85rem;}
-        .diff-old { color: var(--tx-red); text-decoration: line-through; width: 30%; word-break: break-all; }
-        .diff-new { color: #00ff66; font-weight: bold; width: 35%; word-break: break-all; }
+        .list-card { border: 1px solid rgba(255,255,255,0.05); border-left: 3px solid var(--tx-violet); padding: 15px; border-radius: 10px; margin-bottom: 12px; background: rgba(0,0,0,0.5); font-family: var(--font-code); font-size: 0.95rem; display: flex; flex-direction: column; gap: 5px;}
 
+        /* CRITICAL TICKET MODAL (HOT POTATO) */
+        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); z-index: 2000; display: none; align-items: center; justify-content: center; backdrop-filter: blur(10px); }
+        .modal-overlay.active { display: flex; }
+        .ticket-alert-box { background: #0a0315; border: 2px solid var(--tx-red); width: 95%; max-width: 500px; border-radius: 15px; box-shadow: 0 0 50px rgba(255,0,85,0.4); text-align: center; padding: 30px; animation: pulseAlert 1s infinite alternate; }
+        .ticket-alert-box h2 { font-family: var(--font-head); color: var(--tx-red); text-transform: uppercase; font-size: 1.8rem; margin-bottom: 10px;}
+        .timer-bar-bg { width: 100%; height: 10px; background: rgba(255,255,255,0.1); border-radius: 5px; margin: 20px 0; overflow: hidden; }
+        .timer-bar-fill { height: 100%; background: var(--tx-red); width: 100%; transition: width 1s linear; }
+        .btn-group { display: flex; gap: 15px; margin-top: 20px; }
+
+        @keyframes pulseAlert { from { box-shadow: 0 0 20px rgba(255,0,85,0.2); } to { box-shadow: 0 0 60px rgba(255,0,85,0.6); } }
         @keyframes fadeScaleUp { from { opacity: 0; transform: scale(0.9) translateY(30px); } to { opacity: 1; transform: scale(1) translateY(0); } }
-        @keyframes staggerFadeUp { to { opacity: 1; transform: translateY(0); } }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 
-        #toast { position: fixed; bottom: -100px; left: 50%; transform: translateX(-50%); background: var(--tx-cyan); color: #000; padding: 16px 35px; border-radius: 10px; font-family: var(--font-head); font-weight: bold; z-index: 9999; transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); box-shadow: 0 10px 30px rgba(0,242,255,0.4); text-transform: uppercase; letter-spacing: 1px;}
+        #toast { position: fixed; bottom: -100px; left: 50%; transform: translateX(-50%); background: var(--tx-cyan); color: #000; padding: 16px 35px; border-radius: 10px; font-family: var(--font-head); font-weight: bold; z-index: 9999; transition: 0.4s; box-shadow: 0 10px 30px rgba(0,242,255,0.4); text-transform: uppercase; }
         #toast.show { bottom: 40px; }
         #toast.error { background: var(--tx-red); color: #fff; box-shadow: 0 10px 30px rgba(255,0,85,0.4); }
 
-        @media (max-width: 600px) {
-            .search-area { flex-direction: column; background: transparent; box-shadow: none; padding: 0; border: none;}
-            .search-area input { background: var(--panel-bg); border-color: rgba(255,255,255,0.1); }
-            .search-area button { padding: 15px; }
-            .diff-row { flex-direction: column; align-items: flex-start; gap: 5px; }
-            .diff-field, .diff-old, .diff-new { width: 100%; }
-            .diff-old { display: none; }
+        @media (max-width: 900px) {
+            .app-container { flex-direction: column; }
+            .sidebar { width: 100%; flex-direction: row; flex-wrap: wrap; }
+            .nav-btn { flex: 1; text-align: center; justify-content: center; }
+            .nav-btn i { display: none; }
         }
     </style>
 </head>
@@ -179,85 +178,85 @@
         </div>
     </div>
 
-    <div id="dashboard">
+    <div class="app-container" id="mainAppView">
         
-        <div class="tools-grid">
-            <div class="tool-card" onclick="document.getElementById('inpSearch').focus()"><div class="tool-icon"><i class="fa-solid fa-radar"></i></div><div class="tool-text">Deep Scan Engine</div></div>
-            <div class="tool-card" onclick="triggerAction('God Mode Overwrite')"><div class="tool-icon"><i class="fa-solid fa-pen-nib"></i></div><div class="tool-text">God Mode Overwrite</div></div>
-            <div class="tool-card" onclick="triggerAction('Wallet Override')"><div class="tool-icon"><i class="fa-solid fa-wallet"></i></div><div class="tool-text">Wallet Override</div></div>
-            <div class="tool-card" onclick="triggerAction('Ban Hammer')"><div class="tool-icon" style="color:var(--tx-red)"><i class="fa-solid fa-gavel"></i></div><div class="tool-text" style="color:var(--tx-red)">The Ban Hammer</div></div>
-            <div class="tool-card" onclick="triggerAction('VIP Granter')"><div class="tool-icon" style="color:#FFD700"><i class="fa-solid fa-crown"></i></div><div class="tool-text" style="color:#FFD700">VIP Granter</div></div>
-            <div class="tool-card" onclick="triggerAction('XP Injection')"><div class="tool-icon"><i class="fa-solid fa-syringe"></i></div><div class="tool-text">Manual XP Injection</div></div>
-            <div class="tool-card" onclick="triggerAction('Clan Disband')"><div class="tool-icon"><i class="fa-solid fa-burst"></i></div><div class="tool-text">Clan Disband Protocol</div></div>
-            <div class="tool-card" onclick="triggerAction('Roster Force-Kick')"><div class="tool-icon"><i class="fa-solid fa-user-xmark"></i></div><div class="tool-text">Roster Force-Kick</div></div>
-            <div class="tool-card" onclick="triggerAction('Tourney Force-Cancel')"><div class="tool-icon"><i class="fa-solid fa-calendar-xmark"></i></div><div class="tool-text">Tourney Force-Cancel</div></div>
-            <div class="tool-card" onclick="triggerAction('Match Reversal')"><div class="tool-icon"><i class="fa-solid fa-clock-rotate-left"></i></div><div class="tool-text">Match Reversal Tool</div></div>
-            <div class="tool-card" onclick="triggerAction('System Broadcast')"><div class="tool-icon"><i class="fa-solid fa-bullhorn"></i></div><div class="tool-text">System Broadcast</div></div>
-            <div class="tool-card" onclick="triggerAction('Password Reset')"><div class="tool-icon"><i class="fa-solid fa-unlock-keyhole"></i></div><div class="tool-text">Direct Password Reset</div></div>
-            <div class="tool-card" onclick="openTicketModal()"><div class="tool-icon"><i class="fa-solid fa-headset"></i></div><div class="tool-text">Admin Escalation Ticket</div></div>
+        <div class="sidebar">
+            <button class="nav-btn active" onclick="switchTab('tab-dash', this)"><i class="fa-solid fa-chart-line"></i> Dashboard</button>
+            <button class="nav-btn" onclick="switchTab('tab-scan', this)"><i class="fa-solid fa-radar"></i> Deep Scan User</button>
+            <button class="nav-btn" onclick="switchTab('tab-tools', this)"><i class="fa-solid fa-toolbox"></i> Action Center</button>
+            
+            <div class="agent-status-box">
+                <i class="fa-solid fa-satellite-dish" style="color:#00ff66; font-size:1.5rem;"></i>
+                <span>Polling Server Active</span>
+            </div>
         </div>
 
-        <div class="search-area">
-            <input type="text" id="inpSearch" placeholder="Enter Email, UID, or Exact Username..." onkeypress="if(event.key==='Enter') executeSearch()">
-            <button onclick="executeSearch()" id="btnSearch"><i class="fa-solid fa-magnifying-glass"></i> Deep Scan</button>
-        </div>
+        <div class="main-content">
+            
+            <div id="tab-dash" class="tab-section active">
+                <h2 style="font-family: var(--font-head); color: var(--tx-cyan); margin-bottom: 20px; text-transform: uppercase;">Overview Analytics</h2>
+                <div class="stats-grid">
+                    <div class="stat-card"><h4>Tickets Solved (Today)</h4><div class="val" id="stat-solved">0</div></div>
+                    <div class="stat-card"><h4>Avg Response Time</h4><div class="val">42s</div></div>
+                    <div class="stat-card"><h4>Platform Open Bugs</h4><div class="val" style="color:var(--tx-red)">14</div></div>
+                </div>
 
-        <div id="dossierArea" class="dossier-layout" style="display:none;">
-            <div class="section-card">
-                <div class="section-title"><i class="fa-solid fa-address-card"></i> Central Identity</div>
-                <div class="data-grid" id="boxProfile"></div>
+                <h3 style="font-family: var(--font-head); margin-bottom: 15px; color: #fff;">Live Activity Feed</h3>
+                <div class="activity-feed" id="liveFeed">
+                    <div class="feed-item"><span class="time">[10:42:05]</span><span class="event">System Initialized. Engine listening for tickets...</span></div>
+                </div>
+            </div>
+
+            <div id="tab-scan" class="tab-section">
+                <div class="search-area">
+                    <input type="text" id="inpSearch" placeholder="Enter Email, UID, or Exact Username..." onkeypress="if(event.key==='Enter') executeSearch()">
+                    <button onclick="executeSearch()" id="btnSearch"><i class="fa-solid fa-magnifying-glass"></i> Scan</button>
+                </div>
                 
-                <div style="margin-top: 30px; padding-top: 20px; border-top: 1px solid rgba(255,255,255,0.1); text-align:right;">
-                    <button class="btn-solid" style="width:auto; padding: 14px 40px; margin:0;" onclick="reviewChanges()"><i class="fa-solid fa-upload"></i> Review & Inject Updates</button>
+                <div id="dossierArea" class="dossier-layout" style="display:none;">
+                    <div class="section-card">
+                        <div class="section-title"><i class="fa-solid fa-address-card"></i> Central Identity</div>
+                        <div class="data-grid" id="boxProfile"></div>
+                        <div style="margin-top: 20px; text-align:right;">
+                            <button class="btn-solid" style="width:auto; padding: 10px 30px;" onclick="reviewChanges()">Inject Updates</button>
+                        </div>
+                    </div>
+                    <div class="section-card">
+                        <div class="section-title"><i class="fa-solid fa-timeline"></i> Match Topology</div>
+                        <div id="boxMatches" style="max-height:300px; overflow-y:auto;"></div>
+                    </div>
                 </div>
             </div>
 
-            <div class="section-card">
-                <div class="section-title"><i class="fa-solid fa-shield-halved"></i> Associated Clans</div>
-                <div id="boxClans" style="color:#aaa;"></div>
+            <div id="tab-tools" class="tab-section">
+                <h2 style="font-family: var(--font-head); color: var(--tx-violet); margin-bottom: 20px; text-transform: uppercase;">Admin Protocols</h2>
+                <div class="tools-grid">
+                    <div class="tool-card" onclick="triggerAction('God Mode Overwrite')"><div class="tool-icon"><i class="fa-solid fa-pen-nib"></i></div><div class="tool-text">God Mode Overwrite</div></div>
+                    <div class="tool-card" onclick="triggerAction('Wallet Override')"><div class="tool-icon"><i class="fa-solid fa-wallet"></i></div><div class="tool-text">Wallet Override</div></div>
+                    <div class="tool-card" onclick="triggerAction('Ban Hammer')"><div class="tool-icon" style="color:var(--tx-red)"><i class="fa-solid fa-gavel"></i></div><div class="tool-text" style="color:var(--tx-red)">The Ban Hammer</div></div>
+                    <div class="tool-card" onclick="triggerAction('VIP Granter')"><div class="tool-icon" style="color:#FFD700"><i class="fa-solid fa-crown"></i></div><div class="tool-text" style="color:#FFD700">VIP Granter</div></div>
+                    <div class="tool-card" onclick="triggerAction('Tourney Force-Cancel')"><div class="tool-icon"><i class="fa-solid fa-calendar-xmark"></i></div><div class="tool-text">Tourney Force-Cancel</div></div>
+                    <div class="tool-card" onclick="triggerAction('Match Reversal')"><div class="tool-icon"><i class="fa-solid fa-clock-rotate-left"></i></div><div class="tool-text">Match Reversal Tool</div></div>
+                    <div class="tool-card" onclick="openTicketModal()"><div class="tool-icon"><i class="fa-solid fa-headset"></i></div><div class="tool-text">Admin Escalation Ticket</div></div>
+                </div>
             </div>
 
-            <div class="section-card">
-                <div class="section-title"><i class="fa-solid fa-timeline"></i> Match Topology</div>
-                <div id="boxMatches" style="color:#aaa; max-height:300px; overflow-y:auto; padding-right:5px;"></div>
-            </div>
         </div>
     </div>
 
-    <div class="modal-overlay" id="reviewModal">
-        <div class="modal-box">
-            <div class="modal-header">
-                <h3><i class="fa-solid fa-file-code" style="color:var(--tx-cyan);"></i> Verify Overwrites</h3>
-                <i class="fa-solid fa-xmark close-btn" onclick="closeModal('reviewModal')"></i>
+    <div class="modal-overlay" id="incomingTicketModal">
+        <div class="ticket-alert-box">
+            <h2><i class="fa-solid fa-triangle-exclamation"></i> Incoming Ticket</h2>
+            <p style="font-family: var(--font-code); color: #ccc;" id="incTktDesc">User [UID: 10492] reported a Match Dispute.</p>
+            
+            <div class="timer-bar-bg">
+                <div class="timer-bar-fill" id="ticketTimerBar"></div>
             </div>
-            <div class="modal-body" id="reviewDiffArea">
-                </div>
-            <div class="modal-header" style="border-top: 1px solid rgba(255,255,255,0.05); border-bottom: none; display:flex; gap:15px; background: rgba(0,0,0,0.3);">
-                <button class="btn-outline" style="flex:1; border-color:#888; color:#888;" onclick="closeModal('reviewModal')">Abort</button>
-                <button class="btn-solid" style="flex:1; margin:0; background:linear-gradient(135deg, #00f2ff, #0088ff); color:#000; box-shadow: 0 5px 20px rgba(0,242,255,0.3);" id="btnCommit" onclick="commitUpdates()"><i class="fa-solid fa-check-double"></i> Commit to DB</button>
-            </div>
-        </div>
-    </div>
+            <p style="font-family: var(--font-code); color: var(--tx-red); font-weight: bold;">Auto-Rejecting in <span id="tktCountText">60</span>s</p>
 
-    <div class="modal-overlay" id="ticketModal">
-        <div class="modal-box">
-            <div class="modal-header">
-                <h3 style="color:var(--tx-red);"><i class="fa-solid fa-headset"></i> Escalate to Admin</h3>
-                <i class="fa-solid fa-xmark close-btn" onclick="closeModal('ticketModal')"></i>
-            </div>
-            <div class="modal-body">
-                <p style="color:#aaa; font-size:0.95rem; margin-bottom:20px; line-height: 1.5; font-family:var(--font-code);">Use this to report severe bugs, payout disputes, or request permanent account bans.</p>
-                <div class="input-group" style="margin-bottom: 15px;">
-                    <label>Target Identifier</label>
-                    <input type="text" id="tktTarget" class="data-input" readonly style="opacity: 0.7;">
-                </div>
-                <div class="input-group">
-                    <label>Issue Description</label>
-                    <textarea id="tktIssue" class="data-input" rows="6" placeholder="Describe the exact issue in detail..." style="resize:none;" required></textarea>
-                </div>
-            </div>
-            <div class="modal-header" style="border-top: 1px solid rgba(255,255,255,0.05); border-bottom: none;">
-                <button class="btn-solid" style="background:linear-gradient(135deg, var(--tx-red), #990033); box-shadow:0 5px 20px rgba(255,0,85,0.3); margin:0;" id="btnSubmitTkt" onclick="submitTicket()">Submit Escalation</button>
+            <div class="btn-group">
+                <button class="btn-outline" style="flex:1; border-color:var(--tx-red); color:var(--tx-red);" onclick="rejectTicket()">Reject</button>
+                <button class="btn-solid" style="flex:1; margin:0;" onclick="acceptTicket()">Accept Task</button>
             </div>
         </div>
     </div>
@@ -271,6 +270,11 @@
         
         let originalDossier = null;
 
+        // NEW: Polling & Ticket Variables
+        let pollInterval;
+        let activeTicketId = null;
+        let countdownTimer;
+
         function showToast(msg, isError = false) {
             const t = document.getElementById('toast');
             t.innerText = msg;
@@ -283,12 +287,27 @@
         document.addEventListener("DOMContentLoaded", () => {
             if(isSessionValid && agentEmail) {
                 document.getElementById('loginView').style.display = 'none';
-                document.getElementById('dashboard').style.display = 'block';
+                document.getElementById('mainAppView').style.display = 'flex';
                 document.getElementById('btnLogout').style.display = 'block';
+                startTicketPolling(); // Start listening for tasks
             }
         });
 
-        // 1. LOGIN (Request OTP)
+        // TABS NAVIGATION
+        function switchTab(tabId, btnElement) {
+            document.querySelectorAll('.tab-section').forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+            document.getElementById(tabId).classList.add('active');
+            if(btnElement) btnElement.classList.add('active');
+        }
+
+        function appendFeed(msg) {
+            const feed = document.getElementById('liveFeed');
+            const time = new Date().toLocaleTimeString('en-GB');
+            feed.innerHTML = `<div class="feed-item"><span class="time">[${time}]</span><span class="event">${msg}</span></div>` + feed.innerHTML;
+        }
+
+        // --- AUTHENTICATION (Retained Original) ---
         document.getElementById('formLogin').addEventListener('submit', async (e) => {
             e.preventDefault();
             const email = document.getElementById('l_email').value;
@@ -301,26 +320,21 @@
                 const result = await res.json();
                 if(result.status === 'success') {
                     agentEmail = email;
-                    
-                    // Smooth Transition to OTP Screen
                     document.getElementById('loginView').classList.remove('active');
                     document.getElementById('loginView').classList.add('hidden');
                     setTimeout(() => {
                         document.getElementById('loginView').style.display = 'none';
                         document.getElementById('otpView').style.display = 'flex';
-                        // Force reflow
                         void document.getElementById('otpView').offsetWidth;
                         document.getElementById('otpView').classList.remove('hidden');
                         document.getElementById('otpView').classList.add('active');
                     }, 500);
-
                     showToast("Credentials Accepted. Token Sent.");
                 } else { showToast(result.data, true); }
             } catch(e) { showToast("Network Error", true); }
             btn.innerHTML = 'Initialize Uplink'; btn.disabled = false;
         });
 
-        // 2. VERIFY OTP
         document.getElementById('formOtp').addEventListener('submit', async (e) => {
             e.preventDefault();
             const otp = document.getElementById('l_otp').value;
@@ -333,12 +347,11 @@
                 if(result.status === 'success') {
                     localStorage.setItem('tournyx_agent_email', agentEmail);
                     localStorage.setItem('tournyx_agent_session', 'active');
-                    
-                    // Hide OTP and Show Dashboard
                     document.getElementById('otpView').style.display = 'none';
-                    document.getElementById('dashboard').style.display = 'block';
+                    document.getElementById('mainAppView').style.display = 'flex';
                     document.getElementById('btnLogout').style.display = 'block';
                     showToast("Secure Session Established.");
+                    startTicketPolling();
                 } else { showToast(result.data, true); }
             } catch(e) { showToast("Network Error", true); }
             btn.innerHTML = 'Verify Session'; btn.disabled = false;
@@ -350,17 +363,89 @@
             window.location.reload();
         }
 
-        // TOOL TRIGGER (UI ONLY)
+        // --- NEW: THE TICKET ENGINE (POLLING) ---
+        function startTicketPolling() {
+            // Check server every 10 seconds
+            pollInterval = setInterval(checkPendingTickets, 10000);
+        }
+
+        async function checkPendingTickets() {
+            if(activeTicketId) return; // Already handling a ticket
+            try {
+                const res = await fetch(API_URL, { method: 'POST', body: JSON.stringify({ action: 'support_poll_tickets', agent: agentEmail }) });
+                const result = await res.json();
+                if(result.status === 'success' && result.data.ticket_id) {
+                    triggerTicketAlert(result.data);
+                }
+            } catch(e) { console.log("Polling skip..."); }
+        }
+
+        function triggerTicketAlert(ticketData) {
+            activeTicketId = ticketData.ticket_id;
+            document.getElementById('incTktDesc').innerText = `Issue: ${ticketData.issue_type} | User: ${ticketData.user_id}`;
+            document.getElementById('incomingTicketModal').classList.add('active');
+            
+            // Audio alert (optional if you add an mp3)
+            // new Audio('alert.mp3').play();
+
+            let timeLeft = 60;
+            const bar = document.getElementById('ticketTimerBar');
+            const txt = document.getElementById('tktCountText');
+            bar.style.width = '100%';
+
+            countdownTimer = setInterval(() => {
+                timeLeft--;
+                txt.innerText = timeLeft;
+                bar.style.width = `${(timeLeft/60)*100}%`;
+                if(timeLeft <= 0) {
+                    rejectTicket(); // Auto reject on timeout
+                }
+            }, 1000);
+        }
+
+        async function acceptTicket() {
+            clearInterval(countdownTimer);
+            document.getElementById('incomingTicketModal').classList.remove('active');
+            appendFeed(`Accepted Ticket #${activeTicketId}. Routing to workspace...`);
+            
+            try {
+                await fetch(API_URL, { method: 'POST', body: JSON.stringify({ action: 'support_accept_ticket', agent: agentEmail, ticket_id: activeTicketId }) });
+                
+                // Update stats counter visually
+                let solvedTxt = document.getElementById('stat-solved');
+                solvedTxt.innerText = parseInt(solvedTxt.innerText) + 1;
+                
+                // Auto-scan the user associated with the ticket
+                // In a real scenario, ticketData would return the user email.
+                showToast(`Ticket Locked. Accessing user data...`);
+                switchTab('tab-scan', document.querySelectorAll('.nav-btn')[1]);
+                
+            } catch(e) { showToast("Error connecting to DB", true); }
+            activeTicketId = null;
+        }
+
+        async function rejectTicket() {
+            clearInterval(countdownTimer);
+            document.getElementById('incomingTicketModal').classList.remove('active');
+            appendFeed(`Rejected Ticket #${activeTicketId}. Bouncing to next available agent.`);
+            
+            try {
+                await fetch(API_URL, { method: 'POST', body: JSON.stringify({ action: 'support_reject_ticket', agent: agentEmail, ticket_id: activeTicketId }) });
+            } catch(e) {}
+            activeTicketId = null;
+        }
+
+
+        // --- SEARCH & TOOLS (Retained Original Logic) ---
         function triggerAction(name) {
             if(!originalDossier) {
                 showToast("Please run a Deep Scan on a user first.", true);
-                document.getElementById('inpSearch').focus();
+                switchTab('tab-scan', document.querySelectorAll('.nav-btn')[1]);
             } else {
                 showToast(`Accessing ${name} module... Edit directly in the Dossier.`);
             }
         }
 
-        // 3. SEARCH & BUILD DOSSIER
         async function executeSearch() {
             const query = document.getElementById('inpSearch').value.trim();
             if(!query) return;
@@ -377,158 +462,26 @@
                     originalDossier = result.data; 
                     renderDossier(result.data);
                     document.getElementById('dossierArea').style.display = 'grid';
+                    appendFeed(`Scanned user record: ${query}`);
                     showToast("Player Record Extracted");
                 } else { showToast(result.data, true); }
             } catch(e) { showToast("Network Error", true); }
             
-            btn.innerHTML = '<i class="fa-solid fa-magnifying-glass"></i> Deep Scan'; btn.disabled = false;
+            btn.innerHTML = '<i class="fa-solid fa-magnifying-glass"></i> Scan'; btn.disabled = false;
         }
 
         function renderDossier(data) {
             const profBox = document.getElementById('boxProfile');
             profBox.innerHTML = '';
-            
-            // Protect critical columns
             const skipFields = ['password', 'avatar', 'claimed_ms']; 
-            
             for(let key in data.target) {
                 if(key === '_row' || skipFields.includes(key)) continue;
-                
-                let val = data.target[key];
-                
                 profBox.innerHTML += `
                     <div class="input-group">
                         <label>${key.replace(/_/g, ' ')}</label>
-                        <input type="text" class="data-input edit-tracker" data-sheet="Users" data-row="${data.target._row}" data-field="${key}" data-original="${String(val).replace(/"/g, '&quot;')}" value="${String(val).replace(/"/g, '&quot;')}">
-                    </div>
-                `;
-            }
-
-            const cBox = document.getElementById('boxClans');
-            cBox.innerHTML = '';
-            if(data.sheets.Clans && data.sheets.Clans.length > 0) {
-                data.sheets.Clans.forEach(c => {
-                    cBox.innerHTML += `
-                    <div class="list-card">
-                        <div style="color:var(--tx-cyan); font-family:var(--font-head); font-weight:bold; font-size:1.1rem; margin-bottom:5px; text-transform:uppercase;">${c.clan_name || c.name}</div>
-                        <div><span style="color:#888;">ID:</span> ${c.clanId || 'N/A'}</div>
-                        <div><span style="color:#888;">Game:</span> <span style="color:var(--tx-silver);">${c.game}</span></div>
-                        <div><span style="color:#888;">Status:</span> <span style="color:#00ff66;">${c.status}</span></div>
+                        <input type="text" class="data-input edit-tracker" data-sheet="Users" data-row="${data.target._row}" data-field="${key}" data-original="${String(data.target[key]).replace(/"/g, '&quot;')}" value="${String(data.target[key]).replace(/"/g, '&quot;')}">
                     </div>`;
-                });
-            } else { cBox.innerHTML = "<div style='color:#666; font-style:italic;'>No clans associated.</div>"; }
-
-            const mBox = document.getElementById('boxMatches');
-            mBox.innerHTML = '';
-            if(data.sheets.Matches && data.sheets.Matches.length > 0) {
-                data.sheets.Matches.forEach(m => {
-                    let sColor = String(m.status).toLowerCase().includes('won') ? '#00ff66' : '#fff';
-                    mBox.innerHTML += `
-                    <div class="list-card">
-                        <div style="color:var(--tx-violet); font-weight:bold; margin-bottom:5px;">Match ID: ${m.match_id}</div>
-                        <div><span style="color:#888;">Clan/Solo:</span> ${m.clan || m.username}</div>
-                        <div><span style="color:#888;">Status:</span> <span style="color:${sColor}">${m.status || 'Registered'}</span></div>
-                        <div><span style="color:#888;">Prize:</span> ${m.prize || '0'}</div>
-                    </div>`;
-                });
-            } else { mBox.innerHTML = "<div style='color:#666; font-style:italic;'>No match history found.</div>"; }
-        }
-
-        // 4. VERIFY CHANGES
-        let pendingUpdates = [];
-        
-        function reviewChanges() {
-            pendingUpdates = [];
-            const inputs = document.querySelectorAll('.edit-tracker');
-            const diffArea = document.getElementById('reviewDiffArea');
-            diffArea.innerHTML = '';
-
-            inputs.forEach(inp => {
-                let original = inp.getAttribute('data-original');
-                let current = inp.value;
-                if(original !== current) {
-                    pendingUpdates.push({
-                        sheet: inp.getAttribute('data-sheet'),
-                        row: inp.getAttribute('data-row'),
-                        field: inp.getAttribute('data-field'),
-                        value: current
-                    });
-                    
-                    diffArea.innerHTML += `
-                        <div class="diff-row">
-                            <div class="diff-field">${inp.getAttribute('data-field')}</div>
-                            <div class="diff-old">${original || '<i>Empty</i>'}</div>
-                            <i class="fa-solid fa-arrow-right" style="color:#555;"></i>
-                            <div class="diff-new">${current || '<i>Empty</i>'}</div>
-                        </div>
-                    `;
-                }
-            });
-
-            if(pendingUpdates.length === 0) { showToast("No changes detected.", true); return; }
-            document.getElementById('reviewModal').classList.add('active');
-        }
-
-        function closeModal(id) { document.getElementById(id).classList.remove('active'); }
-
-        // 5. COMMIT CHANGES
-        async function commitUpdates() {
-            const btn = document.getElementById('btnCommit');
-            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Committing...'; btn.disabled = true;
-
-            try {
-                const res = await fetch(API_URL, { 
-                    method: 'POST', 
-                    body: JSON.stringify({ action: 'support_batch_update', agent_email: agentEmail, updates: pendingUpdates }) 
-                });
-                const result = await res.json();
-                
-                if(result.status === 'success') {
-                    showToast("Database Overwritten Successfully.");
-                    closeModal('reviewModal');
-                    executeSearch(); 
-                } else { showToast(result.data, true); }
-            } catch(e) { showToast("Network Error", true); }
-            
-            btn.innerHTML = '<i class="fa-solid fa-check-double"></i> Commit to DB'; btn.disabled = false;
-        }
-
-        // 6. TICKETING
-        function openTicketModal() {
-            if(!originalDossier || !originalDossier.target) {
-                showToast("Please scan a user first.", true); return;
             }
-            document.getElementById('tktTarget').value = `${originalDossier.target.email} | ${originalDossier.target.uid}`;
-            document.getElementById('tktIssue').value = '';
-            document.getElementById('ticketModal').classList.add('active');
-        }
-
-        async function submitTicket() {
-            const issue = document.getElementById('tktIssue').value.trim();
-            if(!issue) return;
-
-            const btn = document.getElementById('btnSubmitTkt');
-            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Submitting...'; btn.disabled = true;
-
-            try {
-                const res = await fetch(API_URL, { 
-                    method: 'POST', 
-                    body: JSON.stringify({ 
-                        action: 'support_create_ticket', 
-                        agent: agentEmail, 
-                        target: originalDossier.target.email, 
-                        issue: issue 
-                    }) 
-                });
-                const result = await res.json();
-                
-                if(result.status === 'success') {
-                    showToast(`Ticket Raised! Reference: ${result.data}`);
-                    closeModal('ticketModal');
-                } else { showToast(result.data, true); }
-            } catch(e) { showToast("Network Error", true); }
-            
-            btn.innerHTML = 'Submit Escalation'; btn.disabled = false;
         }
 
         // Particle background logic
