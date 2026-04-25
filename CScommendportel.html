@@ -16,6 +16,7 @@
             --tx-silver: #e0e0e0;
             --tx-cyan: #00f2ff;
             --tx-red: #ff0055;
+            --tx-green: #00ff66;
             --font-head: 'Orbitron', sans-serif;
             --font-body: 'Rajdhani', sans-serif;
             --font-code: 'Share Tech Mono', monospace;
@@ -30,7 +31,7 @@
 
         /* ELITE COMPOSITE LOGO */
         .cs-logo-container { display: flex; align-items: center; gap: 15px; }
-        .tournyx-logo { width: 45px; height: 45px; object-fit: contain; animation: pulseLogo 3s infinite alternate; filter: drop-shadow(0 0 10px rgba(0, 242, 255, 0.6)); border-radius: 50%; border: 2px solid var(--tx-cyan); }
+        .tournyx-logo { width: 45px; height: 45px; object-fit: contain; animation: pulseLogo 3s infinite alternate; filter: drop-shadow(0 0 10px rgba(0, 242, 255, 0.6)); border-radius: 50%; border: 2px solid var(--tx-cyan); background: black; padding: 2px;}
         
         .sys-title { font-family: var(--font-head); font-size: 1.6rem; color: #fff; font-weight: 900; letter-spacing: 2px; display: flex; flex-direction: column; line-height: 1;}
         .sys-title span { font-size: 0.75rem; color: var(--tx-cyan); letter-spacing: 5px; text-shadow: 0 0 10px rgba(0,242,255,0.5); text-transform: uppercase;}
@@ -59,18 +60,18 @@
         .btn-solid { width: 100%; padding: 15px; background: linear-gradient(135deg, var(--tx-violet), #5a009d); color: #fff; border: 1px solid #d073ff; border-radius: 10px; font-family: var(--font-head); font-weight: bold; font-size: 1.1rem; cursor: pointer; transition: 0.3s; box-shadow: 0 5px 25px rgba(162,0,255,0.5); text-transform: uppercase; letter-spacing: 2px;}
         .btn-solid:hover { transform: translateY(-3px); box-shadow: 0 8px 35px rgba(162,0,255,0.7); }
 
-        /* MAIN APP LAYOUT (DASHBOARD REDESIGN) */
-        .app-container { display: none; flex: 1; width: 100%; max-width: 1600px; margin: 0 auto; padding: 20px; gap: 20px; animation: fadeScaleUp 0.6s; }
+        /* MAIN APP LAYOUT */
+        .app-container { display: none; flex: 1; width: 100%; max-width: 1400px; margin: 0 auto; padding: 20px; gap: 20px; animation: fadeScaleUp 0.6s; }
         
         /* SIDEBAR NAV */
         .sidebar { width: 260px; background: var(--panel-bg); border: 1px solid rgba(255,255,255,0.05); border-radius: 15px; padding: 20px 10px; display: flex; flex-direction: column; gap: 10px; box-shadow: 0 10px 30px rgba(0,0,0,0.6); }
-        .nav-btn { background: transparent; border: none; color: var(--tx-silver); font-family: var(--font-head); font-size: 1rem; text-align: left; padding: 15px 20px; border-radius: 10px; cursor: pointer; transition: 0.3s; display: flex; align-items: center; gap: 15px; text-transform: uppercase; }
+        .nav-btn { background: transparent; border: none; color: var(--tx-silver); font-family: var(--font-head); font-size: 0.95rem; text-align: left; padding: 15px 20px; border-radius: 10px; cursor: pointer; transition: 0.3s; display: flex; align-items: center; gap: 15px; text-transform: uppercase; letter-spacing: 1px;}
         .nav-btn i { font-size: 1.2rem; width: 25px; text-align: center; }
         .nav-btn:hover { background: rgba(255,255,255,0.05); color: #fff; }
         .nav-btn.active { background: rgba(0, 242, 255, 0.1); color: var(--tx-cyan); border-left: 4px solid var(--tx-cyan); }
         
         .agent-status-box { margin-top: auto; padding: 15px; background: rgba(0,0,0,0.5); border-radius: 10px; border: 1px solid rgba(0,255,102,0.3); text-align: center; }
-        .agent-status-box span { display: block; font-family: var(--font-code); color: #00ff66; font-size: 0.9rem; margin-top: 5px; }
+        .agent-status-box span { display: block; font-family: var(--font-code); color: var(--tx-green); font-size: 0.9rem; margin-top: 5px; }
 
         /* CONTENT AREA */
         .main-content { flex: 1; background: var(--panel-bg); border: 1px solid rgba(255,255,255,0.05); border-radius: 15px; padding: 30px; box-shadow: 0 10px 30px rgba(0,0,0,0.6); overflow-y: auto; height: 85vh; }
@@ -88,18 +89,11 @@
         .feed-item .time { color: var(--tx-cyan); }
         .feed-item .event { color: #ccc; }
 
-        /* TOOLS & DOSSIER STYLES (Retained from original) */
+        /* DOSSIER SCANNER */
         .search-area { display: flex; gap: 15px; margin-bottom: 30px; background: rgba(0,0,0,0.4); padding: 15px; border-radius: 15px; border: 1px solid rgba(255,255,255,0.05); }
         .search-area input { flex: 1; padding: 15px; font-size: 1.1rem; background: rgba(0,0,0,0.5); border: 1px solid var(--tx-cyan); color: #fff; font-family: var(--font-code); border-radius: 10px; outline: none; transition: 0.3s;}
         .search-area button { background: var(--tx-cyan); color: #000; border: none; padding: 0 40px; border-radius: 10px; font-family: var(--font-head); font-weight: bold; cursor: pointer; font-size: 1.1rem; text-transform: uppercase; }
         
-        .tools-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 15px; margin-bottom: 30px; }
-        .tool-card { background: rgba(0,0,0,0.4); border: 1px solid rgba(255,255,255,0.05); border-left: 3px solid var(--tx-violet); padding: 15px; border-radius: 10px; cursor: pointer; transition: 0.3s; display: flex; align-items: center; gap: 15px; }
-        .tool-card:hover { background: rgba(162,0,255,0.1); border-color: rgba(162,0,255,0.3); transform: translateX(5px); }
-        .tool-icon { font-size: 1.5rem; color: var(--tx-silver); width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; background: rgba(255,255,255,0.05); border-radius: 8px; }
-        .tool-card:hover .tool-icon { color: var(--tx-cyan); text-shadow: 0 0 10px var(--tx-cyan); }
-        .tool-text { font-family: var(--font-head); font-size: 0.85rem; font-weight: bold; text-transform: uppercase; color: #ccc; }
-
         .dossier-layout { display: grid; grid-template-columns: 1fr; gap: 25px; }
         .section-card { background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.05); border-top: 3px solid var(--tx-cyan); border-radius: 15px; padding: 25px; }
         .section-title { font-family: var(--font-head); color: #fff; font-size: 1.2rem; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 12px; margin-bottom: 20px; text-transform: uppercase; display: flex; align-items: center; gap: 10px; }
@@ -108,8 +102,19 @@
         .input-group { display: flex; flex-direction: column; gap: 5px; }
         .input-group label { font-family: var(--font-code); color: var(--tx-silver); font-size: 0.85rem; text-transform: uppercase; }
         .data-input { background: rgba(0,0,0,0.6); border: 1px solid rgba(255,255,255,0.15); color: #fff; padding: 12px; border-radius: 8px; font-family: var(--font-code); font-size: 1rem; width: 100%; outline: none; }
-        
-        .list-card { border: 1px solid rgba(255,255,255,0.05); border-left: 3px solid var(--tx-violet); padding: 15px; border-radius: 10px; margin-bottom: 12px; background: rgba(0,0,0,0.5); font-family: var(--font-code); font-size: 0.95rem; display: flex; flex-direction: column; gap: 5px;}
+        .data-input:focus { border-color: var(--tx-violet); }
+
+        /* ACTION CENTER */
+        .tools-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 15px; margin-bottom: 30px; }
+        .tool-card { background: rgba(0,0,0,0.4); border: 1px solid rgba(255,255,255,0.05); border-left: 3px solid var(--tx-violet); padding: 15px; border-radius: 10px; cursor: pointer; transition: 0.3s; display: flex; align-items: center; gap: 15px; }
+        .tool-card:hover { background: rgba(162,0,255,0.1); border-color: rgba(162,0,255,0.3); transform: translateX(5px); }
+        .tool-icon { font-size: 1.5rem; color: var(--tx-silver); width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; background: rgba(255,255,255,0.05); border-radius: 8px; }
+        .tool-card:hover .tool-icon { color: var(--tx-cyan); text-shadow: 0 0 10px var(--tx-cyan); }
+        .tool-text { font-family: var(--font-head); font-size: 0.85rem; font-weight: bold; text-transform: uppercase; color: #ccc; }
+
+        /* MAIL SYSTEM */
+        .mail-composer { background: rgba(0,0,0,0.5); padding: 20px; border-radius: 10px; border: 1px dashed var(--tx-cyan); margin-top: 20px;}
+        .mail-composer textarea { width: 100%; height: 100px; background: #000; border: 1px solid rgba(255,255,255,0.1); color: #fff; padding: 10px; font-family: var(--font-body); resize: vertical; border-radius: 8px; margin-bottom: 10px;}
 
         /* CRITICAL TICKET MODAL (HOT POTATO) */
         .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); z-index: 2000; display: none; align-items: center; justify-content: center; backdrop-filter: blur(10px); }
@@ -186,7 +191,7 @@
             <button class="nav-btn" onclick="switchTab('tab-tools', this)"><i class="fa-solid fa-toolbox"></i> Action Center</button>
             
             <div class="agent-status-box">
-                <i class="fa-solid fa-satellite-dish" style="color:#00ff66; font-size:1.5rem;"></i>
+                <i class="fa-solid fa-satellite-dish" style="color:var(--tx-green); font-size:1.5rem; animation: pulseLogo 2s infinite alternate;"></i>
                 <span>Polling Server Active</span>
             </div>
         </div>
@@ -198,7 +203,7 @@
                 <div class="stats-grid">
                     <div class="stat-card"><h4>Tickets Solved (Today)</h4><div class="val" id="stat-solved">0</div></div>
                     <div class="stat-card"><h4>Avg Response Time</h4><div class="val">42s</div></div>
-                    <div class="stat-card"><h4>Platform Open Bugs</h4><div class="val" style="color:var(--tx-red)">14</div></div>
+                    <div class="stat-card"><h4>Platform Open Bugs</h4><div class="val" style="color:var(--tx-red)">3</div></div>
                 </div>
 
                 <h3 style="font-family: var(--font-head); margin-bottom: 15px; color: #fff;">Live Activity Feed</h3>
@@ -208,36 +213,42 @@
             </div>
 
             <div id="tab-scan" class="tab-section">
+                <h2 style="font-family: var(--font-head); color: var(--tx-violet); margin-bottom: 20px; text-transform: uppercase;">Central Database Scanner</h2>
                 <div class="search-area">
-                    <input type="text" id="inpSearch" placeholder="Enter Email, UID, or Exact Username..." onkeypress="if(event.key==='Enter') executeSearch()">
+                    <input type="text" id="inpSearch" placeholder="Enter Email, Target UID, or Exact Username..." onkeypress="if(event.key==='Enter') executeSearch()">
                     <button onclick="executeSearch()" id="btnSearch"><i class="fa-solid fa-magnifying-glass"></i> Scan</button>
                 </div>
                 
                 <div id="dossierArea" class="dossier-layout" style="display:none;">
                     <div class="section-card">
-                        <div class="section-title"><i class="fa-solid fa-address-card"></i> Central Identity</div>
+                        <div class="section-title"><i class="fa-solid fa-address-card"></i> Central Identity Dossier</div>
                         <div class="data-grid" id="boxProfile"></div>
                         <div style="margin-top: 20px; text-align:right;">
-                            <button class="btn-solid" style="width:auto; padding: 10px 30px;" onclick="reviewChanges()">Inject Updates</button>
+                            <button class="btn-solid" style="width:auto; padding: 10px 30px; border-radius: 8px; font-size: 1rem;" onclick="reviewChanges()">Inject Overwrite</button>
                         </div>
-                    </div>
-                    <div class="section-card">
-                        <div class="section-title"><i class="fa-solid fa-timeline"></i> Match Topology</div>
-                        <div id="boxMatches" style="max-height:300px; overflow-y:auto;"></div>
                     </div>
                 </div>
             </div>
 
             <div id="tab-tools" class="tab-section">
-                <h2 style="font-family: var(--font-head); color: var(--tx-violet); margin-bottom: 20px; text-transform: uppercase;">Admin Protocols</h2>
+                <h2 style="font-family: var(--font-head); color: var(--tx-cyan); margin-bottom: 20px; text-transform: uppercase;">Admin Protocols</h2>
                 <div class="tools-grid">
                     <div class="tool-card" onclick="triggerAction('God Mode Overwrite')"><div class="tool-icon"><i class="fa-solid fa-pen-nib"></i></div><div class="tool-text">God Mode Overwrite</div></div>
-                    <div class="tool-card" onclick="triggerAction('Wallet Override')"><div class="tool-icon"><i class="fa-solid fa-wallet"></i></div><div class="tool-text">Wallet Override</div></div>
+                    <div class="tool-card" onclick="triggerAction('Wallet Override')"><div class="tool-icon"><i class="fa-solid fa-wallet"></i></div><div class="tool-text">Wallet Override (Requires Admin Approval)</div></div>
                     <div class="tool-card" onclick="triggerAction('Ban Hammer')"><div class="tool-icon" style="color:var(--tx-red)"><i class="fa-solid fa-gavel"></i></div><div class="tool-text" style="color:var(--tx-red)">The Ban Hammer</div></div>
                     <div class="tool-card" onclick="triggerAction('VIP Granter')"><div class="tool-icon" style="color:#FFD700"><i class="fa-solid fa-crown"></i></div><div class="tool-text" style="color:#FFD700">VIP Granter</div></div>
                     <div class="tool-card" onclick="triggerAction('Tourney Force-Cancel')"><div class="tool-icon"><i class="fa-solid fa-calendar-xmark"></i></div><div class="tool-text">Tourney Force-Cancel</div></div>
-                    <div class="tool-card" onclick="triggerAction('Match Reversal')"><div class="tool-icon"><i class="fa-solid fa-clock-rotate-left"></i></div><div class="tool-text">Match Reversal Tool</div></div>
-                    <div class="tool-card" onclick="openTicketModal()"><div class="tool-icon"><i class="fa-solid fa-headset"></i></div><div class="tool-text">Admin Escalation Ticket</div></div>
+                </div>
+
+                <div class="section-card" style="margin-top: 20px;">
+                    <div class="section-title"><i class="fa-solid fa-envelope"></i> Send Resolution Mail / Status Update</div>
+                    <div class="mail-composer">
+                        <div class="input-wrapper">
+                            <input type="email" id="mailRecipient" class="form-control" style="padding-left:15px;" placeholder="User Email Address (e.g. player@gmail.com)">
+                        </div>
+                        <textarea id="mailBody" placeholder="Type resolution details here... Example: We have reviewed your match dispute and refunded your TX ticket."></textarea>
+                        <button class="btn-solid" onclick="dispatchEmail()" id="btnSendMail" style="font-size:0.95rem; padding: 12px;"><i class="fa-solid fa-paper-plane"></i> Dispatch Email</button>
+                    </div>
                 </div>
             </div>
 
@@ -255,7 +266,7 @@
             <p style="font-family: var(--font-code); color: var(--tx-red); font-weight: bold;">Auto-Rejecting in <span id="tktCountText">60</span>s</p>
 
             <div class="btn-group">
-                <button class="btn-outline" style="flex:1; border-color:var(--tx-red); color:var(--tx-red);" onclick="rejectTicket()">Reject</button>
+                <button class="btn-outline" style="flex:1; border-color:var(--tx-red); color:var(--tx-red);" onclick="rejectTicket()">Reject & Pass</button>
                 <button class="btn-solid" style="flex:1; margin:0;" onclick="acceptTicket()">Accept Task</button>
             </div>
         </div>
@@ -264,16 +275,30 @@
     <div id="toast">Notification</div>
 
     <script>
+        // --- 1. SECURE API CONFIGURATION ---
         const API_URL = 'https://script.google.com/macros/s/AKfycbyqqTpgaflxKJ9xH0jq7mJ_jLzcoNhas3gNo0h5gvoa_6r5Ae9NFxJAJp7ZoYNnMRKl/exec';
         let agentEmail = localStorage.getItem('tournyx_agent_email') || "";
         let isSessionValid = localStorage.getItem('tournyx_agent_session') === "active";
         
         let originalDossier = null;
-
-        // NEW: Polling & Ticket Variables
         let pollInterval;
         let activeTicketId = null;
+        let activeTicketEmail = null;
         let countdownTimer;
+
+        async function secureFetch(payload) {
+            try {
+                const response = await fetch(API_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'text/plain' },
+                    body: JSON.stringify(payload)
+                });
+                return await response.json();
+            } catch (error) {
+                console.error("Fetch Error:", error);
+                throw error;
+            }
+        }
 
         function showToast(msg, isError = false) {
             const t = document.getElementById('toast');
@@ -283,17 +308,70 @@
             setTimeout(() => t.classList.remove('show'), 3000);
         }
 
-        // INIT
+        // --- 2. INIT & AUTHENTICATION ---
         document.addEventListener("DOMContentLoaded", () => {
             if(isSessionValid && agentEmail) {
                 document.getElementById('loginView').style.display = 'none';
                 document.getElementById('mainAppView').style.display = 'flex';
                 document.getElementById('btnLogout').style.display = 'block';
-                startTicketPolling(); // Start listening for tasks
+                startTicketPolling(); 
             }
         });
 
-        // TABS NAVIGATION
+        document.getElementById('formLogin').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const email = document.getElementById('l_email').value;
+            const pass = document.getElementById('l_pass').value;
+            const btn = document.getElementById('btnReqOtp');
+            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i>'; btn.disabled = true;
+
+            try {
+                const result = await secureFetch({ action: 'support_login', email: email, password: pass });
+                if(result.status === 'success') {
+                    agentEmail = email;
+                    document.getElementById('loginView').classList.remove('active');
+                    document.getElementById('loginView').classList.add('hidden');
+                    setTimeout(() => {
+                        document.getElementById('loginView').style.display = 'none';
+                        document.getElementById('otpView').style.display = 'flex';
+                        void document.getElementById('otpView').offsetWidth;
+                        document.getElementById('otpView').classList.remove('hidden');
+                        document.getElementById('otpView').classList.add('active');
+                    }, 500);
+                    showToast("Credentials Accepted. Token Sent.");
+                } else { showToast(result.data || result.message, true); }
+            } catch(e) { showToast("Network Error", true); }
+            btn.innerHTML = 'Initialize Uplink'; btn.disabled = false;
+        });
+
+        document.getElementById('formOtp').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const otp = document.getElementById('l_otp').value;
+            const btn = document.getElementById('btnVerify');
+            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i>'; btn.disabled = true;
+
+            try {
+                const result = await secureFetch({ action: 'support_verify', email: agentEmail, otp: otp });
+                if(result.status === 'success') {
+                    localStorage.setItem('tournyx_agent_email', agentEmail);
+                    localStorage.setItem('tournyx_agent_session', 'active');
+                    document.getElementById('otpView').style.display = 'none';
+                    document.getElementById('mainAppView').style.display = 'flex';
+                    document.getElementById('btnLogout').style.display = 'block';
+                    showToast("Secure Session Established.");
+                    startTicketPolling();
+                } else { showToast(result.data || result.message, true); }
+            } catch(e) { showToast("Network Error", true); }
+            btn.innerHTML = 'Verify Session'; btn.disabled = false;
+        });
+
+        function logout() {
+            localStorage.removeItem('tournyx_agent_email');
+            localStorage.removeItem('tournyx_agent_session');
+            window.location.reload();
+        }
+
+        // --- 3. UI NAVIGATION & FEED ---
         function switchTab(tabId, btnElement) {
             document.querySelectorAll('.tab-section').forEach(t => t.classList.remove('active'));
             document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
@@ -307,74 +385,16 @@
             feed.innerHTML = `<div class="feed-item"><span class="time">[${time}]</span><span class="event">${msg}</span></div>` + feed.innerHTML;
         }
 
-        // --- AUTHENTICATION (Retained Original) ---
-        document.getElementById('formLogin').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const email = document.getElementById('l_email').value;
-            const pass = document.getElementById('l_pass').value;
-            const btn = document.getElementById('btnReqOtp');
-            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i>'; btn.disabled = true;
-
-            try {
-                const res = await fetch(API_URL, { method: 'POST', body: JSON.stringify({ action: 'support_login', email: email, password: pass }) });
-                const result = await res.json();
-                if(result.status === 'success') {
-                    agentEmail = email;
-                    document.getElementById('loginView').classList.remove('active');
-                    document.getElementById('loginView').classList.add('hidden');
-                    setTimeout(() => {
-                        document.getElementById('loginView').style.display = 'none';
-                        document.getElementById('otpView').style.display = 'flex';
-                        void document.getElementById('otpView').offsetWidth;
-                        document.getElementById('otpView').classList.remove('hidden');
-                        document.getElementById('otpView').classList.add('active');
-                    }, 500);
-                    showToast("Credentials Accepted. Token Sent.");
-                } else { showToast(result.data, true); }
-            } catch(e) { showToast("Network Error", true); }
-            btn.innerHTML = 'Initialize Uplink'; btn.disabled = false;
-        });
-
-        document.getElementById('formOtp').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const otp = document.getElementById('l_otp').value;
-            const btn = document.getElementById('btnVerify');
-            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i>'; btn.disabled = true;
-
-            try {
-                const res = await fetch(API_URL, { method: 'POST', body: JSON.stringify({ action: 'support_verify', email: agentEmail, otp: otp }) });
-                const result = await res.json();
-                if(result.status === 'success') {
-                    localStorage.setItem('tournyx_agent_email', agentEmail);
-                    localStorage.setItem('tournyx_agent_session', 'active');
-                    document.getElementById('otpView').style.display = 'none';
-                    document.getElementById('mainAppView').style.display = 'flex';
-                    document.getElementById('btnLogout').style.display = 'block';
-                    showToast("Secure Session Established.");
-                    startTicketPolling();
-                } else { showToast(result.data, true); }
-            } catch(e) { showToast("Network Error", true); }
-            btn.innerHTML = 'Verify Session'; btn.disabled = false;
-        });
-
-        function logout() {
-            localStorage.removeItem('tournyx_agent_email');
-            localStorage.removeItem('tournyx_agent_session');
-            window.location.reload();
-        }
-
-        // --- NEW: THE TICKET ENGINE (POLLING) ---
+        // --- 4. TICKET POLLING (HOT POTATO) ---
         function startTicketPolling() {
-            // Check server every 10 seconds
-            pollInterval = setInterval(checkPendingTickets, 10000);
+            pollInterval = setInterval(checkPendingTickets, 10000); // Check every 10 sec
         }
 
         async function checkPendingTickets() {
-            if(activeTicketId) return; // Already handling a ticket
+            if(activeTicketId) return; 
             try {
-                const res = await fetch(API_URL, { method: 'POST', body: JSON.stringify({ action: 'support_poll_tickets', agent: agentEmail }) });
-                const result = await res.json();
-                if(result.status === 'success' && result.data.ticket_id) {
+                const result = await secureFetch({ action: 'support_poll_tickets', agent: agentEmail });
+                if(result.status === 'success' && result.data && result.data.ticket_id) {
                     triggerTicketAlert(result.data);
                 }
             } catch(e) { console.log("Polling skip..."); }
@@ -382,11 +402,10 @@
 
         function triggerTicketAlert(ticketData) {
             activeTicketId = ticketData.ticket_id;
+            activeTicketEmail = ticketData.user_id; // Extract email for auto-scan
+            
             document.getElementById('incTktDesc').innerText = `Issue: ${ticketData.issue_type} | User: ${ticketData.user_id}`;
             document.getElementById('incomingTicketModal').classList.add('active');
-            
-            // Audio alert (optional if you add an mp3)
-            // new Audio('alert.mp3').play();
 
             let timeLeft = 60;
             const bar = document.getElementById('ticketTimerBar');
@@ -397,55 +416,48 @@
                 timeLeft--;
                 txt.innerText = timeLeft;
                 bar.style.width = `${(timeLeft/60)*100}%`;
-                if(timeLeft <= 0) {
-                    rejectTicket(); // Auto reject on timeout
-                }
+                if(timeLeft <= 0) rejectTicket();
             }, 1000);
         }
 
         async function acceptTicket() {
             clearInterval(countdownTimer);
             document.getElementById('incomingTicketModal').classList.remove('active');
-            appendFeed(`Accepted Ticket #${activeTicketId}. Routing to workspace...`);
+            appendFeed(`Accepted Ticket #${activeTicketId}. Locking task.`);
             
             try {
-                await fetch(API_URL, { method: 'POST', body: JSON.stringify({ action: 'support_accept_ticket', agent: agentEmail, ticket_id: activeTicketId }) });
+                await secureFetch({ action: 'support_accept_ticket', agent: agentEmail, ticket_id: activeTicketId });
                 
-                // Update stats counter visually
                 let solvedTxt = document.getElementById('stat-solved');
                 solvedTxt.innerText = parseInt(solvedTxt.innerText) + 1;
                 
-                // Auto-scan the user associated with the ticket
-                // In a real scenario, ticketData would return the user email.
-                showToast(`Ticket Locked. Accessing user data...`);
-                switchTab('tab-scan', document.querySelectorAll('.nav-btn')[1]);
+                showToast(`Ticket Locked. Fetching User Data...`);
                 
-            } catch(e) { showToast("Error connecting to DB", true); }
+                // Auto Search the user who submitted the ticket
+                if(activeTicketEmail) {
+                    document.getElementById('inpSearch').value = activeTicketEmail;
+                    switchTab('tab-scan', document.querySelectorAll('.nav-btn')[1]);
+                    executeSearch();
+                    
+                    // Pre-fill mail composer
+                    document.getElementById('mailRecipient').value = activeTicketEmail;
+                }
+            } catch(e) { showToast("Error locking ticket", true); }
             activeTicketId = null;
         }
 
         async function rejectTicket() {
             clearInterval(countdownTimer);
             document.getElementById('incomingTicketModal').classList.remove('active');
-            appendFeed(`Rejected Ticket #${activeTicketId}. Bouncing to next available agent.`);
+            appendFeed(`Rejected Ticket #${activeTicketId}. Bouncing to next agent.`);
             
             try {
-                await fetch(API_URL, { method: 'POST', body: JSON.stringify({ action: 'support_reject_ticket', agent: agentEmail, ticket_id: activeTicketId }) });
+                await secureFetch({ action: 'support_reject_ticket', agent: agentEmail, ticket_id: activeTicketId });
             } catch(e) {}
             activeTicketId = null;
         }
 
-
-        // --- SEARCH & TOOLS (Retained Original Logic) ---
-        function triggerAction(name) {
-            if(!originalDossier) {
-                showToast("Please run a Deep Scan on a user first.", true);
-                switchTab('tab-scan', document.querySelectorAll('.nav-btn')[1]);
-            } else {
-                showToast(`Accessing ${name} module... Edit directly in the Dossier.`);
-            }
-        }
-
+        // --- 5. SEARCH & DOSSIER ---
         async function executeSearch() {
             const query = document.getElementById('inpSearch').value.trim();
             if(!query) return;
@@ -455,8 +467,7 @@
             document.getElementById('dossierArea').style.display = 'none';
 
             try {
-                const res = await fetch(API_URL, { method: 'POST', body: JSON.stringify({ action: 'support_global_search', query: query }) });
-                const result = await res.json();
+                const result = await secureFetch({ action: 'support_global_search', query: query });
                 
                 if(result.status === 'success') {
                     originalDossier = result.data; 
@@ -464,7 +475,12 @@
                     document.getElementById('dossierArea').style.display = 'grid';
                     appendFeed(`Scanned user record: ${query}`);
                     showToast("Player Record Extracted");
-                } else { showToast(result.data, true); }
+                    
+                    // Auto fill email composer if we found an email
+                    if(result.data.target.email) {
+                        document.getElementById('mailRecipient').value = result.data.target.email;
+                    }
+                } else { showToast(result.data || result.message, true); }
             } catch(e) { showToast("Network Error", true); }
             
             btn.innerHTML = '<i class="fa-solid fa-magnifying-glass"></i> Scan'; btn.disabled = false;
@@ -484,29 +500,59 @@
             }
         }
 
-        // Particle background logic
-        const c = document.getElementById('particles');
-        let dots = [];
-        for(let i=0; i<40; i++) {
-            let dot = document.createElement('div');
-            dot.style.position = 'absolute';
-            dot.style.width = Math.random() * 3 + 'px'; dot.style.height = dot.style.width;
-            dot.style.background = Math.random() > 0.7 ? 'var(--tx-cyan)' : 'var(--tx-violet)';
-            dot.style.left = Math.random() * 100 + 'vw';
-            dot.style.top = Math.random() * 100 + 'vh';
-            dot.style.opacity = Math.random() * 0.5 + 0.1;
-            dot.style.borderRadius = '50%';
-            dot.style.boxShadow = `0 0 10px ${dot.style.background}`;
-            c.appendChild(dot);
-            dots.push({el: dot, speed: Math.random() * 0.5 + 0.1});
+        // Dummy function for UI button
+        function reviewChanges() {
+            showToast("Overwrites require Level 5 Admin Auth (Beta).", true);
         }
-        setInterval(() => {
-            dots.forEach(d => {
-                let currentTop = parseFloat(d.el.style.top);
-                d.el.style.top = (currentTop - d.speed) + 'vh';
-                if(currentTop < 0) d.el.style.top = '100vh';
-            });
-        }, 50);
+
+        function triggerAction(name) {
+            if(!originalDossier) {
+                showToast("Scan a user target first.", true);
+                switchTab('tab-scan', document.querySelectorAll('.nav-btn')[1]);
+                return;
+            }
+            if (name === "Wallet Override") {
+                showToast("Request sent to Admin (JacksolutioTj) for Approval.", false);
+                appendFeed(`Requested approval for Wallet Override on ${originalDossier.target.email}`);
+            } else {
+                showToast(`Accessing ${name} module... Modify Dossier.`);
+            }
+        }
+
+        // --- 6. SEND EMAIL ENGINE ---
+        async function dispatchEmail() {
+            const recipient = document.getElementById('mailRecipient').value.trim();
+            const body = document.getElementById('mailBody').value.trim();
+            const btn = document.getElementById('btnSendMail');
+
+            if(!recipient || !body) { showToast("Missing email or body text.", true); return; }
+
+            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Dispatching...';
+            btn.disabled = true;
+
+            try {
+                const result = await secureFetch({ 
+                    action: 'support_send_mail', 
+                    recipient: recipient, 
+                    body: body,
+                    agent: agentEmail
+                });
+                
+                if(result.status === 'success') {
+                    showToast("Email dispatched successfully.");
+                    document.getElementById('mailBody').value = ""; // Clear
+                    appendFeed(`Dispatched resolution email to ${recipient}`);
+                } else {
+                    showToast(result.message || "Failed to send mail.", true);
+                }
+            } catch(e) {
+                showToast("Network Error during dispatch.", true);
+            }
+
+            btn.innerHTML = '<i class="fa-solid fa-paper-plane"></i> Dispatch Email';
+            btn.disabled = false;
+        }
+
     </script>
 </body>
 </html>
