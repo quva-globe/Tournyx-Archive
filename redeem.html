@@ -239,8 +239,10 @@
         .overlay-title { font-family: var(--font-head); font-size: 1.6rem; color: white; margin-bottom: 10px; text-shadow: 0 0 10px rgba(255,255,255,0.3); transition: 0.3s; }
         .overlay-desc { color: #aaa; font-size: 0.95rem; text-align: center; max-width: 80%; line-height: 1.5; transition: 0.3s; }
 
-        /* ADSTERRA & MONETAG CONTAINER */
-        .ad-container { width: 100%; max-width: 336px; min-height: 280px; background: rgba(255,255,255,0.02); border-radius: 12px; margin-top: 20px; display: none; align-items: center; justify-content: center; border: 1px dashed rgba(255,255,255,0.15); flex-direction: column; overflow: hidden; }
+        /* ADSTERRA CONTAINER */
+        .ad-container { width: 100%; max-width: 336px; min-height: 100px; background: rgba(255,255,255,0.02); border-radius: 12px; margin-top: 20px; display: none; align-items: center; justify-content: center; border: 1px dashed rgba(255,255,255,0.15); flex-direction: column; overflow: hidden; padding: 10px; }
+        #adsterra-banner { width: 100%; display: flex; justify-content: center; align-items: center; }
+        
         .ad-timer { font-family: var(--font-head); font-size: 1rem; color: var(--accent-orange); margin-top: 20px; font-weight: bold; display: none; text-shadow: 0 0 10px rgba(255,153,0,0.5); animation: pulse 1s infinite;}
         html.theme-vip .ad-timer { color: #FFD700; text-shadow: 0 0 10px rgba(255,215,0,0.5); }
 
@@ -574,12 +576,7 @@
         <div class="ad-container" id="adContainer">
             <span style="color:rgba(255,255,255,0.2); font-size:0.7rem; font-family:var(--font-head); margin-bottom: 5px;">SPONSOR AD</span>
             
-            <div id="adsterra-banner">
-                <iframe srcdoc='<script type="text/javascript">atOptions = {"key" : "3435a0d810065b1a92465c0ff9aff6e9", "format" : "iframe", "height" : 50, "width" : 320, "params" : {}};</script><script type="text/javascript" src="https://www.highperformanceformat.com/3435a0d810065b1a92465c0ff9aff6e9/invoke.js"></script>' width="320" height="50" frameborder="0" scrolling="no" style="border:none; overflow:hidden; background:transparent; margin:auto; display:block;"></iframe>
-            </div>
-
-            <div id="monetag-banner">
-            </div>
+            <div id="adsterra-banner" style="width: 320px; height: 50px;"></div>
 
         </div>
         <div class="ad-timer" id="adTimer">Closing in 10...</div>
@@ -665,10 +662,24 @@
         anim();
         window.addEventListener('resize', () => { canvas.width = window.innerWidth; canvas.height = window.innerHeight; });
 
-        // --- BACKEND & AUTH SETUP ---
+        // --- SECURE API FETCH ENGINE ---
         const API_URL = "https://script.google.com/macros/s/AKfycbyqqTpgaflxKJ9xH0jq7mJ_jLzcoNhas3gNo0h5gvoa_6r5Ae9NFxJAJp7ZoYNnMRKl/exec"; 
         let currentUser = JSON.parse(localStorage.getItem('tournyx_user'));
         let isGuest = false;
+
+        async function secureFetch(payload) {
+            try {
+                const response = await fetch(API_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'text/plain' },
+                    body: JSON.stringify(payload)
+                });
+                return await response.json();
+            } catch (error) {
+                console.error("Fetch Error:", error);
+                throw error;
+            }
+        }
 
         function triggerHaptic() { if(navigator.vibrate) navigator.vibrate(40); }
 
@@ -708,14 +719,34 @@
             setTimeout(function(){ x.className = x.className.replace("show", ""); }, 3500);
         }
 
-        // --- SYNC ENGINE (UPDATED TO SECURE POST LOGIC) ---
+        // --- DYNAMIC IFRAME AD BUILDER (Bypasses browser block issues) ---
+        function loadPartnerAd() {
+            const container = document.getElementById('adsterra-banner');
+            container.innerHTML = ''; 
+            
+            const iframe = document.createElement('iframe');
+            iframe.width = "320";
+            iframe.height = "50";
+            iframe.frameBorder = "0";
+            iframe.scrolling = "no";
+            iframe.style.border = "none";
+            iframe.style.display = "block";
+            iframe.style.margin = "auto";
+            
+            container.appendChild(iframe);
+            
+            const doc = iframe.contentWindow.document;
+            doc.open();
+            doc.write('<html><head></head><body style="margin:0;padding:0;text-align:center;">');
+            doc.write('<script type="text/javascript">atOptions = {"key":"3435a0d810065b1a92465c0ff9aff6e9","format":"iframe","height":50,"width":320,"params":{}};</scr'+'ipt>');
+            doc.write('<script type="text/javascript" src="https://www.highperformanceformat.com/3435a0d810065b1a92465c0ff9aff6e9/invoke.js"></scr'+'ipt>');
+            doc.write('</body></html>');
+            doc.close();
+        }
+
+        // --- SYNC ENGINE ---
         function syncLivePoints() {
-            fetch(API_URL, {
-                method: 'POST',
-                headers: { 'Content-Type': 'text/plain' },
-                body: JSON.stringify({ action: 'sync_user', email: currentUser.email })
-            })
-            .then(res => res.json())
+            secureFetch({ action: 'sync_user', email: currentUser.email })
             .then(data => {
                 if(data.status === 'success') {
                     currentUser.points = data.data.points || currentUser.points;
@@ -733,10 +764,10 @@
             }).catch(e => console.log("Offline mode"));
         }
 
-        // --- DYNAMIC AFFORDABILITY ENGINE (VIP UNLOCK) ---
+        // --- DYNAMIC AFFORDABILITY ENGINE (VIP UNLOCK FIX) ---
         function updateUIState() {
             let pts = parseInt(currentUser.points) || 0;
-            let isVip = document.documentElement.classList.contains('theme-vip');
+            let isVip = String(currentUser.is_premium).toLowerCase() === 'true'; 
             
             // Animate Points display
             let ptsDisplay = document.getElementById('userPointsDisplay');
@@ -747,7 +778,7 @@
                 let isPremiumOnly = btn.getAttribute('data-premium') === 'true';
                 let card = btn.closest('.reward-card');
                 
-                // If it's a premium-only item and user is NOT a VIP, strictly lock it visually.
+                // Exclusively lock premium items for non-VIPs
                 if (isPremiumOnly && !isVip) {
                     btn.classList.add('locked');
                     btn.innerHTML = `<i class="fa-solid fa-crown"></i> VIP Only`;
@@ -802,7 +833,7 @@
             }
 
             let pts = parseInt(currentUser.points) || 0;
-            let isVip = document.documentElement.classList.contains('theme-vip');
+            let isVip = String(currentUser.is_premium).toLowerCase() === 'true';
             
             // Strictly reject non-VIPs from Premium items
             if (isPremiumOnly && !isVip) {
@@ -813,8 +844,8 @@
                 return;
             }
 
-            // Reject standard items if points are insufficient
-            if (pts < cost && !isVip) {
+            // Reject ALL users if points are insufficient (Fixed bypass bug)
+            if (pts < cost) {
                 let badge = document.getElementById('walletBadge');
                 badge.style.animation = "shake 0.4s";
                 setTimeout(()=>badge.style.animation = "none", 400);
@@ -862,7 +893,7 @@
             document.getElementById('statusOverlay').classList.remove('active'); 
         }
 
-        // --- SECURE REDEMPTION & ADSTERRA LOGIC (UPDATED TO POST) ---
+        // --- SECURE REDEMPTION & ADSTERRA LOGIC ---
         function confirmRedeem() {
             let inputField = document.getElementById('modalInput');
             let payoutDetails = inputField.value.trim();
@@ -896,11 +927,7 @@
                 cost: activeReward.cost
             };
 
-            fetch(API_URL, {
-                method: 'POST', 
-                headers: { 'Content-Type': 'text/plain' },
-                body: JSON.stringify(payload)
-            }).then(() => {
+            secureFetch(payload).then(() => {
                 
                 // Deduct points instantly in UI
                 let oldPts = parseInt(currentUser.points) || 0;
@@ -909,19 +936,22 @@
                 
                 updateUIState();
                 
-                // Optimistically log transaction
+                // Log transaction specifically appending " PTS" so Tickets.html catches it correctly
                 let localTxns = JSON.parse(localStorage.getItem('tournyx_txns')) || [];
                 localTxns.unshift({ 
-                    id: "RD" + Date.now().toString().slice(-6), 
+                    id: "RD-" + Date.now().toString().slice(-6), 
                     date: new Date().toLocaleString('en-US', { month: 'short', day: '2-digit', hour: 'numeric', minute: '2-digit', hour12: true }), 
-                    amount: activeReward.cost, type: "Debit", title: "Redeemed: " + activeReward.name, status: "Pending"
+                    amount: activeReward.cost + " PTS", 
+                    type: "Debit", 
+                    title: "Redeemed: " + activeReward.name, 
+                    status: "Pending",
+                    category: "Reward"
                 });
                 localStorage.setItem('tournyx_txns', JSON.stringify(localTxns));
 
                 showOverlay('success', 'Reward Claimed!', 'Your request has been sent to the admins. Allow up to 24 hours.');
                 
-                // VIP Check for Ad Bypass
-                let isVip = document.documentElement.classList.contains('theme-vip');
+                let isVip = String(currentUser.is_premium).toLowerCase() === 'true';
                 
                 if (isVip) {
                     setTimeout(() => {
@@ -929,6 +959,7 @@
                         showToast("Reward processed successfully!", false);
                     }, 2000);
                 } else {
+                    // Standard Users - Show Adsterra Ad properly via doc.write injection
                     setTimeout(() => {
                         document.getElementById('statusCircle').style.display = 'none';
                         document.getElementById('statusTitle').innerText = 'Sponsor Message';
@@ -936,6 +967,8 @@
                         
                         document.getElementById('adContainer').style.display = 'flex';
                         document.getElementById('adTimer').style.display = 'block';
+                        
+                        loadPartnerAd(); // Inject the Adsterra ad dynamically
 
                         let timeLeft = 10;
                         document.getElementById('adTimer').innerText = `Closing in ${timeLeft}...`;
