@@ -262,7 +262,6 @@
 
         .org-list-header { font-family: var(--font-head); font-size: 1.2rem; color: white; margin-bottom: 15px; display: flex; justify-content: space-between; align-items: center; border-top: 1px solid var(--card-border); padding-top: 25px; text-transform: uppercase; letter-spacing: 1px;}
         
-        /* Adjusted for perfect fit on mobile: Stacked layout to prevent overflow and show full tournament name */
         .managed-item { background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.05); border-radius: 15px; padding: 15px; display: flex; flex-direction: column; margin-bottom: 12px; transition: 0.3s; box-shadow: 0 5px 15px rgba(0,0,0,0.2); gap: 12px; backdrop-filter: blur(10px); }
         .managed-item:hover { border-color: var(--accent-cyan); background: rgba(0,242,255,0.05); }
         .theme-vip .managed-item:hover { border-color: #d4af37; }
@@ -366,7 +365,7 @@
         .nav-item.active > .tx-ticket-composite { transform: translateY(-4px); }
         .nav-item.active > i, .nav-item.active > .tx-icon, .nav-item.active > .tx-ticket-composite i { transform: translateY(-4px); background: linear-gradient(135deg, var(--accent-purple), var(--accent-cyan)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; filter: drop-shadow(0 0 10px var(--accent-cyan)); font-style: normal;}
         .theme-vip .nav-item.active > i, .theme-vip .nav-item.active > .tx-icon, .theme-vip .nav-item.active > .tx-ticket-composite i { background: linear-gradient(135deg, #FFE87C, #FF8C00); -webkit-background-clip: text; -webkit-text-fill-color: transparent; filter: drop-shadow(0 0 10px rgba(212,175,55,0.8)); }
-        .nav-item.active .tx-ticket-composite i { transform: translateY(0); }
+        .nav-item.active .tx-ticket-composite i { transform: translateY(0); } /* Reset inner transform */
         
         .nav-item.active span { transform: translateY(2px); color: white; text-shadow: 0 0 5px rgba(255,255,255,0.5);}
         .fab-slot { flex: 1.2; display: flex; justify-content: center; position: relative; height: 100%; align-items: center; }
@@ -794,8 +793,8 @@
     <div class="app-footer">
         © 2026 TOURNYX. All rights reserved.<br>
         <div style="margin-top: 5px; font-style: italic; color: #777; font-size: 0.8rem;">made with ⚡ for gamers</div>
-        <div style="margin-top: 15px; font-size: 0.85rem; color: #888; font-family: var(--font-head); letter-spacing: 2px;">
-            Powered by <span style="font-weight: 900; background: var(--accent-gradient); -webkit-background-clip: text; -webkit-text-fill-color: transparent; letter-spacing: 2px;">QUVA</span>
+        <div style="margin-top: 15px; font-size: 0.85rem; color: #888; font-family: var(--font-head); letter-spacing: 1px;">
+            Powered by <span style="font-weight: 900; background: var(--accent-gradient); -webkit-background-clip: text; -webkit-text-fill-color: transparent; letter-spacing: 1px;">QUVA</span>
         </div>
     </div>
 
@@ -1116,6 +1115,7 @@
                 <input type="hidden" id="editTourneyId">
                 <input type="hidden" id="editTourneyBannerStr">
                 <input type="hidden" id="editPrizeJsonStr">
+                <input type="hidden" id="editTourneyRoomsJson">
                 
                 <label class="form-label"><i class="fa-solid fa-image"></i> Visual Identity</label>
                 <div class="image-upload-box highlight-input-important" onclick="document.getElementById('tourneyBannerInp').click(); triggerHaptic();">
@@ -1130,15 +1130,11 @@
                 <label class="form-label" style="margin-top: 10px;"><i class="fa-solid fa-pen"></i> Basic Information</label>
                 <input type="text" id="editTourneyTitle" class="form-control" placeholder="Tournament Title *" style="margin-bottom: 20px;">
 
-                <label class="form-label"><i class="fa-solid fa-key"></i> Room Details (Live)</label>
-                <div style="display: flex; gap: 10px; margin-bottom: 20px;">
-                    <div style="flex: 1;">
-                        <input type="text" id="editTourneyRoomId" class="form-control highlight-input" placeholder="Room ID">
-                    </div>
-                    <div style="flex: 1;">
-                        <input type="text" id="editTourneyRoomPass" class="form-control highlight-input-pass" placeholder="Password">
-                    </div>
-                </div>
+                <label class="form-label"><i class="fa-solid fa-key"></i> Multi-Stage Sub-Lobbies (Live)</label>
+                <div style="font-size: 0.8rem; color: #aaa; margin-bottom: 15px; line-height: 1.4;">Create multiple rooms (e.g., Group A, Finals). Players will automatically be routed to their assigned group in the Matches tab.</div>
+                
+                <div id="subLobbiesContainer"></div>
+                <button type="button" class="btn-secondary" style="font-size: 0.85rem; padding: 10px; margin-bottom: 25px; border-style: dashed;" onclick="addSubLobbyBlock('', '', '', 'TBD', 'WAITING'); triggerHaptic();"><i class="fa-solid fa-plus"></i> Add Sub-Lobby</button>
 
                 <label class="form-label"><i class="fa-solid fa-calendar-days"></i> Timeline & Access</label>
                 <label class="form-label" style="font-size: 0.7rem; text-transform:none; margin-bottom: 4px; color:#888;">General Registration Deadline *</label>
@@ -1440,14 +1436,12 @@
                 if(urlParams.has('user')) {
                     try {
                         let targetUserEmail = atob(decodeURIComponent(urlParams.get('user')));
-                        // PERFECT RATINGS FOR GUEST VIEWING ANOTHER PROFILE
                         userData = { 
                             email: targetUserEmail, username: "Elite Player", ign: "PRO_GAMER", matches: 999, wins: 850, points: 50000, 
                             hosted: 150, earnings: 10000, winnings: 25000, rupees: 5000, claimed_ms: [], is_premium: true, 
                             player_role: 'IGL', main_game: 'Free Fire', bio: 'Champion of the Tournyx Arena!' 
                         };
 
-                        // Intercept clicks on non-editable attractive display to show Join Popup
                         setTimeout(() => {
                             document.querySelectorAll('.action-card, .milestone-box, .setting-item, .role-switch, .avatar-container').forEach(el => {
                                 el.onclick = (e) => {
@@ -1920,22 +1914,19 @@
                     
                     let sColor = String(statusText).toLowerCase().includes('live') ? 'var(--accent-green)' : (String(statusText).toLowerCase().includes('completed') ? '#888' : 'var(--accent-cyan)');
                     
-                    // BOOST LOGIC INTEGRATION
-    let isBoosted = String(t.Boosted || t.boosted || t.is_boosted).toLowerCase() === 'true';
-    let boostExpiry = (t.Boost_Expiry || t.boost_expiry) ? new Date(t.Boost_Expiry || t.boost_expiry) : null;
-    let now = new Date();
-    let boostActionHtml = "";
+                    let isBoosted = String(t.Boosted || t.boosted || t.is_boosted).toLowerCase() === 'true';
+                    let boostExpiry = (t.Boost_Expiry || t.boost_expiry) ? new Date(t.Boost_Expiry || t.boost_expiry) : null;
+                    let now = new Date();
+                    let boostActionHtml = "";
 
-    if (isBoosted && boostExpiry && boostExpiry > now) {
-        let daysLeft = Math.ceil((boostExpiry - now) / (1000 * 60 * 60 * 24));
-        // The new Cyan Neon Badge with Days Left
-        boostActionHtml = `<div style="background: rgba(0, 242, 255, 0.15); border: 1px solid #00f2ff; color: #00f2ff; padding: 6px 12px; border-radius: 8px; font-family: 'Orbitron'; font-size: 11px; font-weight: bold; box-shadow: 0 0 10px rgba(0,242,255,0.4); display: flex; align-items: center; gap: 5px;">
-             <i class="fa-solid fa-rocket"></i> ACTIVE BOOST (${daysLeft}d left)
-           </div>`;
-    } else {
-        // The standard Boost button to open the Ad Manager
-        boostActionHtml = `<button class="mi-btn" style="background:linear-gradient(90deg, #ff9900, #ff4d4d); border:none; color:white;" onclick="window.location.href='boosttournaments.html?id=${matchId}'"><i class="fa-solid fa-fire"></i> Boost</button>`;
-    }
+                    if (isBoosted && boostExpiry && boostExpiry > now) {
+                        let daysLeft = Math.ceil((boostExpiry - now) / (1000 * 60 * 60 * 24));
+                        boostActionHtml = `<div style="background: rgba(0, 242, 255, 0.15); border: 1px solid #00f2ff; color: #00f2ff; padding: 6px 12px; border-radius: 8px; font-family: 'Orbitron'; font-size: 11px; font-weight: bold; box-shadow: 0 0 10px rgba(0,242,255,0.4); display: flex; align-items: center; gap: 5px;">
+                             <i class="fa-solid fa-rocket"></i> ACTIVE BOOST (${daysLeft}d left)
+                           </div>`;
+                    } else {
+                        boostActionHtml = `<button class="mi-btn" style="background:linear-gradient(90deg, #ff9900, #ff4d4d); border:none; color:white;" onclick="window.location.href='boosttournaments.html?id=${matchId}'"><i class="fa-solid fa-fire"></i> Boost</button>`;
+                    }
 
                     container.innerHTML += `
                         <div class="managed-item">
@@ -1956,31 +1947,29 @@
         }
 
         function cloneTournament(matchId) {
-        if(!confirm("Clone the tournament yes or no?")) return;
-
-        showToast("Cloning tournament...", false);
-        
-        // Trigger the specialized Apps Script Clone Function
-        fetch(API_URL, {
-            method: 'POST',
-            headers: { 'Content-Type': 'text/plain' },
-            body: JSON.stringify({ 
-                action: 'clone_tournament', 
-                id: matchId, 
-                email: userData.email.trim().toLowerCase() 
-            })
-        }).then(res => res.json()).then(data => {
-            if(data.status === 'success') {
-                showToast("Tournament Cloned Successfully!");
-                playSuccessSound();
-                fetchMyTournaments(); // Refresh the list automatically
-            } else {
-                showToast(data.message || "Failed to clone tournament.", true);
-            }
-        }).catch(() => {
-            showToast("Network Error.", true);
-        });
-    }
+            if(!confirm("Clone the tournament yes or no?")) return;
+            showToast("Cloning tournament...", false);
+            
+            fetch(API_URL, {
+                method: 'POST',
+                headers: { 'Content-Type': 'text/plain' },
+                body: JSON.stringify({ 
+                    action: 'clone_tournament', 
+                    id: matchId, 
+                    email: userData.email.trim().toLowerCase() 
+                })
+            }).then(res => res.json()).then(data => {
+                if(data.status === 'success') {
+                    showToast("Tournament Cloned Successfully!");
+                    playSuccessSound();
+                    fetchMyTournaments(); 
+                } else {
+                    showToast(data.message || "Failed to clone tournament.", true);
+                }
+            }).catch(() => {
+                showToast("Network Error.", true);
+            });
+        }
 
         function shareSpecificTournament(title) {
             let msg = `🎮 Register for the epic ${title} Esports Tournament on Tournyx now! Let's go! https://tournyx.in/explore.html`;
@@ -2022,6 +2011,65 @@
             }).catch(() => { 
                 container.innerHTML = "<div style='text-align:center; padding:30px 20px; color:#ff4d4d;'><i class='fa-solid fa-triangle-exclamation' style='font-size:2rem; margin-bottom:10px;'></i><br>Failed to connect to database.</div>"; 
             });
+        }
+
+        // --- SUB-LOBBY BUILDER SYSTEM (GROUPS A, B, FINALS) ---
+        function renderSubLobbies(roomsJsonStr, fallbackId, fallbackPass) {
+            document.getElementById('subLobbiesContainer').innerHTML = "";
+            let currentSubLobbies = {};
+
+            try {
+                if (roomsJsonStr && roomsJsonStr !== "{}" && roomsJsonStr !== "") {
+                    currentSubLobbies = JSON.parse(roomsJsonStr);
+                } else if (fallbackId && fallbackId !== "WAITING") {
+                    currentSubLobbies = {
+                        "Default Lobby": { id: fallbackId, pass: fallbackPass || "", time: "TBD", status: "LIVE" }
+                    };
+                }
+            } catch(e) {}
+
+            if (Object.keys(currentSubLobbies).length === 0) {
+                addSubLobbyBlock("Group A", "", "", "TBD", "WAITING");
+            } else {
+                for (let group in currentSubLobbies) {
+                    let room = currentSubLobbies[group];
+                    addSubLobbyBlock(group, room.id, room.pass, room.time, room.status);
+                }
+            }
+        }
+
+        function addSubLobbyBlock(groupName='', id='', pass='', time='TBD', status='WAITING') {
+            let blockId = Date.now() + Math.floor(Math.random() * 1000);
+            let html = `
+                <div class="sub-lobby-block" id="sl-${blockId}" style="background: rgba(0,0,0,0.4); border: 1px solid rgba(255,255,255,0.1); border-left: 3px solid var(--accent-cyan); border-radius: 12px; padding: 15px; margin-bottom: 15px; position: relative; box-shadow: inset 0 0 10px rgba(0,0,0,0.5);">
+                    <div style="position: absolute; top: -8px; right: -8px; background: var(--accent-red); color: white; width: 24px; height: 24px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; font-size: 0.7rem; z-index: 5; box-shadow: 0 2px 5px rgba(0,0,0,0.5);" onclick="document.getElementById('sl-${blockId}').remove(); triggerHaptic();"><i class="fa-solid fa-xmark"></i></div>
+                    
+                    <input type="text" class="form-control sl-group" placeholder="Group Name (e.g. Group A)" value="${groupName}" style="margin-bottom: 10px; border-color: var(--accent-purple); font-weight: bold; padding: 12px;">
+                    
+                    <div style="display: flex; gap: 10px; margin-bottom: 10px;">
+                        <div style="flex: 1;">
+                            <input type="text" class="form-control sl-id highlight-input" placeholder="Room ID" value="${id}" style="margin-bottom: 0; padding: 12px;">
+                        </div>
+                        <div style="flex: 1;">
+                            <input type="text" class="form-control sl-pass highlight-input-pass" placeholder="Password" value="${pass}" style="margin-bottom: 0; padding: 12px;">
+                        </div>
+                    </div>
+                    
+                    <div style="display: flex; gap: 10px;">
+                        <div style="flex: 1;">
+                            <input type="text" class="form-control sl-time" placeholder="Time (e.g. 10:00 AM)" value="${time}" style="margin-bottom: 0; font-size: 0.85rem; padding: 10px;">
+                        </div>
+                        <div style="flex: 1;">
+                            <select class="form-control sl-status" style="margin-bottom: 0; font-size: 0.85rem; padding: 10px;">
+                                <option value="WAITING" ${status === 'WAITING' ? 'selected' : ''}>Waiting</option>
+                                <option value="LIVE" ${status === 'LIVE' ? 'selected' : ''}>LIVE NOW</option>
+                                <option value="LOCKED" ${status === 'LOCKED' ? 'selected' : ''}>Locked</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            `;
+            document.getElementById('subLobbiesContainer').insertAdjacentHTML('beforeend', html);
         }
 
         let editScheduleCount = 0;
@@ -2095,9 +2143,9 @@
             
             document.getElementById('editTourneyId').value = t.id || t.match_id || "";
             document.getElementById('editTourneyTitle').value = t.title || "";
-            
-            document.getElementById('editTourneyRoomId').value = (t.room_id && t.room_id !== "WAITING") ? t.room_id : "";
-            document.getElementById('editTourneyRoomPass').value = (t.room_pass && t.room_pass !== "WAITING") ? t.room_pass : "";
+
+            // INJECT SUB-LOBBIES
+            renderSubLobbies(t.rooms_json, t.room_id, t.room_pass);
 
             let bannerUrl = t.banner || t.image_url || "";
             document.getElementById('editTourneyBannerStr').value = bannerUrl;
@@ -2354,6 +2402,28 @@
                 let feePts = parseInt(document.getElementById('editTourneyEntryPts').value) || 0;
                 let finalFeeJson = JSON.stringify({ rupees: feeRs, points: feePts });
 
+                // SUB-LOBBY EXTRACTION
+                let roomsJsonObj = {};
+                let fallbackId = "WAITING";
+                let fallbackPass = "WAITING";
+
+                document.querySelectorAll('#subLobbiesContainer .sub-lobby-block').forEach((block, index) => {
+                    let gName = block.querySelector('.sl-group').value.trim();
+                    let gId = block.querySelector('.sl-id').value.trim();
+                    let gPass = block.querySelector('.sl-pass').value.trim();
+                    let gTime = block.querySelector('.sl-time').value.trim();
+                    let gStatus = block.querySelector('.sl-status').value;
+
+                    if (gName) {
+                        roomsJsonObj[gName] = { id: gId, pass: gPass, time: gTime, status: gStatus };
+                        if (index === 0) { 
+                            fallbackId = gId || "WAITING";
+                            fallbackPass = gPass || "WAITING";
+                        }
+                    }
+                });
+                let finalRoomsJsonStr = Object.keys(roomsJsonObj).length > 0 ? JSON.stringify(roomsJsonObj) : "{}";
+
                 const payload = {
                     action: 'edit_tournament',
                     id: document.getElementById('editTourneyId').value,
@@ -2362,8 +2432,11 @@
                     banner: document.getElementById('editTourneyBannerStr').value,
                     prize_json: finalPrizeStr,
                     bracket_json: finalBracketStr,
-                    room_id: document.getElementById('editTourneyRoomId').value,
-                    room_pass: document.getElementById('editTourneyRoomPass').value,
+                    
+                    room_id: fallbackId,
+                    room_pass: fallbackPass,
+                    rooms_json: finalRoomsJsonStr,
+
                     match_period: finalMatchPeriod, 
                     reg_time: document.getElementById('editTourneyRegTime').value, 
                     slots: document.getElementById('editTourneySlots').value,
@@ -2483,7 +2556,6 @@
             btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Sending...';
             btn.disabled = true;
             
-            // --- USING YOUR EXISTING BACKEND OTP FUNCTION ---
             fetch(API_URL, {
                 method: 'POST', headers: { 'Content-Type': 'text/plain' },
                 body: JSON.stringify({ action: 'send_email_otp', email: userData.email.trim().toLowerCase() })
@@ -2506,7 +2578,6 @@
             
             let otpCode = document.getElementById('oe1').value + document.getElementById('oe2').value + document.getElementById('oe3').value + document.getElementById('oe4').value;
             
-            // --- USING YOUR EXISTING BACKEND OTP FUNCTION ---
             fetch(API_URL, {
                 method: 'POST', headers: { 'Content-Type': 'text/plain' },
                 body: JSON.stringify({ action: 'verify_otp', email: userData.email.trim().toLowerCase(), otp: otpCode })
@@ -2623,7 +2694,6 @@
             const btn = document.getElementById('btnSendPassOtpEmail');
             btn.style.opacity = '0.5'; btn.style.pointerEvents = 'none';
             
-            // --- USING YOUR EXISTING BACKEND OTP FUNCTION ---
             fetch(API_URL, {
                 method: 'POST', headers: { 'Content-Type': 'text/plain' },
                 body: JSON.stringify({ action: 'send_email_otp', email: userData.email.trim().toLowerCase() })
@@ -2646,7 +2716,6 @@
             
             let otpCode = document.getElementById('pe1').value + document.getElementById('pe2').value + document.getElementById('pe3').value + document.getElementById('pe4').value;
 
-            // --- USING YOUR EXISTING BACKEND OTP FUNCTION ---
             fetch(API_URL, {
                 method: 'POST', headers: { 'Content-Type': 'text/plain' },
                 body: JSON.stringify({ action: 'verify_otp', email: userData.email.trim().toLowerCase(), otp: otpCode })
@@ -2694,40 +2763,5 @@
             }
         }
     </script>
-    <script>
-    function tournyxOneSignalSetup() {
-        let user = JSON.parse(localStorage.getItem('tournyx_user'));
-        
-        if (user && user.email && typeof median !== 'undefined' && median.onesignal) {
-            let cleanEmail = user.email.toLowerCase().trim();
-            
-            // 1. THE MODERN LOGIN: Binds the device token to the User's Email instantly
-            if (median.onesignal.login) {
-                median.onesignal.login(cleanEmail);
-            } else if (median.onesignal.setExternalUserId) {
-                // Fallback just in case you are using an older Median build
-                median.onesignal.setExternalUserId({ externalId: cleanEmail });
-            }
-
-            // 2. SET TAGS PERFECTLY: Flat JSON object, no nesting!
-            let tagData = { 
-                "user_email": cleanEmail, 
-                "user_status": "active" 
-            };
-            
-            if (median.onesignal.tags && median.onesignal.tags.set) {
-                median.onesignal.tags.set(tagData);
-            } else if (median.onesignal.sendTags) {
-                median.onesignal.sendTags(tagData);
-            }
-        }
-    }
-
-    // Fire securely when the Median native app bridge is fully loaded
-    document.addEventListener("median_library_ready", tournyxOneSignalSetup);
-    
-    // Fallback for regular web browsers
-    document.addEventListener("DOMContentLoaded", tournyxOneSignalSetup);
-</script>
 </body>
 </html>
