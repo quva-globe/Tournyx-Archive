@@ -618,7 +618,16 @@
             </div>
         </div>
     </div>
-
+   <div class="modal-overlay" id="rosterPopupModal">
+        <div class="modal-box" style="padding: 0; overflow: hidden; width: 95%; max-width: 400px; display: flex; flex-direction: column; background: rgba(10,5,20,0.95);">
+            <div class="modal-header" style="padding: 20px; background: rgba(0,0,0,0.5); border-bottom: 1px solid var(--card-border); margin:0; display:flex; justify-content:space-between; align-items:center;">
+                <div class="modal-title" id="rosterPopupTitle" style="font-size: 1.1rem;"><i class="fa-solid fa-users-rays" style="color:var(--accent-cyan);"></i> Clan Roster</div>
+                <i class="fa-solid fa-xmark modal-close" style="position:static;" onclick="closeRosterPopup()"></i>
+            </div>
+            <div id="rosterPopupContent" style="max-height: 60vh; overflow-y: auto; padding: 20px; display: flex; flex-direction: column; gap: 10px;">
+                </div>
+        </div>
+    </div>
     <div class="detail-modal" id="tourneyDetailModal">
       <div class="dm-container">
         <div class="dm-header">
@@ -1241,7 +1250,7 @@
             }, 1000);
         }
 
-        function renderRoomTabDynamic(t, isJoined) {
+        function renderRoomTabDynamic(t, isJoined, myGroup = null) {
             let roomArea = document.getElementById('roomDetailsArea');
             if(!roomArea) return;
 
@@ -1251,8 +1260,7 @@
                         <i class="fa-solid fa-lock" style="font-size: 2rem; color: var(--accent-orange); margin-bottom: 10px;"></i>
                         <div style="font-family: var(--font-head); font-weight: bold; color: white; margin-bottom: 5px;">ID & Password Locked</div>
                         <div style="font-size: 0.85rem; color: #ccc;">Details are only visible to securely registered players. Confirm your slot to get access to the Room.</div>
-                    </div>
-                `;
+                    </div>`;
                 return;
             }
 
@@ -1266,43 +1274,83 @@
             let limit15 = start + (15 * 60 * 1000);
             let limit30 = start + (30 * 60 * 1000);
 
+            // --- SUB-LOBBY ROUTING ENGINE ---
+            let roomIdToShow = t.room_id;
+            let roomPassToShow = t.room_pass;
+            let roomStatus = "WAITING";
+            let groupDisplay = "";
+            let hasGroups = false;
+
+            if (t.rooms_json && t.rooms_json !== "{}" && t.rooms_json !== "") {
+                try {
+                    let roomsObj = JSON.parse(t.rooms_json);
+                    if (Object.keys(roomsObj).length > 0) hasGroups = true;
+                    
+                    if (hasGroups) {
+                        if (myGroup === null) {
+                             roomArea.innerHTML = `
+                                <div class="dm-section" style="border-style: dashed !important; border-color: var(--accent-cyan) !important; text-align: center;">
+                                    <i class="fa-solid fa-spinner fa-spin" style="font-size: 2rem; color: var(--accent-cyan); margin-bottom: 10px;"></i>
+                                    <div style="font-family: var(--font-head); font-weight: bold; color: white; margin-bottom: 5px;">Locating Squad Placement...</div>
+                                    <div style="font-size: 0.85rem; color: #ccc;">Scanning tournament groups...</div>
+                                </div>`;
+                            return;
+                        }
+                        
+                        if (roomsObj[myGroup]) {
+                            roomIdToShow = roomsObj[myGroup].id;
+                            roomPassToShow = roomsObj[myGroup].pass;
+                            roomStatus = roomsObj[myGroup].status;
+                            groupDisplay = ` <span style="background:rgba(255,153,0,0.2); color:var(--accent-orange); padding: 2px 8px; border-radius:4px; font-size:0.7rem; border:1px solid var(--accent-orange); margin-left:8px; vertical-align:middle; display:inline-block;">[${myGroup}]</span>`;
+                        }
+                    }
+                } catch(e) {}
+            }
+
+            if (roomStatus === "LOCKED") {
+                roomArea.innerHTML = `
+                    <div class="dm-section" style="border-color: var(--accent-red) !important; border-style: dashed !important; text-align: center;">
+                        <i class="fa-solid fa-lock" style="font-size: 2rem; color: var(--accent-red); margin-bottom: 10px;"></i>
+                        <div style="font-family: var(--font-head); font-weight: bold; color: white; margin-bottom: 5px;">Group Locked</div>
+                        <div style="font-size: 0.85rem; color: #ccc;">Your group's match is currently locked by the organizer.</div>
+                    </div>`;
+                return;
+            }
+
             if (now < start) {
                 roomArea.innerHTML = `
                     <div class="dm-section" style="border-style: dashed !important; text-align: center;">
                         <i class="fa-solid fa-clock-rotate-left" style="font-size: 2rem; color: var(--accent-cyan); margin-bottom: 10px;"></i>
                         <div style="font-family: var(--font-head); font-weight: bold; color: white; margin-bottom: 5px;">Waiting for Organizer</div>
                         <div style="font-size: 0.85rem; color: #ccc;">You are successfully registered! Room ID and Password will be fetched securely from the server once the match timer begins.</div>
-                    </div>
-                `;
+                    </div>`;
             } else if (now >= start && now < limit15) {
-                if (t.room_id != null && String(t.room_id).trim() !== "") {
+                if (roomIdToShow != null && String(roomIdToShow).trim() !== "") {
                     roomArea.innerHTML = `
                         <div class="dm-section" style="border-color: var(--accent-green) !important; box-shadow: 0 0 20px rgba(0,255,127,0.3);">
-                            <div style="text-align:center; color:var(--accent-green); font-family:var(--font-head); font-weight:bold; margin-bottom: 15px; animation: pulse 2s infinite;"><i class="fa-solid fa-bolt"></i> YOUR MATCH HAS BEEN CREATED</div>
+                            <div style="text-align:center; color:var(--accent-green); font-family:var(--font-head); font-weight:bold; margin-bottom: 15px; animation: pulse 2s infinite;"><i class="fa-solid fa-bolt"></i> YOUR MATCH HAS BEEN CREATED ${groupDisplay}</div>
                             <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px; padding-bottom:15px; border-bottom:1px solid rgba(0,255,127,0.2);">
                                 <div>
                                     <div style="font-size:0.75rem; color:#888; text-transform:uppercase; letter-spacing:1px;">Room ID</div>
-                                    <div style="font-family:var(--font-head); font-size:1.4rem; color:white; font-weight:bold; letter-spacing:1px; word-wrap: break-word;">${t.room_id}</div>
+                                    <div style="font-family:var(--font-head); font-size:1.4rem; color:white; font-weight:bold; letter-spacing:1px; word-wrap: break-word;">${roomIdToShow}</div>
                                 </div>
-                                <button class="btn-secondary" style="padding:8px 15px; font-size:0.8rem; border-color:var(--accent-green); color:var(--accent-green); background: rgba(0,255,127,0.1);" onclick="navigator.clipboard.writeText('${t.room_id}'); showToast('Room ID Copied!'); triggerHaptic();"><i class="fa-solid fa-copy"></i></button>
+                                <button class="btn-secondary" style="padding:8px 15px; font-size:0.8rem; border-color:var(--accent-green); color:var(--accent-green); background: rgba(0,255,127,0.1);" onclick="navigator.clipboard.writeText('${roomIdToShow}'); showToast('Room ID Copied!'); triggerHaptic();"><i class="fa-solid fa-copy"></i></button>
                             </div>
                             <div style="display:flex; justify-content:space-between; align-items:center;">
                                 <div>
                                     <div style="font-size:0.75rem; color:#888; text-transform:uppercase; letter-spacing:1px;">Password</div>
-                                    <div style="font-family:var(--font-head); font-size:1.2rem; color:var(--accent-cyan); font-weight:bold; letter-spacing:1px; word-wrap: break-word;">${t.room_pass != null && t.room_pass !== '' ? t.room_pass : 'No Password Needed'}</div>
+                                    <div style="font-family:var(--font-head); font-size:1.2rem; color:var(--accent-cyan); font-weight:bold; letter-spacing:1px; word-wrap: break-word;">${roomPassToShow != null && roomPassToShow !== '' ? roomPassToShow : 'No Password Needed'}</div>
                                 </div>
-                                <button class="btn-secondary" style="padding:8px 15px; font-size:0.8rem; border-color:var(--accent-cyan); color:var(--accent-cyan); background: rgba(0,242,255,0.1);" onclick="navigator.clipboard.writeText('${t.room_pass || ''}'); showToast('Password Copied!'); triggerHaptic();"><i class="fa-solid fa-copy"></i></button>
+                                <button class="btn-secondary" style="padding:8px 15px; font-size:0.8rem; border-color:var(--accent-cyan); color:var(--accent-cyan); background: rgba(0,242,255,0.1);" onclick="navigator.clipboard.writeText('${roomPassToShow || ''}'); showToast('Password Copied!'); triggerHaptic();"><i class="fa-solid fa-copy"></i></button>
                             </div>
-                        </div>
-                    `;
+                        </div>`;
                 } else {
                     roomArea.innerHTML = `
                         <div class="dm-section" style="border-style: dashed !important; border-color: var(--accent-cyan) !important; text-align: center;">
                             <i class="fa-solid fa-spinner fa-spin" style="font-size: 2rem; color: var(--accent-cyan); margin-bottom: 10px;"></i>
                             <div style="font-family: var(--font-head); font-weight: bold; color: white; margin-bottom: 5px;">Fetching Room Details...</div>
                             <div style="font-size: 0.85rem; color: #ccc;">The match is starting! Waiting for organizer to post Room details to the server.</div>
-                        </div>
-                    `;
+                        </div>`;
                 }
             } else if (now >= limit15 && now < limit30) {
                 roomArea.innerHTML = `
@@ -1310,16 +1358,14 @@
                         <i class="fa-solid fa-gamepad" style="font-size: 2.5rem; color: var(--accent-green); margin-bottom: 10px;"></i>
                         <div style="font-family: var(--font-head); font-size: 1.3rem; font-weight: bold; color: white; margin-bottom: 5px;">MATCH STARTED</div>
                         <div style="font-size: 0.85rem; color: #ccc;">The battle is live! Good luck on the battleground.</div>
-                    </div>
-                `;
+                    </div>`;
             } else {
                 roomArea.innerHTML = `
                     <div class="dm-section" style="background: rgba(255,255,255,0.02); border-color: #ff4d4d !important; text-align: center;">
                         <i class="fa-solid fa-flag-checkered" style="font-size: 2.5rem; color: #ff4d4d; margin-bottom: 10px;"></i>
                         <div style="font-family: var(--font-head); font-size: 1.3rem; font-weight: bold; color: white; margin-bottom: 5px;">MATCH COMPLETED</div>
                         <div style="font-size: 0.85rem; color: #ccc;">The room has been closed and the match has concluded.</div>
-                    </div>
-                `;
+                    </div>`;
             }
         }
 
@@ -2157,12 +2203,58 @@
             }
         }
 
-        function fetchLiveTeams() {
+     // --- ELITE ROSTER POPUP ENGINE ---
+        function openRosterPopup(dataEncoded, isPremium) {
+            triggerHaptic();
+            let teamData = JSON.parse(decodeURIComponent(dataEncoded));
+            let rosterArray = teamData.players || teamData.roster || [teamData]; 
+            
+            let html = "";
+            rosterArray.forEach(p => {
+                let pName = p.name || p.ign || p.username || p.gameName || 'Player';
+                let pUid = p.uid || p.id || 'N/A';
+                let pRole = p.pos || p.role || 'Player';
+                
+                // Color Mapping for Gaming Roles
+                let bgColors = {
+                    'IGL': 'ff9900', 'Owner': 'ff9900', 'Leader': 'ff9900',
+                    'Sniper': 'ff4d4d', 'Assaulter': '00f2ff', 'Support': '00ff7f',
+                    'Flex': 'bd00ff', 'Player': 'bd00ff'
+                };
+                
+                let roleColor = bgColors[pRole] || bgColors[Object.keys(bgColors).find(k => pRole.includes(k))] || 'bd00ff';
+                let avatarUrl = p.avatar ? formatImageUrl(p.avatar) : `https://ui-avatars.com/api/?name=${encodeURIComponent(pName)}&background=110822&color=${roleColor}&bold=true&format=svg`;
+
+                html += `
+                    <div style="display:flex; align-items:center; gap:12px; background:rgba(255,255,255,0.03); padding:12px; border-radius:12px; border:1px solid rgba(255,255,255,0.05);">
+                        <img src="${avatarUrl}" style="width:45px; height:45px; border-radius:10px; border:2px solid #${roleColor}; object-fit:cover;">
+                        <div style="flex:1;">
+                            <div style="font-family:var(--font-head); color:white; font-weight:bold; font-size:1rem; display:flex; align-items:center; gap:6px;">${pName}</div>
+                            <div style="font-size:0.75rem; color:#aaa; margin-top:3px;">
+                                <span style="color:#${roleColor}; font-weight:bold; text-transform:uppercase;">${pRole}</span> | UID: <span style="font-family:monospace; color:white;">${pUid}</span>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
+
+            document.getElementById('rosterPopupContent').innerHTML = html;
+            let titleHtml = teamData.name || teamData.username || "Clan Roster";
+            if(isPremium) titleHtml += ' <i class="fa-solid fa-crown" style="color:#FFD700; font-size:0.9rem; margin-left:5px;"></i>';
+            document.getElementById('rosterPopupTitle').innerHTML = titleHtml;
+
+            document.getElementById('rosterPopupModal').classList.add('active');
+        }
+        
+        function closeRosterPopup() {
+            triggerHaptic();
+            document.getElementById('rosterPopupModal').classList.remove('active');
+        }
+         function fetchLiveTeams() {
             if(!activeTournament.title) return;
             const container = document.getElementById('liveTeamsList');
             container.innerHTML = `<div style="text-align:center; color:var(--accent-cyan); padding:40px;"><i class="fa-solid fa-spinner fa-spin"></i> Fetching roster...</div>`;
             
-            // SECURE POST CALLS INSTEAD OF GET
             Promise.all([
                 secureFetch({ action: 'get_tournament_details', match_id: activeTournament.id || activeTournament.title }),
                 secureFetch({ action: 'get_clans' }).catch(() => ({status: 'error', data: []}))
@@ -2239,42 +2331,28 @@
                         }
                     }
 
+                    let myGroup = null; // Track group for Sub-Lobby Routing
+
                     if(activeTeams.length > 0) {
                         activeTeams.forEach((team, i) => {
                             let currentTeamStr = String(team.clan).toLowerCase().trim();
                             let isMyClan = userClanNames.includes(currentTeamStr) || (team.username === user.username);
                             
+                            if (isMyClan) {
+                                myGroup = team.group || "Default Lobby";
+                            }
+
                             let displayClanName = team.clan;
-                            let rosterHTML = "";
                             let hasRoster = false;
+                            let parsedClanObj = null;
                             
                             if(displayClanName.startsWith("{")) {
                                 try { 
-                                    let sd = JSON.parse(displayClanName); 
-                                    displayClanName = sd.username || sd.name || "Unknown Clan"; 
+                                    parsedClanObj = JSON.parse(displayClanName); 
+                                    displayClanName = parsedClanObj.username || parsedClanObj.name || "Unknown Clan"; 
                                     
-                                    if(sd.players && Array.isArray(sd.players)) {
-                                        hasRoster = true;
-                                        sd.players.forEach(p => {
-                                            rosterHTML += `
-                                                <div class="roster-player">
-                                                    <span class="roster-player-name"><i class="fa-solid fa-user-ninja" style="color:#888; font-size:0.7rem; margin-right:5px;"></i> ${p.name || p.ign || p.username || 'Player'}</span>
-                                                    <span class="roster-player-uid" style="background:rgba(0,242,255,0.1); padding:2px 8px; border-radius:4px; border:1px solid rgba(0,242,255,0.2);">UID: ${p.uid || p.id || 'N/A'}</span>
-                                                </div>
-                                            `;
-                                        });
-                                    }
-                                    else if(sd.roster && Array.isArray(sd.roster)) {
-                                        hasRoster = true;
-                                        sd.roster.forEach(p => {
-                                            rosterHTML += `
-                                                <div class="roster-player">
-                                                    <span class="roster-player-name"><i class="fa-solid fa-user-ninja" style="color:#888; font-size:0.7rem; margin-right:5px;"></i> ${p.name || p.gameName || p.username || 'Player'}</span>
-                                                    <span class="roster-player-uid" style="background:rgba(0,242,255,0.1); padding:2px 8px; border-radius:4px; border:1px solid rgba(0,242,255,0.2);">UID: ${p.uid || p.id || 'N/A'}</span>
-                                                </div>
-                                            `;
-                                        });
-                                    }
+                                    if(parsedClanObj.players && Array.isArray(parsedClanObj.players)) hasRoster = true;
+                                    else if(parsedClanObj.roster && Array.isArray(parsedClanObj.roster)) hasRoster = true;
                                 } catch(e){}
                             }
 
@@ -2297,11 +2375,11 @@
                                     </div>
                                 `;
                                 
-                                // SECURE POST CALL INSTEAD OF GET
                                 secureFetch({ action: 'get_avatar', username: playerName })
                                 .then(d => {
                                     if(d.status === 'success' && (d.data || d.avatar)) {
-                                        document.getElementById(`solo-avatar-${i}`).src = formatImageUrl(d.data || d.avatar);
+                                        let imgEl = document.getElementById(`solo-avatar-${i}`);
+                                        if (imgEl) imgEl.src = formatImageUrl(d.data || d.avatar);
                                     }
                                 }).catch(e => {});
                             } else {
@@ -2315,15 +2393,19 @@
                                 let cLevel = team.level || Math.floor(Math.random() * 5) + 1;
                                 let levelBadge = `<span class="level-badge">Lvl ${cLevel}</span>`;
 
-                                let expandIcon = hasRoster ? `<i class="fa-solid fa-chevron-down" style="color:#888; font-size:0.9rem; transition:0.3s; margin-left:auto;"></i>` : ``;
+                                let isPremiumSolo = (isMyClan && isUserPremium) || (String(team.is_premium).toLowerCase() === 'true');
+                                if(isPremiumSolo) highlightClass += " vip-solo";
+                                let premiumBadge = isPremiumSolo ? '<span class="clan-premium-emblem-small" style="margin-left:8px;"><i class="fa-solid fa-crown"></i> ELITE SQUAD</span>' : '';
+
+                                let safeTeamData = encodeURIComponent(JSON.stringify(parsedClanObj || team));
 
                                 container.innerHTML += `
-                                    <div class="clan-item ${highlightClass}" ${hasRoster ? `onclick="toggleTeamDropdown(this)"` : ''}>
+                                    <div class="clan-item ${highlightClass}" ${hasRoster ? `onclick="openRosterPopup('${safeTeamData}', ${isPremiumSolo})"` : ''}>
                                         <div class="clan-item-header">
                                             <div class="clan-item-icon"><img src="${clanLogo}" onerror="this.src='https://ui-avatars.com/api/?name=${encodeURIComponent(displayClanName)}&background=070311&color=00ff7f&bold=true'"></div>
-                                            <div class="clan-item-name">${displayClanName} ${isMyClan ? '<span style="font-size:0.7rem; color:var(--accent-cyan); font-weight:normal;">(Your Clan)</span>' : ''} ${levelBadge} ${stateBadge} ${expandIcon}</div>
+                                            <div class="clan-item-name">${displayClanName} ${isMyClan ? '<span style="font-size:0.7rem; color:var(--accent-cyan); font-weight:normal;">(Your Clan)</span>' : ''} ${levelBadge} ${stateBadge} ${premiumBadge}</div>
+                                            ${hasRoster ? `<i class="fa-solid fa-users" style="color:#888; font-size:0.9rem; margin-left:auto;"></i>` : ''}
                                         </div>
-                                        ${hasRoster ? `<div class="clan-roster-dropdown">${rosterHTML}</div>` : ''}
                                     </div>
                                 `;
                             }
@@ -2331,12 +2413,19 @@
                     } else {
                         container.innerHTML = `<div style="text-align:center; color:#888; padding:40px;">No entries registered yet. Be the first!</div>`;
                     }
+                    
+                    // Render Room Tab with Sub-Lobby Routing Engine
+                    renderRoomTabDynamic(activeTournament, true, myGroup);
+                    
                 } else {
                     container.innerHTML = `<div style="text-align:center; color:#888; padding:40px;">No entries registered yet. Be the first!</div>`;
+                    renderRoomTabDynamic(activeTournament, true, null); // Pass null if failed
                 }
-            }).catch(() => container.innerHTML = `<div style="text-align:center; color:#ff4d4d; padding:20px;">Failed to load teams.</div>`);
-        }
-
+            }).catch(() => {
+                container.innerHTML = `<div style="text-align:center; color:#ff4d4d; padding:20px;">Failed to load teams.</div>`;
+            });
+        }                        
+                                
         function openRegistrationFlow() {
             triggerHaptic();
             if(document.getElementById('masterJoinBtn').disabled) return;
