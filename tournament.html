@@ -63,13 +63,13 @@
         .top-header { position: fixed; top: 4px; left: 0; width: 100%; padding: env(safe-area-inset-top) 15px 15px; background: rgba(7, 3, 17, 0.95); backdrop-filter: blur(15px); border-bottom: 1px solid var(--card-border); z-index: 2000; box-shadow: 0 4px 30px rgba(0,0,0,0.5); }
         .header-wrapper { display: flex; align-items: center; justify-content: space-between; max-width: 800px; margin: 0 auto; width: 100%; }
         .header-left { display: flex; align-items: center; gap: 15px; }
-        .back-btn { font-size: 1.2rem; color: white; cursor: pointer; text-decoration: none; transition: 0.3s; }
+        .back-btn { font-size: 1.2rem; color: white; cursor: pointer; text-decoration: none; transition: 0.3s; padding: 5px; }
         .back-btn:active { color: var(--accent-cyan); transform: scale(0.9); }
         .app-title { font-family: var(--font-head); font-size: 1.1rem; font-weight: 700; color: white; letter-spacing: 1px; display: flex; flex-direction: column; }
         .draft-status { font-size: 0.65rem; color: var(--accent-green); font-family: var(--font-body); font-style: italic; }
         
         .header-actions { display: flex; gap: 15px; color: #888; font-size: 1.1rem; }
-        .header-actions i { cursor: pointer; transition: 0.3s; }
+        .header-actions i { cursor: pointer; transition: 0.3s; padding: 5px; }
         .header-actions i:active { color: var(--accent-red); transform: scale(0.9); }
 
         /* --- FORM CONTAINER --- */
@@ -112,7 +112,7 @@
         /* VIP Toggle Switch CSS */
         .switch { position: relative; display: inline-block; width: 40px; height: 20px; }
         .switch input { opacity: 0; width: 0; height: 0; }
-        .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: rgba(255,255,255,0.1); transition: .4s; border-radius: 20px; }
+        .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background: rgba(255,255,255,0.1); transition: .4s; border-radius: 20px; }
         .slider:before { position: absolute; content: ""; height: 14px; width: 14px; left: 3px; bottom: 3px; background-color: white; transition: .4s; border-radius: 50%; }
         input:checked + .slider { background-color: #FFD700; box-shadow: 0 0 10px rgba(255,215,0,0.5); }
         input:checked + .slider:before { transform: translateX(20px); background-color: #000; }
@@ -192,14 +192,24 @@
         .ripple { position: absolute; border-radius: 50%; transform: scale(0); animation: ripple-anim 0.6s linear; background-color: rgba(255, 255, 255, 0.4); }
         @keyframes ripple-anim { to { transform: scale(4); opacity: 0; } }
 
-        /* LOADING & SUCCESS OVERLAY */
-        .loading-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(7,3,17,0.95); backdrop-filter: blur(10px); display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 4000; opacity: 0; pointer-events: none; transition: 0.4s; }
+        /* --- ULTIMATE ESPORTS SUCCESS OVERLAY --- */
+        .loading-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 4000; opacity: 0; pointer-events: none; transition: 0.4s ease-out; backdrop-filter: blur(15px);}
         .loading-overlay.active { opacity: 1; pointer-events: auto; }
-        .loader-ring { width: 70px; height: 70px; border: 4px solid rgba(255,255,255,0.1); border-top: 4px solid var(--accent-cyan); border-radius: 50%; animation: spin 1s cubic-bezier(0.175, 0.885, 0.32, 1.275) infinite; margin-bottom: 20px; box-shadow: 0 0 20px rgba(0,242,255,0.5); }
-        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-        .success-icon-anim { display: none; font-size: 6rem; color: var(--accent-green); margin-bottom: 20px; text-shadow: 0 0 40px rgba(0,255,127,0.8); animation: popIn 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
-        @keyframes popIn { 0% { transform: scale(0); opacity: 0; } 60% { transform: scale(1.4); } 100% { transform: scale(1); opacity: 1; } }
         
+        .loader-ring { width: 80px; height: 80px; border: 4px solid rgba(255,255,255,0.1); border-top: 4px solid var(--accent-cyan); border-radius: 50%; animation: spin 1s cubic-bezier(0.175, 0.885, 0.32, 1.275) infinite; margin-bottom: 20px; box-shadow: 0 0 20px rgba(0,242,255,0.5); }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        
+        /* Success Animation Elements */
+        .success-icon-anim { display: none; font-size: 6rem; color: var(--accent-green); margin-bottom: 15px; filter: drop-shadow(0 0 40px rgba(0,255,127,0.8)); animation: popScale 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; }
+        @keyframes popScale { 0% { transform: scale(0) rotate(-45deg); opacity: 0; } 60% { transform: scale(1.3) rotate(10deg); } 100% { transform: scale(1) rotate(0); opacity: 1; } }
+        
+        .status-msg { font-family: var(--font-head); font-size: 1.5rem; text-transform: uppercase; color: white; letter-spacing: 2px; text-shadow: 0 0 15px rgba(255,255,255,0.3); transition: 0.3s;}
+        .status-msg.success-text { font-size: 2.2rem; font-weight: 900; color: white; text-shadow: 0 0 20px var(--accent-green), 0 0 40px var(--accent-cyan); animation: slideUpText 0.6s ease-out forwards; opacity: 0;}
+        @keyframes slideUpText { 0% { transform: translateY(30px); opacity: 0;} 100% { transform: translateY(0); opacity: 1;} }
+        
+        .status-sub { font-size: 1rem; color: #aaa; text-align: center; max-width: 80%; margin-top: 15px; font-weight: bold; text-transform: uppercase; letter-spacing: 1px;}
+        .status-sub.success-sub { color: var(--accent-cyan); animation: slideUpText 0.8s ease-out forwards; opacity: 0;}
+
         #customToast { visibility: hidden; min-width: 250px; background-color: var(--accent-cyan); color: #000; text-align: center; border-radius: 12px; padding: 14px; position: fixed; z-index: 9999; left: 50%; bottom: -50px; transform: translateX(-50%); font-family: var(--font-head); font-weight: bold; transition: 0.4s; box-shadow: 0 5px 25px rgba(0,242,255,0.5);}
         #customToast.show { visibility: visible; bottom: 100px; }
 
@@ -207,9 +217,7 @@
         .stream-status { position: absolute; right: 15px; top: 40px; font-size: 1.2rem; display: none; }
         .stream-status.valid { display: block; color: var(--accent-green); animation: popIn 0.3s; }
         .stream-status.invalid { display: block; color: var(--accent-red); animation: shake 0.3s; }
-        
-        /* Median override to ensure visibility */
-        .median-active .top-header { display: flex !important; }
+        @keyframes popIn { 0% { transform: scale(0.5); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
     </style>
 </head>
 <body>
@@ -221,7 +229,7 @@
     <header class="top-header">
         <div class="header-wrapper">
             <div class="header-left">
-                <a href="javascript:history.back()" class="back-btn"><i class="fa-solid fa-arrow-left"></i></a>
+                <a href="javascript:history.back()" class="back-btn" onclick="triggerHaptic()"><i class="fa-solid fa-arrow-left"></i></a>
                 <div class="app-title">
                     Setup Tournament
                     <span class="draft-status" id="draftStatus">Draft saved: Just now</span>
@@ -519,17 +527,30 @@
     <div class="loading-overlay" id="loadingOverlay">
         <div class="loader-ring" id="spinnerEl"></div>
         <i class="fa-solid fa-circle-check success-icon-anim" id="successIcon"></i>
-        <h3 class="status-msg" id="loadingText" style="font-family: var(--font-head); font-size: 1.5rem; text-transform: uppercase;">Forging Tournament...</h3>
-        <p class="status-sub" id="successSub" style="display: none; font-size: 0.9rem; color: #aaa; text-align: center; max-width: 80%; margin-top: 10px;">Your tournament has been successfully created and synced to the global server.</p>
-        <button class="btn-primary" id="closeLoading" style="display: none; margin-top: 20px; max-width: 200px;" onclick="window.location.href='explore.html'">View in Explore</button>
+        <h3 class="status-msg" id="loadingText">Forging Tournament...</h3>
+        <p class="status-sub" id="successSub" style="display: none;">Your tournament is now live on the global network.</p>
     </div>
 
     <div id="customToast">Notification</div>
 
     <script>
-        // --- 1. CORE CONFIGURATION & INIT ---
+        // --- 1. CORE CONFIGURATION & SECURE INIT ---
         const API_URL = 'https://script.google.com/macros/s/AKfycbyqqTpgaflxKJ9xH0jq7mJ_jLzcoNhas3gNo0h5gvoa_6r5Ae9NFxJAJp7ZoYNnMRKl/exec'; 
         let currentUser = JSON.parse(localStorage.getItem('tournyx_user'));
+
+        async function secureFetch(payload) {
+            try {
+                const response = await fetch(API_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'text/plain' },
+                    body: JSON.stringify(payload)
+                });
+                return await response.json();
+            } catch (error) {
+                console.error("Fetch Error:", error);
+                throw error;
+            }
+        }
 
         document.addEventListener("DOMContentLoaded", function() {
             if (!currentUser || currentUser.role !== 'organizer') {
@@ -538,24 +559,19 @@
                 return;
             }
             
-            // Setup dynamic placeholders
             cyclePlaceholder();
             
-            // Listeners for progress bar
             document.querySelectorAll('.form-control').forEach(inp => {
                 inp.addEventListener('input', calculateProgress);
             });
 
-            // Initialize default prize rows
             addCustomPrize("1st Place", "");
             addCustomPrize("2nd Place", "");
             addCustomPrize("3rd Place", "");
         });
 
         // --- 2. ADVANCED UI FEATURES ---
-        function triggerHaptic() {
-            if(navigator.vibrate) { navigator.vibrate(50); }
-        }
+        function triggerHaptic() { if(navigator.vibrate) { navigator.vibrate(50); } }
 
         function showToast(msg, isError = false) {
             var x = document.getElementById("customToast");
@@ -599,8 +615,6 @@
             });
             let pct = reqs.length > 0 ? (filled / reqs.length) * 100 : 0;
             document.getElementById('formProgress').style.width = pct + '%';
-            
-            // Trigger autosave mock
             document.getElementById('draftStatus').innerText = "Draft saved: Just now";
         }
 
@@ -615,13 +629,10 @@
             updateCalc();
             calculateProgress();
             triggerHaptic();
-            
-            // Add focus animation
             inp.focus();
             setTimeout(()=>inp.blur(), 200);
         }
 
-        // Add ripple effect to buttons
         document.querySelectorAll('.submit-btn').forEach(btn => {
             btn.addEventListener('click', function(e) {
                 let x = e.clientX - e.target.offsetLeft;
@@ -671,7 +682,6 @@
             document.getElementById('inpPlatform').value = platform;
             triggerHaptic();
             
-            // Filter Game Grid by Platform
             let firstMatch = null;
             document.querySelectorAll('.game-card').forEach(c => {
                 if(c.dataset.platform === platform) {
@@ -720,7 +730,6 @@
             let feePts = parseInt(document.getElementById('inpFeePts').value) || 0;
             let slots = parseInt(document.querySelector('input[name="slots"]').value) || 0;
             
-            // Convert tickets to Rupees (1 Pass = 10 Rs) for Revenue calculation
             let revRs = (feeTickets * 10) * slots;
             let revPts = feePts * slots;
             
@@ -779,7 +788,6 @@
                     document.getElementById('inpVipRegDate').classList.remove('error');
                 }
             }
-
             calculateProgress();
         }
 
@@ -959,15 +967,13 @@
             }
         }
 
-        // --- 9. FORM SUBMISSION WITH DYNAMIC PRIZE SYNTHESIS ---
+        // --- 9. FORM SUBMISSION (SECURE POST & MULTI-LOBBY ROUTING READY) ---
         async function submitTournamentForm(e) {
             e.preventDefault();
             const form = document.getElementById('createForm');
             
-            // Sync Rich Text
             document.getElementById('hiddenRules').value = document.getElementById('editor').innerHTML;
             
-            // Compile Dynamic JSON Prize Pool
             let prizeJson = {};
             document.querySelectorAll('.prize-row').forEach(row => {
                 let t = row.querySelector('.prz-title').value.trim();
@@ -987,7 +993,6 @@
             });
             document.getElementById('bracketBase64').value = scheduleArr.length > 0 ? JSON.stringify(scheduleArr) : "";
             
-            // Strict Validation & Scroll to Error
             let reqs = form.querySelectorAll('[required]');
             let firstError = null;
             
@@ -1016,10 +1021,9 @@
                 return; 
             }
 
-            // Lock UI & Show Overlay
             const publishBtn = document.getElementById('publishBtn');
             publishBtn.disabled = true;
-            publishBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Processing...';
+            publishBtn.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin"></i> Validating Data...';
             document.getElementById('loadingOverlay').classList.add('active');
 
             const formData = new FormData(form);
@@ -1036,17 +1040,14 @@
                 date: rawData.date, 
                 match_period: rawData.match_period, 
                 
-                // BACKWARDS COMPATIBLE FEE VARIABLES
                 fee: (!rawData.entry_fee || rawData.entry_fee == "0") ? "0" : rawData.entry_fee,
                 fee_pts: (!rawData.entry_fee_pts || rawData.entry_fee_pts == "0") ? "0" : rawData.entry_fee_pts,
                 
-                // NEW: COMBINED JSON FEE LOGIC FOR BACKEND STORAGE
                 fee_json: JSON.stringify({ 
                     rupees: (!rawData.entry_fee || rawData.entry_fee == "0") ? "0" : rawData.entry_fee, 
                     points: (!rawData.entry_fee_pts || rawData.entry_fee_pts == "0") ? "0" : rawData.entry_fee_pts 
                 }),
                 
-                // NEW: VIP EARLY ACCESS
                 is_vip_early_access: document.getElementById('vipEarlyAccessToggle').checked ? "true" : "false",
                 vip_early_access_date: document.getElementById('vipEarlyAccessToggle').checked ? document.getElementById('inpVipRegDate').value : "",
 
@@ -1056,79 +1057,64 @@
                 
                 prize_json: rawData.prize_distribution_image || "",
                 bracket_json: rawData.bracket_image || "",
+                
+                // --- MULTI-LOBBY ROUTING PAYLOAD ---
+                rooms_json: "{}", 
 
                 status: "Upcoming",
                 stream_url: rawData.stream_url || ""
             };
 
-            try {
-                const response = await fetch(API_URL, {
-                    method: 'POST',
-                    mode: 'no-cors', 
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(payload)
-                });
-                
-                setTimeout(() => { showSuccess(); }, 1200);
-
-            } catch (error) {
+            secureFetch(payload)
+            .then(result => {
+                if (result.status === 'success') {
+                    showUltimateSuccess();
+                } else {
+                    throw new Error(result.message || "Failed to create.");
+                }
+            })
+            .catch (error => {
                 console.error('Error:', error);
                 document.getElementById('loadingText').innerText = "Network Error.";
-                document.getElementById('successSub').innerText = "Tournament draft saved locally.";
-                setTimeout(() => { showSuccess(true); }, 1500); 
-            }
+                document.getElementById('loadingText').style.color = "var(--accent-red)";
+                document.getElementById('successSub').style.display = "block";
+                document.getElementById('successSub').innerText = "Tournament draft saved locally. Connection failed.";
+                
+                document.getElementById('spinnerEl').style.display = 'none';
+                let icon = document.getElementById('successIcon');
+                icon.className = "fa-solid fa-xmark success-icon-anim";
+                icon.style.color = "var(--accent-red)";
+                icon.style.display = 'block';
+
+                publishBtn.innerHTML = '<i class="fa-solid fa-rocket"></i> Retry Publish';
+                publishBtn.disabled = false;
+                
+                setTimeout(() => { document.getElementById('loadingOverlay').classList.remove('active'); }, 3000);
+            });
         }
 
-        function showSuccess(isError = false) {
+        // --- ULTIMATE ESPORTS SUCCESS ANIMATION ---
+        function showUltimateSuccess() {
+            triggerHaptic();
+            
             document.getElementById('spinnerEl').style.display = 'none';
             document.getElementById('successIcon').style.display = 'block';
             
-            if(!isError) {
-                document.body.classList.add('zoom-out-effect'); 
-                document.getElementById('loadingText').innerText = "Tournament Published!";
-                document.getElementById('loadingText').style.color = "var(--accent-green)";
-                document.getElementById('successSub').style.display = 'block';
-                setTimeout(() => { window.location.href = 'explore.html'; }, 1800);
-            } else {
-                document.getElementById('closeLoading').style.display = 'inline-block';
-            }
-            triggerHaptic();
+            document.body.classList.add('zoom-out-effect'); 
+            
+            let loadingText = document.getElementById('loadingText');
+            loadingText.classList.add('success-text');
+            loadingText.innerText = "TOURNAMENT PUBLISHED!";
+            
+            let successSub = document.getElementById('successSub');
+            successSub.classList.add('success-sub');
+            successSub.style.display = 'block';
+            
+            // Dramatic pause before redirect
+            setTimeout(() => { 
+                window.location.href = 'explore.html'; 
+            }, 2500);
         }
     </script>
-    <script>
-    function tournyxOneSignalSetup() {
-        let user = JSON.parse(localStorage.getItem('tournyx_user'));
-        
-        if (user && user.email && typeof median !== 'undefined' && median.onesignal) {
-            let cleanEmail = user.email.toLowerCase().trim();
-            
-            // 1. THE MODERN LOGIN: Binds the device token to the User's Email instantly
-            if (median.onesignal.login) {
-                median.onesignal.login(cleanEmail);
-            } else if (median.onesignal.setExternalUserId) {
-                // Fallback just in case you are using an older Median build
-                median.onesignal.setExternalUserId({ externalId: cleanEmail });
-            }
-
-            // 2. SET TAGS PERFECTLY: Flat JSON object, no nesting!
-            let tagData = { 
-                "user_email": cleanEmail, 
-                "user_status": "active" 
-            };
-            
-            if (median.onesignal.tags && median.onesignal.tags.set) {
-                median.onesignal.tags.set(tagData);
-            } else if (median.onesignal.sendTags) {
-                median.onesignal.sendTags(tagData);
-            }
-        }
-    }
-
-    // Fire securely when the Median native app bridge is fully loaded
-    document.addEventListener("median_library_ready", tournyxOneSignalSetup);
-    
-    // Fallback for regular web browsers
-    document.addEventListener("DOMContentLoaded", tournyxOneSignalSetup);
-</script>
 </body>
 </html>
