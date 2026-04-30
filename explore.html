@@ -619,13 +619,14 @@
         </div>
     </div>
    <div class="modal-overlay" id="rosterPopupModal">
-        <div class="modal-box" style="padding: 0; overflow: hidden; width: 95%; max-width: 400px; display: flex; flex-direction: column; background: rgba(10,5,20,0.95);">
-            <div class="modal-header" style="padding: 20px; background: rgba(0,0,0,0.5); border-bottom: 1px solid var(--card-border); margin:0; display:flex; justify-content:space-between; align-items:center;">
-                <div class="modal-title" id="rosterPopupTitle" style="font-size: 1.1rem;"><i class="fa-solid fa-users-rays" style="color:var(--accent-cyan);"></i> Clan Roster</div>
-                <i class="fa-solid fa-xmark modal-close" style="position:static;" onclick="closeRosterPopup()"></i>
+        <style>
+            @keyframes slideUpRoster { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
+        </style>
+        <div class="modal-box" style="padding: 0; overflow: hidden; width: 95%; max-width: 420px; display: flex; flex-direction: column; background: rgba(10,5,20,0.98); border-radius: 20px; border: 1px solid var(--accent-cyan); box-shadow: 0 15px 50px rgba(0,0,0,0.9), inset 0 0 20px rgba(0,242,255,0.15);">
+            <i class="fa-solid fa-xmark modal-close" style="position: absolute; top: 15px; right: 15px; z-index: 20; color: white; background: rgba(0,0,0,0.6); padding: 6px 9px; border-radius: 50%; backdrop-filter: blur(5px);" onclick="closeRosterPopup()"></i>
+            <div id="rosterPopupContent" style="display: flex; flex-direction: column;">
+                <!-- Premium Dynamic Content Injected Here -->
             </div>
-            <div id="rosterPopupContent" style="max-height: 60vh; overflow-y: auto; padding: 20px; display: flex; flex-direction: column; gap: 10px;">
-                </div>
         </div>
     </div>
     <div class="detail-modal" id="tourneyDetailModal">
@@ -2203,86 +2204,94 @@
             }
         }
 
-     // --- ELITE ROSTER POPUP ENGINE (UPGRADED) ---
+     // --- ELITE ROSTER POPUP ENGINE (PREMIUM UI FIX) ---
         function openRosterPopup(e, dataEncoded, isPremium) {
-            // Stop the click from bubbling up to the tournament card
-            if(e) e.stopPropagation(); 
+            if(e) e.stopPropagation(); // Stops the click from opening the tournament card behind it
             triggerHaptic();
-            
-            // Decode the Base64 safely
+
             let teamData = {};
             try {
                 teamData = JSON.parse(decodeURIComponent(atob(dataEncoded)));
             } catch(err) {
-                showToast("Failed to load roster data.", true);
-                return;
+                showToast("Failed to load roster data.", true); return;
             }
 
-            let rosterArray = teamData.players || teamData.roster || [teamData]; 
+            let cName = teamData.name || teamData.username || teamData.clan_name || teamData[1] || "Clan Roster";
             
-            let cName = teamData.name || teamData.username || teamData.clan || "Clan Roster";
-            
-            // Fetch Logo from Col E and Banner from Col F
+            // Map strictly to Col E (Logo) and Col F (Banner)
             let cLogo = teamData.logo || teamData.Logo || teamData[4] || `https://ui-avatars.com/api/?name=${encodeURIComponent(cName)}&background=070311&color=00f2ff&bold=true`;
-            
-            let defaultBanner = "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEiJvPTY_y_XU-0Lwbnjwm7961lCDkSlQh2MtCWHunFVX6WS7WCprCtkPyB334BU_-4vGsP0NseDQf4NPBEOIxqjk7VZQqZUHpnLb4Bw-c1UeXQy2M9DzNrNdYt_aL0GEb1AlTPupC5zEjJiP3Ci0Oxk-wdg5TF5cs8_UNSe3uTT1BE884je3iXr8QlMjx8/s240/1000094210.jpg";
-            let cBanner = teamData.banner || teamData.Banner || teamData[5] || (activeTournament && activeTournament.banner) || defaultBanner; 
+            let cBanner = teamData.banner || teamData.Banner || teamData[5] || (activeTournament && activeTournament.banner) || "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEiJvPTY_y_XU-0Lwbnjwm7961lCDkSlQh2MtCWHunFVX6WS7WCprCtkPyB334BU_-4vGsP0NseDQf4NPBEOIxqjk7VZQqZUHpnLb4Bw-c1UeXQy2M9DzNrNdYt_aL0GEb1AlTPupC5zEjJiP3Ci0Oxk-wdg5TF5cs8_UNSe3uTT1BE884je3iXr8QlMjx8/s240/1000094210.jpg";
 
-            // Dynamic Header Title
-            let titleHtml = `<i class="fa-solid fa-users-rays" style="color:var(--accent-cyan);"></i> ` + cName;
-            if(isPremium) {
-                titleHtml = `<i class="fa-solid fa-users-rays" style="color:#FFD700;"></i> ` + cName;
+            // Extract the real roster array from team_json (Col H / Index 7)
+            let rosterArray = [];
+            let tJson = teamData.team_json || teamData[7];
+            if (tJson) {
+                try { rosterArray = typeof tJson === 'string' ? JSON.parse(tJson).roster || [] : tJson.roster || []; } catch(err){}
             }
-            document.getElementById('rosterPopupTitle').innerHTML = titleHtml;
+            if (rosterArray.length === 0) {
+                rosterArray = teamData.players || teamData.roster || [teamData]; 
+            }
 
-            // Build the Premium Banner Header
-            let premiumBadgeHtml = isPremium ? 
-                `<div style="position:absolute; top:10px; right:10px; background:linear-gradient(135deg, #FFD700, #FFA500); color:black; font-family:var(--font-head); font-weight:900; font-size:0.65rem; padding:4px 10px; border-radius:50px; box-shadow:0 0 10px rgba(255,215,0,0.6); z-index:5;"><i class="fa-solid fa-crown"></i> ELITE SQUAD</div>` 
-                : '';
-
+            // Elite Squad Ribbon overlay
+            let ribbon = isPremium ? `<div style="position:absolute; top:25px; right:-40px; background:#FFD700; color:black; font-family:var(--font-head); font-weight:900; font-size:0.75rem; padding:6px 45px; transform:rotate(45deg); box-shadow:0 0 15px rgba(255,215,0,0.8); z-index:10; letter-spacing:1px;">ELITE SQUAD</div>` : '';
             let glowColor = isPremium ? '#FFD700' : 'var(--accent-cyan)';
 
-            // Inject the Banner & Logo
+            // Build Header with Banner and Overlapping Logo
             let html = `
-                <div style="position:relative; width:100%; height:110px; border-radius:12px; overflow:visible; margin-bottom:35px; border:1px solid rgba(255,255,255,0.1); opacity:0; animation: fadeUp 0.4s ease forwards;">
-                    <img src="${formatImageUrl(cBanner)}" style="width:100%; height:100%; object-fit:cover; filter:brightness(0.5); border-radius:12px;">
-                    ${premiumBadgeHtml}
-                    <div style="position:absolute; bottom:-30px; left:50%; transform:translateX(-50%); width:70px; height:70px; border-radius:50%; border:3px solid ${glowColor}; box-shadow:0 0 20px ${glowColor}; background:#000; z-index:5; overflow:hidden;">
-                        <img src="${formatImageUrl(cLogo)}" style="width:100%; height:100%; object-fit:cover;" onerror="this.src='https://ui-avatars.com/api/?name=${encodeURIComponent(cName)}&background=070311&color=00f2ff&bold=true'">
+                <div style="position:relative; width:100%; height:150px; background:#000;">
+                    <img src="${formatImageUrl(cBanner)}" style="width:100%; height:100%; object-fit:cover; opacity:0.6;">
+                    <div style="position:absolute; top:0; left:0; width:100%; height:100%; background:linear-gradient(to bottom, transparent, rgba(10,5,20,1));"></div>
+                    ${ribbon}
+                    <div style="position:absolute; bottom:-35px; left:25px; width:85px; height:85px; border-radius:18px; border:2px solid ${glowColor}; box-shadow:0 0 25px ${glowColor}; background:var(--primary-bg); z-index:5; overflow:hidden; padding:2px;">
+                        <img src="${formatImageUrl(cLogo)}" style="width:100%; height:100%; object-fit:cover; border-radius:14px;" onerror="this.src='https://ui-avatars.com/api/?name=${encodeURIComponent(cName)}&background=070311&color=00f2ff&bold=true'">
                     </div>
                 </div>
+                <div style="padding: 45px 25px 25px 25px; text-align: left;">
+                    <div style="display:flex; align-items:flex-end; gap:10px; margin-bottom: 25px; border-bottom: 1px solid rgba(255,255,255,0.08); padding-bottom:12px;">
+                        <h2 style="font-family:var(--font-head); color:white; font-size:1.6rem; margin:0;">Roster</h2>
+                        <span style="color:#888; font-size:0.8rem; margin-bottom:4px;">(Secured View)</span>
+                    </div>
+                    <div style="display:flex; flex-direction:column; gap:12px; max-height: 45vh; overflow-y:auto; padding-right:5px; scrollbar-width:none;">
             `;
 
-            // Inject the Players with Staggered Animations
-            rosterArray.forEach((p, index) => {
-                let pName = p.name || p.ign || p.username || p.gameName || 'Player';
-                let pUid = p.uid || p.id || 'N/A';
-                let pRole = p.pos || p.role || 'Player';
-                let delay = (index * 0.1) + 0.1; // Staggered animation delay
-                
-                // Color Mapping for Gaming Roles
-                let bgColors = {
-                    'IGL': 'ff9900', 'Owner': 'ff9900', 'Leader': 'ff9900',
-                    'Sniper': 'ff4d4d', 'Assaulter': '00f2ff', 'Support': '00ff7f',
-                    'Flex': 'bd00ff', 'Player': 'bd00ff'
-                };
-                
-                let roleColor = bgColors[pRole] || bgColors[Object.keys(bgColors).find(k => pRole.includes(k))] || 'bd00ff';
-                let avatarUrl = p.avatar ? formatImageUrl(p.avatar) : `https://ui-avatars.com/api/?name=${encodeURIComponent(pName)}&background=110822&color=${roleColor}&bold=true&format=svg`;
+            // Build Player Cards
+            if (rosterArray.length === 0 || !rosterArray[0].name) {
+                html += `<div style="color:#888; text-align:center; padding:20px;">Roster details hidden or not configured.</div>`;
+            } else {
+                rosterArray.forEach((p, index) => {
+                    let pName = p.name || p.ign || p.username || p.gameName || 'Player';
+                    let pUid = p.uid || p.id || 'N/A';
+                    let pRole = p.pos || p.role || 'PLAYER';
+                    let delay = (index * 0.08); // Cascading drop-in animation
 
-                html += `
-                    <div style="display:flex; align-items:center; gap:12px; background:rgba(255,255,255,0.03); padding:12px; border-radius:12px; border:1px solid rgba(255,255,255,0.05); opacity:0; animation:fadeUp 0.4s ease forwards ${delay}s;">
-                        <img src="${avatarUrl}" style="width:45px; height:45px; border-radius:10px; border:2px solid #${roleColor}; object-fit:cover;" onerror="this.src='https://ui-avatars.com/api/?name=${encodeURIComponent(pName)}&background=110822&color=${roleColor}&bold=true&format=svg'">
-                        <div style="flex:1;">
-                            <div style="font-family:var(--font-head); color:white; font-weight:bold; font-size:1rem; display:flex; align-items:center; gap:6px;">${pName} ${pRole.includes('IGL') || pRole.includes('Leader') ? '<i class="fa-solid fa-star" style="color:#ff9900; font-size:0.75rem;"></i>' : ''}</div>
-                            <div style="font-size:0.75rem; color:#aaa; margin-top:3px;">
-                                <span style="color:#${roleColor}; font-weight:bold; text-transform:uppercase;">${pRole}</span> | UID: <span style="font-family:monospace; color:white;">${pUid}</span>
+                    // Exact Color matching from your image
+                    let roleColor = 'var(--text-main)';
+                    let roleText = pRole.toUpperCase();
+                    if(roleText.includes('OWNER') || roleText.includes('ADMIN') || roleText.includes('LEADER')) roleColor = '#ff9900'; // Orange/Gold
+                    else if(roleText.includes('PLAYER')) roleColor = '#aaa'; // Grey
+                    else roleColor = 'var(--accent-cyan)'; // Cyan default
+
+                    let initials = pName.substring(0, 2).toUpperCase();
+
+                    html += `
+                        <div style="display:flex; align-items:center; gap:15px; background:rgba(255,255,255,0.02); padding:14px 18px; border-radius:14px; border:1px solid rgba(255,255,255,0.04); opacity:0; animation:slideUpRoster 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards ${delay}s;">
+                            <div style="width:45px; height:45px; border-radius:10px; background:rgba(0,242,255,0.05); border:1px solid var(--accent-cyan); display:flex; align-items:center; justify-content:center; color:var(--accent-cyan); font-family:var(--font-head); font-weight:900; font-size:1.2rem; flex-shrink:0; box-shadow: 0 0 10px rgba(0,242,255,0.2);">
+                                ${initials}
+                            </div>
+                            <div style="flex:1; overflow:hidden;">
+                                <div style="font-family:var(--font-head); color:white; font-weight:bold; font-size:1.15rem; display:flex; align-items:center; gap:8px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">
+                                    ${pName} <span style="color:${roleColor}; font-size:0.75rem; text-transform:uppercase;">(${pRole})</span>
+                                </div>
+                                <div style="font-size:0.8rem; color:#888; margin-top:4px;">
+                                    IGN: <span style="color:var(--accent-cyan); font-weight:bold;">${p.gameName || p.ign || pName}</span> <span style="color:#555; margin:0 4px;">|</span> UID: <span style="color:white; font-family:monospace;">${pUid}</span>
+                                </div>
                             </div>
                         </div>
-                    </div>
-                `;
-            });
+                    `;
+                });
+            }
 
+            html += `</div></div>`;
             document.getElementById('rosterPopupContent').innerHTML = html;
             document.getElementById('rosterPopupModal').classList.add('active');
         }
@@ -2309,16 +2318,19 @@
                 
                 let clanMap = {};
                 let clanStateMap = {};
-                
+                let clanFullDataMap = {}; // NEW: Stores the entire row from the Clans sheet
+
                 if (clansData.status === 'success' && clansData.data) {
                     clansData.data.forEach(c => {
-                        let cName = c.name || c.Tag || c.tag || c[1];
+                        let cName = c.name || c.clan_name || c.Tag || c.tag || c[1];
                         let rawLogo = c.logo || c.Logo || c[4];
                         let cState = c.state || c.city || c.location || c.region; 
                         
                         if (cName) {
-                            if(rawLogo) clanMap[String(cName).toLowerCase().trim()] = rawLogo;
-                            if(cState) clanStateMap[String(cName).toLowerCase().trim()] = cState;
+                            let safeName = String(cName).toLowerCase().trim();
+                            if(rawLogo) clanMap[safeName] = rawLogo;
+                            if(cState) clanStateMap[safeName] = cState;
+                            clanFullDataMap[safeName] = c; // Save full clan object (including Banner & team_json)
                         }
                     });
                 }
@@ -2438,13 +2450,15 @@
                                 if(isPremiumSolo) highlightClass += " vip-solo";
                                 let premiumBadge = isPremiumSolo ? '<span class="clan-premium-emblem-small" style="margin-left:8px;"><i class="fa-solid fa-crown"></i> ELITE SQUAD</span>' : '';
 
-                                // Use Base64 encoding (btoa) to perfectly escape the JSON for inline HTML
-        let rawJsonStr = JSON.stringify(parsedClanObj || team);
-        let safeTeamData = btoa(encodeURIComponent(rawJsonStr));
+                                // Connect Match data with Full Clan Sheet data for the popup
+                                let fullClanObj = clanFullDataMap[String(displayClanName).toLowerCase().trim()] || parsedClanObj || team;
+                                
+                                // Safely encode the full object to Base64 to prevent HTML quoting errors
+                                let rawJsonStr = JSON.stringify(fullClanObj);
+                                let safeTeamData = btoa(encodeURIComponent(rawJsonStr));
 
-        // Note: We pass 'event' into the onclick so we can stop the click bubbling!
-        container.innerHTML += `
-            <div class="clan-item ${highlightClass}" ${hasRoster ? `onclick="openRosterPopup(event, '${safeTeamData}', ${isPremiumSolo})"` : ''}>
+                                container.innerHTML += `
+                                    <div class="clan-item ${highlightClass}" ${hasRoster ? `onclick="openRosterPopup(event, '${safeTeamData}', ${isPremiumSolo})"` : ''}>
                                         <div class="clan-item-header">
                                             <div class="clan-item-icon"><img src="${clanLogo}" onerror="this.src='https://ui-avatars.com/api/?name=${encodeURIComponent(displayClanName)}&background=070311&color=00ff7f&bold=true'"></div>
                                             <div class="clan-item-name">${displayClanName} ${isMyClan ? '<span style="font-size:0.7rem; color:var(--accent-cyan); font-weight:normal;">(Your Clan)</span>' : ''} ${levelBadge} ${stateBadge} ${premiumBadge}</div>
