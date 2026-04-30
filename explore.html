@@ -2420,7 +2420,7 @@
                                 let rawState = team.state || team.State || team[20] || "";
                                 let rawCity = team.city || team.City || team[21] || "";
                                 let locationText = rawCity ? (rawState ? `${rawCity}, ${rawState}` : rawCity) : rawState;
-                                let stateBadge = locationText ? `<span class="state-badge"><i class="fa-solid fa-location-dot" style="color:var(--accent-cyan);"></i> ${locationText}</span>` : '';
+                                let stateBadge = locationText ? `<span style="background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.1); padding:3px 8px; border-radius:6px; font-size:0.65rem; color:#ccc; display:inline-flex; align-items:center; gap:4px;"><i class="fa-solid fa-location-dot" style="color:var(--accent-cyan);"></i> ${locationText}</span>` : '';
 
                                 // PREMIUM / VIP CHECK (Col X)
                                 let isPremiumSolo = (isMyClan && isUserPremium) || 
@@ -2432,7 +2432,13 @@
                                 
                                 let premiumBadge = isPremiumSolo ? '<span style="background:linear-gradient(135deg, #FFD700, #FFA500); color:black; padding:3px 8px; border-radius:6px; font-size:0.65rem; font-family:var(--font-head); font-weight:900; box-shadow:0 0 10px rgba(255,215,0,0.5); display:inline-flex; align-items:center; gap:4px; letter-spacing:0.5px; margin-left:6px;"><i class="fa-solid fa-crown"></i> ELITE</span>' : '';
                                 
-                                let safeTeamData = encodeURIComponent(JSON.stringify(team));
+                                // 🚨 INDESTRUCTIBLE ENCODING (Matches the Clan block fix)
+                                let safeTeamData = "";
+                                try {
+                                    safeTeamData = btoa(encodeURIComponent(JSON.stringify(team)));
+                                } catch(e) {
+                                    safeTeamData = btoa(encodeURIComponent(JSON.stringify({username: playerName})));
+                                }
 
                                 container.innerHTML += `
                                     <div class="clan-item ${highlightClass}" style="padding: 15px;">
@@ -2454,7 +2460,6 @@
                                         </div>
                                     </div>
                                 `;
-                            }
                                 
                                 secureFetch({ action: 'get_avatar', username: playerName })
                                 .then(d => {
