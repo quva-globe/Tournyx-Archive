@@ -2466,51 +2466,76 @@
                                 }).catch(e => {});
                             } else {
                                 let highlightClass = isMyClan ? "my-clan" : "";
-                                
-                                // 1. AGGRESSIVE LOGO FETCHING
-                                let mappedLogo = clanMap[String(displayClanName).toLowerCase().trim()];
-                                let rawLogo = mappedLogo || (parsedClanObj ? (parsedClanObj.logo || parsedClanObj.Logo || parsedClanObj[4]) : null) || team.logo || team.clan_logo;
+                                let safeClanName = String(displayClanName).toLowerCase().trim();
+
+                                // 1. BULLETPROOF CLAN DATA FETCHING
+                                // Search the clansData array directly to prevent any map-related crashes
+                                let realClanData = null;
+                                try {
+                                    if (typeof clansData !== 'undefined' && clansData.status === 'success' && clansData.data) {
+                                        realClanData = clansData.data.find(c => {
+                                            let cName = String(c.name || c.clan_name || c.Tag || c.tag || c[1] || "").toLowerCase().trim();
+                                            return cName === safeClanName;
+                                        });
+                                    }
+                                } catch(e) {}
+
+                                let fullObj = realClanData || parsedClanObj || team || {};
+
+                                // 2. EXACT LOGO FETCHING (Col E / Index 4)
+                                let rawLogo = fullObj.logo || fullObj.Logo || fullObj[4] || team.logo || team.clan_logo;
                                 let clanLogo = rawLogo ? formatImageUrl(rawLogo) : `https://ui-avatars.com/api/?name=${encodeURIComponent(displayClanName)}&background=070311&color=00ff7f&bold=true`;
 
-                                // 2. ELITE SQUAD / VIP BADGE CHECK
-                                let isClanPremium = (isMyClan && isUserPremium) || 
-                                                    String(team.is_premium).toLowerCase() === 'true' || 
-                                                    (parsedClanObj && String(parsedClanObj.is_premium).toLowerCase() === 'true') ||
-                                                    (parsedClanObj && String(parsedClanObj.vip_badge).toLowerCase() === 'true');
-                                                    
-                                if (isClanPremium) highlightClass += " vip-solo"; // Adds the golden glow outline
+                                // 3. ELITE SQUAD / VIP BADGE CHECK (Col X / Index 23)
+                                let checkPremiumFlags = [
+                                    fullObj.is_premium, fullObj.vip_badge, fullObj.vip, fullObj[23],
+                                    team.is_premium, team.vip_badge, team[23]
+                                ];
+                                let isClanPremium = (isMyClan && isUserPremium) || checkPremiumFlags.some(val => String(val).toLowerCase() === 'true' || val === true);
+                                
+                                if (isClanPremium) highlightClass += " vip-solo"; 
                                 
                                 let premiumBadge = isClanPremium ? 
                                     `<span style="background:linear-gradient(135deg, #FFD700, #FFA500); color:black; padding:3px 8px; border-radius:6px; font-size:0.65rem; font-family:var(--font-head); font-weight:900; box-shadow:0 0 10px rgba(255,215,0,0.5); display:inline-flex; align-items:center; gap:4px; letter-spacing:0.5px;"><i class="fa-solid fa-crown"></i> ELITE</span>` : '';
 
-                                // 3. LOCATION FETCHING (State / City)
-                                let mappedState = clanStateMap[String(displayClanName).toLowerCase().trim()];
-                                let rawLocation = mappedState || (parsedClanObj ? (parsedClanObj.state || parsedClanObj.city || parsedClanObj.location) : null) || team.state || team.city || "";
-                                let stateBadge = rawLocation ? `<span style="background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.1); padding:3px 8px; border-radius:6px; font-size:0.65rem; color:#ccc; display:inline-flex; align-items:center; gap:4px;"><i class="fa-solid fa-location-dot" style="color:var(--accent-cyan);"></i> ${rawLocation}</span>` : '';
+                                // 4. EXACT LOCATION FETCHING (State Col U/Index 20, City Col V/Index 21)
+                                let rawState = fullObj.state || fullObj.State || fullObj[20] || team.state || "";
+                                let rawCity = fullObj.city || fullObj.City || fullObj[21] || team.city || "";
+                                let locationText = rawCity ? (rawState ? `${rawCity}, ${rawState}` : rawCity) : rawState;
+                                
+                                let stateBadge = locationText ? `<span style="background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.1); padding:3px 8px; border-radius:6px; font-size:0.65rem; color:#ccc; display:inline-flex; align-items:center; gap:4px;"><i class="fa-solid fa-location-dot" style="color:var(--accent-cyan);"></i> ${locationText}</span>` : '';
 
-                                // 4. LEVEL BADGE
-                                let cLevel = team.level || (parsedClanObj ? parsedClanObj.level : null) || Math.floor(Math.random() * 5) + 1;
-                                let levelBadge = `<span style="background:rgba(255,215,0,0.1); color:#FFD700; border:1px solid #FFD700; padding:3px 8px; border-radius:6px; font-size:0.65rem; font-family:var(--font-head); font-weight:bold;">Lvl ${cLevel}</span>`;
+                                // 5. SAFE BASE64 ENCODING (Prevents page freeze)
+                                let safeTeamData = "";
+                                try {
+                                    // Strip down the massive object to ONLY what the popup needs
+                                    let minimalObj = {
+                                        name: displayClanName,
+                                        logo: rawLogo,
+                                        banner: fullObj.banner || fullObj[5],
+                                        is_premium: isClanPremium,
+                                        players: fullObj.players || fullObj.roster || team.players || team.roster || [team]
+                                    };
+                                    safeTeamData = btoa(encodeURIComponent(JSON.stringify(minimalObj)));
+                                } catch(e) {
+                                    safeTeamData = btoa(encodeURIComponent(JSON.stringify({name: displayClanName})));
+                                }
 
-                                // Connect Match data with Full Clan Sheet data for the popup
-                                let fullClanObj = clanFullDataMap[String(displayClanName).toLowerCase().trim()] || parsedClanObj || team;
-                                let rawJsonStr = JSON.stringify(fullClanObj);
-                                let safeTeamData = btoa(encodeURIComponent(rawJsonStr));
+                                let clickAction = hasRoster ? `onclick="openRosterPopup(event, '${safeTeamData}', ${isClanPremium})"` : '';
 
                                 container.innerHTML += `
-                                    <div class="clan-item ${highlightClass}" ${hasRoster ? `onclick="openRosterPopup(event, '${safeTeamData}', ${isClanPremium})"` : ''} style="padding: 15px;">
+                                    <div class="clan-item ${highlightClass}" ${clickAction} style="padding: 15px;">
                                         <div class="clan-item-header" style="align-items: center; display: flex; gap: 15px;">
                                             <div class="clan-item-icon" style="width: 50px; height: 50px; border-radius: 12px; border: 2px solid ${isClanPremium ? '#FFD700' : 'rgba(255,255,255,0.2)'}; box-shadow: ${isClanPremium ? '0 0 15px rgba(255,215,0,0.4)' : 'none'}; overflow:hidden; flex-shrink:0; background: #000;">
                                                 <img src="${clanLogo}" style="width:100%; height:100%; object-fit:cover;" onerror="this.src='https://ui-avatars.com/api/?name=${encodeURIComponent(displayClanName)}&background=070311&color=00ff7f&bold=true'">
                                             </div>
                                             <div style="display:flex; flex-direction:column; gap:6px; flex:1; min-width:0;">
-                                                <div class="clan-item-name" style="font-size:1.15rem; text-shadow:${isClanPremium ? '0 0 10px rgba(255,215,0,0.5)' : 'none'}; color:${isClanPremium ? '#FFD700' : 'white'}; margin:0;">
+                                                <div class="clan-item-name" style="font-size:1.15rem; text-shadow:${isClanPremium ? '0 0 10px rgba(255,215,0,0.5)' : 'none'}; color:${isClanPremium ? '#FFD700' : 'white'}; margin:0; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">
                                                     ${displayClanName} 
                                                     ${isMyClan ? '<span style="font-size:0.7rem; color:var(--accent-cyan); font-weight:normal; text-shadow:none; margin-left:5px;">(You)</span>' : ''}
                                                 </div>
                                                 <div style="display:flex; align-items:center; flex-wrap:wrap; gap:6px;">
                                                     ${premiumBadge}
-                                                    ${levelBadge}
                                                     ${stateBadge}
                                                 </div>
                                             </div>
