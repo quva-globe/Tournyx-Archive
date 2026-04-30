@@ -54,7 +54,7 @@
             background: radial-gradient(circle at 50% 30%, #15062e 0%, #070311 100%);
         }
 
-        /* --- LANDING HERO SECTION --- */
+        /* --- DESKTOP LANDING HERO SECTION --- */
         .landing-container {
             text-align: center; z-index: 10; padding: 15px;
             animation: cinematicZoomIn 1.2s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; width: 100%; max-width: 500px;
@@ -64,6 +64,10 @@
             0% { transform: scale(0.85); opacity: 0; filter: blur(10px); }
             100% { transform: scale(1); opacity: 1; filter: blur(0); }
         }
+
+        /* Mobile Top Showcase - Hidden on Desktop */
+        .mobile-top-showcase { display: none; }
+        .landing-content-wrapper { display: block; }
 
         /* NORMAL APP ICON SHAPE */
         .logo-wrapper {
@@ -157,6 +161,8 @@
 
         @keyframes modalBgFade { from { opacity: 0; backdrop-filter: blur(0px); } to { opacity: 1; backdrop-filter: blur(5px); } }
 
+        .modal-drag-pill { display: none; }
+        
         .modal-card {
             background: var(--card-bg); border: 1px solid var(--card-border);
             width: 100%; max-width: 400px; border-radius: 18px; padding: 20px;
@@ -223,7 +229,6 @@
         }
         input:-webkit-autofill { -webkit-box-shadow: 0 0 0 30px var(--input-bg) inset !important; -webkit-text-fill-color: white !important; }
         
-        /* Removed background logic for read-only to ensure it works beautifully when editable */
         .form-control:read-only { opacity: 0.7; }
 
         /* EYE ICON FLASH */
@@ -349,20 +354,101 @@
             box-shadow: 0 0 15px rgba(255, 77, 77, 0.2); animation: shake 0.4s ease;
         }
         @keyframes shake { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-5px); } 75% { transform: translateX(5px); } }
-        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 
-        /* RESPONSIVE DESIGN */
-        @media (max-width: 480px) {
-            .app-name { font-size: 1.7rem; letter-spacing: 2px; margin-bottom: 0px; }
-            .logo-wrapper { width: 95px; height: 95px; margin-bottom: 10px; }
-            .action-btn { font-size: 0.95rem; padding: 12px; max-width: 280px; margin-bottom: 8px; }
-            .modal-card { padding: 20px 18px; border-radius: 15px; }
-            .form-control { font-size: 0.9rem; padding: 12px 14px 12px 38px; }
-            .input-icon { left: 12px; }
+        /* --- MOBILE SPECIFIC APP-LIKE UI (NO DESKTOP CHANGE) --- */
+        @media (max-width: 768px) {
+            body { 
+                align-items: flex-end; padding: 0; background: #000; 
+            }
+            .landing-container {
+                display: flex; flex-direction: column;
+                justify-content: flex-end;
+                height: 100vh; height: 100dvh;
+                width: 100%; max-width: 100%; padding: 0;
+                animation: none; 
+            }
+
+            /* The Top Banners & Emojis Showcase */
+            .mobile-top-showcase {
+                display: block; position: absolute;
+                top: 0; left: 0; width: 100%; height: 55%;
+                z-index: 1; overflow: hidden;
+            }
+            .mts-banner {
+                position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+                background-size: cover; background-position: center;
+                opacity: 0; animation: crossfade 12s infinite;
+            }
+            .mts-banner::after {
+                content: ''; position: absolute; bottom: 0; left: 0; width: 100%; height: 80%;
+                background: linear-gradient(to top, rgba(7,3,17,1) 5%, transparent);
+            }
+            @keyframes crossfade {
+                0% { opacity: 0; transform: scale(1.05); }
+                10%, 30% { opacity: 1; transform: scale(1); }
+                40%, 100% { opacity: 0; transform: scale(1.05); }
+            }
+            
+            .floating-emoji {
+                position: absolute; font-size: 2.5rem; z-index: 2;
+                animation: floatEmoji 4s ease-in-out infinite; 
+                filter: drop-shadow(0 5px 15px rgba(0,0,0,0.6));
+            }
+            .e1 { top: 15%; left: 10%; animation-delay: 0s; }
+            .e2 { top: 12%; right: 12%; animation-delay: 1s; font-size: 3rem; }
+            .e3 { top: 35%; left: 15%; animation-delay: 2s; }
+            .e4 { top: 30%; right: 8%; animation-delay: 0.5s; font-size: 2.2rem; }
+            @keyframes floatEmoji {
+                0%, 100% { transform: translateY(0) rotate(-5deg); }
+                50% { transform: translateY(-15px) rotate(10deg); }
+            }
+
+            /* The Bottom Glass UI */
+            .landing-content-wrapper {
+                background: linear-gradient(to top, rgba(7,3,17,1) 80%, rgba(7,3,17,0.85) 95%, transparent);
+                padding: 40px 20px 30px;
+                border-top: 1px solid rgba(0, 242, 255, 0.2);
+                border-radius: 40px 40px 0 0;
+                box-shadow: 0 -10px 40px rgba(0,0,0,0.9);
+                backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+                z-index: 10; position: relative;
+                animation: slideUpContent 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+            }
+            @keyframes slideUpContent { from { transform: translateY(100%); } to { transform: translateY(0); } }
+
+            .logo-wrapper { 
+                width: 90px; height: 90px; margin: -80px auto 15px; 
+                border-radius: 25%; background: var(--primary-bg); 
+                box-shadow: 0 10px 30px rgba(0,0,0,0.9), inset 0 0 15px rgba(0,242,255,0.4); 
+                animation: none; 
+            } 
+            
+            .app-name { font-size: 1.8rem; letter-spacing: 2px; margin-bottom: 2px; }
+            .app-tagline { font-size: 0.9rem; margin-bottom: 12px; }
+            .static-desc { font-size: 0.85rem; margin-bottom: 20px; color: #ccc;}
+            .features-row { gap: 8px; margin-bottom: 20px; }
+            .feature-badge { padding: 8px 12px; font-size: 0.75rem; background: rgba(0,0,0,0.6); border-color: rgba(255,255,255,0.15);}
+            .action-btn { max-width: 100%; border-radius: 16px; padding: 16px; font-size: 1rem; margin-bottom: 10px;}
+
+            /* Bottom Sheet Modals for Mobile */
+            .modal-overlay { align-items: flex-end; padding: 0; background: rgba(0,0,0,0.7); }
+            .modal-card {
+                max-width: 100%; border-radius: 30px 30px 0 0;
+                border-bottom: none; border-left: none; border-right: none;
+                border-top: 2px solid var(--accent-cyan);
+                box-shadow: 0 -10px 40px rgba(0,0,0,0.9), inset 0 20px 30px rgba(0,242,255,0.05);
+                padding: 25px 20px calc(25px + env(safe-area-inset-bottom));
+                transform: translateY(100%);
+            }
+            .modal-overlay.active .modal-card { transform: translateY(0); }
+            .modal-drag-pill {
+                display: block; width: 45px; height: 5px; background: rgba(255,255,255,0.25);
+                border-radius: 10px; margin: -10px auto 20px;
+            }
+            .close-modal { top: 15px; right: 20px; }
+            .form-control { font-size: 0.95rem; padding: 14px 14px 14px 40px; }
+            .input-icon { left: 14px; }
             .arena-text { font-size: 1.6rem; letter-spacing: 3px; }
-            .static-desc { font-size: 0.85rem; margin-bottom: 15px; }
-            .features-row { margin-bottom: 20px; }
-            .app-tagline { font-size: 0.9rem; margin-bottom: 8px; }
         }
     </style>
 </head>
@@ -371,37 +457,55 @@
     <canvas id="particles-canvas"></canvas>
 
     <div class="landing-container" id="landingView">
-        <div class="logo-wrapper">
-            <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEipVmqyUEA22VpntZdPCHuXoO_Rjco_cRaNl5CyFa-eehdtgXnHe6JoD8a5svxJRJYZfv_yXwww10T2cL2PHTiXLK-J-nWC1swmMs5RDxGVM8FBSlJORaRiX4YiD8gL8SyM4X1tRyQn_v8MsqQvbU4uEyHEU0qaySP1STWHaBEYuWKyF3-6QovSqJR-8xU/s1024/1000093705.png" alt="Tournyx Logo" class="brand-logo">
-        </div>
         
-        <h1 class="app-name">TOURNYX</h1>
-        <p class="app-tagline">The Ultimate Esports Arena</p>
-        
-        <div class="static-desc">
-            Join the elite. Compete in daily scrims, climb the leaderboard, and withdraw real cash directly to your wallet.
-        </div>
-
-        <div class="features-row">
-            <span class="feature-badge"><i class="fa-solid fa-trophy"></i> Compete</span>
-            <span class="feature-badge"><i class="fa-solid fa-wallet"></i> Earn Cash</span>
-            <span class="feature-badge"><i class="fa-solid fa-shield-halved"></i> Build Clans</span>
+        <!-- MOBILE ONLY: TOP CINEMATIC SHOWCASE -->
+        <div class="mobile-top-showcase">
+            <div class="mts-banner" style="background-image: url('https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEiJvPTY_y_XU-0Lwbnjwm7961lCDkSlQh2MtCWHunFVX6WS7WCprCtkPyB334BU_-4vGsP0NseDQf4NPBEOIxqjk7VZQqZUHpnLb4Bw-c1UeXQy2M9DzNrNdYt_aL0GEb1AlTPupC5zEjJiP3Ci0Oxk-wdg5TF5cs8_UNSe3uTT1BE884je3iXr8QlMjx8/s240/1000094210.jpg'); animation-delay: 0s;"></div>
+            <div class="mts-banner" style="background-image: url('https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEj3MKUI87mMK4_3DltS3LQgqfrK1sESUIMMqlENdi0dPRtOFkeDbvPsTbSaCRaJOb17QZ5s9OO5dR6kFCYiCkgUCF2zBWwvGFSb3T-9Nz51XuIzMvIiOuqwcLzyzeFmn1orKbiETP4LrlaG-RidnWAAzBwUA3aL5_z62HP4_F7R02lAK_WSYdH0U_Gn7Es/s250/1000094211.jpg'); animation-delay: 4s;"></div>
+            <div class="mts-banner" style="background-image: url('https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEhU9TzP8rO7ZqXzM_wS3N9eD_T8f4Kx0FwVp7E4Z9qZ8pX_W4E9_M4F8N9aH_bL0K5XwW9TzP8rO7ZqXzM_wS3N9eD_T8f4Kx0FwVp7E4Z9qZ8pX_W4E9_M4F8N9aH_bL0K5Xw/s1600/1000094212.jpg'); animation-delay: 8s;"></div>
+            
+            <div class="floating-emoji e1">🏆</div>
+            <div class="floating-emoji e2">🎯</div>
+            <div class="floating-emoji e3">🔥</div>
+            <div class="floating-emoji e4">💎</div>
         </div>
 
-        <button class="action-btn btn-primary" onclick="openModal('loginModal')">
-            <i class="fa-solid fa-right-to-bracket"></i> Player Login
-        </button>
-        <button class="action-btn btn-secondary" onclick="openModal('signupModal')">
-            <i class="fa-solid fa-user-plus"></i> Create Account
-        </button>
-        
-        <button class="action-btn btn-ghost" onclick="openModal('orgModal')">
-            <i class="fa-solid fa-crown" style="color:var(--accent-orange)"></i> Organizer Portal
-        </button>
+        <!-- CONTENT WRAPPER -->
+        <div class="landing-content-wrapper">
+            <div class="logo-wrapper">
+                <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEipVmqyUEA22VpntZdPCHuXoO_Rjco_cRaNl5CyFa-eehdtgXnHe6JoD8a5svxJRJYZfv_yXwww10T2cL2PHTiXLK-J-nWC1swmMs5RDxGVM8FBSlJORaRiX4YiD8gL8SyM4X1tRyQn_v8MsqQvbU4uEyHEU0qaySP1STWHaBEYuWKyF3-6QovSqJR-8xU/s1024/1000093705.png" alt="Tournyx Logo" class="brand-logo">
+            </div>
+            
+            <h1 class="app-name">TOURNYX</h1>
+            <p class="app-tagline">The Ultimate Esports Arena</p>
+            
+            <div class="static-desc">
+                Join the elite. Compete in daily scrims, climb the leaderboard, and withdraw real cash directly to your wallet.
+            </div>
+
+            <div class="features-row">
+                <span class="feature-badge"><i class="fa-solid fa-trophy"></i> Compete</span>
+                <span class="feature-badge"><i class="fa-solid fa-wallet"></i> Earn Cash</span>
+                <span class="feature-badge"><i class="fa-solid fa-shield-halved"></i> Build Clans</span>
+            </div>
+
+            <button class="action-btn btn-primary" onclick="openModal('loginModal')">
+                <i class="fa-solid fa-right-to-bracket"></i> Player Login
+            </button>
+            <button class="action-btn btn-secondary" onclick="openModal('signupModal')">
+                <i class="fa-solid fa-user-plus"></i> Create Account
+            </button>
+            
+            <button class="action-btn btn-ghost" onclick="openModal('orgModal')">
+                <i class="fa-solid fa-crown" style="color:var(--accent-orange)"></i> Organizer Portal
+            </button>
+        </div>
     </div>
 
+    <!-- LOGIN MODAL -->
     <div class="modal-overlay" id="loginModal">
         <div class="modal-card">
+            <div class="modal-drag-pill"></div>
             <i class="fa-solid fa-xmark close-modal" onclick="closeModals()"></i>
             <h2 class="modal-title" style="color:var(--accent-cyan)">Welcome Back</h2>
             <div class="error-msg" id="loginError"></div>
@@ -428,8 +532,10 @@
         </div>
     </div>
 
+    <!-- SIGNUP MODAL -->
     <div class="modal-overlay" id="signupModal">
         <div class="modal-card">
+            <div class="modal-drag-pill"></div>
             <i class="fa-solid fa-xmark close-modal" onclick="closeModals()"></i>
             <h2 class="modal-title" style="color:var(--accent-purple)">Register</h2>
             
@@ -584,8 +690,10 @@
         </div>
     </div>
 
+    <!-- ORGANIZER MODAL -->
     <div class="modal-overlay" id="orgModal">
-        <div class="modal-card" style="border-color:var(--accent-orange); box-shadow: 0 20px 50px rgba(0,0,0,0.9), inset 0 0 30px rgba(255,153,0,0.15);">
+        <div class="modal-card" style="border-top-color:var(--accent-orange); box-shadow: 0 -10px 40px rgba(0,0,0,0.9), inset 0 20px 30px rgba(255,153,0,0.05);">
+            <div class="modal-drag-pill"></div>
             <i class="fa-solid fa-xmark close-modal" onclick="closeModals()"></i>
             <h2 class="modal-title" style="color:var(--accent-orange)"><i class="fa-solid fa-crown"></i> Organizer Hub</h2>
             <div class="error-msg" id="orgError"></div>
@@ -613,12 +721,28 @@
         </div>
     </div>
 
+    <!-- ARENA LOADER -->
     <div id="arenaLoader" class="arena-overlay">
         <div class="arena-text">ENTERING THE ARENA</div>
     </div>
 
     <script>
         const API_URL = 'https://script.google.com/macros/s/AKfycbyqqTpgaflxKJ9xH0jq7mJ_jLzcoNhas3gNo0h5gvoa_6r5Ae9NFxJAJp7ZoYNnMRKl/exec';
+
+        // --- SECURE API FETCH WRAPPER ---
+        async function secureFetch(payload) {
+            try {
+                const response = await fetch(API_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'text/plain' },
+                    body: JSON.stringify(payload)
+                });
+                return await response.json();
+            } catch (error) {
+                console.error("Fetch Error:", error);
+                throw error;
+            }
+        }
 
         // --- SHOW/HIDE PASSWORD TOGGLE ---
         function togglePwd(inputId, icon) {
@@ -654,11 +778,7 @@
             btn.disabled = true;
 
             try {
-                const res = await fetch(API_URL, { 
-                    method: 'POST', 
-                    body: JSON.stringify({ action: 'send_email_otp', email: email }) 
-                });
-                const result = await res.json();
+                const result = await secureFetch({ action: 'send_email_otp', email: email });
 
                 if (result.status === 'success') {
                     document.getElementById('otpGroup').style.display = 'block';
@@ -808,7 +928,6 @@
         function unlockEmailInput() {
             document.getElementById('regEmail').readOnly = false;
             
-            // Reset verification status
             isEmailVerified = false;
             
             const btn = document.getElementById('btnVerifyOtp');
@@ -832,14 +951,12 @@
             const errBox = document.getElementById('signupError');
             errBox.style.display = 'none';
 
-            // Requires Email Verification before Submitting
             if(!isEmailVerified) {
                 errBox.innerText = "Please verify your Email Address with OTP to continue.";
                 errBox.style.display = 'block';
                 return;
             }
 
-            // Verify exactly 10 digits for phone before sending
             const phoneVal = document.getElementById('regPhone').value;
             const phoneDigits = phoneVal.substring(4).replace(/\D/g, '');
             if (phoneDigits.length !== 10) {
@@ -853,9 +970,6 @@
             try {
                 const formData = new FormData(e.target);
                 const rawData = Object.fromEntries(formData);
-                
-                // Format phone number specifically to prevent #NUM! issues in Sheets
-                // Send ONLY the 10 digits (no +91, no apostrophe) to save cleanly as a standard number
                 const safePhoneStr = phoneDigits; 
 
                 const payload = {
@@ -870,12 +984,11 @@
                     email: rawData.email,
                     password: rawData.password,
                     referral: rawData.referral || "", 
-                    otp: rawData.otp,         // <-- Sent to backend to verify email
+                    otp: rawData.otp,         
                     role: 'player'
                 };
 
-                const res = await fetch(API_URL, { method: 'POST', body: JSON.stringify(payload) });
-                const result = await res.json();
+                const result = await secureFetch(payload);
                 
                 if(result.status === 'success') {
                     alert("Account Created! You can now Login.");
@@ -884,7 +997,6 @@
                     errBox.innerText = result.data; 
                     errBox.style.display = 'block';
                     
-                    // Unlock the email input if it was already registered
                     if (result.data.toLowerCase().includes("email already registered")) {
                         unlockEmailInput();
                     }
@@ -908,10 +1020,7 @@
             const password = e.target.password.value;
             
             try {
-                const res = await fetch(API_URL, { 
-                    method: 'POST', body: JSON.stringify({ action: 'login', email: email, password: password }) 
-                });
-                const result = await res.json();
+                const result = await secureFetch({ action: 'login', email: email, password: password });
                 
                 if (result.status === 'success') {
                     if (result.data.role === 'organizer') {
@@ -937,10 +1046,7 @@
             const password = e.target.password.value;
             
             try {
-                const res = await fetch(API_URL, { 
-                    method: 'POST', body: JSON.stringify({ action: 'login', email: email, password: password }) 
-                });
-                const result = await res.json();
+                const result = await secureFetch({ action: 'login', email: email, password: password });
                 
                 if (result.status === 'success') {
                     if (result.data.role === 'organizer') {
@@ -961,13 +1067,9 @@
         
         if (user && user.email && typeof median !== 'undefined' && median.onesignal) {
             let cleanEmail = user.email.toLowerCase().trim();
-            
-            // 1. Set the Official External ID
             if(median.onesignal.setExternalUserId) {
                 median.onesignal.setExternalUserId({ externalId: cleanEmail });
             }
-
-            // 2. Set an Email TAG (The Ultimate Failsafe)
             if(median.onesignal.sendTags) {
                 median.onesignal.sendTags({
                     tags: { 
@@ -978,11 +1080,7 @@
             }
         }
     }
-
-    // Fire when Median bridge is fully loaded inside the app
     document.addEventListener("median_library_ready", tournyxOneSignalSetup);
-    
-    // Fallback for regular web browsers
     document.addEventListener("DOMContentLoaded", tournyxOneSignalSetup);
 </script>
 </body>
