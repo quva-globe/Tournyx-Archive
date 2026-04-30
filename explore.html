@@ -2466,70 +2466,51 @@
                                 }).catch(e => {});
                             } else {
                                 let highlightClass = isMyClan ? "my-clan" : "";
-
-                                // 🚨 FAIL-SAFE: Prevents page freeze if map data is missing
-                                let fullClanObj = null;
-                                try { 
-                                    if (typeof clanFullDataMap !== 'undefined') {
-                                        fullClanObj = clanFullDataMap[String(displayClanName).toLowerCase().trim()];
-                                    }
-                                } catch(e) {}
-                                fullClanObj = fullClanObj || parsedClanObj || team;
                                 
                                 // 1. AGGRESSIVE LOGO FETCHING
-                                let mappedLogo = null;
-                                try { if (typeof clanMap !== 'undefined') mappedLogo = clanMap[String(displayClanName).toLowerCase().trim()]; } catch(e) {}
-                                let rawLogo = mappedLogo || (fullClanObj ? (fullClanObj.logo || fullClanObj.Logo || fullClanObj[4]) : null) || team.logo || team.clan_logo;
+                                let mappedLogo = clanMap[String(displayClanName).toLowerCase().trim()];
+                                let rawLogo = mappedLogo || (parsedClanObj ? (parsedClanObj.logo || parsedClanObj.Logo || parsedClanObj[4]) : null) || team.logo || team.clan_logo;
                                 let clanLogo = rawLogo ? formatImageUrl(rawLogo) : `https://ui-avatars.com/api/?name=${encodeURIComponent(displayClanName)}&background=070311&color=00ff7f&bold=true`;
 
-                                // 2. BULLETPROOF ELITE SQUAD / VIP BADGE CHECK
-                                let checkPremiumFlags = [
-                                    team.is_premium, team.vip_badge, team.vip, team[23],
-                                    parsedClanObj ? parsedClanObj.is_premium : null, 
-                                    parsedClanObj ? parsedClanObj.vip_badge : null,
-                                    fullClanObj ? fullClanObj.is_premium : null, 
-                                    fullClanObj ? fullClanObj.vip_badge : null, 
-                                    fullClanObj ? fullClanObj.vip : null, 
-                                    fullClanObj ? fullClanObj[23] : null
-                                ];
-                                
-                                let isClanPremium = (isMyClan && isUserPremium) || checkPremiumFlags.some(val => String(val).toLowerCase() === 'true' || val === true);
+                                // 2. ELITE SQUAD / VIP BADGE CHECK
+                                let isClanPremium = (isMyClan && isUserPremium) || 
+                                                    String(team.is_premium).toLowerCase() === 'true' || 
+                                                    (parsedClanObj && String(parsedClanObj.is_premium).toLowerCase() === 'true') ||
+                                                    (parsedClanObj && String(parsedClanObj.vip_badge).toLowerCase() === 'true');
                                                     
-                                if (isClanPremium) highlightClass += " vip-solo"; 
+                                if (isClanPremium) highlightClass += " vip-solo"; // Adds the golden glow outline
                                 
                                 let premiumBadge = isClanPremium ? 
                                     `<span style="background:linear-gradient(135deg, #FFD700, #FFA500); color:black; padding:3px 8px; border-radius:6px; font-size:0.65rem; font-family:var(--font-head); font-weight:900; box-shadow:0 0 10px rgba(255,215,0,0.5); display:inline-flex; align-items:center; gap:4px; letter-spacing:0.5px;"><i class="fa-solid fa-crown"></i> ELITE</span>` : '';
 
                                 // 3. LOCATION FETCHING (State / City)
-                                let mappedState = null;
-                                try { if (typeof clanStateMap !== 'undefined') mappedState = clanStateMap[String(displayClanName).toLowerCase().trim()]; } catch(e) {}
-                                let rawLocation = mappedState || (fullClanObj ? (fullClanObj.state || fullClanObj.city || fullClanObj.location) : null) || team.state || team.city || "";
+                                let mappedState = clanStateMap[String(displayClanName).toLowerCase().trim()];
+                                let rawLocation = mappedState || (parsedClanObj ? (parsedClanObj.state || parsedClanObj.city || parsedClanObj.location) : null) || team.state || team.city || "";
                                 let stateBadge = rawLocation ? `<span style="background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.1); padding:3px 8px; border-radius:6px; font-size:0.65rem; color:#ccc; display:inline-flex; align-items:center; gap:4px;"><i class="fa-solid fa-location-dot" style="color:var(--accent-cyan);"></i> ${rawLocation}</span>` : '';
 
-                                // 4. SAFE BASE64 ENCODING (Prevents HTML quoting crashes)
-                                let safeTeamData = "";
-                                try {
-                                    safeTeamData = btoa(encodeURIComponent(JSON.stringify(fullClanObj)));
-                                } catch(e) {
-                                    safeTeamData = btoa(encodeURIComponent(JSON.stringify(team)));
-                                }
+                                // 4. LEVEL BADGE
+                                let cLevel = team.level || (parsedClanObj ? parsedClanObj.level : null) || Math.floor(Math.random() * 5) + 1;
+                                let levelBadge = `<span style="background:rgba(255,215,0,0.1); color:#FFD700; border:1px solid #FFD700; padding:3px 8px; border-radius:6px; font-size:0.65rem; font-family:var(--font-head); font-weight:bold;">Lvl ${cLevel}</span>`;
 
-                                // 5. CLEAN ONCLICK BINDING
-                                let clickAction = hasRoster ? `onclick="openRosterPopup(event, '${safeTeamData}', ${isClanPremium})"` : '';
+                                // Connect Match data with Full Clan Sheet data for the popup
+                                let fullClanObj = clanFullDataMap[String(displayClanName).toLowerCase().trim()] || parsedClanObj || team;
+                                let rawJsonStr = JSON.stringify(fullClanObj);
+                                let safeTeamData = btoa(encodeURIComponent(rawJsonStr));
 
                                 container.innerHTML += `
-                                    <div class="clan-item ${highlightClass}" ${clickAction} style="padding: 15px;">
+                                    <div class="clan-item ${highlightClass}" ${hasRoster ? `onclick="openRosterPopup(event, '${safeTeamData}', ${isClanPremium})"` : ''} style="padding: 15px;">
                                         <div class="clan-item-header" style="align-items: center; display: flex; gap: 15px;">
                                             <div class="clan-item-icon" style="width: 50px; height: 50px; border-radius: 12px; border: 2px solid ${isClanPremium ? '#FFD700' : 'rgba(255,255,255,0.2)'}; box-shadow: ${isClanPremium ? '0 0 15px rgba(255,215,0,0.4)' : 'none'}; overflow:hidden; flex-shrink:0; background: #000;">
                                                 <img src="${clanLogo}" style="width:100%; height:100%; object-fit:cover;" onerror="this.src='https://ui-avatars.com/api/?name=${encodeURIComponent(displayClanName)}&background=070311&color=00ff7f&bold=true'">
                                             </div>
                                             <div style="display:flex; flex-direction:column; gap:6px; flex:1; min-width:0;">
-                                                <div class="clan-item-name" style="font-size:1.15rem; text-shadow:${isClanPremium ? '0 0 10px rgba(255,215,0,0.5)' : 'none'}; color:${isClanPremium ? '#FFD700' : 'white'}; margin:0; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">
+                                                <div class="clan-item-name" style="font-size:1.15rem; text-shadow:${isClanPremium ? '0 0 10px rgba(255,215,0,0.5)' : 'none'}; color:${isClanPremium ? '#FFD700' : 'white'}; margin:0;">
                                                     ${displayClanName} 
                                                     ${isMyClan ? '<span style="font-size:0.7rem; color:var(--accent-cyan); font-weight:normal; text-shadow:none; margin-left:5px;">(You)</span>' : ''}
                                                 </div>
                                                 <div style="display:flex; align-items:center; flex-wrap:wrap; gap:6px;">
                                                     ${premiumBadge}
+                                                    ${levelBadge}
                                                     ${stateBadge}
                                                 </div>
                                             </div>
