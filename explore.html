@@ -2203,46 +2203,95 @@
             }
         }
 
-     // --- ELITE ROSTER POPUP ENGINE ---
-        function openRosterPopup(dataEncoded, isPremium) {
+     // --- ELITE ROSTER POPUP ENGINE (PREMIUM UI FIX) ---
+        function openRosterPopup(e, dataEncoded, isPremium) {
+            if(e) e.stopPropagation(); // Stops the click from opening the tournament card behind it
             triggerHaptic();
-            let teamData = JSON.parse(decodeURIComponent(dataEncoded));
-            let rosterArray = teamData.players || teamData.roster || [teamData]; 
-            
-            let html = "";
-            rosterArray.forEach(p => {
-                let pName = p.name || p.ign || p.username || p.gameName || 'Player';
-                let pUid = p.uid || p.id || 'N/A';
-                let pRole = p.pos || p.role || 'Player';
-                
-                // Color Mapping for Gaming Roles
-                let bgColors = {
-                    'IGL': 'ff9900', 'Owner': 'ff9900', 'Leader': 'ff9900',
-                    'Sniper': 'ff4d4d', 'Assaulter': '00f2ff', 'Support': '00ff7f',
-                    'Flex': 'bd00ff', 'Player': 'bd00ff'
-                };
-                
-                let roleColor = bgColors[pRole] || bgColors[Object.keys(bgColors).find(k => pRole.includes(k))] || 'bd00ff';
-                let avatarUrl = p.avatar ? formatImageUrl(p.avatar) : `https://ui-avatars.com/api/?name=${encodeURIComponent(pName)}&background=110822&color=${roleColor}&bold=true&format=svg`;
 
-                html += `
-                    <div style="display:flex; align-items:center; gap:12px; background:rgba(255,255,255,0.03); padding:12px; border-radius:12px; border:1px solid rgba(255,255,255,0.05);">
-                        <img src="${avatarUrl}" style="width:45px; height:45px; border-radius:10px; border:2px solid #${roleColor}; object-fit:cover;">
-                        <div style="flex:1;">
-                            <div style="font-family:var(--font-head); color:white; font-weight:bold; font-size:1rem; display:flex; align-items:center; gap:6px;">${pName}</div>
-                            <div style="font-size:0.75rem; color:#aaa; margin-top:3px;">
-                                <span style="color:#${roleColor}; font-weight:bold; text-transform:uppercase;">${pRole}</span> | UID: <span style="font-family:monospace; color:white;">${pUid}</span>
+            let teamData = {};
+            try {
+                teamData = JSON.parse(decodeURIComponent(atob(dataEncoded)));
+            } catch(err) {
+                showToast("Failed to load roster data.", true); return;
+            }
+
+            let cName = teamData.name || teamData.username || teamData.clan_name || teamData[1] || "Clan Roster";
+            
+            // Map strictly to Col E (Logo) and Col F (Banner)
+            let cLogo = teamData.logo || teamData.Logo || teamData[4] || `https://ui-avatars.com/api/?name=${encodeURIComponent(cName)}&background=070311&color=00f2ff&bold=true`;
+            let cBanner = teamData.banner || teamData.Banner || teamData[5] || (activeTournament && activeTournament.banner) || "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEiJvPTY_y_XU-0Lwbnjwm7961lCDkSlQh2MtCWHunFVX6WS7WCprCtkPyB334BU_-4vGsP0NseDQf4NPBEOIxqjk7VZQqZUHpnLb4Bw-c1UeXQy2M9DzNrNdYt_aL0GEb1AlTPupC5zEjJiP3Ci0Oxk-wdg5TF5cs8_UNSe3uTT1BE884je3iXr8QlMjx8/s240/1000094210.jpg";
+
+            // Extract the real roster array from team_json (Col H / Index 7)
+            let rosterArray = [];
+            let tJson = teamData.team_json || teamData[7];
+            if (tJson) {
+                try { rosterArray = typeof tJson === 'string' ? JSON.parse(tJson).roster || [] : tJson.roster || []; } catch(err){}
+            }
+            if (rosterArray.length === 0) {
+                rosterArray = teamData.players || teamData.roster || [teamData]; 
+            }
+
+            // Elite Squad Ribbon overlay
+            let ribbon = isPremium ? `<div style="position:absolute; top:25px; right:-40px; background:#FFD700; color:black; font-family:var(--font-head); font-weight:900; font-size:0.75rem; padding:6px 45px; transform:rotate(45deg); box-shadow:0 0 15px rgba(255,215,0,0.8); z-index:10; letter-spacing:1px;">ELITE SQUAD</div>` : '';
+            let glowColor = isPremium ? '#FFD700' : 'var(--accent-cyan)';
+
+            // Build Header with Banner and Overlapping Logo
+            let html = `
+                <div style="position:relative; width:100%; height:150px; background:#000;">
+                    <img src="${formatImageUrl(cBanner)}" style="width:100%; height:100%; object-fit:cover; opacity:0.6;">
+                    <div style="position:absolute; top:0; left:0; width:100%; height:100%; background:linear-gradient(to bottom, transparent, rgba(10,5,20,1));"></div>
+                    ${ribbon}
+                    <div style="position:absolute; bottom:-35px; left:25px; width:85px; height:85px; border-radius:18px; border:2px solid ${glowColor}; box-shadow:0 0 25px ${glowColor}; background:var(--primary-bg); z-index:5; overflow:hidden; padding:2px;">
+                        <img src="${formatImageUrl(cLogo)}" style="width:100%; height:100%; object-fit:cover; border-radius:14px;" onerror="this.src='https://ui-avatars.com/api/?name=${encodeURIComponent(cName)}&background=070311&color=00f2ff&bold=true'">
+                    </div>
+                </div>
+                <div style="padding: 45px 25px 25px 25px; text-align: left;">
+                    <div style="display:flex; align-items:flex-end; gap:10px; margin-bottom: 25px; border-bottom: 1px solid rgba(255,255,255,0.08); padding-bottom:12px;">
+                        <h2 style="font-family:var(--font-head); color:white; font-size:1.6rem; margin:0;">Roster</h2>
+                        <span style="color:#888; font-size:0.8rem; margin-bottom:4px;">(Secured View)</span>
+                    </div>
+                    <div style="display:flex; flex-direction:column; gap:12px; max-height: 45vh; overflow-y:auto; padding-right:5px; scrollbar-width:none;">
+            `;
+
+            // Build Player Cards
+            if (rosterArray.length === 0 || !rosterArray[0].name) {
+                html += `<div style="color:#888; text-align:center; padding:20px;">Roster details hidden or not configured.</div>`;
+            } else {
+                rosterArray.forEach((p, index) => {
+                    let pName = p.name || p.ign || p.username || p.gameName || 'Player';
+                    let pUid = p.uid || p.id || 'N/A';
+                    let pRole = p.pos || p.role || 'PLAYER';
+                    let delay = (index * 0.08); // Cascading drop-in animation
+
+                    // Exact Color matching from your image
+                    let roleColor = 'var(--text-main)';
+                    let roleText = pRole.toUpperCase();
+                    if(roleText.includes('OWNER') || roleText.includes('ADMIN') || roleText.includes('LEADER')) roleColor = '#ff9900'; // Orange/Gold
+                    else if(roleText.includes('PLAYER')) roleColor = '#aaa'; // Grey
+                    else roleColor = 'var(--accent-cyan)'; // Cyan default
+
+                    let initials = pName.substring(0, 2).toUpperCase();
+
+                    html += `
+                        <div style="display:flex; align-items:center; gap:15px; background:rgba(255,255,255,0.02); padding:14px 18px; border-radius:14px; border:1px solid rgba(255,255,255,0.04); opacity:0; animation:slideUpRoster 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards ${delay}s;">
+                            <div style="width:45px; height:45px; border-radius:10px; background:rgba(0,242,255,0.05); border:1px solid var(--accent-cyan); display:flex; align-items:center; justify-content:center; color:var(--accent-cyan); font-family:var(--font-head); font-weight:900; font-size:1.2rem; flex-shrink:0; box-shadow: 0 0 10px rgba(0,242,255,0.2);">
+                                ${initials}
+                            </div>
+                            <div style="flex:1; overflow:hidden;">
+                                <div style="font-family:var(--font-head); color:white; font-weight:bold; font-size:1.15rem; display:flex; align-items:center; gap:8px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">
+                                    ${pName} <span style="color:${roleColor}; font-size:0.75rem; text-transform:uppercase;">(${pRole})</span>
+                                </div>
+                                <div style="font-size:0.8rem; color:#888; margin-top:4px;">
+                                    IGN: <span style="color:var(--accent-cyan); font-weight:bold;">${p.gameName || p.ign || pName}</span> <span style="color:#555; margin:0 4px;">|</span> UID: <span style="color:white; font-family:monospace;">${pUid}</span>
+                                </div>
                             </div>
                         </div>
-                    </div>
-                `;
-            });
+                    `;
+                });
+            }
 
+            html += `</div></div>`;
             document.getElementById('rosterPopupContent').innerHTML = html;
-            let titleHtml = teamData.name || teamData.username || "Clan Roster";
-            if(isPremium) titleHtml += ' <i class="fa-solid fa-crown" style="color:#FFD700; font-size:0.9rem; margin-left:5px;"></i>';
-            document.getElementById('rosterPopupTitle').innerHTML = titleHtml;
-
             document.getElementById('rosterPopupModal').classList.add('active');
         }
         
@@ -2268,16 +2317,19 @@
                 
                 let clanMap = {};
                 let clanStateMap = {};
-                
+                let clanFullDataMap = {}; // NEW: Stores the entire row from the Clans sheet
+
                 if (clansData.status === 'success' && clansData.data) {
                     clansData.data.forEach(c => {
-                        let cName = c.name || c.Tag || c.tag || c[1];
+                        let cName = c.name || c.clan_name || c.Tag || c.tag || c[1];
                         let rawLogo = c.logo || c.Logo || c[4];
                         let cState = c.state || c.city || c.location || c.region; 
                         
                         if (cName) {
-                            if(rawLogo) clanMap[String(cName).toLowerCase().trim()] = rawLogo;
-                            if(cState) clanStateMap[String(cName).toLowerCase().trim()] = cState;
+                            let safeName = String(cName).toLowerCase().trim();
+                            if(rawLogo) clanMap[safeName] = rawLogo;
+                            if(cState) clanStateMap[safeName] = cState;
+                            clanFullDataMap[safeName] = c; // Save full clan object (including Banner & team_json)
                         }
                     });
                 }
@@ -2357,23 +2409,52 @@
                             }
 
                             if (isSolo) {
+                                // Extract Player Info directly from the match data
                                 let playerName = team.username || displayClanName;
                                 let safePlayerName = encodeURIComponent(playerName);
-                                let fallbackAvatar = team.avatar ? formatImageUrl(team.avatar) : `https://ui-avatars.com/api/?name=${safePlayerName}&background=070311&color=00f2ff&bold=true`;
                                 
-                                let isPremiumSolo = (isMyClan && isUserPremium) || (String(team.is_premium).toLowerCase() === 'true');
+                                // AGGRESSIVE FETCHING: Avatar (Col F), State (Col U), City (Col V)
+                                let rawAvatar = team.avatar || team.Avatar || team[5] || null;
+                                let fallbackAvatar = rawAvatar ? formatImageUrl(rawAvatar) : `https://ui-avatars.com/api/?name=${safePlayerName}&background=070311&color=00f2ff&bold=true`;
+                                
+                                let rawState = team.state || team.State || team[20] || "";
+                                let rawCity = team.city || team.City || team[21] || "";
+                                let locationText = rawCity ? (rawState ? `${rawCity}, ${rawState}` : rawCity) : rawState;
+                                let stateBadge = locationText ? `<span class="state-badge"><i class="fa-solid fa-location-dot" style="color:var(--accent-cyan);"></i> ${locationText}</span>` : '';
+
+                                // PREMIUM / VIP CHECK (Col X)
+                                let isPremiumSolo = (isMyClan && isUserPremium) || 
+                                                    (String(team.is_premium).toLowerCase() === 'true') || 
+                                                    (String(team[23]).toLowerCase() === 'true'); // Col X is index 23
+
                                 let highlightClass = isMyClan ? "my-clan" : "";
                                 if(isPremiumSolo) highlightClass += " vip-solo";
                                 
-                                let premiumBadge = isPremiumSolo ? '<i class="fa-solid fa-crown" style="color: #FFD700; margin-left: 5px; font-size: 0.85rem;" title="Tournyx Elite"></i>' : '';
+                                let premiumBadge = isPremiumSolo ? '<span style="background:linear-gradient(135deg, #FFD700, #FFA500); color:black; padding:3px 8px; border-radius:6px; font-size:0.65rem; font-family:var(--font-head); font-weight:900; box-shadow:0 0 10px rgba(255,215,0,0.5); display:inline-flex; align-items:center; gap:4px; letter-spacing:0.5px; margin-left:6px;"><i class="fa-solid fa-crown"></i> ELITE</span>' : '';
                                 
+                                let safeTeamData = encodeURIComponent(JSON.stringify(team));
+
                                 container.innerHTML += `
-                                    <div class="clan-item ${highlightClass}" style="flex-direction: row; align-items: center;">
-                                        <div class="clan-item-icon" style="overflow: hidden;"><img id="solo-avatar-${i}" src="${fallbackAvatar}"></div>
-                                        <div class="clan-item-name">${playerName} ${isMyClan ? '<span style="font-size:0.7rem; color:var(--accent-cyan); font-weight:normal;">(You)</span>' : ''} ${premiumBadge}</div>
-                                        <div style="font-size:0.75rem; color:var(--accent-cyan); font-weight: bold; background: rgba(0,242,255,0.1); padding: 4px 10px; border-radius: 50px; border: 1px solid rgba(0,242,255,0.2);">Solo</div>
+                                    <div class="clan-item ${highlightClass}" style="padding: 15px;">
+                                        <div class="clan-item-header" style="align-items: center; display: flex; gap: 15px;">
+                                            <div class="clan-item-icon" style="width: 50px; height: 50px; border-radius: 12px; border: 2px solid ${isPremiumSolo ? '#FFD700' : 'rgba(255,255,255,0.2)'}; box-shadow: ${isPremiumSolo ? '0 0 15px rgba(255,215,0,0.4)' : 'none'}; overflow:hidden; flex-shrink:0; background: #000;">
+                                                <img src="${fallbackAvatar}" style="width:100%; height:100%; object-fit:cover;" onerror="this.src='https://ui-avatars.com/api/?name=${safePlayerName}&background=070311&color=00f2ff&bold=true'">
+                                            </div>
+                                            <div style="display:flex; flex-direction:column; gap:6px; flex:1; min-width:0;">
+                                                <div class="clan-item-name" style="font-size:1.15rem; text-shadow:${isPremiumSolo ? '0 0 10px rgba(255,215,0,0.5)' : 'none'}; color:${isPremiumSolo ? '#FFD700' : 'white'}; margin:0;">
+                                                    ${playerName} 
+                                                    ${isMyClan ? '<span style="font-size:0.7rem; color:var(--accent-cyan); font-weight:normal; text-shadow:none; margin-left:5px;">(You)</span>' : ''}
+                                                </div>
+                                                <div style="display:flex; align-items:center; flex-wrap:wrap; gap:6px;">
+                                                    ${premiumBadge}
+                                                    <div style="font-size:0.75rem; color:var(--accent-cyan); font-weight: bold; background: rgba(0,242,255,0.1); padding: 3px 8px; border-radius: 6px; border: 1px solid rgba(0,242,255,0.2);">Solo</div>
+                                                    ${stateBadge}
+                                                </div>
+                                            </div>
+                                        </div>
                                     </div>
                                 `;
+                            }
                                 
                                 secureFetch({ action: 'get_avatar', username: playerName })
                                 .then(d => {
@@ -2384,27 +2465,55 @@
                                 }).catch(e => {});
                             } else {
                                 let highlightClass = isMyClan ? "my-clan" : "";
+                                
+                                // 1. AGGRESSIVE LOGO FETCHING
                                 let mappedLogo = clanMap[String(displayClanName).toLowerCase().trim()];
-                                let clanLogo = mappedLogo ? formatImageUrl(mappedLogo) : (team.logo ? formatImageUrl(team.logo) : (team.clan_logo ? formatImageUrl(team.clan_logo) : `https://ui-avatars.com/api/?name=${encodeURIComponent(displayClanName)}&background=070311&color=00ff7f&bold=true`));
+                                let rawLogo = mappedLogo || (parsedClanObj ? (parsedClanObj.logo || parsedClanObj.Logo || parsedClanObj[4]) : null) || team.logo || team.clan_logo;
+                                let clanLogo = rawLogo ? formatImageUrl(rawLogo) : `https://ui-avatars.com/api/?name=${encodeURIComponent(displayClanName)}&background=070311&color=00ff7f&bold=true`;
+
+                                // 2. ELITE SQUAD / VIP BADGE CHECK
+                                let isClanPremium = (isMyClan && isUserPremium) || 
+                                                    String(team.is_premium).toLowerCase() === 'true' || 
+                                                    (parsedClanObj && String(parsedClanObj.is_premium).toLowerCase() === 'true') ||
+                                                    (parsedClanObj && String(parsedClanObj.vip_badge).toLowerCase() === 'true');
+                                                    
+                                if (isClanPremium) highlightClass += " vip-solo"; // Adds the golden glow outline
                                 
+                                let premiumBadge = isClanPremium ? 
+                                    `<span style="background:linear-gradient(135deg, #FFD700, #FFA500); color:black; padding:3px 8px; border-radius:6px; font-size:0.65rem; font-family:var(--font-head); font-weight:900; box-shadow:0 0 10px rgba(255,215,0,0.5); display:inline-flex; align-items:center; gap:4px; letter-spacing:0.5px;"><i class="fa-solid fa-crown"></i> ELITE</span>` : '';
+
+                                // 3. LOCATION FETCHING (State / City)
                                 let mappedState = clanStateMap[String(displayClanName).toLowerCase().trim()];
-                                let stateBadge = mappedState ? `<span class="state-badge"><i class="fa-solid fa-location-dot" style="font-size:0.5rem;"></i> ${mappedState}</span>` : '';
-                                
-                                let cLevel = team.level || Math.floor(Math.random() * 5) + 1;
-                                let levelBadge = `<span class="level-badge">Lvl ${cLevel}</span>`;
+                                let rawLocation = mappedState || (parsedClanObj ? (parsedClanObj.state || parsedClanObj.city || parsedClanObj.location) : null) || team.state || team.city || "";
+                                let stateBadge = rawLocation ? `<span style="background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.1); padding:3px 8px; border-radius:6px; font-size:0.65rem; color:#ccc; display:inline-flex; align-items:center; gap:4px;"><i class="fa-solid fa-location-dot" style="color:var(--accent-cyan);"></i> ${rawLocation}</span>` : '';
 
-                                let isPremiumSolo = (isMyClan && isUserPremium) || (String(team.is_premium).toLowerCase() === 'true');
-                                if(isPremiumSolo) highlightClass += " vip-solo";
-                                let premiumBadge = isPremiumSolo ? '<span class="clan-premium-emblem-small" style="margin-left:8px;"><i class="fa-solid fa-crown"></i> ELITE SQUAD</span>' : '';
+                                // 4. LEVEL BADGE
+                                let cLevel = team.level || (parsedClanObj ? parsedClanObj.level : null) || Math.floor(Math.random() * 5) + 1;
+                                let levelBadge = `<span style="background:rgba(255,215,0,0.1); color:#FFD700; border:1px solid #FFD700; padding:3px 8px; border-radius:6px; font-size:0.65rem; font-family:var(--font-head); font-weight:bold;">Lvl ${cLevel}</span>`;
 
-                                let safeTeamData = encodeURIComponent(JSON.stringify(parsedClanObj || team));
+                                // Connect Match data with Full Clan Sheet data for the popup
+                                let fullClanObj = clanFullDataMap[String(displayClanName).toLowerCase().trim()] || parsedClanObj || team;
+                                let rawJsonStr = JSON.stringify(fullClanObj);
+                                let safeTeamData = btoa(encodeURIComponent(rawJsonStr));
 
                                 container.innerHTML += `
-                                    <div class="clan-item ${highlightClass}" ${hasRoster ? `onclick="openRosterPopup('${safeTeamData}', ${isPremiumSolo})"` : ''}>
-                                        <div class="clan-item-header">
-                                            <div class="clan-item-icon"><img src="${clanLogo}" onerror="this.src='https://ui-avatars.com/api/?name=${encodeURIComponent(displayClanName)}&background=070311&color=00ff7f&bold=true'"></div>
-                                            <div class="clan-item-name">${displayClanName} ${isMyClan ? '<span style="font-size:0.7rem; color:var(--accent-cyan); font-weight:normal;">(Your Clan)</span>' : ''} ${levelBadge} ${stateBadge} ${premiumBadge}</div>
-                                            ${hasRoster ? `<i class="fa-solid fa-users" style="color:#888; font-size:0.9rem; margin-left:auto;"></i>` : ''}
+                                    <div class="clan-item ${highlightClass}" ${hasRoster ? `onclick="openRosterPopup(event, '${safeTeamData}', ${isClanPremium})"` : ''} style="padding: 15px;">
+                                        <div class="clan-item-header" style="align-items: center; display: flex; gap: 15px;">
+                                            <div class="clan-item-icon" style="width: 50px; height: 50px; border-radius: 12px; border: 2px solid ${isClanPremium ? '#FFD700' : 'rgba(255,255,255,0.2)'}; box-shadow: ${isClanPremium ? '0 0 15px rgba(255,215,0,0.4)' : 'none'}; overflow:hidden; flex-shrink:0; background: #000;">
+                                                <img src="${clanLogo}" style="width:100%; height:100%; object-fit:cover;" onerror="this.src='https://ui-avatars.com/api/?name=${encodeURIComponent(displayClanName)}&background=070311&color=00ff7f&bold=true'">
+                                            </div>
+                                            <div style="display:flex; flex-direction:column; gap:6px; flex:1; min-width:0;">
+                                                <div class="clan-item-name" style="font-size:1.15rem; text-shadow:${isClanPremium ? '0 0 10px rgba(255,215,0,0.5)' : 'none'}; color:${isClanPremium ? '#FFD700' : 'white'}; margin:0;">
+                                                    ${displayClanName} 
+                                                    ${isMyClan ? '<span style="font-size:0.7rem; color:var(--accent-cyan); font-weight:normal; text-shadow:none; margin-left:5px;">(You)</span>' : ''}
+                                                </div>
+                                                <div style="display:flex; align-items:center; flex-wrap:wrap; gap:6px;">
+                                                    ${premiumBadge}
+                                                    ${levelBadge}
+                                                    ${stateBadge}
+                                                </div>
+                                            </div>
+                                            ${hasRoster ? `<i class="fa-solid fa-chevron-right" style="color:#888; font-size:1.2rem; flex-shrink:0;"></i>` : ''}
                                         </div>
                                     </div>
                                 `;
