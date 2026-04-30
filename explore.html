@@ -2410,23 +2410,52 @@
                             }
 
                             if (isSolo) {
+                                // Extract Player Info directly from the match data
                                 let playerName = team.username || displayClanName;
                                 let safePlayerName = encodeURIComponent(playerName);
-                                let fallbackAvatar = team.avatar ? formatImageUrl(team.avatar) : `https://ui-avatars.com/api/?name=${safePlayerName}&background=070311&color=00f2ff&bold=true`;
                                 
-                                let isPremiumSolo = (isMyClan && isUserPremium) || (String(team.is_premium).toLowerCase() === 'true');
+                                // AGGRESSIVE FETCHING: Avatar (Col F), State (Col U), City (Col V)
+                                let rawAvatar = team.avatar || team.Avatar || team[5] || null;
+                                let fallbackAvatar = rawAvatar ? formatImageUrl(rawAvatar) : `https://ui-avatars.com/api/?name=${safePlayerName}&background=070311&color=00f2ff&bold=true`;
+                                
+                                let rawState = team.state || team.State || team[20] || "";
+                                let rawCity = team.city || team.City || team[21] || "";
+                                let locationText = rawCity ? (rawState ? `${rawCity}, ${rawState}` : rawCity) : rawState;
+                                let stateBadge = locationText ? `<span class="state-badge"><i class="fa-solid fa-location-dot" style="color:var(--accent-cyan);"></i> ${locationText}</span>` : '';
+
+                                // PREMIUM / VIP CHECK (Col X)
+                                let isPremiumSolo = (isMyClan && isUserPremium) || 
+                                                    (String(team.is_premium).toLowerCase() === 'true') || 
+                                                    (String(team[23]).toLowerCase() === 'true'); // Col X is index 23
+
                                 let highlightClass = isMyClan ? "my-clan" : "";
                                 if(isPremiumSolo) highlightClass += " vip-solo";
                                 
-                                let premiumBadge = isPremiumSolo ? '<i class="fa-solid fa-crown" style="color: #FFD700; margin-left: 5px; font-size: 0.85rem;" title="Tournyx Elite"></i>' : '';
+                                let premiumBadge = isPremiumSolo ? '<span style="background:linear-gradient(135deg, #FFD700, #FFA500); color:black; padding:3px 8px; border-radius:6px; font-size:0.65rem; font-family:var(--font-head); font-weight:900; box-shadow:0 0 10px rgba(255,215,0,0.5); display:inline-flex; align-items:center; gap:4px; letter-spacing:0.5px; margin-left:6px;"><i class="fa-solid fa-crown"></i> ELITE</span>' : '';
                                 
+                                let safeTeamData = encodeURIComponent(JSON.stringify(team));
+
                                 container.innerHTML += `
-                                    <div class="clan-item ${highlightClass}" style="flex-direction: row; align-items: center;">
-                                        <div class="clan-item-icon" style="overflow: hidden;"><img id="solo-avatar-${i}" src="${fallbackAvatar}"></div>
-                                        <div class="clan-item-name">${playerName} ${isMyClan ? '<span style="font-size:0.7rem; color:var(--accent-cyan); font-weight:normal;">(You)</span>' : ''} ${premiumBadge}</div>
-                                        <div style="font-size:0.75rem; color:var(--accent-cyan); font-weight: bold; background: rgba(0,242,255,0.1); padding: 4px 10px; border-radius: 50px; border: 1px solid rgba(0,242,255,0.2);">Solo</div>
+                                    <div class="clan-item ${highlightClass}" style="padding: 15px;">
+                                        <div class="clan-item-header" style="align-items: center; display: flex; gap: 15px;">
+                                            <div class="clan-item-icon" style="width: 50px; height: 50px; border-radius: 12px; border: 2px solid ${isPremiumSolo ? '#FFD700' : 'rgba(255,255,255,0.2)'}; box-shadow: ${isPremiumSolo ? '0 0 15px rgba(255,215,0,0.4)' : 'none'}; overflow:hidden; flex-shrink:0; background: #000;">
+                                                <img src="${fallbackAvatar}" style="width:100%; height:100%; object-fit:cover;" onerror="this.src='https://ui-avatars.com/api/?name=${safePlayerName}&background=070311&color=00f2ff&bold=true'">
+                                            </div>
+                                            <div style="display:flex; flex-direction:column; gap:6px; flex:1; min-width:0;">
+                                                <div class="clan-item-name" style="font-size:1.15rem; text-shadow:${isPremiumSolo ? '0 0 10px rgba(255,215,0,0.5)' : 'none'}; color:${isPremiumSolo ? '#FFD700' : 'white'}; margin:0;">
+                                                    ${playerName} 
+                                                    ${isMyClan ? '<span style="font-size:0.7rem; color:var(--accent-cyan); font-weight:normal; text-shadow:none; margin-left:5px;">(You)</span>' : ''}
+                                                </div>
+                                                <div style="display:flex; align-items:center; flex-wrap:wrap; gap:6px;">
+                                                    ${premiumBadge}
+                                                    <div style="font-size:0.75rem; color:var(--accent-cyan); font-weight: bold; background: rgba(0,242,255,0.1); padding: 3px 8px; border-radius: 6px; border: 1px solid rgba(0,242,255,0.2);">Solo</div>
+                                                    ${stateBadge}
+                                                </div>
+                                            </div>
+                                        </div>
                                     </div>
                                 `;
+                            }
                                 
                                 secureFetch({ action: 'get_avatar', username: playerName })
                                 .then(d => {
