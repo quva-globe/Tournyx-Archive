@@ -139,6 +139,19 @@
         /* --- TOAST STATUS --- */
         #customToast { visibility: hidden; min-width: 250px; background-color: var(--accent-cyan); color: #000; text-align: center; border-radius: 10px; padding: 12px; position: fixed; z-index: 5000; left: 50%; bottom: -50px; transform: translateX(-50%); font-family: var(--font-head); font-weight: bold; box-shadow: 0 5px 15px rgba(0,242,255,0.5); opacity: 0; transition: 0.4s; font-size: 0.85rem;}
         #customToast.show { visibility: visible; opacity: 1; bottom: 30px; }
+
+        /* --- INVISIBLE PDF RENDER CONTAINER --- */
+        #pdfRenderWrapper {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 800px; 
+            z-index: -9999;
+            opacity: 0;
+            pointer-events: none;
+            overflow: hidden;
+            height: 0; 
+        }
     </style>
 </head>
 <body>
@@ -299,7 +312,6 @@
                         let isLeaved = Object.values(row).some(v => String(v).toLowerCase().includes('leaved') || String(v).toLowerCase() === 'leave');
                         if (isLeaved) return;
 
-                        // Safely checks team_json or clan column
                         let rawClan = String(row.clan || row.clan_name || row.team_json || "").trim();
                         if (!rawClan) return;
 
@@ -339,6 +351,7 @@
                         }));
 
                         teamsArr.push({
+                            join_id: row.join_id || row.id || "", // Ensures backend matches exactly
                             clan_name: cName,
                             roster: roster,
                             group: assignedGroup
@@ -354,7 +367,6 @@
                         bracket_json: bracketJsonRaw
                     };
                     
-                    // Extract Custom Lobbies dynamically from the unified bracket_json
                     customGroupNames = [];
                     let hasRealBrackets = false;
 
@@ -368,6 +380,10 @@
                                 }
                             });
                         } catch(e) {}
+                    }
+
+                    if (customGroupNames.length === 0) {
+                        customGroupNames = ['Group A', 'Group B', 'Group C', 'Group D'];
                     }
 
                     document.getElementById('detectedLobbiesCount').innerText = customGroupNames.length;
@@ -462,11 +478,20 @@
                 };
                 
                 const response = await secureFetch(payload);
-                if (response.status !== "success") console.error("Backend warning:", response.data);
+                if (response.status !== "success") {
+                    console.error("Backend Error:", response.message);
+                    showToast("Database Error: " + response.message, true);
+                    loader.style.display = 'none';
+                    return; // Stop on error
+                }
             } catch (error) {
                 console.error("Network Error during save:", error);
+                showToast("Network Error: Could not save to backend.", true);
+                loader.style.display = 'none';
+                return; // Stop on error
             }
 
+            // Only run this if the try block succeeds!
             setTimeout(() => {
                 loader.style.display = 'none';
                 document.getElementById('stepGroups').style.display = 'none';
