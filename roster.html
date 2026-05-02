@@ -139,19 +139,6 @@
         /* --- TOAST STATUS --- */
         #customToast { visibility: hidden; min-width: 250px; background-color: var(--accent-cyan); color: #000; text-align: center; border-radius: 10px; padding: 12px; position: fixed; z-index: 5000; left: 50%; bottom: -50px; transform: translateX(-50%); font-family: var(--font-head); font-weight: bold; box-shadow: 0 5px 15px rgba(0,242,255,0.5); opacity: 0; transition: 0.4s; font-size: 0.85rem;}
         #customToast.show { visibility: visible; opacity: 1; bottom: 30px; }
-
-        /* --- INVISIBLE PDF RENDER CONTAINER --- */
-        #pdfRenderWrapper {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 800px;
-            z-index: -9999;
-            opacity: 0;
-            pointer-events: none;
-            overflow: hidden;
-            height: 0;
-        }
     </style>
 </head>
 <body>
@@ -230,13 +217,6 @@
     </div>
 
     <div id="customToast">Notification</div>
-
-    <!-- INVISIBLE PDF RENDER CONTAINER -->
-    <div id="pdfRenderWrapper">
-        <div id="docTemplate">
-            <!-- PDF Template will be injected here dynamically -->
-        </div>
-    </div>
 
     <script>
         // --- BACKGROUND ANIMATION ---
@@ -327,6 +307,7 @@
 
                         let cName = rawClan;
                         let roster = [];
+                        let assignedGroup = row.group || "Unassigned";
 
                         // Deep Parse the JSON to recover the Clan Name and Player List
                         if (rawClan.startsWith('{') || rawClan.startsWith('[')) {
@@ -337,6 +318,9 @@
                                 
                                 let isSquad = Array.isArray(parsed.roster) || Array.isArray(parsed.players) || parsed.clanId || parsed.tag;
                                 
+                                // Extract the saved group from the JSON if it exists
+                                if (parsed.group) assignedGroup = parsed.group;
+
                                 if (isSquad) {
                                     cName = parsed.name || parsed.clanName || parsed.clan_name || "Unknown Team";
                                     roster = parsed.roster || parsed.players || [];
@@ -364,7 +348,7 @@
                         teamsArr.push({
                             clan_name: cName,
                             roster: roster,
-                            group: row.group || "Unassigned"
+                            group: assignedGroup
                         });
                     });
 
@@ -471,7 +455,7 @@
             loader.style.display = 'flex';
             lText.innerText = 'LOCKING BRACKETS...';
 
-            // 2. Attempt a silent background save (Won't freeze if backend errors out)
+            // 2. Send the new permanent save request to the backend
             try {
                 const payload = { 
                     action: 'save_roster_groups', 
@@ -479,8 +463,17 @@
                     email: document.getElementById('email').value.trim(),
                     teams: currentRosterData.teams 
                 };
-                secureFetch(payload).catch(e => console.log("Silent backend skip."));
-            } catch (error) {}
+                
+                // We await this so we don't proceed to download if the backend is slow
+                const response = await secureFetch(payload);
+                
+                if (response.status !== "success") {
+                    console.error("Backend warning:", response.data);
+                    // We still proceed even if backend failed, so user isn't stuck
+                }
+            } catch (error) {
+                console.error("Network Error during save:", error);
+            }
 
             // 3. Immediately proceed to Download
             setTimeout(() => {
@@ -488,7 +481,7 @@
                 document.getElementById('stepGroups').style.display = 'none';
                 document.getElementById('stepDownload').style.display = 'block';
                 showToast("Groups Locked! Ready for Download. ✨");
-            }, 800);
+            }, 500);
         }
 
         function editGroupsAgain() {
@@ -625,11 +618,9 @@
 
         // --- THE FLAWLESS PDF GENERATOR ---
         function generatePDF(data, matchId) {
-            // 1. Build the complete HTML string (which already includes all your CSS)
+            // By passing the raw string, we bypass ALL browser DOM bugs!
             const fullHTML = buildDocumentHTML(data);
             
-            // 2. Pass the raw STRING directly to html2pdf! 
-            // This completely bypasses the browser's viewport and opacity limits.
             html2pdf().set({
                 margin: [10, 10, 10, 10], 
                 filename: `Tournyx_${matchId}_Roster.pdf`,
@@ -637,7 +628,7 @@
                 html2canvas: { 
                     scale: 2, 
                     useCORS: true, 
-                    backgroundColor: '#0f0719', // Forces your premium dark background
+                    backgroundColor: '#0f0719', // Fixes the white border background!
                     windowWidth: 800 
                 },
                 jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
