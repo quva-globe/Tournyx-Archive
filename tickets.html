@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+ <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -638,18 +638,45 @@
             return d.toLocaleString('en-IN', options).toUpperCase();
         }
 
-        // Failsafe normalizer
+        // Failsafe normalizer (UPGRADED SMART DETECTION)
         function normalizeTxn(t) {
             let norm = { ...t };
-            if (t.amount === "Credit" || t.amount === "Debit") {
-                norm.type = t.amount;
-                norm.amount = parseFloat(t.type) || 0;
-                norm.status = t.date;
-                norm.date = ""; 
-                norm.currency = t.status;
+            
+            // 1. Force Amount to be a clean number (strips out any accidental text)
+            let rawAmt = String(t.amount || t.type || "0").replace(/[^0-9.-]+/g, "");
+            norm.amount = parseFloat(rawAmt) || 0;
+            
+            // 2. Smart Type Detection (Aggressively scan all fields for the word "Credit")
+            let rawType = String(t.type || "").toLowerCase();
+            let rawTitle = String(t.title || "").toLowerCase();
+            let rawAmountStr = String(t.amount || "").toLowerCase();
+            let rawStatus = String(t.status || "").toLowerCase();
+            
+            if (rawType.includes("credit") || rawTitle.includes("credit") || rawAmountStr.includes("credit") || rawStatus.includes("credit")) {
+                norm.type = "Credit";
             } else {
-                norm.amount = parseFloat(t.amount) || 0;
+                norm.type = "Debit";
             }
+            
+            // 3. Fix Title if it accidentally just says "Credit"
+            if (rawTitle === "credit" || rawTitle === "debit") {
+                norm.title = "Wallet Deposit"; 
+            }
+            
+            // 4. Clean up Status (If it says "Approved" or is scrambled, map it to "Success")
+            if (rawStatus === "pending" || rawType === "pending" || rawTitle.includes("pending")) {
+                norm.status = "Pending";
+            } else if (rawStatus === "failed" || rawType === "failed") {
+                norm.status = "Failed";
+            } else {
+                norm.status = "Success"; 
+            }
+
+            // 5. Restore Date if it got pushed to a different column
+            if (!norm.date || norm.date === "") {
+                norm.date = t.status && String(t.status).includes("202") ? t.status : new Date().toISOString();
+            }
+
             return norm;
         }
 
