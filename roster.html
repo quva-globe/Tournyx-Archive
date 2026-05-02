@@ -147,7 +147,6 @@
         .pdf-meta { color: #555; font-size: 12px; margin: 0; }
         .pdf-team-box { margin-bottom: 20px; border: 1px solid #ddd; border-radius: 8px; overflow: hidden; }
         
-        /* Updated PDF Header for Groups */
         .pdf-team-head { background: #110822; padding: 10px 15px; margin: 0; font-size: 14px; color: white; border-bottom: 2px solid #00f2ff; display: flex; justify-content: space-between; align-items: center; font-family: 'Orbitron', sans-serif;}
         .pdf-group-tag { background: #bd00ff; padding: 2px 8px; border-radius: 4px; font-size: 12px; font-weight: bold;}
         
@@ -275,7 +274,7 @@
         
         let selectedFormat = 'pdf';
         let currentRosterData = null; 
-        let customGroupNames = []; // Stores the dynamic sub-lobby names
+        let customGroupNames = []; 
 
         function selectFormat(btn, format) {
             document.querySelectorAll('.format-btn').forEach(b => b.classList.remove('active'));
@@ -283,7 +282,22 @@
             selectedFormat = format;
         }
 
-        // --- STEP 1: FETCH DATA ---
+        // --- SECURE API FETCH WRAPPER ---
+        async function secureFetch(payload) {
+            try {
+                const response = await fetch(API_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'text/plain' },
+                    body: JSON.stringify(payload)
+                });
+                return await response.json();
+            } catch (error) {
+                console.error("Fetch Error:", error);
+                throw error;
+            }
+        }
+
+        // --- STEP 1: FETCH DATA & REPAIR ENGINE ---
         async function processFetch() {
             const matchId = document.getElementById('matchId').value.trim();
             const email = document.getElementById('email').value.trim();
@@ -296,14 +310,43 @@
             lText.innerText = 'EXTRACTING DATA...';
 
             try {
-                const response = await fetch(API_URL, {
-                    method: 'POST', headers: { 'Content-Type': 'text/plain' },
-                    body: JSON.stringify({ action: 'get_roster_pdf_data', match_id: matchId, email: email })
-                });
-                const result = await response.json();
+                const result = await secureFetch({ action: 'get_roster_pdf_data', match_id: matchId, email: email });
 
                 if (result.status === "success") {
                     currentRosterData = result.data;
+                    
+                    // --- DATA REPAIR ENGINE: Handle JSON strings for Teams and Solo players ---
+                    if (currentRosterData.teams && Array.isArray(currentRosterData.teams)) {
+                        currentRosterData.teams.forEach(t => {
+                            let rawClan = String(t.clan_name).trim();
+                            
+                            // If the backend saved the full JSON instead of the team name, parse it!
+                            if (rawClan.startsWith('{')) {
+                                try {
+                                    let parsed = JSON.parse(rawClan);
+                                    let isTeam = Array.isArray(parsed.roster) || Array.isArray(parsed.players);
+                                    
+                                    if (isTeam) {
+                                        t.clan_name = parsed.name || parsed.clan_name || "Team";
+                                        t.roster = parsed.roster || parsed.players || [];
+                                    } else {
+                                        t.clan_name = (parsed.username || parsed.name || "Player") + " (Solo)";
+                                        t.roster = [parsed]; // Wrap solo player in array
+                                    }
+                                } catch(e) {}
+                            }
+                            
+                            // Fallback ensure roster is an array
+                            if (typeof t.roster === 'string') {
+                                if (t.roster.trim().startsWith('[')) {
+                                    try { t.roster = JSON.parse(t.roster); } catch(e) { t.roster = []; }
+                                } else {
+                                    t.roster = [];
+                                }
+                            }
+                            if (!t.roster || !Array.isArray(t.roster)) t.roster = [];
+                        });
+                    }
                     
                     // NEW DYNAMIC GROUPS LOGIC: Extract custom sub-lobbies from rooms_json
                     customGroupNames = [];
@@ -390,6 +433,7 @@
             showToast("Magic Seed Applied! ✨");
         }
 
+        // --- SECURE FREEZE-FREE BACKGROUND SAVE ---
         async function saveGroups() {
             triggerHaptic();
             const loader = document.getElementById('mainLoader');
@@ -412,11 +456,7 @@
                     email: document.getElementById('email').value.trim(),
                     teams: currentRosterData.teams 
                 };
-                fetch(API_URL, { 
-                    method: 'POST', 
-                    headers: { 'Content-Type': 'text/plain' }, 
-                    body: JSON.stringify(payload) 
-                }).catch(e => console.log("Silent backend skip."));
+                secureFetch(payload).catch(e => console.log("Silent backend skip."));
             } catch (error) {}
 
             // 3. Immediately proceed to the Download Step (100% Freeze-Free!)
@@ -426,14 +466,6 @@
                 document.getElementById('stepDownload').style.display = 'block';
                 showToast("Groups Locked! Ready for Download. ✨");
             }, 800);
-                } else {
-                    showToast("Failed to save groups.", true);
-                    loader.style.display = 'none';
-                }
-            } catch (error) {
-                showToast("Network Error while saving.", true);
-                loader.style.display = 'none';
-            }
         }
 
         function editGroupsAgain() {
@@ -478,18 +510,17 @@
                 html += `<table class="pdf-table">`;
                 html += `<tr><th>Player</th><th>Role</th><th>IGN</th><th>UID</th><th>Phone</th><th>Location</th></tr>`;
                 
-                if (team.roster.length > 0) {
+                if (team.roster && team.roster.length > 0) {
                     team.roster.forEach(p => {
                         let loc = (p.city && p.state) ? `${p.city}, ${p.state}` : (p.state || p.city || 'N/A');
-                        
-                        // Extract precise gaming roles correctly
                         let pRole = p.pos || p.role || p.player_role || 'Player';
+                        let ign = p.gameName || p.ign || p.name || 'N/A';
                         
                         html += `<tr>
-                                    <td style="font-weight:bold;">${p.name}</td>
+                                    <td style="font-weight:bold;">${p.name || p.username || 'Player'}</td>
                                     <td class="role-col">${pRole}</td>
-                                    <td>${p.gameName || p.ign || 'N/A'}</td>
-                                    <td style="font-family: monospace;">${p.uid}</td>
+                                    <td>${ign}</td>
+                                    <td style="font-family: monospace;">${p.uid || p.id || 'N/A'}</td>
                                     <td>${p.phone || 'N/A'}</td>
                                     <td>${loc}</td>
                                  </tr>`;
@@ -541,7 +572,7 @@
 
         function generateText(data, matchId) {
             let text = `=======================================\n`;
-            text = `🏆 TOURNYX ROSTER: ${data.tournament_title}\nMatch ID: ${data.match_id}\nTotal Teams: ${data.total_teams}\n`;
+            text += `🏆 TOURNYX ROSTER: ${data.tournament_title}\nMatch ID: ${data.match_id}\nTotal Teams: ${data.total_teams}\n`;
             text += `=======================================\n\n`;
             
             let sortedTeams = [...data.teams].sort((a,b) => {
@@ -555,11 +586,16 @@
                 let groupTag = (team.group && team.group !== "Unassigned") ? `[${team.group}]` : "";
                 text += `[ SLOT ${i+1} ] - ${team.clan_name} ${groupTag}\n`;
                 text += `---------------------------------------\n`;
-                team.roster.forEach(p => {
-                    let loc = (p.city && p.state) ? `${p.city}, ${p.state}` : (p.state || p.city || 'N/A');
-                    let pRole = p.pos || p.role || p.player_role || 'Player';
-                    text += `* ${p.name} (${pRole}) | IGN: ${p.gameName || p.ign || 'N/A'} | UID: ${p.uid} | Ph: ${p.phone || 'N/A'} | Loc: ${loc}\n`;
-                });
+                if (team.roster && team.roster.length > 0) {
+                    team.roster.forEach(p => {
+                        let loc = (p.city && p.state) ? `${p.city}, ${p.state}` : (p.state || p.city || 'N/A');
+                        let pRole = p.pos || p.role || p.player_role || 'Player';
+                        let ign = p.gameName || p.ign || p.name || 'N/A';
+                        text += `* ${p.name || p.username || 'Player'} (${pRole}) | IGN: ${ign} | UID: ${p.uid || p.id || 'N/A'} | Ph: ${p.phone || 'N/A'} | Loc: ${loc}\n`;
+                    });
+                } else {
+                    text += `* No player data found.\n`;
+                }
                 text += `\n`;
             });
 
