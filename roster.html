@@ -625,28 +625,23 @@
 
         // --- THE FLAWLESS PDF GENERATOR ---
         function generatePDF(data, matchId) {
+            // 1. Build the complete HTML string (which already includes all your CSS)
             const fullHTML = buildDocumentHTML(data);
-            const wrapper = document.getElementById('pdfRenderWrapper');
             
-            // Inject the HTML into our isolated render wrapper
-            wrapper.innerHTML = fullHTML;
-            
-            // Change styles temporarily to allow html2canvas to "see" it, without flashing it on the screen
-            wrapper.style.height = 'auto'; 
-            wrapper.style.overflow = 'visible';
-            
+            // 2. Pass the raw STRING directly to html2pdf! 
+            // This completely bypasses the browser's viewport and opacity limits.
             html2pdf().set({
                 margin: [10, 10, 10, 10], 
                 filename: `Tournyx_${matchId}_Roster.pdf`,
                 image: { type: 'jpeg', quality: 1 },
-                html2canvas: { scale: 2, useCORS: true, backgroundColor: '#0f0719', windowWidth: 800 },
+                html2canvas: { 
+                    scale: 2, 
+                    useCORS: true, 
+                    backgroundColor: '#0f0719', // Forces your premium dark background
+                    windowWidth: 800 
+                },
                 jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
-            }).from(wrapper).save().then(() => {
-                // Restore wrapper state back to completely invisible
-                wrapper.style.height = '0';
-                wrapper.style.overflow = 'hidden';
-                wrapper.innerHTML = ""; // Clear memory
-            });
+            }).from(fullHTML).save();
         }
 
         function generateWord(data, matchId) {
