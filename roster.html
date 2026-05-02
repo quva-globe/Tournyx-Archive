@@ -148,11 +148,11 @@
         .pdf-team-box { margin-bottom: 20px; border: 1px solid #ddd; border-radius: 8px; overflow: hidden; }
         
         .pdf-team-head { background: #110822; padding: 10px 15px; margin: 0; font-size: 14px; color: white; border-bottom: 2px solid #00f2ff; display: flex; justify-content: space-between; align-items: center; font-family: 'Orbitron', sans-serif;}
-        .pdf-group-tag { background: #bd00ff; padding: 2px 8px; border-radius: 4px; font-size: 12px; font-weight: bold;}
+        .pdf-group-tag { background: #bd00ff; padding: 2px 8px; border-radius: 4px; font-size: 12px; font-weight: bold; color: white;}
         
         .pdf-table { width: 100%; border-collapse: collapse; font-size: 11px; }
         .pdf-table th { background: #f8f9fa; padding: 8px 15px; text-align: left; color: #555; text-transform: uppercase; border-bottom: 1px solid #ddd; font-weight: bold;}
-        .pdf-table td { padding: 8px 15px; border-bottom: 1px solid #eee; }
+        .pdf-table td { padding: 8px 15px; border-bottom: 1px solid #eee; color: #000;}
         .pdf-table tr:last-child td { border-bottom: none; }
         .pdf-table .role-col { font-weight: bold; color: #8a2be2; }
         
@@ -318,32 +318,47 @@
                     // --- DATA REPAIR ENGINE: Handle JSON strings for Teams and Solo players ---
                     if (currentRosterData.teams && Array.isArray(currentRosterData.teams)) {
                         currentRosterData.teams.forEach(t => {
-                            let rawClan = String(t.clan_name).trim();
+                            // Extract raw data from clan or clan_name field
+                            let rawData = t.clan_name || t.clan || "Unknown"; 
                             
                             // If the backend saved the full JSON instead of the team name, parse it!
-                            if (rawClan.startsWith('{')) {
+                            if (typeof rawData === 'string' && rawData.trim().startsWith('{')) {
                                 try {
-                                    let parsed = JSON.parse(rawClan);
-                                    let isTeam = Array.isArray(parsed.roster) || Array.isArray(parsed.players);
+                                    let parsed = JSON.parse(rawData);
+                                    let isSquad = Array.isArray(parsed.roster) || Array.isArray(parsed.players);
                                     
-                                    if (isTeam) {
-                                        t.clan_name = parsed.name || parsed.clan_name || "Team";
+                                    if (isSquad) {
+                                        t.clan_name = parsed.clanName || parsed.clan_name || parsed.name || parsed.username || "Team";
                                         t.roster = parsed.roster || parsed.players || [];
                                     } else {
-                                        t.clan_name = (parsed.username || parsed.name || "Player") + " (Solo)";
-                                        t.roster = [parsed]; // Wrap solo player in array
+                                        // This handles Solo Players mapped inside the JSON block perfectly
+                                        t.clan_name = (parsed.username || parsed.name || parsed.ign || "Player") + " (Solo)";
+                                        t.roster = [parsed]; 
                                     }
-                                } catch(e) {}
-                            }
-                            
-                            // Fallback ensure roster is an array
-                            if (typeof t.roster === 'string') {
-                                if (t.roster.trim().startsWith('[')) {
-                                    try { t.roster = JSON.parse(t.roster); } catch(e) { t.roster = []; }
+                                } catch(e) {
+                                    t.clan_name = rawData;
+                                }
+                            } else if (typeof rawData === 'object' && rawData !== null) {
+                                // If the backend sent an object directly
+                                let isSquad = Array.isArray(rawData.roster) || Array.isArray(rawData.players);
+                                if (isSquad) {
+                                    t.clan_name = rawData.clanName || rawData.clan_name || rawData.name || rawData.username || "Team";
+                                    t.roster = rawData.roster || rawData.players || [];
                                 } else {
-                                    t.roster = [];
+                                    // Solo Object 
+                                    t.clan_name = (rawData.username || rawData.name || rawData.ign || "Player") + " (Solo)";
+                                    t.roster = [rawData];
+                                }
+                            } else {
+                                // Standard string name
+                                t.clan_name = String(rawData);
+                                // Ensure roster array exists
+                                if (typeof t.roster === 'string' && t.roster.trim().startsWith('[')) {
+                                    try { t.roster = JSON.parse(t.roster); } catch(e) { t.roster = []; }
                                 }
                             }
+                            
+                            // Failsafe fallback
                             if (!t.roster || !Array.isArray(t.roster)) t.roster = [];
                         });
                     }
@@ -515,9 +530,10 @@
                         let loc = (p.city && p.state) ? `${p.city}, ${p.state}` : (p.state || p.city || 'N/A');
                         let pRole = p.pos || p.role || p.player_role || 'Player';
                         let ign = p.gameName || p.ign || p.name || 'N/A';
+                        let playerName = p.name || p.username || 'Player';
                         
                         html += `<tr>
-                                    <td style="font-weight:bold;">${p.name || p.username || 'Player'}</td>
+                                    <td style="font-weight:bold;">${playerName}</td>
                                     <td class="role-col">${pRole}</td>
                                     <td>${ign}</td>
                                     <td style="font-family: monospace;">${p.uid || p.id || 'N/A'}</td>
@@ -537,21 +553,25 @@
             populateTemplate(data);
             const element = document.getElementById('docTemplate');
             
-            // Prevent UI flashing by moving the template far off-screen during rendering
-            element.style.position = 'absolute';
-            element.style.left = '-9999px';
+            // PROPER INVISIBLE RENDERING ENGINE (Fixes the Blank PDF Bug)
             element.style.display = 'block'; 
+            element.style.position = 'absolute';
+            element.style.top = '0';
+            element.style.left = '0';
+            element.style.opacity = '0'; // Keep it visible to the engine, invisible to the user
+            element.style.zIndex = '-9999';
             
-            html2pdf().from(element).set({
-                margin: 10,
+            html2pdf().set({
+                margin: [10, 10, 10, 10], // Margins
                 filename: `Tournyx_${matchId}_Roster.pdf`,
-                image: { type: 'jpeg', quality: 0.98 },
-                html2canvas: { scale: 2, useCORS: true, backgroundColor: '#ffffff' },
+                image: { type: 'jpeg', quality: 1 },
+                html2canvas: { scale: 2, useCORS: true, backgroundColor: '#ffffff', windowWidth: 800 },
                 jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
-            }).save().then(() => {
-                // Hide it cleanly once the PDF is triggered
+            }).from(element).save().then(() => {
+                // Return to normal hidden state
                 element.style.display = 'none'; 
                 element.style.position = 'static';
+                element.style.opacity = '1';
             });
         }
 
@@ -591,7 +611,8 @@
                         let loc = (p.city && p.state) ? `${p.city}, ${p.state}` : (p.state || p.city || 'N/A');
                         let pRole = p.pos || p.role || p.player_role || 'Player';
                         let ign = p.gameName || p.ign || p.name || 'N/A';
-                        text += `* ${p.name || p.username || 'Player'} (${pRole}) | IGN: ${ign} | UID: ${p.uid || p.id || 'N/A'} | Ph: ${p.phone || 'N/A'} | Loc: ${loc}\n`;
+                        let playerName = p.name || p.username || 'Player';
+                        text += `* ${playerName} (${pRole}) | IGN: ${ign} | UID: ${p.uid || p.id || 'N/A'} | Ph: ${p.phone || 'N/A'} | Loc: ${loc}\n`;
                     });
                 } else {
                     text += `* No player data found.\n`;
