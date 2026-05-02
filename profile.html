@@ -365,7 +365,7 @@
         .nav-item.active > .tx-ticket-composite { transform: translateY(-4px); }
         .nav-item.active > i, .nav-item.active > .tx-icon, .nav-item.active > .tx-ticket-composite i { transform: translateY(-4px); background: linear-gradient(135deg, var(--accent-purple), var(--accent-cyan)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; filter: drop-shadow(0 0 10px var(--accent-cyan)); font-style: normal;}
         .theme-vip .nav-item.active > i, .theme-vip .nav-item.active > .tx-icon, .theme-vip .nav-item.active > .tx-ticket-composite i { background: linear-gradient(135deg, #FFE87C, #FF8C00); -webkit-background-clip: text; -webkit-text-fill-color: transparent; filter: drop-shadow(0 0 10px rgba(212,175,55,0.8)); }
-        .nav-item.active .tx-ticket-composite i { transform: translateY(0); } /* Reset inner transform */
+        .nav-item.active .tx-ticket-composite i { transform: translateY(0); } 
         
         .nav-item.active span { transform: translateY(2px); color: white; text-shadow: 0 0 5px rgba(255,255,255,0.5);}
         .fab-slot { flex: 1.2; display: flex; justify-content: center; position: relative; height: 100%; align-items: center; }
@@ -1103,6 +1103,7 @@
         </div>
     </div>
 
+    <!-- UPDATE TOURNAMENT MODAL WITH UNIFIED BRACKET ENGINE -->
     <div class="modal-overlay full-screen-modal" id="manageTourneyModal" style="z-index: 5005;">
         <div class="modal-card" style="padding: 25px 20px 0; display: flex; flex-direction: column;">
             <div class="modal-header" style="margin-bottom: 15px; flex-shrink: 0;">
@@ -1115,7 +1116,6 @@
                 <input type="hidden" id="editTourneyId">
                 <input type="hidden" id="editTourneyBannerStr">
                 <input type="hidden" id="editPrizeJsonStr">
-                <input type="hidden" id="editTourneyRoomsJson">
                 
                 <label class="form-label"><i class="fa-solid fa-image"></i> Visual Identity</label>
                 <div class="image-upload-box highlight-input-important" onclick="document.getElementById('tourneyBannerInp').click(); triggerHaptic();">
@@ -1130,13 +1130,17 @@
                 <label class="form-label" style="margin-top: 10px;"><i class="fa-solid fa-pen"></i> Basic Information</label>
                 <input type="text" id="editTourneyTitle" class="form-control" placeholder="Tournament Title *" style="margin-bottom: 20px;">
 
-                <label class="form-label"><i class="fa-solid fa-key"></i> Multi-Stage Sub-Lobbies (Live)</label>
-                <div style="font-size: 0.8rem; color: #aaa; margin-bottom: 15px; line-height: 1.4;">Create multiple rooms (e.g., Group A, Finals). Players will automatically be routed to their assigned group in the Matches tab.</div>
-                
-                <div id="subLobbiesContainer"></div>
-                <button type="button" class="btn-secondary" style="font-size: 0.85rem; padding: 10px; margin-bottom: 25px; border-style: dashed;" onclick="addSubLobbyBlock('', '', '', 'TBD', 'WAITING'); triggerHaptic();"><i class="fa-solid fa-plus"></i> Add Sub-Lobby</button>
+                <!-- THE UNIFIED MATCH SCHEDULE ENGINE -->
+                <div style="padding-top: 15px; border-top: 1px solid rgba(255,255,255,0.05);">
+                    <div style="display:flex; justify-content:space-between; align-items:center;">
+                        <label class="form-label" style="margin:0;"><i class="fa-solid fa-calendar-days"></i> Match Schedule & Sub-Lobbies</label>
+                        <span style="background:var(--accent-cyan); color:black; border-radius:8px; padding: 4px 10px; font-size:0.75rem; font-family:var(--font-head); font-weight:bold; cursor:pointer;" onclick="addEditScheduleBlock()"><i class="fa-solid fa-plus"></i> Add Match</span>
+                    </div>
+                    <div style="font-size: 0.8rem; color: #aaa; margin-top: 8px; margin-bottom: 15px; line-height: 1.4;">Create multiple rooms (e.g., Group A, Finals). Players assigned to these groups will automatically receive the Room ID & Password here.</div>
+                    <div id="editScheduleContainer" style="margin-top: 15px;"></div>
+                </div>
 
-                <label class="form-label"><i class="fa-solid fa-calendar-days"></i> Timeline & Access</label>
+                <label class="form-label"><i class="fa-solid fa-calendar-check"></i> Timeline & Access</label>
                 <label class="form-label" style="font-size: 0.7rem; text-transform:none; margin-bottom: 4px; color:#888;">General Registration Deadline *</label>
                 <input type="datetime-local" id="editTourneyRegTime" class="form-control highlight-input-important" style="margin-bottom: 15px;">
                 
@@ -1154,7 +1158,7 @@
                     </div>
                 </div>
                 
-                <label class="form-label" style="font-size: 0.7rem; text-transform:none; margin-bottom: 4px; color:#888;">Tournament Matches (Start to End) *</label>
+                <label class="form-label" style="font-size: 0.7rem; text-transform:none; margin-bottom: 4px; color:#888;">Overall Tournament Period (Start to End) *</label>
                 <div style="display: flex; gap: 8px; margin-bottom: 20px; align-items: center;">
                     <input type="date" id="editTourneyDateStart" class="form-control" style="padding: 12px;">
                     <span style="color: #888; font-family: var(--font-head); font-size: 0.75rem;">TO</span>
@@ -1194,14 +1198,6 @@
                     </div>
                     <div id="editCustomPrizesContainer"></div>
                     <button type="button" class="add-prize-btn" onclick="addEditCustomPrize()"><i class="fa-solid fa-plus"></i> Add Prize Tier</button>
-                </div>
-
-                <div style="padding-top: 15px; border-top: 1px solid rgba(255,255,255,0.05);">
-                    <div style="display:flex; justify-content:space-between; align-items:center;">
-                        <label class="form-label" style="margin:0;">Match Schedule</label>
-                        <span style="background:var(--accent-cyan); color:black; border-radius:8px; padding: 4px 10px; font-size:0.75rem; font-family:var(--font-head); font-weight:bold; cursor:pointer;" onclick="addEditScheduleBlock()"><i class="fa-solid fa-plus"></i> Add Match</span>
-                    </div>
-                    <div id="editScheduleContainer" style="margin-top: 15px;"></div>
                 </div>
 
                 <label class="form-label" style="margin-top: 20px;"><i class="fa-brands fa-youtube"></i> Live Stream URL</label>
@@ -2013,67 +2009,10 @@
             });
         }
 
-        // --- SUB-LOBBY BUILDER SYSTEM (GROUPS A, B, FINALS) ---
-        function renderSubLobbies(roomsJsonStr, fallbackId, fallbackPass) {
-            document.getElementById('subLobbiesContainer').innerHTML = "";
-            let currentSubLobbies = {};
-
-            try {
-                if (roomsJsonStr && roomsJsonStr !== "{}" && roomsJsonStr !== "") {
-                    currentSubLobbies = JSON.parse(roomsJsonStr);
-                } else if (fallbackId && fallbackId !== "WAITING") {
-                    currentSubLobbies = {
-                        "Default Lobby": { id: fallbackId, pass: fallbackPass || "", time: "TBD", status: "LIVE" }
-                    };
-                }
-            } catch(e) {}
-
-            if (Object.keys(currentSubLobbies).length === 0) {
-                addSubLobbyBlock("Group A", "", "", "TBD", "WAITING");
-            } else {
-                for (let group in currentSubLobbies) {
-                    let room = currentSubLobbies[group];
-                    addSubLobbyBlock(group, room.id, room.pass, room.time, room.status);
-                }
-            }
-        }
-
-        function addSubLobbyBlock(groupName='', id='', pass='', time='TBD', status='WAITING') {
-            let blockId = Date.now() + Math.floor(Math.random() * 1000);
-            let html = `
-                <div class="sub-lobby-block" id="sl-${blockId}" style="background: rgba(0,0,0,0.4); border: 1px solid rgba(255,255,255,0.1); border-left: 3px solid var(--accent-cyan); border-radius: 12px; padding: 15px; margin-bottom: 15px; position: relative; box-shadow: inset 0 0 10px rgba(0,0,0,0.5);">
-                    <div style="position: absolute; top: -8px; right: -8px; background: var(--accent-red); color: white; width: 24px; height: 24px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; font-size: 0.7rem; z-index: 5; box-shadow: 0 2px 5px rgba(0,0,0,0.5);" onclick="document.getElementById('sl-${blockId}').remove(); triggerHaptic();"><i class="fa-solid fa-xmark"></i></div>
-                    
-                    <input type="text" class="form-control sl-group" placeholder="Group Name (e.g. Group A)" value="${groupName}" style="margin-bottom: 10px; border-color: var(--accent-purple); font-weight: bold; padding: 12px;">
-                    
-                    <div style="display: flex; gap: 10px; margin-bottom: 10px;">
-                        <div style="flex: 1;">
-                            <input type="text" class="form-control sl-id highlight-input" placeholder="Room ID" value="${id}" style="margin-bottom: 0; padding: 12px;">
-                        </div>
-                        <div style="flex: 1;">
-                            <input type="text" class="form-control sl-pass highlight-input-pass" placeholder="Password" value="${pass}" style="margin-bottom: 0; padding: 12px;">
-                        </div>
-                    </div>
-                    
-                    <div style="display: flex; gap: 10px;">
-                        <div style="flex: 1;">
-                            <input type="text" class="form-control sl-time" placeholder="Time (e.g. 10:00 AM)" value="${time}" style="margin-bottom: 0; font-size: 0.85rem; padding: 10px;">
-                        </div>
-                        <div style="flex: 1;">
-                            <select class="form-control sl-status" style="margin-bottom: 0; font-size: 0.85rem; padding: 10px;">
-                                <option value="WAITING" ${status === 'WAITING' ? 'selected' : ''}>Waiting</option>
-                                <option value="LIVE" ${status === 'LIVE' ? 'selected' : ''}>LIVE NOW</option>
-                                <option value="LOCKED" ${status === 'LOCKED' ? 'selected' : ''}>Locked</option>
-                            </select>
-                        </div>
-                    </div>
-                </div>
-            `;
-            document.getElementById('subLobbiesContainer').insertAdjacentHTML('beforeend', html);
-        }
-
         let editScheduleCount = 0;
-        function addEditScheduleBlock(title='', start='', end='') {
+        
+        // --- UNIFIED MATCH SCHEDULE ENGINE ---
+        function addEditScheduleBlock(title='', start='', end='', roomId='', roomPass='', status='WAITING') {
             if(editScheduleCount >= 7) { showToast("Maximum 7 matches allowed per tournament.", true); return; }
             triggerHaptic();
             editScheduleCount++;
@@ -2081,16 +2020,32 @@
             let html = `
                 <div class="sch-block" id="edit-sch-${id}">
                     <div class="sch-remove" onclick="removeEditScheduleBlock('edit-sch-${id}')"><i class="fa-solid fa-xmark"></i></div>
-                    <input type="text" class="form-control sch-title" placeholder="Match Title (e.g. Group A / Finals)" value="${title}" required style="margin-bottom:10px; font-size:0.9rem; padding: 12px;">
-                    <div style="display:flex; gap:10px;">
+                    
+                    <label class="form-label" style="font-size:0.65rem; color:#888;">Match / Group Name</label>
+                    <input type="text" class="form-control sch-title highlight-input" placeholder="e.g. Group A / Finals" value="${title}" required style="margin-bottom:10px; font-size:0.95rem; font-weight:bold; padding: 12px; border-color:var(--accent-cyan);">
+                    
+                    <div style="display:flex; gap:10px; margin-bottom:10px;">
                         <div style="flex:1;">
                             <label class="form-label" style="font-size:0.65rem; text-transform:none; margin-bottom:4px; color:#888;">Start Time</label>
-                            <input type="datetime-local" class="form-control sch-start highlight-input" value="${start}" required style="font-size:0.8rem; padding: 10px;">
+                            <input type="datetime-local" class="form-control sch-start" value="${start}" required style="font-size:0.8rem; padding: 10px;">
                         </div>
                         <div style="flex:1;">
                             <label class="form-label" style="font-size:0.65rem; text-transform:none; margin-bottom:4px; color:#888;">End Time</label>
-                            <input type="datetime-local" class="form-control sch-end highlight-input" value="${end}" required style="font-size:0.8rem; padding: 10px;">
+                            <input type="datetime-local" class="form-control sch-end" value="${end}" required style="font-size:0.8rem; padding: 10px;">
                         </div>
+                    </div>
+
+                    <div style="border-top: 1px dashed rgba(255,255,255,0.1); padding-top: 10px; margin-top: 5px;">
+                        <label class="form-label" style="font-size:0.65rem; color:#888;"><i class="fa-solid fa-key"></i> Room Access (Secured)</label>
+                        <div style="display:flex; gap:10px; margin-bottom: 5px;">
+                            <input type="text" class="form-control sch-room-id" placeholder="Room ID" value="${roomId}" style="flex:1; padding:10px; font-size:0.85rem;">
+                            <input type="text" class="form-control sch-room-pass highlight-input-pass" placeholder="Password" value="${roomPass}" style="flex:1; padding:10px; font-size:0.85rem;">
+                        </div>
+                        <select class="form-control sch-room-status" style="padding:10px; font-size:0.85rem;">
+                            <option value="WAITING" ${status === 'WAITING' ? 'selected' : ''}>Waiting for Organizer</option>
+                            <option value="LIVE" ${status === 'LIVE' ? 'selected' : ''}>Match is LIVE</option>
+                            <option value="LOCKED" ${status === 'LOCKED' ? 'selected' : ''}>Room Locked</option>
+                        </select>
                     </div>
                 </div>
             `;
@@ -2144,9 +2099,6 @@
             document.getElementById('editTourneyId').value = t.id || t.match_id || "";
             document.getElementById('editTourneyTitle').value = t.title || "";
 
-            // INJECT SUB-LOBBIES
-            renderSubLobbies(t.rooms_json, t.room_id, t.room_pass);
-
             let bannerUrl = t.banner || t.image_url || "";
             document.getElementById('editTourneyBannerStr').value = bannerUrl;
             let previewBannerImg = document.getElementById('editTourneyBannerPreview');
@@ -2183,7 +2135,8 @@
                 if(sData && sData.startsWith("[")) {
                     let parsed = JSON.parse(sData);
                     parsed.forEach(match => {
-                        addEditScheduleBlock(match.title, match.start, match.end);
+                        // Pass roomId, pass, and status from the unified JSON block
+                        addEditScheduleBlock(match.title, match.start, match.end, match.roomId, match.roomPass, match.status);
                     });
                 }
             } catch(e) {}
@@ -2384,13 +2337,26 @@
                 });
                 let finalPrizeStr = Object.keys(prizeJson).length > 0 ? JSON.stringify(prizeJson) : "";
 
+                // --- UNIFIED MATCH ENGINE SAVER ---
                 let scheduleArr = [];
                 document.querySelectorAll('#editScheduleContainer .sch-block').forEach(block => {
                     let title = block.querySelector('.sch-title').value.trim();
                     let start = block.querySelector('.sch-start').value;
                     let end = block.querySelector('.sch-end').value;
-                    if(title && start && end) {
-                        scheduleArr.push({title: title, start: start, end: end});
+                    
+                    let roomId = block.querySelector('.sch-room-id').value.trim();
+                    let roomPass = block.querySelector('.sch-room-pass').value.trim();
+                    let status = block.querySelector('.sch-room-status').value;
+
+                    if(title) {
+                        scheduleArr.push({
+                            title: title, 
+                            start: start, 
+                            end: end,
+                            roomId: roomId,
+                            roomPass: roomPass,
+                            status: status
+                        });
                     }
                 });
                 let finalBracketStr = scheduleArr.length > 0 ? JSON.stringify(scheduleArr) : "";
@@ -2402,27 +2368,13 @@
                 let feePts = parseInt(document.getElementById('editTourneyEntryPts').value) || 0;
                 let finalFeeJson = JSON.stringify({ rupees: feeRs, points: feePts });
 
-                // SUB-LOBBY EXTRACTION
-                let roomsJsonObj = {};
+                // Find the default "Waiting" ID to act as a fallback 
                 let fallbackId = "WAITING";
                 let fallbackPass = "WAITING";
-
-                document.querySelectorAll('#subLobbiesContainer .sub-lobby-block').forEach((block, index) => {
-                    let gName = block.querySelector('.sl-group').value.trim();
-                    let gId = block.querySelector('.sl-id').value.trim();
-                    let gPass = block.querySelector('.sl-pass').value.trim();
-                    let gTime = block.querySelector('.sl-time').value.trim();
-                    let gStatus = block.querySelector('.sl-status').value;
-
-                    if (gName) {
-                        roomsJsonObj[gName] = { id: gId, pass: gPass, time: gTime, status: gStatus };
-                        if (index === 0) { 
-                            fallbackId = gId || "WAITING";
-                            fallbackPass = gPass || "WAITING";
-                        }
-                    }
-                });
-                let finalRoomsJsonStr = Object.keys(roomsJsonObj).length > 0 ? JSON.stringify(roomsJsonObj) : "{}";
+                if (scheduleArr.length > 0) {
+                    fallbackId = scheduleArr[0].roomId || "WAITING";
+                    fallbackPass = scheduleArr[0].roomPass || "WAITING";
+                }
 
                 const payload = {
                     action: 'edit_tournament',
@@ -2435,7 +2387,7 @@
                     
                     room_id: fallbackId,
                     room_pass: fallbackPass,
-                    rooms_json: finalRoomsJsonStr,
+                    rooms_json: "{}", // We send empty to cleanly retire this column in the DB
 
                     match_period: finalMatchPeriod, 
                     reg_time: document.getElementById('editTourneyRegTime').value, 
