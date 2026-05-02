@@ -139,6 +139,19 @@
         /* --- TOAST STATUS --- */
         #customToast { visibility: hidden; min-width: 250px; background-color: var(--accent-cyan); color: #000; text-align: center; border-radius: 10px; padding: 12px; position: fixed; z-index: 5000; left: 50%; bottom: -50px; transform: translateX(-50%); font-family: var(--font-head); font-weight: bold; box-shadow: 0 5px 15px rgba(0,242,255,0.5); opacity: 0; transition: 0.4s; font-size: 0.85rem;}
         #customToast.show { visibility: visible; opacity: 1; bottom: 30px; }
+
+        /* --- INVISIBLE PDF RENDER CONTAINER --- */
+        #pdfRenderWrapper {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 800px; 
+            z-index: -9999;
+            opacity: 0;
+            pointer-events: none;
+            overflow: hidden;
+            height: 0; 
+        }
     </style>
 </head>
 <body>
@@ -217,6 +230,13 @@
     </div>
 
     <div id="customToast">Notification</div>
+
+    <!-- INVISIBLE PDF RENDER CONTAINER -->
+    <div id="pdfRenderWrapper">
+        <div id="docTemplate">
+            <!-- PDF Template will be injected here dynamically -->
+        </div>
+    </div>
 
     <script>
         // --- BACKGROUND ANIMATION ---
@@ -352,37 +372,39 @@
                         });
                     });
 
-                    // Construct the perfect object
+                    // Construct the perfect object integrating the UNIFIED Bracket Schedule
+                    let bracketJsonRaw = tInfo.bracket_json || matchResult.data[0]?.bracket_json || "[]";
                     currentRosterData = {
                         match_id: matchId,
                         tournament_title: tInfo.title || matchResult.data[0]?.title || matchId,
                         total_teams: teamsArr.length,
                         teams: teamsArr,
-                        rooms_json: tInfo.rooms_json || "{}"
+                        bracket_json: bracketJsonRaw
                     };
                     
-                    // Extact Custom Lobbies
+                    // Extract Custom Lobbies dynamically from the unified bracket_json
                     customGroupNames = [];
-                    if (currentRosterData.rooms_json && currentRosterData.rooms_json !== "{}" && currentRosterData.rooms_json !== "") {
+                    if (bracketJsonRaw !== "[]" && bracketJsonRaw !== "") {
                         try {
-                            let roomsObj = JSON.parse(currentRosterData.rooms_json);
-                            customGroupNames = Object.keys(roomsObj);
+                            let scheduleArr = JSON.parse(bracketJsonRaw);
+                            scheduleArr.forEach(match => {
+                                if(match.title) customGroupNames.push(match.title);
+                            });
                         } catch(e) {}
-                    }
-                    if (customGroupNames.length === 0) {
-                        customGroupNames = ['Group A', 'Group B', 'Group C', 'Group D'];
                     }
 
                     document.getElementById('detectedLobbiesCount').innerText = customGroupNames.length;
 
-                    // Check if groups are already assigned to any team
+                    // Double Bypass Check
                     let hasGroups = currentRosterData.teams.some(t => t.group && t.group !== "Unassigned");
+                    let hasBrackets = customGroupNames.length > 0;
                     
                     setTimeout(() => {
                         loader.style.display = 'none';
                         document.getElementById('stepFetch').style.display = 'none';
                         
-                        if (hasGroups) {
+                        // BYPASS LOGIC: If already assigned OR if there are no brackets to assign
+                        if (hasGroups || !hasBrackets) {
                             showToast("Roster Loaded. Ready to Export.");
                             document.getElementById('stepDownload').style.display = 'block';
                         } else {
@@ -469,7 +491,6 @@
                 
                 if (response.status !== "success") {
                     console.error("Backend warning:", response.data);
-                    // We still proceed even if backend failed, so user isn't stuck
                 }
             } catch (error) {
                 console.error("Network Error during save:", error);
@@ -485,6 +506,10 @@
         }
 
         function editGroupsAgain() {
+            if (customGroupNames.length === 0) {
+                showToast("No Match Schedule created to assign groups!", true);
+                return;
+            }
             document.getElementById('stepDownload').style.display = 'none';
             document.getElementById('stepGroups').style.display = 'block';
             renderGroupDropdowns();
@@ -514,26 +539,26 @@
                 return (a.clan_name || "").localeCompare(b.clan_name || "");
             });
 
-            // Modern Dark eSports Theme for PDF!
+            // CRISP LIGHT THEME FOR PDF (Highly readable black text on white background)
             let html = `
                 <html>
                 <head>
                 <style>
-                    body { background: #0f0719; color: #ffffff; font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; margin: 0; padding: 0;}
+                    body { background: #ffffff; color: #000000; font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; margin: 0; padding: 0;}
                     .pdf-container { padding: 40px; box-sizing: border-box; width: 100%; }
-                    .pdf-header { text-align: center; border-bottom: 2px solid #bd00ff; padding-bottom: 20px; margin-bottom: 25px; }
-                    .pdf-logo { font-size: 28px; font-weight: 900; color: #00f2ff; text-transform: uppercase; letter-spacing: 3px; margin: 0; }
-                    .pdf-title { color: #ffffff; margin: 10px 0 5px; font-size: 22px; text-transform: uppercase; font-weight: bold;}
-                    .pdf-meta { color: #888; font-size: 13px; margin: 0; font-weight: bold;}
-                    .pdf-team-box { margin-bottom: 25px; border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; overflow: hidden; page-break-inside: avoid; background: rgba(255,255,255,0.02);}
-                    .pdf-team-head { background: linear-gradient(90deg, #bd00ff, #110822); padding: 12px 15px; margin: 0; font-size: 15px; color: white; border-bottom: 1px solid #00f2ff; display: flex; justify-content: space-between; align-items: center; font-weight: bold;}
-                    .pdf-group-tag { background: #00f2ff; color: #000; padding: 4px 10px; border-radius: 4px; font-size: 12px; font-weight: bold;}
+                    .pdf-header { text-align: center; border-bottom: 3px solid #bd00ff; padding-bottom: 20px; margin-bottom: 25px; }
+                    .pdf-logo { font-size: 28px; font-weight: 900; color: #070311; text-transform: uppercase; letter-spacing: 3px; margin: 0; }
+                    .pdf-title { color: #bd00ff; margin: 10px 0 5px; font-size: 22px; text-transform: uppercase; font-weight: bold;}
+                    .pdf-meta { color: #555; font-size: 13px; margin: 0; font-weight: bold;}
+                    .pdf-team-box { margin-bottom: 25px; border: 1px solid #ddd; border-radius: 8px; overflow: hidden; page-break-inside: avoid; background: #fafafa;}
+                    .pdf-team-head { background: #110822; padding: 12px 15px; margin: 0; font-size: 15px; color: white; border-bottom: 2px solid #00f2ff; display: flex; justify-content: space-between; align-items: center; font-weight: bold;}
+                    .pdf-group-tag { background: #bd00ff; color: #fff; padding: 4px 10px; border-radius: 4px; font-size: 12px; font-weight: bold;}
                     .pdf-table { width: 100%; border-collapse: collapse; font-size: 12px; }
-                    .pdf-table th { background: rgba(255,255,255,0.05); padding: 10px 15px; text-align: left; color: #00f2ff; text-transform: uppercase; border-bottom: 1px solid rgba(255,255,255,0.1); font-weight: bold;}
-                    .pdf-table td { padding: 10px 15px; border-bottom: 1px solid rgba(255,255,255,0.05); color: #ddd;}
+                    .pdf-table th { background: #eee; padding: 10px 15px; text-align: left; color: #333; text-transform: uppercase; border-bottom: 1px solid #ccc; font-weight: bold;}
+                    .pdf-table td { padding: 10px 15px; border-bottom: 1px solid #ddd; color: #000;}
                     .pdf-table tr:last-child td { border-bottom: none; }
                     .role-col { font-weight: bold; color: #bd00ff; }
-                    .pdf-footer { text-align: center; color: #666; font-size: 11px; margin-top: 40px; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 15px; font-weight: bold;}
+                    .pdf-footer { text-align: center; color: #888; font-size: 11px; margin-top: 40px; border-top: 1px solid #eee; padding-top: 15px; font-weight: bold;}
                 </style>
                 </head>
                 <body>
@@ -559,8 +584,10 @@
                 
                 if (team.roster && team.roster.length > 0) {
                     team.roster.forEach(p => {
+                        let playerName = p.name || p.username || 'Player';
+                        
                         html += `<tr>
-                                    <td style="font-weight:bold; color:white;">${p.name}</td>
+                                    <td style="font-weight:bold;">${playerName}</td>
                                     <td class="role-col">${p.role}</td>
                                     <td>${p.ign}</td>
                                     <td style="font-family: monospace;">${p.uid}</td>
@@ -576,9 +603,9 @@
 
             // 2. ROSTER SUMMARY SECTION
             html += `
-                <div style="margin-top: 40px; page-break-inside: avoid; border: 1px solid rgba(255,255,255,0.1); border-radius:8px; overflow:hidden; background:rgba(255,255,255,0.02);">
-                    <div class="pdf-team-head" style="background:#070311; border-bottom: 2px solid #00f2ff;">
-                        <span style="font-size: 16px; font-weight: 900; text-transform: uppercase; color:#00f2ff; letter-spacing:1px;">ROSTER SUMMARY</span>
+                <div style="margin-top: 40px; page-break-inside: avoid; border: 1px solid #ddd; border-radius:8px; overflow:hidden; background:#fafafa;">
+                    <div class="pdf-team-head" style="background:#110822; border-bottom: 2px solid #00f2ff;">
+                        <span style="font-size: 16px; font-weight: 900; text-transform: uppercase; color:#fff; letter-spacing:1px;">ROSTER SUMMARY</span>
                     </div>
                     <table class="pdf-table">
                         <thead>
@@ -595,8 +622,8 @@
                 let gName = team.group || "Unassigned";
                 let gColor = gName !== "Unassigned" ? "#bd00ff" : "#888";
                 html += `<tr>
-                            <td style="text-align: center; font-weight: bold; color: #888;">${i+1}</td>
-                            <td style="font-weight: bold; font-size: 13px; color: #fff;">${team.clan_name}</td>
+                            <td style="text-align: center; font-weight: bold; color: #555;">${i+1}</td>
+                            <td style="font-weight: bold; font-size: 13px; color: #000;">${team.clan_name}</td>
                             <td style="text-align: right; font-weight: bold; color: ${gColor};">${gName}</td>
                          </tr>`;
             });
@@ -620,6 +647,14 @@
         function generatePDF(data, matchId) {
             // By passing the raw string, we bypass ALL browser DOM bugs!
             const fullHTML = buildDocumentHTML(data);
+            const wrapper = document.getElementById('pdfRenderWrapper');
+            
+            // Inject the HTML into our isolated render wrapper
+            wrapper.innerHTML = fullHTML;
+            
+            // Change styles temporarily to allow html2canvas to "see" it, without flashing it on the screen
+            wrapper.style.height = 'auto'; 
+            wrapper.style.overflow = 'visible';
             
             html2pdf().set({
                 margin: [10, 10, 10, 10], 
@@ -628,11 +663,16 @@
                 html2canvas: { 
                     scale: 2, 
                     useCORS: true, 
-                    backgroundColor: '#0f0719', // Fixes the white border background!
+                    backgroundColor: '#ffffff', // Ensures a pure white background for the PDF
                     windowWidth: 800 
                 },
                 jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
-            }).from(fullHTML).save();
+            }).from(wrapper).save().then(() => {
+                // Restore wrapper state back to completely invisible
+                wrapper.style.height = '0';
+                wrapper.style.overflow = 'hidden';
+                wrapper.innerHTML = ""; // Clear memory
+            });
         }
 
         function generateWord(data, matchId) {
@@ -662,7 +702,8 @@
                 text += `---------------------------------------\n`;
                 if (team.roster && team.roster.length > 0) {
                     team.roster.forEach(p => {
-                        text += `* ${p.name} (${p.role}) | IGN: ${p.ign} | UID: ${p.uid} | Ph: ${p.phone} | Loc: ${p.location}\n`;
+                        let playerName = p.name || p.username || 'Player';
+                        text += `* ${playerName} (${p.role}) | IGN: ${p.ign} | UID: ${p.uid} | Ph: ${p.phone} | Loc: ${p.location}\n`;
                     });
                 } else {
                     text += `* No player data found.\n`;
