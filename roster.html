@@ -287,7 +287,7 @@
             }
         }
 
-        // --- STEP 1: FETCH DATA (ULTIMATE BYPASS RESCUE ENGINE) ---
+        // --- STEP 1: FETCH DATA & DOUBLE BYPASS LOGIC ---
         async function processFetch() {
             const matchId = document.getElementById('matchId').value.trim();
             const email = document.getElementById('email').value.trim();
@@ -300,7 +300,6 @@
             lText.innerText = 'EXTRACTING RAW DATA...';
 
             try {
-                // BYPASS THE BROKEN BACKEND PARSER - We fetch raw Matches & Tournaments directly!
                 const [matchResult, tourneyResult] = await Promise.all([
                     secureFetch({ action: 'get_tournament_details', match_id: matchId }),
                     secureFetch({ action: 'get_tournaments' }).catch(() => ({ status: 'error', data: [] }))
@@ -308,20 +307,16 @@
 
                 if (matchResult.status === "success" && matchResult.data) {
                     
-                    // 1. Get Tournament Information
                     let tInfo = {};
                     if (tourneyResult.status === "success" && tourneyResult.data) {
                         tInfo = tourneyResult.data.find(t => String(t.id || t.title).trim().toLowerCase() === matchId.toLowerCase()) || {};
                     }
 
-                    // 2. Parse Raw Matches Data
                     let teamsArr = [];
                     matchResult.data.forEach(row => {
-                        // Skip teams that left
                         let isLeaved = Object.values(row).some(v => String(v).toLowerCase().includes('leaved') || String(v).toLowerCase() === 'leave');
                         if (isLeaved) return;
 
-                        // Grab the raw clan string from the Matches sheet
                         let rawClan = String(row.clan || row.clan_name || "").trim();
                         if (!rawClan) return;
 
@@ -329,23 +324,19 @@
                         let roster = [];
                         let assignedGroup = row.group || "Unassigned";
 
-                        // Deep Parse the JSON to recover the Clan Name and Player List
                         if (rawClan.startsWith('{') || rawClan.startsWith('[')) {
                             try {
-                                // Clean up double escaped quotes
                                 let clean = rawClan.replace(/^"|"$/g, '').replace(/\\"/g, '"');
                                 let parsed = JSON.parse(clean);
                                 
                                 let isSquad = Array.isArray(parsed.roster) || Array.isArray(parsed.players) || parsed.clanId || parsed.tag;
                                 
-                                // Extract the saved group from the JSON if it exists
                                 if (parsed.group) assignedGroup = parsed.group;
 
                                 if (isSquad) {
                                     cName = parsed.name || parsed.clanName || parsed.clan_name || "Unknown Team";
                                     roster = parsed.roster || parsed.players || [];
                                 } else {
-                                    // Solo player structure
                                     let soloName = parsed.username || parsed.name || parsed.ign || parsed.gameName || "Player";
                                     cName = soloName + " (Solo)";
                                     roster = [parsed];
@@ -355,7 +346,6 @@
                             }
                         }
 
-                        // Ensure roster items don't show "undefined"
                         roster = roster.map(p => ({
                             name: p.name || p.username || p.playerName || "Player",
                             role: p.pos || p.role || p.player_role || p.playerRole || "Player",
@@ -372,7 +362,6 @@
                         });
                     });
 
-                    // Construct the perfect object integrating the UNIFIED Bracket Schedule
                     let bracketJsonRaw = tInfo.bracket_json || matchResult.data[0]?.bracket_json || "[]";
                     currentRosterData = {
                         match_id: matchId,
@@ -384,27 +373,36 @@
                     
                     // Extract Custom Lobbies dynamically from the unified bracket_json
                     customGroupNames = [];
+                    let hasRealBrackets = false;
+
                     if (bracketJsonRaw !== "[]" && bracketJsonRaw !== "") {
                         try {
                             let scheduleArr = JSON.parse(bracketJsonRaw);
                             scheduleArr.forEach(match => {
-                                if(match.title) customGroupNames.push(match.title);
+                                if(match.title) {
+                                    customGroupNames.push(match.title);
+                                    hasRealBrackets = true;
+                                }
                             });
                         } catch(e) {}
+                    }
+
+                    // Fallback purely for UI if they manually click Edit later
+                    if (customGroupNames.length === 0) {
+                        customGroupNames = ['Group A', 'Group B', 'Group C', 'Group D'];
                     }
 
                     document.getElementById('detectedLobbiesCount').innerText = customGroupNames.length;
 
                     // Double Bypass Check
                     let hasGroups = currentRosterData.teams.some(t => t.group && t.group !== "Unassigned");
-                    let hasBrackets = customGroupNames.length > 0;
                     
                     setTimeout(() => {
                         loader.style.display = 'none';
                         document.getElementById('stepFetch').style.display = 'none';
                         
-                        // BYPASS LOGIC: If already assigned OR if there are no brackets to assign
-                        if (hasGroups || !hasBrackets) {
+                        // BYPASS LOGIC: If already assigned OR if there are no real brackets to assign
+                        if (hasGroups || !hasRealBrackets) {
                             showToast("Roster Loaded. Ready to Export.");
                             document.getElementById('stepDownload').style.display = 'block';
                         } else {
@@ -468,7 +466,6 @@
             const loader = document.getElementById('mainLoader');
             const lText = document.getElementById('loaderText');
             
-            // 1. Save selections LOCALLY (This is what the PDF generator uses)
             currentRosterData.teams.forEach((t, i) => {
                 let selectEl = document.getElementById(`seed_team_${i}`);
                 if(selectEl) t.group = selectEl.value;
@@ -477,7 +474,6 @@
             loader.style.display = 'flex';
             lText.innerText = 'LOCKING BRACKETS...';
 
-            // 2. Send the new permanent save request to the backend
             try {
                 const payload = { 
                     action: 'save_roster_groups', 
@@ -486,17 +482,12 @@
                     teams: currentRosterData.teams 
                 };
                 
-                // We await this so we don't proceed to download if the backend is slow
                 const response = await secureFetch(payload);
-                
-                if (response.status !== "success") {
-                    console.error("Backend warning:", response.data);
-                }
+                if (response.status !== "success") console.error("Backend warning:", response.data);
             } catch (error) {
                 console.error("Network Error during save:", error);
             }
 
-            // 3. Immediately proceed to Download
             setTimeout(() => {
                 loader.style.display = 'none';
                 document.getElementById('stepGroups').style.display = 'none';
@@ -506,10 +497,6 @@
         }
 
         function editGroupsAgain() {
-            if (customGroupNames.length === 0) {
-                showToast("No Match Schedule created to assign groups!", true);
-                return;
-            }
             document.getElementById('stepDownload').style.display = 'none';
             document.getElementById('stepGroups').style.display = 'block';
             renderGroupDropdowns();
@@ -557,7 +544,7 @@
                     .pdf-table th { background: #eee; padding: 10px 15px; text-align: left; color: #333; text-transform: uppercase; border-bottom: 1px solid #ccc; font-weight: bold;}
                     .pdf-table td { padding: 10px 15px; border-bottom: 1px solid #ddd; color: #000;}
                     .pdf-table tr:last-child td { border-bottom: none; }
-                    .role-col { font-weight: bold; color: #bd00ff; }
+                    .role-col { font-weight: bold; color: #8a2be2; }
                     .pdf-footer { text-align: center; color: #888; font-size: 11px; margin-top: 40px; border-top: 1px solid #eee; padding-top: 15px; font-weight: bold;}
                 </style>
                 </head>
@@ -586,8 +573,9 @@
                     team.roster.forEach(p => {
                         let playerName = p.name || p.username || 'Player';
                         
+                        // Removed the inline 'color:white' style to fix invisible text
                         html += `<tr>
-                                    <td style="font-weight:bold;">${playerName}</td>
+                                    <td style="font-weight:bold; color:#000;">${playerName}</td>
                                     <td class="role-col">${p.role}</td>
                                     <td>${p.ign}</td>
                                     <td style="font-family: monospace;">${p.uid}</td>
@@ -621,6 +609,8 @@
             sortedTeams.forEach((team, i) => {
                 let gName = team.group || "Unassigned";
                 let gColor = gName !== "Unassigned" ? "#bd00ff" : "#888";
+                
+                // Removed the inline 'color:white' style to fix invisible text
                 html += `<tr>
                             <td style="text-align: center; font-weight: bold; color: #555;">${i+1}</td>
                             <td style="font-weight: bold; font-size: 13px; color: #000;">${team.clan_name}</td>
@@ -645,14 +635,10 @@
 
         // --- THE FLAWLESS PDF GENERATOR ---
         function generatePDF(data, matchId) {
-            // By passing the raw string, we bypass ALL browser DOM bugs!
             const fullHTML = buildDocumentHTML(data);
             const wrapper = document.getElementById('pdfRenderWrapper');
             
-            // Inject the HTML into our isolated render wrapper
             wrapper.innerHTML = fullHTML;
-            
-            // Change styles temporarily to allow html2canvas to "see" it, without flashing it on the screen
             wrapper.style.height = 'auto'; 
             wrapper.style.overflow = 'visible';
             
@@ -668,10 +654,9 @@
                 },
                 jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
             }).from(wrapper).save().then(() => {
-                // Restore wrapper state back to completely invisible
                 wrapper.style.height = '0';
                 wrapper.style.overflow = 'hidden';
-                wrapper.innerHTML = ""; // Clear memory
+                wrapper.innerHTML = ""; 
             });
         }
 
