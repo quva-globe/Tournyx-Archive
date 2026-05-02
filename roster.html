@@ -479,8 +479,10 @@
                 
                 const response = await secureFetch(payload);
                 if (response.status !== "success") {
-                    console.error("Backend Error:", response.message);
-                    showToast("Database Error: " + response.message, true);
+                    // FIXED: Now correctly reads response.data to show the REAL error!
+                    let actualError = response.data || response.message || "Action not found. Did you deploy new version?";
+                    console.error("Backend Error:", actualError);
+                    showToast("Database Error: " + actualError, true);
                     loader.style.display = 'none';
                     return; // Stop on error
                 }
@@ -491,7 +493,6 @@
                 return; // Stop on error
             }
 
-            // Only run this if the try block succeeds!
             setTimeout(() => {
                 loader.style.display = 'none';
                 document.getElementById('stepGroups').style.display = 'none';
