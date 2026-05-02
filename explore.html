@@ -1275,38 +1275,43 @@
             let limit15 = start + (15 * 60 * 1000);
             let limit30 = start + (30 * 60 * 1000);
 
-            // --- SUB-LOBBY ROUTING ENGINE ---
-            let roomIdToShow = t.room_id;
-            let roomPassToShow = t.room_pass;
-            let roomStatus = "WAITING";
-            let groupDisplay = "";
-            let hasGroups = false;
+            // --- SUB-LOBBY ROUTING ENGINE (UNIFIED) ---
+        let roomIdToShow = t.room_id;
+        let roomPassToShow = t.room_pass;
+        let roomStatus = "WAITING";
+        let groupDisplay = "";
+        let hasGroups = false;
 
-            if (t.rooms_json && t.rooms_json !== "{}" && t.rooms_json !== "") {
-                try {
-                    let roomsObj = JSON.parse(t.rooms_json);
-                    if (Object.keys(roomsObj).length > 0) hasGroups = true;
-                    
-                    if (hasGroups) {
-                        if (myGroup === null) {
-                             roomArea.innerHTML = `
-                                <div class="dm-section" style="border-style: dashed !important; border-color: var(--accent-cyan) !important; text-align: center;">
-                                    <i class="fa-solid fa-spinner fa-spin" style="font-size: 2rem; color: var(--accent-cyan); margin-bottom: 10px;"></i>
-                                    <div style="font-family: var(--font-head); font-weight: bold; color: white; margin-bottom: 5px;">Locating Squad Placement...</div>
-                                    <div style="font-size: 0.85rem; color: #ccc;">Scanning tournament groups...</div>
-                                </div>`;
-                            return;
-                        }
-                        
-                        if (roomsObj[myGroup]) {
-                            roomIdToShow = roomsObj[myGroup].id;
-                            roomPassToShow = roomsObj[myGroup].pass;
-                            roomStatus = roomsObj[myGroup].status;
-                            groupDisplay = ` <span style="background:rgba(255,153,0,0.2); color:var(--accent-orange); padding: 2px 8px; border-radius:4px; font-size:0.7rem; border:1px solid var(--accent-orange); margin-left:8px; vertical-align:middle; display:inline-block;">[${myGroup}]</span>`;
-                        }
+        let rawBracket = t.bracket_json || t.bracket_image || t.bracket || "[]";
+
+        if (rawBracket !== "[]" && rawBracket !== "") {
+            try {
+                let scheduleArr = JSON.parse(rawBracket);
+                if (scheduleArr.length > 0) hasGroups = true;
+
+                if (hasGroups) {
+                    if (myGroup === null) {
+                        roomArea.innerHTML = `
+                            <div class="dm-section" style="border-style: dashed !important; border-color: var(--accent-cyan) !important; text-align: center;">
+                                <i class="fa-solid fa-spinner fa-spin" style="font-size: 2rem; color: var(--accent-cyan); margin-bottom: 10px;"></i>
+                                <div style="font-family: var(--font-head); font-weight: bold; color: white; margin-bottom: 5px;">Locating Squad Placement...</div>
+                                <div style="font-size: 0.85rem; color: #ccc;">Scanning tournament groups...</div>
+                            </div>`;
+                        return;
                     }
-                } catch(e) {}
-            }
+
+                    // Find the specific schedule block that matches the player's assigned group!
+                    let myMatchBlock = scheduleArr.find(match => String(match.title).toLowerCase().trim() === String(myGroup).toLowerCase().trim());
+                    
+                    if (myMatchBlock) {
+                        roomIdToShow = myMatchBlock.roomId || "";
+                        roomPassToShow = myMatchBlock.roomPass || "";
+                        roomStatus = myMatchBlock.status || "WAITING";
+                        groupDisplay = ` <span style="background:rgba(255,153,0,0.2); color:var(--accent-orange); padding: 2px 8px; border-radius:4px; font-size:0.7rem; border:1px solid var(--accent-orange); margin-left:8px; vertical-align:middle; display:inline-block;">[${myGroup}]</span>`;
+                    }
+                }
+            } catch(e) {}
+        }
 
             if (roomStatus === "LOCKED") {
                 roomArea.innerHTML = `
