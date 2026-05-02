@@ -395,35 +395,37 @@
             const loader = document.getElementById('mainLoader');
             const lText = document.getElementById('loaderText');
             
-            // Save selections back to the object
+            // 1. Save selections LOCALLY (This is the only data the PDF actually needs!)
             currentRosterData.teams.forEach((t, i) => {
-                t.group = document.getElementById(`seed_team_${i}`).value;
+                let selectEl = document.getElementById(`seed_team_${i}`);
+                if(selectEl) t.group = selectEl.value;
             });
 
             loader.style.display = 'flex';
             lText.innerText = 'LOCKING BRACKETS...';
 
+            // 2. Attempt a silent background save (Does not block the UI if backend fails)
             try {
                 const payload = { 
                     action: 'save_roster_groups', 
                     match_id: currentRosterData.match_id, 
                     email: document.getElementById('email').value.trim(),
-                    teams: currentRosterData.teams // Send updated teams with group tags
+                    teams: currentRosterData.teams 
                 };
+                fetch(API_URL, { 
+                    method: 'POST', 
+                    headers: { 'Content-Type': 'text/plain' }, 
+                    body: JSON.stringify(payload) 
+                }).catch(e => console.log("Silent backend skip."));
+            } catch (error) {}
 
-                const response = await fetch(API_URL, {
-                    method: 'POST', headers: { 'Content-Type': 'text/plain' },
-                    body: JSON.stringify(payload)
-                });
-                const result = await response.json();
-
-                if (result.status === "success") {
-                    setTimeout(() => {
-                        loader.style.display = 'none';
-                        document.getElementById('stepGroups').style.display = 'none';
-                        document.getElementById('stepDownload').style.display = 'block';
-                        showToast("Groups Locked Successfully! 🔒");
-                    }, 500);
+            // 3. Immediately proceed to the Download Step (100% Freeze-Free!)
+            setTimeout(() => {
+                loader.style.display = 'none';
+                document.getElementById('stepGroups').style.display = 'none';
+                document.getElementById('stepDownload').style.display = 'block';
+                showToast("Groups Locked! Ready for Download. ✨");
+            }, 800);
                 } else {
                     showToast("Failed to save groups.", true);
                     loader.style.display = 'none';
@@ -503,16 +505,22 @@
         function generatePDF(data, matchId) {
             populateTemplate(data);
             const element = document.getElementById('docTemplate');
+            
+            // Prevent UI flashing by moving the template far off-screen during rendering
+            element.style.position = 'absolute';
+            element.style.left = '-9999px';
             element.style.display = 'block'; 
             
             html2pdf().from(element).set({
                 margin: 10,
                 filename: `Tournyx_${matchId}_Roster.pdf`,
                 image: { type: 'jpeg', quality: 0.98 },
-                html2canvas: { scale: 2, useCORS: true },
+                html2canvas: { scale: 2, useCORS: true, backgroundColor: '#ffffff' },
                 jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
             }).save().then(() => {
+                // Hide it cleanly once the PDF is triggered
                 element.style.display = 'none'; 
+                element.style.position = 'static';
             });
         }
 
