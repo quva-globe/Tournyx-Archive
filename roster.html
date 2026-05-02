@@ -11,7 +11,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700;900&family=Rajdhani:wght@500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
-    <!-- Using the reliable bundled version of html2pdf -->
+    <!-- Reliable bundled version of html2pdf -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 
     <style>
@@ -140,37 +140,31 @@
         #customToast { visibility: hidden; min-width: 250px; background-color: var(--accent-cyan); color: #000; text-align: center; border-radius: 10px; padding: 12px; position: fixed; z-index: 5000; left: 50%; bottom: -50px; transform: translateX(-50%); font-family: var(--font-head); font-weight: bold; box-shadow: 0 5px 15px rgba(0,242,255,0.5); opacity: 0; transition: 0.4s; font-size: 0.85rem;}
         #customToast.show { visibility: visible; opacity: 1; bottom: 30px; }
 
-        /* --- INVISIBLE PDF RENDER CONTAINER --- */
-        /* This keeps the template in the DOM but perfectly hidden and ready for html2canvas */
+        /* --- PREMIUM PDF RENDERING CONTAINER & STYLES --- */
         #pdfRenderWrapper {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 800px; /* Fixed width for perfect rendering */
-            z-index: -9999;
-            opacity: 0;
-            pointer-events: none;
-            overflow: hidden;
-            height: 0; /* Prevents scrolling issues */
+            position: absolute; left: -9999px; top: 0; width: 1000px;
+            z-index: -9999; opacity: 0; pointer-events: none; height: auto; overflow: visible;
         }
-
-        .pdf-container { background: #ffffff; color: #000000; padding: 30px; font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; width: 800px; box-sizing: border-box; }
-        .pdf-header { text-align: center; border-bottom: 3px solid #bd00ff; padding-bottom: 20px; margin-bottom: 20px; }
-        .pdf-logo { font-size: 24px; font-weight: 900; color: #070311; text-transform: uppercase; letter-spacing: 1px; margin: 0; }
-        .pdf-title { color: #8a2be2; margin: 10px 0 5px; font-size: 20px; text-transform: uppercase; }
-        .pdf-meta { color: #555; font-size: 12px; margin: 0; }
-        .pdf-team-box { margin-bottom: 20px; border: 1px solid #ddd; border-radius: 8px; overflow: hidden; }
         
-        .pdf-team-head { background: #110822; padding: 10px 15px; margin: 0; font-size: 14px; color: white; border-bottom: 2px solid #00f2ff; display: flex; justify-content: space-between; align-items: center; font-family: 'Orbitron', sans-serif;}
-        .pdf-group-tag { background: #bd00ff; padding: 2px 8px; border-radius: 4px; font-size: 12px; font-weight: bold; color: white;}
+        .pdf-container { background: #070311; color: #ffffff; padding: 40px; font-family: 'Orbitron', 'Helvetica Neue', sans-serif; width: 1000px; box-sizing: border-box; }
+        .pdf-header { text-align: center; border-bottom: 4px solid #bd00ff; padding-bottom: 25px; margin-bottom: 30px; }
+        .pdf-logo { font-size: 32px; font-weight: 900; color: #00f2ff; text-transform: uppercase; letter-spacing: 2px; margin: 0; text-shadow: 0 0 10px rgba(0,242,255,0.5); }
+        .pdf-title { color: #ffffff; margin: 15px 0 5px; font-size: 24px; text-transform: uppercase; font-family: 'Orbitron', sans-serif; font-weight: 900; }
+        .pdf-meta { color: #aaa; font-size: 14px; margin: 0; font-family: 'Rajdhani', sans-serif; font-weight: bold; letter-spacing: 1px;}
         
-        .pdf-table { width: 100%; border-collapse: collapse; font-size: 11px; }
-        .pdf-table th { background: #f8f9fa; padding: 8px 15px; text-align: left; color: #555; text-transform: uppercase; border-bottom: 1px solid #ddd; font-weight: bold;}
-        .pdf-table td { padding: 8px 15px; border-bottom: 1px solid #eee; color: #000;}
+        .pdf-team-box { margin-bottom: 25px; border: 1px solid rgba(0,242,255,0.3); border-radius: 12px; overflow: hidden; background: rgba(255,255,255,0.02); box-shadow: 0 5px 15px rgba(0,0,0,0.5); }
+        .pdf-team-head { background: linear-gradient(90deg, #110822, #1a0a3a); padding: 12px 20px; margin: 0; font-size: 16px; color: white; border-bottom: 2px solid #00f2ff; display: flex; justify-content: space-between; align-items: center; font-family: 'Orbitron', sans-serif; font-weight: bold; }
+        .pdf-group-tag { background: #bd00ff; padding: 4px 10px; border-radius: 6px; font-size: 13px; font-weight: 900; color: white; text-transform: uppercase; box-shadow: 0 0 10px rgba(189,0,255,0.5); }
+        
+        .pdf-table { width: 100%; border-collapse: collapse; font-size: 13px; font-family: 'Rajdhani', sans-serif; }
+        .pdf-table th { background: rgba(0,0,0,0.6); padding: 12px 20px; text-align: left; color: #00f2ff; text-transform: uppercase; border-bottom: 1px solid rgba(255,255,255,0.1); font-weight: 900; letter-spacing: 1px; }
+        .pdf-table td { padding: 12px 20px; border-bottom: 1px solid rgba(255,255,255,0.05); color: #e0e0e0; font-weight: 600; }
         .pdf-table tr:last-child td { border-bottom: none; }
-        .pdf-table .role-col { font-weight: bold; color: #8a2be2; }
+        .pdf-table .role-col { font-weight: 900; color: #bd00ff; text-transform: uppercase; }
         
-        .pdf-footer { text-align: center; color: #aaa; font-size: 10px; margin-top: 30px; border-top: 1px solid #eee; padding-top: 10px; }
+        .pdf-summary { margin-top: 50px; background: rgba(15,7,25,0.8); border-radius: 15px; padding: 20px; border: 1px solid rgba(bd,0,255,0.3); }
+        
+        .pdf-footer { text-align: center; color: #666; font-size: 11px; margin-top: 40px; border-top: 1px dashed rgba(255,255,255,0.2); padding-top: 15px; font-family: 'Rajdhani', sans-serif; font-weight: bold; }
     </style>
 </head>
 <body>
@@ -250,7 +244,7 @@
 
     <div id="customToast">Notification</div>
 
-    <!-- INVISIBLE PDF RENDER CONTAINER -->
+    <!-- INVISIBLE PREMIUM PDF RENDER CONTAINER -->
     <div id="pdfRenderWrapper">
         <div id="docTemplate">
             <div class="pdf-container">
@@ -260,7 +254,7 @@
                     <p id="docMeta" class="pdf-meta"></p>
                 </div>
                 <div id="docContent"></div>
-                <div class="pdf-footer">Official Cryptographic Roster generated by Tournyx Organizer Portal</div>
+                <div class="pdf-footer">Official Cryptographic Roster generated by Tournyx Organizer Portal<br>Powered by Quva Engine</div>
             </div>
         </div>
     </div>
@@ -314,7 +308,7 @@
             }
         }
 
-        // --- STEP 1: FETCH DATA & REPAIR ENGINE ---
+        // --- STEP 1: FETCH DATA & BULLETPROOF REPAIR ENGINE ---
         async function processFetch() {
             const matchId = document.getElementById('matchId').value.trim();
             const email = document.getElementById('email').value.trim();
@@ -332,41 +326,35 @@
                 if (result.status === "success") {
                     currentRosterData = result.data;
                     
-                    // --- DATA REPAIR ENGINE: Re-maps the Clan Name perfectly ---
+                    // --- DATA REPAIR ENGINE: Re-maps JSON Data perfectly ---
                     if (currentRosterData.teams && Array.isArray(currentRosterData.teams)) {
                         currentRosterData.teams.forEach(t => {
                             let rawClan = t.clan_name || t.clan || "Unknown"; 
                             
-                            // It's a JSON string
                             if (typeof rawClan === 'string' && rawClan.trim().startsWith('{')) {
                                 try {
                                     let parsed = JSON.parse(rawClan);
-                                    let isSquad = Array.isArray(parsed.roster) || Array.isArray(parsed.players);
+                                    t.clan_name = parsed.name || parsed.clanName || parsed.clan_name || "Team";
+                                    t.roster = parsed.roster || parsed.players || [];
                                     
-                                    if (isSquad) {
-                                        t.clan_name = parsed.clanName || parsed.clan_name || parsed.name || parsed.username || "Team";
-                                        t.roster = parsed.roster || parsed.players || [];
-                                    } else {
-                                        t.clan_name = (parsed.username || parsed.name || parsed.ign || "Player") + " (Solo)";
-                                        t.roster = [parsed]; 
+                                    // If no roster array but has player details (Solo)
+                                    if (t.roster.length === 0) {
+                                        if (parsed.username || parsed.ign || parsed.name) {
+                                            t.clan_name = (parsed.username || parsed.name || parsed.ign || "Player") + " (Solo)";
+                                            t.roster = [parsed]; 
+                                        }
                                     }
                                 } catch(e) {
                                     t.clan_name = rawClan;
                                 }
-                            } 
-                            // It's already a JS Object
-                            else if (typeof rawClan === 'object' && rawClan !== null) {
-                                let isSquad = Array.isArray(rawClan.roster) || Array.isArray(rawClan.players);
-                                if (isSquad) {
-                                    t.clan_name = rawClan.clanName || rawClan.clan_name || rawClan.name || rawClan.username || "Team";
-                                    t.roster = rawClan.roster || rawClan.players || [];
-                                } else {
+                            } else if (typeof rawClan === 'object' && rawClan !== null) {
+                                t.clan_name = rawClan.name || rawClan.clanName || rawClan.clan_name || "Team";
+                                t.roster = rawClan.roster || rawClan.players || [];
+                                if (t.roster.length === 0 && (rawClan.username || rawClan.ign)) {
                                     t.clan_name = (rawClan.username || rawClan.name || rawClan.ign || "Player") + " (Solo)";
                                     t.roster = [rawClan];
                                 }
-                            } 
-                            // It's a normal string
-                            else {
+                            } else {
                                 t.clan_name = String(rawClan);
                                 if (typeof t.roster === 'string' && t.roster.trim().startsWith('[')) {
                                     try { t.roster = JSON.parse(t.roster); } catch(e) { t.roster = []; }
@@ -378,7 +366,7 @@
                         });
                     }
                     
-                    // NEW DYNAMIC GROUPS LOGIC: Extract custom sub-lobbies from rooms_json
+                    // Extract custom sub-lobbies from rooms_json
                     customGroupNames = [];
                     if (currentRosterData.rooms_json && currentRosterData.rooms_json !== "{}" && currentRosterData.rooms_json !== "") {
                         try {
@@ -387,14 +375,11 @@
                         } catch(e) {}
                     }
                     
-                    // Fallback if no custom lobbies were created in profile yet
                     if (customGroupNames.length === 0) {
                         customGroupNames = ['Group A', 'Group B', 'Group C', 'Group D'];
                     }
 
                     document.getElementById('detectedLobbiesCount').innerText = customGroupNames.length;
-
-                    // Check if groups are already assigned to any team
                     let hasGroups = currentRosterData.teams.some(t => t.group && t.group !== "Unassigned");
                     
                     setTimeout(() => {
@@ -423,15 +408,12 @@
         // --- STEP 2: DYNAMIC GROUP SEEDING LOGIC ---
         function renderGroupDropdowns() {
             let html = "";
-
             currentRosterData.teams.forEach((t, i) => {
                 let optionsHtml = `<option value="Unassigned">Unassigned</option>`;
-                
                 customGroupNames.forEach(g => {
                     let sel = (t.group === g) ? "selected" : "";
                     optionsHtml += `<option value="${g}" ${sel}>${g}</option>`;
                 });
-
                 html += `
                     <div class="seed-card">
                         <div class="seed-name">${i+1}. ${t.clan_name}</div>
@@ -446,15 +428,11 @@
 
         function autoGenerateGroups() {
             triggerHaptic();
-            
-            // Shuffle teams visually (frontend array)
             let indices = Array.from(Array(currentRosterData.teams.length).keys());
             for (let i = indices.length - 1; i > 0; i--) {
                 const j = Math.floor(Math.random() * (i + 1));
                 [indices[i], indices[j]] = [indices[j], indices[i]];
             }
-
-            // Assign sequentially across custom group names
             indices.forEach((teamIndex, loopIndex) => {
                 let groupAssigned = customGroupNames[loopIndex % customGroupNames.length];
                 currentRosterData.teams[teamIndex].group = groupAssigned;
@@ -469,7 +447,6 @@
             const loader = document.getElementById('mainLoader');
             const lText = document.getElementById('loaderText');
             
-            // 1. Save selections LOCALLY (This is the only data the PDF actually needs!)
             currentRosterData.teams.forEach((t, i) => {
                 let selectEl = document.getElementById(`seed_team_${i}`);
                 if(selectEl) t.group = selectEl.value;
@@ -478,7 +455,6 @@
             loader.style.display = 'flex';
             lText.innerText = 'LOCKING BRACKETS...';
 
-            // 2. Attempt a silent background save
             try {
                 const payload = { 
                     action: 'save_roster_groups', 
@@ -489,7 +465,6 @@
                 secureFetch(payload).catch(e => console.log("Silent backend skip."));
             } catch (error) {}
 
-            // 3. Immediately proceed to the Download Step
             setTimeout(() => {
                 loader.style.display = 'none';
                 document.getElementById('stepGroups').style.display = 'none';
@@ -510,7 +485,6 @@
             loader.style.display = 'flex';
             document.getElementById('loaderText').innerText = 'GENERATING FILE...';
             
-            // Allow DOM to update loader before intense generation
             setTimeout(() => {
                 if (selectedFormat === 'pdf') generatePDF(currentRosterData, currentRosterData.match_id);
                 else if (selectedFormat === 'word') generateWord(currentRosterData, currentRosterData.match_id);
@@ -518,7 +492,7 @@
 
                 showToast(`✨ Success! Your ${selectedFormat.toUpperCase()} is downloading.`);
                 loader.style.display = 'none';
-            }, 300);
+            }, 500);
         }
 
         function populateTemplate(data) {
@@ -533,6 +507,8 @@
             });
 
             let html = '';
+            
+            // 1. GENERATE TEAM ROSTERS
             sortedTeams.forEach((team, i) => {
                 let groupTag = (team.group && team.group !== "Unassigned") ? `<span class="pdf-group-tag">${team.group}</span>` : "";
                 
@@ -543,17 +519,19 @@
                 
                 if (team.roster && team.roster.length > 0) {
                     team.roster.forEach(p => {
-                        let loc = (p.city && p.state) ? `${p.city}, ${p.state}` : (p.state || p.city || 'N/A');
+                        let loc = [p.city, p.state].filter(Boolean).join(', ') || p.location || 'N/A';
                         let pRole = p.pos || p.role || p.player_role || 'Player';
-                        let ign = p.gameName || p.ign || p.name || 'N/A';
-                        let playerName = p.name || p.username || 'Player';
+                        let ign = p.gameName || p.ign || p.in_game_name || 'N/A';
+                        let pName = p.name || p.username || 'Player';
+                        let pUid = p.uid || p.id || p.game_uid || 'N/A';
+                        let phone = p.phone || p.whatsapp || 'N/A';
                         
                         html += `<tr>
-                                    <td style="font-weight:bold;">${playerName}</td>
+                                    <td style="font-weight:bold; color:#fff;">${pName}</td>
                                     <td class="role-col">${pRole}</td>
                                     <td>${ign}</td>
-                                    <td style="font-family: monospace;">${p.uid || p.id || 'N/A'}</td>
-                                    <td>${p.phone || 'N/A'}</td>
+                                    <td style="font-family: monospace;">${pUid}</td>
+                                    <td>${phone}</td>
                                     <td>${loc}</td>
                                  </tr>`;
                     });
@@ -562,36 +540,54 @@
                 }
                 html += `</table></div>`;
             });
+            
+            // 2. GENERATE TOTAL TEAMS SUMMARY TABLE
+            html += `<div class="pdf-summary">`;
+            html += `<h2 style="font-family:'Orbitron', sans-serif; color:#00f2ff; text-align:center; text-transform:uppercase; margin-bottom:20px; font-size:20px;">🏆 Tournament Summary</h2>`;
+            html += `<table class="pdf-table" style="width:70%; margin:0 auto; border: 1px solid rgba(255,255,255,0.1);">`;
+            html += `<tr><th style="width:15%; text-align:center;">Slot #</th><th>Team Name</th><th style="text-align:right;">Group / Lobby</th></tr>`;
+            
+            sortedTeams.forEach((team, i) => {
+                let g = team.group || "Unassigned";
+                html += `<tr>
+                            <td style="text-align:center; color:#00f2ff; font-weight:bold;">${i+1}</td>
+                            <td style="font-weight:bold; color:#fff; font-size:14px;">${team.clan_name}</td>
+                            <td style="text-align:right; font-weight:bold; color:#bd00ff;">${g}</td>
+                         </tr>`;
+            });
+            
+            html += `</table></div>`;
+
             document.getElementById('docContent').innerHTML = html;
         }
 
         function generatePDF(data, matchId) {
             populateTemplate(data);
             
-            // Remove the 0 height restriction so html2canvas can 'see' the element 
-            // but keep it hidden from the user using opacity 0 and negative z-index
-            const wrapper = document.getElementById('pdfRenderWrapper');
-            wrapper.style.height = 'auto'; 
-            wrapper.style.overflow = 'visible';
-            
             const element = document.getElementById('docTemplate');
             
+            // The magic fix for blank PDFs: Render block but push it outside view
+            element.style.display = 'block'; 
+            
             html2pdf().set({
-                margin: [10, 10, 10, 10], // Margins
+                margin: [10, 10, 10, 10],
                 filename: `Tournyx_${matchId}_Roster.pdf`,
                 image: { type: 'jpeg', quality: 1 },
-                html2canvas: { scale: 2, useCORS: true, backgroundColor: '#ffffff', windowWidth: 800 },
+                // Use a forced window width to ensure the layout triggers desktop CSS
+                html2canvas: { scale: 2, useCORS: true, backgroundColor: '#070311', windowWidth: 1000 },
                 jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
             }).from(element).save().then(() => {
-                // Restore wrapper state
-                wrapper.style.height = '0';
-                wrapper.style.overflow = 'hidden';
+                element.style.display = 'none'; 
             });
         }
 
         function generateWord(data, matchId) {
             populateTemplate(data);
-            const content = document.getElementById('docTemplate').innerHTML;
+            // Replace our neon colors with standard word-friendly hex values
+            let content = document.getElementById('docTemplate').innerHTML
+                            .replace(/#070311/g, '#ffffff')
+                            .replace(/color: #ffffff/g, 'color: #000000')
+                            .replace(/color:#fff/g, 'color: #000000');
             
             const blob = new Blob(['\ufeff', `
                 <html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:w='urn:schemas-microsoft-com:office:word' xmlns='http://www.w3.org/TR/REC-html40'>
@@ -622,16 +618,24 @@
                 text += `---------------------------------------\n`;
                 if (team.roster && team.roster.length > 0) {
                     team.roster.forEach(p => {
-                        let loc = (p.city && p.state) ? `${p.city}, ${p.state}` : (p.state || p.city || 'N/A');
+                        let loc = [p.city, p.state].filter(Boolean).join(', ') || p.location || 'N/A';
                         let pRole = p.pos || p.role || p.player_role || 'Player';
-                        let ign = p.gameName || p.ign || p.name || 'N/A';
-                        let playerName = p.name || p.username || 'Player';
-                        text += `* ${playerName} (${pRole}) | IGN: ${ign} | UID: ${p.uid || p.id || 'N/A'} | Ph: ${p.phone || 'N/A'} | Loc: ${loc}\n`;
+                        let ign = p.gameName || p.ign || p.in_game_name || 'N/A';
+                        let pName = p.name || p.username || 'Player';
+                        text += `* ${pName} (${pRole}) | IGN: ${ign} | UID: ${p.uid || p.id || 'N/A'} | Ph: ${p.phone || p.whatsapp || 'N/A'} | Loc: ${loc}\n`;
                     });
                 } else {
                     text += `* No player data found.\n`;
                 }
                 text += `\n`;
+            });
+            
+            text += `=======================================\n`;
+            text += `🏆 TOURNAMENT SUMMARY\n`;
+            text += `=======================================\n`;
+            sortedTeams.forEach((team, i) => {
+                let g = team.group || "Unassigned";
+                text += `${i+1}. ${team.clan_name} -> ${g}\n`;
             });
 
             const blob = new Blob([text], { type: 'text/plain' });
