@@ -1,0 +1,464 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>Creator Hub | Powered by Tournyx</title>
+    
+    <link rel="icon" href="https://tournyx.in/favicon.ico" sizes="any">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700;900&family=Rajdhani:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        /* --- DYNAMIC CSS VARIABLES (Injected via JSON) --- */
+        :root {
+            --primary-bg: #05020a;
+            --surface-bg: rgba(20, 10, 35, 0.6);
+            --accent-main: #00f2ff; /* Will be overwritten by creator config */
+            --accent-sec: #bd00ff;  /* Will be overwritten by creator config */
+            --text-main: #ffffff;
+            --text-muted: #888888;
+            --font-head: 'Orbitron', sans-serif;
+            --font-body: 'Rajdhani', sans-serif;
+        }
+
+        /* --- GLOBAL RESETS --- */
+        * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+        *::-webkit-scrollbar { display: none; }
+        body { background-color: var(--primary-bg); color: var(--text-main); font-family: var(--font-body); overflow-x: hidden; }
+        a { text-decoration: none; color: inherit; }
+
+        /* --- 3D & GLASSMORPHISM UTILS --- */
+        .glass-panel {
+            background: var(--surface-bg);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.5);
+        }
+        .neon-text { text-shadow: 0 0 10px var(--accent-main), 0 0 20px var(--accent-main); }
+        .gradient-text {
+            background: linear-gradient(90deg, var(--accent-sec), var(--accent-main));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        /* --- LOADING SCREEN --- */
+        #loader { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--primary-bg); z-index: 9999; display: flex; flex-direction: column; align-items: center; justify-content: center; transition: opacity 0.8s ease; }
+        .spinner { width: 80px; height: 80px; border-radius: 50%; border: 3px solid transparent; border-top-color: var(--accent-main); border-bottom-color: var(--accent-sec); animation: spin 1s linear infinite; margin-bottom: 20px; }
+        @keyframes spin { 100% { transform: rotate(360deg); } }
+
+        /* --- NAVBAR --- */
+        nav { position: fixed; top: 0; width: 100%; padding: 15px 20px; z-index: 1000; display: flex; justify-content: space-between; align-items: center; transition: background 0.3s; }
+        nav.scrolled { background: rgba(5, 2, 10, 0.9); backdrop-filter: blur(15px); border-bottom: 1px solid rgba(255,255,255,0.05); }
+        .nav-logo img { height: 40px; border-radius: 50%; border: 2px solid var(--accent-main); }
+        .nav-links { display: flex; gap: 20px; display: none; /* Hide on mobile initially */ }
+        @media(min-width: 768px) { .nav-links { display: flex; } }
+        .nav-links a { font-family: var(--font-head); font-size: 0.85rem; font-weight: bold; text-transform: uppercase; letter-spacing: 1px; transition: 0.3s; }
+        .nav-links a:hover { color: var(--accent-main); text-shadow: 0 0 10px var(--accent-main); }
+        
+        .tournyx-login-btn { background: var(--accent-main); color: #000; padding: 8px 20px; border-radius: 8px; font-family: var(--font-head); font-weight: bold; font-size: 0.8rem; box-shadow: 0 0 15px rgba(0,242,255,0.4); }
+
+        /* --- HERO SECTION (Features 1-5, 20) --- */
+        .hero { position: relative; height: 85vh; display: flex; align-items: center; justify-content: center; text-align: center; overflow: hidden; padding-top: 60px; }
+        .hero-bg { position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; z-index: -2; opacity: 0.4; filter: blur(2px); }
+        .hero-gradient { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; background: linear-gradient(to bottom, rgba(5,2,10,0.1) 0%, var(--primary-bg) 100%); }
+        
+        .hero-content { z-index: 1; max-width: 800px; padding: 20px; animation: slideUp 1s ease forwards; }
+        .hero-logo { width: 150px; height: 150px; border-radius: 50%; border: 3px solid var(--accent-main); box-shadow: 0 0 30px var(--accent-main); margin-bottom: 20px; animation: float 4s ease-in-out infinite; }
+        @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-15px); } }
+        
+        .hero-title { font-family: var(--font-head); font-size: 3.5rem; font-weight: 900; text-transform: uppercase; letter-spacing: 2px; line-height: 1.1; margin-bottom: 10px; }
+        .hero-bio { font-size: 1.1rem; color: var(--text-muted); max-width: 600px; margin: 0 auto 25px; }
+        
+        .hero-stats { display: flex; justify-content: center; gap: 30px; margin-bottom: 30px; }
+        .stat-box { display: flex; flex-direction: column; align-items: center; }
+        .stat-val { font-family: var(--font-head); font-size: 1.5rem; font-weight: bold; color: var(--accent-main); }
+        .stat-lbl { font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; }
+
+        .social-row { display: flex; justify-content: center; gap: 15px; }
+        .social-btn { width: 45px; height: 45px; border-radius: 50%; background: var(--surface-bg); border: 1px solid rgba(255,255,255,0.1); display: flex; align-items: center; justify-content: center; font-size: 1.2rem; transition: 0.3s; color: white; }
+        .social-btn:hover { background: var(--accent-main); color: #000; box-shadow: 0 0 15px var(--accent-main); transform: scale(1.1); }
+
+        /* --- SPONSOR MARQUEE (Feature 3) --- */
+        .marquee-container { width: 100%; overflow: hidden; background: rgba(255,255,255,0.02); border-top: 1px solid rgba(255,255,255,0.05); border-bottom: 1px solid rgba(255,255,255,0.05); padding: 15px 0; display: flex; }
+        .marquee-track { display: flex; animation: marquee 20s linear infinite; gap: 50px; padding-left: 50px; }
+        .marquee-track img { height: 35px; opacity: 0.5; filter: grayscale(100%); transition: 0.3s; }
+        .marquee-track img:hover { opacity: 1; filter: grayscale(0%); }
+        @keyframes marquee { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
+
+        /* --- SECTION STRUCTURE --- */
+        .section { padding: 80px 20px; max-width: 1200px; margin: 0 auto; }
+        .section-header { text-align: center; margin-bottom: 50px; }
+        .section-title { font-family: var(--font-head); font-size: 2.5rem; text-transform: uppercase; font-weight: 900; margin-bottom: 10px; }
+        .section-subtitle { color: var(--accent-sec); font-size: 0.9rem; text-transform: uppercase; letter-spacing: 3px; font-weight: bold; }
+
+        /* --- TOURNAMENT ARENA (Features 6-11) --- */
+        .tourney-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 25px; }
+        .t-card { position: relative; overflow: hidden; display: flex; flex-direction: column; justify-content: space-between; padding: 25px; transition: 0.3s; }
+        .t-card:hover { transform: translateY(-5px); border-color: var(--accent-main); box-shadow: 0 10px 30px rgba(0,242,255,0.2); }
+        .t-status { position: absolute; top: 15px; right: 15px; background: rgba(0,255,127,0.1); color: var(--accent-green); border: 1px solid var(--accent-green); padding: 4px 10px; border-radius: 8px; font-size: 0.7rem; font-weight: bold; text-transform: uppercase; }
+        .t-game { color: var(--accent-sec); font-size: 0.8rem; font-weight: bold; margin-bottom: 5px; text-transform: uppercase; letter-spacing: 1px; }
+        .t-title { font-family: var(--font-head); font-size: 1.3rem; margin-bottom: 15px; line-height: 1.2; }
+        .t-details { display: flex; justify-content: space-between; margin-bottom: 20px; font-size: 0.85rem; color: #aaa; }
+        .t-btn { width: 100%; background: rgba(255,255,255,0.05); text-align: center; padding: 12px; border-radius: 10px; font-family: var(--font-head); font-weight: bold; border: 1px solid rgba(255,255,255,0.1); transition: 0.3s; color: white;}
+        .t-btn:hover { background: var(--accent-gradient); border-color: transparent; color: white; }
+
+        /* --- 3D ROSTER CARDS (Features 12-16) --- */
+        .roster-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 30px; perspective: 1000px; }
+        .player-card { height: 320px; position: relative; transform-style: preserve-3d; transition: transform 0.6s cubic-bezier(0.4, 0.2, 0.2, 1); cursor: pointer; }
+        .player-card:hover { transform: rotateY(180deg); }
+        .pc-front, .pc-back { position: absolute; width: 100%; height: 100%; backface-visibility: hidden; border-radius: 20px; overflow: hidden; display: flex; flex-direction: column; }
+        
+        .pc-front { background: var(--surface-bg); border: 1px solid rgba(255,255,255,0.1); }
+        .pc-img { width: 100%; height: 200px; object-fit: cover; background: #000; opacity: 0.8; }
+        .pc-info { padding: 15px; text-align: center; flex: 1; display: flex; flex-direction: column; justify-content: center; background: linear-gradient(to top, rgba(0,0,0,0.8), transparent); position: absolute; bottom: 0; width: 100%;}
+        .pc-name { font-family: var(--font-head); font-size: 1.2rem; font-weight: bold; color: white; text-shadow: 0 2px 4px rgba(0,0,0,0.8); }
+        .pc-role { color: var(--accent-main); font-size: 0.8rem; font-weight: bold; text-transform: uppercase; }
+        
+        .pc-back { background: linear-gradient(135deg, var(--surface-bg), rgba(0,0,0,0.9)); border: 1px solid var(--accent-main); transform: rotateY(180deg); padding: 25px; display: flex; align-items: center; justify-content: center; text-align: center; }
+        .pc-stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; width: 100%; }
+        .p-stat { background: rgba(0,0,0,0.5); padding: 10px; border-radius: 10px; border: 1px solid rgba(255,255,255,0.05); }
+
+        .recruitment-banner { margin-top: 40px; padding: 30px; text-align: center; border: 1px dashed var(--accent-sec); border-radius: 20px; background: rgba(189, 0, 255, 0.05); }
+
+        /* --- MEDIA & COMMUNITY HUB (Features 17-21) --- */
+        .media-grid { display: grid; grid-template-columns: 2fr 1fr; gap: 20px; }
+        @media(max-width: 768px) { .media-grid { grid-template-columns: 1fr; } }
+        .video-container { position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden; border-radius: 20px; border: 1px solid rgba(255,255,255,0.1); }
+        .video-container iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; }
+        
+        .fan-wall { padding: 20px; height: 100%; display: flex; flex-direction: column; }
+        .fan-msgs { flex: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 15px; margin-bottom: 15px; }
+        .msg-box { background: rgba(0,0,0,0.4); padding: 12px; border-radius: 12px; border-left: 3px solid var(--accent-main); font-size: 0.85rem; }
+        .msg-user { font-weight: bold; color: var(--accent-sec); margin-bottom: 4px; font-family: var(--font-head); font-size: 0.75rem;}
+        .tournyx-lock { background: rgba(0,242,255,0.1); border: 1px solid var(--accent-main); padding: 15px; border-radius: 12px; text-align: center; }
+
+        /* --- THE TOURNYX ECOSYSTEM FOOTER (Features 22-26) --- */
+        footer { border-top: 1px solid rgba(255,255,255,0.1); padding: 40px 20px; text-align: center; background: #000; margin-top: 50px; }
+        .footer-logo { font-family: var(--font-head); font-size: 1.5rem; font-weight: 900; letter-spacing: 2px; margin-bottom: 15px; display: inline-block; }
+        .powered-by { font-size: 0.8rem; color: #666; margin-bottom: 20px; }
+        .powered-by span { color: var(--accent-main); font-weight: bold; }
+        .footer-links { display: flex; justify-content: center; gap: 20px; font-size: 0.85rem; color: #888; }
+        .footer-links a:hover { color: white; }
+
+        @keyframes slideUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
+    </style>
+</head>
+<body>
+
+    <!-- LOADING SCREEN -->
+    <div id="loader">
+        <div class="spinner"></div>
+        <h2 class="neon-text" style="font-family: var(--font-head); letter-spacing: 2px;" id="loaderText">CONNECTING TO HUB...</h2>
+    </div>
+
+    <!-- NAVBAR -->
+    <nav id="navbar">
+        <a href="#" class="nav-logo"><img src="" id="navImg" alt="Logo"></a>
+        <div class="nav-links">
+            <a href="#tournaments">Tournaments</a>
+            <a href="#roster">Roster</a>
+            <a href="#media">Media</a>
+        </div>
+        <a href="https://tournyx.in/login.html" class="tournyx-login-btn"><i class="fa-solid fa-passport"></i> Tournyx ID</a>
+    </nav>
+
+    <!-- HERO SECTION -->
+    <section class="hero">
+        <img src="" id="heroBg" class="hero-bg">
+        <div class="hero-gradient"></div>
+        <div class="hero-content">
+            <img src="" id="heroLogo" class="hero-logo">
+            <h1 class="hero-title gradient-text" id="heroTitle">Creator Name</h1>
+            <p class="hero-bio" id="heroBio">The official eSports Hub and community arena.</p>
+            
+            <div class="hero-stats">
+                <div class="stat-box">
+                    <span class="stat-val" id="statSubs">--</span>
+                    <span class="stat-lbl">Community</span>
+                </div>
+                <div class="stat-box">
+                    <span class="stat-val" id="statWins">--</span>
+                    <span class="stat-lbl">Trophies</span>
+                </div>
+            </div>
+
+            <div class="social-row" id="socialBox">
+                <!-- Injected via JS -->
+            </div>
+        </div>
+    </section>
+
+    <!-- SPONSOR MARQUEE -->
+    <div class="marquee-container" id="sponsorContainer" style="display: none;">
+        <div class="marquee-track" id="sponsorTrack">
+            <!-- Injected via JS -->
+        </div>
+        <div class="marquee-track" id="sponsorTrack2" aria-hidden="true">
+            <!-- Duplicated for seamless loop -->
+        </div>
+    </div>
+
+    <!-- TOURNAMENT ARENA -->
+    <section class="section" id="tournaments">
+        <div class="section-header">
+            <h4 class="section-subtitle">The Arena</h4>
+            <h2 class="section-title">Official <span class="gradient-text">Tournaments</span></h2>
+        </div>
+        <div class="tourney-grid" id="tGrid">
+            <!-- Injected via JS -->
+        </div>
+    </section>
+
+    <!-- ROSTER / GUILD -->
+    <section class="section" id="roster" style="background: rgba(255,255,255,0.02); border-top: 1px solid rgba(255,255,255,0.05); border-bottom: 1px solid rgba(255,255,255,0.05);">
+        <div class="section-header">
+            <h4 class="section-subtitle">Meet The Squad</h4>
+            <h2 class="section-title">Pro <span class="gradient-text">Roster</span></h2>
+        </div>
+        <div class="roster-grid" id="rGrid">
+            <!-- Injected via JS -->
+        </div>
+        
+        <div class="recruitment-banner">
+            <h3 style="font-family: var(--font-head); margin-bottom: 10px;">Think you have what it takes?</h3>
+            <p style="color: #888; font-size: 0.9rem; margin-bottom: 15px;">We are scouting tier-1 talent. Login with your Tournyx ID to submit your official player stats.</p>
+            <button class="tournyx-login-btn" style="border:none; cursor:pointer;" onclick="alert('Redirecting to Tournyx Scouting Engine...')"><i class="fa-solid fa-crosshairs"></i> Apply for Tryouts</button>
+        </div>
+    </section>
+
+    <!-- MEDIA & COMMUNITY -->
+    <section class="section" id="media">
+        <div class="section-header">
+            <h4 class="section-subtitle">Content Hub</h4>
+            <h2 class="section-title">Media & <span class="gradient-text">Community</span></h2>
+        </div>
+        
+        <div class="media-grid">
+            <div class="video-container" id="ytVideo">
+                <!-- iframe injected via JS -->
+            </div>
+            
+            <div class="glass-panel fan-wall">
+                <h3 style="font-family: var(--font-head); margin-bottom: 15px; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 10px;">Fan Wall</h3>
+                <div class="fan-msgs">
+                    <div class="msg-box">
+                        <div class="msg-user">GamerX_99 <i class="fa-solid fa-circle-check" style="color:var(--accent-main); font-size:0.6rem;"></i></div>
+                        Bro the last tournament was insane! Next time my squad is taking the 1st prize! 🔥
+                    </div>
+                    <div class="msg-box">
+                        <div class="msg-user">Viper_Snipe <i class="fa-solid fa-circle-check" style="color:var(--accent-main); font-size:0.6rem;"></i></div>
+                        When are the next scrims opening? Registration filled up in 2 mins last time! 😭
+                    </div>
+                </div>
+                
+                <div class="tournyx-lock">
+                    <i class="fa-solid fa-lock" style="font-size: 1.5rem; margin-bottom: 10px; color: var(--accent-main);"></i>
+                    <p style="font-size: 0.8rem; color: #ccc; margin-bottom: 10px;">You must verify your Tournyx Player Passport to post on the Fan Wall.</p>
+                    <a href="https://tournyx.in/login.html" class="tournyx-login-btn" style="display:inline-block;">Verify & Comment</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- GLOBAL TOURNYX FOOTER -->
+    <footer>
+        <div class="footer-logo neon-text">TOURNYX</div>
+        <div class="powered-by">Hub Engineered & Secured by <span>Tournyx eSports Engine</span></div>
+        <div class="footer-links">
+            <a href="https://tournyx.in/explore.html">Explore Platform</a>
+            <a href="https://tournyx.in/create.html">Create Your Hub</a>
+            <a href="#">Report Abuse</a>
+        </div>
+    </footer>
+
+    <script>
+        // --- 1. CORE ENGINE SETUP ---
+        const API_URL = 'https://script.google.com/macros/s/AKfycbyqqTpgaflxKJ9xH0jq7mJ_jLzcoNhas3gNo0h5gvoa_6r5Ae9NFxJAJp7ZoYNnMRKl/exec';
+        
+        // Get creator ID from URL (e.g., tournyx.in/hub.html?c=warheros)
+        const urlParams = new URLSearchParams(window.location.search);
+        const creatorId = urlParams.get('c') ? urlParams.get('c').toLowerCase() : 'demo';
+
+        // Navbar Scroll Effect
+        window.addEventListener('scroll', () => {
+            document.getElementById('navbar').classList.toggle('scrolled', window.scrollY > 50);
+        });
+
+        // --- 2. THE MOCK DATA (Fallback for testing before backend is linked) ---
+        const MOCK_DB = {
+            "demo": {
+                creator_id: "demo",
+                config: {
+                    theme: { main: "#00f2ff", sec: "#bd00ff" },
+                    branding: {
+                        name: "Warheros Esports",
+                        bio: "Tamil Nadu's premier Free Fire competitive hub. Hosting weekly scrims and major prize pool tournaments.",
+                        logo: "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEg_20wCR-WBMpQmw3vxcYUf-vxIO1PYDJoQN_Sid3UDjA9tf0cuX0eH40jbzHoJad4cxbnjhPjqfCw1Z5V1LhgN9zFuIQC0fJjecTy3D9PFu5WjR2H1wHwTD1bUGnXY_NiApWn5gMs6velcQngSzKoP1yHzX0cVsFSUFM8zIefcbiPayY7680Kz0V0ZAAE/s1264/1000093706.png",
+                        banner: "https://images.unsplash.com/photo-1542751371-adc38448a05e?q=80&w=2070&auto=format&fit=crop",
+                        youtube_embed: "https://www.youtube.com/embed/dQw4w9WgXcQ" // Example video
+                    },
+                    stats: { subs: "125K+", trophies: "14" },
+                    socials: {
+                        youtube: "https://youtube.com",
+                        instagram: "https://instagram.com",
+                        discord: "https://discord.com"
+                    },
+                    sponsors: [
+                        "https://upload.wikimedia.org/wikipedia/commons/e/e8/Red_Bull_logo.svg",
+                        "https://upload.wikimedia.org/wikipedia/commons/a/a6/Logo_NIKE.svg"
+                    ],
+                    roster: [
+                        { name: "WH Xeron YT", role: "Assaulter", kd: "4.2", headshot: "65%", img: "https://i.pravatar.cc/300?img=11" },
+                        { name: "WH KING", role: "IGL", kd: "3.8", headshot: "58%", img: "https://i.pravatar.cc/300?img=12" },
+                        { name: "WH ACE", role: "Sniper", kd: "4.5", headshot: "72%", img: "https://i.pravatar.cc/300?img=13" }
+                    ]
+                },
+                tournaments: [
+                    { id: "T-1001", title: "Warheros Sunday Scrims", game: "Free Fire", date: "2026-05-10", prize: "5000", status: "Upcoming" },
+                    { id: "T-1002", title: "TN Champions Cup", game: "BGMI", date: "2026-04-20", prize: "15000", status: "Completed" }
+                ]
+            }
+        };
+
+        // --- 3. FETCH & BUILD ENGINE ---
+        async function buildCreatorHub() {
+            try {
+                // 1. Fetch Data (Try API first, fallback to mock data)
+                let payload = { action: 'get_creator_hub', creator_id: creatorId };
+                let response = null;
+                
+                try {
+                    const req = await fetch(API_URL, { method: 'POST', body: JSON.stringify(payload) });
+                    response = await req.json();
+                } catch(e) {
+                    console.log("Using Mock Database for preview...");
+                }
+
+                let hubData = (response && response.status === 'success') ? response.data : MOCK_DB[creatorId] || MOCK_DB['demo'];
+
+                // 2. Apply Theme Variables
+                const config = hubData.config;
+                if(config.theme) {
+                    document.documentElement.style.setProperty('--accent-main', config.theme.main);
+                    document.documentElement.style.setProperty('--accent-sec', config.theme.sec);
+                }
+
+                // 3. Inject Branding
+                document.title = `${config.branding.name} | Tournyx Hub`;
+                document.getElementById('navImg').src = config.branding.logo;
+                document.getElementById('heroLogo').src = config.branding.logo;
+                document.getElementById('heroBg').src = config.branding.banner;
+                document.getElementById('heroTitle').innerText = config.branding.name;
+                document.getElementById('heroBio').innerText = config.branding.bio;
+                
+                document.getElementById('statSubs').innerText = config.stats.subs || "0";
+                document.getElementById('statWins').innerText = config.stats.trophies || "0";
+
+                // 4. Inject Socials
+                let socialHtml = "";
+                if(config.socials.youtube) socialHtml += `<a href="${config.socials.youtube}" class="social-btn"><i class="fa-brands fa-youtube"></i></a>`;
+                if(config.socials.instagram) socialHtml += `<a href="${config.socials.instagram}" class="social-btn"><i class="fa-brands fa-instagram"></i></a>`;
+                if(config.socials.discord) socialHtml += `<a href="${config.socials.discord}" class="social-btn"><i class="fa-brands fa-discord"></i></a>`;
+                document.getElementById('socialBox').innerHTML = socialHtml;
+
+                // 5. Inject Sponsors
+                if(config.sponsors && config.sponsors.length > 0) {
+                    let spHtml = config.sponsors.map(url => `<img src="${url}">`).join("");
+                    document.getElementById('sponsorTrack').innerHTML = spHtml;
+                    document.getElementById('sponsorTrack2').innerHTML = spHtml;
+                    document.getElementById('sponsorContainer').style.display = "flex";
+                }
+
+                // 6. Inject Tournaments
+                let tHtml = "";
+                if(hubData.tournaments && hubData.tournaments.length > 0) {
+                    hubData.tournaments.forEach(t => {
+                        let isLive = t.status.toLowerCase() === "live";
+                        let statusColor = isLive ? "var(--accent-sec)" : "var(--accent-green)";
+                        let btnText = isLive ? "Watch Live Bracket" : (t.status === "Upcoming" ? "Register on Tournyx" : "View Results");
+                        
+                        tHtml += `
+                            <div class="glass-panel t-card">
+                                <div class="t-status" style="color:${statusColor}; border-color:${statusColor};"><i class="fa-solid fa-circle${isLive?'-dot':''}"></i> ${t.status}</div>
+                                <div>
+                                    <div class="t-game"><i class="fa-solid fa-gamepad"></i> ${t.game}</div>
+                                    <div class="t-title">${t.title}</div>
+                                </div>
+                                <div>
+                                    <div class="t-details">
+                                        <span><i class="fa-regular fa-calendar"></i> ${new Date(t.date).toLocaleDateString('en-IN', {month:'short', day:'numeric'})}</span>
+                                        <span><i class="fa-solid fa-trophy"></i> ₹${t.prize}</span>
+                                    </div>
+                                    <a href="https://tournyx.in/match.html?id=${t.id}" class="t-btn">${btnText} <i class="fa-solid fa-arrow-right"></i></a>
+                                </div>
+                            </div>
+                        `;
+                    });
+                } else {
+                    tHtml = `<div style="grid-column: 1/-1; text-align:center; padding: 40px; color:#888;">No active tournaments found for this creator.</div>`;
+                }
+                document.getElementById('tGrid').innerHTML = tHtml;
+
+                // 7. Inject Roster (CSS 3D Cards)
+                let rHtml = "";
+                if(config.roster && config.roster.length > 0) {
+                    config.roster.forEach(p => {
+                        rHtml += `
+                            <div class="player-card">
+                                <div class="pc-front">
+                                    <img src="${p.img || 'https://via.placeholder.com/300'}" class="pc-img">
+                                    <div class="pc-info">
+                                        <div class="pc-name">${p.name}</div>
+                                        <div class="pc-role">${p.role}</div>
+                                    </div>
+                                </div>
+                                <div class="pc-back">
+                                    <div>
+                                        <h3 style="font-family:var(--font-head); margin-bottom: 20px; color:var(--accent-main);">${p.name}</h3>
+                                        <div class="pc-stats-grid">
+                                            <div class="p-stat">
+                                                <div style="font-size:0.7rem; color:#888; text-transform:uppercase;">K/D Ratio</div>
+                                                <div style="font-weight:bold; font-size:1.2rem;">${p.kd}</div>
+                                            </div>
+                                            <div class="p-stat">
+                                                <div style="font-size:0.7rem; color:#888; text-transform:uppercase;">Headshot</div>
+                                                <div style="font-weight:bold; font-size:1.2rem;">${p.headshot}</div>
+                                            </div>
+                                        </div>
+                                        <button class="tournyx-login-btn" style="width:100%; margin-top:20px; background:transparent; border:1px solid var(--accent-main); color:white;">View Tournyx Profile</button>
+                                    </div>
+                                </div>
+                            </div>
+                        `;
+                    });
+                }
+                document.getElementById('rGrid').innerHTML = rHtml;
+
+                // 8. Inject Video
+                if(config.branding.youtube_embed) {
+                    document.getElementById('ytVideo').innerHTML = `<iframe src="${config.branding.youtube_embed}" frameborder="0" allowfullscreen></iframe>`;
+                }
+
+                // Hide Loader
+                setTimeout(() => {
+                    document.getElementById('loader').style.opacity = '0';
+                    setTimeout(() => document.getElementById('loader').style.display = 'none', 800);
+                }, 1000);
+
+            } catch (err) {
+                document.getElementById('loaderText').innerText = "ERROR LOADING HUB";
+                document.getElementById('loaderText').style.color = "red";
+                console.error(err);
+            }
+        }
+
+        // Initialize Engine
+        window.onload = buildCreatorHub;
+
+    </script>
+</body>
+</html>
