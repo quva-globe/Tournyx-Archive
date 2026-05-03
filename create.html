@@ -26,94 +26,130 @@
         /* --- GLOBAL RESETS --- */
         * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
         *::-webkit-scrollbar { display: none; }
-        body { background-color: var(--primary-bg); color: var(--text-main); font-family: var(--font-body); overflow-x: hidden; font-size: 14px; min-height: 100vh; display: flex; flex-direction: column; }
+        body { background-color: var(--primary-bg); color: var(--text-main); font-family: var(--font-body); overflow-x: hidden; font-size: 14px; min-height: 100vh; display: flex; flex-direction: column; scroll-behavior: smooth;}
         a { text-decoration: none; color: inherit; }
         
         .neon-text { text-shadow: 0 0 10px var(--accent-main), 0 0 20px var(--accent-main); }
         .gradient-text { background: linear-gradient(90deg, var(--accent-sec), var(--accent-main)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
         .glass { background: var(--card-bg); backdrop-filter: blur(25px); -webkit-backdrop-filter: blur(25px); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 16px; }
 
-        .btn-glow { background: rgba(0,0,0,0.6); color: #fff; padding: 12px 25px; border-radius: 8px; font-family: var(--font-head); font-weight: bold; font-size: 0.9rem; text-transform: uppercase; border: 1px solid var(--accent-main); box-shadow: 0 0 15px rgba(0, 0, 0, 0.5); transition: 0.3s; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; gap: 10px; }
-        .btn-glow:hover { background: var(--accent-main); color: #000; box-shadow: 0 0 25px var(--accent-main); transform: translateY(-3px); }
+        .btn-glow { background: rgba(0,0,0,0.6); color: #fff; padding: 12px 25px; border-radius: 8px; font-family: var(--font-head); font-weight: bold; font-size: 0.9rem; text-transform: uppercase; border: 1px solid var(--accent-main); box-shadow: 0 0 15px rgba(0, 0, 0, 0.5); transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); cursor: pointer; display: inline-flex; align-items: center; justify-content: center; gap: 10px; }
+        .btn-glow:hover { background: var(--accent-main); color: #000; box-shadow: 0 0 25px var(--accent-main); transform: translateY(-4px) scale(1.02); }
         .btn-glow:disabled { opacity: 0.5; cursor: not-allowed; transform: none; box-shadow: none; }
+        .pulse-btn { animation: pulseBtn 2s infinite; background: var(--accent-main); color: #000; border: none; }
+        @keyframes pulseBtn { 0% { box-shadow: 0 0 0 0 rgba(0,242,255, 0.7); } 70% { box-shadow: 0 0 0 15px rgba(0,242,255, 0); } 100% { box-shadow: 0 0 0 0 rgba(0,242,255, 0); } }
 
         /* --- TOP NAV --- */
-        .top-nav { position: fixed; top: 0; width: 100%; padding: 15px 30px; z-index: 1000; display: flex; justify-content: space-between; align-items: center; background: rgba(3, 1, 5, 0.95); backdrop-filter: blur(15px); border-bottom: 1px solid rgba(255,255,255,0.05); }
-        .nav-logo { font-family: var(--font-head); font-size: 1.2rem; font-weight: 900; letter-spacing: 2px; color: white; display: flex; align-items: center; gap: 10px;}
-        .nav-logo img { height: 35px; }
+        .top-nav { position: fixed; top: 0; width: 100%; padding: 15px 30px; z-index: 1000; display: flex; justify-content: space-between; align-items: center; background: linear-gradient(to bottom, rgba(3,1,5,0.95), transparent); backdrop-filter: blur(10px); }
+        .nav-logo img { height: 40px; filter: drop-shadow(0 0 5px var(--accent-main)); }
 
         /* --- CINEMATIC SLIDER INTRO --- */
         #introSlider { position: fixed; inset: 0; z-index: 500; background: var(--primary-bg); display: flex; align-items: center; justify-content: center; transition: 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
         #introSlider.hidden { transform: translateY(-100%); opacity: 0; pointer-events: none; }
         .slide { position: absolute; inset: 0; opacity: 0; transition: 0.8s ease; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 20px; background-size: cover; background-position: center; background-blend-mode: overlay; background-color: rgba(3,1,5,0.85); }
-        .slide.active { opacity: 1; z-index: 10;}
-        .slide-icon { font-size: 4rem; color: var(--accent-main); margin-bottom: 20px; filter: drop-shadow(0 0 20px var(--accent-main)); }
-        .slide-title { font-family: var(--font-head); font-size: 2.5rem; font-weight: 900; text-transform: uppercase; margin-bottom: 15px; }
-        .slide-desc { font-size: 1.1rem; color: #ccc; max-width: 600px; line-height: 1.5; margin-bottom: 40px; }
-        .slide-dots { position: absolute; bottom: 40px; display: flex; gap: 10px; }
+        .slide.active { opacity: 1; z-index: 10; animation: scaleIn 5s linear forwards;}
+        @keyframes scaleIn { from { background-size: 100%; } to { background-size: 105%; } }
+        
+        .slide-icon { font-size: 4.5rem; color: var(--accent-main); margin-bottom: 20px; filter: drop-shadow(0 0 25px var(--accent-main)); transform: translateY(20px); opacity: 0; transition: 0.5s 0.2s; }
+        .slide.active .slide-icon { transform: translateY(0); opacity: 1; }
+        
+        .slide-title { font-family: var(--font-head); font-size: 2.8rem; font-weight: 900; text-transform: uppercase; margin-bottom: 15px; transform: translateY(20px); opacity: 0; transition: 0.5s 0.4s; line-height: 1.1;}
+        .slide.active .slide-title { transform: translateY(0); opacity: 1; }
+        
+        .slide-desc { font-size: 1.15rem; color: #ccc; max-width: 650px; line-height: 1.5; margin-bottom: 40px; transform: translateY(20px); opacity: 0; transition: 0.5s 0.6s; }
+        .slide.active .slide-desc { transform: translateY(0); opacity: 1; }
+        
+        .slide-controls { transform: translateY(20px); opacity: 0; transition: 0.5s 0.8s; }
+        .slide.active .slide-controls { transform: translateY(0); opacity: 1; }
+
+        .slide-dots { position: absolute; bottom: 80px; display: flex; gap: 12px; z-index: 20;}
         .dot { width: 12px; height: 12px; border-radius: 50%; background: rgba(255,255,255,0.2); transition: 0.3s; }
-        .dot.active { background: var(--accent-main); box-shadow: 0 0 10px var(--accent-main); }
+        .dot.active { background: var(--accent-main); box-shadow: 0 0 15px var(--accent-main); transform: scale(1.3); }
+
+        .slider-footer { position: absolute; bottom: 15px; width: 100%; text-align: center; z-index: 20; font-size: 0.7rem; color: #888; text-transform: uppercase; letter-spacing: 2px; font-weight: bold; }
+        .slider-footer span { color: var(--accent-main); }
 
         /* --- FORM WIZARD UI --- */
         #wizardContainer { display: none; flex: 1; padding: 100px 20px 60px; max-width: 900px; margin: 0 auto; width: 100%; opacity: 0; animation: fadeIn 1s ease forwards; }
         @keyframes fadeIn { to { opacity: 1; } }
         
         .form-header { text-align: center; margin-bottom: 40px; }
-        .form-title { font-family: var(--font-head); font-size: 2rem; font-weight: 900; text-transform: uppercase; margin-bottom: 10px; }
-        .form-subtitle { color: var(--text-muted); font-size: 0.95rem; }
+        .form-title { font-family: var(--font-head); font-size: 2.2rem; font-weight: 900; text-transform: uppercase; margin-bottom: 10px; }
+        .form-subtitle { color: var(--text-muted); font-size: 1rem; }
 
-        .form-section { padding: 30px; margin-bottom: 25px; position: relative; overflow: hidden; }
-        .section-title { font-family: var(--font-head); color: var(--accent-sec); font-size: 1.1rem; text-transform: uppercase; margin-bottom: 20px; display: flex; align-items: center; gap: 10px; border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 10px;}
+        .form-section { padding: 35px; margin-bottom: 30px; position: relative; overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.5), inset 0 0 20px rgba(255,255,255,0.02); }
+        .section-title { font-family: var(--font-head); color: var(--accent-sec); font-size: 1.2rem; text-transform: uppercase; margin-bottom: 25px; display: flex; align-items: center; gap: 10px; border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 12px;}
 
-        .input-group { margin-bottom: 20px; }
-        .input-label { display: block; font-size: 0.8rem; font-weight: bold; text-transform: uppercase; color: #aaa; margin-bottom: 8px; letter-spacing: 1px; }
-        .form-input { width: 100%; background: rgba(0,0,0,0.5); border: 1px solid rgba(255,255,255,0.1); padding: 14px 15px; border-radius: 8px; color: white; font-family: var(--font-body); font-size: 1rem; outline: none; transition: 0.3s; }
-        .form-input:focus { border-color: var(--accent-main); box-shadow: 0 0 15px rgba(0,242,255,0.2); }
-        .input-hint { font-size: 0.7rem; color: #666; margin-top: 5px; }
+        .input-group { margin-bottom: 25px; }
+        .input-label { display: block; font-size: 0.85rem; font-weight: bold; text-transform: uppercase; color: #ccc; margin-bottom: 10px; letter-spacing: 1px; }
+        .form-input { width: 100%; background: rgba(0,0,0,0.5); border: 1px solid rgba(255,255,255,0.1); padding: 15px; border-radius: 10px; color: white; font-family: var(--font-body); font-size: 1.05rem; outline: none; transition: 0.3s; }
+        .form-input:focus { border-color: var(--accent-main); box-shadow: 0 0 15px rgba(0,242,255,0.2), inset 0 0 10px rgba(0,0,0,0.5); transform: translateY(-2px); }
+        .input-hint { font-size: 0.75rem; color: #666; margin-top: 6px; }
 
         .form-row { display: grid; grid-template-columns: 1fr; gap: 20px; }
         @media(min-width: 768px) { .form-row { grid-template-columns: 1fr 1fr; } }
 
         /* Uploader UI */
-        .upload-box { background: rgba(0,0,0,0.4); border: 1px dashed var(--accent-main); border-radius: 12px; padding: 25px 15px; text-align: center; cursor: pointer; transition: 0.3s; position: relative; overflow: hidden; }
-        .upload-box:hover { background: rgba(0,242,255,0.05); box-shadow: inset 0 0 20px rgba(0,242,255,0.1); }
-        .upload-icon { font-size: 2rem; color: var(--accent-main); margin-bottom: 10px; }
-        .upload-text { font-family: var(--font-head); font-weight: bold; margin-bottom: 5px; }
+        .upload-box { background: rgba(0,0,0,0.4); border: 1px dashed var(--accent-main); border-radius: 12px; padding: 30px 15px; text-align: center; cursor: pointer; transition: 0.3s; position: relative; overflow: hidden; }
+        .upload-box:hover { background: rgba(0,242,255,0.05); box-shadow: inset 0 0 20px rgba(0,242,255,0.1); border-style: solid; }
+        .upload-icon { font-size: 2.2rem; color: var(--accent-main); margin-bottom: 12px; }
+        .upload-text { font-family: var(--font-head); font-weight: bold; margin-bottom: 8px; font-size: 1.1rem; }
+        .size-badge { background: rgba(255,255,255,0.1); color: #fff; padding: 4px 10px; border-radius: 6px; font-size: 0.7rem; font-weight: bold; display: inline-block; margin-bottom: 5px; }
+        
         .upload-preview { position: absolute; inset: 0; background-size: cover; background-position: center; opacity: 0; transition: 0.3s; z-index: 2; }
         .upload-preview.active { opacity: 1; }
-        .upload-overlay { position: absolute; inset: 0; background: rgba(0,0,0,0.7); display: flex; align-items: center; justify-content: center; z-index: 3; opacity: 0; transition: 0.3s; color: var(--accent-main); font-weight: bold; font-family: var(--font-head); }
+        .upload-overlay { position: absolute; inset: 0; background: rgba(0,0,0,0.8); display: flex; align-items: center; justify-content: center; z-index: 3; opacity: 0; transition: 0.3s; color: var(--accent-main); font-weight: bold; font-family: var(--font-head); }
         .upload-box:hover .upload-overlay.active { opacity: 1; }
         .file-input { display: none; }
-        .upload-loading { position: absolute; inset: 0; background: rgba(0,0,0,0.9); z-index: 5; display: flex; flex-direction: column; align-items: center; justify-content: center; opacity: 0; pointer-events: none; transition: 0.3s;}
+        .upload-loading { position: absolute; inset: 0; background: rgba(0,0,0,0.95); z-index: 5; display: flex; flex-direction: column; align-items: center; justify-content: center; opacity: 0; pointer-events: none; transition: 0.3s;}
         .upload-loading.active { opacity: 1; pointer-events: all;}
 
         /* Color Picker UI */
-        .color-picker-wrapper { display: flex; align-items: center; gap: 15px; background: rgba(0,0,0,0.5); padding: 10px 15px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.1); }
-        .color-input { -webkit-appearance: none; -moz-appearance: none; appearance: none; width: 40px; height: 40px; background: transparent; border: none; cursor: pointer; }
+        .color-picker-wrapper { display: flex; align-items: center; gap: 15px; background: rgba(0,0,0,0.5); padding: 12px 15px; border-radius: 10px; border: 1px solid rgba(255,255,255,0.1); transition: 0.3s;}
+        .color-picker-wrapper:hover { border-color: var(--accent-main); }
+        .color-input { -webkit-appearance: none; -moz-appearance: none; appearance: none; width: 45px; height: 45px; background: transparent; border: none; cursor: pointer; }
         .color-input::-webkit-color-swatch { border-radius: 50%; border: 2px solid rgba(255,255,255,0.2); }
         .color-input::-moz-color-swatch { border-radius: 50%; border: 2px solid rgba(255,255,255,0.2); }
 
         /* --- FOOTER --- */
         footer { padding: 40px 20px; text-align: center; border-top: 1px solid rgba(255,255,255,0.05); background: #010002; margin-top: auto; }
-        .footer-logo img { height: 30px; margin-bottom: 10px; opacity: 0.8; filter: drop-shadow(0 0 5px var(--accent-main)); }
-        .footer-text { font-size: 0.7rem; color: #666; margin-bottom: 15px; font-weight: bold; text-transform: uppercase; letter-spacing: 1px; }
+        .footer-logo img { height: 35px; margin-bottom: 10px; opacity: 0.8; filter: drop-shadow(0 0 5px var(--accent-main)); }
+        .footer-text { font-size: 0.75rem; color: #666; font-weight: bold; text-transform: uppercase; letter-spacing: 1px; }
 
         /* --- SUCCESS OVERLAY --- */
         #successOverlay { position: fixed; inset: 0; background: rgba(3,1,5,0.98); z-index: 9999; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 20px; opacity: 0; pointer-events: none; transition: 0.5s; }
         #successOverlay.active { opacity: 1; pointer-events: all; }
-        .success-icon { font-size: 5rem; color: var(--accent-green, #00ff7f); filter: drop-shadow(0 0 30px rgba(0,255,127,0.5)); margin-bottom: 20px; transform: scale(0); transition: 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
-        #successOverlay.active .success-icon { transform: scale(1); }
+        
+        .success-icon { font-size: 6rem; color: var(--accent-main); filter: drop-shadow(0 0 40px var(--accent-main)); margin-bottom: 20px; transform: scale(0) rotate(-45deg); transition: 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+        #successOverlay.active .success-icon { transform: scale(1) rotate(0); }
+        
+        .welcome-text { font-family: var(--font-head); font-size: 3rem; text-transform: uppercase; margin-bottom: 10px; opacity: 0; transform: translateY(20px); transition: 0.5s 0.3s; }
+        #successOverlay.active .welcome-text { opacity: 1; transform: translateY(0); }
+
+        .link-box { background: rgba(0,242,255,0.05); border: 1px dashed var(--accent-main); padding: 20px; border-radius: 12px; margin: 30px 0; width: 100%; max-width: 500px; opacity: 0; transform: translateY(20px); transition: 0.5s 0.5s;}
+        #successOverlay.active .link-box { opacity: 1; transform: translateY(0); }
+
+        .share-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; width: 100%; max-width: 500px; margin-bottom: 30px; opacity: 0; transform: translateY(20px); transition: 0.5s 0.7s;}
+        #successOverlay.active .share-grid { opacity: 1; transform: translateY(0); }
+        .share-btn { padding: 12px; border-radius: 8px; border: none; font-family: var(--font-head); font-weight: bold; cursor: pointer; display: flex; flex-direction: column; align-items: center; gap: 5px; transition: 0.3s; color: white;}
+        .share-btn i { font-size: 1.5rem; }
+        .share-btn:hover { transform: translateY(-3px); }
+        .s-wa { background: #25D366; } .s-wa:hover { box-shadow: 0 0 15px #25D366; }
+        .s-ig { background: linear-gradient(45deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888); } .s-ig:hover { box-shadow: 0 0 15px #dc2743; }
+        .s-cp { background: #444; } .s-cp:hover { box-shadow: 0 0 15px #888; }
+        
+        .enter-btn-wrap { opacity: 0; transform: translateY(20px); transition: 0.5s 0.9s; }
+        #successOverlay.active .enter-btn-wrap { opacity: 1; transform: translateY(0); }
     </style>
 </head>
 <body>
 
     <!-- TOP NAV -->
     <nav class="top-nav">
-        <div class="nav-logo">
+        <a href="https://tournyx.in" class="nav-logo">
             <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEg_20wCR-WBMpQmw3vxcYUf-vxIO1PYDJoQN_Sid3UDjA9tf0cuX0eH40jbzHoJad4cxbnjhPjqfCw1Z5V1LhgN9zFuIQC0fJjecTy3D9PFu5WjR2H1wHwTD1bUGnXY_NiApWn5gMs6velcQngSzKoP1yHzX0cVsFSUFM8zIefcbiPayY7680Kz0V0ZAAE/s1264/1000093706.png" alt="Tournyx">
-            TOUR<span style="color:var(--accent-main);">NYX</span>
-        </div>
-        <button class="btn-glow" style="padding: 6px 15px; font-size: 0.7rem;" onclick="window.location.href='https://tournyx.in/login.html'"><i class="fa-solid fa-passport"></i> Tournyx ID</button>
+        </a>
+        <button class="btn-glow" style="padding: 8px 18px; font-size: 0.75rem;" onclick="window.location.href='https://tournyx.in/login.html'"><i class="fa-solid fa-passport"></i> Tournyx ID</button>
     </nav>
 
     <!-- CINEMATIC SLIDER INTRO -->
@@ -123,7 +159,7 @@
             <i class="fa-solid fa-building-shield slide-icon"></i>
             <h1 class="slide-title">Your Brand.<br><span class="gradient-text">Your Arena.</span></h1>
             <p class="slide-desc">Stop using messy WhatsApp groups. Build your official, premium eSports Hub in under 3 minutes.</p>
-            <button class="btn-glow" onclick="nextSlide(1)">Next <i class="fa-solid fa-arrow-right"></i></button>
+            <div class="slide-controls"><button class="btn-glow" onclick="nextSlide(1)">Next <i class="fa-solid fa-arrow-right"></i></button></div>
         </div>
         
         <!-- Slide 2 -->
@@ -131,7 +167,7 @@
             <i class="fa-solid fa-crosshairs slide-icon" style="color:var(--accent-sec);"></i>
             <h1 class="slide-title">Integrated<br><span class="gradient-text" style="background: linear-gradient(90deg, #ff9900, #ff4d4d); -webkit-background-clip: text;">Tournaments</span></h1>
             <p class="slide-desc">Host scrims directly on your page. Fans register with their Tournyx ID, and the brackets sync automatically.</p>
-            <button class="btn-glow" style="border-color:var(--accent-sec); box-shadow:0 0 15px var(--accent-sec);" onclick="nextSlide(2)">Next <i class="fa-solid fa-arrow-right"></i></button>
+            <div class="slide-controls"><button class="btn-glow" style="border-color:var(--accent-sec); box-shadow:0 0 15px var(--accent-sec);" onclick="nextSlide(2)">Next <i class="fa-solid fa-arrow-right"></i></button></div>
         </div>
 
         <!-- Slide 3 -->
@@ -139,15 +175,15 @@
             <i class="fa-solid fa-shield-halved slide-icon" style="color:#00ff7f;"></i>
             <h1 class="slide-title">Official<br><span class="gradient-text" style="background: linear-gradient(90deg, #00ff7f, #00f2ff); -webkit-background-clip: text;">Pro Roster</span></h1>
             <p class="slide-desc">Showcase your elite squad. Track K/D, Headshots, and let fans apply directly for tryouts.</p>
-            <button class="btn-glow" style="border-color:#00ff7f; box-shadow:0 0 15px #00ff7f;" onclick="nextSlide(3)">Next <i class="fa-solid fa-arrow-right"></i></button>
+            <div class="slide-controls"><button class="btn-glow" style="border-color:#00ff7f; box-shadow:0 0 15px #00ff7f;" onclick="nextSlide(3)">Next <i class="fa-solid fa-arrow-right"></i></button></div>
         </div>
 
         <!-- Slide 4 -->
         <div class="slide" style="background-image: url('https://images.unsplash.com/photo-1511512578047-dfb367046420?q=80&w=2071&auto=format&fit=crop');">
-            <i class="fa-solid fa-rocket slide-icon"></i>
+            <i class="fa-solid fa-hammer slide-icon"></i>
             <h1 class="slide-title">Forged For<br><span class="gradient-text">Creators</span></h1>
-            <p class="slide-desc">Your colors, your logo, your domain. Expand your community footprint today.</p>
-            <button class="btn-glow pulse-btn" style="font-size: 1.1rem; padding: 15px 30px;" onclick="startWizard()"><i class="fa-solid fa-hammer"></i> Forge My Hub</button>
+            <p class="slide-desc">We automatically extract your brand colors. Your logo, your domain. Expand your community footprint today.</p>
+            <div class="slide-controls"><button class="btn-glow pulse-btn" style="font-size: 1.1rem; padding: 15px 30px;" onclick="startWizard()"><i class="fa-solid fa-rocket"></i> Forge My Hub</button></div>
         </div>
 
         <div class="slide-dots">
@@ -156,6 +192,8 @@
             <div class="dot"></div>
             <div class="dot"></div>
         </div>
+        
+        <div class="slider-footer">Powered By <span>Tournyx eSports</span></div>
     </div>
 
     <!-- MAIN SETUP WIZARD -->
@@ -175,7 +213,7 @@
                     <div class="input-group">
                         <label class="input-label">Creator ID (Your URL) *</label>
                         <input type="text" class="form-input" id="inpId" placeholder="e.g. warheros" required oninput="formatSlug(this)">
-                        <div class="input-hint">Your link will be: <span style="color:var(--accent-main);">tournyx.in/hub.html?c=<span id="slugPreview">...</span></span></div>
+                        <div class="input-hint">Your link will be: <span style="color:var(--accent-main); font-weight:bold;">tournyx.in/hub.html?c=<span id="slugPreview">...</span></span></div>
                     </div>
                     <div class="input-group">
                         <label class="input-label">Organizer Email *</label>
@@ -198,7 +236,8 @@
 
             <!-- SECTION 2: THEME & MEDIA -->
             <div class="glass form-section">
-                <div class="section-title"><i class="fa-solid fa-palette"></i> Visuals & Media</div>
+                <div class="section-title"><i class="fa-solid fa-palette"></i> Visuals & Color AI</div>
+                <p style="color:#aaa; font-size:0.8rem; margin-bottom:20px; font-style:italic;">Upload your graphics and our AI will automatically suggest the perfect Neon colors for your Hub.</p>
                 
                 <div class="form-row">
                     <!-- LOGO UPLOAD -->
@@ -207,13 +246,13 @@
                         <div class="upload-box" id="logoBox" onclick="document.getElementById('logoInput').click()">
                             <i class="fa-solid fa-circle-user upload-icon"></i>
                             <div class="upload-text">Upload Logo</div>
-                            <div class="input-hint">Square Ratio (e.g. 500x500px)</div>
+                            <div class="size-badge">500x500px (1:1)</div>
                             <div class="upload-preview" id="logoPreview"></div>
                             <div class="upload-overlay" id="logoOverlay"><i class="fa-solid fa-pen"></i> Change</div>
                             
                             <div class="upload-loading" id="logoLoader">
                                 <i class="fa-solid fa-circle-notch fa-spin upload-icon" style="color:white;"></i>
-                                <span style="color:white; font-family:var(--font-head); font-size:0.8rem;">Compressing...</span>
+                                <span style="color:white; font-family:var(--font-head); font-size:0.8rem;">Processing & Extracting Color...</span>
                             </div>
                         </div>
                         <input type="file" id="logoInput" class="file-input" accept="image/*" onchange="processImage(event, 'logo')">
@@ -226,13 +265,13 @@
                         <div class="upload-box" id="bannerBox" onclick="document.getElementById('bannerInput').click()">
                             <i class="fa-solid fa-panorama upload-icon"></i>
                             <div class="upload-text">Upload Banner</div>
-                            <div class="input-hint">16:9 Ratio (e.g. 1920x1080px)</div>
+                            <div class="size-badge">1920x1080px (16:9)</div>
                             <div class="upload-preview" id="bannerPreview"></div>
                             <div class="upload-overlay" id="bannerOverlay"><i class="fa-solid fa-pen"></i> Change</div>
                             
                             <div class="upload-loading" id="bannerLoader">
                                 <i class="fa-solid fa-circle-notch fa-spin upload-icon" style="color:white;"></i>
-                                <span style="color:white; font-family:var(--font-head); font-size:0.8rem;">Compressing...</span>
+                                <span style="color:white; font-family:var(--font-head); font-size:0.8rem;">Processing & Extracting Color...</span>
                             </div>
                         </div>
                         <input type="file" id="bannerInput" class="file-input" accept="image/*" onchange="processImage(event, 'banner')">
@@ -245,14 +284,14 @@
                         <label class="input-label">Primary Neon Color</label>
                         <div class="color-picker-wrapper">
                             <input type="color" id="inpColor1" class="color-input" value="#00f2ff" onchange="updateThemePreview()">
-                            <span style="font-family:monospace; color:#ccc;" id="hex1">#00f2ff</span>
+                            <span style="font-family:monospace; color:#ccc; font-weight:bold;" id="hex1">#00f2ff</span>
                         </div>
                     </div>
                     <div class="input-group">
                         <label class="input-label">Secondary Neon Color</label>
                         <div class="color-picker-wrapper">
                             <input type="color" id="inpColor2" class="color-input" value="#bd00ff" onchange="updateThemePreview()">
-                            <span style="font-family:monospace; color:#ccc;" id="hex2">#bd00ff</span>
+                            <span style="font-family:monospace; color:#ccc; font-weight:bold;" id="hex2">#bd00ff</span>
                         </div>
                     </div>
                 </div>
@@ -290,16 +329,24 @@
 
     <!-- SUCCESS OVERLAY -->
     <div id="successOverlay">
-        <i class="fa-solid fa-circle-check success-icon"></i>
-        <h1 style="font-family:var(--font-head); font-size:3rem; text-transform:uppercase; margin-bottom:10px;" class="neon-text">Hub Forged!</h1>
-        <p style="color:#aaa; font-size:1.1rem; margin-bottom:30px; max-width:500px;">Your custom eSports architecture is now live on the Tournyx Global Network.</p>
+        <i class="fa-solid fa-fingerprint success-icon"></i>
+        <h1 class="welcome-text neon-text">Welcome to the Arena</h1>
+        <p style="color:#ccc; font-size:1.1rem; max-width:500px; opacity:0; transform:translateY(20px); transition:0.5s 0.4s;" id="sucSub">Your custom eSports architecture is now live.</p>
         
-        <div style="background:rgba(0,242,255,0.1); border:1px dashed var(--accent-main); padding:20px; border-radius:12px; margin-bottom:30px;">
-            <p style="color:#888; font-size:0.8rem; text-transform:uppercase; margin-bottom:5px;">Your Official Link</p>
-            <h3 style="font-family:monospace; color:white; word-break:break-all;" id="finalLink">tournyx.in/hub.html?c=id</h3>
+        <div class="link-box">
+            <p style="color:#888; font-size:0.8rem; text-transform:uppercase; margin-bottom:8px; font-weight:bold;">Your Official Link</p>
+            <h3 style="font-family:monospace; font-size:1.3rem; color:var(--accent-main); word-break:break-all;" id="finalLink">tournyx.in/hub.html?c=id</h3>
         </div>
 
-        <button class="btn-glow" style="font-size:1.2rem; padding:15px 30px;" id="visitBtn">Enter Your Arena <i class="fa-solid fa-arrow-right"></i></button>
+        <div class="share-grid">
+            <button class="share-btn s-wa" onclick="shareWhatsApp()"><i class="fa-brands fa-whatsapp"></i> Status</button>
+            <button class="share-btn s-ig" onclick="shareInsta()"><i class="fa-brands fa-instagram"></i> Story</button>
+            <button class="share-btn s-cp" onclick="copyLink()"><i class="fa-solid fa-copy"></i> Copy</button>
+        </div>
+
+        <div class="enter-btn-wrap">
+            <button class="btn-glow pulse-btn" style="font-size:1.2rem; padding:15px 40px;" id="visitBtn">Enter Your Hub <i class="fa-solid fa-arrow-right"></i></button>
+        </div>
     </div>
 
     <!-- FOOTER -->
@@ -334,12 +381,11 @@
             if(navigator.vibrate) navigator.vibrate(50);
             document.getElementById('introSlider').classList.add('hidden');
             document.getElementById('wizardContainer').style.display = 'block';
-            window.scrollTo(0,0);
+            setTimeout(() => { window.scrollTo(0, 0); }, 100);
         }
 
         // --- 2. FORM UTILS ---
         function formatSlug(input) {
-            // Remove spaces and special chars, convert to lowercase
             let val = input.value.toLowerCase().replace(/[^a-z0-9]/g, '');
             input.value = val;
             document.getElementById('slugPreview').innerText = val || "...";
@@ -354,14 +400,13 @@
             document.documentElement.style.setProperty('--accent-sec', c2);
         }
 
-        // --- 3. DUAL IMAGE COMPRESSION & UPLOAD ENGINE (ImgBB) ---
+        // --- 3. DUAL IMAGE COMPRESSION & AUTO-COLOR EXTRACTION ---
         const IMGBB_KEY = "727c66ecfe2882d63fee08fee7495850";
 
         function processImage(event, type) {
             const file = event.target.files[0];
             if (!file) return;
 
-            // Show internal loader
             document.getElementById(`${type}Loader`).classList.add('active');
 
             const reader = new FileReader();
@@ -369,9 +414,8 @@
                 const img = new Image();
                 img.onload = function() {
                     const canvas = document.createElement('canvas');
-                    const ctx = canvas.getContext('2d');
+                    const ctx = canvas.getContext('2d', { willReadFrequently: true });
                     
-                    // Logic based on type (Logo vs Banner)
                     let MAX_WIDTH = type === 'banner' ? 1280 : 500;
                     let width = img.width;
                     let height = img.height;
@@ -385,11 +429,33 @@
                     canvas.height = height;
                     ctx.drawImage(img, 0, 0, width, height);
 
+                    // 🧠 AI COLOR EXTRACTION
+                    try {
+                        let r = 0, g = 0, b = 0, count = 0;
+                        const data = ctx.getImageData(0, 0, width, height).data;
+                        // Skip pixels for speed (step by 16)
+                        for(let i=0; i<data.length; i+=16) {
+                            r += data[i]; g += data[i+1]; b += data[i+2]; count++;
+                        }
+                        if(count > 0) {
+                            r = Math.floor(r/count); g = Math.floor(g/count); b = Math.floor(b/count);
+                            // Boost saturation slightly for neon effect
+                            r = Math.min(255, Math.floor(r * 1.2));
+                            g = Math.min(255, Math.floor(g * 1.2));
+                            b = Math.min(255, Math.floor(b * 1.2));
+                            
+                            let hex = "#" + ((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1);
+                            
+                            if(type === 'logo') { document.getElementById('inpColor1').value = hex; }
+                            else { document.getElementById('inpColor2').value = hex; }
+                            updateThemePreview();
+                        }
+                    } catch(colorErr) { console.log("Color extraction skipped."); }
+
                     // Compress to JPG
                     const compressedBase64 = canvas.toDataURL('image/jpeg', 0.8);
                     const base64Data = compressedBase64.split(',')[1];
                     
-                    // Upload to ImgBB
                     uploadToImgBB(base64Data, type);
                 };
                 img.src = e.target.result;
@@ -409,9 +475,8 @@
             .then(result => {
                 if(result.success) {
                     let url = result.data.url;
-                    // Update Hidden Input
                     document.getElementById(`val${type === 'logo' ? 'Logo' : 'Banner'}`).value = url;
-                    // Update UI Preview
+                    
                     let previewEl = document.getElementById(`${type}Preview`);
                     previewEl.style.backgroundImage = `url('${url}')`;
                     previewEl.classList.add('active');
@@ -432,11 +497,11 @@
 
         // --- 4. SECURE SUBMISSION TO GOOGLE APPS SCRIPT ---
         const API_URL = 'https://script.google.com/macros/s/AKfycbyqqTpgaflxKJ9xH0jq7mJ_jLzcoNhas3gNo0h5gvoa_6r5Ae9NFxJAJp7ZoYNnMRKl/exec';
+        let generatedSlug = "";
 
         document.getElementById('hubForm').addEventListener('submit', async function(e) {
             e.preventDefault();
             
-            // Final validation for images
             let logoUrl = document.getElementById('valLogo').value;
             let bannerUrl = document.getElementById('valBanner').value;
             let errorMsg = document.getElementById('errorMsg');
@@ -448,16 +513,16 @@
             }
             errorMsg.style.display = "none";
 
-            // UI State change
             let btn = document.getElementById('submitBtn');
             btn.disabled = true;
             btn.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin"></i> Forging Architecture...';
             if(navigator.vibrate) navigator.vibrate([20, 50, 20]);
 
-            // Construct Payload matching the Code.gs logic
+            generatedSlug = document.getElementById('inpId').value;
+
             let payload = {
                 action: 'create_creator_hub',
-                creator_id: document.getElementById('inpId').value,
+                creator_id: generatedSlug,
                 email: document.getElementById('inpEmail').value,
                 creator_name: document.getElementById('inpName').value,
                 bio: document.getElementById('inpBio').value,
@@ -473,17 +538,19 @@
             try {
                 let response = await fetch(API_URL, {
                     method: 'POST',
-                    headers: { 'Content-Type': 'text/plain' }, // Prevent CORS preflight issues
+                    headers: { 'Content-Type': 'text/plain' }, 
                     body: JSON.stringify(payload)
                 });
-                
                 let data = await response.json();
                 
                 if (data.status === 'success') {
                     // Trigger Success UI
-                    document.getElementById('finalLink').innerText = `tournyx.in/hub.html?c=${payload.creator_id}`;
+                    document.getElementById('sucSub').style.opacity = '1';
+                    document.getElementById('sucSub').style.transform = 'translateY(0)';
+                    
+                    document.getElementById('finalLink').innerText = `tournyx.in/hub.html?c=${generatedSlug}`;
                     document.getElementById('visitBtn').onclick = () => {
-                        window.location.href = `https://tournyx.in/hub.html?c=${payload.creator_id}`;
+                        window.location.href = `https://tournyx.in/hub.html?c=${generatedSlug}`;
                     };
                     document.getElementById('successOverlay').classList.add('active');
                     if(navigator.vibrate) navigator.vibrate(100);
@@ -491,7 +558,6 @@
                     throw new Error(data.message);
                 }
             } catch (err) {
-                console.error(err);
                 errorMsg.innerText = "Error: " + err.message;
                 errorMsg.style.display = "block";
                 btn.disabled = false;
@@ -499,6 +565,25 @@
             }
         });
 
+        // --- 5. SHARE ENGINE ---
+        function shareWhatsApp() {
+            triggerHaptic();
+            let text = `🔥 I just launched my Official eSports Hub on Tournyx!\n\nCheck out my Pro Roster and register for upcoming tournaments here:\n👉 https://tournyx.in/hub.html?c=${generatedSlug}`;
+            window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(text)}`, '_blank');
+        }
+
+        function shareInsta() {
+            triggerHaptic();
+            copyLink(true);
+            alert("Link copied! Open Instagram to paste it in your Story sticker or Bio.");
+        }
+
+        function copyLink(silent = false) {
+            triggerHaptic();
+            navigator.clipboard.writeText(`https://tournyx.in/hub.html?c=${generatedSlug}`).then(() => {
+                if(!silent) alert("Hub Link Copied to Clipboard!");
+            });
+        }
     </script>
 </body>
 </html>
