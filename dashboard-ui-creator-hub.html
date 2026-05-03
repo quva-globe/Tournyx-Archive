@@ -32,6 +32,7 @@
         .glass { background: var(--card-bg); backdrop-filter: blur(25px); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 16px; }
         .gradient-text { background: linear-gradient(90deg, var(--accent-sec), var(--accent-main)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
         
+        /* Buttons */
         .btn-glow { background: rgba(0,0,0,0.6); color: #fff; padding: 10px 20px; border-radius: 8px; font-family: var(--font-head); font-weight: bold; font-size: 0.85rem; text-transform: uppercase; border: 1px solid var(--accent-main); box-shadow: 0 0 15px rgba(0, 0, 0, 0.5); transition: 0.3s; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; gap: 8px; width: 100%;}
         .btn-glow:hover { background: var(--accent-main); color: #000; box-shadow: 0 0 25px var(--accent-main); transform: translateY(-2px); }
         .btn-glow:disabled { opacity: 0.5; cursor: not-allowed; transform: none; box-shadow: none; }
@@ -49,7 +50,7 @@
         /* --- HEADER UI --- */
         .header { display: flex; justify-content: space-between; align-items: center; background: rgba(0,0,0,0.5); border: 1px solid rgba(255,255,255,0.1); border-bottom: 2px solid var(--accent-main); padding: 12px 20px; border-radius: 12px; margin-bottom: 25px; animation: slideDown 0.5s ease; box-shadow: 0 10px 30px rgba(0,0,0,0.5);}
         .header-left { display: flex; align-items: center; gap: 12px; }
-        .header-left img { height: 30px; filter: drop-shadow(0 0 5px var(--accent-main)); }
+        .header-logo { width: 35px; height: 35px; object-fit: contain; filter: drop-shadow(0 0 5px var(--accent-main)); }
         .header-title-container { display: flex; flex-direction: column; }
         .header-title { font-family: var(--font-head); font-size: 0.7rem; text-transform: uppercase; color: #aaa; margin: 0; letter-spacing: 1px;}
         .header-subtitle { font-family: var(--font-head); font-size: 1.1rem; font-weight: 900; margin: 0; color: white; text-shadow: 0 0 10px rgba(255,255,255,0.3);}
@@ -61,7 +62,7 @@
         .profile-btn { width: 40px; height: 40px; border-radius: 50%; border: 2px solid var(--accent-main); object-fit: cover; cursor: pointer; box-shadow: 0 0 10px var(--accent-main); display: none;}
         .default-user { font-size: 1.8rem; color: var(--accent-main); cursor: pointer; filter: drop-shadow(0 0 8px var(--accent-main)); }
         
-        .logout-menu { position: absolute; top: 50px; right: 0; background: var(--card-bg); border: 1px solid var(--accent-red, #ff4d4d); padding: 15px; border-radius: 12px; display: none; flex-direction: column; gap: 10px; box-shadow: 0 10px 20px rgba(0,0,0,0.8); z-index: 100;}
+        .logout-menu { position: absolute; top: 55px; right: 0; background: var(--card-bg); border: 1px solid var(--accent-red, #ff4d4d); padding: 15px; border-radius: 12px; display: none; flex-direction: column; gap: 10px; box-shadow: 0 10px 20px rgba(0,0,0,0.8); z-index: 1000;}
         .logout-menu.active { display: flex; animation: slideDown 0.3s ease; }
 
         /* --- FORM SECTIONS --- */
@@ -89,6 +90,7 @@
         .upload-box { background: rgba(0,0,0,0.6); border: 1px dashed #888; border-radius: 10px; text-align: center; cursor: pointer; transition: 0.3s; position: relative; overflow: hidden; display: flex; flex-direction: column; align-items: center; justify-content: center;}
         .upload-box:hover { border-color: var(--accent-main); }
         .upload-preview { position: absolute; inset: 0; background-size: cover; background-position: center; opacity: 0; z-index: 2; transition: 0.3s;}
+        .upload-preview.active { opacity: 1; }
         .upload-overlay { position: absolute; inset: 0; background: rgba(0,0,0,0.7); display: flex; align-items: center; justify-content: center; z-index: 3; opacity: 0; color: white; transition: 0.3s; }
         .upload-box:hover .upload-overlay { opacity: 1; }
         .file-input { display: none; }
@@ -113,7 +115,7 @@
         .timer-num { position: absolute; animation: unspin 1s linear infinite; }
         @keyframes unspin { 100% { transform: rotate(-360deg); } }
 
-        /* --- FETCH MODAL --- */
+        /* --- MODALS --- */
         .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.8); backdrop-filter: blur(10px); z-index: 5000; display: none; align-items: center; justify-content: center; opacity: 0; transition: 0.3s; padding: 20px;}
         .modal-overlay.active { display: flex; opacity: 1; }
         .modal-content { background: var(--card-bg); border: 1px solid var(--accent-main); width: 100%; max-width: 450px; border-radius: 16px; padding: 30px; position: relative; transform: scale(0.9); transition: 0.3s; box-shadow: 0 10px 40px rgba(0,0,0,0.9); }
@@ -127,7 +129,7 @@
 </head>
 <body>
 
-    <!-- AUTH LOCK (Fades out if logged in) -->
+    <!-- STRICT AUTH LOCK -->
     <div id="authLock">
         <i class="fa-solid fa-passport" style="font-size:4.5rem; color:var(--accent-main); margin-bottom:20px; filter:drop-shadow(0 0 20px var(--accent-main));"></i>
         <h1 style="font-family:var(--font-head); text-transform:uppercase; margin-bottom:10px;">Passport Required</h1>
@@ -136,9 +138,10 @@
     </div>
 
     <!-- UPGRADED HEADER -->
-    <div class="header">
+    <div class="header" id="dashHeader" style="display:none;">
         <div class="header-left">
-            <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEg_20wCR-WBMpQmw3vxcYUf-vxIO1PYDJoQN_Sid3UDjA9tf0cuX0eH40jbzHoJad4cxbnjhPjqfCw1Z5V1LhgN9zFuIQC0fJjecTy3D9PFu5WjR2H1wHwTD1bUGnXY_NiApWn5gMs6velcQngSzKoP1yHzX0cVsFSUFM8zIefcbiPayY7680Kz0V0ZAAE/s1264/1000093706.png" alt="Tournyx">
+            <!-- Universal Tournyx Logo -->
+            <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEg_20wCR-WBMpQmw3vxcYUf-vxIO1PYDJoQN_Sid3UDjA9tf0cuX0eH40jbzHoJad4cxbnjhPjqfCw1Z5V1LhgN9zFuIQC0fJjecTy3D9PFu5WjR2H1wHwTD1bUGnXY_NiApWn5gMs6velcQngSzKoP1yHzX0cVsFSUFM8zIefcbiPayY7680Kz0V0ZAAE/s1264/1000093706.png" class="header-logo" style="display:block;" alt="Tournyx">
             <div class="header-title-container">
                 <h3 class="header-title">Creator Dashboard</h3>
                 <h1 class="header-subtitle">Forge Editor</h1>
@@ -147,9 +150,11 @@
         <div class="header-right">
             <a href="#" id="viewHubBtn" class="view-hub-btn" target="_blank">View Hub <i class="fa-solid fa-arrow-up-right-from-square"></i></a>
             
+            <!-- Dynamic Profile Icon -->
             <img src="" id="profileImg" class="profile-btn" onclick="toggleLogout()">
             <i class="fa-solid fa-circle-user default-user" id="defaultUserIcon" onclick="toggleLogout()"></i>
             
+            <!-- Logout Menu -->
             <div class="logout-menu" id="logoutMenu">
                 <span style="font-size:0.75rem; color:#888; text-transform:uppercase; font-weight:bold; border-bottom:1px solid rgba(255,255,255,0.1); padding-bottom:5px;">Options</span>
                 <button class="btn-glow" style="background:rgba(255,77,77,0.1); border-color:#ff4d4d; color:#ff4d4d; padding:8px;" onclick="logout()"><i class="fa-solid fa-right-from-bracket"></i> Logout</button>
@@ -177,11 +182,11 @@
             <div class="form-row" style="margin-top:10px;">
                 <div class="input-group">
                     <label class="input-label">Primary Neon Style</label>
-                    <input type="color" id="inpColor1" class="color-picker">
+                    <input type="color" id="inpColor1" class="color-picker" onchange="triggerHaptic()">
                 </div>
                 <div class="input-group">
                     <label class="input-label">Secondary Neon Style</label>
-                    <input type="color" id="inpColor2" class="color-picker">
+                    <input type="color" id="inpColor2" class="color-picker" onchange="triggerHaptic()">
                 </div>
             </div>
 
@@ -189,7 +194,7 @@
             <div class="form-row" style="margin-top:15px;">
                 <div class="input-group">
                     <label class="input-label">Hub Logo (1:1 Ratio)</label>
-                    <div class="upload-box" style="height: 150px;" onclick="document.getElementById('logoInput').click()">
+                    <div class="upload-box" style="height: 150px;" onclick="document.getElementById('logoInput').click(); triggerHaptic();">
                         <i class="fa-solid fa-circle-user" style="font-size:2.5rem; color:#888; margin-bottom:10px;"></i>
                         <span style="font-size:0.9rem; font-weight:bold;">Tap to Edit Logo</span>
                         <div class="upload-preview" id="logoPreview"></div>
@@ -201,7 +206,7 @@
                 </div>
                 <div class="input-group">
                     <label class="input-label">Arena Banner (16:9 Ratio)</label>
-                    <div class="upload-box" style="height: 150px;" onclick="document.getElementById('bannerInput').click()">
+                    <div class="upload-box" style="height: 150px;" onclick="document.getElementById('bannerInput').click(); triggerHaptic();">
                         <i class="fa-solid fa-panorama" style="font-size:2.5rem; color:#888; margin-bottom:10px;"></i>
                         <span style="font-size:0.9rem; font-weight:bold;">Tap to Edit Banner</span>
                         <div class="upload-preview" id="bannerPreview"></div>
@@ -252,13 +257,13 @@
             </div>
         </div>
 
-        <!-- UPGRADED PRO ROSTER (MANUAL + FETCH) -->
+        <!-- PRO ROSTER BUILDER -->
         <div class="glass section-card" style="animation-delay: 0.3s;">
             <div class="section-title"><i class="fa-solid fa-shield-halved"></i> Pro Roster Builder</div>
             <p style="font-size:0.9rem; color:#aaa; margin-bottom:20px;">Build your official squad. Manually input details or instantly fetch verified player stats using their Tournyx email.</p>
             
             <div style="display:flex; gap:15px; margin-bottom: 25px;">
-                <button type="button" class="btn-glow" style="flex:1;" onclick="addPlayerInput()"><i class="fa-solid fa-pen-to-square"></i> Manual Add</button>
+                <button type="button" class="btn-glow" style="flex:1;" onclick="addPlayerInput(); triggerHaptic();"><i class="fa-solid fa-pen-to-square"></i> Manual Add</button>
                 <button type="button" class="btn-glow btn-sec" style="flex:1;" onclick="openModal('fetchModal')"><i class="fa-solid fa-magnifying-glass"></i> Fetch Player</button>
             </div>
 
@@ -272,11 +277,11 @@
             
             <label class="input-label" style="color:var(--accent-main);"><i class="fa-brands fa-youtube"></i> Main Videos</label>
             <div class="dynamic-list" id="videoList"></div>
-            <button type="button" class="add-new-btn" style="margin-bottom:20px;" onclick="addMediaInput('videoList', 'Video Embed URL')">+ Add Video Embed</button>
+            <button type="button" class="add-new-btn" style="margin-bottom:20px;" onclick="addMediaInput('videoList', 'Video Embed URL'); triggerHaptic();">+ Add Video Embed</button>
             
             <label class="input-label" style="color:var(--accent-main);"><i class="fa-solid fa-mobile-screen"></i> YouTube Shorts</label>
             <div class="dynamic-list" id="shortsList"></div>
-            <button type="button" class="add-new-btn" onclick="addMediaInput('shortsList', 'Shorts Embed URL')">+ Add Shorts Embed</button>
+            <button type="button" class="add-new-btn" onclick="addMediaInput('shortsList', 'Shorts Embed URL'); triggerHaptic();">+ Add Shorts Embed</button>
         </div>
 
         <!-- FOUNDERS & EDITORS -->
@@ -285,16 +290,16 @@
             
             <label class="input-label" style="color:var(--accent-main);">Founders / Owners</label>
             <div class="dynamic-list" id="founderList"></div>
-            <button type="button" class="add-new-btn" style="margin-bottom:20px;" onclick="addPersonInput('founderList')">+ Add Founder</button>
+            <button type="button" class="add-new-btn" style="margin-bottom:20px;" onclick="addPersonInput('founderList'); triggerHaptic();">+ Add Founder</button>
             
             <label class="input-label" style="color:var(--accent-main);">Editing Team</label>
             <div class="dynamic-list" id="editorList"></div>
-            <button type="button" class="add-new-btn" onclick="addPersonInput('editorList')">+ Add Editor</button>
+            <button type="button" class="add-new-btn" onclick="addPersonInput('editorList'); triggerHaptic();">+ Add Editor</button>
         </div>
 
         <!-- SUBMIT -->
         <div style="text-align: center; margin-top: 40px;">
-            <button type="submit" class="btn-glow pulse-btn" id="saveBtn" style="font-size:1.1rem; padding:15px 30px; max-width: 400px; margin:0 auto;">
+            <button type="submit" class="btn-glow pulse-btn" id="saveBtn" style="font-size:1.1rem; padding:15px 30px; max-width: 400px; margin:0 auto;" onclick="triggerHaptic()">
                 <i class="fa-solid fa-floppy-disk"></i> Synchronize Hub Live
             </button>
             <p id="statusMsg" style="text-align:center; font-weight:bold; font-size:1.1rem; margin-top: 15px;"></p>
@@ -304,7 +309,7 @@
     <!-- FETCH PLAYER MODAL -->
     <div class="modal-overlay" id="fetchModal" onclick="closeModal(event, 'fetchModal')">
         <div class="modal-content glass" style="text-align:center;">
-            <i class="fa-solid fa-xmark modal-close" onclick="document.getElementById('fetchModal').classList.remove('active')"></i>
+            <i class="fa-solid fa-xmark modal-close" onclick="closeModalDirect('fetchModal')"></i>
             <i class="fa-solid fa-magnifying-glass" style="font-size:3rem; color:var(--accent-sec); margin-bottom:15px; filter:drop-shadow(0 0 15px var(--accent-sec));"></i>
             <h2 style="font-family:var(--font-head); color:white; margin-bottom:10px;">Fetch Tournyx Player</h2>
             <p style="color:#aaa; font-size:0.9rem; margin-bottom:20px;">Enter the player's Tournyx verified email to automatically pull their stats and IGN into the roster.</p>
@@ -332,32 +337,46 @@
         
         let currentUser = JSON.parse(localStorage.getItem('tournyx_user'));
         let myHubId = "";
-        let pendingRequests = []; // Store requests fetched from DB
+        let pendingRequests = []; 
 
-        // --- AUTH CHECK & LOGOUT ---
-        if(currentUser && currentUser.email && currentUser.role === 'organizer') {
+        // --- BULLETPROOF JSON PARSER ---
+        function safeJSONParse(data, defaultReturn) {
+            if (typeof data === 'object' && data !== null) return data;
+            if (!data || data.trim() === "") return defaultReturn;
+            try { return JSON.parse(data); } 
+            catch(e) { console.warn("Parse error, using default.", e); return defaultReturn; }
+        }
+
+        // --- HAPTIC ENGINE ---
+        function triggerHaptic() { if(navigator.vibrate) navigator.vibrate(30); }
+
+        // --- STRICT AUTH CHECK & LOGOUT ---
+        if(currentUser && currentUser.email && (currentUser.role === 'organizer' || currentUser.role === 'admin')) {
             document.getElementById('authLock').classList.add('hidden');
+            document.getElementById('dashHeader').style.display = 'flex';
             document.getElementById('editForm').style.display = 'block';
             fetchMyHub();
         }
 
         function toggleLogout() {
-            let menu = document.getElementById('logoutMenu');
-            menu.classList.toggle('active');
+            triggerHaptic();
+            document.getElementById('logoutMenu').classList.toggle('active');
         }
 
         function logout() {
+            triggerHaptic();
             localStorage.removeItem('tournyx_user');
             window.location.href = 'https://tournyx.in/login.html';
         }
 
-        function openModal(id) { document.getElementById(id).classList.add('active'); }
+        function openModal(id) { triggerHaptic(); document.getElementById(id).classList.add('active'); }
         function closeModal(e, id) { if(e.target.id === id) document.getElementById(id).classList.remove('active'); }
+        function closeModalDirect(id) { document.getElementById(id).classList.remove('active'); }
 
         // --- SQUAD REQUEST HANDLERS ---
         function renderRequests() {
             let container = document.getElementById('requestsList');
-            if(pendingRequests.length === 0) {
+            if(!pendingRequests || pendingRequests.length === 0) {
                 container.innerHTML = '<p style="color:#888; font-style:italic;">No pending requests at this time.</p>';
                 return;
             }
@@ -375,8 +394,8 @@
                         </div>
                         <div style="font-size:0.75rem; color:#ccc;">${req.bio ? req.bio.substring(0,60)+'...' : 'No bio provided.'}</div>
                         <div class="req-actions">
-                            <button type="button" class="btn-glow" style="padding:6px; font-size:0.7rem;" onclick="approveRequest(${idx})"><i class="fa-solid fa-check"></i> Accept</button>
-                            <button type="button" class="btn-glow" style="padding:6px; font-size:0.7rem; background:rgba(255,77,77,0.1); border-color:#ff4d4d; color:#ff4d4d;" onclick="rejectRequest(${idx})"><i class="fa-solid fa-xmark"></i> Reject</button>
+                            <button type="button" class="btn-glow" style="padding:6px; font-size:0.7rem;" onclick="approveRequest(${idx}); triggerHaptic();"><i class="fa-solid fa-check"></i> Accept</button>
+                            <button type="button" class="btn-glow" style="padding:6px; font-size:0.7rem; background:rgba(255,77,77,0.1); border-color:#ff4d4d; color:#ff4d4d;" onclick="rejectRequest(${idx}); triggerHaptic();"><i class="fa-solid fa-xmark"></i> Reject</button>
                         </div>
                     </div>
                 `;
@@ -386,15 +405,7 @@
 
         function approveRequest(idx) {
             let req = pendingRequests[idx];
-            // Add to roster input
-            addPlayerInput({
-                name: req.ign || req.name || "",
-                role: req.role || "",
-                uid: req.uid || "",
-                ig: "",
-                img: "" // Leave blank for manual update
-            });
-            // Remove from array and UI
+            addPlayerInput({ name: req.ign || req.name || "", role: req.role || "", uid: req.uid || "", ig: "", img: "" });
             pendingRequests.splice(idx, 1);
             renderRequests();
             alert("Player added to Roster Builder below! Remember to save your hub to finalize.");
@@ -411,13 +422,12 @@
         function addMediaInput(containerId, placeholder, value = "") {
             let limit = document.getElementById(containerId).children.length;
             if(limit >= 10) { alert("Maximum 10 allowed."); return; }
-            
             const container = document.getElementById(containerId);
             const div = document.createElement('div');
             div.className = "dynamic-item";
             div.innerHTML = `
                 <input type="url" class="form-input media-val" value="${value}" placeholder="${placeholder}" required>
-                <button type="button" class="remove-btn" onclick="this.parentElement.remove()"><i class="fa-solid fa-trash"></i></button>
+                <button type="button" class="remove-btn" onclick="this.parentElement.remove(); triggerHaptic();"><i class="fa-solid fa-trash"></i></button>
             `;
             container.appendChild(div);
         }
@@ -432,7 +442,7 @@
             let bgStyle = data.img ? `style="background-image:url('${data.img}'); opacity:1;"` : "";
             
             div.innerHTML = `
-                <div class="upload-box" style="padding:0; height:90px; justify-content:center;" onclick="document.getElementById('inp_${uniqueId}').click()">
+                <div class="upload-box" style="padding:0; height:90px; justify-content:center;" onclick="document.getElementById('inp_${uniqueId}').click(); triggerHaptic();">
                     <i class="fa-solid fa-image" style="color:#888; font-size:1.5rem;"></i>
                     <div class="upload-preview ${data.img ? 'active' : ''}" id="prev_${uniqueId}" ${bgStyle}></div>
                     <div class="upload-loader" id="load_${uniqueId}"><i class="fa-solid fa-circle-notch fa-spin" style="color:white; font-size:1.5rem;"></i></div>
@@ -443,7 +453,7 @@
                     <input type="text" class="form-input person-name" value="${data.name}" placeholder="Name" required>
                     <input type="text" class="form-input person-role" value="${data.role}" placeholder="Role (e.g. Manager)" required>
                 </div>
-                <button type="button" class="remove-btn" onclick="this.parentElement.remove()"><i class="fa-solid fa-trash"></i></button>
+                <button type="button" class="remove-btn" onclick="this.parentElement.remove(); triggerHaptic();"><i class="fa-solid fa-trash"></i></button>
             `;
             container.appendChild(div);
         }
@@ -459,7 +469,7 @@
             
             div.innerHTML = `
                 <div style="display:flex; gap:20px; align-items:center;">
-                    <div class="upload-box" style="padding:0; height:100px; width:100px; flex-shrink:0; border-radius:12px;" onclick="document.getElementById('inp_${uniqueId}').click()">
+                    <div class="upload-box" style="padding:0; height:100px; width:100px; flex-shrink:0; border-radius:12px;" onclick="document.getElementById('inp_${uniqueId}').click(); triggerHaptic();">
                         <i class="fa-solid fa-user" style="color:#888; font-size:2rem;"></i>
                         <div class="upload-preview ${data.img ? 'active' : ''}" id="prev_${uniqueId}" ${bgStyle}></div>
                         <div class="upload-loader" id="load_${uniqueId}"><i class="fa-solid fa-circle-notch fa-spin" style="color:white; font-size:1.5rem;"></i></div>
@@ -479,13 +489,14 @@
                     <input type="text" class="form-input player-kd" value="${data.kd || ''}" placeholder="K/D Ratio (Optional)">
                     <input type="text" class="form-input player-hs" value="${data.hs || ''}" placeholder="Headshot % (Optional)">
                 </div>
-                <button type="button" class="remove-btn" onclick="this.parentElement.remove()"><i class="fa-solid fa-trash"></i></button>
+                <button type="button" class="remove-btn" onclick="this.parentElement.remove(); triggerHaptic();"><i class="fa-solid fa-trash"></i></button>
             `;
             container.appendChild(div);
         }
 
         // --- FETCH TOURNYX PLAYER LOGIC ---
         async function fetchPlayerByEmail() {
+            triggerHaptic();
             let email = document.getElementById('fetchEmailInp').value.trim();
             let err = document.getElementById('fetchErr');
             let btn = document.getElementById('fetchBtn');
@@ -503,14 +514,13 @@
                 let data = await res.json();
                 
                 if (data.status === 'success') {
-                    // Populate new input with fetched data
                     addPlayerInput({
                         name: data.data.name || "",
                         role: data.data.role || "",
                         uid: data.data.uid || "",
                         ig: "", img: "", kd: "", hs: ""
                     });
-                    document.getElementById('fetchModal').classList.remove('active');
+                    closeModalDirect('fetchModal');
                     document.getElementById('fetchEmailInp').value = "";
                 } else { throw new Error(data.message); }
             } catch(e) {
@@ -577,16 +587,14 @@
                     let hub = data.data;
                     myHubId = hub.id;
                     
-                    // Bulletproof Fallbacks for Configs
-                    let config = hub.config || {};
-                    let theme = hub.theme || {};
-                    let roster = hub.roster || [];
-                    pendingRequests = hub.requests || []; // Global assignment
+                    // Bulletproof Extraction Algorithm
+                    let config = safeJSONParse(hub.config, {});
+                    let theme = safeJSONParse(hub.theme, {main:"#00f2ff", sec:"#bd00ff"});
+                    let roster = safeJSONParse(hub.roster, []);
+                    pendingRequests = safeJSONParse(hub.requests, []);
 
-                    // Apply Header Logo & Theme
+                    // Apply Header Logic
                     if(config.logo) {
-                        document.getElementById('headerLogo').src = config.logo;
-                        document.getElementById('headerLogo').style.display = 'block';
                         document.getElementById('profileImg').src = config.logo;
                         document.getElementById('profileImg').style.display = 'block';
                         document.getElementById('defaultUserIcon').style.display = 'none';
@@ -599,7 +607,7 @@
                     document.getElementById('viewHubBtn').style.display = 'flex';
                     document.getElementById('viewHubBtn').href = `https://tournyx.in/hub.html?c=${myHubId}`;
                     
-                    // Basic Form Populate
+                    // Populate Main Form
                     document.getElementById('inpName').value = config.name || config.HubName || "";
                     document.getElementById('inpBio').value = config.bio || config.Mission || "";
                     document.getElementById('inpColor1').value = theme.main || "#00f2ff";
@@ -628,9 +636,6 @@
                         document.getElementById('inpDcLink').value = config.socials.discord || "";
                     }
                     
-                    // Render Requests Tab
-                    renderRequests();
-
                     // Arrays
                     if(config.media) {
                         if(config.media.videos) config.media.videos.forEach(v => addMediaInput('videoList', 'YouTube Embed URL', v));
@@ -638,11 +643,14 @@
                     }
                     if(config.founders) config.founders.forEach(f => addPersonInput('founderList', f));
                     if(config.editors) config.editors.forEach(e => addPersonInput('editorList', e));
+                    
+                    // Load Roster & Requests
                     roster.forEach(p => addPlayerInput(p));
+                    renderRequests();
                 }
             } catch(e) { 
                 console.error(e); 
-                document.getElementById('statusMsg').innerText = "Failed to load Hub data.";
+                document.getElementById('statusMsg').innerText = "Failed to load Hub data properly. Please try refreshing.";
                 document.getElementById('statusMsg').style.color = "#ff4d4d";
             }
         }
@@ -650,28 +658,23 @@
         // --- SUBMIT SAVE & REDIRECT ---
         document.getElementById('editForm').addEventListener('submit', async (e) => {
             e.preventDefault();
+            triggerHaptic();
             let btn = document.getElementById('saveBtn');
             let status = document.getElementById('statusMsg');
             btn.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin"></i> Synchronizing Network...';
             btn.disabled = true;
 
-            // Extract Arrays
             let videos = Array.from(document.querySelectorAll('#videoList .media-val')).map(el => el.value);
             let shorts = Array.from(document.querySelectorAll('#shortsList .media-val')).map(el => el.value);
             
             let founders = Array.from(document.querySelectorAll('#founderList .dynamic-item')).map(el => ({
-                img: el.querySelector('.person-img').value,
-                name: el.querySelector('.person-name').value,
-                role: el.querySelector('.person-role').value
+                img: el.querySelector('.person-img').value, name: el.querySelector('.person-name').value, role: el.querySelector('.person-role').value
             }));
             
             let editors = Array.from(document.querySelectorAll('#editorList .dynamic-item')).map(el => ({
-                img: el.querySelector('.person-img').value,
-                name: el.querySelector('.person-name').value,
-                role: el.querySelector('.person-role').value
+                img: el.querySelector('.person-img').value, name: el.querySelector('.person-name').value, role: el.querySelector('.person-role').value
             }));
 
-            // Expanded Roster Extractor
             let roster = Array.from(document.querySelectorAll('#rosterList .dynamic-item')).map(el => ({
                 img: el.querySelector('.player-img').value,
                 name: el.querySelector('.player-name').value,
@@ -701,7 +704,7 @@
                 founders: founders,
                 editors: editors,
                 roster: roster,
-                requests: pendingRequests // Save the remaining requests back
+                requests: pendingRequests 
             };
 
             try {
@@ -709,7 +712,6 @@
                 let data = await res.json();
                 
                 if (data.status === 'success') {
-                    // Success Overlay & Timer Redirect
                     document.getElementById('successOverlay').classList.add('active');
                     if(navigator.vibrate) navigator.vibrate([30,50,30]);
                     
