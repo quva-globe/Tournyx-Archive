@@ -29,7 +29,7 @@
         a { text-decoration: none; color: inherit; }
 
         /* --- UTILS & GLASSMORPHISM --- */
-        .glass { background: var(--card-bg); backdrop-filter: blur(25px); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 16px; }
+        .glass { background: var(--card-bg); backdrop-filter: blur(25px); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 16px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
         .gradient-text { background: linear-gradient(90deg, var(--accent-sec), var(--accent-main)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
         
         /* Buttons */
@@ -66,8 +66,8 @@
         .logout-menu.active { display: flex; animation: slideDown 0.3s ease; }
 
         /* --- FORM SECTIONS --- */
-        .section-card { padding: 25px; margin-bottom: 30px; animation: slideUp 0.6s ease forwards; opacity: 0; transform: translateY(20px); transition: border-color 0.3s;}
-        .section-card:hover { border-color: var(--accent-main); box-shadow: 0 10px 30px rgba(0,0,0,0.6), inset 0 0 15px rgba(0,242,255,0.05); }
+        .section-card { padding: 25px; margin-bottom: 30px; animation: slideUp 0.6s ease forwards; opacity: 0; transform: translateY(20px); transition: border-color 0.3s, box-shadow 0.3s;}
+        .section-card:hover { border-color: var(--accent-main); box-shadow: 0 10px 35px rgba(0,0,0,0.8), inset 0 0 20px rgba(0,242,255,0.05); }
         .section-title { font-family: var(--font-head); color: var(--accent-sec); font-size: 1.2rem; text-transform: uppercase; margin-bottom: 20px; display: flex; align-items: center; gap: 10px; border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 10px;}
 
         .input-group { margin-bottom: 20px; }
@@ -159,7 +159,6 @@
     <!-- UPGRADED HEADER -->
     <div class="header" id="dashHeader" style="display:none;">
         <div class="header-left">
-            <!-- Universal Tournyx Logo -->
             <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEg_20wCR-WBMpQmw3vxcYUf-vxIO1PYDJoQN_Sid3UDjA9tf0cuX0eH40jbzHoJad4cxbnjhPjqfCw1Z5V1LhgN9zFuIQC0fJjecTy3D9PFu5WjR2H1wHwTD1bUGnXY_NiApWn5gMs6velcQngSzKoP1yHzX0cVsFSUFM8zIefcbiPayY7680Kz0V0ZAAE/s1264/1000093706.png" class="header-logo" style="display:block;" alt="Tournyx">
             <div class="header-title-container">
                 <h3 class="header-title">Creator Dashboard</h3>
@@ -169,11 +168,9 @@
         <div class="header-right">
             <a href="#" id="viewHubBtn" class="view-hub-btn" target="_blank">View Hub <i class="fa-solid fa-arrow-up-right-from-square"></i></a>
             
-            <!-- Dynamic Profile Icon -->
             <img src="" id="profileImg" class="profile-btn" onclick="toggleLogout()">
             <i class="fa-solid fa-circle-user default-user" id="defaultUserIcon" onclick="toggleLogout()"></i>
             
-            <!-- Logout Menu -->
             <div class="logout-menu" id="logoutMenu">
                 <span style="font-size:0.75rem; color:#888; text-transform:uppercase; font-weight:bold; border-bottom:1px solid rgba(255,255,255,0.1); padding-bottom:5px;">Options</span>
                 <button class="btn-glow" style="background:rgba(255,77,77,0.1); border-color:#ff4d4d; color:#ff4d4d; padding:8px;" onclick="logout()"><i class="fa-solid fa-right-from-bracket"></i> Logout</button>
@@ -193,9 +190,17 @@
                     <input type="text" class="form-input" id="inpName" required>
                 </div>
                 <div class="input-group">
-                    <label class="input-label">Mission / Bio (Emojis Supported)</label>
-                    <textarea class="form-input" id="inpBio" rows="2" required></textarea>
+                    <label class="input-label">Moto / Slogan (Optional)</label>
+                    <input type="text" class="form-input" id="inpMoto" placeholder="Short team moto or slogan">
                 </div>
+            </div>
+            <div class="input-group">
+                <label class="input-label">Mission / Bio (Emojis Supported)</label>
+                <textarea class="form-input" id="inpBio" rows="2" required></textarea>
+            </div>
+            <div class="input-group">
+                <label class="input-label">Future Ambitions (Optional)</label>
+                <textarea class="form-input" id="inpAmbitions" rows="2" placeholder="Describe your team's goals..."></textarea>
             </div>
             
             <div class="form-row" style="margin-top:10px;">
@@ -302,9 +307,13 @@
             <div class="dynamic-list" id="shortsList"></div>
             <button type="button" class="add-new-btn" style="margin-bottom:20px;" onclick="addMediaInput('shortsList', 'Shorts Link (e.g. youtube.com/shorts/...)'); triggerHaptic();">+ Add Short</button>
 
-            <label class="input-label" style="color:#e1306c;"><i class="fa-brands fa-instagram"></i> Instagram Posts/Reels</label>
-            <div class="dynamic-list" id="instaList"></div>
-            <button type="button" class="add-new-btn" style="border-color:#e1306c; color:#e1306c;" onclick="addMediaInput('instaList', 'Instagram Link (e.g. instagram.com/p/...)'); triggerHaptic();">+ Add Instagram Post</button>
+            <label class="input-label" style="color:#e1306c;"><i class="fa-brands fa-instagram"></i> Instagram Posts</label>
+            <div class="dynamic-list" id="instaPostList"></div>
+            <button type="button" class="add-new-btn" style="border-color:#e1306c; color:#e1306c; margin-bottom:20px;" onclick="addMediaInput('instaPostList', 'Instagram Post Link (e.g. instagram.com/p/...)'); triggerHaptic();">+ Add Insta Post</button>
+
+            <label class="input-label" style="color:#e1306c;"><i class="fa-brands fa-instagram"></i> Instagram Reels</label>
+            <div class="dynamic-list" id="instaReelList"></div>
+            <button type="button" class="add-new-btn" style="border-color:#e1306c; color:#e1306c;" onclick="addMediaInput('instaReelList', 'Instagram Reel Link (e.g. instagram.com/reel/...)'); triggerHaptic();">+ Add Insta Reel</button>
         </div>
 
         <!-- FOUNDERS & EDITORS -->
@@ -384,7 +393,8 @@
             <h2 style="font-family:var(--font-head); color:white; margin-bottom:20px;">Card Preview</h2>
             <img id="prevPersonImg" src="" style="width:100px; height:100px; border-radius:50%; object-fit:cover; margin-bottom:15px; border:2px solid var(--accent-main);">
             <h3 id="prevPersonName" style="font-family:var(--font-head); color:white; margin-bottom:5px;">Name</h3>
-            <p id="prevPersonRole" style="color:var(--accent-sec); font-weight:bold; text-transform:uppercase; font-size:0.8rem;">Role</p>
+            <p id="prevPersonRole" style="color:var(--accent-sec); font-weight:bold; text-transform:uppercase; font-size:0.8rem; margin-bottom:10px;">Role</p>
+            <p id="prevPersonDesc" style="color:#aaa; font-size:0.85rem; font-style:italic;">Description</p>
         </div>
     </div>
 
@@ -408,7 +418,12 @@
         function safeJSONParse(data, defaultReturn) {
             if (typeof data === 'object' && data !== null) return data;
             if (!data || data.trim() === "") return defaultReturn;
-            try { return JSON.parse(data); } 
+            try { 
+                let parsed = JSON.parse(data); 
+                // Double Parse catch for Arrays saved weirdly in Sheets
+                if (typeof parsed === 'string') parsed = JSON.parse(parsed); 
+                return parsed;
+            } 
             catch(e) { console.warn("Parse error, using default.", e); return defaultReturn; }
         }
 
@@ -437,6 +452,7 @@
             document.getElementById('prevPersonImg').src = item.querySelector('.person-img').value || 'https://via.placeholder.com/100';
             document.getElementById('prevPersonName').innerText = item.querySelector('.person-name').value || 'Name Not Set';
             document.getElementById('prevPersonRole').innerText = item.querySelector('.person-role').value || 'Role Not Set';
+            document.getElementById('prevPersonDesc').innerText = item.querySelector('.person-desc').value || '';
             openModal('previewModalPerson');
         }
 
@@ -451,7 +467,6 @@
             document.getElementById('prevPlayerUid').innerText = "UID: " + (item.querySelector('.player-uid').value || '-');
             openModal('previewModalPlayer');
         }
-
 
         // --- SQUAD REQUEST HANDLERS ---
         function renderRequests() {
@@ -512,7 +527,7 @@
             container.appendChild(div);
         }
 
-        function addPersonInput(containerId, data = {name:"", role:"", img:""}) {
+        function addPersonInput(containerId, data = {name:"", role:"", desc:"", img:""}) {
             const container = document.getElementById(containerId);
             let uniqueId = "img_" + Date.now() + Math.floor(Math.random()*100);
             const div = document.createElement('div');
@@ -531,9 +546,10 @@
                     <input type="hidden" class="person-img" id="val_${uniqueId}" value="${data.img}" required>
                 </div>
                 <div style="display:flex; flex-direction:column; gap:10px; justify-content:center;">
-                    <input type="text" class="form-input person-name" value="${data.name}" placeholder="Name" required>
-                    <input type="text" class="form-input person-role" value="${data.role}" placeholder="Role (e.g. Manager)" required>
+                    <input type="text" class="form-input person-name" value="${data.name}" placeholder="Name" required style="padding:8px;">
+                    <input type="text" class="form-input person-role" value="${data.role}" placeholder="Role (e.g. Manager)" required style="padding:8px;">
                 </div>
+                <textarea class="form-input person-desc" rows="2" placeholder="Description / Bio" style="grid-column: 1 / -1; padding:8px; resize:none;">${data.desc || ""}</textarea>
                 <button type="button" class="remove-btn" onclick="this.parentElement.remove(); triggerHaptic();"><i class="fa-solid fa-trash"></i></button>
             `;
             container.appendChild(div);
@@ -635,7 +651,7 @@
         function convertInstaLink(url) {
             if(!url) return "";
             if(url.includes('/embed')) return url;
-            let cleanUrl = url.split('?')[0];
+            let cleanUrl = url.split('?')[0]; 
             if (!cleanUrl.endsWith('/')) cleanUrl += '/';
             return cleanUrl + "embed";
         }
@@ -752,6 +768,9 @@
                     
                     document.getElementById('inpName').value = config.name || config.HubName || "";
                     document.getElementById('inpBio').value = config.bio || config.Mission || "";
+                    document.getElementById('inpMoto').value = config.moto || "";
+                    document.getElementById('inpAmbitions').value = config.ambitions || "";
+                    
                     document.getElementById('inpColor1').value = theme.main || "#00f2ff";
                     document.getElementById('inpColor2').value = theme.sec || "#bd00ff";
                     
@@ -779,7 +798,8 @@
                     if(config.media) {
                         if(config.media.videos) config.media.videos.forEach(v => addMediaInput('videoList', 'YouTube Link', v));
                         if(config.media.shorts) config.media.shorts.forEach(s => addMediaInput('shortsList', 'Shorts Link', s));
-                        if(config.media.insta) config.media.insta.forEach(i => addMediaInput('instaList', 'Instagram Link', i));
+                        if(config.media.insta_posts) config.media.insta_posts.forEach(i => addMediaInput('instaPostList', 'Instagram Post Link', i));
+                        if(config.media.insta_reels) config.media.insta_reels.forEach(i => addMediaInput('instaReelList', 'Instagram Reel Link', i));
                     }
                     if(config.founders) config.founders.forEach(f => addPersonInput('founderList', f));
                     if(config.editors) config.editors.forEach(e => addPersonInput('editorList', e));
@@ -805,18 +825,26 @@
 
             let rawVideos = Array.from(document.querySelectorAll('#videoList .media-val')).map(el => el.value);
             let rawShorts = Array.from(document.querySelectorAll('#shortsList .media-val')).map(el => el.value);
-            let rawInsta = Array.from(document.querySelectorAll('#instaList .media-val')).map(el => el.value);
+            let rawInstaPosts = Array.from(document.querySelectorAll('#instaPostList .media-val')).map(el => el.value);
+            let rawInstaReels = Array.from(document.querySelectorAll('#instaReelList .media-val')).map(el => el.value);
 
             let videos = rawVideos.map(link => convertYouTubeLink(link)).filter(link => link !== "");
             let shorts = rawShorts.map(link => convertShortsLink(link)).filter(link => link !== "");
-            let insta = rawInsta.map(link => convertInstaLink(link)).filter(link => link !== "");
+            let instaPosts = rawInstaPosts.map(link => convertInstaLink(link)).filter(link => link !== "");
+            let instaReels = rawInstaReels.map(link => convertInstaLink(link)).filter(link => link !== "");
             
             let founders = Array.from(document.querySelectorAll('#founderList .dynamic-item')).map(el => ({
-                img: el.querySelector('.person-img').value, name: el.querySelector('.person-name').value, role: el.querySelector('.person-role').value
+                img: el.querySelector('.person-img').value, 
+                name: el.querySelector('.person-name').value, 
+                role: el.querySelector('.person-role').value,
+                desc: el.querySelector('.person-desc').value
             }));
             
             let editors = Array.from(document.querySelectorAll('#editorList .dynamic-item')).map(el => ({
-                img: el.querySelector('.person-img').value, name: el.querySelector('.person-name').value, role: el.querySelector('.person-role').value
+                img: el.querySelector('.person-img').value, 
+                name: el.querySelector('.person-name').value, 
+                role: el.querySelector('.person-role').value,
+                desc: el.querySelector('.person-desc').value
             }));
 
             let roster = Array.from(document.querySelectorAll('#rosterList .dynamic-item')).map(el => ({
@@ -834,6 +862,8 @@
                 email: currentUser.email,
                 creator_name: document.getElementById('inpName').value,
                 bio: document.getElementById('inpBio').value,
+                moto: document.getElementById('inpMoto').value,
+                ambitions: document.getElementById('inpAmbitions').value,
                 logo_url: document.getElementById('valLogo').value,
                 banner_url: document.getElementById('valBanner').value,
                 color_main: document.getElementById('inpColor1').value,
@@ -845,7 +875,8 @@
                 discord_link: document.getElementById('inpDcLink').value,
                 yt_videos: videos,
                 yt_shorts: shorts,
-                ig_posts: insta,
+                ig_posts: instaPosts,
+                ig_reels: instaReels,
                 founders: founders,
                 editors: editors,
                 roster: roster,
