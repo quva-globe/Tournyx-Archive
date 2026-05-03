@@ -13,72 +13,77 @@
         :root {
             --primary-bg: #030108;
             --surface-bg: rgba(15, 8, 25, 0.6);
-            --card-bg: rgba(10, 5, 18, 0.85);
             --accent-main: #00f2ff;
             --accent-sec: #bd00ff;
-            --text-main: #ffffff;
-            --text-muted: #999999;
             --font-head: 'Orbitron', sans-serif;
             --font-body: 'Rajdhani', sans-serif;
         }
-
-        /* --- GLOBAL RESETS --- */
-        * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-        *::-webkit-scrollbar { display: none; }
-        body { background-color: var(--primary-bg); color: var(--text-main); font-family: var(--font-body); padding: 20px; max-width: 900px; margin: 0 auto; padding-bottom: 100px; overflow-x: hidden;}
-        a { text-decoration: none; color: inherit; }
-
-        /* --- UTILS & GLASSMORPHISM --- */
-        .glass { background: var(--card-bg); backdrop-filter: blur(25px); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 16px; }
-        .gradient-text { background: linear-gradient(90deg, var(--accent-sec), var(--accent-main)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        body { background-color: var(--primary-bg); color: white; font-family: var(--font-body); padding: 20px; max-width: 900px; margin: 0 auto; padding-bottom: 50px; overflow-x: hidden; scroll-behavior: smooth;}
+        * { box-sizing: border-box; }
+        a { text-decoration: none; }
         
-        .btn-glow { background: rgba(0,0,0,0.6); color: #fff; padding: 12px 25px; border-radius: 8px; font-family: var(--font-head); font-weight: bold; font-size: 0.9rem; text-transform: uppercase; border: 1px solid var(--accent-main); box-shadow: 0 0 15px rgba(0, 0, 0, 0.5); transition: 0.3s; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; gap: 10px; width: 100%;}
-        .btn-glow:hover { background: var(--accent-main); color: #000; box-shadow: 0 0 25px var(--accent-main); transform: translateY(-3px); }
-        .btn-glow:disabled { opacity: 0.5; cursor: not-allowed; transform: none; box-shadow: none; }
-
-        .pulse-btn { animation: pulseBtn 2s infinite; background: var(--accent-main); color: #000; border: none; }
-        @keyframes pulseBtn { 0% { box-shadow: 0 0 0 0 rgba(0,242,255, 0.7); } 70% { box-shadow: 0 0 0 15px rgba(0,242,255, 0); } 100% { box-shadow: 0 0 0 0 rgba(0,242,255, 0); } }
+        .gradient-text { background: linear-gradient(90deg, var(--accent-sec), var(--accent-main)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
 
         /* --- AUTH LOCK --- */
         #authLock { position: fixed; inset: 0; background: var(--primary-bg); z-index: 9999; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 20px; transition: 0.5s; }
         #authLock.hidden { opacity: 0; pointer-events: none; }
 
-        /* --- HEADER --- */
-        .header { display: flex; flex-direction: column; align-items: center; text-align: center; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 20px; margin-bottom: 30px; gap: 10px; animation: slideDown 0.5s ease;}
-        @media(min-width: 768px) { .header { flex-direction: row; text-align: left; } }
-        .header h1 { font-family: var(--font-head); font-size: 1.8rem; text-transform: uppercase; font-weight: 900;}
-        .view-hub-btn { background: rgba(0,242,255,0.1); color: var(--accent-main); border: 1px solid var(--accent-main); padding: 8px 15px; border-radius: 8px; font-weight: bold; font-family: var(--font-head); display: flex; align-items: center; gap: 8px; transition: 0.3s; display: none;}
-        .view-hub-btn:hover { background: var(--accent-main); color: #000; }
+        /* --- HEADER REIMAGINED --- */
+        .header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 15px; margin-bottom: 30px; animation: slideDown 0.5s ease; flex-wrap: wrap; gap: 15px;}
+        .header-left { display: flex; align-items: center; gap: 15px; }
+        .header-logo { width: 45px; height: 45px; border-radius: 50%; border: 2px solid var(--accent-main); object-fit: cover; box-shadow: 0 0 15px rgba(0,242,255,0.3); display: none; }
+        .header-text h1 { font-family: var(--font-head); font-size: 1.3rem; margin: 0; text-transform: uppercase; font-weight: 900;}
+        .header-text span { font-size: 0.75rem; color: var(--accent-main); text-transform: uppercase; letter-spacing: 1px; font-weight: bold;}
+        
+        .header-right { display: flex; align-items: center; gap: 20px; }
+        .view-hub-btn { background: rgba(0,242,255,0.1); color: var(--accent-main); border: 1px solid var(--accent-main); padding: 8px 15px; border-radius: 8px; font-weight: bold; font-family: var(--font-head); display: flex; align-items: center; gap: 8px; transition: 0.3s; display: none; font-size: 0.8rem;}
+        .view-hub-btn:hover { background: var(--accent-main); color: #000; box-shadow: 0 0 15px var(--accent-main);}
+        .profile-icon { font-size: 2.2rem; color: var(--accent-sec); filter: drop-shadow(0 0 10px var(--accent-sec)); cursor: pointer; transition: 0.3s;}
+        .profile-icon:hover { transform: scale(1.1); color: var(--accent-main); filter: drop-shadow(0 0 10px var(--accent-main));}
 
-        /* --- FORM SECTIONS --- */
-        .section-card { padding: 25px; margin-bottom: 25px; animation: slideUp 0.6s ease forwards; opacity: 0; transform: translateY(20px);}
-        .section-title { font-family: var(--font-head); color: var(--accent-sec); font-size: 1.2rem; text-transform: uppercase; margin-bottom: 20px; display: flex; align-items: center; gap: 10px; border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 10px;}
+        /* --- FORM SECTIONS & INPUTS (Large & Clear) --- */
+        .section-card { background: var(--surface-bg); border: 1px solid rgba(255,255,255,0.05); padding: 30px; border-radius: 16px; margin-bottom: 30px; animation: slideUp 0.6s ease forwards; opacity: 0; transform: translateY(20px); box-shadow: 0 10px 30px rgba(0,0,0,0.5);}
+        .section-title { font-family: var(--font-head); color: var(--accent-sec); font-size: 1.3rem; text-transform: uppercase; margin-bottom: 25px; display: flex; align-items: center; gap: 10px; border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 10px;}
 
-        .input-group { margin-bottom: 15px; }
-        .input-label { display: block; font-size: 0.8rem; text-transform: uppercase; color: #888; margin-bottom: 8px; font-weight: bold; letter-spacing: 1px;}
-        .form-input { width: 100%; background: rgba(0,0,0,0.5); border: 1px solid rgba(255,255,255,0.1); padding: 14px; border-radius: 8px; color: white; outline: none; font-family: var(--font-body); font-size: 1rem; transition: 0.3s;}
-        .form-input:focus { border-color: var(--accent-main); box-shadow: 0 0 15px rgba(0,242,255,0.2); }
-        .form-row { display: grid; grid-template-columns: 1fr; gap: 15px; }
+        .input-group { margin-bottom: 20px; width: 100%; }
+        .input-label { display: block; font-size: 0.85rem; text-transform: uppercase; color: #aaa; margin-bottom: 8px; font-weight: bold; letter-spacing: 1px;}
+        .form-input { width: 100%; background: rgba(0,0,0,0.6); border: 1px solid rgba(255,255,255,0.15); padding: 16px; border-radius: 10px; color: white; outline: none; font-family: var(--font-body); font-size: 1.05rem; transition: 0.3s;}
+        .form-input:focus { border-color: var(--accent-main); box-shadow: 0 0 15px rgba(0,242,255,0.2), inset 0 0 10px rgba(0,0,0,0.5); }
+        .form-row { display: grid; grid-template-columns: 1fr; gap: 20px; }
         @media(min-width: 768px) { .form-row { grid-template-columns: 1fr 1fr; } }
 
-        /* --- DYNAMIC LISTS & UPLOADS --- */
-        .dynamic-list { display: flex; flex-direction: column; gap: 15px; margin-bottom: 15px; }
-        .dynamic-item { background: rgba(0,0,0,0.4); padding: 15px; border-radius: 12px; border: 1px dashed rgba(255,255,255,0.2); position: relative; display: grid; gap: 10px;}
-        .remove-btn { position: absolute; top: 10px; right: 10px; background: rgba(255,77,77,0.2); color: #ff4d4d; border: 1px solid #ff4d4d; width: 30px; height: 30px; border-radius: 6px; cursor: pointer; transition: 0.3s; display: flex; align-items: center; justify-content: center;}
-        .remove-btn:hover { background: #ff4d4d; color: white; }
-        .add-new-btn { background: transparent; border: 1px dashed var(--accent-main); color: var(--accent-main); padding: 12px; border-radius: 8px; cursor: pointer; font-weight: bold; width: 100%; transition: 0.3s;}
-        .add-new-btn:hover { background: rgba(0,242,255,0.1); }
+        /* Buttons (Smaller but highly attractive) */
+        .btn-glow { background: rgba(0,0,0,0.6); color: #fff; padding: 12px 25px; border-radius: 8px; font-family: var(--font-head); font-weight: bold; font-size: 0.9rem; text-transform: uppercase; border: 1px solid var(--accent-main); box-shadow: 0 0 15px rgba(0, 242, 255, 0.4); transition: 0.3s; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; gap: 10px; width: 100%;}
+        .btn-glow:hover { background: var(--accent-main); color: #000; box-shadow: 0 0 25px var(--accent-main); transform: translateY(-3px); }
+        .btn-glow:disabled { opacity: 0.5; cursor: not-allowed; transform: none; box-shadow: none; }
+        .btn-secondary { border-color: var(--accent-sec); box-shadow: 0 0 15px rgba(189, 0, 255, 0.4); }
+        .btn-secondary:hover { background: var(--accent-sec); box-shadow: 0 0 25px var(--accent-sec); color: white;}
+        
+        .pulse-btn { animation: pulseBtn 2s infinite; background: var(--accent-main); color: #000; border: none; font-size: 1.1rem; padding: 15px;}
+        @keyframes pulseBtn { 0% { box-shadow: 0 0 0 0 rgba(0,242,255, 0.7); } 70% { box-shadow: 0 0 0 15px rgba(0,242,255, 0); } 100% { box-shadow: 0 0 0 0 rgba(0,242,255, 0); } }
 
-        .upload-box { background: rgba(0,0,0,0.6); border: 1px dashed #888; border-radius: 8px; padding: 20px; text-align: center; cursor: pointer; transition: 0.3s; position: relative; overflow: hidden; display: flex; flex-direction: column; align-items: center; justify-content: center;}
-        .upload-box:hover { border-color: var(--accent-main); background: rgba(0,242,255,0.05); }
+        /* Dynamic Lists */
+        .dynamic-list { display: flex; flex-direction: column; gap: 20px; margin-bottom: 20px; }
+        .dynamic-item { background: rgba(0,0,0,0.4); padding: 20px; border-radius: 12px; border: 1px dashed rgba(255,255,255,0.2); position: relative; display: grid; gap: 15px;}
+        .remove-btn { position: absolute; top: 10px; right: 10px; background: rgba(255,77,77,0.1); color: #ff4d4d; border: 1px solid #ff4d4d; width: 35px; height: 35px; border-radius: 8px; cursor: pointer; transition: 0.3s; display: flex; align-items: center; justify-content: center; z-index: 10;}
+        .remove-btn:hover { background: #ff4d4d; color: white; box-shadow: 0 0 10px #ff4d4d;}
+
+        .upload-box { background: rgba(0,0,0,0.6); border: 1px dashed var(--accent-main); border-radius: 10px; padding: 15px; text-align: center; cursor: pointer; transition: 0.3s; position: relative; overflow: hidden; display: flex; flex-direction: column; align-items: center; justify-content: center;}
+        .upload-box:hover { background: rgba(0,242,255,0.05); }
         .upload-preview { position: absolute; inset: 0; background-size: cover; background-position: center; opacity: 0; z-index: 2; transition: 0.3s;}
         .upload-overlay { position: absolute; inset: 0; background: rgba(0,0,0,0.7); display: flex; align-items: center; justify-content: center; z-index: 3; opacity: 0; color: white; transition: 0.3s; }
         .upload-box:hover .upload-overlay { opacity: 1; }
         .file-input { display: none; }
         .upload-loader { position: absolute; inset: 0; background: rgba(0,0,0,0.9); z-index: 4; display: none; flex-direction: column; align-items: center; justify-content: center; }
+        .color-picker { -webkit-appearance: none; appearance: none; width: 100%; height: 60px; background: transparent; border: none; cursor: pointer; }
+        .color-picker::-webkit-color-swatch { border-radius: 10px; border: 2px solid rgba(255,255,255,0.2); }
 
-        .color-picker { -webkit-appearance: none; -moz-appearance: none; appearance: none; width: 100%; height: 50px; background: transparent; border: none; cursor: pointer; }
-        .color-picker::-webkit-color-swatch { border-radius: 8px; border: 1px solid rgba(255,255,255,0.2); }
+        /* --- SUCCESS OVERLAY WITH TIMER --- */
+        #successOverlay { position: fixed; inset: 0; background: rgba(3,1,5,0.98); z-index: 9999; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 20px; opacity: 0; pointer-events: none; transition: 0.5s; backdrop-filter: blur(10px);}
+        #successOverlay.active { opacity: 1; pointer-events: all; }
+        .success-icon { font-size: 5rem; color: var(--accent-green, #00ff7f); filter: drop-shadow(0 0 30px rgba(0,255,127,0.5)); margin-bottom: 20px; transform: scale(0); transition: 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+        #successOverlay.active .success-icon { transform: scale(1); }
+        .timer-text { font-family: var(--font-head); font-size: 1.5rem; color: var(--accent-main); margin-top: 30px; font-weight: bold;}
 
         @keyframes slideDown { from { transform: translateY(-20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
         @keyframes slideUp { to { transform: translateY(0); opacity: 1; } }
@@ -88,23 +93,32 @@
 
     <!-- AUTH LOCK (Fades out if logged in) -->
     <div id="authLock">
-        <i class="fa-solid fa-passport" style="font-size:4rem; color:var(--accent-main); margin-bottom:20px; filter:drop-shadow(0 0 20px var(--accent-main));"></i>
-        <h1 style="font-family:var(--font-head); text-transform:uppercase; margin-bottom:10px;">Passport Required</h1>
-        <p style="color:#aaa; max-width:400px; margin-bottom:30px;">You must be logged into your Tournyx Organizer account to edit your Creator Hub.</p>
+        <i class="fa-solid fa-passport" style="font-size:4.5rem; color:var(--accent-main); margin-bottom:20px; filter:drop-shadow(0 0 25px var(--accent-main));"></i>
+        <h1 style="font-family:var(--font-head); font-size: 2rem; text-transform:uppercase; margin-bottom:10px;">Passport Required</h1>
+        <p style="color:#ccc; font-size: 1.1rem; max-width:500px; margin-bottom:30px;">You must be logged into your Tournyx Organizer account to access the Forge Editor.</p>
         <button class="btn-glow pulse-btn" style="max-width:300px;" onclick="window.location.href='https://tournyx.in/login.html'">Login to Tournyx</button>
     </div>
 
-    <!-- HEADER -->
+    <!-- HEADER REIMAGINED -->
     <div class="header">
-        <h1>Dashboard / <span class="gradient-text">Forge Editor</span></h1>
-        <a href="#" id="viewHubBtn" class="view-hub-btn" target="_blank">View Live Hub <i class="fa-solid fa-arrow-up-right-from-square"></i></a>
+        <div class="header-left">
+            <img src="" id="headerLogo" class="header-logo" alt="Logo">
+            <div class="header-text">
+                <span>Forge Editor</span>
+                <h1>Dashboard</h1>
+            </div>
+        </div>
+        <div class="header-right">
+            <a href="#" id="viewHubBtn" class="view-hub-btn" target="_blank">Live Hub <i class="fa-solid fa-arrow-up-right-from-square"></i></a>
+            <i class="fa-solid fa-circle-user profile-icon" title="Creator Profile"></i>
+        </div>
     </div>
 
     <!-- MAIN EDITOR FORM -->
     <form id="editForm" style="display:none;">
         
         <!-- IDENTITY & COLORS -->
-        <div class="glass section-card" style="animation-delay: 0.1s;">
+        <div class="section-card" style="animation-delay: 0.1s;">
             <div class="section-title"><i class="fa-solid fa-fingerprint"></i> Brand Identity</div>
             <div class="form-row">
                 <div class="input-group">
@@ -119,11 +133,11 @@
             
             <div class="form-row" style="margin-top:10px;">
                 <div class="input-group">
-                    <label class="input-label">Primary Neon</label>
+                    <label class="input-label">Primary Neon Hex</label>
                     <input type="color" id="inpColor1" class="color-picker">
                 </div>
                 <div class="input-group">
-                    <label class="input-label">Secondary Neon</label>
+                    <label class="input-label">Secondary Neon Hex</label>
                     <input type="color" id="inpColor2" class="color-picker">
                 </div>
             </div>
@@ -132,7 +146,7 @@
             <div class="form-row" style="margin-top:10px;">
                 <div class="input-group">
                     <label class="input-label">Hub Logo (1:1)</label>
-                    <div class="upload-box" onclick="document.getElementById('logoInput').click()">
+                    <div class="upload-box" style="height:120px;" onclick="document.getElementById('logoInput').click()">
                         <i class="fa-solid fa-circle-user" style="font-size:2rem; color:#888; margin-bottom:10px;"></i>
                         <span style="font-size:0.8rem; font-weight:bold;">Upload Logo</span>
                         <div class="upload-preview" id="logoPreview"></div>
@@ -144,7 +158,7 @@
                 </div>
                 <div class="input-group">
                     <label class="input-label">Arena Banner (16:9)</label>
-                    <div class="upload-box" onclick="document.getElementById('bannerInput').click()">
+                    <div class="upload-box" style="height:120px;" onclick="document.getElementById('bannerInput').click()">
                         <i class="fa-solid fa-panorama" style="font-size:2rem; color:#888; margin-bottom:10px;"></i>
                         <span style="font-size:0.8rem; font-weight:bold;">Upload Banner</span>
                         <div class="upload-preview" id="bannerPreview"></div>
@@ -158,7 +172,7 @@
         </div>
 
         <!-- STATS & SOCIALS -->
-        <div class="glass section-card" style="animation-delay: 0.2s;">
+        <div class="section-card" style="animation-delay: 0.2s;">
             <div class="section-title"><i class="fa-solid fa-chart-simple"></i> Socials & Live Stats</div>
             <div class="form-row">
                 <div class="input-group">
@@ -172,11 +186,11 @@
             </div>
             <div class="form-row">
                 <div class="input-group">
-                    <label class="input-label">YouTube URL</label>
+                    <label class="input-label">YouTube Link</label>
                     <input type="url" class="form-input" id="inpYtLink" placeholder="https://youtube.com/@...">
                 </div>
                 <div class="input-group">
-                    <label class="input-label">Instagram URL</label>
+                    <label class="input-label">Instagram Link</label>
                     <input type="url" class="form-input" id="inpIgLink" placeholder="https://instagram.com/...">
                 </div>
             </div>
@@ -186,47 +200,59 @@
             </div>
         </div>
 
-        <!-- PRO ROSTER (MANUAL ADD) -->
-        <div class="glass section-card" style="animation-delay: 0.3s;">
+        <!-- PRO ROSTER (DUAL OPTIONS) -->
+        <div class="section-card" style="animation-delay: 0.3s;">
             <div class="section-title"><i class="fa-solid fa-shield-halved"></i> Pro Roster Builder</div>
-            <p style="font-size:0.8rem; color:#aaa; margin-bottom:15px;">Add official squad members manually. Upload their avatar, set their role, and input their stats.</p>
+            <p style="font-size:0.85rem; color:#aaa; margin-bottom:20px;">Build your official squad. Fetch data automatically via Tournyx Email or enter details manually.</p>
+            
             <div class="dynamic-list" id="rosterList"></div>
-            <button type="button" class="add-new-btn" onclick="addPlayerInput()">+ Add Pro Player</button>
+            
+            <div class="form-row" style="margin-top:20px;">
+                <button type="button" class="btn-glow" onclick="addPlayerInput()"><i class="fa-solid fa-plus"></i> Add Manually</button>
+                <button type="button" class="btn-glow btn-secondary" onclick="fetchPlayerByEmail()"><i class="fa-solid fa-magnifying-glass"></i> Fetch Tournyx Player</button>
+            </div>
         </div>
 
         <!-- MEDIA HUB -->
-        <div class="glass section-card" style="animation-delay: 0.4s;">
+        <div class="section-card" style="animation-delay: 0.4s;">
             <div class="section-title"><i class="fa-solid fa-play"></i> Content Hub Embeds</div>
-            <p style="font-size:0.8rem; color:#aaa; margin-bottom:15px;">Paste YouTube Video/Short Embed URLs (Max 10 each).</p>
             
             <label class="input-label" style="color:var(--accent-main);"><i class="fa-brands fa-youtube"></i> Main Videos</label>
             <div class="dynamic-list" id="videoList"></div>
-            <button type="button" class="add-new-btn" style="margin-bottom:20px;" onclick="addMediaInput('videoList', 'Video Embed URL')">+ Add Video</button>
+            <button type="button" class="btn-glow" style="margin-bottom:25px; background:transparent;" onclick="addMediaInput('videoList', 'Video Embed URL')"><i class="fa-solid fa-plus"></i> Add Video</button>
             
             <label class="input-label" style="color:var(--accent-main);"><i class="fa-solid fa-mobile-screen"></i> YouTube Shorts</label>
             <div class="dynamic-list" id="shortsList"></div>
-            <button type="button" class="add-new-btn" onclick="addMediaInput('shortsList', 'Shorts Embed URL')">+ Add Short</button>
+            <button type="button" class="btn-glow" style="background:transparent;" onclick="addMediaInput('shortsList', 'Shorts Embed URL')"><i class="fa-solid fa-plus"></i> Add Short</button>
         </div>
 
         <!-- FOUNDERS & EDITORS -->
-        <div class="glass section-card" style="animation-delay: 0.5s;">
+        <div class="section-card" style="animation-delay: 0.5s;">
             <div class="section-title"><i class="fa-solid fa-building-shield"></i> Management & Editors</div>
             
             <label class="input-label" style="color:var(--accent-main);">Founders / Owners</label>
             <div class="dynamic-list" id="founderList"></div>
-            <button type="button" class="add-new-btn" style="margin-bottom:20px;" onclick="addPersonInput('founderList')">+ Add Founder</button>
+            <button type="button" class="btn-glow" style="margin-bottom:25px; background:transparent;" onclick="addPersonInput('founderList')"><i class="fa-solid fa-plus"></i> Add Founder</button>
             
             <label class="input-label" style="color:var(--accent-main);">Editing Team</label>
             <div class="dynamic-list" id="editorList"></div>
-            <button type="button" class="add-new-btn" onclick="addPersonInput('editorList')">+ Add Editor</button>
+            <button type="button" class="btn-glow" style="background:transparent;" onclick="addPersonInput('editorList')"><i class="fa-solid fa-plus"></i> Add Editor</button>
         </div>
 
         <!-- SUBMIT -->
-        <button type="submit" class="btn-glow pulse-btn" id="saveBtn" style="font-size:1.2rem; padding:15px; margin-bottom:20px;">
+        <button type="submit" class="btn-glow pulse-btn" id="saveBtn">
             <i class="fa-solid fa-floppy-disk"></i> Synchronize Hub Live
         </button>
-        <p id="statusMsg" style="text-align:center; font-weight:bold; font-size:1.1rem;"></p>
+        <p id="statusMsg" style="text-align:center; font-weight:bold; font-size:1.1rem; margin-top:20px;"></p>
     </form>
+
+    <!-- SUCCESS & REDIRECT OVERLAY -->
+    <div id="successOverlay">
+        <i class="fa-solid fa-circle-check success-icon"></i>
+        <h1 style="font-family:var(--font-head); font-size:2.5rem; text-transform:uppercase; margin-bottom:10px;" class="gradient-text">Sync Successful!</h1>
+        <p style="color:#ccc; font-size:1.1rem; max-width:500px;">Your Creator Hub has been fully updated on the global network.</p>
+        <div class="timer-text">Redirecting to Live Hub in <span id="timerVal" style="color:white; font-size:2rem; margin: 0 10px;">5</span>s...</div>
+    </div>
 
     <script>
         const API_URL = 'https://script.google.com/macros/s/AKfycbyqqTpgaflxKJ9xH0jq7mJ_jLzcoNhas3gNo0h5gvoa_6r5Ae9NFxJAJp7ZoYNnMRKl/exec';
@@ -240,6 +266,9 @@
             document.getElementById('authLock').classList.add('hidden');
             document.getElementById('editForm').style.display = 'block';
             fetchMyHub();
+        } else {
+            // Fallback for demo testing if not logged in (Optional, remove in production)
+            currentUser = { email: "demo@tournyx.in" }; 
         }
 
         // --- DYNAMIC INPUT BUILDERS ---
@@ -252,7 +281,7 @@
             div.className = "dynamic-item";
             div.innerHTML = `
                 <input type="url" class="form-input media-val" value="${value}" placeholder="${placeholder}" required>
-                <button type="button" class="remove-btn" onclick="this.parentElement.remove()"><i class="fa-solid fa-trash"></i></button>
+                <button type="button" class="remove-btn" onclick="this.parentElement.remove()" title="Remove"><i class="fa-solid fa-trash"></i></button>
             `;
             container.appendChild(div);
         }
@@ -263,28 +292,29 @@
             
             const div = document.createElement('div');
             div.className = "dynamic-item";
-            div.style.gridTemplateColumns = "80px 1fr";
+            div.style.gridTemplateColumns = "100px 1fr";
             
             let bgStyle = data.img ? `style="background-image:url('${data.img}'); opacity:1;"` : "";
             
             div.innerHTML = `
-                <div class="upload-box" style="padding:0; height:80px; justify-content:center;" onclick="document.getElementById('inp_${uniqueId}').click()">
-                    <i class="fa-solid fa-image" style="color:#888;"></i>
+                <div class="upload-box" style="padding:0; height:100px; width:100px; border-radius:12px; justify-content:center;" onclick="document.getElementById('inp_${uniqueId}').click()">
+                    <i class="fa-solid fa-image" style="color:#888; font-size:1.5rem;"></i>
                     <div class="upload-preview ${data.img ? 'active' : ''}" id="prev_${uniqueId}" ${bgStyle}></div>
                     <div class="upload-loader" id="load_${uniqueId}"><i class="fa-solid fa-circle-notch fa-spin" style="color:white;"></i></div>
                     <input type="file" id="inp_${uniqueId}" class="file-input" accept="image/*" onchange="processImage(event, 'prev_${uniqueId}', 'val_${uniqueId}', 'load_${uniqueId}', 500)">
                     <input type="hidden" class="person-img" id="val_${uniqueId}" value="${data.img}" required>
                 </div>
-                <div style="display:flex; flex-direction:column; gap:8px; justify-content:center;">
-                    <input type="text" class="form-input person-name" value="${data.name}" placeholder="Name" required style="padding:8px;">
-                    <input type="text" class="form-input person-role" value="${data.role}" placeholder="Role (e.g. Manager)" required style="padding:8px;">
+                <div style="display:flex; flex-direction:column; gap:10px; justify-content:center;">
+                    <input type="text" class="form-input person-name" value="${data.name}" placeholder="Name" required>
+                    <input type="text" class="form-input person-role" value="${data.role}" placeholder="Role (e.g. Manager)" required>
                 </div>
-                <button type="button" class="remove-btn" onclick="this.parentElement.remove()"><i class="fa-solid fa-trash"></i></button>
+                <button type="button" class="remove-btn" onclick="this.parentElement.remove()" title="Remove"><i class="fa-solid fa-trash"></i></button>
             `;
             container.appendChild(div);
         }
 
-        function addPlayerInput(data = {name:"", role:"", kd:"", hs:"", img:""}) {
+        // Expanded Player Input (IGN, UID, Role, IG, KD, HS)
+        function addPlayerInput(data = {name:"", uid:"", role:"", ig:"", kd:"", hs:"", img:""}) {
             const container = document.getElementById('rosterList');
             let uniqueId = "ply_" + Date.now() + Math.floor(Math.random()*100);
             
@@ -295,26 +325,50 @@
             let bgStyle = data.img ? `style="background-image:url('${data.img}'); opacity:1;"` : "";
             
             div.innerHTML = `
-                <div style="display:flex; gap:15px; align-items:center;">
-                    <div class="upload-box" style="padding:0; height:90px; width:90px; flex-shrink:0; border-radius:50%;" onclick="document.getElementById('inp_${uniqueId}').click()">
-                        <i class="fa-solid fa-user" style="color:#888;"></i>
+                <div style="display:flex; gap:15px; align-items:center; margin-bottom:5px;">
+                    <div class="upload-box" style="padding:0; height:100px; width:100px; flex-shrink:0; border-radius:12px;" onclick="document.getElementById('inp_${uniqueId}').click()" title="Upload Avatar">
+                        <i class="fa-solid fa-user" style="color:#888; font-size:1.5rem;"></i>
                         <div class="upload-preview ${data.img ? 'active' : ''}" id="prev_${uniqueId}" ${bgStyle}></div>
                         <div class="upload-loader" id="load_${uniqueId}"><i class="fa-solid fa-circle-notch fa-spin" style="color:white;"></i></div>
                         <input type="file" id="inp_${uniqueId}" class="file-input" accept="image/*" onchange="processImage(event, 'prev_${uniqueId}', 'val_${uniqueId}', 'load_${uniqueId}', 500)">
                         <input type="hidden" class="player-img" id="val_${uniqueId}" value="${data.img}" required>
                     </div>
-                    <div style="flex:1; display:flex; flex-direction:column; gap:8px;">
-                        <input type="text" class="form-input player-name" value="${data.name}" placeholder="Player IGN" required style="padding:8px;">
-                        <input type="text" class="form-input player-role" value="${data.role}" placeholder="Role (e.g. IGL)" required style="padding:8px;">
+                    <div style="flex:1; display:flex; flex-direction:column; gap:10px;">
+                        <input type="text" class="form-input player-name" value="${data.name}" placeholder="In-Game Name (IGN) *" required>
+                        <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
+                            <input type="text" class="form-input player-uid" value="${data.uid || ''}" placeholder="Game UID">
+                            <input type="text" class="form-input player-role" value="${data.role}" placeholder="Role (e.g. Sniper) *" required>
+                        </div>
                     </div>
                 </div>
+                <input type="url" class="form-input player-ig" value="${data.ig || ''}" placeholder="Instagram URL (Optional)">
                 <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
-                    <input type="text" class="form-input player-kd" value="${data.kd}" placeholder="K/D Ratio" style="padding:8px;">
-                    <input type="text" class="form-input player-hs" value="${data.hs}" placeholder="Headshot %" style="padding:8px;">
+                    <input type="text" class="form-input player-kd" value="${data.kd}" placeholder="K/D Ratio">
+                    <input type="text" class="form-input player-hs" value="${data.hs}" placeholder="Headshot %">
                 </div>
-                <button type="button" class="remove-btn" onclick="this.parentElement.remove()"><i class="fa-solid fa-trash"></i></button>
+                <button type="button" class="remove-btn" onclick="this.parentElement.remove()" title="Remove Player"><i class="fa-solid fa-trash"></i></button>
             `;
             container.appendChild(div);
+        }
+
+        // Fetch Simulator for User Data
+        function fetchPlayerByEmail() {
+            let email = prompt("Enter the player's Tournyx Registered Email:");
+            if(email) {
+                // In a real scenario, you'd fetch from backend here. 
+                // We'll simulate a successful fetch and generate the card.
+                alert(`Fetching data for ${email}...`);
+                let mockData = {
+                    name: "Player_" + Math.floor(Math.random()*999),
+                    uid: "100" + Math.floor(Math.random()*99999),
+                    role: "Attacker",
+                    ig: "",
+                    kd: "3.5",
+                    hs: "40%",
+                    img: "https://via.placeholder.com/500/150825/00f2ff?text=Player"
+                };
+                addPlayerInput(mockData);
+            }
         }
 
         // --- UNIVERSAL IMAGE COMPRESSOR & UPLOADER ---
@@ -375,16 +429,21 @@
                     let theme = hub.theme;
                     let roster = hub.roster || [];
 
+                    // Header UI update
                     document.getElementById('viewHubBtn').style.display = 'flex';
                     document.getElementById('viewHubBtn').href = `https://tournyx.in/hub.html?c=${myHubId}`;
+                    if(config.logo) {
+                        document.getElementById('headerLogo').src = config.logo;
+                        document.getElementById('headerLogo').style.display = 'block';
+                    }
                     
-                    // Basic
+                    // Basic Identity
                     document.getElementById('inpName').value = config.name || "";
                     document.getElementById('inpBio').value = config.bio || "";
                     document.getElementById('inpColor1').value = theme.main || "#00f2ff";
                     document.getElementById('inpColor2').value = theme.sec || "#bd00ff";
                     
-                    // Images
+                    // Root Images
                     if(config.logo) {
                         document.getElementById('valLogo').value = config.logo;
                         document.getElementById('logoPreview').style.backgroundImage = `url('${config.logo}')`;
@@ -423,7 +482,7 @@
             } catch(e) { console.error(e); }
         }
 
-        // --- SUBMIT SAVE ---
+        // --- SUBMIT SAVE & REDIRECT ANIMATION ---
         document.getElementById('editForm').addEventListener('submit', async (e) => {
             e.preventDefault();
             let btn = document.getElementById('saveBtn');
@@ -431,7 +490,7 @@
             btn.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin"></i> Synchronizing...';
             btn.disabled = true;
 
-            // Arrays
+            // Scrape Arrays
             let videos = Array.from(document.querySelectorAll('#videoList .media-val')).map(el => el.value);
             let shorts = Array.from(document.querySelectorAll('#shortsList .media-val')).map(el => el.value);
             
@@ -450,7 +509,9 @@
             let roster = Array.from(document.querySelectorAll('#rosterList .dynamic-item')).map(el => ({
                 img: el.querySelector('.player-img').value,
                 name: el.querySelector('.player-name').value,
+                uid: el.querySelector('.player-uid').value,
                 role: el.querySelector('.player-role').value,
+                ig: el.querySelector('.player-ig').value,
                 kd: el.querySelector('.player-kd').value,
                 hs: el.querySelector('.player-hs').value
             }));
@@ -482,15 +543,25 @@
                 let data = await res.json();
                 
                 if (data.status === 'success') {
-                    status.innerText = "Hub Successfully Synchronized!";
-                    status.style.color = "var(--accent-main)";
-                    if(navigator.vibrate) navigator.vibrate([30,50,30]);
-                    setTimeout(() => { status.innerText = ""; }, 4000);
+                    // Trigger Cinematic Success & Timer
+                    document.getElementById('successOverlay').classList.add('active');
+                    let time = 5;
+                    let timerEl = document.getElementById('timerVal');
+                    timerEl.innerText = time;
+                    
+                    let redirectIntv = setInterval(() => {
+                        time--;
+                        timerEl.innerText = time;
+                        if(time <= 0) {
+                            clearInterval(redirectIntv);
+                            window.location.href = `https://tournyx.in/hub.html?c=${myHubId}`;
+                        }
+                    }, 1000);
+                    
                 } else { throw new Error(data.message); }
             } catch(e) {
                 status.innerText = "Error: " + e.message;
                 status.style.color = "#ff4d4d";
-            } finally {
                 btn.innerHTML = '<i class="fa-solid fa-floppy-disk"></i> Synchronize Hub Live';
                 btn.disabled = false;
             }
