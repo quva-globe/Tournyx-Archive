@@ -129,12 +129,17 @@
 </head>
 <body>
 
-    <!-- STRICT AUTH LOCK -->
+    <!-- STRICT CREATOR AUTH LOCK -->
     <div id="authLock">
-        <i class="fa-solid fa-passport" style="font-size:4.5rem; color:var(--accent-main); margin-bottom:20px; filter:drop-shadow(0 0 20px var(--accent-main));"></i>
-        <h1 style="font-family:var(--font-head); text-transform:uppercase; margin-bottom:10px;">Passport Required</h1>
-        <p style="color:#aaa; max-width:400px; margin-bottom:30px; font-size:1.1rem;">You must be logged into your Tournyx Organizer account to edit your Creator Hub.</p>
-        <button class="btn-glow pulse-btn" style="max-width:300px; padding: 15px;" onclick="window.location.href='https://tournyx.in/login.html'">Login to Tournyx</button>
+        <i class="fa-solid fa-user-shield" style="font-size:4.5rem; color:var(--accent-main); margin-bottom:20px; filter:drop-shadow(0 0 20px var(--accent-main));"></i>
+        <h1 style="font-family:var(--font-head); text-transform:uppercase; margin-bottom:10px;">Creator Access</h1>
+        <p style="color:#aaa; max-width:400px; margin-bottom:25px; font-size:1rem;">Enter your registered Organizer Email to securely access and edit your Hub.</p>
+        
+        <form id="creatorLoginForm" style="width:100%; max-width:320px; display:flex; flex-direction:column; gap:15px;" onsubmit="handleCreatorLogin(event)">
+            <input type="email" id="loginEmail" class="form-input" placeholder="Organizer Email" required style="text-align:center; padding:15px;">
+            <button type="submit" class="btn-glow pulse-btn" id="loginBtn" style="padding:15px; font-size:1.1rem; width:100%;">Verify Identity</button>
+            <p id="loginErr" style="color:#ff4d4d; font-size:0.85rem; display:none; margin:0; font-weight:bold;"></p>
+        </form>
     </div>
 
     <!-- UPGRADED HEADER -->
@@ -332,12 +337,21 @@
     </div>
 
     <script>
+        // --- 1. GLOBALS & SECURE AUTH CHECK ---
         const API_URL = 'https://script.google.com/macros/s/AKfycbyqqTpgaflxKJ9xH0jq7mJ_jLzcoNhas3gNo0h5gvoa_6r5Ae9NFxJAJp7ZoYNnMRKl/exec';
         const IMGBB_KEY = "727c66ecfe2882d63fee08fee7495850";
         
-        let currentUser = JSON.parse(localStorage.getItem('tournyx_user'));
+        // Use a strict, separate session key for the Creator Dashboard
+        let currentUser = JSON.parse(localStorage.getItem('hub_creator_session'));
         let myHubId = "";
         let pendingRequests = []; 
+
+        if(currentUser && currentUser.email) {
+            document.getElementById('authLock').classList.add('hidden');
+            document.getElementById('dashHeader').style.display = 'flex';
+            document.getElementById('editForm').style.display = 'block';
+            fetchMyHub();
+        }
 
         // --- BULLETPROOF JSON PARSER ---
         function safeJSONParse(data, defaultReturn) {
@@ -363,11 +377,6 @@
             document.getElementById('logoutMenu').classList.toggle('active');
         }
 
-        function logout() {
-            triggerHaptic();
-            localStorage.removeItem('tournyx_user');
-            window.location.href = 'https://tournyx.in/login.html';
-        }
 
         function openModal(id) { triggerHaptic(); document.getElementById(id).classList.add('active'); }
         function closeModal(e, id) { if(e.target.id === id) document.getElementById(id).classList.remove('active'); }
@@ -494,6 +503,53 @@
             container.appendChild(div);
         }
 
+        // --- 2. DEDICATED LOGIN LOGIC ---
+        async function handleCreatorLogin(e) {
+            e.preventDefault();
+            triggerHaptic();
+            let email = document.getElementById('loginEmail').value.trim();
+            let btn = document.getElementById('loginBtn');
+            let err = document.getElementById('loginErr');
+
+            btn.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin"></i> Verifying...';
+            btn.disabled = true;
+            err.style.display = 'none';
+
+            try {
+                let res = await fetch(API_URL, {
+                    method: 'POST',
+                    body: JSON.stringify({ action: 'creator_login', email: email })
+                });
+                let data = await res.json();
+
+                if (data.status === 'success') {
+                    // Save dedicated creator session
+                    localStorage.setItem('hub_creator_session', JSON.stringify({ email: data.data.email }));
+                    currentUser = { email: data.data.email };
+
+                    // Unlock Dashboard UI
+                    document.getElementById('authLock').classList.add('hidden');
+                    document.getElementById('dashHeader').style.display = 'flex';
+                    document.getElementById('editForm').style.display = 'block';
+
+                    // Fetch all Hub Data instantly
+                    fetchMyHub();
+                } else { throw new Error(data.message); }
+            } catch(error) {
+                err.innerText = error.message;
+                err.style.display = 'block';
+                btn.disabled = false;
+                btn.innerHTML = 'Verify Identity';
+            }
+        }
+
+        // Overwrite your existing logout function:
+        function logout() {
+            triggerHaptic();
+            localStorage.removeItem('hub_creator_session'); // Clear strict session
+            location.reload(); // Instantly reload to lock the screen
+        }
+        
         // --- FETCH TOURNYX PLAYER LOGIC ---
         async function fetchPlayerByEmail() {
             triggerHaptic();
