@@ -81,9 +81,12 @@
         .dynamic-list { display: flex; flex-direction: column; gap: 15px; margin-bottom: 20px; }
         .dynamic-item { background: rgba(0,0,0,0.5); padding: 20px; border-radius: 12px; border: 1px dashed rgba(255,255,255,0.2); position: relative; display: grid; gap: 15px; transition: 0.3s;}
         .dynamic-item:hover { border-color: var(--accent-main); background: rgba(0,242,255,0.05); }
-        .remove-btn { position: absolute; top: -10px; right: -10px; background: var(--primary-bg); color: #ff4d4d; border: 1px solid #ff4d4d; width: 35px; height: 35px; border-radius: 50%; cursor: pointer; transition: 0.3s; display: flex; align-items: center; justify-content: center; font-size: 1.1rem; box-shadow: 0 5px 15px rgba(255,77,77,0.3);}
+        .remove-btn { position: absolute; top: -10px; right: -10px; background: var(--primary-bg); color: #ff4d4d; border: 1px solid #ff4d4d; width: 35px; height: 35px; border-radius: 50%; cursor: pointer; transition: 0.3s; display: flex; align-items: center; justify-content: center; font-size: 1.1rem; box-shadow: 0 5px 15px rgba(255,77,77,0.3); z-index: 10;}
         .remove-btn:hover { background: #ff4d4d; color: white; transform: scale(1.1);}
         
+        .preview-btn { position: absolute; top: -10px; right: 30px; background: var(--primary-bg); color: var(--accent-main); border: 1px solid var(--accent-main); width: 35px; height: 35px; border-radius: 50%; cursor: pointer; transition: 0.3s; display: flex; align-items: center; justify-content: center; font-size: 1.1rem; box-shadow: 0 5px 15px rgba(0,242,255,0.3); z-index: 10;}
+        .preview-btn:hover { background: var(--accent-main); color: #000; transform: scale(1.1);}
+
         .add-new-btn { background: transparent; border: 1px dashed var(--accent-main); color: var(--accent-main); padding: 15px; border-radius: 10px; cursor: pointer; font-weight: bold; width: 100%; transition: 0.3s; font-size: 1rem; font-family: var(--font-head);}
         .add-new-btn:hover { background: rgba(0,242,255,0.1); }
 
@@ -125,6 +128,7 @@
         .timer-circle-bg { fill: none; stroke: rgba(255,255,255,0.05); stroke-width: 5; }
         .timer-circle-prog { fill: none; stroke: var(--accent-sec); stroke-width: 5; stroke-dasharray: 251; stroke-dashoffset: 0; filter: drop-shadow(0 0 5px var(--accent-sec)); transition: stroke-dashoffset 1s linear; stroke-linecap: round; }
         .timer-num { font-family: var(--font-head); font-size: 2.2rem; font-weight: bold; color: white; position: relative; z-index: 2; }
+
         /* --- MODALS --- */
         .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.8); backdrop-filter: blur(10px); z-index: 5000; display: none; align-items: center; justify-content: center; opacity: 0; transition: 0.3s; padding: 20px;}
         .modal-overlay.active { display: flex; opacity: 1; }
@@ -358,12 +362,37 @@
         <p style="color:#888; font-weight:bold; text-transform:uppercase; font-size:clamp(0.7rem, 2vw, 0.8rem); letter-spacing:1px;">Redirecting to your Hub...</p>
     </div>
 
+    <!-- PREVIEW MODALS -->
+    <div class="modal-overlay" id="previewModalPlayer" onclick="closeModal(event, 'previewModalPlayer')">
+        <div class="modal-content glass" style="text-align:center;">
+            <i class="fa-solid fa-xmark modal-close" onclick="closeModalDirect('previewModalPlayer')"></i>
+            <h2 style="font-family:var(--font-head); color:white; margin-bottom:20px;">Player Preview</h2>
+            <img id="prevPlayerImg" src="" style="width:100px; height:100px; border-radius:50%; object-fit:cover; margin-bottom:15px; border:2px solid var(--accent-main);">
+            <h3 id="prevPlayerName" style="font-family:var(--font-head); color:white; margin-bottom:5px;">Name</h3>
+            <p id="prevPlayerRole" style="color:var(--accent-sec); font-weight:bold; text-transform:uppercase; font-size:0.8rem; margin-bottom:15px;">Role</p>
+            <div style="display:flex; justify-content:center; gap:15px; margin-bottom:15px;">
+                <span id="prevPlayerKd" style="font-weight:bold;">KD: -</span>
+                <span id="prevPlayerHs" style="font-weight:bold;">HS: -</span>
+            </div>
+             <p id="prevPlayerUid" style="color:#aaa; font-size:0.8rem; font-family:monospace;">UID: -</p>
+        </div>
+    </div>
+
+     <div class="modal-overlay" id="previewModalPerson" onclick="closeModal(event, 'previewModalPerson')">
+        <div class="modal-content glass" style="text-align:center;">
+            <i class="fa-solid fa-xmark modal-close" onclick="closeModalDirect('previewModalPerson')"></i>
+            <h2 style="font-family:var(--font-head); color:white; margin-bottom:20px;">Card Preview</h2>
+            <img id="prevPersonImg" src="" style="width:100px; height:100px; border-radius:50%; object-fit:cover; margin-bottom:15px; border:2px solid var(--accent-main);">
+            <h3 id="prevPersonName" style="font-family:var(--font-head); color:white; margin-bottom:5px;">Name</h3>
+            <p id="prevPersonRole" style="color:var(--accent-sec); font-weight:bold; text-transform:uppercase; font-size:0.8rem;">Role</p>
+        </div>
+    </div>
+
     <script>
         // --- 1. GLOBALS & SECURE AUTH CHECK ---
         const API_URL = 'https://script.google.com/macros/s/AKfycbyqqTpgaflxKJ9xH0jq7mJ_jLzcoNhas3gNo0h5gvoa_6r5Ae9NFxJAJp7ZoYNnMRKl/exec';
         const IMGBB_KEY = "727c66ecfe2882d63fee08fee7495850";
         
-        // Use a strict, separate session key for the Creator Dashboard
         let currentUser = JSON.parse(localStorage.getItem('hub_creator_session'));
         let myHubId = "";
         let pendingRequests = []; 
@@ -386,23 +415,43 @@
         // --- HAPTIC ENGINE ---
         function triggerHaptic() { if(navigator.vibrate) navigator.vibrate(30); }
 
-        // --- STRICT AUTH CHECK & LOGOUT ---
-        if(currentUser && currentUser.email && (currentUser.role === 'organizer' || currentUser.role === 'admin')) {
-            document.getElementById('authLock').classList.add('hidden');
-            document.getElementById('dashHeader').style.display = 'flex';
-            document.getElementById('editForm').style.display = 'block';
-            fetchMyHub();
-        }
-
         function toggleLogout() {
             triggerHaptic();
             document.getElementById('logoutMenu').classList.toggle('active');
         }
 
+        function logout() {
+            triggerHaptic();
+            localStorage.removeItem('hub_creator_session');
+            window.location.href = 'https://tournyx.in/login.html';
+        }
 
         function openModal(id) { triggerHaptic(); document.getElementById(id).classList.add('active'); }
         function closeModal(e, id) { if(e.target.id === id) document.getElementById(id).classList.remove('active'); }
         function closeModalDirect(id) { document.getElementById(id).classList.remove('active'); }
+
+        // --- PREVIEW FUNCTIONS ---
+        function previewPerson(btn) {
+            triggerHaptic();
+            const item = btn.closest('.dynamic-item');
+            document.getElementById('prevPersonImg').src = item.querySelector('.person-img').value || 'https://via.placeholder.com/100';
+            document.getElementById('prevPersonName').innerText = item.querySelector('.person-name').value || 'Name Not Set';
+            document.getElementById('prevPersonRole').innerText = item.querySelector('.person-role').value || 'Role Not Set';
+            openModal('previewModalPerson');
+        }
+
+        function previewPlayer(btn) {
+             triggerHaptic();
+            const item = btn.closest('.dynamic-item');
+            document.getElementById('prevPlayerImg').src = item.querySelector('.player-img').value || 'https://via.placeholder.com/100';
+            document.getElementById('prevPlayerName').innerText = item.querySelector('.player-name').value || 'IGN Not Set';
+            document.getElementById('prevPlayerRole').innerText = item.querySelector('.player-role').value || 'Role Not Set';
+            document.getElementById('prevPlayerKd').innerText = "KD: " + (item.querySelector('.player-kd').value || '-');
+            document.getElementById('prevPlayerHs').innerText = "HS: " + (item.querySelector('.player-hs').value || '-');
+            document.getElementById('prevPlayerUid').innerText = "UID: " + (item.querySelector('.player-uid').value || '-');
+            openModal('previewModalPlayer');
+        }
+
 
         // --- SQUAD REQUEST HANDLERS ---
         function renderRequests() {
@@ -473,6 +522,7 @@
             let bgStyle = data.img ? `style="background-image:url('${data.img}'); opacity:1;"` : "";
             
             div.innerHTML = `
+                <button type="button" class="preview-btn" onclick="previewPerson(this)" title="Preview Card"><i class="fa-solid fa-eye"></i></button>
                 <div class="upload-box" style="padding:0; height:90px; justify-content:center;" onclick="document.getElementById('inp_${uniqueId}').click(); triggerHaptic();">
                     <i class="fa-solid fa-image" style="color:#888; font-size:1.5rem;"></i>
                     <div class="upload-preview ${data.img ? 'active' : ''}" id="prev_${uniqueId}" ${bgStyle}></div>
@@ -499,6 +549,7 @@
             let bgStyle = data.img ? `style="background-image:url('${data.img}'); opacity:1;"` : "";
             
             div.innerHTML = `
+                <button type="button" class="preview-btn" onclick="previewPlayer(this)" title="Preview Card"><i class="fa-solid fa-eye"></i></button>
                 <div style="display:flex; gap:20px; align-items:center;">
                     <div class="upload-box" style="padding:0; height:100px; width:100px; flex-shrink:0; border-radius:12px;" onclick="document.getElementById('inp_${uniqueId}').click(); triggerHaptic();">
                         <i class="fa-solid fa-user" style="color:#888; font-size:2rem;"></i>
@@ -525,53 +576,6 @@
             container.appendChild(div);
         }
 
-        // --- 2. DEDICATED LOGIN LOGIC ---
-        async function handleCreatorLogin(e) {
-            e.preventDefault();
-            triggerHaptic();
-            let email = document.getElementById('loginEmail').value.trim();
-            let btn = document.getElementById('loginBtn');
-            let err = document.getElementById('loginErr');
-
-            btn.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin"></i> Verifying...';
-            btn.disabled = true;
-            err.style.display = 'none';
-
-            try {
-                let res = await fetch(API_URL, {
-                    method: 'POST',
-                    body: JSON.stringify({ action: 'creator_login', email: email })
-                });
-                let data = await res.json();
-
-                if (data.status === 'success') {
-                    // Save dedicated creator session
-                    localStorage.setItem('hub_creator_session', JSON.stringify({ email: data.data.email }));
-                    currentUser = { email: data.data.email };
-
-                    // Unlock Dashboard UI
-                    document.getElementById('authLock').classList.add('hidden');
-                    document.getElementById('dashHeader').style.display = 'flex';
-                    document.getElementById('editForm').style.display = 'block';
-
-                    // Fetch all Hub Data instantly
-                    fetchMyHub();
-                } else { throw new Error(data.message); }
-            } catch(error) {
-                err.innerText = error.message;
-                err.style.display = 'block';
-                btn.disabled = false;
-                btn.innerHTML = 'Verify Identity';
-            }
-        }
-
-        // Overwrite your existing logout function:
-        function logout() {
-            triggerHaptic();
-            localStorage.removeItem('hub_creator_session'); // Clear strict session
-            location.reload(); // Instantly reload to lock the screen
-        }
-        
         // --- FETCH TOURNYX PLAYER LOGIC ---
         async function fetchPlayerByEmail() {
             triggerHaptic();
@@ -611,45 +615,31 @@
         }
 
         // --- MEDIA CONVERSION ENGINE ---
-        
         function convertYouTubeLink(url) {
             if(!url) return "";
-            // If it's already an embed, leave it
             if(url.includes('/embed/')) return url;
-            
             let videoId = "";
-            if(url.includes('youtu.be/')) {
-                videoId = url.split('youtu.be/')[1].split('?')[0];
-            } else if (url.includes('watch?v=')) {
-                videoId = url.split('watch?v=')[1].split('&')[0];
-            }
+            if(url.includes('youtu.be/')) videoId = url.split('youtu.be/')[1].split('?')[0];
+            else if (url.includes('watch?v=')) videoId = url.split('watch?v=')[1].split('&')[0];
             return videoId ? `https://www.youtube.com/embed/${videoId}` : url;
         }
 
         function convertShortsLink(url) {
             if(!url) return "";
             if(url.includes('/embed/')) return url;
-            
             let videoId = "";
-            if(url.includes('/shorts/')) {
-                videoId = url.split('/shorts/')[1].split('?')[0];
-            }
+            if(url.includes('/shorts/')) videoId = url.split('/shorts/')[1].split('?')[0];
             return videoId ? `https://www.youtube.com/embed/${videoId}` : convertYouTubeLink(url);
         }
 
         function convertInstaLink(url) {
             if(!url) return "";
-            // Ensure the link ends with /embed
             if(url.includes('/embed')) return url;
-            
-            // Clean the URL (remove tracking parameters like ?igsh=...)
             let cleanUrl = url.split('?')[0];
-            // Ensure trailing slash
             if (!cleanUrl.endsWith('/')) cleanUrl += '/';
-            
             return cleanUrl + "embed";
         }
-        
+
         // --- UNIVERSAL IMAGE COMPRESSOR & UPLOADER ---
         function processImage(event, previewId, hiddenId, loaderId, maxWidth) {
             const file = event.target.files[0];
@@ -695,6 +685,43 @@
             .finally(() => { document.getElementById(loaderId).style.display = 'none'; });
         }
 
+        // --- DEDICATED LOGIN LOGIC ---
+        async function handleCreatorLogin(e) {
+            e.preventDefault();
+            triggerHaptic();
+            let email = document.getElementById('loginEmail').value.trim();
+            let btn = document.getElementById('loginBtn');
+            let err = document.getElementById('loginErr');
+
+            btn.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin"></i> Verifying...';
+            btn.disabled = true;
+            err.style.display = 'none';
+
+            try {
+                let res = await fetch(API_URL, {
+                    method: 'POST',
+                    body: JSON.stringify({ action: 'creator_login', email: email })
+                });
+                let data = await res.json();
+
+                if (data.status === 'success') {
+                    localStorage.setItem('hub_creator_session', JSON.stringify({ email: data.data.email }));
+                    currentUser = { email: data.data.email };
+
+                    document.getElementById('authLock').classList.add('hidden');
+                    document.getElementById('dashHeader').style.display = 'flex';
+                    document.getElementById('editForm').style.display = 'block';
+
+                    fetchMyHub();
+                } else { throw new Error(data.message); }
+            } catch(error) {
+                err.innerText = error.message;
+                err.style.display = 'block';
+                btn.disabled = false;
+                btn.innerHTML = 'Verify Identity';
+            }
+        }
+
         // --- FETCH CURRENT DATA ---
         async function fetchMyHub() {
             try {
@@ -705,13 +732,11 @@
                     let hub = data.data;
                     myHubId = hub.id;
                     
-                    // Bulletproof Extraction Algorithm
                     let config = safeJSONParse(hub.config, {});
                     let theme = safeJSONParse(hub.theme, {main:"#00f2ff", sec:"#bd00ff"});
                     let roster = safeJSONParse(hub.roster, []);
                     pendingRequests = safeJSONParse(hub.requests, []);
 
-                    // Apply Header Logic
                     if(config.logo) {
                         document.getElementById('profileImg').src = config.logo;
                         document.getElementById('profileImg').style.display = 'block';
@@ -725,13 +750,11 @@
                     document.getElementById('viewHubBtn').style.display = 'flex';
                     document.getElementById('viewHubBtn').href = `https://tournyx.in/hub.html?c=${myHubId}`;
                     
-                    // Populate Main Form
                     document.getElementById('inpName').value = config.name || config.HubName || "";
                     document.getElementById('inpBio').value = config.bio || config.Mission || "";
                     document.getElementById('inpColor1').value = theme.main || "#00f2ff";
                     document.getElementById('inpColor2').value = theme.sec || "#bd00ff";
                     
-                    // Images
                     if(config.logo) {
                         document.getElementById('valLogo').value = config.logo;
                         document.getElementById('logoPreview').style.backgroundImage = `url('${config.logo}')`;
@@ -743,7 +766,6 @@
                         document.getElementById('bannerPreview').classList.add('active');
                     }
 
-                    // Stats & Socials
                     if(config.stats) {
                         document.getElementById('inpYtK').value = config.stats.yt_k || 0;
                         document.getElementById('inpIgK').value = config.stats.insta_k || 0;
@@ -754,7 +776,6 @@
                         document.getElementById('inpDcLink').value = config.socials.discord || "";
                     }
                     
-                    // Arrays
                     if(config.media) {
                         if(config.media.videos) config.media.videos.forEach(v => addMediaInput('videoList', 'YouTube Link', v));
                         if(config.media.shorts) config.media.shorts.forEach(s => addMediaInput('shortsList', 'Shorts Link', s));
@@ -763,7 +784,6 @@
                     if(config.founders) config.founders.forEach(f => addPersonInput('founderList', f));
                     if(config.editors) config.editors.forEach(e => addPersonInput('editorList', e));
                     
-                    // Load Roster & Requests
                     roster.forEach(p => addPlayerInput(p));
                     renderRequests();
                 }
@@ -783,7 +803,6 @@
             btn.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin"></i> Synchronizing Network...';
             btn.disabled = true;
 
-            // Extract and Convert Media Arrays Instantly
             let rawVideos = Array.from(document.querySelectorAll('#videoList .media-val')).map(el => el.value);
             let rawShorts = Array.from(document.querySelectorAll('#shortsList .media-val')).map(el => el.value);
             let rawInsta = Array.from(document.querySelectorAll('#instaList .media-val')).map(el => el.value);
@@ -826,7 +845,7 @@
                 discord_link: document.getElementById('inpDcLink').value,
                 yt_videos: videos,
                 yt_shorts: shorts,
-                ig_posts: insta, 
+                ig_posts: insta,
                 founders: founders,
                 editors: editors,
                 roster: roster,
@@ -838,7 +857,6 @@
                 let data = await res.json();
                 
                 if (data.status === 'success') {
-                    // Success Overlay & SVG Timer Redirect
                     document.getElementById('successOverlay').classList.add('active');
                     if(navigator.vibrate) navigator.vibrate([30,50,30]);
                     
@@ -852,7 +870,6 @@
                         timeLeft--;
                         document.getElementById('redirTime').innerText = timeLeft;
                         
-                        // Calculate SVG smooth progression (251 is circumference)
                         let offset = 251 - (timeLeft / totalTime) * 251;
                         timerProg.style.strokeDashoffset = offset;
 
@@ -862,7 +879,13 @@
                         }
                     }, 1000);
 
-                }
+                } else { throw new Error(data.message); }
+            } catch(e) {
+                status.innerText = "Error: " + e.message;
+                status.style.color = "#ff4d4d";
+                btn.innerHTML = '<i class="fa-solid fa-floppy-disk"></i> Synchronize Hub Live';
+                btn.disabled = false;
+            } 
         });
     </script>
 </body>
