@@ -106,15 +106,25 @@
         .req-uid { font-size: 0.7rem; color: var(--accent-main); font-family: monospace; }
         .req-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 5px;}
 
-        /* --- SUCCESS OVERLAY WITH TIMER --- */
-        #successOverlay { position: fixed; inset: 0; background: rgba(3,1,5,0.95); backdrop-filter: blur(20px); z-index: 9999; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 20px; opacity: 0; pointer-events: none; transition: 0.5s; }
+        /* --- SUCCESS OVERLAY WITH TIMER (UPGRADED) --- */
+        #successOverlay { position: fixed; inset: 0; background: rgba(3,1,5,0.95); backdrop-filter: blur(20px); z-index: 9999; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 20px; opacity: 0; pointer-events: none; transition: 0.5s; overflow: hidden; }
         #successOverlay.active { opacity: 1; pointer-events: all; }
-        .suc-icon { font-size: 5rem; color: var(--accent-main); filter: drop-shadow(0 0 30px var(--accent-main)); margin-bottom: 20px; transform: scale(0) rotate(-45deg); transition: 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
-        #successOverlay.active .suc-icon { transform: scale(1) rotate(0); }
-        .timer-circle { width: 80px; height: 80px; border-radius: 50%; border: 3px solid rgba(255,255,255,0.1); border-top-color: var(--accent-sec); display: flex; align-items: center; justify-content: center; font-family: var(--font-head); font-size: 2rem; font-weight: bold; color: white; margin: 30px auto; animation: spin 1s linear infinite; position: relative;}
-        .timer-num { position: absolute; animation: unspin 1s linear infinite; }
-        @keyframes unspin { 100% { transform: rotate(-360deg); } }
-
+        
+        .suc-logo-wrap { position: relative; margin-bottom: 30px; transform: scale(0); opacity: 0; transition: 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275); display: flex; align-items: center; justify-content: center; }
+        #successOverlay.active .suc-logo-wrap { transform: scale(1); opacity: 1; }
+        .suc-logo { height: 75px; filter: drop-shadow(0 0 15px var(--accent-main)); position: relative; z-index: 2; }
+        .suc-ring { position: absolute; width: 120px; height: 120px; border-radius: 50%; border: 2px dashed var(--accent-main); animation: spinRing 5s linear infinite; z-index: 1; opacity: 0.5; }
+        .suc-ring-2 { position: absolute; width: 150px; height: 150px; border-radius: 50%; border: 2px solid var(--accent-sec); border-top-color: transparent; border-bottom-color: transparent; animation: spinRing 3s linear infinite reverse; z-index: 1; opacity: 0.3; }
+        @keyframes spinRing { 100% { transform: rotate(360deg); } }
+        
+        .suc-title { font-family: var(--font-head); font-size: clamp(1.8rem, 6vw, 2.8rem); text-transform: uppercase; margin-bottom: 12px; font-weight: 900; letter-spacing: 2px; }
+        .suc-desc { color: #ccc; font-size: clamp(0.9rem, 3vw, 1.1rem); margin-bottom: 10px; max-width: 500px; line-height: 1.5; }
+        
+        .timer-wrapper { position: relative; width: 90px; height: 90px; margin: 30px auto 20px; display: flex; align-items: center; justify-content: center; }
+        .timer-svg { position: absolute; inset: 0; width: 100%; height: 100%; transform: rotate(-90deg); }
+        .timer-circle-bg { fill: none; stroke: rgba(255,255,255,0.05); stroke-width: 5; }
+        .timer-circle-prog { fill: none; stroke: var(--accent-sec); stroke-width: 5; stroke-dasharray: 251; stroke-dashoffset: 0; filter: drop-shadow(0 0 5px var(--accent-sec)); transition: stroke-dashoffset 1s linear; stroke-linecap: round; }
+        .timer-num { font-family: var(--font-head); font-size: 2.2rem; font-weight: bold; color: white; position: relative; z-index: 2; }
         /* --- MODALS --- */
         .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.8); backdrop-filter: blur(10px); z-index: 5000; display: none; align-items: center; justify-content: center; opacity: 0; transition: 0.3s; padding: 20px;}
         .modal-overlay.active { display: flex; opacity: 1; }
@@ -275,18 +285,22 @@
             <div class="dynamic-list" id="rosterList"></div>
         </div>
 
-        <!-- MEDIA HUB -->
+        <!-- MEDIA HUB (UPGRADED) -->
         <div class="glass section-card" style="animation-delay: 0.4s;">
             <div class="section-title"><i class="fa-solid fa-play"></i> Content Hub Embeds</div>
-            <p style="font-size:0.9rem; color:#aaa; margin-bottom:15px;">Paste YouTube Video/Short Embed URLs (Max 10 each).</p>
+            <p style="font-size:0.9rem; color:#aaa; margin-bottom:15px;">Paste normal YouTube or Instagram share links (Max 10 each). Our engine will auto-convert them.</p>
             
             <label class="input-label" style="color:var(--accent-main);"><i class="fa-brands fa-youtube"></i> Main Videos</label>
             <div class="dynamic-list" id="videoList"></div>
-            <button type="button" class="add-new-btn" style="margin-bottom:20px;" onclick="addMediaInput('videoList', 'Video Embed URL'); triggerHaptic();">+ Add Video Embed</button>
+            <button type="button" class="add-new-btn" style="margin-bottom:20px;" onclick="addMediaInput('videoList', 'YouTube Link (e.g. youtube.com/watch?v=...)'); triggerHaptic();">+ Add Video</button>
             
             <label class="input-label" style="color:var(--accent-main);"><i class="fa-solid fa-mobile-screen"></i> YouTube Shorts</label>
             <div class="dynamic-list" id="shortsList"></div>
-            <button type="button" class="add-new-btn" onclick="addMediaInput('shortsList', 'Shorts Embed URL'); triggerHaptic();">+ Add Shorts Embed</button>
+            <button type="button" class="add-new-btn" style="margin-bottom:20px;" onclick="addMediaInput('shortsList', 'Shorts Link (e.g. youtube.com/shorts/...)'); triggerHaptic();">+ Add Short</button>
+
+            <label class="input-label" style="color:#e1306c;"><i class="fa-brands fa-instagram"></i> Instagram Posts/Reels</label>
+            <div class="dynamic-list" id="instaList"></div>
+            <button type="button" class="add-new-btn" style="border-color:#e1306c; color:#e1306c;" onclick="addMediaInput('instaList', 'Instagram Link (e.g. instagram.com/p/...)'); triggerHaptic();">+ Add Instagram Post</button>
         </div>
 
         <!-- FOUNDERS & EDITORS -->
@@ -324,16 +338,24 @@
         </div>
     </div>
 
-    <!-- SUCCESS OVERLAY W/ TIMER -->
+    <!-- SUCCESS OVERLAY W/ TIMER (UPGRADED) -->
     <div id="successOverlay">
-        <i class="fa-solid fa-satellite-dish suc-icon"></i>
-        <h1 style="font-family:var(--font-head); font-size:2.5rem; text-transform:uppercase; margin-bottom:10px;" class="neon-text">Hub Synchronized!</h1>
-        <p style="color:#ccc; font-size:1.1rem; margin-bottom:10px; max-width:500px;">Your new configurations have been pushed live to the global arena.</p>
+        <div class="suc-logo-wrap">
+            <div class="suc-ring"></div>
+            <div class="suc-ring-2"></div>
+            <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEg_20wCR-WBMpQmw3vxcYUf-vxIO1PYDJoQN_Sid3UDjA9tf0cuX0eH40jbzHoJad4cxbnjhPjqfCw1Z5V1LhgN9zFuIQC0fJjecTy3D9PFu5WjR2H1wHwTD1bUGnXY_NiApWn5gMs6velcQngSzKoP1yHzX0cVsFSUFM8zIefcbiPayY7680Kz0V0ZAAE/s1264/1000093706.png" class="suc-logo" alt="Tournyx">
+        </div>
+        <h1 class="suc-title neon-text">Hub Synchronized!</h1>
+        <p class="suc-desc">Your new configurations have been pushed live to the global arena.</p>
         
-        <div class="timer-circle">
+        <div class="timer-wrapper">
+            <svg class="timer-svg" viewBox="0 0 90 90">
+                <circle class="timer-circle-bg" cx="45" cy="45" r="40"></circle>
+                <circle class="timer-circle-prog" cx="45" cy="45" r="40" id="timerProgress"></circle>
+            </svg>
             <span class="timer-num" id="redirTime">5</span>
         </div>
-        <p style="color:#888; font-weight:bold; text-transform:uppercase; font-size:0.8rem;">Redirecting to your Hub...</p>
+        <p style="color:#888; font-weight:bold; text-transform:uppercase; font-size:clamp(0.7rem, 2vw, 0.8rem); letter-spacing:1px;">Redirecting to your Hub...</p>
     </div>
 
     <script>
@@ -588,6 +610,46 @@
             }
         }
 
+        // --- MEDIA CONVERSION ENGINE ---
+        
+        function convertYouTubeLink(url) {
+            if(!url) return "";
+            // If it's already an embed, leave it
+            if(url.includes('/embed/')) return url;
+            
+            let videoId = "";
+            if(url.includes('youtu.be/')) {
+                videoId = url.split('youtu.be/')[1].split('?')[0];
+            } else if (url.includes('watch?v=')) {
+                videoId = url.split('watch?v=')[1].split('&')[0];
+            }
+            return videoId ? `https://www.youtube.com/embed/${videoId}` : url;
+        }
+
+        function convertShortsLink(url) {
+            if(!url) return "";
+            if(url.includes('/embed/')) return url;
+            
+            let videoId = "";
+            if(url.includes('/shorts/')) {
+                videoId = url.split('/shorts/')[1].split('?')[0];
+            }
+            return videoId ? `https://www.youtube.com/embed/${videoId}` : convertYouTubeLink(url);
+        }
+
+        function convertInstaLink(url) {
+            if(!url) return "";
+            // Ensure the link ends with /embed
+            if(url.includes('/embed')) return url;
+            
+            // Clean the URL (remove tracking parameters like ?igsh=...)
+            let cleanUrl = url.split('?')[0];
+            // Ensure trailing slash
+            if (!cleanUrl.endsWith('/')) cleanUrl += '/';
+            
+            return cleanUrl + "embed";
+        }
+        
         // --- UNIVERSAL IMAGE COMPRESSOR & UPLOADER ---
         function processImage(event, previewId, hiddenId, loaderId, maxWidth) {
             const file = event.target.files[0];
@@ -694,8 +756,9 @@
                     
                     // Arrays
                     if(config.media) {
-                        if(config.media.videos) config.media.videos.forEach(v => addMediaInput('videoList', 'YouTube Embed URL', v));
-                        if(config.media.shorts) config.media.shorts.forEach(s => addMediaInput('shortsList', 'Shorts Embed URL', s));
+                        if(config.media.videos) config.media.videos.forEach(v => addMediaInput('videoList', 'YouTube Link', v));
+                        if(config.media.shorts) config.media.shorts.forEach(s => addMediaInput('shortsList', 'Shorts Link', s));
+                        if(config.media.insta) config.media.insta.forEach(i => addMediaInput('instaList', 'Instagram Link', i));
                     }
                     if(config.founders) config.founders.forEach(f => addPersonInput('founderList', f));
                     if(config.editors) config.editors.forEach(e => addPersonInput('editorList', e));
@@ -720,8 +783,14 @@
             btn.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin"></i> Synchronizing Network...';
             btn.disabled = true;
 
-            let videos = Array.from(document.querySelectorAll('#videoList .media-val')).map(el => el.value);
-            let shorts = Array.from(document.querySelectorAll('#shortsList .media-val')).map(el => el.value);
+            // Extract and Convert Media Arrays Instantly
+            let rawVideos = Array.from(document.querySelectorAll('#videoList .media-val')).map(el => el.value);
+            let rawShorts = Array.from(document.querySelectorAll('#shortsList .media-val')).map(el => el.value);
+            let rawInsta = Array.from(document.querySelectorAll('#instaList .media-val')).map(el => el.value);
+
+            let videos = rawVideos.map(link => convertYouTubeLink(link)).filter(link => link !== "");
+            let shorts = rawShorts.map(link => convertShortsLink(link)).filter(link => link !== "");
+            let insta = rawInsta.map(link => convertInstaLink(link)).filter(link => link !== "");
             
             let founders = Array.from(document.querySelectorAll('#founderList .dynamic-item')).map(el => ({
                 img: el.querySelector('.person-img').value, name: el.querySelector('.person-name').value, role: el.querySelector('.person-role').value
@@ -757,6 +826,7 @@
                 discord_link: document.getElementById('inpDcLink').value,
                 yt_videos: videos,
                 yt_shorts: shorts,
+                ig_posts: insta, 
                 founders: founders,
                 editors: editors,
                 roster: roster,
@@ -768,26 +838,31 @@
                 let data = await res.json();
                 
                 if (data.status === 'success') {
+                    // Success Overlay & SVG Timer Redirect
                     document.getElementById('successOverlay').classList.add('active');
                     if(navigator.vibrate) navigator.vibrate([30,50,30]);
                     
                     let timeLeft = 5;
+                    let totalTime = 5;
+                    let timerProg = document.getElementById('timerProgress');
+                    
+                    document.getElementById('redirTime').innerText = timeLeft;
+                    
                     let timerInterval = setInterval(() => {
                         timeLeft--;
                         document.getElementById('redirTime').innerText = timeLeft;
+                        
+                        // Calculate SVG smooth progression (251 is circumference)
+                        let offset = 251 - (timeLeft / totalTime) * 251;
+                        timerProg.style.strokeDashoffset = offset;
+
                         if(timeLeft <= 0) {
                             clearInterval(timerInterval);
                             window.location.href = `https://tournyx.in/hub.html?c=${myHubId}`;
                         }
                     }, 1000);
 
-                } else { throw new Error(data.message); }
-            } catch(e) {
-                status.innerText = "Error: " + e.message;
-                status.style.color = "#ff4d4d";
-                btn.innerHTML = '<i class="fa-solid fa-floppy-disk"></i> Synchronize Hub Live';
-                btn.disabled = false;
-            } 
+                }
         });
     </script>
 </body>
