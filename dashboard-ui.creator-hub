@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>Creator Dashboard | Tournyx</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700;900&family=Rajdhani:wght@500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        :root {
+            --primary-bg: #030108;
+            --surface-bg: rgba(15, 8, 25, 0.6);
+            --accent-main: #00f2ff;
+            --font-head: 'Orbitron', sans-serif;
+            --font-body: 'Rajdhani', sans-serif;
+        }
+        body { background-color: var(--primary-bg); color: white; font-family: var(--font-body); padding: 20px; max-width: 800px; margin: 0 auto; }
+        * { box-sizing: border-box; }
+        
+        .header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 20px; margin-bottom: 30px; }
+        .header h1 { font-family: var(--font-head); }
+        
+        .section-card { background: var(--surface-bg); border: 1px solid rgba(255,255,255,0.05); padding: 25px; border-radius: 12px; margin-bottom: 25px; }
+        .section-title { font-family: var(--font-head); color: var(--accent-main); margin-bottom: 20px; font-size: 1.2rem; }
+        
+        .input-group { margin-bottom: 15px; }
+        .input-label { display: block; font-size: 0.8rem; text-transform: uppercase; color: #888; margin-bottom: 5px; font-weight: bold; }
+        .form-input { width: 100%; background: rgba(0,0,0,0.5); border: 1px solid rgba(255,255,255,0.1); padding: 12px; border-radius: 8px; color: white; outline: none; font-family: var(--font-body);}
+        .form-input:focus { border-color: var(--accent-main); }
+        
+        .btn-glow { background: var(--accent-main); color: #000; padding: 12px 25px; border-radius: 8px; font-family: var(--font-head); font-weight: bold; text-transform: uppercase; border: none; cursor: pointer; transition: 0.3s; width: 100%; font-size: 1.1rem;}
+        .btn-glow:hover { box-shadow: 0 0 20px var(--accent-main); transform: translateY(-2px); }
+
+        /* Dynamic List Builder Styles */
+        .dynamic-list { background: rgba(0,0,0,0.3); padding: 10px; border-radius: 8px; margin-bottom: 10px; }
+        .dynamic-item { display: flex; gap: 10px; margin-bottom: 10px; }
+        .remove-btn { background: #ff4d4d; color: white; border: none; padding: 10px; border-radius: 8px; cursor: pointer; }
+    </style>
+</head>
+<body>
+
+    <div class="header">
+        <h1>Dashboard / <span style="color:var(--accent-main);">Edit Hub</span></h1>
+        <a href="#" id="viewHubBtn" style="color:var(--accent-main); font-weight:bold;">View Live Hub <i class="fa-solid fa-arrow-up-right-from-square"></i></a>
+    </div>
+
+    <form id="editForm">
+        
+        <!-- IDENTITY -->
+        <div class="section-card">
+            <div class="section-title">1. Brand Identity</div>
+            <div class="input-group">
+                <label class="input-label">Hub / Team Name</label>
+                <input type="text" class="form-input" id="inpName" required>
+            </div>
+            <div class="input-group">
+                <label class="input-label">Mission / Bio</label>
+                <textarea class="form-input" id="inpBio" rows="4" required></textarea>
+            </div>
+            <div style="display:grid; grid-template-columns: 1fr 1fr; gap:15px;">
+                <div class="input-group">
+                    <label class="input-label">Primary Color</label>
+                    <input type="color" id="inpColor1" class="form-input" style="height:50px; padding:5px;">
+                </div>
+                <div class="input-group">
+                    <label class="input-label">Secondary Color</label>
+                    <input type="color" id="inpColor2" class="form-input" style="height:50px; padding:5px;">
+                </div>
+            </div>
+            <input type="hidden" id="valLogo">
+            <input type="hidden" id="valBanner">
+            <p style="font-size:0.8rem; color:#888;">*Note: Logo and Banner editing coming soon. Contact admin to change graphics.</p>
+        </div>
+
+        <!-- STATS -->
+        <div class="section-card">
+            <div class="section-title">2. Live Statistics Override</div>
+            <div style="display:grid; grid-template-columns: 1fr 1fr 1fr; gap:15px;">
+                <div class="input-group">
+                    <label class="input-label">YouTube (K)</label>
+                    <input type="number" class="form-input" id="inpYtK" placeholder="e.g. 125">
+                </div>
+                <div class="input-group">
+                    <label class="input-label">Insta (K)</label>
+                    <input type="number" class="form-input" id="inpIgK" placeholder="e.g. 42">
+                </div>
+                <div class="input-group">
+                    <label class="input-label">Scrims</label>
+                    <input type="number" class="form-input" id="inpHosted" placeholder="e.g. 38">
+                </div>
+            </div>
+        </div>
+
+        <!-- SOCIAL LINKS -->
+        <div class="section-card">
+            <div class="section-title">3. Social Links</div>
+            <div class="input-group">
+                <label class="input-label">YouTube URL</label>
+                <input type="url" class="form-input" id="inpYtLink">
+            </div>
+            <div class="input-group">
+                <label class="input-label">Instagram URL</label>
+                <input type="url" class="form-input" id="inpIgLink">
+            </div>
+            <div class="input-group">
+                <label class="input-label">Discord URL</label>
+                <input type="url" class="form-input" id="inpDcLink">
+            </div>
+        </div>
+
+        <!-- MEDIA HUB (Dynamic Arrays) -->
+        <div class="section-card">
+            <div class="section-title">4. Media Center (YouTube Embeds)</div>
+            <p style="font-size:0.8rem; color:#888; margin-bottom:10px;">Paste the YouTube EMBED URL (e.g. https://www.youtube.com/embed/XXXXX)</p>
+            
+            <div class="dynamic-list" id="videoList">
+                <!-- Videos injected here -->
+            </div>
+            <button type="button" class="form-input" style="background:transparent; border-style:dashed; color:var(--accent-main); text-align:center; font-weight:bold;" onclick="addMediaInput('videoList')">+ Add Video Embed</button>
+
+            <div style="margin-top:20px;"></div>
+            
+            <div class="dynamic-list" id="shortsList">
+                <!-- Shorts injected here -->
+            </div>
+            <button type="button" class="form-input" style="background:transparent; border-style:dashed; color:var(--accent-main); text-align:center; font-weight:bold;" onclick="addMediaInput('shortsList')">+ Add Shorts Embed</button>
+        </div>
+
+        <button type="submit" class="btn-glow" id="saveBtn"><i class="fa-solid fa-floppy-disk"></i> Update Hub Live</button>
+        <p id="statusMsg" style="text-align:center; margin-top:15px; font-weight:bold;"></p>
+    </form>
+
+    <script>
+        const API_URL = 'https://script.google.com/macros/s/AKfycbyqqTpgaflxKJ9xH0jq7mJ_jLzcoNhas3gNo0h5gvoa_6r5Ae9NFxJAJp7ZoYNnMRKl/exec';
+        // Get user from local storage (must be logged in)
+        let currentUser = JSON.parse(localStorage.getItem('tournyx_user')) || { email: "thilakeshwaran@gmail.com" }; // Fallback for testing
+        let myHubId = "";
+
+        // Function to create dynamic input fields for media
+        function addMediaInput(containerId, value = "") {
+            const container = document.getElementById(containerId);
+            const div = document.createElement('div');
+            div.className = "dynamic-item";
+            div.innerHTML = `
+                <input type="url" class="form-input media-val" value="${value}" placeholder="Embed URL" required>
+                <button type="button" class="remove-btn" onclick="this.parentElement.remove()"><i class="fa-solid fa-trash"></i></button>
+            `;
+            container.appendChild(div);
+        }
+
+        // 1. Fetch current data on load
+        async function fetchMyHub() {
+            try {
+                let res = await fetch(API_URL, {
+                    method: 'POST',
+                    body: JSON.stringify({ action: 'get_hub_for_edit', email: currentUser.email })
+                });
+                let data = await res.json();
+                
+                if (data.status === 'success') {
+                    let hub = data.data;
+                    myHubId = hub.id;
+                    let config = hub.config;
+                    let theme = hub.theme;
+
+                    // Populate Form
+                    document.getElementById('viewHubBtn').href = `https://tournyx.in/hub.html?c=${myHubId}`;
+                    
+                    document.getElementById('inpName').value = config.name || "";
+                    document.getElementById('inpBio').value = config.bio || "";
+                    document.getElementById('inpColor1').value = theme.main || "#00f2ff";
+                    document.getElementById('inpColor2').value = theme.sec || "#bd00ff";
+                    
+                    document.getElementById('valLogo').value = config.logo || "";
+                    document.getElementById('valBanner').value = config.banner || "";
+
+                    if(config.stats) {
+                        document.getElementById('inpYtK').value = config.stats.yt_k || 0;
+                        document.getElementById('inpIgK').value = config.stats.insta_k || 0;
+                        document.getElementById('inpHosted').value = config.stats.hosted || 0;
+                    }
+                    if(config.socials) {
+                        document.getElementById('inpYtLink').value = config.socials.youtube || "";
+                        document.getElementById('inpIgLink').value = config.socials.instagram || "";
+                        document.getElementById('inpDcLink').value = config.socials.discord || "";
+                    }
+                    if(config.media) {
+                        if(config.media.videos) config.media.videos.forEach(v => addMediaInput('videoList', v));
+                        if(config.media.shorts) config.media.shorts.forEach(s => addMediaInput('shortsList', s));
+                    }
+                } else {
+                    document.getElementById('statusMsg').innerText = "You don't have a Hub yet!";
+                    document.getElementById('statusMsg').style.color = "#ff4d4d";
+                }
+            } catch(e) { console.error(e); }
+        }
+
+        // 2. Save changes back to DB
+        document.getElementById('editForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            let btn = document.getElementById('saveBtn');
+            let status = document.getElementById('statusMsg');
+            btn.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin"></i> Saving...';
+            btn.disabled = true;
+
+            // Extract dynamic media arrays
+            let videos = Array.from(document.querySelectorAll('#videoList .media-val')).map(el => el.value);
+            let shorts = Array.from(document.querySelectorAll('#shortsList .media-val')).map(el => el.value);
+
+            let payload = {
+                action: 'update_creator_hub',
+                email: currentUser.email,
+                creator_name: document.getElementById('inpName').value,
+                bio: document.getElementById('inpBio').value,
+                logo_url: document.getElementById('valLogo').value,
+                banner_url: document.getElementById('valBanner').value,
+                color_main: document.getElementById('inpColor1').value,
+                color_sec: document.getElementById('inpColor2').value,
+                yt_k: document.getElementById('inpYtK').value,
+                insta_k: document.getElementById('inpIgK').value,
+                hosted: document.getElementById('inpHosted').value,
+                yt_link: document.getElementById('inpYtLink').value,
+                ig_link: document.getElementById('inpIgLink').value,
+                discord_link: document.getElementById('inpDcLink').value,
+                yt_videos: videos,
+                yt_shorts: shorts
+            };
+
+            try {
+                let res = await fetch(API_URL, {
+                    method: 'POST',
+                    body: JSON.stringify(payload)
+                });
+                let data = await res.json();
+                
+                if (data.status === 'success') {
+                    status.innerText = "Hub Updated Successfully!";
+                    status.style.color = "var(--accent-main)";
+                    setTimeout(() => { status.innerText = ""; }, 3000);
+                } else { throw new Error(data.message); }
+            } catch(e) {
+                status.innerText = "Error: " + e.message;
+                status.style.color = "#ff4d4d";
+            } finally {
+                btn.innerHTML = '<i class="fa-solid fa-floppy-disk"></i> Update Hub Live';
+                btn.disabled = false;
+            }
+        });
+
+        // Init
+        window.onload = fetchMyHub;
+    </script>
+</body>
+</html>
