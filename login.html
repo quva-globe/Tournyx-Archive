@@ -1066,26 +1066,46 @@
         });
     </script>
     <script>
-    function tournyxOneSignalSetup() {
-        let user = JSON.parse(localStorage.getItem('tournyx_user'));
-        
-        if (user && user.email && typeof median !== 'undefined' && median.onesignal) {
-            let cleanEmail = user.email.toLowerCase().trim();
-            if(median.onesignal.setExternalUserId) {
-                median.onesignal.setExternalUserId({ externalId: cleanEmail });
+function tournyxOneSignalSetup() {
+    let user = JSON.parse(localStorage.getItem('tournyx_user'));
+    
+    if (user && user.email && typeof median !== 'undefined' && median.onesignal) {
+        let cleanEmail = user.email.toLowerCase().trim();
+
+        // 1. THE MODERN LOGIN: Uses proper Objects for Median V5
+        if (median.onesignal.login) {
+            // Bind External ID
+            median.onesignal.login({ externalId: cleanEmail });
+            
+            // NEW: Bind Email so it shows up in the OneSignal Dashboard!
+            if (median.onesignal.user && median.onesignal.user.addEmail) {
+                median.onesignal.user.addEmail({ email: cleanEmail });
             }
-            if(median.onesignal.sendTags) {
-                median.onesignal.sendTags({
-                    tags: { 
-                        "user_email": cleanEmail,
-                        "user_status": "active" 
-                    }
-                });
+        } else if (median.onesignal.setExternalUserId) {
+            // Fallback for older Median builds
+            median.onesignal.setExternalUserId({ externalId: cleanEmail });
+            if (median.onesignal.setEmail) {
+                median.onesignal.setEmail({ email: cleanEmail });
             }
         }
+
+        // 2. SET TAGS PERFECTLY (We will use this to target them!)
+        let tagData = { 
+            "user_email": cleanEmail, 
+            "user_status": "active" 
+        };
+        
+        if (median.onesignal.tags && median.onesignal.tags.set) {
+            median.onesignal.tags.set(tagData);
+        } else if (median.onesignal.sendTags) {
+            median.onesignal.sendTags(tagData);
+        }
     }
-    document.addEventListener("median_library_ready", tournyxOneSignalSetup);
-    document.addEventListener("DOMContentLoaded", tournyxOneSignalSetup);
+}
+
+// Fire securely when the Median native app bridge is fully loaded
+document.addEventListener("median_library_ready", tournyxOneSignalSetup);
+document.addEventListener("DOMContentLoaded", tournyxOneSignalSetup);
 </script>
 </body>
 </html>
