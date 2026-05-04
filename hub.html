@@ -808,16 +808,18 @@
                 if(data.tournaments && data.tournaments.length > 0) {
                     hostedCount = data.tournaments.length;
                     data.tournaments.forEach(t => {
-                        let isCompleted = t.status.toLowerCase() === 'completed';
-                        let statClass = isCompleted ? 'completed' : (t.status.toLowerCase() === 'live' ? 'live' : 'upcoming');
-                        let statIcon = isCompleted ? 'fa-check-double' : (t.status.toLowerCase() === 'live' ? 'fa-circle-dot' : 'fa-clock');
+                        let safeStatus = String(t.status || 'upcoming').toLowerCase();
+                        let isCompleted = safeStatus === 'completed';
+                        let statClass = isCompleted ? 'completed' : (safeStatus === 'live' ? 'live' : 'upcoming');
+                        let statIcon = isCompleted ? 'fa-check-double' : (safeStatus === 'live' ? 'fa-circle-dot' : 'fa-clock');
                         let btnTxt = isCompleted ? 'View Results' : 'Register Now';
                         let btnClass = isCompleted ? 'btn-glow' : 'btn-glow pulse-btn';
                         
                         let pVal = parseInt(String(t.prize).replace(/[^0-9]/g, '')) || 0;
                         totalPrize += pVal;
 
-                        let feeHtml = t.fee.toLowerCase() === 'free' 
+                        let safeFee = String(t.fee || 'Free').toLowerCase();
+                        let feeHtml = safeFee === 'free' 
                             ? `<span class="tm-val free"><i class="fa-solid fa-ticket"></i> FREE</span>`
                             : `<span class="tm-val"><i class="fa-solid fa-ticket"></i> ${t.fee}</span>`;
 
@@ -875,7 +877,7 @@
 
                 roster.slice(0, 50).forEach((p, idx) => {
                     let avatarImg = p.img || p.avatar || creatorLogo;
-                    let roleLower = (p.role || '').toLowerCase();
+                    let roleLower = String(p.role || '').toLowerCase();
                     
                     let card = `
                         <div class="player-card dynamic-shadow" onclick="showPlayerStats(${idx})">
