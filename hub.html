@@ -65,7 +65,11 @@
 
         /* --- SKELETON LOADER --- */
         .skeleton { background: linear-gradient(110deg, rgba(255,255,255,0.03) 8%, rgba(255,255,255,0.1) 18%, rgba(255,255,255,0.03) 33%); background-size: 200% 100%; animation: shimmer 1.5s linear infinite; border-radius: 12px; min-height: 80px;}
-        @keyframes shimmer { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
+        /* Marquee Animation for Announcements */
+        @keyframes marqueeScroll { 
+            0% { transform: translateX(0); } 
+            100% { transform: translateX(-100%); } 
+        }
 
         /* --- BATTLEGROUNDS LOADER --- */
         #loader { position: fixed; inset: 0; background: var(--primary-bg); z-index: 9999; display: flex; flex-direction: column; align-items: center; justify-content: center; transition: opacity 0.3s ease; }
@@ -367,9 +371,14 @@
             </div>
 
             <!-- ANNOUNCEMENTS BOARD -->
-            <div class="notice-board dynamic-shadow" id="announcementBoard">
-                <h3 id="noticeTitle"><i class="fa-solid fa-bullhorn"></i> Official Broadcast</h3>
-                <p id="announcementText" style="font-size:0.95rem; color:#ddd; line-height:1.5;">Join our discord and stay tuned for the next official scrims.</p>
+            <div class="notice-board dynamic-shadow" id="announcementBoard" onclick="openModal('announceModal')" style="cursor: pointer; display: flex; align-items: center; gap: 15px; padding: 12px 15px; text-align: left;">
+                <img src="" id="announceLogo" style="width: 45px; height: 45px; border-radius: 50%; border: 2px solid var(--accent-main); object-fit: cover; flex-shrink: 0; box-shadow: 0 0 10px rgba(0,242,255,0.5);">
+                <div style="flex: 1; overflow: hidden; display: flex; flex-direction: column; justify-content: center;">
+                    <h3 id="noticeTitle" style="font-family: var(--font-head); color: var(--accent-main); font-size: 0.9rem; margin-bottom: 4px; text-transform: uppercase;"><i class="fa-solid fa-bullhorn"></i> Official Broadcast</h3>
+                    <div style="width: 100%; overflow: hidden; white-space: nowrap; position: relative;">
+                        <div id="announcementText" style="display: inline-block; font-size: 0.9rem; color: #ddd; padding-left: 100%;">Loading...</div>
+                    </div>
+                </div>
             </div>
 
             <!-- HUB HIGHLIGHTS -->
@@ -648,6 +657,16 @@
         </div>
     </div>
 
+    <!-- Announcement Popup Modal -->
+    <div class="modal-overlay" id="announceModal" onclick="closeModal(event, 'announceModal')">
+        <div class="modal-content glass" style="text-align:center; padding: 30px;">
+            <i class="fa-solid fa-xmark modal-close" onclick="closeModalDirect('announceModal')"></i>
+            <i class="fa-solid fa-bullhorn" style="font-size:3.5rem; color:var(--accent-main); margin-bottom:15px; filter:drop-shadow(0 0 15px var(--accent-main));"></i>
+            <h2 style="font-family:var(--font-head); color:white; margin-bottom:15px; text-transform:uppercase; letter-spacing: 1px;">Broadcast</h2>
+            <p id="announceModalText" style="color:#ddd; font-size:1.05rem; line-height:1.6; text-align: left; background: rgba(0,0,0,0.5); padding: 15px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.05);"></p>
+        </div>
+    </div>
+    
     <!-- Join Guild Form Modal -->
     <div class="modal-overlay" id="joinModal" onclick="closeModal(event, 'joinModal')">
         <div class="modal-content glass" style="text-align:center; padding: 30px;">
@@ -808,9 +827,23 @@
                 document.getElementById('homeDiscord').style.display = 'none';
             }
 
-            if(config.announcement) {
-                document.getElementById('noticeTitle').innerHTML = `<i class="fa-solid fa-bullhorn"></i> Official Broadcast`;
-                document.getElementById('announcementText').innerHTML = config.announcement.replace(/([\u2700-\u27BF]|[\uE000-\uF8FF]|\uD83C[\uDC00-\uDFFF]|\uD83D[\uDC00-\uDFFF]|[\u2011-\u26FF]|\uD83E[\uDD10-\uDDFF])/g, '<span class="glow-emoji">$1</span>');
+            if(config.announcement && config.announcement.trim() !== '') {
+                let formattedAnnounce = config.announcement.replace(/([\u2700-\u27BF]|[\uE000-\uF8FF]|\uD83C[\uDC00-\uDFFF]|\uD83D[\uDC00-\uDFFF]|[\u2011-\u26FF]|\uD83E[\uDD10-\uDDFF])/g, '<span class="glow-emoji">$1</span>');
+                let textEl = document.getElementById('announcementText');
+                
+                textEl.innerHTML = formattedAnnounce;
+                document.getElementById('announceModalText').innerHTML = formattedAnnounce;
+                document.getElementById('announceLogo').src = config.logo || 'https://via.placeholder.com/150';
+                
+                // Smart sliding animation: Slide horizontally if text is long, stay static if short
+                if (config.announcement.length > 35) {
+                    textEl.style.animation = "marqueeScroll 12s linear infinite";
+                    textEl.style.paddingLeft = "100%";
+                } else {
+                    textEl.style.animation = "none";
+                    textEl.style.paddingLeft = "0";
+                }
+                document.getElementById('announcementBoard').style.display = 'flex';
             } else {
                 document.getElementById('announcementBoard').style.display = 'none';
             }
@@ -834,7 +867,19 @@
                             let safeDate = t.date || '';
                             let safeStatus = String(t.status || 'upcoming').toLowerCase();
                             let filled = t.filled_slots || 0;
-                            let matchPeriod = t.match_period || "TBA";
+                            
+                            // Perfect Match Period Timestamp Parser
+                            let matchPeriod = "TBA";
+                            if (t.match_period && String(t.match_period).trim() !== "") {
+                                let rawMp = String(t.match_period).trim();
+                                if (rawMp.includes("T") && rawMp.includes("Z")) {
+                                    let mpD = new Date(rawMp);
+                                    if (!isNaN(mpD.getTime())) matchPeriod = mpD.toLocaleDateString('en-IN', { month: 'short', day: 'numeric' });
+                                    else matchPeriod = rawMp.split('T')[0];
+                                } else {
+                                    matchPeriod = rawMp;
+                                }
+                            }
                             let cardBanner = (t.banner && String(t.banner).startsWith('http')) ? t.banner : (config.banner || 'https://via.placeholder.com/800x400');
 
                             // Detect if backend shifted columns (t.slots containing a timestamp)
@@ -899,9 +944,9 @@
                                 }
                             }
 
-                            // Safe Slots Logic
-                            let totalS = parseInt(safeSlots) || 100;
-                            let filledS = parseInt(filled) || 0;
+                            // Safe Slots Logic (Sanitizing any weird string characters)
+                            let totalS = parseInt(String(safeSlots).replace(/[^0-9]/g, '')) || 100;
+                            let filledS = parseInt(String(filled).replace(/[^0-9]/g, '')) || 0;
                             let perc = Math.min(100, Math.floor((filledS / totalS) * 100)) || 0;
                             let likesCount = Math.floor(Math.random() * 150) + 50;
 
