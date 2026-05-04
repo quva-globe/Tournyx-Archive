@@ -24,17 +24,18 @@
 
         /* --- GLOBAL RESETS --- */
         * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-        *::-webkit-scrollbar { display: none; }
-        body { background-color: var(--primary-bg); color: var(--text-main); font-family: var(--font-body); padding: 15px; max-width: 900px; margin: 0 auto; padding-bottom: 100px; overflow-x: hidden;}
+        *::-webkit-scrollbar { width: 6px; }
+        *::-webkit-scrollbar-thumb { background: var(--accent-main); border-radius: 10px; }
+        body { background-color: var(--primary-bg); color: var(--text-main); font-family: var(--font-body); padding: 15px; max-width: 1000px; margin: 0 auto; padding-bottom: 100px; overflow-x: hidden; background-image: radial-gradient(circle at 50% 0%, rgba(0, 242, 255, 0.05), transparent 50%);}
         a { text-decoration: none; color: inherit; }
 
         /* --- UTILS & GLASSMORPHISM --- */
-        .glass { background: var(--card-bg); backdrop-filter: blur(25px); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 16px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+        .glass { background: linear-gradient(145deg, rgba(15, 8, 25, 0.9), rgba(5, 2, 10, 0.95)); backdrop-filter: blur(25px); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 16px; box-shadow: 0 15px 35px rgba(0,0,0,0.8); }
         .gradient-text { background: linear-gradient(90deg, var(--accent-sec), var(--accent-main)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
         
         /* Buttons */
-        .btn-glow { background: rgba(0,0,0,0.6); color: #fff; padding: 10px 20px; border-radius: 8px; font-family: var(--font-head); font-weight: bold; font-size: 0.85rem; text-transform: uppercase; border: 1px solid var(--accent-main); box-shadow: 0 0 15px rgba(0, 0, 0, 0.5); transition: 0.3s; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; gap: 8px; width: 100%;}
-        .btn-glow:hover { background: var(--accent-main); color: #000; box-shadow: 0 0 25px var(--accent-main); transform: translateY(-2px); }
+        .btn-glow { background: rgba(0,0,0,0.6); color: #fff; padding: 12px 20px; border-radius: 8px; font-family: var(--font-head); font-weight: bold; font-size: 0.9rem; text-transform: uppercase; border: 1px solid var(--accent-main); box-shadow: 0 0 15px rgba(0, 0, 0, 0.5); transition: 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); cursor: pointer; display: inline-flex; align-items: center; justify-content: center; gap: 8px; width: 100%;}
+        .btn-glow:hover { background: var(--accent-main); color: #000; box-shadow: 0 0 25px var(--accent-main); transform: translateY(-3px); }
         .btn-glow:disabled { opacity: 0.5; cursor: not-allowed; transform: none; box-shadow: none; }
 
         .btn-sec { border-color: var(--accent-sec); box-shadow: 0 0 15px rgba(189, 0, 255, 0.3); }
@@ -48,50 +49,54 @@
         #authLock.hidden { opacity: 0; pointer-events: none; }
 
         /* --- HEADER UI --- */
-        .header { display: flex; justify-content: space-between; align-items: center; background: rgba(0,0,0,0.5); border: 1px solid rgba(255,255,255,0.1); border-bottom: 2px solid var(--accent-main); padding: 12px 20px; border-radius: 12px; margin-bottom: 25px; animation: slideDown 0.5s ease; box-shadow: 0 10px 30px rgba(0,0,0,0.5);}
-        .header-left { display: flex; align-items: center; gap: 12px; }
-        .header-logo { width: 35px; height: 35px; object-fit: contain; filter: drop-shadow(0 0 5px var(--accent-main)); }
+        .header { display: flex; justify-content: space-between; align-items: center; background: rgba(0,0,0,0.6); border: 1px solid rgba(255,255,255,0.08); border-bottom: 2px solid var(--accent-main); padding: 15px 25px; border-radius: 16px; margin-bottom: 30px; animation: slideDown 0.5s ease; box-shadow: 0 10px 30px rgba(0,0,0,0.7);}
+        .header-left { display: flex; align-items: center; gap: 15px; }
+        .header-logo { width: 40px; height: 40px; object-fit: contain; filter: drop-shadow(0 0 8px var(--accent-main)); }
         .header-title-container { display: flex; flex-direction: column; }
-        .header-title { font-family: var(--font-head); font-size: 0.7rem; text-transform: uppercase; color: #aaa; margin: 0; letter-spacing: 1px;}
-        .header-subtitle { font-family: var(--font-head); font-size: 1.1rem; font-weight: 900; margin: 0; color: white; text-shadow: 0 0 10px rgba(255,255,255,0.3);}
+        .header-title { font-family: var(--font-head); font-size: 0.75rem; text-transform: uppercase; color: var(--accent-main); margin: 0; letter-spacing: 2px; font-weight: bold;}
+        .header-subtitle { font-family: var(--font-head); font-size: 1.3rem; font-weight: 900; margin: 0; color: white; text-shadow: 0 0 10px rgba(255,255,255,0.3);}
         
         .header-right { position: relative; display: flex; align-items: center; gap: 15px;}
-        .view-hub-btn { background: rgba(0,242,255,0.1); color: var(--accent-main); border: 1px solid var(--accent-main); padding: 6px 12px; border-radius: 6px; font-weight: bold; font-family: var(--font-head); font-size: 0.7rem; display: flex; align-items: center; gap: 5px; transition: 0.3s; display: none; text-transform: uppercase;}
-        .view-hub-btn:hover { background: var(--accent-main); color: #000; }
+        .view-hub-btn { background: rgba(0,242,255,0.1); color: var(--accent-main); border: 1px solid var(--accent-main); padding: 8px 15px; border-radius: 8px; font-weight: bold; font-family: var(--font-head); font-size: 0.75rem; display: flex; align-items: center; gap: 6px; transition: 0.3s; display: none; text-transform: uppercase; letter-spacing: 1px;}
+        .view-hub-btn:hover { background: var(--accent-main); color: #000; box-shadow: 0 0 15px rgba(0,242,255,0.4); transform: translateY(-2px);}
         
-        .profile-btn { width: 40px; height: 40px; border-radius: 50%; border: 2px solid var(--accent-main); object-fit: cover; cursor: pointer; box-shadow: 0 0 10px var(--accent-main); display: none;}
-        .default-user { font-size: 1.8rem; color: var(--accent-main); cursor: pointer; filter: drop-shadow(0 0 8px var(--accent-main)); }
+        .profile-btn { width: 45px; height: 45px; border-radius: 50%; border: 2px solid var(--accent-main); object-fit: cover; cursor: pointer; box-shadow: 0 0 15px var(--accent-main); display: none; transition: 0.3s;}
+        .profile-btn:hover { transform: scale(1.1); }
+        .default-user { font-size: 2rem; color: var(--accent-main); cursor: pointer; filter: drop-shadow(0 0 8px var(--accent-main)); transition: 0.3s;}
+        .default-user:hover { transform: scale(1.1); }
         
-        .logout-menu { position: absolute; top: 55px; right: 0; background: var(--card-bg); border: 1px solid var(--accent-red, #ff4d4d); padding: 15px; border-radius: 12px; display: none; flex-direction: column; gap: 10px; box-shadow: 0 10px 20px rgba(0,0,0,0.8); z-index: 1000;}
+        .logout-menu { position: absolute; top: 60px; right: 0; background: var(--card-bg); border: 1px solid var(--accent-red, #ff4d4d); padding: 15px; border-radius: 12px; display: none; flex-direction: column; gap: 10px; box-shadow: 0 15px 30px rgba(0,0,0,0.9); z-index: 1000; min-width: 150px;}
         .logout-menu.active { display: flex; animation: slideDown 0.3s ease; }
 
         /* --- FORM SECTIONS --- */
-        .section-card { padding: 25px; margin-bottom: 30px; animation: slideUp 0.6s ease forwards; opacity: 0; transform: translateY(20px); transition: border-color 0.3s, box-shadow 0.3s;}
-        .section-card:hover { border-color: var(--accent-main); box-shadow: 0 10px 35px rgba(0,0,0,0.8), inset 0 0 20px rgba(0,242,255,0.05); }
-        .section-title { font-family: var(--font-head); color: var(--accent-sec); font-size: 1.2rem; text-transform: uppercase; margin-bottom: 20px; display: flex; align-items: center; gap: 10px; border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 10px;}
+        .section-card { padding: 30px 25px; margin-bottom: 35px; animation: slideUp 0.6s ease forwards; opacity: 0; transform: translateY(20px); transition: border-color 0.3s, box-shadow 0.3s; position: relative; overflow: hidden;}
+        .section-card::before { content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 3px; background: linear-gradient(90deg, transparent, var(--accent-main), transparent); opacity: 0.5; }
+        .section-card:hover { border-color: var(--accent-main); box-shadow: 0 15px 40px rgba(0,0,0,0.9), inset 0 0 30px rgba(0,242,255,0.05); }
+        .section-title { font-family: var(--font-head); color: var(--accent-sec); font-size: 1.3rem; text-transform: uppercase; margin-bottom: 25px; display: flex; align-items: center; gap: 12px; border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 12px; font-weight: 900;}
 
-        .input-group { margin-bottom: 20px; }
-        .input-label { display: block; font-size: 0.85rem; text-transform: uppercase; color: #aaa; margin-bottom: 8px; font-weight: bold; letter-spacing: 1px;}
-        .form-input { width: 100%; background: rgba(0,0,0,0.6); border: 1px solid rgba(255,255,255,0.15); padding: 16px; border-radius: 10px; color: white; outline: none; font-family: var(--font-body); font-size: 1.05rem; transition: 0.3s;}
+        .input-group { margin-bottom: 20px; width: 100%;}
+        .input-label { display: block; font-size: 0.85rem; text-transform: uppercase; color: #bbb; margin-bottom: 8px; font-weight: bold; letter-spacing: 1px;}
+        .form-input { width: 100%; background: rgba(0,0,0,0.7); border: 1px solid rgba(255,255,255,0.15); padding: 16px; border-radius: 10px; color: white; outline: none; font-family: var(--font-body); font-size: 1.05rem; transition: 0.3s;}
         .form-input:focus { border-color: var(--accent-main); box-shadow: 0 0 15px rgba(0,242,255,0.2), inset 0 2px 5px rgba(0,0,0,0.5); transform: translateY(-2px);}
         .form-row { display: grid; grid-template-columns: 1fr; gap: 20px; }
         @media(min-width: 768px) { .form-row { grid-template-columns: 1fr 1fr; } }
 
         /* --- DYNAMIC LISTS & UPLOADS --- */
-        .dynamic-list { display: flex; flex-direction: column; gap: 15px; margin-bottom: 20px; }
-        .dynamic-item { background: rgba(0,0,0,0.5); padding: 20px; border-radius: 12px; border: 1px dashed rgba(255,255,255,0.2); position: relative; display: grid; gap: 15px; transition: 0.3s;}
-        .dynamic-item:hover { border-color: var(--accent-main); background: rgba(0,242,255,0.05); }
-        .remove-btn { position: absolute; top: -10px; right: -10px; background: var(--primary-bg); color: #ff4d4d; border: 1px solid #ff4d4d; width: 35px; height: 35px; border-radius: 50%; cursor: pointer; transition: 0.3s; display: flex; align-items: center; justify-content: center; font-size: 1.1rem; box-shadow: 0 5px 15px rgba(255,77,77,0.3); z-index: 10;}
-        .remove-btn:hover { background: #ff4d4d; color: white; transform: scale(1.1);}
+        .dynamic-list { display: flex; flex-direction: column; gap: 20px; margin-bottom: 20px; }
+        .dynamic-item { background: rgba(0,0,0,0.6); padding: 20px; border-radius: 14px; border: 1px solid rgba(255,255,255,0.1); position: relative; display: grid; gap: 15px; transition: 0.3s; box-shadow: inset 0 0 20px rgba(0,0,0,0.5);}
+        .dynamic-item:hover { border-color: var(--accent-main); background: rgba(0,242,255,0.03); transform: scale(1.01);}
         
-        .preview-btn { position: absolute; top: -10px; right: 30px; background: var(--primary-bg); color: var(--accent-main); border: 1px solid var(--accent-main); width: 35px; height: 35px; border-radius: 50%; cursor: pointer; transition: 0.3s; display: flex; align-items: center; justify-content: center; font-size: 1.1rem; box-shadow: 0 5px 15px rgba(0,242,255,0.3); z-index: 10;}
-        .preview-btn:hover { background: var(--accent-main); color: #000; transform: scale(1.1);}
+        .remove-btn { position: absolute; top: -12px; right: -12px; background: #1a0b1c; color: #ff4d4d; border: 1px solid #ff4d4d; width: 38px; height: 38px; border-radius: 50%; cursor: pointer; transition: 0.3s; display: flex; align-items: center; justify-content: center; font-size: 1.1rem; box-shadow: 0 5px 15px rgba(255,77,77,0.3); z-index: 10;}
+        .remove-btn:hover { background: #ff4d4d; color: white; transform: scale(1.15) rotate(90deg);}
+        
+        .preview-btn { position: absolute; top: -12px; right: 35px; background: #0a151f; color: var(--accent-main); border: 1px solid var(--accent-main); width: 38px; height: 38px; border-radius: 50%; cursor: pointer; transition: 0.3s; display: flex; align-items: center; justify-content: center; font-size: 1.1rem; box-shadow: 0 5px 15px rgba(0,242,255,0.3); z-index: 10;}
+        .preview-btn:hover { background: var(--accent-main); color: #000; transform: scale(1.15);}
 
-        .add-new-btn { background: transparent; border: 1px dashed var(--accent-main); color: var(--accent-main); padding: 15px; border-radius: 10px; cursor: pointer; font-weight: bold; width: 100%; transition: 0.3s; font-size: 1rem; font-family: var(--font-head);}
-        .add-new-btn:hover { background: rgba(0,242,255,0.1); }
+        .add-new-btn { background: transparent; border: 1.5px dashed var(--accent-main); color: var(--accent-main); padding: 18px; border-radius: 12px; cursor: pointer; font-weight: bold; width: 100%; transition: 0.3s; font-size: 1.05rem; font-family: var(--font-head); letter-spacing: 1px;}
+        .add-new-btn:hover { background: rgba(0,242,255,0.1); border-style: solid; box-shadow: 0 5px 15px rgba(0,242,255,0.2);}
 
-        .upload-box { background: rgba(0,0,0,0.6); border: 1px dashed #888; border-radius: 10px; text-align: center; cursor: pointer; transition: 0.3s; position: relative; overflow: hidden; display: flex; flex-direction: column; align-items: center; justify-content: center;}
-        .upload-box:hover { border-color: var(--accent-main); }
+        .upload-box { background: rgba(0,0,0,0.8); border: 1.5px dashed #666; border-radius: 12px; text-align: center; cursor: pointer; transition: 0.3s; position: relative; overflow: hidden; display: flex; flex-direction: column; align-items: center; justify-content: center;}
+        .upload-box:hover { border-color: var(--accent-main); background: rgba(0,242,255,0.05); }
         .upload-preview { position: absolute; inset: 0; background-size: cover; background-position: center; opacity: 0; z-index: 2; transition: 0.3s;}
         .upload-preview.active { opacity: 1; }
         .upload-overlay { position: absolute; inset: 0; background: rgba(0,0,0,0.7); display: flex; align-items: center; justify-content: center; z-index: 3; opacity: 0; color: white; transition: 0.3s; }
@@ -99,17 +104,17 @@
         .file-input { display: none; }
         .upload-loader { position: absolute; inset: 0; background: rgba(0,0,0,0.9); z-index: 4; display: none; flex-direction: column; align-items: center; justify-content: center; }
 
-        .color-picker { -webkit-appearance: none; -moz-appearance: none; appearance: none; width: 100%; height: 55px; background: transparent; border: none; cursor: pointer; }
-        .color-picker::-webkit-color-swatch { border-radius: 8px; border: 1px solid rgba(255,255,255,0.2); }
+        .color-picker { -webkit-appearance: none; -moz-appearance: none; appearance: none; width: 100%; height: 55px; background: transparent; border: none; cursor: pointer; padding: 0;}
+        .color-picker::-webkit-color-swatch { border-radius: 10px; border: 1px solid rgba(255,255,255,0.2); box-shadow: inset 0 0 10px rgba(0,0,0,0.5); }
 
         /* --- SQUAD REQUEST CARDS --- */
-        .req-card { background: rgba(0,0,0,0.4); border: 1px solid var(--accent-sec); border-radius: 12px; padding: 15px; display: flex; flex-direction: column; gap: 10px; position: relative;}
-        .req-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 8px;}
-        .req-name { font-family: var(--font-head); font-size: 1.1rem; font-weight: bold; color: white; }
-        .req-uid { font-size: 0.7rem; color: var(--accent-main); font-family: monospace; }
-        .req-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 5px;}
+        .req-card { background: rgba(0,0,0,0.6); border: 1px solid var(--accent-sec); border-radius: 14px; padding: 18px; display: flex; flex-direction: column; gap: 12px; position: relative; box-shadow: inset 0 0 20px rgba(189,0,255,0.1);}
+        .req-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 10px;}
+        .req-name { font-family: var(--font-head); font-size: 1.2rem; font-weight: bold; color: white; text-shadow: 0 0 5px rgba(255,255,255,0.2);}
+        .req-uid { font-size: 0.75rem; color: var(--accent-main); font-family: monospace; font-weight: bold;}
+        .req-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 8px;}
 
-        /* --- SUCCESS OVERLAY WITH TIMER (UPGRADED) --- */
+        /* --- SUCCESS OVERLAY WITH TIMER --- */
         #successOverlay { position: fixed; inset: 0; background: rgba(3,1,5,0.95); backdrop-filter: blur(20px); z-index: 9999; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 20px; opacity: 0; pointer-events: none; transition: 0.5s; overflow: hidden; }
         #successOverlay.active { opacity: 1; pointer-events: all; }
         
@@ -120,7 +125,7 @@
         .suc-ring-2 { position: absolute; width: 150px; height: 150px; border-radius: 50%; border: 2px solid var(--accent-sec); border-top-color: transparent; border-bottom-color: transparent; animation: spinRing 3s linear infinite reverse; z-index: 1; opacity: 0.3; }
         @keyframes spinRing { 100% { transform: rotate(360deg); } }
         
-        .suc-title { font-family: var(--font-head); font-size: clamp(1.8rem, 6vw, 2.8rem); text-transform: uppercase; margin-bottom: 12px; font-weight: 900; letter-spacing: 2px; }
+        .suc-title { font-family: var(--font-head); font-size: clamp(1.8rem, 6vw, 2.8rem); text-transform: uppercase; margin-bottom: 12px; font-weight: 900; letter-spacing: 2px; text-shadow: 0 0 20px var(--accent-main);}
         .suc-desc { color: #ccc; font-size: clamp(0.9rem, 3vw, 1.1rem); margin-bottom: 10px; max-width: 500px; line-height: 1.5; }
         
         .timer-wrapper { position: relative; width: 90px; height: 90px; margin: 30px auto 20px; display: flex; align-items: center; justify-content: center; }
@@ -130,12 +135,12 @@
         .timer-num { font-family: var(--font-head); font-size: 2.2rem; font-weight: bold; color: white; position: relative; z-index: 2; }
 
         /* --- MODALS --- */
-        .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.8); backdrop-filter: blur(10px); z-index: 5000; display: none; align-items: center; justify-content: center; opacity: 0; transition: 0.3s; padding: 20px;}
+        .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.85); backdrop-filter: blur(15px); z-index: 5000; display: none; align-items: center; justify-content: center; opacity: 0; transition: 0.3s; padding: 20px;}
         .modal-overlay.active { display: flex; opacity: 1; }
-        .modal-content { background: var(--card-bg); border: 1px solid var(--accent-main); width: 100%; max-width: 450px; border-radius: 16px; padding: 30px; position: relative; transform: scale(0.9); transition: 0.3s; box-shadow: 0 10px 40px rgba(0,0,0,0.9); }
+        .modal-content { background: var(--card-bg); border: 1px solid var(--accent-main); width: 100%; max-width: 450px; border-radius: 16px; padding: 30px; position: relative; transform: scale(0.9); transition: 0.3s; box-shadow: 0 15px 50px rgba(0,0,0,0.9); }
         .modal-overlay.active .modal-content { transform: scale(1); }
-        .modal-close { position: absolute; top: 15px; right: 15px; color: #888; font-size: 1.2rem; cursor: pointer; transition: 0.3s; }
-        .modal-close:hover { color: #ff4d4d; }
+        .modal-close { position: absolute; top: 15px; right: 15px; color: #888; font-size: 1.2rem; cursor: pointer; transition: 0.3s; background: rgba(0,0,0,0.5); width: 30px; height: 30px; display: flex; align-items: center; justify-content: center; border-radius: 50%;}
+        .modal-close:hover { color: #fff; background: #ff4d4d;}
 
         @keyframes slideDown { from { transform: translateY(-20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
         @keyframes slideUp { to { transform: translateY(0); opacity: 1; } }
@@ -190,17 +195,17 @@
                     <input type="text" class="form-input" id="inpName" required>
                 </div>
                 <div class="input-group">
-                    <label class="input-label">Moto / Slogan (Optional)</label>
+                    <label class="input-label">Moto / Slogan</label>
                     <input type="text" class="form-input" id="inpMoto" placeholder="Short team moto or slogan">
                 </div>
             </div>
             <div class="input-group">
                 <label class="input-label">Mission / Bio (Emojis Supported)</label>
-                <textarea class="form-input" id="inpBio" rows="2" required></textarea>
+                <textarea class="form-input" id="inpBio" rows="2" required placeholder="Who are you and what do you do?"></textarea>
             </div>
             <div class="input-group">
-                <label class="input-label">Future Ambitions (Optional)</label>
-                <textarea class="form-input" id="inpAmbitions" rows="2" placeholder="Describe your team's goals..."></textarea>
+                <label class="input-label">Future Ambitions</label>
+                <textarea class="form-input" id="inpAmbitions" rows="2" placeholder="Describe your team's ultimate goals..."></textarea>
             </div>
             
             <div class="form-row" style="margin-top:10px;">
@@ -218,9 +223,9 @@
             <div class="form-row" style="margin-top:15px;">
                 <div class="input-group">
                     <label class="input-label">Hub Logo (1:1 Ratio)</label>
-                    <div class="upload-box" style="height: 150px;" onclick="document.getElementById('logoInput').click(); triggerHaptic();">
-                        <i class="fa-solid fa-circle-user" style="font-size:2.5rem; color:#888; margin-bottom:10px;"></i>
-                        <span style="font-size:0.9rem; font-weight:bold;">Tap to Edit Logo</span>
+                    <div class="upload-box" style="height: 160px;" onclick="document.getElementById('logoInput').click(); triggerHaptic();">
+                        <i class="fa-solid fa-circle-user" style="font-size:3rem; color:#888; margin-bottom:10px;"></i>
+                        <span style="font-size:0.95rem; font-weight:bold; color:#aaa;">Tap to Edit Logo</span>
                         <div class="upload-preview" id="logoPreview"></div>
                         <div class="upload-overlay"><i class="fa-solid fa-pen" style="font-size:1.5rem;"></i></div>
                         <div class="upload-loader" id="logoLoader"><i class="fa-solid fa-circle-notch fa-spin" style="font-size:2rem; color:white;"></i></div>
@@ -230,9 +235,9 @@
                 </div>
                 <div class="input-group">
                     <label class="input-label">Arena Banner (16:9 Ratio)</label>
-                    <div class="upload-box" style="height: 150px;" onclick="document.getElementById('bannerInput').click(); triggerHaptic();">
-                        <i class="fa-solid fa-panorama" style="font-size:2.5rem; color:#888; margin-bottom:10px;"></i>
-                        <span style="font-size:0.9rem; font-weight:bold;">Tap to Edit Banner</span>
+                    <div class="upload-box" style="height: 160px;" onclick="document.getElementById('bannerInput').click(); triggerHaptic();">
+                        <i class="fa-solid fa-panorama" style="font-size:3rem; color:#888; margin-bottom:10px;"></i>
+                        <span style="font-size:0.95rem; font-weight:bold; color:#aaa;">Tap to Edit Banner</span>
                         <div class="upload-preview" id="bannerPreview"></div>
                         <div class="upload-overlay"><i class="fa-solid fa-pen" style="font-size:1.5rem;"></i></div>
                         <div class="upload-loader" id="bannerLoader"><i class="fa-solid fa-circle-notch fa-spin" style="font-size:2rem; color:white;"></i></div>
@@ -240,6 +245,15 @@
                     <input type="file" id="bannerInput" class="file-input" accept="image/*" onchange="processImage(event, 'bannerPreview', 'valBanner', 'bannerLoader', 1280)">
                     <input type="hidden" id="valBanner">
                 </div>
+            </div>
+        </div>
+
+        <!-- NOTICE BOARD & BROADCAST -->
+        <div class="glass section-card" style="animation-delay: 0.15s;">
+            <div class="section-title"><i class="fa-solid fa-bullhorn"></i> Notice Board & Broadcast</div>
+            <div class="input-group" style="margin: 0;">
+                <label class="input-label">Official Announcement</label>
+                <textarea class="form-input" id="inpAnnouncement" rows="2" placeholder="Announce scrims, tryouts, or server updates here..."></textarea>
             </div>
         </div>
 
@@ -275,8 +289,8 @@
         <!-- SQUAD APPLICATIONS ENGINE -->
         <div class="glass section-card" style="animation-delay: 0.25s;">
             <div class="section-title"><i class="fa-solid fa-user-plus"></i> Squad Applications</div>
-            <p style="font-size:0.85rem; color:#aaa; margin-bottom:15px;">Review players who have requested to join your official roster. Accepting them adds them to the Pro Roster Builder below.</p>
-            <div id="requestsList" style="display:grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap:15px;">
+            <p style="font-size:0.9rem; color:#aaa; margin-bottom:20px; line-height:1.5;">Review players who have requested to join your official roster. Accepting them adds them directly to the Pro Roster Builder below.</p>
+            <div id="requestsList" style="display:grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap:20px;">
                 <p style="color:#888; font-style:italic;">Fetching requests...</p>
             </div>
         </div>
@@ -284,7 +298,7 @@
         <!-- PRO ROSTER BUILDER -->
         <div class="glass section-card" style="animation-delay: 0.3s;">
             <div class="section-title"><i class="fa-solid fa-shield-halved"></i> Pro Roster Builder</div>
-            <p style="font-size:0.9rem; color:#aaa; margin-bottom:20px;">Build your official squad. Manually input details or instantly fetch verified player stats using their Tournyx email.</p>
+            <p style="font-size:0.9rem; color:#aaa; margin-bottom:20px; line-height:1.5;">Build your official squad cards. Manually input details or instantly fetch verified player stats using their Tournyx email to save time.</p>
             
             <div style="display:flex; gap:15px; margin-bottom: 25px;">
                 <button type="button" class="btn-glow" style="flex:1;" onclick="addPlayerInput(); triggerHaptic();"><i class="fa-solid fa-pen-to-square"></i> Manual Add</button>
@@ -297,19 +311,19 @@
         <!-- MEDIA HUB (UPGRADED) -->
         <div class="glass section-card" style="animation-delay: 0.4s;">
             <div class="section-title"><i class="fa-solid fa-play"></i> Content Hub Embeds</div>
-            <p style="font-size:0.9rem; color:#aaa; margin-bottom:15px;">Paste normal YouTube or Instagram share links (Max 10 each). Our engine will auto-convert them.</p>
+            <p style="font-size:0.9rem; color:#aaa; margin-bottom:20px; line-height:1.5;">Paste normal YouTube or Instagram share links (Max 10 each). Our engine will securely auto-convert them for display.</p>
             
             <label class="input-label" style="color:var(--accent-main);"><i class="fa-brands fa-youtube"></i> Main Videos</label>
             <div class="dynamic-list" id="videoList"></div>
-            <button type="button" class="add-new-btn" style="margin-bottom:20px;" onclick="addMediaInput('videoList', 'YouTube Link (e.g. youtube.com/watch?v=...)'); triggerHaptic();">+ Add Video</button>
+            <button type="button" class="add-new-btn" style="margin-bottom:25px;" onclick="addMediaInput('videoList', 'YouTube Link (e.g. youtube.com/watch?v=...)'); triggerHaptic();">+ Add Video</button>
             
             <label class="input-label" style="color:var(--accent-main);"><i class="fa-solid fa-mobile-screen"></i> YouTube Shorts</label>
             <div class="dynamic-list" id="shortsList"></div>
-            <button type="button" class="add-new-btn" style="margin-bottom:20px;" onclick="addMediaInput('shortsList', 'Shorts Link (e.g. youtube.com/shorts/...)'); triggerHaptic();">+ Add Short</button>
+            <button type="button" class="add-new-btn" style="margin-bottom:25px;" onclick="addMediaInput('shortsList', 'Shorts Link (e.g. youtube.com/shorts/...)'); triggerHaptic();">+ Add Short</button>
 
             <label class="input-label" style="color:#e1306c;"><i class="fa-brands fa-instagram"></i> Instagram Posts</label>
             <div class="dynamic-list" id="instaPostList"></div>
-            <button type="button" class="add-new-btn" style="border-color:#e1306c; color:#e1306c; margin-bottom:20px;" onclick="addMediaInput('instaPostList', 'Instagram Post Link (e.g. instagram.com/p/...)'); triggerHaptic();">+ Add Insta Post</button>
+            <button type="button" class="add-new-btn" style="border-color:#e1306c; color:#e1306c; margin-bottom:25px;" onclick="addMediaInput('instaPostList', 'Instagram Post Link (e.g. instagram.com/p/...)'); triggerHaptic();">+ Add Insta Post</button>
 
             <label class="input-label" style="color:#e1306c;"><i class="fa-brands fa-instagram"></i> Instagram Reels</label>
             <div class="dynamic-list" id="instaReelList"></div>
@@ -322,16 +336,16 @@
             
             <label class="input-label" style="color:var(--accent-main);">Founders / Owners</label>
             <div class="dynamic-list" id="founderList"></div>
-            <button type="button" class="add-new-btn" style="margin-bottom:20px;" onclick="addPersonInput('founderList'); triggerHaptic();">+ Add Founder</button>
+            <button type="button" class="add-new-btn" style="margin-bottom:25px;" onclick="addPersonInput('founderList'); triggerHaptic();">+ Add Founder</button>
             
-            <label class="input-label" style="color:var(--accent-main);">Editing Team</label>
+            <label class="input-label" style="color:var(--accent-main);">Official Editing Team</label>
             <div class="dynamic-list" id="editorList"></div>
             <button type="button" class="add-new-btn" onclick="addPersonInput('editorList'); triggerHaptic();">+ Add Editor</button>
         </div>
 
         <!-- SUBMIT -->
-        <div style="text-align: center; margin-top: 40px;">
-            <button type="submit" class="btn-glow pulse-btn" id="saveBtn" style="font-size:1.1rem; padding:15px 30px; max-width: 400px; margin:0 auto;" onclick="triggerHaptic()">
+        <div style="text-align: center; margin-top: 50px;">
+            <button type="submit" class="btn-glow pulse-btn" id="saveBtn" style="font-size:1.15rem; padding:18px 30px; max-width: 450px; margin:0 auto; box-shadow: 0 10px 30px rgba(0,242,255,0.4);" onclick="triggerHaptic()">
                 <i class="fa-solid fa-floppy-disk"></i> Synchronize Hub Live
             </button>
             <p id="statusMsg" style="text-align:center; font-weight:bold; font-size:1.1rem; margin-top: 15px;"></p>
@@ -342,12 +356,12 @@
     <div class="modal-overlay" id="fetchModal" onclick="closeModal(event, 'fetchModal')">
         <div class="modal-content glass" style="text-align:center;">
             <i class="fa-solid fa-xmark modal-close" onclick="closeModalDirect('fetchModal')"></i>
-            <i class="fa-solid fa-magnifying-glass" style="font-size:3rem; color:var(--accent-sec); margin-bottom:15px; filter:drop-shadow(0 0 15px var(--accent-sec));"></i>
+            <i class="fa-solid fa-magnifying-glass" style="font-size:3.5rem; color:var(--accent-sec); margin-bottom:15px; filter:drop-shadow(0 0 15px var(--accent-sec));"></i>
             <h2 style="font-family:var(--font-head); color:white; margin-bottom:10px;">Fetch Tournyx Player</h2>
-            <p style="color:#aaa; font-size:0.9rem; margin-bottom:20px;">Enter the player's Tournyx verified email to automatically pull their stats and IGN into the roster.</p>
-            <input type="email" id="fetchEmailInp" class="form-input" placeholder="Player's Tournyx Email" style="margin-bottom:15px;">
-            <button type="button" class="btn-glow btn-sec" style="width:100%;" id="fetchBtn" onclick="fetchPlayerByEmail()">Fetch Player Data</button>
-            <p id="fetchErr" style="color:#ff4d4d; font-size:0.8rem; margin-top:10px; display:none;"></p>
+            <p style="color:#aaa; font-size:0.95rem; margin-bottom:25px; line-height:1.5;">Enter the player's Tournyx verified email to automatically pull their stats and IGN directly into your roster editor.</p>
+            <input type="email" id="fetchEmailInp" class="form-input" placeholder="Player's Tournyx Email" style="margin-bottom:20px; text-align:center;">
+            <button type="button" class="btn-glow btn-sec" style="width:100%; padding:14px; font-size:1.05rem;" id="fetchBtn" onclick="fetchPlayerByEmail()">Fetch Player Data</button>
+            <p id="fetchErr" style="color:#ff4d4d; font-size:0.9rem; font-weight:bold; margin-top:15px; display:none;"></p>
         </div>
     </div>
 
@@ -359,7 +373,7 @@
             <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEg_20wCR-WBMpQmw3vxcYUf-vxIO1PYDJoQN_Sid3UDjA9tf0cuX0eH40jbzHoJad4cxbnjhPjqfCw1Z5V1LhgN9zFuIQC0fJjecTy3D9PFu5WjR2H1wHwTD1bUGnXY_NiApWn5gMs6velcQngSzKoP1yHzX0cVsFSUFM8zIefcbiPayY7680Kz0V0ZAAE/s1264/1000093706.png" class="suc-logo" alt="Tournyx">
         </div>
         <h1 class="suc-title neon-text">Hub Synchronized!</h1>
-        <p class="suc-desc">Your new configurations have been pushed live to the global arena.</p>
+        <p class="suc-desc">Your ultimate configurations have been securely pushed live to the global arena.</p>
         
         <div class="timer-wrapper">
             <svg class="timer-svg" viewBox="0 0 90 90">
@@ -368,33 +382,33 @@
             </svg>
             <span class="timer-num" id="redirTime">5</span>
         </div>
-        <p style="color:#888; font-weight:bold; text-transform:uppercase; font-size:clamp(0.7rem, 2vw, 0.8rem); letter-spacing:1px;">Redirecting to your Hub...</p>
+        <p style="color:#888; font-weight:bold; text-transform:uppercase; font-size:clamp(0.7rem, 2vw, 0.8rem); letter-spacing:1px;">Redirecting to your Live Hub...</p>
     </div>
 
     <!-- PREVIEW MODALS -->
     <div class="modal-overlay" id="previewModalPlayer" onclick="closeModal(event, 'previewModalPlayer')">
         <div class="modal-content glass" style="text-align:center;">
             <i class="fa-solid fa-xmark modal-close" onclick="closeModalDirect('previewModalPlayer')"></i>
-            <h2 style="font-family:var(--font-head); color:white; margin-bottom:20px;">Player Preview</h2>
-            <img id="prevPlayerImg" src="" style="width:100px; height:100px; border-radius:50%; object-fit:cover; margin-bottom:15px; border:2px solid var(--accent-main);">
-            <h3 id="prevPlayerName" style="font-family:var(--font-head); color:white; margin-bottom:5px;">Name</h3>
-            <p id="prevPlayerRole" style="color:var(--accent-sec); font-weight:bold; text-transform:uppercase; font-size:0.8rem; margin-bottom:15px;">Role</p>
-            <div style="display:flex; justify-content:center; gap:15px; margin-bottom:15px;">
-                <span id="prevPlayerKd" style="font-weight:bold;">KD: -</span>
-                <span id="prevPlayerHs" style="font-weight:bold;">HS: -</span>
+            <h2 style="font-family:var(--font-head); color:white; margin-bottom:20px;">Player Card Preview</h2>
+            <img id="prevPlayerImg" src="" style="width:110px; height:110px; border-radius:50%; object-fit:cover; margin-bottom:15px; border:2px solid var(--accent-main); box-shadow: 0 0 15px rgba(0,242,255,0.3);">
+            <h3 id="prevPlayerName" style="font-family:var(--font-head); font-size: 1.5rem; color:white; margin-bottom:5px;">Name</h3>
+            <p id="prevPlayerRole" style="color:var(--accent-main); font-weight:bold; text-transform:uppercase; font-size:0.85rem; margin-bottom:20px; background: rgba(0,242,255,0.1); display:inline-block; padding: 4px 12px; border-radius: 6px; border: 1px solid var(--accent-main);">Role</p>
+            <div style="display:flex; justify-content:center; gap:20px; margin-bottom:20px;">
+                <span id="prevPlayerKd" style="font-weight:bold; background:rgba(0,0,0,0.5); padding: 8px 15px; border-radius:8px;">KD: -</span>
+                <span id="prevPlayerHs" style="font-weight:bold; background:rgba(0,0,0,0.5); padding: 8px 15px; border-radius:8px;">HS: -</span>
             </div>
-             <p id="prevPlayerUid" style="color:#aaa; font-size:0.8rem; font-family:monospace;">UID: -</p>
+             <p id="prevPlayerUid" style="color:#aaa; font-size:0.85rem; font-family:monospace; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 15px;">UID: -</p>
         </div>
     </div>
 
      <div class="modal-overlay" id="previewModalPerson" onclick="closeModal(event, 'previewModalPerson')">
         <div class="modal-content glass" style="text-align:center;">
             <i class="fa-solid fa-xmark modal-close" onclick="closeModalDirect('previewModalPerson')"></i>
-            <h2 style="font-family:var(--font-head); color:white; margin-bottom:20px;">Card Preview</h2>
-            <img id="prevPersonImg" src="" style="width:100px; height:100px; border-radius:50%; object-fit:cover; margin-bottom:15px; border:2px solid var(--accent-main);">
-            <h3 id="prevPersonName" style="font-family:var(--font-head); color:white; margin-bottom:5px;">Name</h3>
-            <p id="prevPersonRole" style="color:var(--accent-sec); font-weight:bold; text-transform:uppercase; font-size:0.8rem; margin-bottom:10px;">Role</p>
-            <p id="prevPersonDesc" style="color:#aaa; font-size:0.85rem; font-style:italic;">Description</p>
+            <h2 style="font-family:var(--font-head); color:white; margin-bottom:20px;">Staff Card Preview</h2>
+            <img id="prevPersonImg" src="" style="width:110px; height:110px; border-radius:50%; object-fit:cover; margin-bottom:15px; border:2px solid var(--accent-main); box-shadow: 0 0 15px rgba(0,242,255,0.3);">
+            <h3 id="prevPersonName" style="font-family:var(--font-head); font-size: 1.5rem; color:white; margin-bottom:5px;">Name</h3>
+            <p id="prevPersonRole" style="color:var(--accent-sec); font-weight:bold; text-transform:uppercase; font-size:0.85rem; margin-bottom:15px; background: rgba(189,0,255,0.1); display:inline-block; padding: 4px 12px; border-radius: 6px; border: 1px solid var(--accent-sec);">Role</p>
+            <p id="prevPersonDesc" style="color:#aaa; font-size:0.95rem; font-style:italic; line-height:1.5;">Description</p>
         </div>
     </div>
 
@@ -485,12 +499,12 @@
                                 <div class="req-name">${req.ign || req.name || 'Unknown Player'}</div>
                                 <div class="req-uid">UID: ${req.uid || 'N/A'}</div>
                             </div>
-                            <span style="font-size:0.7rem; font-weight:bold; color:var(--accent-main); text-transform:uppercase; border:1px solid var(--accent-main); padding:2px 6px; border-radius:4px;">${req.role || 'Player'}</span>
+                            <span style="font-size:0.7rem; font-weight:bold; color:var(--accent-main); text-transform:uppercase; border:1px solid var(--accent-main); padding:4px 8px; border-radius:6px; background:rgba(0,242,255,0.1);">${req.role || 'Player'}</span>
                         </div>
-                        <div style="font-size:0.75rem; color:#ccc;">${req.bio ? req.bio.substring(0,60)+'...' : 'No bio provided.'}</div>
+                        <div style="font-size:0.85rem; color:#ccc; line-height:1.4;">${req.bio ? req.bio.substring(0,60)+'...' : 'No bio provided.'}</div>
                         <div class="req-actions">
-                            <button type="button" class="btn-glow" style="padding:6px; font-size:0.7rem;" onclick="approveRequest(${idx}); triggerHaptic();"><i class="fa-solid fa-check"></i> Accept</button>
-                            <button type="button" class="btn-glow" style="padding:6px; font-size:0.7rem; background:rgba(255,77,77,0.1); border-color:#ff4d4d; color:#ff4d4d;" onclick="rejectRequest(${idx}); triggerHaptic();"><i class="fa-solid fa-xmark"></i> Reject</button>
+                            <button type="button" class="btn-glow" style="padding:10px; font-size:0.75rem;" onclick="approveRequest(${idx}); triggerHaptic();"><i class="fa-solid fa-check"></i> Accept</button>
+                            <button type="button" class="btn-glow" style="padding:10px; font-size:0.75rem; background:rgba(255,77,77,0.1); border-color:#ff4d4d; color:#ff4d4d;" onclick="rejectRequest(${idx}); triggerHaptic();"><i class="fa-solid fa-xmark"></i> Reject</button>
                         </div>
                     </div>
                 `;
@@ -500,20 +514,20 @@
 
         function approveRequest(idx) {
             let req = pendingRequests[idx];
-            addPlayerInput({ name: req.ign || req.name || "", role: req.role || "", uid: req.uid || "", ig: "", img: "" });
+            addPlayerInput({ name: req.ign || req.name || "", role: req.role || "", uid: req.uid || "", ig: "", img: "", kd: "", hs: "" });
             pendingRequests.splice(idx, 1);
             renderRequests();
-            alert("Player added to Roster Builder below! Remember to save your hub to finalize.");
+            alert("Player injected to Roster Builder below! Remember to save your hub to finalize.");
         }
 
         function rejectRequest(idx) {
-            if(confirm("Are you sure you want to reject this application?")) {
+            if(confirm("Are you sure you want to officially reject this application?")) {
                 pendingRequests.splice(idx, 1);
                 renderRequests();
             }
         }
 
-        // --- DYNAMIC INPUT BUILDERS ---
+        // --- DYNAMIC INPUT BUILDERS (Secure mapped variables to prevent undefined errors) ---
         function addMediaInput(containerId, placeholder, value = "") {
             let limit = document.getElementById(containerId).children.length;
             if(limit >= 10) { alert("Maximum 10 allowed."); return; }
@@ -521,71 +535,84 @@
             const div = document.createElement('div');
             div.className = "dynamic-item";
             div.innerHTML = `
-                <input type="url" class="form-input media-val" value="${value}" placeholder="${placeholder}" required>
+                <input type="url" class="form-input media-val" value="${value || ''}" placeholder="${placeholder}" required>
                 <button type="button" class="remove-btn" onclick="this.parentElement.remove(); triggerHaptic();"><i class="fa-solid fa-trash"></i></button>
             `;
             container.appendChild(div);
         }
 
-        function addPersonInput(containerId, data = {name:"", role:"", desc:"", img:""}) {
+        function addPersonInput(containerId, data = {}) {
+            let name = data.name || "";
+            let role = data.role || "";
+            let desc = data.desc || "";
+            let img = data.img || "";
+
             const container = document.getElementById(containerId);
             let uniqueId = "img_" + Date.now() + Math.floor(Math.random()*100);
             const div = document.createElement('div');
             div.className = "dynamic-item";
-            div.style.gridTemplateColumns = "90px 1fr";
+            div.style.gridTemplateColumns = "100px 1fr";
             
-            let bgStyle = data.img ? `style="background-image:url('${data.img}'); opacity:1;"` : "";
+            let bgStyle = img ? `style="background-image:url('${img}'); opacity:1;"` : "";
             
             div.innerHTML = `
                 <button type="button" class="preview-btn" onclick="previewPerson(this)" title="Preview Card"><i class="fa-solid fa-eye"></i></button>
-                <div class="upload-box" style="padding:0; height:90px; justify-content:center;" onclick="document.getElementById('inp_${uniqueId}').click(); triggerHaptic();">
-                    <i class="fa-solid fa-image" style="color:#888; font-size:1.5rem;"></i>
-                    <div class="upload-preview ${data.img ? 'active' : ''}" id="prev_${uniqueId}" ${bgStyle}></div>
+                <div class="upload-box" style="padding:0; height:100px; justify-content:center;" onclick="document.getElementById('inp_${uniqueId}').click(); triggerHaptic();">
+                    <i class="fa-solid fa-image" style="color:#888; font-size:2rem;"></i>
+                    <div class="upload-preview ${img ? 'active' : ''}" id="prev_${uniqueId}" ${bgStyle}></div>
                     <div class="upload-loader" id="load_${uniqueId}"><i class="fa-solid fa-circle-notch fa-spin" style="color:white; font-size:1.5rem;"></i></div>
                     <input type="file" id="inp_${uniqueId}" class="file-input" accept="image/*" onchange="processImage(event, 'prev_${uniqueId}', 'val_${uniqueId}', 'load_${uniqueId}', 500)">
-                    <input type="hidden" class="person-img" id="val_${uniqueId}" value="${data.img}" required>
+                    <input type="hidden" class="person-img" id="val_${uniqueId}" value="${img}" required>
                 </div>
-                <div style="display:flex; flex-direction:column; gap:10px; justify-content:center;">
-                    <input type="text" class="form-input person-name" value="${data.name}" placeholder="Name" required style="padding:8px;">
-                    <input type="text" class="form-input person-role" value="${data.role}" placeholder="Role (e.g. Manager)" required style="padding:8px;">
+                <div style="display:flex; flex-direction:column; gap:12px; justify-content:center;">
+                    <input type="text" class="form-input person-name" value="${name}" placeholder="Name" required style="padding:10px;">
+                    <input type="text" class="form-input person-role" value="${role}" placeholder="Role (e.g. Manager)" required style="padding:10px;">
                 </div>
-                <textarea class="form-input person-desc" rows="2" placeholder="Description / Bio" style="grid-column: 1 / -1; padding:8px; resize:none;">${data.desc || ""}</textarea>
+                <textarea class="form-input person-desc" rows="2" placeholder="Description / Bio" style="grid-column: 1 / -1; padding:10px; resize:none;">${desc}</textarea>
                 <button type="button" class="remove-btn" onclick="this.parentElement.remove(); triggerHaptic();"><i class="fa-solid fa-trash"></i></button>
             `;
             container.appendChild(div);
         }
 
-        function addPlayerInput(data = {name:"", role:"", uid:"", ig:"", img:"", kd:"", hs:""}) {
+        function addPlayerInput(data = {}) {
+            let name = data.name || "";
+            let role = data.role || "";
+            let uid = data.uid || "";
+            let ig = data.ig || "";
+            let img = data.img || "";
+            let kd = data.kd || "";
+            let hs = data.hs || "";
+
             const container = document.getElementById('rosterList');
             let uniqueId = "ply_" + Date.now() + Math.floor(Math.random()*100);
             const div = document.createElement('div');
             div.className = "dynamic-item";
             div.style.gridTemplateColumns = "1fr";
             
-            let bgStyle = data.img ? `style="background-image:url('${data.img}'); opacity:1;"` : "";
+            let bgStyle = img ? `style="background-image:url('${img}'); opacity:1;"` : "";
             
             div.innerHTML = `
                 <button type="button" class="preview-btn" onclick="previewPlayer(this)" title="Preview Card"><i class="fa-solid fa-eye"></i></button>
                 <div style="display:flex; gap:20px; align-items:center;">
-                    <div class="upload-box" style="padding:0; height:100px; width:100px; flex-shrink:0; border-radius:12px;" onclick="document.getElementById('inp_${uniqueId}').click(); triggerHaptic();">
-                        <i class="fa-solid fa-user" style="color:#888; font-size:2rem;"></i>
-                        <div class="upload-preview ${data.img ? 'active' : ''}" id="prev_${uniqueId}" ${bgStyle}></div>
+                    <div class="upload-box" style="padding:0; height:110px; width:110px; flex-shrink:0; border-radius:12px;" onclick="document.getElementById('inp_${uniqueId}').click(); triggerHaptic();">
+                        <i class="fa-solid fa-user" style="color:#888; font-size:2.5rem;"></i>
+                        <div class="upload-preview ${img ? 'active' : ''}" id="prev_${uniqueId}" ${bgStyle}></div>
                         <div class="upload-loader" id="load_${uniqueId}"><i class="fa-solid fa-circle-notch fa-spin" style="color:white; font-size:1.5rem;"></i></div>
                         <input type="file" id="inp_${uniqueId}" class="file-input" accept="image/*" onchange="processImage(event, 'prev_${uniqueId}', 'val_${uniqueId}', 'load_${uniqueId}', 500)">
-                        <input type="hidden" class="player-img" id="val_${uniqueId}" value="${data.img}" required>
+                        <input type="hidden" class="player-img" id="val_${uniqueId}" value="${img}" required>
                     </div>
-                    <div style="flex:1; display:flex; flex-direction:column; gap:10px;">
-                        <input type="text" class="form-input player-name" value="${data.name}" placeholder="Player IGN" required>
-                        <input type="text" class="form-input player-role" value="${data.role}" placeholder="Role (e.g. IGL)" required>
+                    <div style="flex:1; display:flex; flex-direction:column; gap:12px;">
+                        <input type="text" class="form-input player-name" value="${name}" placeholder="Player IGN" required style="padding:10px;">
+                        <input type="text" class="form-input player-role" value="${role}" placeholder="Role (e.g. IGL)" required style="padding:10px;">
                     </div>
                 </div>
                 <div style="display:grid; grid-template-columns:1fr 1fr; gap:15px; margin-top:5px;">
-                    <input type="text" class="form-input player-uid" value="${data.uid || ''}" placeholder="In-Game UID" required>
-                    <input type="url" class="form-input player-ig" value="${data.ig || ''}" placeholder="Insta URL (Optional)">
+                    <input type="text" class="form-input player-uid" value="${uid}" placeholder="In-Game UID" required style="padding:10px;">
+                    <input type="url" class="form-input player-ig" value="${ig}" placeholder="Insta URL (Optional)" style="padding:10px;">
                 </div>
                 <div style="display:grid; grid-template-columns:1fr 1fr; gap:15px; margin-top:5px;">
-                    <input type="text" class="form-input player-kd" value="${data.kd || ''}" placeholder="K/D Ratio (Optional)">
-                    <input type="text" class="form-input player-hs" value="${data.hs || ''}" placeholder="Headshot % (Optional)">
+                    <input type="text" class="form-input player-kd" value="${kd}" placeholder="K/D Ratio (Optional)" style="padding:10px;">
+                    <input type="text" class="form-input player-hs" value="${hs}" placeholder="Headshot % (Optional)" style="padding:10px;">
                 </div>
                 <button type="button" class="remove-btn" onclick="this.parentElement.remove(); triggerHaptic();"><i class="fa-solid fa-trash"></i></button>
             `;
@@ -770,6 +797,7 @@
                     document.getElementById('inpBio').value = config.bio || config.Mission || "";
                     document.getElementById('inpMoto').value = config.moto || "";
                     document.getElementById('inpAmbitions').value = config.ambitions || "";
+                    document.getElementById('inpAnnouncement').value = config.announcement || "";
                     
                     document.getElementById('inpColor1').value = theme.main || "#00f2ff";
                     document.getElementById('inpColor2').value = theme.sec || "#bd00ff";
@@ -804,6 +832,7 @@
                     if(config.founders) config.founders.forEach(f => addPersonInput('founderList', f));
                     if(config.editors) config.editors.forEach(e => addPersonInput('editorList', e));
                     
+                    // The Fallback strings in addPlayerInput now securely map everything avoiding "undefined" breaks
                     roster.forEach(p => addPlayerInput(p));
                     renderRequests();
                 }
@@ -864,6 +893,7 @@
                 bio: document.getElementById('inpBio').value,
                 moto: document.getElementById('inpMoto').value,
                 ambitions: document.getElementById('inpAmbitions').value,
+                announcement: document.getElementById('inpAnnouncement').value,
                 logo_url: document.getElementById('valLogo').value,
                 banner_url: document.getElementById('valBanner').value,
                 color_main: document.getElementById('inpColor1').value,
