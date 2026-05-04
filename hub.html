@@ -43,7 +43,7 @@
         @keyframes slideUpFade { from { opacity: 0; transform: translateY(20px) scale(0.98); } to { opacity: 1; transform: translateY(0) scale(1); } }
 
         /* --- TOAST NOTIFICATION --- */
-        #toast { visibility: hidden; min-width: 250px; background-color: rgba(0,0,0,0.95); border: 1px solid #ff4d4d; color: #fff; text-align: center; border-radius: 8px; padding: 16px; position: fixed; z-index: 10000; left: 50%; bottom: 30px; transform: translateX(-50%); box-shadow: 0 0 20px rgba(255,77,77,0.5); font-family: var(--font-head); font-weight: bold; font-size: 0.9rem; opacity: 0; transition: opacity 0.3s, bottom 0.3s; }
+        #toast { visibility: hidden; min-width: 250px; background-color: rgba(0,0,0,0.9); border: 1px solid #ff4d4d; color: #fff; text-align: center; border-radius: 8px; padding: 16px; position: fixed; z-index: 10000; left: 50%; bottom: 30px; transform: translateX(-50%); box-shadow: 0 0 20px rgba(255,77,77,0.5); font-family: var(--font-head); font-weight: bold; font-size: 0.9rem; opacity: 0; transition: opacity 0.3s, bottom 0.3s; }
         #toast.show { visibility: visible; opacity: 1; bottom: 50px; }
 
         /* --- GLASSMORPHISM & NEON --- */
@@ -112,11 +112,8 @@
         .sec-title i { color: var(--accent-main); text-shadow: 0 0 10px var(--accent-main); }
         .sub-header { font-family: var(--font-head); color: var(--accent-sec); text-transform: uppercase; font-size: 0.9rem; margin-top: 25px; margin-bottom: 15px; font-weight: bold; letter-spacing: 1px;}
 
-        /* ADSTERRA SPONSOR LAYOUT */
-        .adsterra-slot { width: 100%; max-width: 800px; margin: 25px auto 40px; text-align: center; position: relative; z-index: 10; }
-        .adsterra-slot:empty { display: none; }
-        .adsterra-slot:not(:empty) { padding: 15px; background: rgba(0,0,0,0.4); border: 1px dashed rgba(255,255,255,0.2); border-radius: 12px; }
-        .adsterra-slot:not(:empty)::before { content: 'SPONSORED'; position: absolute; top: 4px; right: 8px; font-size: 0.5rem; color: #888; letter-spacing: 1px; text-transform: uppercase; }
+        .sponsor-layout { width: 100%; max-width: 800px; margin: 25px auto 40px; position: relative; border-radius: 12px; overflow: hidden; background: rgba(0,0,0,0.4); border: 1px dashed rgba(255,255,255,0.2); min-height: 50px; display: flex; align-items: center; justify-content: center; flex-direction: column;}
+        .ad-lbl { position: absolute; top: 4px; right: 4px; background: rgba(0,0,0,0.9); font-size: 0.45rem; padding: 3px 6px; border-radius: 4px; color: #888; text-transform: uppercase; letter-spacing: 1px; z-index: 10;}
 
         /* --- HOME: PROFILE HEADER --- */
         .profile-wrapper { width: 100%; max-width: 1000px; margin: 0 auto; position: relative; border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 20px;}
@@ -128,8 +125,7 @@
         .profile-details-card { position: relative; padding: 0 20px; max-width: 900px; margin: 0 auto; display: flex; flex-direction: column; align-items: center; text-align: center;}
         @media(min-width: 768px) { .profile-details-card { flex-direction: row; align-items: flex-end; text-align: left; padding: 0 30px; } }
         
-        .profile-avatar { width: 110px; height: 110px; border-radius: 50%; border: 4px solid var(--primary-bg); background: var(--primary-bg); margin-top: -55px; position: relative; z-index: 10; box-shadow: 0 0 25px rgba(0,0,0,0.9); transition:0.3s;}
-        .profile-avatar:hover { border-color: var(--accent-main); box-shadow: 0 0 30px var(--accent-main); transform: scale(1.05);}
+        .profile-avatar { width: 110px; height: 110px; border-radius: 50%; border: 4px solid var(--primary-bg); background: var(--primary-bg); margin-top: -55px; position: relative; z-index: 10; box-shadow: 0 0 25px rgba(0,0,0,0.9); }
         @media(min-width: 768px) { .profile-avatar { width: 140px; height: 140px; margin-top: -70px; flex-shrink: 0;} }
         .profile-avatar img { width: 100%; height: 100%; border-radius: 50%; object-fit: cover; border: 2px solid var(--accent-main); box-shadow: inset 0 0 15px var(--accent-main); }
         .online-badge { position: absolute; bottom: 8px; right: 8px; background: #00ff7f; width: 18px; height: 18px; border-radius: 50%; border: 3px solid var(--primary-bg); box-shadow: 0 0 10px #00ff7f; animation: pulse 2s infinite;}
@@ -155,39 +151,48 @@
         .home-sections { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; padding: 15px; max-width: 900px; margin: 0 auto; }
         @media(min-width: 768px) { .home-sections { grid-template-columns: repeat(4, 1fr); gap: 20px; padding: 25px;} }
         .h-card { padding: 20px 15px; text-align: center; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px; transition: 0.3s; border: 1px solid rgba(255,255,255,0.05);}
+        .h-card:hover { border-color: var(--accent-main); transform: translateY(-4px); box-shadow: 0 8px 20px rgba(0,242,255,0.15); }
+        .h-card i { font-size: 1.8rem; color: var(--accent-sec); filter: drop-shadow(0 0 5px var(--accent-sec)); margin-bottom: 5px;}
         .h-val { font-family: var(--font-head); font-size: 1.5rem; font-weight: bold; color: white;}
         .h-lbl { font-size: 0.7rem; color: #aaa; text-transform: uppercase; letter-spacing: 1px;}
 
-        /* --- EXPLORE.HTML STYLE TOURNAMENT CARDS --- */
-        .tourney-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; }
-        .t-card { background: var(--card-bg); border-radius: 16px; border: 1px solid rgba(255,255,255,0.05); overflow: hidden; display: flex; flex-direction: column; transition: 0.3s; cursor: pointer; }
-        .t-card:hover { transform: translateY(-5px); box-shadow: 0 10px 30px rgba(0,242,255,0.2); border-color: var(--accent-main); }
+        /* --- NEW ARENA TOURNAMENT CARDS (Explore.html Match) --- */
+        .tourney-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 25px; padding-bottom: 20px;}
         
-        .tc-banner { height: 160px; position: relative; background-size: cover; background-position: center; }
-        .tc-overlay { position: absolute; inset: 0; background: linear-gradient(to top, rgba(10,5,18,1) 5%, transparent 90%); }
-        .tc-badge-top-left { position: absolute; top: 10px; left: 10px; background: rgba(0,242,255,0.2); border: 1px solid var(--accent-main); color: var(--accent-main); padding: 4px 10px; border-radius: 20px; font-size: 0.7rem; font-weight: bold; text-transform: uppercase; z-index: 2; box-shadow: 0 0 10px rgba(0,242,255,0.2);}
-        .tc-badge-top-left.completed { background: rgba(255,255,255,0.1); border-color: #888; color: #ccc; box-shadow: none;}
-        .tc-badge-top-left.live { background: rgba(255,77,77,0.2); border-color: #ff4d4d; color: #ff4d4d; box-shadow: 0 0 10px rgba(255,77,77,0.3); animation: pulse 1.5s infinite;}
-        .tc-badge-top-right { position: absolute; top: 10px; right: 10px; background: rgba(255,77,77,0.2); border: 1px solid #ff4d4d; color: #ff4d4d; padding: 4px 10px; border-radius: 20px; font-size: 0.7rem; font-weight: bold; text-transform: uppercase; z-index: 2;}
-        .tc-share { position: absolute; bottom: 10px; right: 10px; font-size: 1.2rem; color: white; filter: drop-shadow(0 0 5px black); z-index: 5; transition: 0.3s; }
-        .tc-share:hover { color: var(--accent-main); transform: scale(1.1); }
+        .explore-card { border-radius: 16px; overflow: hidden; background: linear-gradient(180deg, #110822 0%, #05020a 100%); border: 1px solid rgba(255,255,255,0.05); display: flex; flex-direction: column; position: relative; cursor: pointer; transition: 0.3s; }
+        .explore-card:hover { border-color: var(--accent-main); box-shadow: 0 10px 30px rgba(0,242,255,0.15); transform: translateY(-5px); }
         
-        .tc-body { padding: 20px; position: relative; z-index: 3; margin-top: -30px; display: flex; flex-direction: column; gap: 12px; }
-        .tc-title { font-family: var(--font-head); font-size: 1.3rem; color: white; font-weight: 900; line-height: 1.2; text-shadow: 0 2px 5px rgba(0,0,0,0.8); white-space: nowrap; overflow: hidden; text-overflow: ellipsis;}
+        .ec-banner { width: 100%; height: 160px; background-size: cover; background-position: center; position: relative; }
+        .ec-banner::after { content: ''; position: absolute; inset: 0; background: linear-gradient(to top, #05020a 0%, transparent 60%); }
         
-        .tc-row { display: flex; justify-content: space-between; align-items: center; font-size: 0.85rem; color: #ccc; font-weight: bold; }
-        .tc-row i { color: var(--accent-main); width: 20px; }
-        .tc-fee { color: #00ff7f; font-weight: bold; background: rgba(0,255,127,0.1); padding: 4px 10px; border-radius: 6px; border: 1px solid rgba(0,255,127,0.3);}
+        .ec-badge-left { position: absolute; top: 12px; left: 12px; font-size: 0.65rem; font-weight: bold; text-transform: uppercase; padding: 4px 10px; border-radius: 20px; z-index: 2; backdrop-filter: blur(5px); display: flex; align-items: center; gap: 5px; border: 1px solid; }
+        .ec-badge-left.upcoming { background: rgba(0,242,255,0.15); color: #00f2ff; border-color: #00f2ff; box-shadow: 0 0 10px rgba(0,242,255,0.3); }
+        .ec-badge-left.live { background: rgba(255,77,77,0.15); color: #ff4d4d; border-color: #ff4d4d; box-shadow: 0 0 10px rgba(255,77,77,0.3); animation: pulse 2s infinite; }
+        .ec-badge-left.completed { background: rgba(255,255,255,0.1); color: #ccc; border-color: #888; }
         
-        .tc-progress-bg { width: 100%; height: 8px; background: rgba(255,255,255,0.1); border-radius: 4px; overflow: hidden; margin-top: 2px; }
-        .tc-progress-fill { height: 100%; background: var(--accent-main); width: 0%; box-shadow: 0 0 10px var(--accent-main); border-radius: 4px;}
+        .ec-badge-right { position: absolute; top: 12px; right: 12px; background: rgba(255,77,77,0.2); border: 1px solid #ff4d4d; color: #ff4d4d; font-size: 0.65rem; font-weight: bold; padding: 4px 10px; border-radius: 20px; z-index: 2; display: flex; align-items: center; gap: 5px; backdrop-filter: blur(5px); }
+        .ec-badge-bottom { position: absolute; bottom: 12px; right: 12px; background: rgba(0,0,0,0.6); color: white; font-size: 0.65rem; font-weight: bold; padding: 4px 10px; border-radius: 6px; z-index: 2; border: 1px solid rgba(255,255,255,0.1); }
         
-        .tc-footer { display: flex; justify-content: space-between; align-items: flex-end; margin-top: 10px; border-top: 1px solid rgba(255,255,255,0.05); padding-top: 15px; }
-        .tc-prize-lbl { font-size: 0.7rem; color: #888; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 2px;}
-        .tc-prize-val { font-family: var(--font-head); font-size: 1.5rem; font-weight: 900; color: #00ff7f; text-shadow: 0 0 10px rgba(0,255,127,0.3);}
-        .tc-btn { background: transparent; border: 1px solid var(--accent-main); color: var(--accent-main); padding: 8px 20px; border-radius: 8px; font-family: var(--font-head); font-weight: bold; text-transform: uppercase; transition: 0.3s; cursor: pointer; letter-spacing: 1px;}
-        .tc-btn:hover { background: var(--accent-main); color: #000; box-shadow: 0 0 15px var(--accent-main); }
-        .tc-btn.completed { border-color: #888; color: #ccc; } .tc-btn.completed:hover { background: #888; color: white; box-shadow: none; }
+        .ec-body { padding: 15px 20px 20px; display: flex; flex-direction: column; z-index: 2; position: relative;}
+        .ec-title { font-family: var(--font-head); font-size: 1.15rem; font-weight: bold; margin-bottom: 15px; color: white; line-height: 1.3; text-transform: uppercase; letter-spacing: 0.5px; padding-right: 30px;}
+        .share-icon { position: absolute; right: 20px; top: 15px; color: #888; font-size: 1.2rem; transition: 0.3s; }
+        .share-icon:hover { color: var(--accent-main); transform: scale(1.1); }
+        
+        .ec-grid { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; font-size: 0.85rem; color: #ccc; }
+        .ec-fee { color: #00ff7f; font-weight: bold; display: flex; align-items: center; gap: 5px; background: rgba(0,255,127,0.1); padding: 4px 10px; border-radius: 6px; border: 1px solid rgba(0,255,127,0.3);}
+        
+        .ec-info-row { display: flex; align-items: center; gap: 8px; font-size: 0.8rem; color: #aaa; margin-bottom: 8px; font-weight: bold;}
+        .ec-info-row i { color: #f09433; }
+        .ec-info-row span { color: var(--accent-main); }
+        
+        .ec-slots-container { margin: 15px 0; }
+        .ec-slots-text { display: flex; justify-content: space-between; font-size: 0.75rem; font-weight: bold; color: white; margin-bottom: 6px; text-transform: uppercase;}
+        .ec-progress-bar { width: 100%; height: 6px; background: rgba(255,255,255,0.1); border-radius: 10px; overflow: hidden; }
+        .ec-progress-fill { height: 100%; background: var(--accent-main); box-shadow: 0 0 10px var(--accent-main); transition: 0.5s; }
+        
+        .ec-footer { display: flex; justify-content: space-between; align-items: flex-end; margin-top: 10px; padding-top: 15px; border-top: 1px solid rgba(255,255,255,0.05); }
+        .ec-prize-lbl { font-size: 0.65rem; color: #888; font-weight: bold; text-transform: uppercase; letter-spacing: 1px; display: block; margin-bottom: 3px; }
+        .ec-prize-val { font-size: 1.3rem; font-weight: 900; color: #00ff7f; font-family: var(--font-head); text-shadow: 0 0 10px rgba(0,255,127,0.3); }
 
         /* --- GUILD: ROSTER ENGINE --- */
         .roster-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 15px; }
@@ -207,7 +212,7 @@
         .apply-card:hover { background: rgba(0,242,255,0.1); }
         .apply-card i { position: relative; z-index: 2; font-size: 2.2rem; color: var(--accent-main); margin-bottom: 12px; filter: drop-shadow(0 0 8px var(--accent-main)); }
 
-        /* --- MEDIA SLIDERS (App Feel) --- */
+        /* --- MEDIA: TOURNYX CUSTOM PLAYER CARDS --- */
         .media-slider { display: flex; overflow-x: auto; scroll-snap-type: x mandatory; gap: 15px; padding-bottom: 15px; scrollbar-width: none; -ms-overflow-style: none; }
         .media-slider::-webkit-scrollbar { display: none; }
         
@@ -220,8 +225,8 @@
         .cmc-thumb.shorts { aspect-ratio: 9/16; }
         .cmc-thumb.insta { aspect-ratio: 4/5; } 
         
-        .cmc-overlay { position: absolute; inset: 0; background: rgba(0,0,0,0.5); transition: 0.3s; }
-        .custom-media-card:hover .cmc-overlay { background: rgba(0,0,0,0.2); }
+        .cmc-overlay { position: absolute; inset: 0; background: rgba(0,0,0,0.4); transition: 0.3s; }
+        .custom-media-card:hover .cmc-overlay { background: rgba(0,0,0,0.1); }
         
         .cmc-play { z-index: 2; font-size: 3rem; color: white; filter: drop-shadow(0 0 10px rgba(0,0,0,0.8)); transition: 0.3s; }
         .cmc-thumb.insta .cmc-play { font-size: 4rem; filter: drop-shadow(0 0 15px rgba(0,0,0,0.5)); }
@@ -244,19 +249,9 @@
         @media(min-width: 768px) { .founder-grid { grid-template-columns: repeat(4, 1fr); gap: 20px; } }
         
         .founder-card { border-radius: 16px; overflow: hidden; background: var(--surface-bg); border: 1px solid var(--accent-sec); transition: 0.3s; display: flex; flex-direction: column; position: relative; cursor: pointer; }
-        .founder-card.gold-glow { border-color: gold; box-shadow: 0 5px 20px rgba(255,215,0,0.15); }
-        .founder-card.gold-glow:hover { box-shadow: 0 8px 25px rgba(255,215,0,0.3); transform: translateY(-4px); }
-        .founder-card.editor-glow { border-color: var(--accent-main); box-shadow: 0 5px 20px rgba(0,242,255,0.1); }
-        .founder-card.editor-glow:hover { box-shadow: 0 8px 25px rgba(0,242,255,0.25); transform: translateY(-4px); }
-        
         .founder-img-full { width: 100%; aspect-ratio: 3/4; object-fit: cover; }
-        
         .founder-info-box { position: absolute; bottom: 0; width: 100%; padding: 25px 15px 15px; text-align: center; display: flex; flex-direction: column; align-items: center; justify-content: flex-end; background: linear-gradient(to top, rgba(0,0,0,0.95) 10%, rgba(0,0,0,0.7) 60%, transparent); backdrop-filter: blur(3px);}
-        
-        .founder-role-tag { display: inline-block; color: black; font-size: 0.65rem; font-weight: bold; text-transform: uppercase; padding: 3px 12px; border-radius: 20px; margin-bottom: 8px; letter-spacing: 1px;}
-        .founder-card.gold-glow .founder-role-tag { background: gold; box-shadow: 0 0 10px rgba(255,215,0,0.5); }
-        .founder-card.editor-glow .founder-role-tag { background: var(--accent-main); box-shadow: 0 0 10px rgba(0,242,255,0.5); }
-        
+        .founder-role-tag { display: inline-block; color: black; font-size: 0.65rem; font-weight: bold; text-transform: uppercase; padding: 3px 12px; border-radius: 20px; margin-bottom: 8px; letter-spacing: 1px; background: var(--accent-main); box-shadow: 0 0 10px rgba(0,242,255,0.5); }
         .founder-name { font-family: var(--font-head); font-weight: bold; font-size: 1.1rem; color: white; display: flex; align-items: center; justify-content: center; gap: 4px; text-shadow: 0 2px 5px rgba(0,0,0,0.8); width: 100%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;}
 
         .social-btn-l { display: flex; align-items: center; justify-content: center; gap: 10px; background: rgba(0,0,0,0.6); border: 1px solid rgba(255,255,255,0.15); padding: 12px; border-radius: 12px; color: white; font-weight: bold; font-size: 0.95rem; transition: 0.3s; flex: 1 1 calc(50% - 15px); min-width: 140px; white-space: nowrap; text-align: center; }
@@ -288,7 +283,7 @@
     <!-- USER AUTH FLOATING ICON -->
     <div class="user-auth-wrap" id="userAuthWrap">
         <button class="btn-glow pulse-btn" id="loginBtnNav" onclick="openModal('loginModal')" style="padding: 8px 15px; font-size: 0.75rem;"><i class="fa-solid fa-passport"></i> Tournyx ID</button>
-        <img src="" id="userAvatarNav" class="user-avatar dynamic-shadow" style="display:none;" onclick="toggleUserMenu()" onerror="this.src='https://ui-avatars.com/api/?name=User&background=00f2ff&color=000'">
+        <img src="" id="userAvatarNav" class="user-avatar" style="display:none;" onclick="toggleUserMenu()" onerror="this.src='https://ui-avatars.com/api/?name=User&background=00f2ff&color=000'">
         
         <div class="user-menu" id="userMenu">
             <span id="navUsername" style="font-size:0.85rem; color:#fff; text-transform:uppercase; font-weight:bold; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; max-width: 150px; display:block; border-bottom:1px solid rgba(255,255,255,0.1); padding-bottom:5px; margin-bottom:5px;">My Account</span>
@@ -406,7 +401,8 @@
             <div class="media-slider section" id="homeTrending" style="padding-top: 0;"></div>
 
             <!-- SPONSOR AD LAYOUT -->
-            <div class="adsterra-slot" id="adsterra-ad-space">
+            <div class="sponsor-layout" id="adsterra-ad-space" style="display: none;">
+                <span class="ad-lbl">Sponsored</span>
                 <!-- PASTE ADSTERRA SCRIPT TAGS HERE -->
             </div>
         </div>
@@ -418,7 +414,7 @@
             <div class="section-header">
                 <div class="sec-title"><i class="fa-solid fa-crosshairs"></i> The Arena</div>
             </div>
-
+            
             <h3 class="sub-header">Live & Upcoming Battles</h3>
             <div class="tourney-grid" id="tourneyGridActive">
                 <div class="skeleton" style="height:220px; width:100%;"></div>
@@ -430,7 +426,8 @@
                 <!-- Completed Cards -->
             </div>
 
-            <div class="adsterra-slot" id="adsterra-ad-space-2">
+            <div class="sponsor-layout" id="adsterra-ad-space-2" style="display: none;">
+                <span class="ad-lbl">Sponsored</span>
                 <!-- PASTE ADSTERRA SCRIPT TAGS HERE -->
             </div>
         </div>
@@ -449,7 +446,8 @@
                 <div class="skeleton" style="height:210px;"></div>
             </div>
 
-            <div class="adsterra-slot" id="adsterra-ad-space-3">
+            <div class="sponsor-layout" id="adsterra-ad-space-3" style="display: none;">
+                <span class="ad-lbl">Sponsored</span>
                 <!-- PASTE ADSTERRA SCRIPT TAGS HERE -->
             </div>
         </div>
@@ -477,8 +475,8 @@
                 <div class="sec-title" style="color:#E1306C; text-shadow: 0 0 10px rgba(225,48,108,0.5);"><i class="fa-brands fa-instagram"></i> Instagram Posts</div>
             </div>
             <div class="media-slider" id="igPostGrid">
-                <div class="skeleton slider-item-shorts" style="height:300px;"></div>
-                <div class="skeleton slider-item-shorts" style="height:300px;"></div>
+                <div class="skeleton slider-item" style="height:300px;"></div>
+                <div class="skeleton slider-item" style="height:300px;"></div>
             </div>
             
             <h3 class="sub-header" style="margin-top:35px; color:#E1306C; border-left:3px solid #E1306C; padding-left:10px;"><i class="fa-brands fa-instagram"></i> Instagram Reels</h3>
@@ -487,7 +485,8 @@
                 <div class="skeleton slider-item-shorts" style="height:300px;"></div>
             </div>
 
-            <div class="adsterra-slot" id="adsterra-ad-space-4">
+            <div class="sponsor-layout" id="adsterra-ad-space-4" style="display: none;">
+                <span class="ad-lbl">Sponsored</span>
                 <!-- PASTE ADSTERRA SCRIPT TAGS HERE -->
             </div>
         </div>
@@ -532,7 +531,8 @@
                 <!-- Editors injected -->
             </div>
 
-            <div class="adsterra-slot" id="adsterra-ad-space-5">
+            <div class="sponsor-layout" id="adsterra-ad-space-5" style="display: none;">
+                <span class="ad-lbl">Sponsored</span>
                 <!-- PASTE ADSTERRA SCRIPT TAGS HERE -->
             </div>
         </div>
@@ -690,9 +690,10 @@
             location.reload();
         }
 
+        // Dedicated Parser to prevent crashes on bad data
         function safeJSONParse(data, defaultReturn) {
             if (typeof data === 'object' && data !== null) return data;
-            if (!data || data.trim() === "") return defaultReturn;
+            if (!data || String(data).trim() === "") return defaultReturn;
             try { 
                 let parsed = JSON.parse(data); 
                 if (typeof parsed === 'string') parsed = JSON.parse(parsed); 
@@ -717,11 +718,6 @@
         function extractYouTubeID(url) {
             let match = url.match(/(?:youtu\.be\/|youtube\.com\/(?:embed\/|v\/|watch\?v=|watch\?.+&v=|shorts\/))((\w|-){11})/);
             return (match && match[1]) ? match[1] : null;
-        }
-
-        function getIgCode(url) {
-            let match = url.match(/(?:p|reel)\/([a-zA-Z0-9_-]+)/);
-            return match ? "#" + match[1] : "Exclusive Content";
         }
 
         function openTournyxPlayer(url, platform) {
@@ -770,9 +766,7 @@
                 initParticles(theme.main);
                 
                 // Inject Adsterra visibility logic dynamically
-                document.querySelectorAll('.adsterra-slot').forEach(el => {
-                    if(el.innerHTML.trim() !== '') el.style.display = 'block';
-                });
+                document.querySelectorAll('.sponsor-layout').forEach(el => el.style.display = 'flex');
             } else {
                 initParticles('#00f2ff');
             }
@@ -818,110 +812,111 @@
 
                 if(data.tournaments && data.tournaments.length > 0) {
                     hostedCount = data.tournaments.length;
+                    
                     data.tournaments.forEach(t => {
-                        let safeStatus = String(t.status || 'upcoming').toLowerCase();
-                        let isCompleted = safeStatus === 'completed';
-                        let statClass = isCompleted ? 'completed' : (safeStatus === 'live' ? 'live' : 'upcoming');
-                        let statIcon = isCompleted ? 'fa-check-double' : (safeStatus === 'live' ? 'fa-circle-dot' : 'fa-clock');
-                        let btnTxt = isCompleted ? 'View Results' : 'Register Now';
-                        let btnClass = isCompleted ? 'tc-btn completed' : 'tc-btn';
-                        
-                        // Safe Prize
-                        let prizeStr = String(t.prize || '0');
-                        let pVal = parseInt(prizeStr.replace(/[^0-9]/g, '')) || 0;
-                        totalPrize += pVal;
-                        
-                        let prizeDisplay = prizeStr;
                         try {
-                            let pObj = JSON.parse(prizeStr);
-                            if(pObj["1st Place"]) prizeDisplay = `${pObj["1st Place"]}`;
-                        } catch(e) {}
+                            let safeStatus = String(t.status || 'upcoming').toLowerCase();
+                            let isCompleted = safeStatus === 'completed';
+                            let statClass = isCompleted ? 'completed' : (safeStatus === 'live' ? 'live' : 'upcoming');
+                            let statIcon = isCompleted ? 'fa-check-double' : (safeStatus === 'live' ? 'fa-circle-dot' : 'fa-clock');
+                            
+                            // Safe Fee Parser
+                            let safeFee = "Free";
+                            if (t.fee) {
+                                if (typeof t.fee === 'string' && t.fee.includes('{')) {
+                                    let feeObj = JSON.parse(t.fee);
+                                    if (feeObj.rupees > 0) safeFee = '₹' + feeObj.rupees;
+                                    else if (feeObj.points > 0) safeFee = 'TX ' + feeObj.points;
+                                } else if (!isNaN(t.fee) && Number(t.fee) > 0) {
+                                    safeFee = '₹' + t.fee;
+                                } else if (String(t.fee).toLowerCase() !== 'free' && String(t.fee) !== '0') {
+                                    safeFee = String(t.fee);
+                                }
+                            }
+                            
+                            // Safe Prize Parser
+                            let safePrize = "TBA";
+                            if (t.prize) {
+                                if (typeof t.prize === 'string' && t.prize.includes('{')) {
+                                    let prizeObj = JSON.parse(t.prize);
+                                    if (prizeObj["1st Place"]) safePrize = prizeObj["1st Place"] + " Rs";
+                                } else if (!isNaN(t.prize) && Number(t.prize) > 0) {
+                                    safePrize = t.prize + " Rs";
+                                    totalPrize += Number(t.prize);
+                                } else {
+                                    safePrize = String(t.prize);
+                                }
+                            }
 
-                        // Safe Fee
-                        let feeStr = String(t.fee || 'Free');
-                        let feeDisplay = "Free";
-                        try {
-                            let fObj = JSON.parse(feeStr);
-                            if(fObj.rupees > 0) feeDisplay = `₹${fObj.rupees}`;
-                            else if(fObj.points > 0) feeDisplay = `<i class="fa-solid fa-coins"></i> ${fObj.points}`;
-                        } catch(e) {
-                            feeDisplay = (feeStr.toLowerCase() === 'free' || feeStr === '0') ? "Free" : feeStr;
-                        }
+                            // Safe Date Parser
+                            let dateStr = "TBA";
+                            if (t.date) {
+                                let d = new Date(t.date);
+                                if(!isNaN(d)) dateStr = d.toLocaleDateString('en-IN', {month:'short', day:'numeric'});
+                            }
 
-                        let feeHtml = feeDisplay === 'Free' 
-                            ? `<span class="tc-fee" style="color:#00ff7f; background:rgba(0,255,127,0.1);"><i class="fa-solid fa-ticket"></i> FREE</span>`
-                            : `<span class="tc-fee" style="color:var(--accent-main); background:rgba(0,242,255,0.1); border-color:var(--accent-main);"><i class="fa-solid fa-ticket"></i> ${feeDisplay}</span>`;
+                            // Safe Slots Logic
+                            let filled = t.filled_slots || 0;
+                            let totalSlots = t.slots || 100;
+                            let perc = Math.min(100, Math.floor((filled / totalSlots) * 100)) || 0;
+                            
+                            // Display logic
+                            let matchPeriod = t.match_period || "TBA";
+                            let cardBanner = t.banner || config.banner || 'https://via.placeholder.com/800x400';
 
-                        // Format Slots
-                        let slotsDisplay = String(t.slots || '0');
-                        let slotsNum = parseInt(slotsDisplay.split('/')[1] || slotsDisplay) || 0;
-                        let filledNum = parseInt(slotsDisplay.split('/')[0]) || 0;
-                        let percent = slotsNum > 0 ? Math.min(100, Math.round((filledNum / slotsNum) * 100)) : 0;
-                        
-                        // Safe Date
-                        let dateDisplay = t.date;
-                        try {
-                            let d = new Date(t.date);
-                            if(!isNaN(d)) dateDisplay = d.toLocaleDateString('en-IN', {month:'short', day:'numeric'});
-                        } catch(e){}
-
-                        let bannerImg = t.banner || config.banner || 'https://via.placeholder.com/800x400';
-
-                        let cardHtml = `
-                            <div class="t-card dynamic-shadow" onclick="window.location.href='https://tournyx.in/explore.html?id=${t.id}'">
-                                <div class="tc-banner" style="background-image: url('${bannerImg}')">
-                                    <div class="tc-overlay"></div>
-                                    <div class="tc-badge-top-left ${statClass}">
-                                        <i class="fa-solid ${statIcon}"></i> ${safeStatus.toUpperCase()}
+                            let cardHtml = `
+                                <div class="explore-card dynamic-shadow" onclick="window.location.href='https://tournyx.in/explore.html?id=${t.id}'">
+                                    <div class="ec-banner" style="background-image: url('${cardBanner}');">
+                                        <div class="ec-badge-left ${statClass}"><i class="fa-solid ${statIcon}"></i> ${safeStatus}</div>
+                                        <div class="ec-badge-right"><i class="fa-regular fa-clock"></i> ${dateStr}</div>
+                                        <div class="ec-badge-bottom"><i class="fa-solid fa-mobile-screen"></i> Mobile</div>
                                     </div>
-                                    <div class="tc-badge-top-right">
-                                        <i class="fa-regular fa-clock"></i> ${dateDisplay}
-                                    </div>
-                                    <div class="tc-share" onclick="event.stopPropagation(); shareTourney('${t.id}', '${t.title}')"><i class="fa-solid fa-share-nodes"></i></div>
-                                </div>
-                                <div class="tc-body">
-                                    <h3 class="tc-title">${t.title || 'Official Tournament'}</h3>
-                                    <div class="tc-row">
-                                        <span><i class="fa-solid fa-gamepad"></i> ${t.game || 'Game'} (${t.format || 'Squad'})</span>
-                                        ${feeHtml}
-                                    </div>
-                                    <div class="tc-row">
-                                        <span><i class="fa-solid fa-calendar"></i> Reg Ends: ${dateDisplay}</span>
-                                    </div>
-                                    <div class="tc-row">
-                                        <span><i class="fa-solid fa-clock"></i> Match Period: ${t.match_period || 'TBA'}</span>
-                                    </div>
-                                    <div class="tc-row" style="margin-top:5px;">
-                                        <span style="font-weight:bold; color:white;"><i class="fa-solid fa-users"></i> ${slotsDisplay} Slots</span>
-                                        <span style="color:var(--accent-main); font-weight:bold;">${percent}%</span>
-                                    </div>
-                                    <div class="tc-progress-bg">
-                                        <div class="tc-progress-fill" style="width: ${percent}%;"></div>
-                                    </div>
-                                    
-                                    <div class="tc-footer">
-                                        <div>
-                                            <div class="tc-prize-lbl">Prize Pool</div>
-                                            <div class="tc-prize-val">${prizeDisplay}</div>
+                                    <div class="ec-body">
+                                        <div style="display:flex; justify-content:space-between; align-items:flex-start;">
+                                            <h3 class="ec-title">${t.title || 'Official Tournament'}</h3>
+                                            <i class="fa-solid fa-share-nodes share-icon" onclick="event.stopPropagation(); shareTourney('${t.id}', '${t.title}')"></i>
                                         </div>
-                                        <button class="${btnClass}">${btnTxt}</button>
+                                        
+                                        <div class="ec-grid">
+                                            <div class="ec-fee" style="color:var(--accent-main); background:transparent; border:none; padding:0;"><i class="fa-solid fa-gamepad" style="color:yellow;"></i> ${t.game || 'Esports Title'} [${t.format || 'Squad'}]</div>
+                                            <div class="ec-fee"><i class="fa-solid fa-ticket" style="color:yellow;"></i> ${safeFee}</div>
+                                        </div>
+                                        
+                                        <div class="ec-info-row"><i class="fa-regular fa-calendar"></i> Reg Ends: <span>${dateStr}</span></div>
+                                        <div class="ec-info-row"><i class="fa-solid fa-clock"></i> Match Period: <span>${matchPeriod}</span></div>
+                                        
+                                        <div class="ec-slots-container">
+                                            <div class="ec-slots-text"><i class="fa-solid fa-users"></i> ${filled}/${totalSlots} Slots <span>${perc}%</span></div>
+                                            <div class="ec-progress-bar"><div class="ec-progress-fill" style="width:${perc}%;"></div></div>
+                                        </div>
+                                        
+                                        <div class="ec-footer">
+                                            <div>
+                                                <span class="ec-prize-lbl">PRIZE POOL</span>
+                                                <span class="ec-prize-val">${safePrize}</span>
+                                            </div>
+                                            <button class="btn-glow pulse-btn" style="border-color:yellow; color:yellow; background:transparent;">REGISTER NOW</button>
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
-                        `;
-                        if(isCompleted) pastHtml += cardHtml;
-                        else activeHtml += cardHtml;
+                            `;
+
+                            if(isCompleted) pastHtml += cardHtml;
+                            else activeHtml += cardHtml;
+
+                        } catch(rowErr) {
+                            console.error("Skipping bad tournament row", rowErr);
+                        }
                     });
                 }
                 
                 document.getElementById('tourneyGridActive').innerHTML = activeHtml || `<div style="color:#888; text-align:center; padding:20px; grid-column:1/-1;">No upcoming battles in the arena.</div>`;
                 document.getElementById('tourneyGridPast').innerHTML = pastHtml || `<div style="color:#888; text-align:center; padding:20px; grid-column:1/-1;">No past history.</div>`;
                 
-                // Sync Home Featured Tournaments (Top 2 Active)
+                // Sync Home Featured Tournaments (Top 4 Active)
                 document.getElementById('homeTournaments').innerHTML = activeHtml ? activeHtml.split('</div></div></div>').slice(0, 4).join('</div></div></div>') + '</div></div></div>' : `<div style="color:#888; text-align:center; padding:10px; grid-column:1/-1;">Arena is silent. No active events.</div>`;
 
                 animateValue("hStatTrophies", config.stats ? (config.stats.hosted || hostedCount) : hostedCount);
-                document.getElementById('arenaTotalPrize').innerText = totalPrize.toLocaleString('en-IN');
             }
 
             document.getElementById('hStatYt').innerText = config.stats ? (config.stats.yt_k || '0') : '0';
@@ -937,13 +932,6 @@
                 
                 let foundRoles = new Set();
                 let allowedRoles = ['igl', 'supporter', 'support', 'sniper', 'assaulter', 'assault', 'rusher', 'substitute 1', 'substitute 2', 'sub 1', 'sub 2'];
-                
-                let roleMap = {
-                    'igl': 'IGL', 'supporter': 'Supporter', 'support': 'Supporter', 'sniper': 'Sniper', 
-                    'assaulter': 'Assaulter', 'assault': 'Assaulter', 'rusher': 'Assaulter', 
-                    'substitute 1': 'Substitute 1', 'sub 1': 'Substitute 1', 
-                    'substitute 2': 'Substitute 2', 'sub 2': 'Substitute 2'
-                };
 
                 roster.slice(0, 50).forEach((p, idx) => {
                     let avatarImg = p.img || p.avatar || creatorLogo;
@@ -962,24 +950,10 @@
                     rHtml += card;
 
                     // Filter for Home Team
-                    for(let r of allowedRoles) {
-                        if(roleLower.includes(r)) {
-                            let standardizedRole = roleMap[r];
-                            if(!foundRoles.has(standardizedRole)) {
-                                foundRoles.add(standardizedRole);
-                                homeRosterHtml += `
-                                    <div class="player-card dynamic-shadow" onclick="showPlayerStats(${idx})">
-                                        <img src="${creatorBanner}" class="pc-bg">
-                                        <img src="${avatarImg}" class="pc-avatar">
-                                        <div class="pc-info">
-                                            <div class="pc-name">${p.name || 'Unknown'}</div>
-                                            <div class="pc-role">${standardizedRole}</div>
-                                        </div>
-                                    </div>
-                                `;
-                                break; 
-                            }
-                        }
+                    let matchedRole = allowedRoles.find(r => roleLower.includes(r));
+                    if (matchedRole && !foundRoles.has(matchedRole)) {
+                        foundRoles.add(matchedRole);
+                        homeRosterHtml += card;
                     }
                 });
 
@@ -1035,37 +1009,31 @@
                 document.getElementById('ytShortsGrid').innerHTML = sHtml;
 
                 // Insta Posts (Slider using Creator Banner)
-                let iP = config.media.insta_posts && config.media.insta_posts.length > 0 ? config.media.insta_posts.slice(0, 5).map(ig => {
-                    let igCode = getIgCode(ig);
-                    return `
-                    <div class="custom-media-card slider-item-shorts dynamic-shadow" onclick="window.open('${ig}', '_blank')" style="border-color:#e1306c;">
-                        <div class="cmc-thumb insta shorts" style="background-image:url('${cbanner}'); background-size: cover; background-position: center;">
+                let iP = config.media.insta_posts && config.media.insta_posts.length > 0 ? config.media.insta_posts.slice(0, 5).map(ig => `
+                    <div class="custom-media-card slider-item dynamic-shadow" onclick="window.open('${ig}', '_blank')" style="border-color:#e1306c;">
+                        <div class="cmc-thumb insta" style="background-image:url('${cbanner}'); background-size: cover; background-position: center;">
                             <div class="cmc-overlay" style="background:rgba(0,0,0,0.6);"></div>
-                            <div style="position:absolute; top:15px; left:10px; font-weight:bold; color:white; font-family:var(--font-head); text-transform:uppercase; z-index:5; font-size:0.8rem; letter-spacing:1px;"><i class="fa-solid fa-image" style="color:#e1306c;"></i> ${igCode}</div>
+                            <div style="position:absolute; top:15px; left:15px; font-weight:bold; color:white; font-family:var(--font-head); text-transform:uppercase; z-index:5;"><i class="fa-solid fa-image" style="color:#e1306c;"></i> Insta Post</div>
                             <i class="fa-brands fa-instagram cmc-play"></i>
                         </div>
                         <div class="cmc-body">
-                            <button class="btn-glow btn-ig" style="width:100%; background:transparent; border-color:#e1306c; color:#e1306c; font-size:0.75rem; padding:10px 5px; white-space:nowrap;"><i class="fa-brands fa-instagram"></i> View Post</button>
+                            <button class="btn-glow btn-ig" style="width:100%; background:transparent; border-color:#e1306c; color:#e1306c;"><i class="fa-brands fa-instagram"></i> View Post</button>
                         </div>
-                    </div>`;
-                }).join("") : `<div style="color:#888; grid-column:1/-1; padding-left:15px;">No posts added.</div>`;
+                    </div>`).join("") : `<div style="color:#888; grid-column:1/-1; padding-left:15px;">No posts added.</div>`;
                 document.getElementById('igPostGrid').innerHTML = iP;
 
                 // Insta Reels (Slider using Creator Banner)
-                let iR = config.media.insta_reels && config.media.insta_reels.length > 0 ? config.media.insta_reels.slice(0, 5).map(ig => {
-                    let igCode = getIgCode(ig);
-                    return `
+                let iR = config.media.insta_reels && config.media.insta_reels.length > 0 ? config.media.insta_reels.slice(0, 5).map(ig => `
                     <div class="custom-media-card slider-item-shorts dynamic-shadow" onclick="window.open('${ig}', '_blank')" style="border-color:#e1306c;">
                         <div class="cmc-thumb insta shorts" style="background-image:url('${cbanner}'); background-size: cover; background-position: center;">
                             <div class="cmc-overlay" style="background:rgba(0,0,0,0.6);"></div>
-                            <div style="position:absolute; top:15px; left:10px; font-weight:bold; color:white; font-family:var(--font-head); text-transform:uppercase; z-index:5; font-size:0.8rem; letter-spacing:1px;"><i class="fa-solid fa-video" style="color:#e1306c;"></i> ${igCode}</div>
+                            <div style="position:absolute; top:15px; left:10px; font-weight:bold; color:white; font-family:var(--font-head); text-transform:uppercase; z-index:5; font-size:0.75rem;"><i class="fa-solid fa-video" style="color:#e1306c;"></i> Insta Reel</div>
                             <i class="fa-brands fa-instagram cmc-play"></i>
                         </div>
                         <div class="cmc-body">
                             <button class="btn-glow btn-ig" style="width:100%; background:transparent; border-color:#e1306c; color:#e1306c; font-size:0.75rem; padding:10px 5px; white-space:nowrap;"><i class="fa-brands fa-instagram"></i> View Reel</button>
                         </div>
-                    </div>`;
-                }).join("") : `<div style="color:#888; grid-column:1/-1; padding-left:15px;">No reels added.</div>`;
+                    </div>`).join("") : `<div style="color:#888; grid-column:1/-1; padding-left:15px;">No reels added.</div>`;
                 document.getElementById('igReelGrid').innerHTML = iR;
 
                 // Set Home Trending
@@ -1164,9 +1132,8 @@
         let currentHubHash = "";
 
         async function initHub() {
-            if(!creatorId || creatorId.trim() === '' || creatorId === 'id') {
+            if(!creatorId || creatorId.trim() === '') {
                 document.getElementById('loader').style.display = 'none';
-                document.getElementById('app-container').style.display = 'none';
                 showToast("Creator not found. Please check the link.");
                 return;
             }
@@ -1199,7 +1166,6 @@
             } catch(e) {
                 if(!cachedData) {
                     document.getElementById('loader').style.display = 'none';
-                    document.getElementById('app-container').style.display = 'none';
                     showToast("Creator not found. Please check the link.");
                 }
             }
