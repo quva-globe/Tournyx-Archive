@@ -2,17 +2,17 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Tournyx Esports | Join The Core Team</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;500;700;900&display=swap" rel="stylesheet">
     <style>
         :root {
-            --bg-color: #050505;
-            --surface: #111116;
-            --primary: #6366f1; /* Tournyx Indigo/Purple */
+            --bg-color: #030305;
+            --surface: #0f1015;
+            --primary: #6366f1; /* Tournyx Indigo */
             --primary-glow: rgba(99, 102, 241, 0.6);
-            --secondary: #a855f7;
+            --secondary: #a855f7; /* Tournyx Purple */
             --text-main: #f8fafc;
             --text-muted: #94a3b8;
             --glass: rgba(255, 255, 255, 0.03);
@@ -29,101 +29,159 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            background-image: 
-                radial-gradient(circle at 15% 50%, rgba(99, 102, 241, 0.15), transparent 25%),
-                radial-gradient(circle at 85% 30%, rgba(168, 85, 247, 0.15), transparent 25%);
+            position: relative;
         }
 
-        /* Nav & Logo */
+        /* --- Animated Background Elements --- */
+        .bg-orb {
+            position: absolute; border-radius: 50%; filter: blur(80px); z-index: 0; animation: float 10s infinite alternate ease-in-out;
+        }
+        .orb-1 { width: 300px; height: 300px; background: rgba(99, 102, 241, 0.15); top: -100px; left: -100px; }
+        .orb-2 { width: 400px; height: 400px; background: rgba(168, 85, 247, 0.15); bottom: 100px; right: -150px; animation-delay: -5s; }
+        
+        @keyframes float {
+            0% { transform: translateY(0) scale(1); }
+            100% { transform: translateY(50px) scale(1.1); }
+        }
+
+        /* --- Navigation & Logo --- */
         nav {
-            width: 100%; padding: 25px 50px;
+            width: 100%; padding: 25px 20px;
             display: flex; justify-content: center; align-items: center;
             position: relative; z-index: 10;
         }
+        
         .logo-container {
-            display: flex; align-items: center; gap: 10px;
+            display: flex; align-items: center; gap: 12px;
             font-size: 28px; font-weight: 900; letter-spacing: -1px;
             text-transform: uppercase;
+        }
+        
+        /* Replace src with your actual logo path (e.g., "Picsart_26-02-16_14-38-46-168.jpg") */
+        .tx-logo {
+            width: 50px; height: 50px; border-radius: 12px;
+            object-fit: contain; filter: drop-shadow(0 0 10px var(--primary-glow));
+        }
+
+        .logo-text {
             background: linear-gradient(135deg, #fff, #a5b4fc);
             -webkit-background-clip: text; -webkit-text-fill-color: transparent;
             filter: drop-shadow(0 0 15px var(--primary-glow));
         }
 
-        /* Hero Section */
-        .hero { text-align: center; margin-top: 40px; padding: 0 20px; z-index: 2; position: relative; }
-        .hero h1 { font-size: 48px; font-weight: 900; line-height: 1.1; margin-bottom: 15px; }
-        .hero h1 span { color: var(--primary); text-shadow: 0 0 20px var(--primary-glow); }
-        .hero p { font-size: 16px; color: var(--text-muted); max-width: 600px; margin: 0 auto; line-height: 1.6; }
+        /* --- Hero Section & Explanation --- */
+        .hero { 
+            text-align: center; margin-top: 20px; padding: 0 20px; 
+            z-index: 2; position: relative; width: 100%; max-width: 800px; 
+        }
+        .hero h1 { font-size: clamp(32px, 5vw, 56px); font-weight: 900; line-height: 1.1; margin-bottom: 20px; }
+        .hero h1 span { color: var(--primary); text-shadow: 0 0 25px var(--primary-glow); }
+        
+        .hero-box {
+            background: rgba(15, 16, 21, 0.6); border: 1px solid var(--border);
+            border-radius: 20px; padding: 25px; margin: 0 auto 40px;
+            backdrop-filter: blur(10px); box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        }
+        .hero-box p { font-size: 15px; color: var(--text-muted); line-height: 1.6; margin-bottom: 10px; }
+        .hero-box p strong { color: #fff; }
 
-        /* 3D Application Form */
+        /* --- The Form Architecture (Zero Overflow) --- */
         .form-container {
-            margin: 50px auto 100px;
-            width: 90%; max-width: 800px;
-            background: var(--surface);
-            border: 1px solid var(--border);
-            border-radius: 24px;
-            padding: 40px;
-            box-shadow: 0 25px 50px rgba(0,0,0,0.5), inset 0 0 0 1px rgba(255,255,255,0.05);
-            position: relative; z-index: 5;
-            backdrop-filter: blur(20px);
+            width: 92%; max-width: 800px; margin: 0 auto 80px;
+            background: rgba(17, 17, 22, 0.8); border: 1px solid var(--border);
+            border-radius: 24px; padding: clamp(20px, 5vw, 40px);
+            box-shadow: 0 25px 50px rgba(0,0,0,0.5), inset 0 0 0 1px rgba(255,255,255,0.02);
+            position: relative; z-index: 5; backdrop-filter: blur(20px);
             transform: perspective(1000px) rotateX(0deg) rotateY(0deg);
             transition: transform 0.3s ease, box-shadow 0.3s ease;
         }
-        
-        .form-container:hover {
-            box-shadow: 0 30px 60px rgba(99, 102, 241, 0.15), inset 0 0 0 1px rgba(255,255,255,0.1);
+
+        /* Desktop Hover 3D Effect */
+        @media (hover: hover) {
+            .form-container:hover { box-shadow: 0 30px 60px rgba(99, 102, 241, 0.15); }
         }
 
-        .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+        .form-grid { 
+            display: grid; 
+            grid-template-columns: repeat(2, 1fr); 
+            gap: 20px; 
+            width: 100%;
+        }
+        .form-group { display: flex; flex-direction: column; width: 100%; animation: fadeInUp 0.5s ease backwards; }
         .form-group.full { grid-column: span 2; }
         
-        @media (max-width: 768px) { .form-grid { grid-template-columns: 1fr; } .form-group.full { grid-column: span 1; } }
+        /* Mobile Breakpoint Fixes */
+        @media (max-width: 768px) { 
+            .form-grid { grid-template-columns: 1fr; } 
+            .form-group.full { grid-column: span 1; } 
+        }
 
-        label { display: block; font-size: 12px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px; }
+        label { font-size: 12px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px; }
+        .optional { color: #64748b; font-size: 10px; text-transform: none; float: right; margin-top: 2px; }
         
         input, select, textarea {
             width: 100%; padding: 16px 20px;
-            background: var(--bg-color);
-            border: 1px solid var(--border);
-            border-radius: 12px;
-            color: white; font-size: 15px;
-            transition: all 0.3s ease;
-            outline: none;
+            background: rgba(0,0,0,0.4); border: 1px solid var(--border);
+            border-radius: 12px; color: white; font-size: 15px;
+            transition: all 0.3s ease; outline: none;
+            box-sizing: border-box; /* Crucial for preventing overflow */
         }
+        
         input:focus, select:focus, textarea:focus {
-            border-color: var(--primary);
-            box-shadow: 0 0 15px rgba(99, 102, 241, 0.3);
-            background: #0f1016;
+            border-color: var(--primary); box-shadow: 0 0 15px rgba(99, 102, 241, 0.3);
+            background: rgba(15, 16, 22, 0.9);
         }
         textarea { resize: vertical; min-height: 120px; }
+        
+        /* Custom Phone Input Lock */
+        .phone-group { display: flex; align-items: stretch; width: 100%; }
+        .country-code { 
+            background: rgba(255,255,255,0.05); border: 1px solid var(--border); border-right: none;
+            padding: 0 15px; display: flex; align-items: center; justify-content: center;
+            border-radius: 12px 0 0 12px; font-weight: 700; color: var(--text-muted);
+        }
+        .phone-group input { border-radius: 0 12px 12px 0; flex: 1; }
+
+        /* Custom Select Appearance */
+        select { appearance: none; background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2394a3b8' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e"); background-repeat: no-repeat; background-position: right 15px center; background-size: 16px; cursor: pointer; }
+        select option { background: var(--surface); color: white; }
+
+        /* Staggered Animations */
+        .form-group:nth-child(1) { animation-delay: 0.1s; } .form-group:nth-child(2) { animation-delay: 0.2s; }
+        .form-group:nth-child(3) { animation-delay: 0.3s; } .form-group:nth-child(4) { animation-delay: 0.4s; }
+        .form-group:nth-child(5) { animation-delay: 0.5s; } .form-group:nth-child(6) { animation-delay: 0.6s; }
+        .form-group:nth-child(7) { animation-delay: 0.7s; } .form-group:nth-child(8) { animation-delay: 0.8s; }
+
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
 
         /* The Ultimate Submit Button */
         .btn-submit {
-            grid-column: span 2;
-            width: 100%; padding: 20px; margin-top: 15px;
+            grid-column: span 2; width: 100%; padding: 20px; margin-top: 10px;
             background: linear-gradient(135deg, var(--primary), var(--secondary));
-            border: none; border-radius: 16px;
-            color: white; font-size: 18px; font-weight: 900; text-transform: uppercase; letter-spacing: 2px;
-            cursor: pointer; position: relative; overflow: hidden;
+            border: none; border-radius: 16px; color: white; font-size: 18px; font-weight: 900;
+            text-transform: uppercase; letter-spacing: 2px; cursor: pointer;
             box-shadow: 0 10px 30px var(--primary-glow);
             transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
             display: flex; justify-content: center; align-items: center; gap: 10px;
         }
-        .btn-submit:hover { transform: translateY(-3px) scale(1.02); box-shadow: 0 15px 40px var(--primary-glow); }
+        @media (max-width: 768px) { .btn-submit { grid-column: span 1; } }
+        
+        .btn-submit:hover { transform: translateY(-3px) scale(1.01); box-shadow: 0 15px 40px var(--primary-glow); }
         .btn-submit:active { transform: translateY(1px) scale(0.98); }
         
-        /* Loading Animation */
         .loader { display: none; width: 24px; height: 24px; border: 3px solid rgba(255,255,255,0.3); border-top: 3px solid white; border-radius: 50%; animation: spin 1s linear infinite; }
         @keyframes spin { 100% { transform: rotate(360deg); } }
 
         /* Success Modal */
         #success-modal {
-            display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.8);
-            backdrop-filter: blur(10px); z-index: 1000;
-            justify-content: center; align-items: center; text-align: center;
+            display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.85);
+            backdrop-filter: blur(15px); z-index: 1000; justify-content: center; align-items: center; text-align: center; padding: 20px;
         }
         .modal-content {
-            background: var(--surface); padding: 50px; border-radius: 24px;
+            background: var(--surface); padding: 40px; border-radius: 24px; width: 100%; max-width: 450px;
             border: 1px solid var(--primary); box-shadow: 0 0 50px var(--primary-glow);
             animation: modalIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
         }
@@ -133,15 +191,22 @@
 </head>
 <body>
 
+    <div class="bg-orb orb-1"></div>
+    <div class="bg-orb orb-2"></div>
+
     <nav>
         <div class="logo-container">
-            <i class="fa-solid fa-gamepad"></i> TOURNYX ESPORTS
+            <img src="https://ui-avatars.com/api/?name=TX&background=6366f1&color=fff&rounded=true" alt="Tournyx Logo" class="tx-logo" id="main-logo">
+            <span class="logo-text">TOURNYX ESPORTS</span>
         </div>
     </nav>
 
     <div class="hero">
         <h1>Build the Future of<br><span>Mobile Esports</span></h1>
-        <p>We are replacing messy manual brackets with automated, live-syncing tech. Join the core team and help us build the ultimate ecosystem for Free Fire, BGMI, and beyond.</p>
+        <div class="hero-box">
+            <p><strong>Tournyx is a next-gen esports ecosystem.</strong> We are completely replacing messy manual brackets and spreadsheets with flawless, automated live-syncing tech.</p>
+            <p>From seamless player registrations to integrated wallets and live leaderboards for <strong>Free Fire & BGMI</strong>, we are building the ultimate infrastructure for gamers. Ready to join the revolution?</p>
+        </div>
     </div>
 
     <div class="form-container" id="3d-card">
@@ -159,7 +224,10 @@
             
             <div class="form-group">
                 <label>WhatsApp Number</label>
-                <input type="tel" name="phone" placeholder="+91 XXXXX XXXXX" required>
+                <div class="phone-group">
+                    <span class="country-code">+91</span>
+                    <input type="tel" id="phone-input" name="phone" placeholder="10-digit mobile number" pattern="[0-9]{10}" maxlength="10" minlength="10" required>
+                </div>
             </div>
             
             <div class="form-group">
@@ -177,18 +245,32 @@
                 <label>Which Core Role are you applying for?</label>
                 <select name="role" required>
                     <option value="" disabled selected>Choose your weapon...</option>
+                    <option value="AI Vibe Coder">🤖 AI Vibe Coder</option>
+                    <option value="Assistant Coder">💻 Assistant Coder</option>
                     <option value="Frontend Developer">🖥️ Frontend Dev (HTML/CSS/JS)</option>
                     <option value="Backend / DB Engineer">⚙️ Backend/DB Dev (Apps Script/Logic)</option>
-                    <option value="AI Integration Specialist">🤖 AI Integration Specialist</option>
+                    <option value="AI Integration Specialist">🧠 AI Integration Specialist</option>
                     <option value="UI/UX & Branding">🎨 Digital Branding & UI/UX</option>
                     <option value="Caster / Content Creator">🎙️ Caster / Video Editor</option>
                     <option value="Customer Success">🎧 Customer Success & Community</option>
                 </select>
             </div>
 
-            <div class="form-group full">
-                <label>Portfolio / GitHub / Instagram Link</label>
-                <input type="url" name="link" placeholder="https://..." required>
+            <div class="form-group">
+                <label>Portfolio / GitHub / Instagram <span class="optional">(Optional)</span></label>
+                <input type="url" name="link" placeholder="https://...">
+            </div>
+
+            <div class="form-group">
+                <label>How do you know about Tournyx?</label>
+                <select name="source" required>
+                    <option value="" disabled selected>Select an option</option>
+                    <option value="Instagram">Instagram / Social Media</option>
+                    <option value="Discord">Discord Community</option>
+                    <option value="Friend/Referral">Friend / Referral</option>
+                    <option value="Tournament">Played in a Tournyx Event</option>
+                    <option value="Other">Other</option>
+                </select>
             </div>
 
             <div class="form-group full">
@@ -196,7 +278,7 @@
                 <textarea name="message" placeholder="I want to join the core team because..." required></textarea>
             </div>
 
-            <button type="submit" class="btn-submit" id="submit-btn" style="grid-column: span 2;">
+            <button type="submit" class="btn-submit" id="submit-btn">
                 <span id="btn-text">Initialize Application <i class="fa-solid fa-rocket"></i></span>
                 <div class="loader" id="btn-loader"></div>
             </button>
@@ -207,29 +289,39 @@
         <div class="modal-content">
             <i class="fa-solid fa-circle-check"></i>
             <h2>Application Secured!</h2>
-            <p style="color: var(--text-muted); margin-top: 10px;">Check your email. The Tournyx team will review your profile shortly.</p>
-            <button onclick="closeModal()" style="margin-top: 25px; padding: 10px 30px; background: transparent; border: 2px solid var(--primary); color: white; border-radius: 50px; cursor: pointer;">Return to Base</button>
+            <p style="color: var(--text-muted); margin-top: 10px;">Your data has been transmitted securely. Check your email. The Tournyx team will review your profile shortly.</p>
+            <button onclick="closeModal()" style="margin-top: 25px; padding: 12px 35px; background: rgba(99, 102, 241, 0.2); border: 1px solid var(--primary); color: white; font-weight: bold; border-radius: 50px; cursor: pointer; transition: 0.3s;">Return to Base</button>
         </div>
     </div>
 
     <script>
-        // --- 1. 3D Tilt Effect on Form Hover ---
-        const card = document.getElementById('3d-card');
-        card.addEventListener('mousemove', (e) => {
-            const rect = card.getBoundingClientRect();
-            const x = e.clientX - rect.left;
-            const y = e.clientY - rect.top;
-            const centerX = rect.width / 2;
-            const centerY = rect.height / 2;
-            const rotateX = ((y - centerY) / centerY) * -5; // Max 5 deg tilt
-            const rotateY = ((x - centerX) / centerX) * 5;
-            card.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg)`;
-        });
-        card.addEventListener('mouseleave', () => {
-            card.style.transform = `perspective(1000px) rotateX(0deg) rotateY(0deg)`;
+        // --- 1. Desktop 3D Tilt Effect ---
+        // Only run on non-touch devices to prevent mobile scrolling issues
+        if (window.matchMedia("(hover: hover)").matches) {
+            const card = document.getElementById('3d-card');
+            card.addEventListener('mousemove', (e) => {
+                const rect = card.getBoundingClientRect();
+                const x = e.clientX - rect.left;
+                const y = e.clientY - rect.top;
+                const centerX = rect.width / 2;
+                const centerY = rect.height / 2;
+                const rotateX = ((y - centerY) / centerY) * -3; // Subtle 3 deg tilt
+                const rotateY = ((x - centerX) / centerX) * 3;
+                card.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg)`;
+            });
+            card.addEventListener('mouseleave', () => {
+                card.style.transform = `perspective(1000px) rotateX(0deg) rotateY(0deg)`;
+            });
+        }
+
+        // --- 2. Strict Phone Number Validation ---
+        const phoneInput = document.getElementById('phone-input');
+        phoneInput.addEventListener('input', function (e) {
+            // Strip any non-numeric character instantly
+            this.value = this.value.replace(/\D/g, '').slice(0, 10);
         });
 
-        // --- 2. Form Submission & Backend Sync ---
+        // --- 3. Form Submission & Backend Sync ---
         const form = document.getElementById('tournyx-form');
         const submitBtn = document.getElementById('submit-btn');
         const btnText = document.getElementById('btn-text');
@@ -247,7 +339,18 @@
             btnLoader.style.display = 'block';
             submitBtn.style.pointerEvents = 'none';
 
+            // Ensure phone is exactly 10 digits before sending
+            if (phoneInput.value.length !== 10) {
+                alert("Please enter a valid 10-digit phone number.");
+                btnText.style.display = 'block';
+                btnLoader.style.display = 'none';
+                submitBtn.style.pointerEvents = 'auto';
+                return;
+            }
+
             const formData = new FormData(form);
+            // Append the +91 to the backend payload automatically
+            formData.set('phone', '+91' + phoneInput.value);
 
             try {
                 const response = await fetch(SCRIPT_URL, {
@@ -267,7 +370,7 @@
                 form.reset();
             } finally {
                 // Reset UI
-                btnText.style.display = 'block';
+                btnText.style.display = 'flex';
                 btnLoader.style.display = 'none';
                 submitBtn.style.pointerEvents = 'auto';
             }
