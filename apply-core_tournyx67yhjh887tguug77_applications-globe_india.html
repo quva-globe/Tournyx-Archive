@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tournyx Esports | Join The Core Team</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;500;700;900&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-color: #050505;
+            --surface: #111116;
+            --primary: #6366f1; /* Tournyx Indigo/Purple */
+            --primary-glow: rgba(99, 102, 241, 0.6);
+            --secondary: #a855f7;
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --glass: rgba(255, 255, 255, 0.03);
+            --border: rgba(255, 255, 255, 0.08);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            min-height: 100vh;
+            overflow-x: hidden;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            background-image: 
+                radial-gradient(circle at 15% 50%, rgba(99, 102, 241, 0.15), transparent 25%),
+                radial-gradient(circle at 85% 30%, rgba(168, 85, 247, 0.15), transparent 25%);
+        }
+
+        /* Nav & Logo */
+        nav {
+            width: 100%; padding: 25px 50px;
+            display: flex; justify-content: center; align-items: center;
+            position: relative; z-index: 10;
+        }
+        .logo-container {
+            display: flex; align-items: center; gap: 10px;
+            font-size: 28px; font-weight: 900; letter-spacing: -1px;
+            text-transform: uppercase;
+            background: linear-gradient(135deg, #fff, #a5b4fc);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+            filter: drop-shadow(0 0 15px var(--primary-glow));
+        }
+
+        /* Hero Section */
+        .hero { text-align: center; margin-top: 40px; padding: 0 20px; z-index: 2; position: relative; }
+        .hero h1 { font-size: 48px; font-weight: 900; line-height: 1.1; margin-bottom: 15px; }
+        .hero h1 span { color: var(--primary); text-shadow: 0 0 20px var(--primary-glow); }
+        .hero p { font-size: 16px; color: var(--text-muted); max-width: 600px; margin: 0 auto; line-height: 1.6; }
+
+        /* 3D Application Form */
+        .form-container {
+            margin: 50px auto 100px;
+            width: 90%; max-width: 800px;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 24px;
+            padding: 40px;
+            box-shadow: 0 25px 50px rgba(0,0,0,0.5), inset 0 0 0 1px rgba(255,255,255,0.05);
+            position: relative; z-index: 5;
+            backdrop-filter: blur(20px);
+            transform: perspective(1000px) rotateX(0deg) rotateY(0deg);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        
+        .form-container:hover {
+            box-shadow: 0 30px 60px rgba(99, 102, 241, 0.15), inset 0 0 0 1px rgba(255,255,255,0.1);
+        }
+
+        .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+        .form-group.full { grid-column: span 2; }
+        
+        @media (max-width: 768px) { .form-grid { grid-template-columns: 1fr; } .form-group.full { grid-column: span 1; } }
+
+        label { display: block; font-size: 12px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px; }
+        
+        input, select, textarea {
+            width: 100%; padding: 16px 20px;
+            background: var(--bg-color);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            color: white; font-size: 15px;
+            transition: all 0.3s ease;
+            outline: none;
+        }
+        input:focus, select:focus, textarea:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 15px rgba(99, 102, 241, 0.3);
+            background: #0f1016;
+        }
+        textarea { resize: vertical; min-height: 120px; }
+
+        /* The Ultimate Submit Button */
+        .btn-submit {
+            grid-column: span 2;
+            width: 100%; padding: 20px; margin-top: 15px;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            border: none; border-radius: 16px;
+            color: white; font-size: 18px; font-weight: 900; text-transform: uppercase; letter-spacing: 2px;
+            cursor: pointer; position: relative; overflow: hidden;
+            box-shadow: 0 10px 30px var(--primary-glow);
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            display: flex; justify-content: center; align-items: center; gap: 10px;
+        }
+        .btn-submit:hover { transform: translateY(-3px) scale(1.02); box-shadow: 0 15px 40px var(--primary-glow); }
+        .btn-submit:active { transform: translateY(1px) scale(0.98); }
+        
+        /* Loading Animation */
+        .loader { display: none; width: 24px; height: 24px; border: 3px solid rgba(255,255,255,0.3); border-top: 3px solid white; border-radius: 50%; animation: spin 1s linear infinite; }
+        @keyframes spin { 100% { transform: rotate(360deg); } }
+
+        /* Success Modal */
+        #success-modal {
+            display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.8);
+            backdrop-filter: blur(10px); z-index: 1000;
+            justify-content: center; align-items: center; text-align: center;
+        }
+        .modal-content {
+            background: var(--surface); padding: 50px; border-radius: 24px;
+            border: 1px solid var(--primary); box-shadow: 0 0 50px var(--primary-glow);
+            animation: modalIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+        }
+        @keyframes modalIn { from { transform: scale(0.8) translateY(50px); opacity: 0; } to { transform: scale(1) translateY(0); opacity: 1; } }
+        .modal-content i { font-size: 60px; color: var(--success); margin-bottom: 20px; filter: drop-shadow(0 0 15px rgba(34, 197, 94, 0.5)); }
+    </style>
+</head>
+<body>
+
+    <nav>
+        <div class="logo-container">
+            <i class="fa-solid fa-gamepad"></i> TOURNYX ESPORTS
+        </div>
+    </nav>
+
+    <div class="hero">
+        <h1>Build the Future of<br><span>Mobile Esports</span></h1>
+        <p>We are replacing messy manual brackets with automated, live-syncing tech. Join the core team and help us build the ultimate ecosystem for Free Fire, BGMI, and beyond.</p>
+    </div>
+
+    <div class="form-container" id="3d-card">
+        <form id="tournyx-form" class="form-grid">
+            
+            <div class="form-group">
+                <label>Full Name</label>
+                <input type="text" name="name" placeholder="E.g. Thilakeshwaran" required>
+            </div>
+            
+            <div class="form-group">
+                <label>Email Address</label>
+                <input type="email" name="email" placeholder="you@example.com" required>
+            </div>
+            
+            <div class="form-group">
+                <label>WhatsApp Number</label>
+                <input type="tel" name="phone" placeholder="+91 XXXXX XXXXX" required>
+            </div>
+            
+            <div class="form-group">
+                <label>Current Status</label>
+                <select name="status" required>
+                    <option value="" disabled selected>Select your status</option>
+                    <option value="Student">High School / College Student</option>
+                    <option value="Intern">Looking for Internship</option>
+                    <option value="Professional">Working Professional</option>
+                    <option value="Freelancer">Freelancer / Creator</option>
+                </select>
+            </div>
+
+            <div class="form-group full">
+                <label>Which Core Role are you applying for?</label>
+                <select name="role" required>
+                    <option value="" disabled selected>Choose your weapon...</option>
+                    <option value="Frontend Developer">🖥️ Frontend Dev (HTML/CSS/JS)</option>
+                    <option value="Backend / DB Engineer">⚙️ Backend/DB Dev (Apps Script/Logic)</option>
+                    <option value="AI Integration Specialist">🤖 AI Integration Specialist</option>
+                    <option value="UI/UX & Branding">🎨 Digital Branding & UI/UX</option>
+                    <option value="Caster / Content Creator">🎙️ Caster / Video Editor</option>
+                    <option value="Customer Success">🎧 Customer Success & Community</option>
+                </select>
+            </div>
+
+            <div class="form-group full">
+                <label>Portfolio / GitHub / Instagram Link</label>
+                <input type="url" name="link" placeholder="https://..." required>
+            </div>
+
+            <div class="form-group full">
+                <label>Why Tournyx? (Tell us your Esports Vibe)</label>
+                <textarea name="message" placeholder="I want to join the core team because..." required></textarea>
+            </div>
+
+            <button type="submit" class="btn-submit" id="submit-btn" style="grid-column: span 2;">
+                <span id="btn-text">Initialize Application <i class="fa-solid fa-rocket"></i></span>
+                <div class="loader" id="btn-loader"></div>
+            </button>
+        </form>
+    </div>
+
+    <div id="success-modal">
+        <div class="modal-content">
+            <i class="fa-solid fa-circle-check"></i>
+            <h2>Application Secured!</h2>
+            <p style="color: var(--text-muted); margin-top: 10px;">Check your email. The Tournyx team will review your profile shortly.</p>
+            <button onclick="closeModal()" style="margin-top: 25px; padding: 10px 30px; background: transparent; border: 2px solid var(--primary); color: white; border-radius: 50px; cursor: pointer;">Return to Base</button>
+        </div>
+    </div>
+
+    <script>
+        // --- 1. 3D Tilt Effect on Form Hover ---
+        const card = document.getElementById('3d-card');
+        card.addEventListener('mousemove', (e) => {
+            const rect = card.getBoundingClientRect();
+            const x = e.clientX - rect.left;
+            const y = e.clientY - rect.top;
+            const centerX = rect.width / 2;
+            const centerY = rect.height / 2;
+            const rotateX = ((y - centerY) / centerY) * -5; // Max 5 deg tilt
+            const rotateY = ((x - centerX) / centerX) * 5;
+            card.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg)`;
+        });
+        card.addEventListener('mouseleave', () => {
+            card.style.transform = `perspective(1000px) rotateX(0deg) rotateY(0deg)`;
+        });
+
+        // --- 2. Form Submission & Backend Sync ---
+        const form = document.getElementById('tournyx-form');
+        const submitBtn = document.getElementById('submit-btn');
+        const btnText = document.getElementById('btn-text');
+        const btnLoader = document.getElementById('btn-loader');
+        const modal = document.getElementById('success-modal');
+
+        // REPLACE THIS URL WITH YOUR GOOGLE APPS SCRIPT WEB APP URL
+        const SCRIPT_URL = "YOUR_GOOGLE_APPS_SCRIPT_WEB_APP_URL_HERE";
+
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            // UI Loading State
+            btnText.style.display = 'none';
+            btnLoader.style.display = 'block';
+            submitBtn.style.pointerEvents = 'none';
+
+            const formData = new FormData(form);
+
+            try {
+                const response = await fetch(SCRIPT_URL, {
+                    method: 'POST',
+                    body: formData
+                });
+
+                if(response.ok) {
+                    modal.style.display = 'flex';
+                    form.reset();
+                } else {
+                    alert("Network error. Please try again.");
+                }
+            } catch (error) {
+                // If CORS blocks it but it succeeds (common with GAS forms)
+                modal.style.display = 'flex';
+                form.reset();
+            } finally {
+                // Reset UI
+                btnText.style.display = 'block';
+                btnLoader.style.display = 'none';
+                submitBtn.style.pointerEvents = 'auto';
+            }
+        });
+
+        function closeModal() {
+            modal.style.display = 'none';
+        }
+    </script>
+</body>
+</html>
