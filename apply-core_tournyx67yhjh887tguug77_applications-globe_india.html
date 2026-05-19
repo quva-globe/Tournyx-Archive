@@ -251,19 +251,65 @@
                 </select>
             </div>
 
-            <div class="form-group full">
+            <div class="form-group full" id="role-container">
                 <label>Designated Core Role</label>
-                <select name="role" required>
+                <select name="role" id="role-select" required onchange="handleCustomRole()">
                     <option value="" disabled selected>Deploy your skills...</option>
-                    <option value="AI Vibe Coder">🤖 AI Vibe Coder (LLM / Logic integration)</option>
-                    <option value="Assistant Coder">💻 Assistant Coder (Debug & Testing)</option>
-                    <option value="Frontend Developer">🖥️ Frontend Dev (HTML/CSS/JS/UI)</option>
-                    <option value="Backend / DB Engineer">⚙️ Backend/DB Dev (Apps Script/Database)</option>
-                    <option value="AI Integration Specialist">🧠 AI Integration Specialist (Workflow Auto)</option>
-                    <option value="UI/UX & Branding">🎨 Digital Branding & Designer</option>
-                    <option value="Caster / Content Creator">🎙️ Esports Caster / Video Editor</option>
-                    <option value="Customer Success">🎧 Customer Success & Community Mod</option>
+                    
+                    <optgroup label="💻 Software & Engineering">
+                        <option value="Frontend Developer (React/HTML/CSS)">Frontend Developer (React/HTML/CSS)</option>
+                        <option value="Backend Developer (NodeJS/Firebase)">Backend Developer (NodeJS/Firebase)</option>
+                        <option value="Full-Stack Engineer">Full-Stack Engineer</option>
+                        <option value="Database Architect">Database Architect</option>
+                        <option value="App Developer (Flutter/React Native)">App Developer (Flutter/React Native)</option>
+                        <option value="Game Developer (Unity/Unreal)">Game Developer (Unity/Unreal)</option>
+                        <option value="QA & Testing Assistant">QA & Testing Assistant</option>
+                    </optgroup>
+
+                    <optgroup label="🧠 AI & Automation">
+                        <option value="AI Prompt Engineer / Vibe Coder">AI Prompt Engineer / Vibe Coder</option>
+                        <option value="AI Workflow Integration Specialist">AI Workflow Integration Specialist</option>
+                        <option value="Bot Developer (Discord/Telegram)">Bot Developer (Discord/Telegram)</option>
+                    </optgroup>
+
+                    <optgroup label="🎨 Design & Creative">
+                        <option value="UI/UX Designer">UI/UX Designer</option>
+                        <option value="Graphic Designer (Thumbnails/Overlays)">Graphic Designer (Thumbnails/Overlays)</option>
+                        <option value="Video Editor (Reels/Highlights)">Video Editor (Reels/Highlights)</option>
+                        <option value="3D Animator / Modeler">3D Animator / Modeler</option>
+                        <option value="Motion Graphics Artist">Motion Graphics Artist</option>
+                    </optgroup>
+
+                    <optgroup label="🎙️ Content & Esports">
+                        <option value="Esports Caster / Commentator">Esports Caster / Commentator</option>
+                        <option value="Tournament Administrator (Admin)">Tournament Administrator (Admin)</option>
+                        <option value="Match Observer / Spectator">Match Observer / Spectator</option>
+                        <option value="Content Creator / Streamer">Content Creator / Streamer</option>
+                        <option value="Esports Data Analyst">Esports Data Analyst</option>
+                    </optgroup>
+
+                    <optgroup label="📈 Marketing & Growth">
+                        <option value="Social Media Manager">Social Media Manager</option>
+                        <option value="Community Moderator (Discord/WhatsApp)">Community Moderator (Discord/WhatsApp)</option>
+                        <option value="Growth Hacker / SEO">Growth Hacker / SEO</option>
+                        <option value="Campus Ambassador">Campus Ambassador</option>
+                        <option value="Partnerships & Sponsorships Lead">Partnerships & Sponsorships Lead</option>
+                    </optgroup>
+
+                    <optgroup label="💼 Business & Operations">
+                        <option value="Operations Manager">Operations Manager</option>
+                        <option value="Finance & Accounting">Finance & Accounting</option>
+                        <option value="Customer Success / Support">Customer Success / Support</option>
+                        <option value="Legal & Compliance">Legal & Compliance</option>
+                        <option value="HR & Talent Acquisition">HR & Talent Acquisition</option>
+                    </optgroup>
+
+                    <optgroup label="🔄 Other">
+                        <option value="other">Other / Custom Role...</option>
+                    </optgroup>
                 </select>
+
+                <input type="text" id="custom-role-input" name="custom_role" placeholder="Specify your exact role / skill..." style="display: none; margin-top: 15px;" autocomplete="off">
             </div>
 
             <div class="form-group">
@@ -555,5 +601,19 @@
             cCtx.clearRect(0,0, confCanvas.width, confCanvas.height); // clear artifacts
         }
     </script>
+    <script>
+                function handleCustomRole() {
+                    const select = document.getElementById('role-select');
+                    const customInput = document.getElementById('custom-role-input');
+                    if (select.value === 'other') {
+                        customInput.style.display = 'block';
+                        customInput.setAttribute('required', 'true');
+                    } else {
+                        customInput.style.display = 'none';
+                        customInput.removeAttribute('required');
+                        customInput.value = '';
+                    }
+                }
+            </script>
 </body>
 </html>
