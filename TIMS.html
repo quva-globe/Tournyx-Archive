@@ -314,13 +314,18 @@
             const pdfWrapper = document.getElementById('pdfContainerWrapper');
             const canvasBg = document.getElementById('particles-canvas');
             
+            // 🔥 FIX 1: Reset scroll instantly so html2canvas doesn't capture blank offset space
+            window.scrollTo(0, 0);
+            
             // 1. Temporarily bring PDF to front to force browser rendering
             mainContainer.style.display = 'none';
             canvasBg.style.display = 'none';
-            pdfWrapper.style.position = 'relative';
+            // 🔥 FIX 2: Use Absolute positioning to bypass mobile body padding limits
+            pdfWrapper.style.position = 'absolute';
+            pdfWrapper.style.top = '0';
             pdfWrapper.style.left = '0';
             pdfWrapper.style.opacity = '1';
-            pdfWrapper.style.zIndex = '1';
+            pdfWrapper.style.zIndex = '9999';
             
             // Wait for DOM repaint
             await new Promise(resolve => setTimeout(resolve, 150));
@@ -332,7 +337,14 @@
                 margin: 0, 
                 filename: `TIMS_${name}.pdf`, 
                 image: { type: 'jpeg', quality: 1 }, 
-                html2canvas: { scale: 2, useCORS: true, backgroundColor: '#05020c', windowWidth: 800 }, 
+                html2canvas: { 
+                    scale: 2, 
+                    useCORS: true, 
+                    backgroundColor: '#05020c', 
+                    windowWidth: 800,
+                    scrollY: 0, // 🔥 FIX 3: Force rendering engine to start capturing from true zero
+                    scrollX: 0
+                }, 
                 jsPDF: { unit: 'px', format: [800, 1131], orientation: 'portrait' }
             };
 
