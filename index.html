@@ -1758,31 +1758,49 @@
         }
     });
 </script>
-    <script src="https://cdn.onesignal.com/sdks/web/v16/OneSignalSDK.page.js" defer></script>
-<script>
-  window.OneSignalDeferred = window.OneSignalDeferred || [];
+    <script>
+// =========================================================================
+// TOURNYX OFFICIAL ONESIGNAL PWA INTEGRATION (v16)
+// =========================================================================
+window.OneSignalDeferred = window.OneSignalDeferred || [];
 
-  function tournyxOneSignalSetup() {
-    let user = JSON.parse(localStorage.getItem("tournyx_user") || "null");
-    if (!user || !user.email) return;
-
-    let cleanEmail = user.email.toLowerCase().trim();
-
-    OneSignalDeferred.push(async function(OneSignal) {
-      await OneSignal.login(cleanEmail);
-      await OneSignal.User.addTag("user_email", cleanEmail);
-      await OneSignal.User.addTag("user_status", "active");
-      console.log("OneSignal user linked:", cleanEmail);
-    });
-  }
-
-  OneSignalDeferred.push(async function(OneSignal) {
+OneSignalDeferred.push(async function(OneSignal) {
+    // 1. Initialize the App
     await OneSignal.init({
-      appId: "15a8e2b2-248c-4547-929e-797d7170e988",
-      notifyButton: { enable: true }
+        appId: "15a8e2b2-248c-4547-929e-797d7170e988", // ⚠️ PASTE YOUR APP ID HERE
+        notifyButton: {
+            enable: false, // Set to true if you want the visual bell icon
+        },
+        allowLocalhostAsSecureOrigin: true
     });
-    tournyxOneSignalSetup();
-  });
+
+    // 2. Fetch logged-in user securely from Quva/Tournyx LocalStorage
+    let user = JSON.parse(localStorage.getItem('tournyx_user'));
+    
+    if (user && user.email) {
+        let cleanEmail = user.email.toLowerCase().trim();
+
+        // 3. TARGETING LOCK: Assign External ID (Email)
+        // This makes sure your Google Apps Script backend can find THIS exact device!
+        await OneSignal.login(cleanEmail);
+
+        // 4. Set Organizational Tags
+        OneSignal.User.addTags({
+            "user_email": cleanEmail,
+            "user_status": "active",
+            "platform": "pwa"
+        });
+        
+        // 5. Prompt for Permission (if not already granted)
+        if (OneSignal.Notifications.permission !== "granted") {
+            // Optional: Delay the prompt slightly so it feels natural
+            setTimeout(() => {
+                OneSignal.Notifications.requestPermission();
+            }, 3000);
+        }
+    }
+});
 </script>
+    
 </body>
 </html>
