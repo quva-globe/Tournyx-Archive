@@ -1,41 +1,35 @@
 const CACHE_NAME = "tournyx-cache-v1";
 
-// Add ALL your important files here
-const ASSETS_TO_CACHE = [
+const URLS_TO_CACHE = [
   "/tournyx/",
   "/tournyx/index.html",
+  "/tournyx/manifest.json",
   "/tournyx/style.css",
   "/tournyx/app.js",
-  "/tournyx/icons/icon-192.png",
-  "/tournyx/icons/icon-512.png"
+  "/tournyx/favicon-192x192.png",
+  "/tournyx/favicon-512x512.png"
 ];
 
-// INSTALL — cache files
 self.addEventListener("install", (event) => {
   event.waitUntil(
-    caches.open(CACHE_NAME).then((cache) => {
-      console.log("Caching app files...");
-      return cache.addAll(ASSETS_TO_CACHE);
-    })
+    caches.open(CACHE_NAME).then((cache) => cache.addAll(URLS_TO_CACHE))
   );
   self.skipWaiting();
 });
 
-// ACTIVATE — delete old caches
 self.addEventListener("activate", (event) => {
   event.waitUntil(
-    caches.keys().then((cacheNames) =>
+    caches.keys().then((keys) =>
       Promise.all(
-        cacheNames
-          .filter((name) => name !== CACHE_NAME)
-          .map((name) => caches.delete(name))
+        keys
+          .filter((key) => key !== CACHE_NAME)
+          .map((key) => caches.delete(key))
       )
     )
   );
   self.clients.claim();
 });
 
-// FETCH — serve cached files when offline
 self.addEventListener("fetch", (event) => {
   event.respondWith(
     caches.match(event.request).then((cachedResponse) => {
