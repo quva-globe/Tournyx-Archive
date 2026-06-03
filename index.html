@@ -1758,47 +1758,31 @@
         }
     });
 </script>
-    <script>
-function tournyxOneSignalSetup() {
-    let user = JSON.parse(localStorage.getItem('tournyx_user'));
-    
-    if (user && user.email && typeof median !== 'undefined' && median.onesignal) {
-        let cleanEmail = user.email.toLowerCase().trim();
+    <script src="https://cdn.onesignal.com/sdks/web/v16/OneSignalSDK.page.js" defer></script>
+<script>
+  window.OneSignalDeferred = window.OneSignalDeferred || [];
 
-        // 1. THE MODERN LOGIN: Uses proper Objects for Median V5
-        if (median.onesignal.login) {
-            // Bind External ID
-            median.onesignal.login({ externalId: cleanEmail });
-            
-            // NEW: Bind Email so it shows up in the OneSignal Dashboard!
-            if (median.onesignal.user && median.onesignal.user.addEmail) {
-                median.onesignal.user.addEmail({ email: cleanEmail });
-            }
-        } else if (median.onesignal.setExternalUserId) {
-            // Fallback for older Median builds
-            median.onesignal.setExternalUserId({ externalId: cleanEmail });
-            if (median.onesignal.setEmail) {
-                median.onesignal.setEmail({ email: cleanEmail });
-            }
-        }
+  function tournyxOneSignalSetup() {
+    let user = JSON.parse(localStorage.getItem("tournyx_user") || "null");
+    if (!user || !user.email) return;
 
-        // 2. SET TAGS PERFECTLY (We will use this to target them!)
-        let tagData = { 
-            "user_email": cleanEmail, 
-            "user_status": "active" 
-        };
-        
-        if (median.onesignal.tags && median.onesignal.tags.set) {
-            median.onesignal.tags.set(tagData);
-        } else if (median.onesignal.sendTags) {
-            median.onesignal.sendTags(tagData);
-        }
-    }
-}
+    let cleanEmail = user.email.toLowerCase().trim();
 
-// Fire securely when the Median native app bridge is fully loaded
-document.addEventListener("median_library_ready", tournyxOneSignalSetup);
-document.addEventListener("DOMContentLoaded", tournyxOneSignalSetup);
+    OneSignalDeferred.push(async function(OneSignal) {
+      await OneSignal.login(cleanEmail);
+      await OneSignal.User.addTag("user_email", cleanEmail);
+      await OneSignal.User.addTag("user_status", "active");
+      console.log("OneSignal user linked:", cleanEmail);
+    });
+  }
+
+  OneSignalDeferred.push(async function(OneSignal) {
+    await OneSignal.init({
+      appId: "15a8e2b2-248c-4547-929e-797d7170e988",
+      notifyButton: { enable: true }
+    });
+    tournyxOneSignalSetup();
+  });
 </script>
 </body>
 </html>
