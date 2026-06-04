@@ -275,7 +275,7 @@
     <div class="top-header">
         <div class="header-wrapper">
             <div class="header-left">
-                <a href="profile.html" class="back-btn" onclick="triggerHaptic()"><i class="fa-solid fa-arrow-left"></i></a>
+                <a href="#" class="back-btn" onclick="goBack(); return false;"><i class="fa-solid fa-arrow-left"></i></a>
                 <div>
                     <div class="header-greeting" id="dynamicGreeting">Withdraw Funds</div>
                     <h1 class="app-title">FUNDS</h1>
@@ -649,6 +649,15 @@
         }
 
         function triggerHaptic() { if(navigator.vibrate) navigator.vibrate(30); }
+        function goBack() {
+            triggerHaptic();
+
+            if (window.history.length > 1) {
+                window.history.back();
+            } else {
+                window.location.href = "profile.html";
+            }
+        }
         function triggerError(id) { let el = document.getElementById(id); el.classList.add('input-error'); triggerHaptic(); setTimeout(()=>el.classList.remove('input-error'),400); }
         function showToast(msg, isError = false) {
             const t = document.getElementById('customToast'); t.innerText = msg; t.className = "show";
