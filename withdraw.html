@@ -1102,13 +1102,35 @@
                     else if (isCancelled) { statusColor = "var(--accent-red)"; statusBg = "rgba(255, 77, 77, 0.1)"; statusBorder = "rgba(255, 77, 77, 0.3)"; mainIcon = "fa-xmark"; } 
                     else if (isRefunded) { statusColor = "var(--accent-cyan)"; statusBg = "rgba(0, 242, 255, 0.1)"; statusBorder = "rgba(0, 242, 255, 0.3)"; mainIcon = "fa-rotate-left"; }
 
+                    // --- NEW DATE FORMATTING LOGIC ---
+                    let displayDate = item.date;
+                    try {
+                        let d = new Date(item.date);
+                        if (!isNaN(d.getTime())) { 
+                            let day = String(d.getDate()).padStart(2, '0');
+                            const monthNames = ["JAN", "FEB", "MAR", "APR", "MAY", "JUN", "JUL", "AUG", "SEP", "OCT", "NOV", "DEC"];
+                            let month = monthNames[d.getMonth()];
+                            let year = d.getFullYear();
+                            
+                            let hours = d.getHours();
+                            let minutes = String(d.getMinutes()).padStart(2, '0');
+                            let ampm = hours >= 12 ? 'PM' : 'AM';
+                            hours = hours % 12;
+                            hours = hours ? hours : 12;
+                            let strHours = String(hours).padStart(2, '0');
+                            
+                            displayDate = `${day} ${month} ${year}, ${strHours}:${minutes} ${ampm}`;
+                        }
+                    } catch(e) {}
+                    // ---------------------------------
+
                     historyList.innerHTML += `
                         <div class="txn-item glow-hover" style="animation-delay:${delay*0.05}s" onclick="openMessageInput('${item.id}', '${item.amount}', '${item.date}', '${item.status || 'Pending'}', '${item.method || ''}', '${item.details || ''}'); triggerHaptic();">
                             <div class="txn-left">
                                 <div class="txn-icon icon-debit"><i class="fa-solid ${mainIcon}"></i></div>
                                 <div class="txn-info">
                                     <h4>${item.title}</h4>
-                                    <p><span class="cat-tag"><i class="fa-solid fa-money-bill-transfer"></i> Payout</span> <span>${item.date}</span></p>
+                                    <p><span class="cat-tag"><i class="fa-solid fa-money-bill-transfer"></i> Payout</span> <span>${displayDate}</span></p>
                                 </div>
                             </div>
                             <div class="txn-right">
@@ -1122,7 +1144,6 @@
                 historyList.innerHTML = `<div class="empty-history"><i class="fa-solid fa-file-invoice" style="font-size:1.8rem; opacity:0.5; margin-bottom:8px; color:var(--accent-purple);"></i><br>No withdrawal records found.</div>`;
             }
         }
-
         // --- EXPLICIT WITHDRAW PROCESSING ---
         function processWithdrawal() {
             const grossAmount = parseFloat(document.getElementById('withdrawAmount').value);
