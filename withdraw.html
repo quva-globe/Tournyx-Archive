@@ -642,11 +642,27 @@
             }
         }
 
-        function getISTDateTime() {
-            let d = new Date();
-            let options = { timeZone: 'Asia/Kolkata', month: 'short', day: '2-digit', year: 'numeric', hour: 'numeric', minute: '2-digit', hour12: true };
-            return d.toLocaleString('en-IN', options).toUpperCase();
-        }
+       function getISTDateTime() {
+    let d = new Date();
+    
+    // Get Date, Month, Year
+    let day = String(d.getDate()).padStart(2, '0');
+    let month = String(d.getMonth() + 1).padStart(2, '0'); // Months are 0-indexed
+    let year = d.getFullYear();
+    
+    // Get Time
+    let hours = d.getHours();
+    let minutes = String(d.getMinutes()).padStart(2, '0');
+    let ampm = hours >= 12 ? 'PM' : 'AM';
+    
+    // Convert to 12-hour format
+    hours = hours % 12;
+    hours = hours ? hours : 12; // The hour '0' should be '12'
+    let strHours = String(hours).padStart(2, '0');
+    
+    // Final Format: DD/MM/YYYY, HH:MM AM/PM
+    return `${day}/${month}/${year}, ${strHours}:${minutes} ${ampm}`;
+}
 
         function triggerHaptic() { if(navigator.vibrate) navigator.vibrate(30); }
         function goBack() {
