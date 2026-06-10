@@ -4,20 +4,16 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     
-    <!-- ==========================================
-         SEO, AEO & GEO TAGS
-         ========================================== -->
+    <!-- SEO, AEO & GEO TAGS -->
     <title>Global Tournyx Elite - Live eSports Rankings</title>
     <meta name="description" content="Check the live Global Tournyx Elite Leaderboard. Discover top BGMI and Free Fire players, win rates, and total earnings on the premier Tournyx Esports platform.">
     <meta name="keywords" content="Tournyx, Esports Leaderboard, BGMI rankings, Free Fire top players, gaming tournaments, India esports, play and earn">
     <meta name="author" content="Tournyx Esports">
-    <meta name="robots" content="index, follow">
+    <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large">
     
-    <!-- Geo Tags -->
     <meta name="geo.region" content="IN-TN">
     <meta name="geo.placename" content="Chennai">
     
-    <!-- Open Graph -->
     <meta property="og:type" content="website">
     <meta property="og:title" content="Global Tournyx Elite - Live eSports Rankings">
     <meta property="og:description" content="View the real-time global rankings of top esports athletes on Tournyx.">
@@ -57,7 +53,7 @@
         body {
             background-color: var(--primary-bg); color: white;
             font-family: var(--font-body); overflow-x: hidden;
-            padding-bottom: calc(100px + env(safe-area-inset-bottom)); /* Extra padding for sticky progress */
+            padding-bottom: calc(100px + env(safe-area-inset-bottom));
         }
         
         .container { max-width: 800px; margin: 0 auto; width: 100%; }
@@ -67,40 +63,45 @@
         .bg-gradient { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -2; background: radial-gradient(circle at 50% 10%, #1a083a 0%, #05020c 80%); }
         .scanlines { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; background: linear-gradient(to bottom, rgba(255,255,255,0), rgba(255,255,255,0) 50%, rgba(0,242,255,0.03) 50%, rgba(0,242,255,0.03)); background-size: 100% 4px; pointer-events: none; }
 
-        /* HEADER - FIXED ALIGNMENT & GLASSMORPHISM */
+        /* TOURNYX TX ICON */
+        .tx-ticket-composite { position: relative; display: inline-flex; align-items: center; justify-content: center; height: 24px; }
+        .tx-ticket-composite i { font-size: inherit; transition: inherit; }
+        .tx-ticket-composite .tx-text { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -46%); font-family: var(--font-head); font-size: 0.38em; font-weight: 900; color: var(--primary-bg) !important; -webkit-text-fill-color: var(--primary-bg) !important; letter-spacing: -0.5px; pointer-events: none; z-index: 2; transition: 0.3s; font-style: normal !important; }
+
+        /* HEADER - REDESIGNED & COMPACT */
         .top-header {
-            padding: calc(12px + env(safe-area-inset-top)) 15px 12px;
-            display: flex; align-items: center; justify-content: space-between; gap: 10px;
-            background: rgba(5, 2, 12, 0.85); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+            padding: calc(15px + env(safe-area-inset-top)) 15px 15px;
+            display: flex; align-items: center; justify-content: space-between;
+            background: rgba(5, 2, 12, 0.7); backdrop-filter: blur(25px); -webkit-backdrop-filter: blur(25px);
             border-bottom: 1px solid var(--card-border);
-            position: sticky; top: 0; z-index: 1000; box-shadow: 0 5px 30px rgba(0,0,0,0.5);
+            position: sticky; top: 0; z-index: 1000; box-shadow: 0 5px 30px rgba(0,0,0,0.6);
         }
-        .header-left { display: flex; align-items: center; gap: 12px; flex: 1; min-width: 0; }
-        .back-btn { font-size: 1.3rem; color: white; cursor: pointer; transition: 0.3s; text-decoration: none; display: flex; align-items: center;}
+        .header-left { flex: 1; display: flex; align-items: center; gap: 12px; }
+        .header-center { flex: 0; display: none; } 
+        .header-right { flex: 1; display: flex; justify-content: flex-end; align-items: center; gap: 15px; }
+
+        .back-btn { font-size: 1.3rem; color: white; cursor: pointer; transition: 0.3s; padding: 5px; text-decoration: none;}
         .back-btn:active { color: var(--accent-cyan); transform: scale(0.9); }
-        .header-title { font-family: var(--font-head); font-size: clamp(1rem, 4vw, 1.4rem); font-weight: 900; background: var(--accent-gradient); -webkit-background-clip: text; -webkit-text-fill-color: transparent; text-transform: uppercase; letter-spacing: 1px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
         
-        .desktop-nav { display: none; gap: 20px; align-items: center; justify-content: center; flex: 2;}
+        .header-title-box { display: flex; flex-direction: column; }
+        .header-lb-title { font-family: var(--font-head); font-size: 1.2rem; font-weight: 900; background: var(--accent-gradient); -webkit-background-clip: text; -webkit-text-fill-color: transparent; letter-spacing: 1px; margin: 0; line-height: 1.1;}
+        .header-lb-sub { font-size: 0.6rem; color: var(--accent-cyan); text-transform: uppercase; letter-spacing: 2px; font-weight: bold; display: flex; align-items: center; gap: 6px; margin-top: 2px;}
+        .live-dot { width: 6px; height: 6px; background: var(--accent-green); border-radius: 50%; box-shadow: 0 0 10px var(--accent-green); animation: pulseLive 1.5s infinite; }
+        @keyframes pulseLive { 0% { opacity: 1; transform:scale(1);} 50% { opacity: 0.3; transform:scale(1.5);} 100% { opacity: 1; transform:scale(1);} }
+
+        .header-profile-img { width: 32px; height: 32px; border-radius: 50%; border: 2px solid var(--accent-cyan); object-fit: cover; cursor: pointer; transition: 0.3s; box-shadow: 0 0 10px rgba(0,242,255,0.3);}
+
+        .desktop-nav { display: none; gap: 20px; align-items: center; justify-content: flex-end; width: 100%;}
         .desktop-nav a { color: #aaa; text-decoration: none; font-family: var(--font-head); font-size: 0.85rem; font-weight: bold; text-transform: uppercase; transition: 0.3s; letter-spacing: 1px; white-space: nowrap;}
         .desktop-nav a:hover, .desktop-nav a.active { color: var(--accent-cyan); text-shadow: 0 0 10px rgba(0,242,255,0.5); }
-        
-        .header-right { display: flex; align-items: center; justify-content: flex-end; gap: 10px; flex: 1; }
-        .header-profile-img { width: 34px; height: 34px; border-radius: 50%; border: 2px solid var(--accent-cyan); object-fit: cover; cursor: pointer; transition: 0.3s; box-shadow: 0 0 10px rgba(0,242,255,0.3);}
-        
         @media (min-width: 850px) { 
             .bottom-nav { display: none !important; } 
             .desktop-nav { display: flex; } 
+            .header-right { flex: 3; }
         }
 
-        /* LIVE STATUS */
-        .live-status-bar { text-align: center; padding: 15px 15px 5px; animation: fadeInDown 0.8s ease backwards; }
-        .lb-subtitle { font-size: 0.8rem; color: var(--accent-cyan); text-transform: uppercase; letter-spacing: 2px; font-weight: bold; display: flex; align-items: center; justify-content: center; gap: 8px; }
-        .live-dot { width: 8px; height: 8px; background: var(--accent-green); border-radius: 50%; box-shadow: 0 0 12px var(--accent-green); animation: pulseLive 1.5s infinite; }
-        @keyframes pulseLive { 0% { opacity: 1; transform:scale(1);} 50% { opacity: 0.3; transform:scale(1.5);} 100% { opacity: 1; transform:scale(1);} }
-        @keyframes fadeInDown { from { opacity: 0; transform: translateY(-20px); } to { opacity: 1; transform: translateY(0); } }
-
         /* SEARCH BAR */
-        .search-container { padding: 10px 15px 15px; max-width: 600px; margin: 0 auto; }
+        .search-container { padding: 15px 15px; max-width: 600px; margin: 0 auto; animation: fadeInDown 0.8s ease backwards;}
         .search-bar-inner { display:flex; align-items:center; gap:10px; background:rgba(255,255,255,0.03); border:1px solid rgba(0,242,255,0.2); border-radius:12px; padding:6px 15px; transition:0.3s; box-shadow: inset 0 0 10px rgba(0,0,0,0.5); width: 100%;}
         .search-bar-inner:focus-within { border-color:var(--accent-purple); box-shadow:0 0 20px rgba(189,0,255,0.2), inset 0 0 10px rgba(0,0,0,0.5); }
         .search-input { flex:1; background:transparent; border:none; color:white; font-family:var(--font-body); font-size:1rem; font-weight:bold; padding:6px 0; outline:none;}
@@ -126,6 +127,7 @@
         .podium-arena { display: flex; justify-content: center; align-items: flex-end; gap: clamp(8px, 2vw, 15px); margin: 20px 15px 40px; height: 200px; }
         .podium-step { display: flex; flex-direction: column; align-items: center; cursor: pointer; position: relative; transition: 0.3s; animation: slideUpGlow 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275) backwards; }
         .podium-step:hover { transform: translateY(-5px); }
+        .podium-step:active { transform: scale(0.95); }
         @keyframes slideUpGlow { from { opacity: 0; transform: translateY(50px); } to { opacity: 1; transform: translateY(0); } }
 
         .rank-1 { z-index: 3; animation-delay: 0.2s; }
@@ -136,11 +138,12 @@
         .rank-1 .avatar-ring { width: 90px; height: 90px; background: linear-gradient(135deg, #FFD700, #FFA500); box-shadow: 0 0 25px rgba(255, 215, 0, 0.5); }
         .rank-2 .avatar-ring { width: 75px; height: 75px; background: linear-gradient(135deg, #C0C0C0, #E0E0E0); box-shadow: 0 0 15px rgba(192, 192, 192, 0.4); }
         .rank-3 .avatar-ring { width: 65px; height: 65px; background: linear-gradient(135deg, #CD7F32, #8B4513); box-shadow: 0 0 15px rgba(205, 127, 50, 0.4); }
+        
         .podium-img { width: 100%; height: 100%; border-radius: 50%; border: 3px solid var(--primary-bg); object-fit: cover; background: #000; }
         .crown { position: absolute; top: -25px; font-size: 2rem; color: var(--accent-gold); filter: drop-shadow(0 0 15px var(--accent-gold)); animation: floatCrown 2s ease-in-out infinite; }
         @keyframes floatCrown { 0%,100% { transform: translateY(0) rotate(-5deg); } 50% { transform: translateY(-10px) rotate(5deg); } }
 
-        .pillar { background: var(--card-bg); backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px); border: 1px solid var(--card-border); border-bottom: none; width: clamp(85px, 25vw, 100px); border-radius: 15px 15px 0 0; display: flex; flex-direction: column; align-items: center; padding: 25px 5px 10px; transition: 0.3s; }
+        .pillar { background: var(--card-bg); backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px); border: 1px solid var(--card-border); border-bottom: none; width: clamp(85px, 25vw, 100px); border-radius: 15px 15px 0 0; display: flex; flex-direction: column; align-items: center; padding: 20px 5px 10px; transition: 0.3s; }
         .rank-1 .pillar { height: 130px; width: clamp(100px, 28vw, 120px); border-color: rgba(255, 215, 0, 0.4); background: linear-gradient(to top, rgba(255,215,0,0.15), rgba(0,0,0,0.6));}
         .rank-2 .pillar { height: 95px; border-color: rgba(192, 192, 192, 0.2); }
         .rank-3 .pillar { height: 80px; border-color: rgba(205, 127, 50, 0.2); }
@@ -148,13 +151,13 @@
         .p-name { font-family: var(--font-head); font-size: 0.75rem; font-weight: bold; text-align: center; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; width: 100%; }
         .p-rate { color: var(--accent-cyan); font-size: 0.95rem; font-weight: bold; margin-top: 4px; text-shadow: 0 0 10px rgba(0,242,255,0.4);}
 
-        /* REACT LIST STYLES */
+        /* REACT LIST */
         .list-container { padding: 0 15px; display: flex; flex-direction: column; gap: 10px; }
         .player-row { background: rgba(10, 5, 20, 0.8); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border: 1px solid var(--card-border); border-radius: 14px; cursor: pointer; padding: 12px 15px; display: flex; align-items: center; position: relative; overflow: hidden; transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1); animation: slideInRight 0.5s ease backwards; box-shadow: 0 5px 15px rgba(0,0,0,0.2); }
         .player-row::before { content: ''; position: absolute; left: 0; top: 0; width: 4px; height: 100%; background: var(--accent-purple); opacity: 0; transition: 0.3s; }
         .player-row:hover::before { opacity: 1; box-shadow: 0 0 15px var(--accent-purple); }
         .player-row:hover { transform: translateX(5px); border-color: rgba(255,255,255,0.2); background: rgba(30, 15, 50, 0.8); }
-        .player-row:active { transform: scale(0.97); }
+        .player-row:active { transform: scale(0.97); border-color: var(--accent-cyan); box-shadow: 0 0 20px rgba(0,242,255,0.2);}
         @keyframes slideInRight { from { opacity: 0; transform: translateX(40px); } to { opacity: 1; transform: translateX(0); } }
 
         .r-num { font-family: var(--font-head); font-size: 1.1rem; font-weight: 900; color: rgba(255,255,255,0.2); width: 40px; text-align: center;}
@@ -163,79 +166,66 @@
         .trend-down { color: var(--accent-red); text-shadow: 0 0 5px rgba(255,51,102,0.5); }
         .trend-same { color: #555; }
 
-        .r-img { width: 45px; height: 45px; border-radius: 50%; border: 2px solid var(--accent-purple); object-fit: cover; margin: 0 12px 0 5px; box-shadow: 0 0 10px rgba(189,0,255,0.3);}
+        .r-img { width: 42px; height: 42px; border-radius: 50%; border: 2px solid var(--accent-purple); object-fit: cover; margin: 0 10px 0 0; box-shadow: 0 0 10px rgba(189,0,255,0.3);}
         
         .r-info { flex: 1; min-width: 0; }
-        .r-info h4 { font-family: var(--font-head); font-size: 0.95rem; margin-bottom: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; display: flex; align-items: center; gap: 6px; }
+        .r-info h4 { font-family: var(--font-head); font-size: 0.9rem; margin-bottom: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; display: flex; align-items: center; gap: 6px; }
         .verified-badge { color: var(--accent-cyan); font-size: 0.75rem; filter: drop-shadow(0 0 5px var(--accent-cyan));}
-        .clan-tag { color: var(--accent-gold); font-size: 0.65rem; letter-spacing: 1px; border: 1px solid var(--accent-gold); padding: 1px 4px; border-radius: 4px; background: rgba(255,215,0,0.1); }
-        .r-info p { font-size: 0.7rem; color: #bbb; text-transform: uppercase; font-weight: 600; letter-spacing: 0.5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;}
-        .r-ping { font-size: 0.65rem; color: #aaa; margin-left: 6px; font-weight: bold; }
+        .clan-tag { color: var(--accent-gold); font-size: 0.6rem; letter-spacing: 1px; border: 1px solid var(--accent-gold); padding: 1px 4px; border-radius: 4px; background: rgba(255,215,0,0.1); }
+        .r-info p { font-size: 0.65rem; color: #bbb; text-transform: uppercase; font-weight: 600; letter-spacing: 0.5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;}
+        .r-ping { color: #aaa; margin-left: 6px; font-weight: bold; }
         
         .r-stats { text-align: right; display: flex; flex-direction: column; align-items: flex-end; flex-shrink: 0;}
         .r-winrate { font-family: var(--font-head); font-size: 1.05rem; color: var(--accent-green); font-weight: bold; text-shadow: 0 0 10px rgba(0,255,127,0.4); display: flex; align-items: center; gap: 4px; }
-        .r-rewards { font-size: 0.7rem; color: #888; margin-top: 3px; font-weight: bold; letter-spacing: 0.5px;}
+        .r-rewards { font-size: 0.65rem; color: #888; margin-top: 3px; font-weight: bold; letter-spacing: 0.5px;}
 
-        /* FF STYLE PROGRESS COMPONENT (STICKY) */
-        .ff-progress-card { background: linear-gradient(135deg, rgba(0,242,255,0.1), rgba(189,0,255,0.1)); border: 1px solid var(--accent-cyan); border-radius: 14px; padding: 15px; margin: 15px; box-shadow: 0 0 20px rgba(0,242,255,0.15), inset 0 0 15px rgba(0,0,0,0.5); animation: slideInRight 0.6s ease backwards; position: sticky; bottom: calc(75px + env(safe-area-inset-bottom)); z-index: 10; backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px);}
-        .ff-prog-header { display: flex; justify-content: space-between; font-family: var(--font-head); font-weight: bold; font-size: 0.8rem; color: white; margin-bottom: 10px; text-transform: uppercase; letter-spacing: 1px;}
-        .ff-prog-bar { width: 100%; height: 8px; background: rgba(255,255,255,0.1); border-radius: 10px; overflow: hidden; border: 1px solid rgba(255,255,255,0.05); position: relative;}
+        /* FF PROGRESS (YOUR RANK) - BLENDED AT BOTTOM */
+        .ff-progress-card { background: linear-gradient(135deg, rgba(0,242,255,0.1), rgba(189,0,255,0.1)); border: 1px solid var(--accent-cyan); border-radius: 14px; padding: 15px; margin: 15px 15px 0; box-shadow: 0 0 20px rgba(0,242,255,0.15), inset 0 0 15px rgba(0,0,0,0.5); position: sticky; bottom: calc(75px + env(safe-area-inset-bottom)); z-index: 100; backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); }
+        .ff-prog-header { display: flex; justify-content: space-between; font-family: var(--font-head); font-weight: bold; font-size: 0.8rem; color: white; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 1px;}
+        .ff-prog-bar { width: 100%; height: 6px; background: rgba(255,255,255,0.1); border-radius: 10px; overflow: hidden; border: 1px solid rgba(255,255,255,0.05); position: relative;}
         .ff-prog-fill { height: 100%; background: linear-gradient(90deg, var(--accent-purple), var(--accent-cyan)); box-shadow: 0 0 10px var(--accent-cyan); transition: width 1s cubic-bezier(0.4, 0, 0.2, 1); }
-        .ff-prog-sub { font-size: 0.75rem; color: #aaa; margin-top: 8px; text-align: center; font-weight: 600; }
+        .ff-prog-sub { font-size: 0.7rem; color: #aaa; margin-top: 8px; text-align: center; font-weight: 600; }
 
-        /* PREMIUM SKELETON LOADER */
+        /* SKELETON LOADER */
         .skeleton-wrapper { display: flex; flex-direction: column; gap: 12px; width: 100%; padding: 20px 15px;}
-        .skeleton { background: linear-gradient(90deg, rgba(255,255,255,0.03) 25%, rgba(255,255,255,0.08) 50%, rgba(255,255,255,0.03) 75%); background-size: 200% 100%; animation: shimmer 1.2s infinite linear; border-radius: 12px; height: 65px; border: 1px solid rgba(255,255,255,0.05);}
-        @keyframes shimmer { 0% { background-position: -200% 0; } 100% { background-position: 200% 0; } }
+        .skeleton { background: linear-gradient(90deg, rgba(255,255,255,0.02) 25%, rgba(255,255,255,0.06) 50%, rgba(255,255,255,0.02) 75%); background-size: 200% 100%; animation: shimmer 1.5s infinite linear; border-radius: 12px; height: 65px; border: 1px solid rgba(255,255,255,0.05);}
 
-        /* --- PLAYER PROFILE MODAL --- */
-        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); z-index: 5000; display: none; align-items: center; justify-content: center; backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); opacity: 0; transition: 0.4s; padding: 20px; }
+        /* MODAL - SIZED TO PREVENT OVERFLOW */
+        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); z-index: 5000; display: none; align-items: center; justify-content: center; backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); opacity: 0; transition: 0.4s; padding: 15px; }
         .modal-overlay.active { display: flex; opacity: 1; }
-        .modal-card { background: rgba(10, 5, 20, 0.95); width: 100%; max-width: 400px; max-height: 85vh; overflow-y: auto; border-radius: 24px; border: 1px solid var(--accent-cyan); box-shadow: 0 15px 50px rgba(0,0,0,0.8), inset 0 0 30px rgba(0, 242, 255, 0.15); transform: scale(0.85) translateY(20px); transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); position: relative; }
-        .modal-card::-webkit-scrollbar { display: none; }
+        .modal-card { background: rgba(10, 5, 20, 0.95); width: 100%; max-width: 360px; border-radius: 20px; border: 1px solid var(--accent-cyan); box-shadow: 0 15px 50px rgba(0,0,0,0.8), inset 0 0 30px rgba(0, 242, 255, 0.15); transform: scale(0.85) translateY(20px); transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); display: flex; flex-direction: column; max-height: 90vh;}
         .modal-overlay.active .modal-card { transform: scale(1) translateY(0); }
-        .modal-close { position: absolute; top: 15px; right: 15px; font-size: 1.6rem; color: white; cursor: pointer; transition: 0.3s; z-index: 10; background: rgba(255,255,255,0.1); width: 35px; height: 35px; display: flex; align-items: center; justify-content: center; border-radius: 50%;}
-        .modal-close:hover, .modal-close:active { background: var(--accent-cyan); color: black; transform: rotate(90deg) scale(1.1); }
+        .modal-close { position: absolute; top: 15px; right: 15px; font-size: 1.4rem; color: #888; cursor: pointer; transition: 0.3s; z-index: 10; }
+        .modal-close:hover, .modal-close:active { color: var(--accent-cyan); transform: rotate(90deg) scale(1.1); }
         
-        .modal-card.premium-glow { border: 1.5px solid #FFD700; box-shadow: 0 0 30px rgba(255,215,0,0.3), inset 0 0 20px rgba(255,215,0,0.1); }
+        .modal-header { background: linear-gradient(180deg, rgba(0,242,255,0.15) 0%, transparent 100%); padding: 25px 15px 10px; text-align: center; border-bottom: 1px solid rgba(255,255,255,0.05); position: relative; flex-shrink: 0;}
+        .modal-avatar { width: 80px; height: 80px; border-radius: 50%; object-fit: cover; border: 3px solid var(--accent-cyan); box-shadow: 0 0 25px rgba(0,242,255,0.5); margin: 0 auto 10px; background: #000; position: relative; z-index: 2; }
+        .modal-ign { font-family: var(--font-head); font-size: 1.2rem; font-weight: bold; margin-bottom: 4px; color: white; display: flex; justify-content: center; align-items: center; gap: 8px;}
+        .modal-name { font-size: 0.75rem; color: #aaa; text-transform: uppercase; letter-spacing: 1.5px; font-weight: bold;}
         
-        .modal-header { background: linear-gradient(180deg, rgba(0,242,255,0.15) 0%, transparent 100%); padding: 30px 20px 15px; text-align: center; border-bottom: 1px solid rgba(255,255,255,0.05); position: relative; }
-        .modal-card.premium-glow .modal-header { background: linear-gradient(180deg, rgba(255,215,0,0.15) 0%, transparent 100%); }
-        
-        .modal-avatar { width: 90px; height: 90px; border-radius: 50%; object-fit: cover; border: 3px solid var(--accent-cyan); box-shadow: 0 0 25px rgba(0,242,255,0.5); margin: 0 auto 12px; background: #000; position: relative; z-index: 2; }
-        .modal-avatar.premium-glow { border-color: #FFD700; box-shadow: 0 0 25px rgba(255,215,0,0.5); }
-        
-        .modal-ign { font-family: var(--font-head); font-size: 1.3rem; font-weight: bold; margin-bottom: 5px; color: white; display: flex; justify-content: center; align-items: center; gap: 8px;}
-        .modal-name { font-size: 0.8rem; color: #aaa; text-transform: uppercase; letter-spacing: 1.5px; font-weight: bold;}
-        
-        .modal-body { padding: 20px; }
-        .stat-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 20px; }
-        .stat-box { background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08); border-radius: 12px; padding: 12px 5px; text-align: center; transition: 0.3s; }
+        .modal-body { padding: 15px; overflow-y: auto; flex: 1;}
+        .stat-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 15px; }
+        .stat-box { background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08); border-radius: 12px; padding: 12px 8px; text-align: center; transition: 0.3s; }
         .stat-box i { font-size: 1.1rem; margin-bottom: 6px; color: var(--accent-cyan); filter: drop-shadow(0 0 8px var(--accent-cyan));}
-        .stat-val { font-family: var(--font-head); font-size: 1.1rem; font-weight: bold; color: white; margin-bottom: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;}
+        .stat-val { font-family: var(--font-head); font-size: 1.1rem; font-weight: bold; color: white; margin-bottom: 2px;}
         .stat-lbl { font-size: 0.6rem; color: #888; text-transform: uppercase; font-weight: bold; letter-spacing: 1px;}
         
-        .info-row { display: flex; justify-content: space-between; padding: 12px 0; border-bottom: 1px dashed rgba(255,255,255,0.1); font-size: 0.85rem; align-items: center;}
+        .info-row { display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px dashed rgba(255,255,255,0.1); font-size: 0.8rem; align-items: center;}
         .info-row:last-child { border-bottom: none; padding-bottom: 0; }
-        .info-lbl { color: #888; font-weight: 600; font-size: 0.75rem; flex-shrink: 0;}
-        .info-val { font-weight: bold; font-family: var(--font-head); color: white; letter-spacing: 0.5px; text-align: right; word-break: break-word;}
+        .info-lbl { color: #888; font-weight: 600; font-size: 0.75rem; }
+        .info-val { font-weight: bold; font-family: var(--font-head); color: white; letter-spacing: 1px; text-align: right; font-size: 0.75rem;}
         
-        .tier-badge { background: rgba(189,0,255,0.15); color: var(--accent-purple); border: 1px solid var(--accent-purple); padding: 4px 10px; border-radius: 6px; font-size: 0.7rem; text-transform: uppercase; box-shadow: 0 0 10px rgba(189,0,255,0.3); font-weight: bold;}
-
-        /* SOCIAL MEDIA BUTTONS IN MODAL */
-        .social-row { display: flex; justify-content: center; gap: 15px; margin-top: 20px; }
-        .social-btn { width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.2rem; color: white; text-decoration: none; border: none; cursor: pointer; transition: 0.3s; background: rgba(255,255,255,0.1); backdrop-filter: blur(5px);}
-        .social-btn:hover { transform: translateY(-3px); }
-        .social-btn.yt:hover { background: #FF0000; box-shadow: 0 5px 15px rgba(255,0,0,0.4); }
-        .social-btn.insta:hover { background: #E1306C; box-shadow: 0 5px 15px rgba(225,48,108,0.4); }
-        .social-btn.dc:hover { background: #5865F2; box-shadow: 0 5px 15px rgba(88,101,242,0.4); }
+        .tier-badge { background: rgba(189,0,255,0.15); color: var(--accent-purple); border: 1px solid var(--accent-purple); padding: 3px 8px; border-radius: 6px; font-size: 0.65rem; text-transform: uppercase; box-shadow: 0 0 10px rgba(189,0,255,0.3); font-weight: bold;}
+        .social-btn { display: inline-flex; align-items: center; justify-content: center; width: 32px; height: 32px; border-radius: 8px; background: rgba(255,255,255,0.05); color: white; font-size: 1.1rem; transition: 0.3s; text-decoration: none;}
+        .social-btn:hover { transform: scale(1.1); }
 
         /* ERROR STATES */
         .status-msg { text-align:center; padding: 50px 20px; animation: fadeInDown 0.5s; }
         .status-icon { font-size: 2.5rem; margin-bottom: 15px; color: var(--accent-cyan); filter: drop-shadow(0 0 10px var(--accent-cyan)); }
+        .error-icon { color: #ff4d4d; filter: drop-shadow(0 0 10px #ff4d4d); }
 
-        /* BOTTOM NAVIGATION - FEATURING TX TICKET ICON */
-        .bottom-nav { position: fixed; bottom: 0; left: 0; width: 100%; height: calc(65px + env(safe-area-inset-bottom)); background: rgba(5, 2, 12, 0.85); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); display: flex; justify-content: space-between; align-items: flex-start; padding: 10px 2px env(safe-area-inset-bottom); border-top: 1px solid rgba(255,255,255,0.08); z-index: 1000; box-shadow: 0 -10px 30px rgba(0,0,0,0.6); transform: translateZ(0);}
+        /* BOTTOM NAV */
+        .bottom-nav { position: fixed; bottom: 0; left: 0; width: 100%; height: calc(65px + env(safe-area-inset-bottom)); background: rgba(5, 2, 12, 0.85); backdrop-filter: blur(25px); -webkit-backdrop-filter: blur(25px); display: flex; justify-content: space-between; align-items: flex-start; padding: 10px 2px env(safe-area-inset-bottom); border-top: 1px solid rgba(255,255,255,0.08); z-index: 1000; box-shadow: 0 -10px 30px rgba(0,0,0,0.6); transform: translateZ(0);}
         .nav-item { display: flex; flex-direction: column; align-items: center; justify-content: flex-start; color: #666; text-decoration: none; font-size: 0.6rem; font-family: var(--font-head); font-weight: bold; flex: 1; transition: 0.3s; position: relative; padding: 0 2px; text-align: center;}
         .nav-item span { margin-top: 4px; transition: 0.3s; letter-spacing: -0.3px;}
         .nav-item > i, .nav-item > .tx-ticket-composite { font-size: 1.2rem; transition: 0.3s; color: #666; height: 24px; width: 24px; display: flex; align-items: center; justify-content: center; }
@@ -247,6 +237,7 @@
         .fab-slot { flex: 1.2; display: flex; justify-content: center; position: relative; height: 100%; align-items: center; }
         .floating-plus { position: absolute; top: -25px; left: 50%; transform: translateX(-50%); width: 54px; height: 54px; background: linear-gradient(135deg, var(--accent-cyan), var(--accent-purple)); border-radius: 50%; display: flex; align-items: center; justify-content: center; border: 4px solid var(--primary-bg); box-shadow: 0 10px 25px rgba(189,0,255,0.4); color: #fff; font-size: 1.6rem; cursor: pointer; transition: 0.3s; z-index: 10; }
         .floating-plus:hover { transform: translateX(-50%) scale(1.1) rotate(90deg); box-shadow: 0 15px 35px rgba(189,0,255,0.6); }
+
     </style>
 </head>
 <body>
@@ -255,32 +246,31 @@
     <div class="scanlines"></div>
     <canvas id="particles-canvas"></canvas>
 
-    <!-- FIXED PREMIUM HEADER -->
     <header class="top-header">
-        <div class="header-left">
-            <a href="index.html" class="back-btn"><i class="fa-solid fa-arrow-left"></i></a>
-            <h1 class="header-title">TOURNYX ELITE</h1>
-        </div>
-        
-        <nav class="desktop-nav">
-            <a href="index.html">Home</a>
-            <a href="explore.html">Explore</a>
-            <a href="matches.html">Matches</a>
-            <a href="leaderboard.html" class="active">Elite</a>
-            <a href="clans.html">Clan</a>
-        </nav>
+        <div style="display:flex; width: 100%; align-items:center;">
+            <div class="header-left">
+                <a href="index.html" class="back-btn"><i class="fa-solid fa-arrow-left"></i></a>
+                <div class="header-title-box">
+                    <h1 class="header-lb-title">TOURNYX ELITE</h1>
+                    <div class="header-lb-sub"><span class="live-dot"></span> LIVE</div>
+                </div>
+            </div>
+            
+            <nav class="desktop-nav">
+                <a href="index.html">Home</a>
+                <a href="explore.html">Explore</a>
+                <a href="matches.html">Matches</a>
+                <a href="leaderboard.html" class="active">Elite</a>
+                <a href="clans.html">Clan</a>
+            </nav>
 
-        <div class="header-right">
-            <img src="https://tournyx.in/favicon.png" class="header-profile-img" onclick="window.location.href='profile.html'">
+            <div class="header-right">
+                <img src="https://tournyx.in/favicon.png" class="header-profile-img" onclick="window.location.href='profile.html'">
+            </div>
         </div>
     </header>
 
     <div class="container">
-        
-        <div class="live-status-bar">
-            <div class="lb-subtitle"><span class="live-dot"></span> LIVE RANKINGS</div>
-        </div>
-
         <!-- SEARCH BAR ALIGNED -->
         <div class="search-container">
             <div class="search-bar-inner">
@@ -319,7 +309,6 @@
             <div class="refresh-timer" id="refreshTimer">NEXT REFRESH IN: --:--:--</div>
         </div>
 
-        <!-- PREMIUM SKELETON LOADER -->
         <div id="loadingSkeleton" class="skeleton-wrapper">
             <div class="skeleton" style="height: 180px; width: 80%; margin: 0 auto; border-radius: 20px;"></div>
             <div class="skeleton"></div>
@@ -330,14 +319,14 @@
         <div id="leaderboardContent" style="display:none;">
             <!-- PODIUM ARENA -->
             <div class="podium-arena" id="podiumArena">
-                <div class="podium-step rank-2" onclick="openPodiumProfile(1)">
+                <div class="podium-step rank-2" onclick="openProfile(1)">
                     <div class="avatar-ring"><img src="" id="p2-img" class="podium-img"></div>
                     <div class="pillar" id="p2-pillar">
                         <div class="p-name" id="p2-name">--</div>
                         <div class="p-rate" id="p2-rate">--</div>
                     </div>
                 </div>
-                <div class="podium-step rank-1" onclick="openPodiumProfile(0)">
+                <div class="podium-step rank-1" onclick="openProfile(0)">
                     <i class="fa-solid fa-crown crown"></i>
                     <div class="avatar-ring"><img src="" id="p1-img" class="podium-img"></div>
                     <div class="pillar" id="p1-pillar">
@@ -345,7 +334,7 @@
                         <div class="p-rate" id="p1-rate" style="font-size: 1.15rem; color: white;">--</div>
                     </div>
                 </div>
-                <div class="podium-step rank-3" onclick="openPodiumProfile(2)">
+                <div class="podium-step rank-3" onclick="openProfile(2)">
                     <div class="avatar-ring"><img src="" id="p3-img" class="podium-img"></div>
                     <div class="pillar" id="p3-pillar">
                         <div class="p-name" id="p3-name">--</div>
@@ -357,24 +346,27 @@
             <h2 id="rankings-label" style="font-family:var(--font-head);font-size:0.8rem;letter-spacing:3px;color:#888;text-align:center;padding:10px 15px;position:relative;z-index:1;">GLOBAL ELITE LIST</h2>
 
             <!-- REACT LIST MOUNT POINT -->
-            <div class="list-container" id="react-list-container"></div>
+            <div id="react-list-container"></div>
         </div>
         
         <div id="errorState" class="status-msg" style="display:none;">
-            <i class="fa-solid fa-satellite-dish status-icon error-icon" style="color:#666; filter:none;"></i>
-            <h3 style="font-family:var(--font-head); color:#888; font-size:1.1rem; letter-spacing:1px; text-transform: uppercase;">No Players Match Query</h3>
-            <p style="color:#555; font-size:0.85rem; margin-top:5px;">Try adjusting your search filters.</p>
+            <i class="fa-solid fa-satellite-dish status-icon error-icon"></i>
+            <h3 style="font-family:var(--font-head); color:#fff; font-size:1.3rem; letter-spacing:1px; text-transform: uppercase;">No Elites Found</h3>
+            <p style="color:#aaa; font-size:0.9rem; margin-top:10px;">Compete in matches to climb the leaderboard!</p>
         </div>
     </div>
 
     <!-- PLAYER PROFILE MODAL -->
     <div class="modal-overlay" id="playerModal">
-        <div class="modal-card" id="modalMainCard">
+        <div class="modal-card">
             <i class="fa-solid fa-xmark modal-close" onclick="closeProfile()"></i>
-            <div class="modal-header" id="modalHeader">
+            <div class="modal-header">
                 <img src="" id="modalAvatar" class="modal-avatar">
                 <div class="modal-ign" id="modalIGN">IGN NAME</div>
                 <div class="modal-name" id="modalFullName">Real Name</div>
+                
+                <!-- Social Buttons injected dynamically -->
+                <div id="modalSocials" style="display:flex; gap:10px; justify-content:center; margin-top:12px;"></div>
             </div>
             <div class="modal-body">
                 <div class="stat-grid">
@@ -383,10 +375,10 @@
                         <div class="stat-val" id="modalWins">0</div>
                         <div class="stat-lbl">Wins</div>
                     </div>
-                    <div class="stat-box">
+                    <div class="stat-box" id="financeBox">
                         <i class="fa-solid fa-coins" style="color:var(--accent-gold); filter:drop-shadow(0 0 8px var(--accent-gold));"></i>
-                        <div class="stat-val" id="modalEarnings" style="color:var(--accent-gold);">₹0</div>
-                        <div class="stat-lbl">Earnings</div>
+                        <div class="stat-val" id="modalFinanceVal" style="color:var(--accent-gold);">₹0</div>
+                        <div class="stat-lbl" id="modalFinanceLbl">Earnings</div>
                     </div>
                     <div class="stat-box">
                         <i class="fa-solid fa-gamepad" style="color:var(--accent-purple); filter:drop-shadow(0 0 8px var(--accent-purple));"></i>
@@ -414,7 +406,7 @@
                 </div>
                 <div class="info-row">
                     <span class="info-lbl">Location</span>
-                    <span class="info-val" id="modalRegion" style="font-size:0.75rem;">Unknown</span>
+                    <span class="info-val" id="modalRegion">Unknown</span>
                 </div>
                 <div class="info-row">
                     <span class="info-lbl">Role</span>
@@ -422,14 +414,8 @@
                 </div>
                 <div class="info-row">
                     <span class="info-lbl">Player UID</span>
-                    <span class="info-val" id="modalUID" style="display:flex; align-items:center; gap:8px; font-family:monospace; color:#aaa;">
-                        <span id="uidText">***HIDDEN***</span>
-                        <i class="fa-regular fa-copy" onclick="copyUID()" style="cursor:pointer; color:var(--accent-cyan); font-size:0.9rem;"></i>
-                    </span>
+                    <span class="info-val" id="modalUID" onclick="copyUID()" style="font-family:monospace; color:#aaa; cursor:pointer;" title="Tap to copy">***HIDDEN*** <i class="fa-regular fa-copy" style="margin-left:4px; color:var(--accent-cyan);"></i></span>
                 </div>
-
-                <!-- DYNAMIC SOCIAL BUTTONS -->
-                <div class="social-row" id="socialRow"></div>
             </div>
         </div>
     </div>
@@ -454,7 +440,6 @@
             <i class="fa-solid fa-shield-halved"></i><span>Clan</span>
         </a>
         <a class="nav-item active" href="leaderboard.html">
-            <!-- Custom TX Ticket composite -->
             <div class="tx-ticket-composite">
                 <i class="fa-solid fa-ticket"></i>
                 <b class="tx-text">TX</b>
@@ -472,9 +457,9 @@
     <script type="text/babel">
         const { useState, useEffect } = React;
 
-        const LeaderboardList = ({ list, fullDataset }) => {
+        const LeaderboardList = ({ list, fullDataset, openModal }) => {
             if (list.length <= 3 && fullDataset.length > 0) {
-                return null; // Don't show text, let the layout stay clean
+                return <div className="status-msg" style={{padding: '30px 20px', color: '#666', fontFamily: 'var(--font-head)', letterSpacing: '1px'}}>NO MORE ELITES IN THIS CATEGORY</div>;
             }
 
             const listData = list.slice(3, 100);
@@ -483,67 +468,70 @@
             const myRank = 105;
             const myPoints = 420;
             const targetPlayer = fullDataset[99] || fullDataset[fullDataset.length - 1];
-            const targetPoints = targetPlayer ? (parseInt(targetPlayer.points) || 500) : 500;
+            const targetPoints = targetPlayer ? (targetPlayer.points || 500) : 500;
             const progressPercent = Math.min(100, Math.floor((myPoints / targetPoints) * 100));
 
             return (
                 <React.Fragment>
-                    {listData.map((p, idx) => {
-                        const rank = idx + 4;
-                        
-                        // Parse values safely
-                        const matches = parseInt(p.matches_played) || parseInt(p.matches) || 0;
-                        const points = parseInt(p.points) || 0;
-                        const wins = parseInt(p.wins) || parseInt(p.matches_won) || 0;
-                        
-                        let regionArr = [];
-                        if (p.state) regionArr.push(p.state);
-                        if (p.city) regionArr.push(p.city);
-                        const region = regionArr.length > 0 ? regionArr.join(", ") : "Global Server";
-                        
-                        const ign = p.ign || p.username || "Elite Player";
-                        
-                        const isMythic = matches >= 150 || points >= 5000;
-                        const mt = window.getMilestoneTier(matches, points);
-                        
-                        const ping = Math.floor(Math.random() * 40) + 15;
-                        const pingColor = ping < 30 ? 'var(--accent-green)' : 'var(--accent-gold)';
+                    <div className="list-container">
+                        {listData.map((p, idx) => {
+                            const rank = idx + 4;
+                            
+                            const matches = parseInt(p.matches_played) || parseInt(p.matches) || 0;
+                            const points = parseInt(p.points) || 0;
+                            const wins = parseInt(p.wins) || 0;
+                            
+                            let regionArr = [];
+                            if (p.state) regionArr.push(p.state);
+                            if (p.city) regionArr.push(p.city);
+                            const region = regionArr.length > 0 ? regionArr.join(", ") : "Global Server";
+                            
+                            const ign = p.ign || p.username || "Elite Player";
+                            
+                            const isMythic = matches >= 150 || points >= 5000;
+                            const mt = window.getMilestoneTier(matches, points);
+                            
+                            const ping = Math.floor(Math.random() * 40) + 15;
+                            const pingColor = ping < 30 ? 'var(--accent-green)' : 'var(--accent-gold)';
 
-                        const trendRand = Math.random();
-                        const trendIcon = trendRand > 0.6 ? 'fa-arrow-up trend-up' : trendRand > 0.3 ? 'fa-minus trend-same' : 'fa-arrow-down trend-down';
+                            const trendRand = Math.random();
+                            const trendIcon = trendRand > 0.6 ? 'fa-arrow-up trend-up' : trendRand > 0.3 ? 'fa-minus trend-same' : 'fa-arrow-down trend-down';
 
-                        const isClan = ign.includes('.');
-                        const clanTag = isClan ? ign.split('.')[0].toUpperCase() : '';
-                        const displayName = isClan ? ign.substring(ign.indexOf('.') + 1) : ign;
+                            const isClan = ign.includes('.');
+                            const clanTag = isClan ? ign.split('.')[0].toUpperCase() : '';
+                            const displayName = isClan ? ign.substring(ign.indexOf('.') + 1) : ign;
 
-                        const isPremium = p.premium === true || String(p.premium).toLowerCase() === 'true';
+                            const isPremium = p.premium === true || String(p.premium).toLowerCase() === 'true';
+                            
+                            const cardStyle = isMythic ? {borderLeft: '3px solid #FFD700', background: 'rgba(25, 15, 0, 0.8)'} : 
+                                              (isPremium ? {borderLeft: '2px solid #FFD700', boxShadow: '0 0 15px rgba(255,215,0,0.15)'} : {});
 
-                        return (
-                            <div key={p._originalIndex} className="player-row" onClick={() => window.openProfileByIndex(p._originalIndex)} style={isMythic ? {borderLeft: '3px solid #FFD700', background: 'rgba(25, 15, 0, 0.8)'} : (isPremium ? {borderLeft: '2px solid #FFD700'} : {})}>
-                                <div className="r-num" style={isMythic ? {color:'#FFD700'} : {}}>
-                                    {rank}
-                                    <span className="r-trend"><i className={`fa-solid ${trendIcon}`}></i></span>
+                            return (
+                                <div key={idx} className="player-row" onClick={() => openModal(idx + 3)} style={cardStyle}>
+                                    <div className="r-num" style={isMythic ? {color:'#FFD700'} : {}}>
+                                        {rank}
+                                        <span className="r-trend"><i className={`fa-solid ${trendIcon}`}></i></span>
+                                    </div>
+                                    <img className="r-img" src={window.formatImageUrl(p.avatar, ign)} alt={ign} loading="lazy" style={isMythic ? {border:'2px solid #FFD700', boxShadow:'0 0 10px rgba(255,215,0,0.5)'} : (isPremium ? {border:'2px solid #FFD700'} : {})} />
+                                    <div className="r-info">
+                                        <h4 style={isMythic ? {color:'#FFD700'} : (isPremium ? {color:'#FFD700'} : {color:'white'})}>
+                                            {clanTag && <span className="clan-tag">{clanTag}</span>}
+                                            {displayName}
+                                            {rank <= 10 && <span className="verified-badge"><i className="fa-solid fa-circle-check"></i></span>}
+                                            {isMythic && <span style={{background:'linear-gradient(135deg,#FFF0A0,#FFD700,#FF8C00)',color:'#000',fontSize:'0.45rem',fontFamily:'var(--font-head)',padding:'1px 6px',borderRadius:'5px',letterSpacing:'1px',marginLeft:'4px',verticalAlign:'middle',fontWeight:'bold'}}>MYTHIC</span>}
+                                            {isPremium && !isMythic && <span style={{background:'linear-gradient(135deg,#FFD700,#FFA500)',color:'#000',fontSize:'0.5rem',fontFamily:'var(--font-head)',padding:'1px 4px',borderRadius:'5px',marginLeft:'4px',verticalAlign:'middle'}}>👑</span>}
+                                        </h4>
+                                        <p>{region} <span className="r-ping"><i className="fa-solid fa-signal" style={{color: pingColor}}></i> {ping}ms</span></p>
+                                    </div>
+                                    <div className="r-stats">
+                                        <div className="r-winrate" style={isMythic ? {color:'#FFD700'} : {}}>{wins} W</div>
+                                        <div className="r-rewards" style={{color: isMythic ? '#FFA500' : mt.color}}>{mt.label}</div>
+                                    </div>
                                 </div>
-                                <img className="r-img" src={window.formatImageUrl(p.avatar, ign)} alt={ign} loading="lazy" style={isMythic ? {border:'2px solid #FFD700', boxShadow:'0 0 10px rgba(255,215,0,0.5)'} : {}} />
-                                <div className="r-info">
-                                    <h4 style={isMythic ? {color:'#FFD700'} : {color:'white'}}>
-                                        {clanTag && <span className="clan-tag">{clanTag}</span>}
-                                        {displayName}
-                                        {rank <= 10 && <span className="verified-badge"><i className="fa-solid fa-circle-check"></i></span>}
-                                        {isMythic && <span style={{background:'linear-gradient(135deg,#FFF0A0,#FFD700,#FF8C00)',color:'#000',fontSize:'0.45rem',fontFamily:'var(--font-head)',padding:'1px 6px',borderRadius:'5px',letterSpacing:'1px',marginLeft:'4px',verticalAlign:'middle',fontWeight:'bold'}}>MYTHIC</span>}
-                                        {isPremium && !isMythic && <span style={{background:'transparent',color:'#FFD700',fontSize:'0.8rem',marginLeft:'4px',verticalAlign:'middle',filter:'drop-shadow(0 0 5px #FFD700)'}}>👑</span>}
-                                    </h4>
-                                    <p>{region.split(',')[0]} <span className="r-ping"><i className="fa-solid fa-signal" style={{color: pingColor}}></i> {ping}ms</span></p>
-                                </div>
-                                <div className="r-stats">
-                                    <div className="r-winrate" style={isMythic ? {color:'#FFD700'} : {}}>{wins} W</div>
-                                    <div className="r-rewards" style={{color: isMythic ? '#FFA500' : mt.color}}>{mt.label}</div>
-                                </div>
-                            </div>
-                        );
-                    })}
+                            );
+                        })}
+                    </div>
 
-                    {/* STICKY FF PROGRESS CARD */}
                     {fullDataset.length > 30 && listData.length > 5 && (
                         <div className="ff-progress-card">
                             <div className="ff-prog-header">
@@ -563,10 +551,10 @@
         window.renderReactList = (filteredList, fullDataset) => {
             const rootContainer = document.getElementById('react-list-container');
             if(window.reactRoot) {
-                window.reactRoot.render(<LeaderboardList list={filteredList} fullDataset={fullDataset} />);
+                window.reactRoot.render(<LeaderboardList list={filteredList} fullDataset={fullDataset} openModal={window.openProfile} />);
             } else {
                 window.reactRoot = ReactDOM.createRoot(rootContainer);
-                window.reactRoot.render(<LeaderboardList list={filteredList} fullDataset={fullDataset} />);
+                window.reactRoot.render(<LeaderboardList list={filteredList} fullDataset={fullDataset} openModal={window.openProfile} />);
             }
         };
     </script>
@@ -575,7 +563,7 @@
          VANILLA JS BACKEND ENGINE & LOGIC
          ========================================== -->
     <script>
-        // --- BACKGROUND PARTICLES ---
+        // BACKGROUND PARTICLES
         const canvas = document.getElementById('particles-canvas');
         const ctx = canvas.getContext('2d');
         let particles = [];
@@ -607,27 +595,31 @@
         }
         animateParticles();
 
-        // --- GLOBAL VARIABLES ---
+        // GLOBALS
         const API_URL = "https://script.google.com/macros/s/AKfycbyqqTpgaflxKJ9xH0jq7mJ_jLzcoNhas3gNo0h5gvoa_6r5Ae9NFxJAJp7ZoYNnMRKl/exec";
         let rawLeaderboardData = [];
         let filteredData = [];
         let currentTimeframe = 'Weekly';
         let currentGame = 'All';
+        let copyUidText = "";
 
-        // Feature: Ultimate Anime Gaming Avatar Fallback
+        // Avatar Fallback logic directly to DiceBear Anime style
         window.formatImageUrl = function(url, fallbackName) {
-            let safeName = fallbackName || "Gamer";
-            if (!url) return `https://api.dicebear.com/7.x/bottts/svg?seed=${encodeURIComponent(safeName)}&colors=cyan,purple&backgroundColor=0a0520`;
+            let safeName = fallbackName || "User";
+            let diceBear = `https://api.dicebear.com/7.x/adventurer/svg?seed=${encodeURIComponent(safeName)}&size=150&backgroundColor=0a0520,0d0825`;
+            
+            if (!url) return diceBear;
             let strUrl = String(url).trim().replace(/[\r\n\t]/g, '');
-            if (strUrl.startsWith('data:image') || strUrl.includes('imgbb') || strUrl.includes('ibb.co') || strUrl.includes('ui-avatars.com') || strUrl.includes('dicebear')) return strUrl;
+            if (strUrl.length < 5) return diceBear;
+            
+            if (strUrl.startsWith('data:image') || strUrl.includes('imgbb') || strUrl.includes('ibb.co')) return strUrl;
             if (strUrl.includes('drive.google.com/file/d/')) {
                 let id = strUrl.split('/d/')[1].split('/')[0];
                 return `https://drive.google.com/uc?export=view&id=${id}`; 
             }
-            return `https://api.dicebear.com/7.x/bottts/svg?seed=${encodeURIComponent(safeName)}&colors=cyan,purple&backgroundColor=0a0520`;
+            return strUrl;
         };
 
-        // Milestone Engine
         window.getMilestoneTier = function(matches, points) {
             if (matches >= 150 || points >= 5000) return { label:'Mythic',    color:'#FFD700', glow:'rgba(255,215,0,0.5)' };
             if (matches >= 100 || points >= 2500) return { label:'Champion',  color:'#BD00FF', glow:'rgba(189,0,255,0.5)' };
@@ -636,7 +628,6 @@
             return                                { label:'Scout',     color:'#888',    glow:'rgba(136,136,136,0.3)' };
         }
 
-        // Dynamic Esports Title
         function getPlayerTitle(wins, points) {
             if(wins > 3000) return "Godlike";
             if(points > 2000) return "Tactician";
@@ -644,14 +635,17 @@
             return "Contender";
         }
 
-        // Secure Data Fetch
         async function secureFetch(payload) {
-            const response = await fetch(API_URL, {
-                method: 'POST',
-                headers: { 'Content-Type': 'text/plain' },
-                body: JSON.stringify(payload)
-            });
-            return await response.json();
+            try {
+                const response = await fetch(API_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'text/plain' },
+                    body: JSON.stringify(payload)
+                });
+                return await response.json();
+            } catch (error) {
+                throw error;
+            }
         }
 
         function startCountdown() {
@@ -685,12 +679,14 @@
                 let json = await secureFetch({ action: "get_leaderboard" });
                 
                 if(json.success || json.status === 'success') {
-                    // Feature 1: IMMUTABLE INDEXING. Inject a unique _originalIndex to prevent card opening bugs!
-                    rawLeaderboardData = (json.data || json.result || []).map((p, i) => {
-                        p._originalIndex = i;
-                        return p;
-                    });
+                    rawLeaderboardData = json.data || json.result || []; 
                     
+                    rawLeaderboardData.forEach(p => {
+                        p.points = parseInt(p.points) || 0;
+                        p.wins = parseInt(p.wins) || parseInt(p.matches_won) || 0;
+                        p.matches_played = parseInt(p.matches_played) || 0;
+                    });
+
                     applyFilters();
                 } else { throw new Error("API Error"); }
             } catch (err) {
@@ -722,24 +718,19 @@
 
             let query = document.getElementById('searchInput').value.trim().toLowerCase();
 
-            // Always show all players, but dynamically re-rank them based on Timeframe
             filteredData = rawLeaderboardData.filter(p => {
                 let gameMatch = (currentGame === 'All') || (p.main_game && p.main_game.toLowerCase().includes(currentGame.toLowerCase()));
+                let timeMatch = true; 
+                
                 if(query) {
                     let searchStr = `${p.ign} ${p.username} ${p.state} ${p.city} ${p.uid}`.toLowerCase();
-                    return gameMatch && searchStr.includes(query);
+                    return timeMatch && gameMatch && searchStr.includes(query);
                 }
-                return gameMatch;
+                
+                return timeMatch && gameMatch;
             });
 
-            // Dynamic Sorting Engine
-            if(currentTimeframe === 'Weekly') {
-                filteredData.sort((a,b) => (parseInt(b.wins)||0) - (parseInt(a.wins)||0));
-            } else if (currentTimeframe === 'Monthly') {
-                filteredData.sort((a,b) => (parseInt(b.matches_played)||0) - (parseInt(a.matches_played)||0));
-            } else {
-                filteredData.sort((a,b) => (parseInt(b.points)||0) - (parseInt(a.points)||0));
-            }
+            filteredData.sort((a,b) => b.points - a.points || b.wins - a.wins);
 
             if(filteredData.length === 0) {
                 document.getElementById('errorState').style.display = 'block';
@@ -757,12 +748,6 @@
             applyFilters();
         });
 
-        // Podium Click Handler (Routes safely to Immutable Index)
-        window.openPodiumProfile = function(idx) {
-            const player = filteredData[idx];
-            if(player) window.openProfileByIndex(player._originalIndex);
-        }
-
         function renderPodium() {
             const getSafe = (idx) => filteredData[idx] || null;
             
@@ -778,21 +763,16 @@
                     let safeName = player.ign || player.username || "Elite Player";
                     let displayName = safeName.includes('.') ? safeName.substring(safeName.indexOf('.') + 1) : safeName;
                     
-                    let wins = parseInt(player.wins) || parseInt(player.matches_won) || 0;
+                    let wins = parseInt(player.wins) || 0;
                     let matches = parseInt(player.matches_played) || 0;
                     let points = parseInt(player.points) || 0;
                     let isMythic = matches >= 150 || points >= 5000;
                     let isPremium = player.premium === true || String(player.premium).toLowerCase() === 'true';
                     
                     elName.innerText = displayName;
-                    // Show metric based on tab
-                    if(currentTimeframe === 'Weekly') elRate.innerText = `${wins} WINS`;
-                    else if (currentTimeframe === 'Monthly') elRate.innerText = `${matches} MCH`;
-                    else elRate.innerText = `${points} PTS`;
-
+                    elRate.innerText = `${wins} WINS`;
                     elImg.src = window.formatImageUrl(player.avatar, safeName);
                     
-                    // Dynamic Style Application
                     if(isMythic) {
                         elName.style.background = 'linear-gradient(135deg,#FFF0A0,#FFD700,#FF8C00)';
                         elName.style.webkitBackgroundClip = 'text';
@@ -813,6 +793,7 @@
                         pillar.style.cssText = '';
                         elImg.style.cssText = '';
                     }
+
                 } else {
                     parent.style.visibility = 'hidden';
                 }
@@ -823,22 +804,26 @@
             updatePodiumSlot(3, getSafe(2)); 
         }
 
-        // --- BULLETPROOF PLAYER PROFILE MODAL (Feature 21) ---
-        // Accepts the _originalIndex, guaranteeing the correct player opens regardless of filters!
-        window.openProfileByIndex = function(originalIndex) {
+        // --- PLAYER PROFILE MODAL (Fully Fixed Mismatch & Overflow) ---
+        window.openProfile = function(index) {
             if(navigator.vibrate) navigator.vibrate(20); 
-            const player = rawLeaderboardData[originalIndex];
+            // The index passed here exactly matches the index inside filteredData
+            const player = filteredData[index];
             if(!player) return;
 
             let safeName = player.ign || player.username || "Elite Player";
-            let matches = parseInt(player.matches_played) || parseInt(player.matches) || 0;
-            let wins = parseInt(player.wins) || parseInt(player.matches_won) || 0;
+            let matches = parseInt(player.matches_played) || 0;
+            let wins = parseInt(player.wins) || 0;
             let points = parseInt(player.points) || 0;
-            let earnings = player.earnings || player.winnings || 0;
             let eTitle = getPlayerTitle(wins, points);
             let isMythic = matches >= 150 || points >= 5000;
             let mt = getMilestoneTier(matches, points);
             let isPremium = player.premium === true || String(player.premium).toLowerCase() === 'true';
+
+            // Organizer Earnings vs Player Winnings Fix
+            let isOrganizer = String(player.role || "").toLowerCase() === 'organizer';
+            let financeLabel = isOrganizer ? "Earnings" : "Winnings";
+            let financeValue = isOrganizer ? (player.earnings || player.winnings || 0) : (player.winnings || player.earnings || 0);
 
             let regionArr = [];
             if (player.state) regionArr.push(player.state);
@@ -846,56 +831,56 @@
             const regionStr = regionArr.length > 0 ? regionArr.join(", ") : "Global Server";
 
             const overlay = document.getElementById('playerModal');
-            const card    = document.getElementById('modalMainCard');
-            const header  = document.getElementById('modalHeader');
+            const card    = overlay.querySelector('.modal-card');
+            const header  = overlay.querySelector('.modal-header');
             const avatar  = document.getElementById('modalAvatar');
 
-            // Apply Premium / Mythic Skins
-            card.className = 'modal-card';
-            avatar.className = 'modal-avatar';
             if (isMythic) {
-                card.style.cssText   = `background:linear-gradient(170deg,#0d0800 0%,#1f1000 40%,#2a1800 70%,#0d0800 100%);border:1.5px solid rgba(255,200,0,0.9);box-shadow:0 0 40px rgba(255,185,0,0.4),0 15px 50px rgba(0,0,0,0.9),inset 0 0 40px rgba(255,185,0,0.08);`;
-                header.style.cssText = `background:linear-gradient(180deg,rgba(255,185,0,0.18) 0%,transparent 100%);`;
-                avatar.style.cssText = `border:3px solid #FFD700;box-shadow:0 0 30px rgba(255,185,0,0.8),0 0 60px rgba(255,140,0,0.4);`;
-            } else if (isPremium) {
-                card.classList.add('premium-glow');
-                avatar.classList.add('premium-glow');
-                card.style.cssText = ``; header.style.cssText = ``; avatar.style.cssText = ``;
+                card.style.cssText   = `background:linear-gradient(170deg,#0d0800 0%,#1f1000 40%,#2a1800 70%,#0d0800 100%);border:1.5px solid rgba(255,200,0,0.9);box-shadow:0 0 40px rgba(255,185,0,0.4),0 15px 50px rgba(0,0,0,0.9),inset 0 0 40px rgba(255,185,0,0.08);border-radius:20px;transform:scale(0.85) translateY(20px);transition:0.4s cubic-bezier(0.175,0.885,0.32,1.275); display:flex; flex-direction:column; max-height:90vh;`;
+                header.style.cssText = `background:linear-gradient(180deg,rgba(255,185,0,0.18) 0%,transparent 100%);padding:25px 15px 10px;text-align:center;border-bottom:1px solid rgba(255,185,0,0.2);flex-shrink:0;`;
+                avatar.style.cssText = `width:80px;height:80px;border-radius:50%;object-fit:cover;border:3px solid #FFD700;box-shadow:0 0 30px rgba(255,185,0,0.8);margin:0 auto 10px;background:#000;position:relative;z-index:2;`;
             } else {
                 card.style.cssText = ``; header.style.cssText = ``; avatar.style.cssText = ``;
             }
 
-            avatar.src = window.formatImageUrl(player.avatar, safeName);
+            avatar.src = formatImageUrl(player.avatar, safeName);
             
-            // Just the Crown for premium, no text
-            const premiumBadge = isPremium ? ' <span style="color:#FFD700;font-size:1.1rem;filter:drop-shadow(0 0 5px #FFD700);vertical-align:middle;">👑</span>' : '';
-            const mythicBadge = isMythic ? ' <span style="background:linear-gradient(135deg,#FFF0A0,#FFD700,#FF8C00);color:#000;font-size:0.55rem;font-family:var(--font-head);padding:2px 8px;border-radius:8px;letter-spacing:1px;vertical-align:middle;font-weight:bold">✦ MYTHIC</span>' : '';
-            const ignStyle = isMythic ? 'background:linear-gradient(135deg,#FFF0A0,#FFD700,#FFA500);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;' : '';
+            const premiumBadge = isPremium ? ' <span style="background:linear-gradient(135deg,#FFD700,#FFA500);color:#000;font-size:0.5rem;font-family:var(--font-head);padding:1px 4px;border-radius:6px;margin-left:4px;vertical-align:middle;">👑</span>' : '';
+            const mythicBadge = isMythic ? ' <span style="background:linear-gradient(135deg,#FFF0A0,#FFD700,#FF8C00);color:#000;font-size:0.5rem;font-family:var(--font-head);padding:1px 6px;border-radius:6px;letter-spacing:1px;margin-left:4px;vertical-align:middle;font-weight:bold">✦ MYTHIC</span>' : '';
+            const ignStyle = isMythic ? 'background:linear-gradient(135deg,#FFF0A0,#FFD700,#FFA500);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;' : (isPremium ? 'color:#FFD700;' : '');
             
             document.getElementById('modalIGN').innerHTML = `<span style="${ignStyle}">${safeName}</span> <i class="fa-solid fa-circle-check" style="color:${isMythic?'#FFD700':'var(--accent-cyan)'}; font-size:0.9rem;"></i>${isMythic ? mythicBadge : premiumBadge}`;
             
             document.getElementById('modalFullName').innerText = player.username || player.ign || "Classified Elite";
             document.getElementById('modalFullName').style.color = isMythic ? '#b87800' : '';
 
-            // Stats
+            // Render Social Buttons if available
+            let socialsHTML = "";
+            if(player.social_insta && player.social_insta.includes('http')) socialsHTML += `<a href="${player.social_insta}" target="_blank" class="social-btn" style="color:#E1306C;"><i class="fa-brands fa-instagram"></i></a>`;
+            if(player.yt_link && player.yt_link.includes('http')) socialsHTML += `<a href="${player.yt_link}" target="_blank" class="social-btn" style="color:#FF0000;"><i class="fa-brands fa-youtube"></i></a>`;
+            if(player.cc_discord && player.cc_discord.includes('http')) socialsHTML += `<a href="${player.cc_discord}" target="_blank" class="social-btn" style="color:#5865F2;"><i class="fa-brands fa-discord"></i></a>`;
+            document.getElementById('modalSocials').innerHTML = socialsHTML;
+
             document.getElementById('modalWins').innerText = wins;
             document.getElementById('modalWins').style.color = isMythic ? '#FFD700' : '';
-            document.getElementById('modalEarnings').innerText = `₹${earnings.toLocaleString()}`;
+            
+            // Winnings vs Earnings mapped here
+            document.getElementById('modalFinanceLbl').innerText = financeLabel;
+            document.getElementById('modalFinanceVal').innerText = `₹${financeValue}`;
+            
             document.getElementById('modalMatches').innerText = matches;
             document.getElementById('modalMatches').style.color = isMythic ? '#FFD700' : '';
-            document.getElementById('modalPoints').innerText = points.toLocaleString();
+            document.getElementById('modalPoints').innerText = points;
 
-            // Info Details
             document.getElementById('modalTitle').innerHTML = `<i class="fa-solid fa-fire"></i> ${eTitle}`;
             document.getElementById('modalTitle').style.color = isMythic ? '#FFD700' : 'var(--accent-purple)';
             document.getElementById('modalGame').innerText = player.main_game || "All Games";
             document.getElementById('modalGame').style.color = isMythic ? '#FFA500' : 'var(--accent-cyan)';
             
-            // UID Cryptographic Masking with raw store
             let rawUid = String(player.uid || "UNKNOWN");
+            copyUidText = rawUid; // Store for copy function
             let maskedUid = rawUid.length > 5 ? rawUid.substring(0, 3) + "****" + rawUid.substring(rawUid.length - 2) : rawUid;
-            document.getElementById('uidText').innerText = maskedUid;
-            document.getElementById('uidText').setAttribute('data-raw', rawUid); // Store for copying
+            document.getElementById('modalUID').innerHTML = `${maskedUid} <i class="fa-regular fa-copy" style="margin-left:4px; color:var(--accent-cyan);"></i>`;
             
             document.getElementById('modalRegion').innerText = regionStr;
             document.getElementById('modalRole').innerText = String(player.role || "PLAYER").toUpperCase();
@@ -907,30 +892,17 @@
             tierBadge.style.background = `rgba(0,0,0,0.3)`;
             tierBadge.style.boxShadow = `0 0 10px ${mt.glow}`;
 
-            // Generate Social Row dynamically
-            let socialsHtml = '';
-            if (player.yt_link || player.youtube) socialsHtml += `<a href="${player.yt_link || player.youtube}" target="_blank" class="social-btn yt"><i class="fa-brands fa-youtube"></i></a>`;
-            if (player.insta_username || player.social_insta) socialsHtml += `<a href="https://instagram.com/${player.insta_username || player.social_insta}" target="_blank" class="social-btn insta"><i class="fa-brands fa-instagram"></i></a>`;
-            if (player.discord_id || player.cc_discord) socialsHtml += `<button class="social-btn dc" onclick="alert('Discord ID: ${player.discord_id || player.cc_discord}')"><i class="fa-brands fa-discord"></i></button>`;
-            
-            document.getElementById('socialRow').innerHTML = socialsHtml;
-
             overlay.classList.add('active');
         }
 
         window.copyUID = function() {
-            if(navigator.vibrate) navigator.vibrate(30);
-            const rawUid = document.getElementById('uidText').getAttribute('data-raw');
-            if(rawUid && rawUid !== "UNKNOWN") {
-                navigator.clipboard.writeText(rawUid);
-                let icon = document.querySelector('.fa-copy');
-                icon.className = "fa-solid fa-check";
-                icon.style.color = "var(--accent-green)";
-                setTimeout(() => {
-                    icon.className = "fa-regular fa-copy";
-                    icon.style.color = "var(--accent-cyan)";
-                }, 2000);
-            }
+            if(navigator.vibrate) navigator.vibrate(20);
+            navigator.clipboard.writeText(copyUidText);
+            document.getElementById('modalUID').innerHTML = `COPIED! <i class="fa-solid fa-check" style="margin-left:4px; color:var(--accent-green);"></i>`;
+            setTimeout(() => {
+                let maskedUid = copyUidText.length > 5 ? copyUidText.substring(0, 3) + "****" + copyUidText.substring(copyUidText.length - 2) : copyUidText;
+                document.getElementById('modalUID').innerHTML = `${maskedUid} <i class="fa-regular fa-copy" style="margin-left:4px; color:var(--accent-cyan);"></i>`;
+            }, 2000);
         }
 
         window.closeProfile = function() {
