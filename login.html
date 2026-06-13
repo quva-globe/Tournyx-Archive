@@ -19,7 +19,7 @@
         /* --- GLOBAL VARIABLES --- */
         :root {
             --primary-bg: #070311;
-            --card-bg: rgba(15, 5, 25, 0.7);
+            --card-bg: rgba(15, 5, 25, 0.75);
             --input-bg: rgba(5, 2, 12, 0.8);
             --card-border: rgba(0, 242, 255, 0.25);
             --accent-cyan: #00f2ff;
@@ -50,7 +50,7 @@
         }
         .bg-overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: radial-gradient(circle at center, transparent 40%, rgba(7,3,17,0.8) 100%); z-index: -3;
+            background: radial-gradient(circle at center, transparent 50%, rgba(7,3,17,0.85) 100%); z-index: -3;
         }
         #particles-canvas {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
@@ -78,7 +78,7 @@
         .top-profile-corner:active { transform: scale(0.95); }
         .top-profile-corner img {
             width: 35px; height: 35px; border-radius: 50%; border: 2px solid var(--accent-cyan);
-            object-fit: cover; box-shadow: 0 0 10px rgba(0,242,255,0.4);
+            object-fit: cover; box-shadow: 0 0 10px rgba(0,242,255,0.4); background: #000;
         }
         .top-profile-corner .user-name {
             font-family: var(--font-head); font-size: 0.85rem; font-weight: bold; color: white;
@@ -112,15 +112,37 @@
             margin-bottom: 5px; text-shadow: 0 0 20px rgba(0,242,255,0.4);
         }
 
-        /* BOTTOM HUD BUTTONS */
+        /* BOTTOM HUD BUTTONS & TERMS */
         .auth-buttons-container {
             display: flex; flex-direction: column; gap: 12px; width: 100%; max-width: 340px;
             animation: slideUpHUD 1s ease forwards;
         }
         @keyframes slideUpHUD { from { transform: translateY(50px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
 
+        /* MASTER TERMS CHECKBOX (BGMI STYLE) */
+        .master-terms-container {
+            display: flex; align-items: center; justify-content: center; gap: 8px; margin-bottom: 15px;
+            cursor: pointer; font-size: 0.75rem; color: #ccc; text-align: center; user-select: none;
+            background: rgba(0,0,0,0.5); padding: 8px 15px; border-radius: 50px; border: 1px solid rgba(255,255,255,0.1);
+            backdrop-filter: blur(5px);
+        }
+        .master-terms-container input { display: none; }
+        .master-checkmark {
+            min-width: 16px; height: 16px; border: 2px solid var(--accent-cyan); border-radius: 4px;
+            display: flex; align-items: center; justify-content: center; transition: 0.3s;
+            background: rgba(0,0,0,0.5); position: relative;
+        }
+        .master-terms-container input:checked + .master-checkmark {
+            background: var(--accent-cyan); box-shadow: 0 0 10px var(--accent-cyan); transform: scale(1.1);
+        }
+        .master-terms-container input:checked + .master-checkmark::after {
+            content: '\f00c'; font-family: "Font Awesome 6 Free"; font-weight: 900;
+            color: black; font-size: 10px;
+        }
+        .terms-link { color: var(--accent-cyan); text-decoration: none; font-weight: bold; }
+
         .game-btn {
-            width: 100%; padding: 15px; border-radius: 12px; font-family: var(--font-head);
+            width: 100%; padding: 14px; border-radius: 12px; font-family: var(--font-head);
             font-size: 0.95rem; font-weight: 900; letter-spacing: 1px; cursor: pointer; transition: 0.2s;
             text-transform: uppercase; display: flex; align-items: center; justify-content: center; gap: 8px;
             position: relative; overflow: hidden; border: none; z-index: 1;
@@ -134,7 +156,7 @@
         .game-btn:active { transform: scale(0.96); }
 
         .login-btn { background: var(--accent-gradient); color: white; box-shadow: 0 5px 20px rgba(189,0,255,0.5); }
-        .register-btn { background: rgba(0,0,0,0.6); color: white; border: 1px solid var(--accent-cyan); box-shadow: inset 0 0 15px rgba(0,242,255,0.2); backdrop-filter: blur(10px); }
+        .register-btn { background: rgba(0,0,0,0.7); color: white; border: 1px solid var(--accent-cyan); box-shadow: inset 0 0 15px rgba(0,242,255,0.2); backdrop-filter: blur(10px); }
         
         .org-btn { 
             background: rgba(255, 153, 0, 0.15); color: var(--accent-orange); 
@@ -244,14 +266,6 @@
         .verify-btn:active { transform: scale(0.95); }
         .verify-btn.verified { background: rgba(0, 255, 127, 0.1); border: 1px solid var(--accent-green); color: var(--accent-green); cursor: default; }
 
-        /* TERMS LINK & CHECKBOX */
-        .custom-checkbox-container { display: flex; align-items: flex-start; gap: 10px; margin-top: 8px; margin-bottom: 15px; cursor: pointer; font-size: 0.75rem; color: #aaa; text-align: left; user-select: none; line-height: 1.3; }
-        .custom-checkbox-container input { display: none; }
-        .checkmark { min-width: 18px; height: 18px; border: 1.5px solid #555; border-radius: 4px; display: flex; align-items: center; justify-content: center; background: rgba(0,0,0,0.5); margin-top: 1px; transition: 0.2s;}
-        .custom-checkbox-container input:checked + .checkmark { border-color: var(--accent-green); background: rgba(0, 255, 127, 0.15); box-shadow: 0 0 10px rgba(0, 255, 127, 0.4); }
-        .custom-checkbox-container input:checked + .checkmark::after { content: '\f00c'; font-family: "Font Awesome 6 Free"; font-weight: 900; color: var(--accent-green); font-size: 10px; }
-        .terms-link { color: var(--accent-cyan); text-decoration: none; font-weight: bold; }
-
         /* SLIDER NAVIGATION BUTTONS */
         .slide-nav-row { display: flex; gap: 8px; margin-top: 10px; }
         .slide-btn { flex: 1; padding: 12px; border: none; border-radius: 10px; font-family: var(--font-head); font-size: 0.85rem; font-weight: bold; text-transform: uppercase; cursor: pointer; transition: 0.2s; box-shadow: 0 4px 15px rgba(0,0,0,0.4); display: flex; align-items: center; justify-content: center; gap: 6px;}
@@ -286,19 +300,23 @@
 </head>
 <body id="mainBody">
 
+    <!-- CACHED HD VIDEO BACKGROUND -->
     <video loop playsinline class="video-bg" id="bgVideo"></video>
     <div class="bg-overlay"></div>
     <canvas id="particles-canvas"></canvas>
 
+    <!-- SIMPLE VOLUME TOGGLE -->
     <button id="volToggle" class="vol-btn simple-vol" onclick="toggleVolume()">
         <i id="volIcon" class="fa-solid fa-volume-xmark"></i>
     </button>
 
+    <!-- TOP RIGHT PROFILE LOGGED IN STATE -->
     <div id="loggedInProfile" class="top-profile-corner hidden" onclick="quickLogin()">
         <img id="loggedInAvatar" src="" alt="Avatar">
         <span id="loggedInName" class="user-name"></span>
     </div>
 
+    <!-- AAA GAME ENTRY HUD -->
     <div class="game-entry-screen" id="entryScreen">
         
         <div class="center-logo-area">
@@ -307,32 +325,43 @@
         </div>
         
         <div id="authButtons" class="auth-buttons-container">
-            <button class="game-btn login-btn" onclick="openModal('loginModal')">
+            <!-- PRE-TICKED TERMS CONSENT (GAME STYLE) -->
+            <label class="master-terms-container" onclick="doHaptic()">
+                <input type="checkbox" id="masterTerms" checked>
+                <span class="master-checkmark"></span>
+                <span>I have read and agree to the <a href="terms.html" target="_blank" class="terms-link">Terms of Service</a> & Privacy Policy.</span>
+            </label>
+
+            <button class="game-btn login-btn" onclick="openFlow('loginModal')">
                 <i class="fa-solid fa-right-to-bracket"></i> PLAYER LOGIN
             </button>
-            <button class="game-btn register-btn" onclick="openModal('signupModal')">
+            <button class="game-btn register-btn" onclick="openFlow('signupModal')">
                 <i class="fa-solid fa-user-plus"></i> CREATE ACCOUNT
             </button>
-            <button class="game-btn org-btn" onclick="openModal('orgModal')">
+            <button class="game-btn org-btn" onclick="openFlow('orgModal')">
                 <i class="fa-solid fa-crown"></i> ORGANIZER PORTAL
             </button>
         </div>
         
+        <!-- PULSING TAP TO ENTER (IF LOGGED IN) -->
         <div id="tapToStart" class="tap-to-start hidden" onclick="quickLogin()">
             TAP TO ENTER ARENA
         </div>
     </div>
 
+    <!-- LEGAL & PLATFORM CREDITS FOOTER -->
     <div class="credits-footer">
         <div class="data-notice"><i class="fa-solid fa-cloud-arrow-down"></i> Video cached. Zero data usage.</div>
         <div class="copyrights">© Tournyx Esports private limited | © KRAFTON | © Garena</div>
         <div class="quva-credit">Powered by <span class="neon-quva">QUVA</span></div>
     </div>
 
+    <!-- SMART DATALIST FOR PAN-INDIA CITIES -->
     <datalist id="indianCities">
         <option value="Mumbai"><option value="Delhi"><option value="Bangalore"><option value="Hyderabad"><option value="Ahmedabad"><option value="Chennai"><option value="Kolkata"><option value="Surat"><option value="Pune"><option value="Jaipur"><option value="Lucknow"><option value="Kanpur"><option value="Nagpur"><option value="Indore"><option value="Thane"><option value="Bhopal"><option value="Visakhapatnam"><option value="Pimpri-Chinchwad"><option value="Patna"><option value="Vadodara"><option value="Ghaziabad"><option value="Ludhiana"><option value="Agra"><option value="Nashik"><option value="Faridabad"><option value="Meerut"><option value="Rajkot"><option value="Kalyan-Dombivli"><option value="Vasai-Virar"><option value="Varanasi"><option value="Srinagar"><option value="Aurangabad"><option value="Dhanbad"><option value="Amritsar"><option value="Navi Mumbai"><option value="Allahabad"><option value="Howrah"><option value="Ranchi"><option value="Gwalior"><option value="Jabalpur"><option value="Coimbatore"><option value="Vijayawada"><option value="Jodhpur"><option value="Madurai"><option value="Raipur"><option value="Kota"><option value="Guwahati"><option value="Chandigarh"><option value="Solapur"><option value="Hubballi-Dharwad"><option value="Tiruchirappalli"><option value="Bareilly"><option value="Moradabad"><option value="Mysore"><option value="Tiruppur"><option value="Gurgaon"><option value="Aligarh"><option value="Jalandhar"><option value="Bhubaneswar"><option value="Salem"><option value="Warangal"><option value="Mira-Bhayandar"><option value="Thiruvananthapuram"><option value="Bhiwandi"><option value="Saharanpur"><option value="Guntur"><option value="Amravati"><option value="Bikaner"><option value="Noida"><option value="Jamshedpur"><option value="Bhilai"><option value="Cuttack"><option value="Firozabad"><option value="Kochi"><option value="Bhavnagar"><option value="Dehradun"><option value="Durgapur"><option value="Asansol"><option value="Nanded"><option value="Kolhapur"><option value="Ajmer"><option value="Gulbarga"><option value="Jamnagar"><option value="Ujjain"><option value="Loni"><option value="Siliguri"><option value="Jhansi"><option value="Ulhasnagar"><option value="Jammu"><option value="Sangli-Miraj & Kupwad"><option value="Mangalore"><option value="Erode"><option value="Belgaum"><option value="Kurnool"><option value="Ambattur"><option value="Rajahmundry"><option value="Tirunelveli"><option value="Malegaon"><option value="Gaya"><option value="Udaipur">
     </datalist>
 
+    <!-- PLAYER LOGIN MODAL -->
     <div class="modal-overlay" id="loginModal">
         <div class="modal-card">
             <i class="fa-solid fa-xmark close-modal" onclick="closeModals()"></i>
@@ -355,11 +384,12 @@
                 <button type="submit" class="slide-btn next" id="btnLogin" style="width:100%; margin-top:10px;">LOGIN TO ARENA</button>
             </form>
             <div style="text-align:center; margin-top:15px; font-size:0.8rem; color:#888;">
-                New here? <span class="terms-link" style="cursor:pointer;" onclick="openModal('signupModal')">Sign Up</span>
+                New here? <span class="terms-link" style="cursor:pointer;" onclick="openFlow('signupModal')">Sign Up</span>
             </div>
         </div>
     </div>
 
+    <!-- ORGANIZER MODAL (AGGRESSIVE NEON ORANGE) -->
     <div class="modal-overlay" id="orgModal">
         <div class="modal-card">
             <i class="fa-solid fa-xmark close-modal" onclick="closeModals()"></i>
@@ -388,6 +418,7 @@
         </div>
     </div>
 
+    <!-- SIGNUP MODAL (MULTI-SLIDE HARDWARE ACCELERATED) -->
     <div class="modal-overlay" id="signupModal">
         <div class="modal-card" style="padding: 25px 20px;">
             <i class="fa-solid fa-xmark close-modal" onclick="closeModals()"></i>
@@ -403,6 +434,7 @@
                 <div class="slider-window">
                     <div class="slider-track" id="sliderTrack">
                         
+                        <!-- SLIDE 1: AUTH & COMMS -->
                         <div class="slide-step">
                             <div class="input-wrapper">
                                 <div class="flex-row">
@@ -445,6 +477,7 @@
                             <button type="button" class="slide-btn next" onclick="nextSlide(1)" style="width:100%; margin-top:5px;">Next <i class="fa-solid fa-arrow-right"></i></button>
                         </div>
 
+                        <!-- SLIDE 2: GAMING IDENTITY -->
                         <div class="slide-step">
                             <div class="input-wrapper">
                                 <div class="input-group">
@@ -455,6 +488,7 @@
                                         <option value="Call of Duty Mobile">Call of Duty Mobile</option>
                                         <option value="Valorant">Valorant</option>
                                     </select>
+                                    <!-- Z-index fix for dropdowns -->
                                     <i class="fa-solid fa-crosshairs input-icon"></i>
                                 </div>
                             </div>
@@ -475,6 +509,7 @@
 
                             <div class="input-wrapper">
                                 <div class="input-group">
+                                    <!-- STRICT NUMERIC ONLY, MAX 15 DIGITS -->
                                     <input type="text" name="uid" id="regUid" class="form-control req-field" placeholder="Game UID (Numbers Only)" maxlength="15" oninput="this.value=this.value.replace(/[^0-9]/g,'')">
                                     <i class="fa-solid fa-id-card input-icon"></i>
                                 </div>
@@ -486,6 +521,7 @@
                             </div>
                         </div>
 
+                        <!-- SLIDE 3: LOCATION & FINAL SUBMIT -->
                         <div class="slide-step">
                             <div class="input-wrapper">
                                 <div class="input-group">
@@ -520,22 +556,17 @@
                                         <option value="Uttarakhand">Uttarakhand</option>
                                         <option value="West Bengal">West Bengal</option>
                                     </select>
-                                    <i class="fa-solid fa-map input-icon"></i>
+                                    <i class="fa-solid fa-map input-icon" style="z-index: 1;"></i>
                                 </div>
                             </div>
 
                             <div class="input-wrapper">
                                 <div class="input-group">
+                                    <!-- LINKED TO DATALIST FOR SMART SUGGESTIONS -->
                                     <input type="text" name="city" id="regCity" list="indianCities" class="form-control req-field" placeholder="City" autocomplete="off">
                                     <i class="fa-solid fa-location-dot input-icon"></i>
                                 </div>
                             </div>
-                            
-                            <label class="custom-checkbox-container">
-                                <input type="checkbox" id="termsCheck" checked required>
-                                <span class="checkmark"></span>
-                                <span>I agree to <a href="terms.html" target="_blank" class="terms-link">Terms</a> & Fair Play.</span>
-                            </label>
 
                             <div class="slide-nav-row" style="margin-top:20px;">
                                 <button type="button" class="slide-btn back" onclick="prevSlide(3)"><i class="fa-solid fa-arrow-left"></i> Back</button>
@@ -549,10 +580,12 @@
         </div>
     </div>
 
+    <!-- ARENA LOADER -->
     <div id="arenaLoader" class="arena-overlay">
         <div class="arena-text">ENTERING THE ARENA</div>
     </div>
 
+    <!-- TOAST NOTIFICATION -->
     <div id="customToast"><i class="fa-solid fa-circle-exclamation"></i> <span id="toastMsg">Alert</span></div>
 
     <script>
@@ -798,19 +831,21 @@
                 
                 // Clicking anywhere on the background triggers login
                 document.getElementById('mainBody').addEventListener('click', function(e) {
-                    if(!document.querySelector('.modal-overlay.active')) quickLogin();
+                    if(!document.querySelector('.modal-overlay.active') && e.target.id !== 'volIcon' && e.target.id !== 'volToggle') {
+                        quickLogin();
+                    }
                 });
             }
 
             if (refCode) { 
                 setTimeout(() => {
-                    openModal('signupModal'); 
+                    openFlow('signupModal'); 
                     document.getElementById('refInput').value = refCode;
                     document.getElementById('refInput').style.borderColor = "var(--accent-green)";
                     document.getElementById('refInput').style.boxShadow = "0 0 15px rgba(0,255,127,0.4)";
-                }, 800); 
+                }, 800); // Slight delay for cinematic intro
             }
-            if (tabParam === 'organizer') openModal('orgModal');
+            if (tabParam === 'organizer') openFlow('orgModal');
         });
 
         // --- TAP TO START QUICK LOGIN ---
@@ -820,32 +855,63 @@
             if(user) triggerArenaEntry(user, 'index.html');
         }
 
-        // --- MODAL LOGIC ---
-        function openModal(id) {
+        // --- MODAL LOGIC WITH TERMS GATEKEEPER ---
+        let isModalOpen = false;
+
+        function openFlow(id) {
             doHaptic();
-            closeModals(); 
+            let terms = document.getElementById('masterTerms');
+            if(terms && !terms.checked) {
+                showToast("Please agree to the Terms of Service to enter.");
+                return;
+            }
+            openModal(id);
+        }
+
+        function openModal(id) {
+            closeModals(true); 
             document.getElementById(id).classList.add('active');
+            
+            if(!isModalOpen) {
+                history.pushState({modal: 'open'}, '', window.location.pathname + '#' + id);
+                isModalOpen = true;
+            }
         }
         
-        function closeModals() {
+        function closeModals(internalCall = false) {
             document.querySelectorAll('.modal-overlay').forEach(m => m.classList.remove('active'));
+            // Reset Slider if closed
             currentStep = 1;
             document.getElementById('sliderTrack').style.transform = `translateX(0%)`;
             updateDots();
+            
+            if(isModalOpen && !internalCall) {
+                history.back();
+            } else {
+                isModalOpen = false;
+            }
         }
+
+        window.addEventListener('popstate', (e) => {
+            if(isModalOpen) {
+                document.querySelectorAll('.modal-overlay').forEach(m => m.classList.remove('active'));
+                isModalOpen = false;
+            }
+        });
 
         // --- ANIMATION OVERLAY LOGIC ---
         function triggerArenaEntry(user, redirectUrl) {
             if(navigator.vibrate) navigator.vibrate([20, 50, 20]);
-            closeModals();
+            closeModals(true);
             localStorage.setItem('tournyx_user', JSON.stringify(user));
             const loader = document.getElementById('arenaLoader');
             loader.classList.add('active');
+            
             setTimeout(() => { window.location.href = redirectUrl; }, 1900);
         }
 
         function btnLoading(btnId, text) {
-            doHaptic();
+            if(navigator.vibrate) navigator.vibrate(15);
             const btn = document.getElementById(btnId);
             btn.dataset.original = btn.innerHTML;
             btn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> ${text}`;
@@ -862,7 +928,6 @@
             e.preventDefault();
 
             // Final Validation for Slide 3
-            if(!document.getElementById('termsCheck').checked) { showToast("You must agree to the Terms & Conditions."); return; }
             if(document.getElementById('regState').value === "") { showToast("Please select a state."); return; }
             if(document.getElementById('regCity').value.trim() === "") { showToast("Please enter your city."); return; }
 
@@ -902,7 +967,7 @@
                     let safePwd = rawData.password;
                     
                     setTimeout(() => {
-                        closeModals();
+                        closeModals(true);
                         openModal('loginModal');
                         document.getElementById('loginEmail').value = safeEmail;
                         document.getElementById('loginPwd').value = safePwd;
@@ -964,22 +1029,6 @@
             } catch (err) { showToast("System Error."); }
             finally { btnReset('btnOrgLogin'); }
         });
-
-        // --- PARTICLES ENGINE ---
-        const canvas = document.getElementById('particles-canvas');
-        const ctx = canvas.getContext('2d');
-        canvas.width = window.innerWidth; canvas.height = window.innerHeight;
-        let particles = [];
-        class P {
-            constructor(){ this.x=Math.random()*canvas.width; this.y=Math.random()*canvas.height; this.vx=Math.random()*0.5-0.25; this.vy=Math.random()*0.5-0.25; this.size=Math.random()*2+0.5; }
-            u(){ this.x+=this.vx; this.y+=this.vy; if(this.x<0||this.x>canvas.width)this.vx=-this.vx; if(this.y<0||this.y>canvas.height)this.vy=-this.vy; }
-            d(){ ctx.fillStyle='rgba(0,242,255,0.3)'; ctx.beginPath(); ctx.arc(this.x,this.y,this.size,0,Math.PI*2); ctx.fill(); }
-        }
-        for(let i=0;i<40;i++) particles.push(new P());
-        function anim(){ ctx.clearRect(0,0,canvas.width,canvas.height); particles.forEach(p=>{p.u();p.d()}); requestAnimationFrame(anim); }
-        anim();
-        window.addEventListener('resize', () => { canvas.width = window.innerWidth; canvas.height = window.innerHeight; });
-
     </script>
     <script>
     function tournyxOneSignalSetup() {
