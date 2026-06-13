@@ -19,9 +19,9 @@
         /* --- GLOBAL VARIABLES --- */
         :root {
             --primary-bg: #070311;
-            --card-bg: rgba(15, 5, 25, 0.7);
-            --input-bg: rgba(5, 2, 12, 0.8);
-            --card-border: rgba(0, 242, 255, 0.25);
+            --card-bg: rgba(10, 5, 20, 0.85);
+            --input-bg: rgba(5, 2, 12, 0.9);
+            --card-border: rgba(0, 242, 255, 0.3);
             --accent-cyan: #00f2ff;
             --accent-purple: #bd00ff;
             --accent-green: #00ff7f;
@@ -37,93 +37,138 @@
 
         body {
             background-color: var(--primary-bg); color: var(--text-main);
-            font-family: var(--font-body); min-height: 100vh;
+            font-family: var(--font-body); min-height: 100vh; width: 100vw;
             display: flex; flex-direction: column; align-items: center; justify-content: space-between;
             overflow: hidden; position: relative; padding: 0;
         }
 
-        /* --- HARDWARE ACCELERATED VIDEO & BACKGROUND --- */
+        /* --- HARDWARE ACCELERATED VIDEO BACKGROUND --- */
         .video-bg {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            object-fit: cover; z-index: -4; filter: brightness(0.75);
-            background: radial-gradient(circle at 50% 30%, #15062e 0%, #070311 100%);
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            object-fit: cover; z-index: -4; filter: brightness(0.85);
+            background: #000;
         }
         .bg-overlay {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: radial-gradient(circle at center, transparent 40%, rgba(7,3,17,0.8) 100%); z-index: -3;
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            background: linear-gradient(to top, rgba(0,0,0,0.95) 0%, rgba(0,0,0,0.4) 20%, transparent 50%, rgba(0,0,0,0.5) 100%);
+            z-index: -3;
         }
         #particles-canvas {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
             z-index: -2; transform: translateZ(0); pointer-events: none;
         }
 
-        /* SIMPLE VOLUME TOGGLE */
-        .vol-btn {
-            position: fixed; top: 20px; left: 20px; z-index: 100;
-            width: 36px; height: 36px; border-radius: 50%; background: rgba(0,0,0,0.5);
-            border: 1px solid #555; color: white; font-size: 0.9rem;
-            display: flex; align-items: center; justify-content: center;
-            cursor: pointer; backdrop-filter: blur(5px); transition: 0.2s;
+        /* --- AAA GAME HUD (TOP LEFT / RIGHT) --- */
+        .hud-top-left {
+            position: absolute; top: 15px; left: 15px; z-index: 100;
+            font-family: var(--font-body); font-size: 0.75rem; color: rgba(255,255,255,0.7);
+            font-weight: bold; letter-spacing: 1px; text-shadow: 1px 1px 2px black;
         }
-        .vol-btn:active { transform: scale(0.9); }
+        
+        .hud-top-right {
+            position: absolute; top: 15px; right: 15px; z-index: 100;
+            display: flex; flex-direction: column; gap: 15px; align-items: center;
+        }
+        .hud-tool-btn {
+            display: flex; flex-direction: column; align-items: center; gap: 4px;
+            color: rgba(255,255,255,0.8); font-size: 0.65rem; font-family: var(--font-body);
+            font-weight: bold; cursor: pointer; text-shadow: 1px 1px 2px black; transition: 0.2s;
+        }
+        .hud-tool-btn i {
+            width: 32px; height: 32px; border-radius: 50%; background: rgba(0,0,0,0.5);
+            border: 1px solid rgba(255,255,255,0.2); display: flex; align-items: center; justify-content: center;
+            font-size: 1rem; backdrop-filter: blur(5px); transition: 0.2s;
+        }
+        .hud-tool-btn:active i { transform: scale(0.9); background: var(--accent-cyan); color: black; border-color: var(--accent-cyan); }
+
+        .vol-btn i { font-size: 1rem; }
 
         /* LOGGED IN PROFILE CORNER */
         .top-profile-corner {
-            position: fixed; top: 20px; right: 20px; z-index: 100;
+            position: absolute; top: 15px; right: 80px; z-index: 100;
             display: flex; align-items: center; gap: 10px; background: rgba(0,0,0,0.6);
-            padding: 5px 15px 5px 5px; border-radius: 50px; border: 1px solid rgba(255,255,255,0.1);
-            backdrop-filter: blur(10px); cursor: pointer; transition: 0.3s;
+            padding: 5px 15px 5px 5px; border-radius: 50px; border: 1px solid rgba(255,255,255,0.2);
+            backdrop-filter: blur(10px); transition: 0.3s;
             animation: fadeInDown 1s ease forwards;
         }
-        .top-profile-corner:active { transform: scale(0.95); }
         .top-profile-corner img {
-            width: 35px; height: 35px; border-radius: 50%; border: 2px solid var(--accent-cyan);
-            object-fit: cover; box-shadow: 0 0 10px rgba(0,242,255,0.4);
+            width: 36px; height: 36px; border-radius: 50%; border: 2px solid var(--accent-cyan);
+            object-fit: cover; box-shadow: 0 0 10px rgba(0,242,255,0.4); cursor: pointer;
         }
+        .top-profile-corner .user-info { display: flex; flex-direction: column; justify-content: center; }
         .top-profile-corner .user-name {
-            font-family: var(--font-head); font-size: 0.85rem; font-weight: bold; color: white;
-            text-transform: uppercase; letter-spacing: 1px;
+            font-family: var(--font-head); font-size: 0.8rem; font-weight: bold; color: white;
+            text-transform: uppercase; letter-spacing: 1px; cursor: pointer;
         }
+        .top-profile-corner .logout-text {
+            font-family: var(--font-body); font-size: 0.65rem; color: #ff4d4d; font-weight: bold;
+            cursor: pointer; text-transform: uppercase;
+        }
+        .top-profile-corner .logout-text:active { color: white; }
         .hidden { display: none !important; }
 
-        /* --- AAA GAME ENTRY SCREEN (NO BOX) --- */
-        .game-entry-screen {
-            display: flex; flex-direction: column; align-items: center; justify-content: space-between;
-            width: 100%; height: 100vh; padding: 10vh 20px 8vh; position: relative; z-index: 10;
-        }
-
+        /* --- CENTER LOGO (GAME TITLE) --- */
         .center-logo-area {
-            display: flex; flex-direction: column; align-items: center;
+            position: absolute; top: 25%; left: 50%; transform: translate(-50%, -50%);
+            display: flex; flex-direction: column; align-items: center; z-index: 10;
             animation: cinematicZoomIn 1.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+            pointer-events: none;
         }
         .center-logo-area img {
-            width: 130px; height: 130px; border-radius: 25px; object-fit: cover;
-            border: 2px solid rgba(0, 242, 255, 0.6);
-            box-shadow: 0 0 30px rgba(189, 0, 255, 0.6), inset 0 0 20px rgba(0, 242, 255, 0.4);
-            animation: floatLogo 4s ease-in-out infinite; margin-bottom: 15px;
-            background: var(--primary-bg);
+            width: 150px; height: 150px; border-radius: 30%; object-fit: cover;
+            filter: drop-shadow(0 0 20px rgba(0, 242, 255, 0.5));
+            animation: floatLogo 4s ease-in-out infinite; margin-bottom: 5px;
         }
-        @keyframes cinematicZoomIn { 0% { transform: scale(0.8); opacity: 0; filter: blur(10px); } 100% { transform: scale(1); opacity: 1; filter: blur(0); } }
-        @keyframes floatLogo { 0%, 100% { transform: translateY(0); box-shadow: 0 0 30px rgba(189,0,255,0.6); } 50% { transform: translateY(-10px); box-shadow: 0 0 40px rgba(0,242,255,0.8); } }
-        
         .app-name { 
-            font-family: var(--font-head); font-size: 2.5rem; letter-spacing: 4px; font-weight: 900;
-            background: var(--accent-gradient); -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-            margin-bottom: 5px; text-shadow: 0 0 20px rgba(0,242,255,0.4);
+            font-family: var(--font-head); font-size: clamp(2.5rem, 6vw, 3.5rem); letter-spacing: 6px; font-weight: 900;
+            color: white; text-shadow: 0 0 20px rgba(0,242,255,0.8), 2px 2px 0px #bd00ff;
+            margin-bottom: 0; text-transform: uppercase;
         }
 
-        /* BOTTOM HUD BUTTONS */
-        .auth-buttons-container {
-            display: flex; flex-direction: column; gap: 12px; width: 100%; max-width: 340px;
-            animation: slideUpHUD 1s ease forwards;
+        @keyframes cinematicZoomIn { 0% { transform: translate(-50%, -50%) scale(0.8); opacity: 0; filter: blur(10px); } 100% { transform: translate(-50%, -50%) scale(1); opacity: 1; filter: blur(0); } }
+        @keyframes floatLogo { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); filter: drop-shadow(0 0 30px rgba(189, 0, 255, 0.8)); } }
+
+        /* --- BOTTOM CONTROLS (AAA MENU) --- */
+        .bottom-hud {
+            position: absolute; bottom: 50px; left: 0; width: 100%;
+            display: flex; flex-direction: column; align-items: center; z-index: 20;
+            padding: 0 20px; animation: slideUpHUD 1s ease forwards;
         }
         @keyframes slideUpHUD { from { transform: translateY(50px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
 
+        /* Terms Gate */
+        .terms-gate {
+            display: flex; align-items: center; gap: 8px; margin-bottom: 20px;
+            cursor: pointer; font-size: 0.8rem; color: #ccc; font-weight: 600; text-shadow: 1px 1px 2px black;
+        }
+        .terms-gate input { display: none; }
+        .terms-checkmark {
+            width: 20px; height: 20px; border: 2px solid #aaa; border-radius: 4px;
+            display: flex; align-items: center; justify-content: center; transition: 0.3s;
+            background: rgba(0,0,0,0.5);
+        }
+        .terms-gate input:checked + .terms-checkmark {
+            border-color: var(--accent-green); background: rgba(0, 255, 127, 0.2);
+            box-shadow: 0 0 10px var(--accent-green);
+        }
+        .terms-gate input:checked + .terms-checkmark::after {
+            content: '\f00c'; font-family: "Font Awesome 6 Free"; font-weight: 900;
+            color: var(--accent-green); font-size: 12px;
+        }
+        .terms-link { color: var(--accent-cyan); text-decoration: underline; font-weight: bold; }
+
+        /* Buttons Layout */
+        .auth-buttons-container {
+            display: flex; flex-direction: row; gap: 15px; width: 100%; max-width: 600px;
+            justify-content: center; flex-wrap: wrap;
+        }
+
         .game-btn {
-            width: 100%; padding: 15px; border-radius: 12px; font-family: var(--font-head);
-            font-size: 0.95rem; font-weight: 900; letter-spacing: 1px; cursor: pointer; transition: 0.2s;
+            flex: 1; min-width: 250px; padding: 14px; border-radius: 8px; font-family: var(--font-head);
+            font-size: 1rem; font-weight: 900; letter-spacing: 1px; cursor: pointer; transition: 0.2s;
             text-transform: uppercase; display: flex; align-items: center; justify-content: center; gap: 8px;
-            position: relative; overflow: hidden; border: none; z-index: 1;
+            position: relative; overflow: hidden; border: none; z-index: 1; color: white;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.6);
         }
         .game-btn::after {
             content: ''; position: absolute; top: 0; left: -100%; width: 50%; height: 100%;
@@ -133,20 +178,20 @@
         .game-btn:hover::after { left: 150%; transition: 0.7s; }
         .game-btn:active { transform: scale(0.96); }
 
-        .login-btn { background: var(--accent-gradient); color: white; box-shadow: 0 5px 20px rgba(189,0,255,0.5); }
-        .register-btn { background: rgba(0,0,0,0.6); color: white; border: 1px solid var(--accent-cyan); box-shadow: inset 0 0 15px rgba(0,242,255,0.2); backdrop-filter: blur(10px); }
+        .login-btn { background: var(--accent-gradient); box-shadow: 0 5px 20px rgba(189,0,255,0.5); }
+        .register-btn { background: rgba(0,0,0,0.6); border: 2px solid var(--accent-cyan); backdrop-filter: blur(10px); }
         
         .org-btn { 
             background: rgba(255, 153, 0, 0.15); color: var(--accent-orange); 
-            border: 1px solid var(--accent-orange); box-shadow: 0 0 20px rgba(255,153,0,0.4), inset 0 0 10px rgba(255,153,0,0.2);
-            backdrop-filter: blur(10px); animation: orgGlow 2s infinite alternate; margin-top: 5px;
+            border: 2px solid var(--accent-orange); box-shadow: 0 0 20px rgba(255,153,0,0.4), inset 0 0 10px rgba(255,153,0,0.2);
+            backdrop-filter: blur(10px); animation: orgGlow 2s infinite alternate; min-width: 100%; max-width: 600px;
         }
         @keyframes orgGlow { from { box-shadow: 0 0 15px rgba(255,153,0,0.3); } to { box-shadow: 0 0 30px rgba(255,153,0,0.6); border-color: #ffd700; color: #ffd700; } }
 
         /* TAP TO START ENGINE */
         .tap-to-start {
-            font-family: var(--font-head); font-size: 1.3rem; font-weight: 900; color: white;
-            letter-spacing: 2px; text-transform: uppercase; cursor: pointer;
+            font-family: var(--font-head); font-size: 1.5rem; font-weight: 900; color: white;
+            letter-spacing: 3px; text-transform: uppercase; cursor: pointer;
             text-shadow: 0 0 15px var(--accent-cyan), 0 0 30px var(--accent-purple);
             animation: pulseTap 1.5s infinite alternate; padding: 20px; width: 100%; text-align: center;
         }
@@ -161,12 +206,12 @@
 
         /* LEGAL FOOTER CREDITS */
         .credits-footer {
-            position: fixed; bottom: 10px; width: 100%; text-align: center;
-            z-index: 5; pointer-events: none; display: flex; flex-direction: column; gap: 4px;
+            position: absolute; bottom: 8px; width: 100%; text-align: center;
+            z-index: 5; pointer-events: none; display: flex; flex-direction: column; gap: 3px;
         }
-        .data-notice { font-size: 0.65rem; color: #00ff7f; font-family: var(--font-body); font-weight: bold; letter-spacing: 0.5px; text-shadow: 0 0 5px rgba(0,255,127,0.5);}
-        .copyrights { font-size: 0.55rem; color: #888; font-family: var(--font-body); letter-spacing: 0.5px; }
-        .quva-credit { font-size: 0.65rem; color: #aaa; font-family: var(--font-body); letter-spacing: 1px; margin-top: 2px;}
+        .data-notice { font-size: 0.65rem; color: var(--accent-green); font-family: var(--font-body); font-weight: bold; letter-spacing: 0.5px; text-shadow: 1px 1px 2px black;}
+        .copyrights { font-size: 0.55rem; color: rgba(255,255,255,0.5); font-family: var(--font-body); letter-spacing: 0.5px; text-shadow: 1px 1px 2px black;}
+        .quva-credit { font-size: 0.65rem; color: #aaa; font-family: var(--font-body); letter-spacing: 1px; margin-top: 1px; text-shadow: 1px 1px 2px black;}
         .neon-quva { font-family: var(--font-head); font-weight: 900; color: white; text-shadow: 0 0 8px #00f2ff, 0 0 15px #bd00ff; letter-spacing: 2px;}
 
         /* --- MODALS (UNIVERSAL SIZING & Z-INDEX FIX) --- */
@@ -195,7 +240,7 @@
 
         /* ORGANIZER PORTAL MODAL GLOW */
         #orgModal .modal-card {
-            background: rgba(20, 5, 0, 0.75); border: 1px solid rgba(255, 153, 0, 0.6);
+            background: rgba(20, 5, 0, 0.85); border: 1px solid rgba(255, 153, 0, 0.6);
             box-shadow: 0 15px 40px rgba(0,0,0,0.9), inset 0 0 40px rgba(255, 153, 0, 0.25);
         }
 
@@ -208,11 +253,10 @@
         .step-dot { width: 8px; height: 8px; border-radius: 50%; background: rgba(255,255,255,0.1); transition: 0.3s; box-shadow: inset 0 0 5px rgba(0,0,0,0.5); }
         .step-dot.active { background: var(--accent-cyan); box-shadow: 0 0 10px var(--accent-cyan); transform: scale(1.3); }
 
-        /* --- FORMS & INPUTS (REDUCED SIZE FOR NO OVERFLOW) --- */
+        /* --- FORMS & INPUTS (MICRO-SCALED FOR NO OVERFLOW) --- */
         .input-wrapper { margin-bottom: 12px; width: 100%; }
         .input-group { position: relative; width: 100%; }
-        /* FIX: Pointer events none allows clicks to pass through to the select field */
-        .input-icon { position: absolute; left: 14px; top: 50%; transform: translateY(-50%); color: #666; transition: 0.3s; pointer-events: none; font-size: 0.85rem; z-index: 3;}
+        .input-icon { position: absolute; left: 14px; top: 50%; transform: translateY(-50%); color: #666; transition: 0.3s; pointer-events: none; font-size: 0.85rem; z-index: 10;}
         
         .form-control {
             width: 100%; background: var(--input-bg); border: 1px solid rgba(255,255,255,0.1); border-radius: 10px;
@@ -220,7 +264,8 @@
             box-shadow: inset 0 0 10px rgba(0,0,0,0.5); appearance: none; -webkit-appearance: none; position: relative; z-index: 2;
         }
         
-        select.form-control { cursor: pointer; padding-right: 30px; background-image: url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23666666%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E"); background-repeat: no-repeat; background-position: right 12px top 50%; background-size: 10px auto; background-color: var(--input-bg);}
+        /* DROPDOWN FIX */
+        select.form-control { cursor: pointer; padding-right: 30px; z-index: 5; background-image: url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23666666%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E"); background-repeat: no-repeat; background-position: right 12px top 50%; background-size: 10px auto; background-color: var(--input-bg);}
         select.form-control option { background: var(--primary-bg); color: white; }
         
         .form-control:focus { border-color: var(--accent-cyan); box-shadow: 0 0 10px rgba(0, 242, 255, 0.3), inset 0 0 8px rgba(0,0,0,0.6); }
@@ -234,26 +279,16 @@
         .pwd-toggle { position: absolute; right: 14px; top: 50%; transform: translateY(-50%); color: #666; cursor: pointer; transition: 0.3s; font-size: 0.9rem; z-index: 10;}
         .pwd-toggle:active { transform: translateY(-50%) scale(0.9); }
 
-        .info-box { background: rgba(0, 242, 255, 0.05); border-left: 2px solid var(--accent-cyan); color: #bbb; font-size: 0.65rem; padding: 6px 10px; margin-top: 6px; border-radius: 0 6px 6px 0; line-height: 1.3; }
-
         /* --- OTP UI --- */
         .flex-row { display: flex; gap: 8px; }
-        .otp-btn { background: rgba(189,0,255,0.15); border: 1px solid var(--accent-purple); color: var(--accent-purple); border-radius: 10px; font-family: var(--font-head); font-size: 0.75rem; font-weight: bold; cursor: pointer; transition: 0.3s; padding: 0 12px; text-transform: uppercase; white-space: nowrap; height: 100%;}
+        .otp-btn { background: rgba(189,0,255,0.15); border: 1px solid var(--accent-purple); color: var(--accent-purple); border-radius: 10px; font-family: var(--font-head); font-size: 0.75rem; font-weight: bold; cursor: pointer; transition: 0.3s; padding: 0 12px; text-transform: uppercase; white-space: nowrap; height: 100%; z-index: 5;}
         .otp-btn:active { transform: scale(0.95); background: var(--accent-purple); color: #fff; }
         .verify-btn { position: absolute; right: 5px; top: 5px; bottom: 5px; background: var(--accent-green); border: none; border-radius: 8px; color: #000; font-weight: 800; padding: 0 12px; cursor: pointer; font-family: var(--font-head); font-size: 0.75rem; transition: 0.2s; z-index: 10;}
         .verify-btn:active { transform: scale(0.95); }
         .verify-btn.verified { background: rgba(0, 255, 127, 0.1); border: 1px solid var(--accent-green); color: var(--accent-green); cursor: default; }
 
-        /* TERMS LINK & CHECKBOX */
-        .custom-checkbox-container { display: flex; align-items: flex-start; gap: 10px; margin-top: 8px; margin-bottom: 15px; cursor: pointer; font-size: 0.75rem; color: #aaa; text-align: left; user-select: none; line-height: 1.3; }
-        .custom-checkbox-container input { display: none; }
-        .checkmark { min-width: 18px; height: 18px; border: 1.5px solid #555; border-radius: 4px; display: flex; align-items: center; justify-content: center; background: rgba(0,0,0,0.5); margin-top: 1px; transition: 0.2s;}
-        .custom-checkbox-container input:checked + .checkmark { border-color: var(--accent-green); background: rgba(0, 255, 127, 0.15); box-shadow: 0 0 10px rgba(0, 255, 127, 0.4); }
-        .custom-checkbox-container input:checked + .checkmark::after { content: '\f00c'; font-family: "Font Awesome 6 Free"; font-weight: 900; color: var(--accent-green); font-size: 10px; }
-        .terms-link { color: var(--accent-cyan); text-decoration: none; font-weight: bold; }
-
         /* SLIDER NAVIGATION BUTTONS */
-        .slide-nav-row { display: flex; gap: 8px; margin-top: 10px; }
+        .slide-nav-row { display: flex; gap: 8px; margin-top: 15px; }
         .slide-btn { flex: 1; padding: 12px; border: none; border-radius: 10px; font-family: var(--font-head); font-size: 0.85rem; font-weight: bold; text-transform: uppercase; cursor: pointer; transition: 0.2s; box-shadow: 0 4px 15px rgba(0,0,0,0.4); display: flex; align-items: center; justify-content: center; gap: 6px;}
         .slide-btn.next { background: var(--accent-gradient); color: white; }
         .slide-btn.back { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.15); color: #aaa; }
@@ -277,11 +312,6 @@
         @keyframes fadeInBg { from { opacity: 0; } to { opacity: 1; } }
         @keyframes cinematicEntry { 0% { transform: scale(0.8); opacity: 0; filter: blur(10px); } 20% { transform: scale(1); opacity: 1; filter: blur(0); letter-spacing: 4px; } 80% { transform: scale(1.05); opacity: 1; filter: blur(0); letter-spacing: 6px; } 100% { transform: scale(1.3); opacity: 0; filter: blur(15px); letter-spacing: 10px; } }
 
-        /* DESKTOP EXCLUSIVE ALIGNMENT */
-        @media (min-width: 769px) {
-            .game-entry-screen { align-items: flex-end; padding-right: 10%; }
-        }
-        
     </style>
 </head>
 <body id="mainBody">
@@ -291,15 +321,25 @@
     <div class="bg-overlay"></div>
     <canvas id="particles-canvas"></canvas>
 
-    <!-- SIMPLE VOLUME TOGGLE -->
-    <button id="volToggle" class="vol-btn simple-vol" onclick="toggleVolume()">
-        <i id="volIcon" class="fa-solid fa-volume-xmark"></i>
-    </button>
+    <!-- AAA HUD ELEMENTS -->
+    <div class="hud-top-left">Version 4.2.0.19751</div>
+    
+    <div class="hud-top-right">
+        <div class="hud-tool-btn vol-btn" onclick="toggleVolume()">
+            <i id="volIcon" class="fa-solid fa-volume-xmark"></i>
+        </div>
+        <div class="hud-tool-btn" onclick="showToast('Help center loading...')"><i class="fa-solid fa-headset"></i>Help</div>
+        <div class="hud-tool-btn" onclick="showToast('Language: English')"><i class="fa-solid fa-earth-americas"></i>Lang</div>
+        <div class="hud-tool-btn" onclick="showToast('Running Diagnostics...')"><i class="fa-solid fa-wrench"></i>Repair</div>
+    </div>
 
-    <!-- TOP RIGHT PROFILE LOGGED IN STATE -->
-    <div id="loggedInProfile" class="top-profile-corner hidden" onclick="quickLogin()">
-        <img id="loggedInAvatar" src="" alt="Avatar">
-        <span id="loggedInName" class="user-name"></span>
+    <!-- LOGGED IN PROFILE CORNER -->
+    <div id="loggedInProfile" class="top-profile-corner hidden">
+        <img id="loggedInAvatar" src="" alt="Avatar" onclick="quickLogin()">
+        <div class="user-info">
+            <span id="loggedInName" class="user-name" onclick="quickLogin()"></span>
+            <span class="logout-text" onclick="logoutUser()">Logout <i class="fa-solid fa-right-from-bracket"></i></span>
+        </div>
     </div>
 
     <!-- AAA GAME ENTRY HUD -->
@@ -310,21 +350,30 @@
             <h1 class="app-name">TOURNYX</h1>
         </div>
         
-        <div id="authButtons" class="auth-buttons-container">
-            <button class="game-btn login-btn" onclick="openModal('loginModal')">
-                <i class="fa-solid fa-right-to-bracket"></i> PLAYER LOGIN
-            </button>
-            <button class="game-btn register-btn" onclick="openModal('signupModal')">
-                <i class="fa-solid fa-user-plus"></i> CREATE ACCOUNT
-            </button>
-            <button class="game-btn org-btn" onclick="openModal('orgModal')">
-                <i class="fa-solid fa-crown"></i> ORGANIZER PORTAL
-            </button>
-        </div>
-        
-        <!-- PULSING TAP TO ENTER (IF LOGGED IN) -->
-        <div id="tapToStart" class="tap-to-start hidden" onclick="quickLogin()">
-            TAP TO ENTER ARENA
+        <div class="bottom-hud">
+            <!-- PRE-ENTRY TERMS GATE -->
+            <label class="terms-gate" id="termsGateContainer">
+                <input type="checkbox" id="masterTerms" checked>
+                <span class="terms-checkmark"></span>
+                <span>I have read and agree to the <a href="terms.html" target="_blank" class="terms-link">Terms of Service</a> and Privacy Policy.</span>
+            </label>
+
+            <div id="authButtons" class="auth-buttons-container">
+                <button class="game-btn login-btn" onclick="checkTermsAndOpen('loginModal')">
+                    <i class="fa-solid fa-right-to-bracket"></i> PLAYER LOGIN
+                </button>
+                <button class="game-btn register-btn" onclick="checkTermsAndOpen('signupModal')">
+                    <i class="fa-solid fa-user-plus"></i> CREATE ACCOUNT
+                </button>
+                <button class="game-btn org-btn" onclick="checkTermsAndOpen('orgModal')">
+                    <i class="fa-solid fa-crown"></i> ORGANIZER PORTAL
+                </button>
+            </div>
+            
+            <!-- PULSING TAP TO ENTER (IF LOGGED IN) -->
+            <div id="tapToStart" class="tap-to-start hidden" onclick="quickLogin()">
+                TAP TO ENTER ARENA
+            </div>
         </div>
     </div>
 
@@ -344,7 +393,7 @@
     <div class="modal-overlay" id="loginModal">
         <div class="modal-card">
             <i class="fa-solid fa-xmark close-modal" onclick="closeModals()"></i>
-            <h2 class="modal-title" style="color:var(--accent-cyan)">Welcome Back</h2>
+            <h2 class="modal-title" style="color:var(--accent-cyan)">Player Login</h2>
             
             <form id="playerLoginForm">
                 <div class="input-wrapper">
@@ -360,11 +409,8 @@
                         <i class="fa-solid fa-eye pwd-toggle" onclick="togglePwd('loginPwd', this, false)"></i>
                     </div>
                 </div>
-                <button type="submit" class="slide-btn next" id="btnLogin" style="width:100%; margin-top:10px;">LOGIN TO ARENA</button>
+                <button type="submit" class="slide-btn next" id="btnLogin" style="width:100%; margin-top:10px;">ENTER ARENA <i class="fa-solid fa-arrow-right"></i></button>
             </form>
-            <div style="text-align:center; margin-top:15px; font-size:0.8rem; color:#888;">
-                New here? <span class="terms-link" style="cursor:pointer;" onclick="openModal('signupModal')">Sign Up</span>
-            </div>
         </div>
     </div>
 
@@ -388,12 +434,8 @@
                         <i class="fa-solid fa-eye pwd-toggle" onclick="togglePwd('orgPwd', this, true)"></i>
                     </div>
                 </div>
-                <button type="submit" class="slide-btn next" id="btnOrgLogin" style="width:100%; margin-top:10px; background:linear-gradient(90deg, #ff9900, #ff4d4d); box-shadow: 0 5px 20px rgba(255,153,0,0.4); border:none;">VERIFY ADMIN</button>
+                <button type="submit" class="slide-btn next" id="btnOrgLogin" style="width:100%; margin-top:10px; background:linear-gradient(90deg, #ff9900, #ff4d4d); box-shadow: 0 5px 20px rgba(255,153,0,0.4); border:none;">VERIFY ADMIN <i class="fa-solid fa-bolt"></i></button>
             </form>
-
-            <div style="margin-top: 20px; padding-top: 15px; border-top: 1px solid rgba(255,255,255,0.1); text-align: center;">
-                <a href="organizerportel.html" class="terms-link" style="color:#aaa; font-size:0.75rem;"><i class="fa-solid fa-file-signature"></i> Apply to Host Tournaments</a>
-            </div>
         </div>
     </div>
 
@@ -401,7 +443,7 @@
     <div class="modal-overlay" id="signupModal">
         <div class="modal-card" style="padding: 25px 20px;">
             <i class="fa-solid fa-xmark close-modal" onclick="closeModals()"></i>
-            <h2 class="modal-title" style="color:var(--accent-purple); margin-bottom:10px;">Register</h2>
+            <h2 class="modal-title" style="color:var(--accent-purple); margin-bottom:10px;">Create Account</h2>
             
             <div class="step-indicators">
                 <div class="step-dot active" id="dot1"></div>
@@ -547,12 +589,10 @@
                                 </div>
                             </div>
                             
-                            <!-- Pre-Ticked Terms -->
-                            <label class="custom-checkbox-container">
-                                <input type="checkbox" id="termsCheck" checked required>
-                                <span class="checkmark"></span>
-                                <span>I agree to <a href="terms.html" target="_blank" class="terms-link">Terms</a> & Fair Play.</span>
-                            </label>
+                            <div class="info-box">
+                                <i class="fa-solid fa-shield-check" style="color:var(--accent-cyan)"></i> 
+                                <span>Terms and conditions accepted on entry gate. Ready to deploy!</span>
+                            </div>
 
                             <div class="slide-nav-row" style="margin-top:20px;">
                                 <button type="button" class="slide-btn back" onclick="prevSlide(3)"><i class="fa-solid fa-arrow-left"></i> Back</button>
@@ -589,6 +629,18 @@
 
         function doHaptic() { if(navigator.vibrate) navigator.vibrate(15); }
 
+        // --- TERMS & CONDITIONS GATE ---
+        function checkTermsAndOpen(modalId) {
+            doHaptic();
+            if(!document.getElementById('masterTerms').checked) {
+                showToast("You must agree to the Terms & Privacy Policy to enter.");
+                document.getElementById('termsGateContainer').style.animation = "shake 0.4s ease";
+                setTimeout(() => document.getElementById('termsGateContainer').style.animation = "", 400);
+                return;
+            }
+            openModal(modalId);
+        }
+
         // --- BACKGROUND VIDEO CACHING & AUDIO ENGINE ---
         async function loadVideoBackground() {
             const videoUrl = 'https://tournyx.in/FFBGMICODTRAILER.mp4'; // Replace with actual Tournyx Video URL
@@ -621,13 +673,21 @@
                     videoElement.muted = true;
                     videoElement.play();
                     document.getElementById('volIcon').className = 'fa-solid fa-volume-xmark';
+                    
+                    // Add listener to unmute on first user interaction anywhere!
+                    document.body.addEventListener('click', function unmuteInit() {
+                        videoElement.muted = false;
+                        document.getElementById('volIcon').className = 'fa-solid fa-volume-high';
+                        document.body.removeEventListener('click', unmuteInit);
+                    }, {once: true});
                 }).then(() => {
                     if(!videoElement.muted) document.getElementById('volIcon').className = 'fa-solid fa-volume-high';
                 });
             }
         }
         
-        function toggleVolume() {
+        function toggleVolume(e) {
+            if(e) e.stopPropagation();
             doHaptic();
             const video = document.getElementById('bgVideo');
             const icon = document.getElementById('volIcon');
@@ -808,21 +868,18 @@
             let user = JSON.parse(localStorage.getItem('tournyx_user'));
             if(user && user.email) {
                 document.getElementById('authButtons').classList.add('hidden');
+                document.getElementById('termsGateContainer').classList.add('hidden');
                 document.getElementById('tapToStart').classList.remove('hidden');
                 document.getElementById('loggedInProfile').classList.remove('hidden');
                 
                 let displayName = user.ign || user.username || "Player";
                 document.getElementById('loggedInName').innerText = displayName;
                 document.getElementById('loggedInAvatar').src = formatImageUrl(user.avatar, displayName);
-                
-                // Clicking anywhere on the background triggers login
-                document.getElementById('mainBody').addEventListener('click', function(e) {
-                    if(!document.querySelector('.modal-overlay.active')) quickLogin();
-                });
             }
 
             if (refCode) { 
                 setTimeout(() => {
+                    document.getElementById('masterTerms').checked = true; // Auto-consent for deep link
                     openModal('signupModal'); 
                     document.getElementById('refInput').value = refCode;
                     document.getElementById('refInput').style.borderColor = "var(--accent-green)";
@@ -832,31 +889,58 @@
             if (tabParam === 'organizer') openModal('orgModal');
         });
 
-        // --- TAP TO START QUICK LOGIN ---
+        // --- TAP TO START QUICK LOGIN & LOGOUT ---
         function quickLogin() {
             doHaptic();
             let user = JSON.parse(localStorage.getItem('tournyx_user'));
             if(user) triggerArenaEntry(user, 'index.html');
         }
 
-        // --- MODAL LOGIC ---
+        function logoutUser() {
+            doHaptic();
+            localStorage.removeItem('tournyx_user');
+            localStorage.removeItem('tournyx_userData');
+            window.location.reload();
+        }
+
+        // --- MODAL LOGIC (HISTORY API BACK BUTTON ENABLED) ---
+        let isModalOpen = false;
+
         function openModal(id) {
             doHaptic();
-            closeModals(); 
+            closeModals(true); 
             document.getElementById(id).classList.add('active');
+            
+            if(!isModalOpen) {
+                history.pushState({modal: 'open'}, '', window.location.pathname + '#' + id);
+                isModalOpen = true;
+            }
         }
         
-        function closeModals() {
+        function closeModals(internalCall = false) {
             document.querySelectorAll('.modal-overlay').forEach(m => m.classList.remove('active'));
             currentStep = 1;
             document.getElementById('sliderTrack').style.transform = `translateX(0%)`;
             updateDots();
+            
+            if(isModalOpen && !internalCall) {
+                history.back();
+            } else {
+                isModalOpen = false;
+            }
         }
+
+        window.addEventListener('popstate', (e) => {
+            if(isModalOpen) {
+                document.querySelectorAll('.modal-overlay').forEach(m => m.classList.remove('active'));
+                isModalOpen = false;
+            }
+        });
 
         // --- ANIMATION OVERLAY LOGIC ---
         function triggerArenaEntry(user, redirectUrl) {
             if(navigator.vibrate) navigator.vibrate([20, 50, 20]);
-            closeModals();
+            closeModals(true);
             localStorage.setItem('tournyx_user', JSON.stringify(user));
             const loader = document.getElementById('arenaLoader');
             loader.classList.add('active');
@@ -882,7 +966,6 @@
             e.preventDefault();
 
             // Final Validation for Slide 3
-            if(!document.getElementById('termsCheck').checked) { showToast("You must agree to the Terms & Conditions."); return; }
             if(document.getElementById('regState').value === "") { showToast("Please select a state."); return; }
             if(document.getElementById('regCity').value.trim() === "") { showToast("Please enter your city."); return; }
 
@@ -922,7 +1005,7 @@
                     let safePwd = rawData.password;
                     
                     setTimeout(() => {
-                        closeModals();
+                        closeModals(true);
                         openModal('loginModal');
                         document.getElementById('loginEmail').value = safeEmail;
                         document.getElementById('loginPwd').value = safePwd;
@@ -932,7 +1015,9 @@
                     
                 } else {
                     showToast(result.data);
-                    if (result.data.toLowerCase().includes("email already registered")) unlockEmailInput();
+                    if (result.data.toLowerCase().includes("email already registered")) {
+                        prevSlide(3); prevSlide(2); unlockEmailInput();
+                    }
                 }
             } catch (err) { 
                 showToast("Connection Error or system unavailable."); 
@@ -984,6 +1069,7 @@
             } catch (err) { showToast("System Error."); }
             finally { btnReset('btnOrgLogin'); }
         });
+
     </script>
     <script>
     function tournyxOneSignalSetup() {
