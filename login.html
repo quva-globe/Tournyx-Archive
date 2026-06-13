@@ -19,443 +19,288 @@
         /* --- GLOBAL VARIABLES --- */
         :root {
             --primary-bg: #070311;
-            --card-bg: rgba(20, 10, 35, 0.85);
-            --input-bg: rgba(10, 5, 20, 0.9);
-            --card-border: rgba(189, 0, 255, 0.3);
+            --card-bg: rgba(15, 5, 25, 0.65);
+            --input-bg: rgba(5, 2, 12, 0.7);
+            --card-border: rgba(0, 242, 255, 0.2);
             --accent-cyan: #00f2ff;
             --accent-purple: #bd00ff;
             --accent-green: #00ff7f;
             --accent-orange: #ff9900;
-            --accent-gradient: linear-gradient(90deg, #bd00ff, #00f2ff);
+            --accent-gradient: linear-gradient(135deg, #bd00ff, #00f2ff);
             --text-main: #ffffff;
             --font-head: 'Orbitron', sans-serif;
             --font-body: 'Rajdhani', sans-serif;
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-        *::-webkit-scrollbar { display: none !important; width: 0 !important; height: 0 !important; background: transparent !important; }
+        *::-webkit-scrollbar { display: none !important; width: 0 !important; height: 0 !important; }
 
         body {
-            background-color: var(--primary-bg);
-            color: var(--text-main);
-            font-family: var(--font-body);
-            min-height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            overflow: hidden; 
-            position: relative;
-            padding: 15px;
+            background-color: var(--primary-bg); color: var(--text-main);
+            font-family: var(--font-body); min-height: 100vh;
+            display: flex; align-items: center; justify-content: center;
+            overflow: hidden; position: relative; padding: 10px;
         }
 
-        /* --- BACKGROUND --- */
+        /* --- HARDWARE ACCELERATED VIDEO & BACKGROUND --- */
+        .video-bg {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            object-fit: cover; z-index: -3; opacity: 0.6; filter: brightness(0.7);
+            background: radial-gradient(circle at 50% 30%, #15062e 0%, #070311 100%);
+        }
+        .bg-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: linear-gradient(to bottom, rgba(7,3,17,0.3) 0%, rgba(7,3,17,0.8) 100%); z-index: -2;
+        }
         #particles-canvas {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            z-index: -1; transform: translateZ(0); /* Hardware Acceleration */
-            background: radial-gradient(circle at 50% 30%, #15062e 0%, #070311 100%);
+            z-index: -1; transform: translateZ(0); pointer-events: none;
         }
 
         /* --- DESKTOP LANDING HERO SECTION --- */
         .landing-container {
-            text-align: center; z-index: 10; padding: 30px;
+            text-align: center; z-index: 10; padding: 25px;
             animation: cinematicZoomIn 1s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; 
-            width: 100%; max-width: 600px;
-            background: rgba(10, 5, 20, 0.6);
-            backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
-            border: 1px solid rgba(0, 242, 255, 0.15);
-            border-radius: 30px; box-shadow: 0 20px 60px rgba(0,0,0,0.8);
+            width: 100%; max-width: 500px;
+            background: rgba(10, 5, 20, 0.5); backdrop-filter: blur(25px); -webkit-backdrop-filter: blur(25px);
+            border: 1px solid rgba(0, 242, 255, 0.15); border-radius: 24px; box-shadow: 0 15px 50px rgba(0,0,0,0.8);
         }
 
-        @keyframes cinematicZoomIn {
-            0% { transform: scale(0.85); opacity: 0; filter: blur(10px); }
-            100% { transform: scale(1); opacity: 1; filter: blur(0); }
-        }
+        @keyframes cinematicZoomIn { 0% { transform: scale(0.9); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
 
         .mobile-top-showcase { display: none; }
-        .landing-content-wrapper { display: block; }
+        .landing-content-wrapper { display: flex; flex-direction: column; align-items: center; }
 
         .logo-wrapper {
-            position: relative;
-            width: 120px; height: 120px; margin: 0 auto 15px;
-            background: linear-gradient(135deg, rgba(189, 0, 255, 0.15), rgba(0, 242, 255, 0.15));
-            border-radius: 28%;
-            display: flex; align-items: center; justify-content: center;
-            border: 2px solid rgba(0, 242, 255, 0.6);
-            box-shadow: 0 0 25px rgba(189, 0, 255, 0.5), inset 0 0 15px rgba(0, 242, 255, 0.3);
-            animation: floatLogo 3.5s ease-in-out infinite;
-            overflow: hidden;
+            position: relative; width: 100px; height: 100px; margin: 0 auto 12px;
+            background: linear-gradient(135deg, rgba(189, 0, 255, 0.2), rgba(0, 242, 255, 0.2));
+            border-radius: 28%; display: flex; align-items: center; justify-content: center;
+            border: 2px solid rgba(0, 242, 255, 0.5);
+            box-shadow: 0 0 20px rgba(189, 0, 255, 0.4), inset 0 0 15px rgba(0, 242, 255, 0.3);
+            animation: floatLogo 4s ease-in-out infinite; overflow: hidden;
         }
         .brand-logo { width: 100%; height: 100%; object-fit: cover; }
-
-        @keyframes floatLogo {
-            0%, 100% { transform: translateY(0); box-shadow: 0 0 25px rgba(189, 0, 255, 0.5), inset 0 0 15px rgba(0, 242, 255, 0.3); }
-            50% { transform: translateY(-8px); box-shadow: 0 0 35px rgba(189, 0, 255, 0.8), inset 0 0 25px rgba(0, 242, 255, 0.6); }
-        }
+        @keyframes floatLogo { 0%, 100% { transform: translateY(0); box-shadow: 0 0 20px rgba(189,0,255,0.4); } 50% { transform: translateY(-6px); box-shadow: 0 0 30px rgba(0,242,255,0.6); } }
 
         .app-name { 
-            font-family: var(--font-head); font-size: 2.2rem; letter-spacing: 3px; font-weight: 900;
+            font-family: var(--font-head); font-size: 1.8rem; letter-spacing: 2px; font-weight: 900;
             background: var(--accent-gradient); -webkit-background-clip: text; -webkit-text-fill-color: transparent;
             margin-bottom: 2px; text-shadow: 0 0 15px rgba(0,242,255,0.3);
         }
 
         .app-tagline { 
-            font-size: 1.1rem; margin-bottom: 12px; font-weight: 600; letter-spacing: 1px; 
-            background: linear-gradient(90deg, #888, #fff, #888, #fff);
-            background-size: 300% auto;
-            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-            animation: shineText 4s linear infinite;
+            font-size: 0.9rem; margin-bottom: 12px; font-weight: 600; letter-spacing: 1px; 
+            background: linear-gradient(90deg, #aaa, #fff, #aaa, #fff); background-size: 300% auto;
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent; animation: shineText 4s linear infinite;
         }
         @keyframes shineText { to { background-position: 300% center; } }
 
         .static-desc {
-            font-size: 0.95rem; color: #00f2ff; font-family: var(--font-body);
-            margin-bottom: 25px; padding: 0 15px; line-height: 1.5;
-            text-shadow: 0 0 8px rgba(0, 242, 255, 0.4); font-weight: 500;
+            font-size: 0.85rem; color: #00f2ff; font-family: var(--font-body);
+            margin-bottom: 20px; padding: 0 10px; line-height: 1.4;
+            text-shadow: 0 0 8px rgba(0, 242, 255, 0.3); font-weight: 500;
         }
 
-        .features-row { display: flex; justify-content: center; gap: 12px; margin-bottom: 30px; flex-wrap: wrap; }
+        .features-row { display: flex; justify-content: center; gap: 8px; margin-bottom: 25px; flex-wrap: wrap; }
         .feature-badge {
             background: rgba(255,255,255,0.05); border: 1px solid rgba(0, 242, 255, 0.3);
-            padding: 8px 16px; border-radius: 20px; font-size: 0.85rem; color: var(--accent-cyan);
-            font-family: var(--font-head); letter-spacing: 1px;
-            box-shadow: inset 0 0 10px rgba(0,242,255,0.15);
-            transition: 0.3s;
+            padding: 6px 12px; border-radius: 20px; font-size: 0.75rem; color: var(--accent-cyan);
+            font-family: var(--font-head); letter-spacing: 0.5px; box-shadow: inset 0 0 10px rgba(0,242,255,0.1);
         }
-        .feature-badge:nth-child(1) { animation: floatBadge 3s ease-in-out infinite 0s; }
-        .feature-badge:nth-child(2) { animation: floatBadge 3s ease-in-out infinite 0.5s; }
-        .feature-badge:nth-child(3) { animation: floatBadge 3s ease-in-out infinite 1s; }
-        @keyframes floatBadge { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-4px); box-shadow: inset 0 0 15px rgba(0,242,255,0.3); border-color: var(--accent-cyan); } }
 
-        /* BUTTONS */
+        /* BUTTONS (SCALED DOWN FOR ZERO OVERFLOW) */
         .action-btn {
-            width: 100%; max-width: 320px; margin: 0 auto 12px; padding: 15px;
-            border-radius: 14px; font-family: var(--font-head); font-size: 1.05rem; font-weight: bold; letter-spacing: 1px;
-            cursor: pointer; transition: 0.3s; display: flex; align-items: center; justify-content: center; gap: 10px;
+            width: 100%; max-width: 300px; margin: 0 auto 10px; padding: 12px;
+            border-radius: 12px; font-family: var(--font-head); font-size: 0.95rem; font-weight: bold; letter-spacing: 1px;
+            cursor: pointer; transition: 0.3s; display: flex; align-items: center; justify-content: center; gap: 8px;
             text-transform: uppercase; position: relative; overflow: hidden; z-index: 1;
         }
         .action-btn::before {
             content: ''; position: absolute; top: 0; left: -100%; width: 50%; height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
             transform: skewX(-25deg); transition: 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275); z-index: -1;
         }
         .action-btn:hover::before { left: 150%; }
         
-        .btn-primary { background: var(--accent-gradient); color: white; border: none; box-shadow: 0 5px 20px rgba(189,0,255,0.4); }
-        .btn-primary:hover { box-shadow: 0 5px 25px rgba(0,242,255,0.7); transform: scale(1.02); }
-        .btn-primary:active { transform: scale(0.96); }
+        .btn-primary { background: var(--accent-gradient); color: white; border: none; box-shadow: 0 4px 15px rgba(189,0,255,0.4); }
+        .btn-primary:active { transform: scale(0.96); box-shadow: 0 2px 10px rgba(0,242,255,0.5); }
 
-        .btn-secondary { background: rgba(0,0,0,0.5); color: white; border: 1px solid var(--accent-cyan); box-shadow: inset 0 0 15px rgba(0,242,255,0.1); }
-        .btn-secondary:hover { background: rgba(0,242,255,0.15); box-shadow: 0 0 20px rgba(0,242,255,0.5); transform: scale(1.02); }
+        .btn-secondary { background: rgba(0,0,0,0.5); color: white; border: 1px solid var(--accent-cyan); box-shadow: inset 0 0 10px rgba(0,242,255,0.1); }
         .btn-secondary:active { transform: scale(0.96); }
 
-        /* Upgraded Organizer Portal Button */
-        .btn-org {
-            background: rgba(255, 153, 0, 0.1); color: var(--accent-orange); 
-            border: 1px solid var(--accent-orange); box-shadow: 0 0 15px rgba(255,153,0,0.2);
-            margin: 15px auto 0;
-        }
-        .btn-org:hover { background: rgba(255, 153, 0, 0.2); box-shadow: 0 0 25px rgba(255, 153, 0, 0.5); transform: scale(1.02); color: white;}
-        .btn-org:active { transform: scale(0.96); }
+        .btn-org { background: rgba(255, 153, 0, 0.1); color: var(--accent-orange); border: 1px solid var(--accent-orange); box-shadow: 0 0 15px rgba(255,153,0,0.2); margin-top: 5px; }
+        .btn-org:active { transform: scale(0.96); background: rgba(255, 153, 0, 0.2); }
 
-        /* --- MODALS --- */
+        /* --- MODALS (UNIVERSAL SIZING) --- */
         .modal-overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0, 0, 0, 0.6); z-index: 50; display: none;
+            background: rgba(0, 0, 0, 0.7); z-index: 50; display: none;
             align-items: center; justify-content: center; backdrop-filter: blur(8px);
-            opacity: 0; transition: opacity 0.3s ease; padding: 15px;
+            opacity: 0; transition: opacity 0.3s ease; padding: 10px;
         }
         .modal-overlay.active { display: flex; opacity: 1; }
 
-        .modal-drag-pill { display: none; }
-        
         .modal-card {
             background: var(--card-bg); border: 1px solid var(--card-border);
-            width: 100%; max-width: 420px; border-radius: 20px; padding: 25px;
-            box-shadow: 0 20px 50px rgba(0,0,0,0.9), 0 0 15px rgba(189,0,255,0.3), inset 0 0 30px rgba(0,242,255,0.15);
+            width: 100%; max-width: 400px; border-radius: 20px; padding: 20px;
+            box-shadow: 0 15px 40px rgba(0,0,0,0.9), inset 0 0 20px rgba(0,242,255,0.1);
             transform: translateY(30px) scale(0.95); transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            max-height: 90vh; overflow-y: auto; position: relative; overscroll-behavior: contain;
+            max-height: 90vh; display: flex; flex-direction: column; position: relative; overflow: hidden;
+            backdrop-filter: blur(25px); -webkit-backdrop-filter: blur(25px);
         }
         .modal-overlay.active .modal-card { transform: translateY(0) scale(1); }
 
-        .close-modal {
-            position: absolute; top: 15px; right: 20px; font-size: 1.5rem; color: #aaa;
-            cursor: pointer; transition: 0.3s; z-index: 10;
+        .close-modal { position: absolute; top: 12px; right: 15px; font-size: 1.3rem; color: #888; cursor: pointer; transition: 0.3s; z-index: 10; }
+        .close-modal:hover { color: var(--accent-red); transform: rotate(90deg) scale(1.1); }
+
+        .modal-title { font-family: var(--font-head); font-size: 1.25rem; color: white; margin-bottom: 12px; text-align: center; text-transform: uppercase; letter-spacing: 1px; text-shadow: 0 0 10px currentColor; flex-shrink: 0;}
+
+        /* --- ORGANIZER PORTAL SPECIFIC (PURE GLASSMORPHISM) --- */
+        #orgModal .modal-card {
+            background: rgba(25, 10, 0, 0.65); border: 1px solid rgba(255, 153, 0, 0.4);
+            box-shadow: 0 15px 40px rgba(0,0,0,0.9), inset 0 0 30px rgba(255, 153, 0, 0.1);
         }
-        .close-modal:hover { color: var(--accent-cyan); transform: rotate(90deg) scale(1.2); text-shadow: 0 0 15px var(--accent-cyan); }
 
-        .modal-title { font-family: var(--font-head); font-size: 1.4rem; color: white; margin-bottom: 20px; text-align: center; text-transform: uppercase; letter-spacing: 1px; text-shadow: 0 0 15px currentColor; }
+        /* --- MULTI-STEP SLIDER --- */
+        .slider-window { width: 100%; flex: 1; overflow: hidden; position: relative; min-height: 320px; }
+        .slider-track { display: flex; width: 300%; transition: transform 0.4s cubic-bezier(0.25, 0.8, 0.25, 1); height: 100%; align-items: flex-start;}
+        .slide-step { width: 33.333%; padding: 5px; flex-shrink: 0; box-sizing: border-box; overflow-y: auto; max-height: 100%; scrollbar-width: none; }
+        
+        .step-indicators { display: flex; justify-content: center; gap: 8px; margin-bottom: 15px; flex-shrink: 0;}
+        .step-dot { width: 10px; height: 10px; border-radius: 50%; background: rgba(255,255,255,0.1); transition: 0.3s; box-shadow: inset 0 0 5px rgba(0,0,0,0.5); }
+        .step-dot.active { background: var(--accent-cyan); box-shadow: 0 0 10px var(--accent-cyan); transform: scale(1.2); }
 
-        /* COMET PROGRESS BAR */
-        .progress-wrapper { width: 100%; height: 4px; background: rgba(255,255,255,0.1); border-radius: 2px; margin-bottom: 20px; overflow: hidden; position: relative; }
-        .progress-bar { height: 100%; width: 0%; background: var(--accent-gradient); transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1); box-shadow: 0 0 10px var(--accent-cyan); position: relative; }
-        .progress-bar::after { content:''; position: absolute; top:0; right:0; width: 20px; height: 100%; background: #fff; box-shadow: 0 0 10px #fff; filter: blur(2px); }
-
-        /* --- FORMS & INPUTS (ZERO LAG RENDER) --- */
-        .input-wrapper { margin-bottom: 15px; width: 100%; }
+        /* --- FORMS & INPUTS (COMPACT) --- */
+        .input-wrapper { margin-bottom: 12px; width: 100%; }
         .input-group { position: relative; width: 100%; }
-        .input-icon { position: absolute; left: 14px; top: 50%; transform: translateY(-50%); color: #666; transition: 0.3s; pointer-events: none; }
+        .input-icon { position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: #666; transition: 0.3s; pointer-events: none; font-size: 0.9rem;}
         
         .form-control {
-            width: 100%; background: var(--input-bg);
-            border: 1px solid rgba(255,255,255,0.1); border-radius: 12px;
-            padding: 14px 14px 14px 42px; color: white;
-            font-family: var(--font-body); font-size: 0.95rem; outline: none; transition: 0.2s;
-            box-shadow: inset 0 0 10px rgba(0,0,0,0.5);
-            appearance: none; -webkit-appearance: none;
+            width: 100%; background: var(--input-bg); border: 1px solid rgba(255,255,255,0.08); border-radius: 10px;
+            padding: 12px 12px 12px 35px; color: white; font-family: var(--font-body); font-size: 0.85rem; outline: none; transition: 0.2s;
+            box-shadow: inset 0 0 10px rgba(0,0,0,0.4); appearance: none; -webkit-appearance: none;
         }
-        select.form-control { cursor: pointer; }
-        select.form-control option, select.form-control optgroup { background: var(--primary-bg); color: white; font-family: var(--font-body); }
+        select.form-control { cursor: pointer; padding-right: 30px; background-image: url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23666666%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E"); background-repeat: no-repeat; background-position: right 12px top 50%; background-size: 10px auto; }
+        select.form-control option { background: var(--primary-bg); color: white; }
         
-        .form-control:focus { 
-            border-color: var(--accent-cyan); 
-            box-shadow: 0 0 15px rgba(0, 242, 255, 0.4), inset 0 0 10px rgba(0,0,0,0.5); 
-        }
-        .form-control:focus + .input-icon, .form-control:not(:placeholder-shown) + .input-icon { 
-            color: var(--accent-cyan); filter: drop-shadow(0 0 5px var(--accent-cyan)); transform: translateY(-50%) scale(1.1);
-        }
-        input:-webkit-autofill { -webkit-box-shadow: 0 0 0 30px var(--input-bg) inset !important; -webkit-text-fill-color: white !important; }
+        .form-control:focus { border-color: var(--accent-cyan); box-shadow: 0 0 10px rgba(0, 242, 255, 0.2), inset 0 0 8px rgba(0,0,0,0.5); }
+        #orgModal .form-control:focus { border-color: var(--accent-orange); box-shadow: 0 0 10px rgba(255, 153, 0, 0.2); }
+        .form-control:focus + .input-icon, .form-control:not(:placeholder-shown) + .input-icon { color: var(--accent-cyan); filter: drop-shadow(0 0 5px var(--accent-cyan)); }
+        #orgModal .form-control:focus + .input-icon, #orgModal .form-control:not(:placeholder-shown) + .input-icon { color: var(--accent-orange); filter: drop-shadow(0 0 5px var(--accent-orange)); }
         
-        .form-control:read-only { opacity: 0.6; pointer-events: none;}
+        .form-control:read-only { opacity: 0.6; pointer-events: none; }
 
-        /* EYE ICON FLASH */
-        .pwd-toggle {
-            position: absolute; right: 14px; top: 50%; transform: translateY(-50%);
-            color: #888; cursor: pointer; transition: 0.3s; font-size: 1.1rem;
-        }
-        .pwd-toggle:hover { color: var(--accent-cyan); text-shadow: 0 0 15px var(--accent-cyan); transform: translateY(-50%) scale(1.1); }
+        .pwd-toggle { position: absolute; right: 12px; top: 50%; transform: translateY(-50%); color: #666; cursor: pointer; transition: 0.3s; font-size: 1rem; }
+        .pwd-toggle:active { transform: translateY(-50%) scale(0.9); }
 
-        /* INFO BOX PULSES */
-        .info-box {
-            background: rgba(0, 242, 255, 0.08); border-left: 3px solid var(--accent-cyan);
-            color: #ccc; font-size: 0.75rem; padding: 10px; margin-top: 8px; border-radius: 0 8px 8px 0;
-            text-align: left; font-family: var(--font-body); font-weight: 500;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.2); animation: infoBreathing 3s infinite alternate;
-            display: flex; align-items: flex-start; gap: 8px; line-height: 1.4; transition: 0.4s ease;
-        }
-        .info-box.purple { border-left-color: var(--accent-purple); background: rgba(189, 0, 255, 0.08); animation: infoBreathingPurple 3s infinite alternate; }
-        .info-box i { margin-top: 2px; text-shadow: 0 0 8px currentColor; font-size: 0.95rem; transition: 0.3s ease; }
-        @keyframes infoBreathing { from { box-shadow: 0 4px 10px rgba(0,0,0,0.2); } to { box-shadow: 0 4px 15px rgba(0,242,255,0.2); border-left-color: #fff; } }
-        @keyframes infoBreathingPurple { from { box-shadow: 0 4px 10px rgba(0,0,0,0.2); } to { box-shadow: 0 4px 15px rgba(189,0,255,0.2); border-left-color: #fff; } }
+        .info-box { background: rgba(0, 242, 255, 0.05); border-left: 2px solid var(--accent-cyan); color: #bbb; font-size: 0.7rem; padding: 8px; margin-top: 6px; border-radius: 0 6px 6px 0; line-height: 1.3; }
 
-        /* --- OTP SPECIFIC UI STYLES --- */
+        /* --- OTP UI --- */
         .flex-row { display: flex; gap: 8px; }
-        .otp-btn {
-            background: rgba(189,0,255,0.1); border: 1px solid var(--accent-purple);
-            color: var(--accent-purple); border-radius: 12px; font-family: var(--font-head);
-            font-size: 0.85rem; font-weight: bold; cursor: pointer; transition: 0.3s;
-            padding: 0 15px; text-transform: uppercase; white-space: nowrap; outline: none;
-        }
-        .otp-btn:hover { background: var(--accent-purple); color: #fff; box-shadow: 0 0 15px var(--accent-purple); }
-        .otp-btn:disabled { opacity: 0.5; cursor: not-allowed; border-color: #555; color: #888; background: transparent; box-shadow: none; pointer-events: none; }
-        
-        .verify-btn {
-            position: absolute; right: 5px; top: 5px; bottom: 5px;
-            background: var(--accent-green); border: none; border-radius: 8px; color: #000;
-            font-weight: 800; padding: 0 15px; cursor: pointer; transition: 0.3s;
-            font-family: var(--font-head); font-size: 0.8rem; text-transform: uppercase;
-        }
-        .verify-btn:hover { box-shadow: 0 0 15px var(--accent-green); transform: scale(1.02); }
+        .otp-btn { background: rgba(189,0,255,0.1); border: 1px solid var(--accent-purple); color: var(--accent-purple); border-radius: 10px; font-family: var(--font-head); font-size: 0.75rem; font-weight: bold; cursor: pointer; transition: 0.3s; padding: 0 12px; text-transform: uppercase; white-space: nowrap; }
+        .otp-btn:active { transform: scale(0.95); background: var(--accent-purple); color: #fff; }
+        .verify-btn { position: absolute; right: 4px; top: 4px; bottom: 4px; background: var(--accent-green); border: none; border-radius: 8px; color: #000; font-weight: 800; padding: 0 12px; cursor: pointer; font-family: var(--font-head); font-size: 0.75rem; transition: 0.2s;}
+        .verify-btn:active { transform: scale(0.95); }
         .verify-btn.verified { background: rgba(0, 255, 127, 0.1); border: 1px solid var(--accent-green); color: var(--accent-green); cursor: default; }
-        .verify-btn.verified:hover { box-shadow: none; transform: none; }
 
-        /* TERMS LINK & SPRING-LOADED CHECKBOX */
-        .custom-checkbox-container {
-            display: flex; align-items: flex-start; gap: 10px; margin-top: 5px; margin-bottom: 20px;
-            cursor: pointer; font-size: 0.85rem; color: #aaa; text-align: left;
-            user-select: none; transition: 0.3s; line-height: 1.4;
-        }
-        .custom-checkbox-container:hover { color: #fff; }
+        /* TERMS LINK & CHECKBOX */
+        .custom-checkbox-container { display: flex; align-items: flex-start; gap: 8px; margin-top: 5px; margin-bottom: 15px; cursor: pointer; font-size: 0.75rem; color: #aaa; text-align: left; user-select: none; line-height: 1.3; }
         .custom-checkbox-container input { display: none; }
-        .checkmark {
-            min-width: 20px; height: 20px; border: 2px solid #555; border-radius: 6px;
-            display: flex; align-items: center; justify-content: center; transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            background: rgba(0,0,0,0.5); margin-top: 2px; position: relative;
-        }
-        .custom-checkbox-container input:checked + .checkmark {
-            border-color: var(--accent-green); background: rgba(0, 255, 127, 0.15);
-            box-shadow: 0 0 15px rgba(0, 255, 127, 0.5); transform: scale(1.1) rotate(5deg);
-        }
-        .custom-checkbox-container input:checked + .checkmark::after {
-            content: '\f00c'; font-family: "Font Awesome 6 Free"; font-weight: 900;
-            color: var(--accent-green); font-size: 12px; text-shadow: 0 0 8px var(--accent-green);
-        }
-        
-        .terms-link {
-            color: var(--accent-cyan); text-decoration: none; font-weight: 700; position: relative;
-            text-shadow: 0 0 8px rgba(0,242,255,0.3); transition: 0.3s;
-        }
-        .terms-link::after {
-            content: ''; position: absolute; bottom: -2px; left: 0; width: 0%; height: 2px;
-            background: var(--accent-cyan); transition: width 0.3s ease; box-shadow: 0 0 5px var(--accent-cyan);
-        }
-        .terms-link:hover { text-shadow: 0 0 15px var(--accent-cyan); color: #fff; }
-        .terms-link:hover::after { width: 100%; }
+        .checkmark { min-width: 16px; height: 16px; border: 1.5px solid #555; border-radius: 4px; display: flex; align-items: center; justify-content: center; background: rgba(0,0,0,0.5); margin-top: 1px; }
+        .custom-checkbox-container input:checked + .checkmark { border-color: var(--accent-green); background: rgba(0, 255, 127, 0.1); box-shadow: 0 0 10px rgba(0, 255, 127, 0.3); }
+        .custom-checkbox-container input:checked + .checkmark::after { content: '\f00c'; font-family: "Font Awesome 6 Free"; font-weight: 900; color: var(--accent-green); font-size: 9px; }
+        .terms-link { color: var(--accent-cyan); text-decoration: none; font-weight: bold; }
 
-        .submit-btn {
-            width: 100%; padding: 15px; background: var(--accent-gradient);
-            border: none; border-radius: 12px; color: white;
-            font-family: var(--font-head); font-size: 1.1rem; font-weight: 800; letter-spacing: 1px;
-            cursor: pointer; transition: 0.3s; margin-top: 5px;
-            box-shadow: 0 5px 20px rgba(189,0,255,0.4); text-transform: uppercase;
-            position: relative; overflow: hidden; z-index: 1;
+        /* SLIDER NAVIGATION BUTTONS */
+        .slide-nav-row { display: flex; gap: 10px; margin-top: 10px; }
+        .slide-btn { flex: 1; padding: 12px; border: none; border-radius: 10px; font-family: var(--font-head); font-size: 0.9rem; font-weight: bold; text-transform: uppercase; cursor: pointer; transition: 0.2s; box-shadow: 0 4px 15px rgba(0,0,0,0.4);}
+        .slide-btn.next { background: var(--accent-gradient); color: white; }
+        .slide-btn.back { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); color: #aaa; }
+        .slide-btn:active { transform: scale(0.96); }
+        .slide-btn:disabled { opacity: 0.5; filter: grayscale(1); cursor: not-allowed; }
+
+        /* --- TOAST ALERTS --- */
+        #customToast {
+            position: fixed; bottom: -60px; left: 50%; transform: translateX(-50%);
+            background: rgba(255, 77, 77, 0.9); color: white; font-family: var(--font-head); font-size: 0.85rem; font-weight: bold;
+            padding: 12px 20px; border-radius: 50px; z-index: 9999;
+            box-shadow: 0 5px 20px rgba(255, 77, 77, 0.5); opacity: 0; transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            display: flex; align-items: center; gap: 8px; white-space: nowrap;
         }
-        .submit-btn::before {
-            content: ''; position: absolute; top: 0; left: -100%; width: 50%; height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.5), transparent);
-            transform: skewX(-25deg); transition: 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275); z-index: -1;
-        }
-        .submit-btn:hover { box-shadow: 0 5px 30px rgba(0,242,255,0.7); transform: translateY(-2px); }
-        .submit-btn:hover::before { left: 150%; }
-        .submit-btn:active { transform: scale(0.95); }
+        #customToast.show { bottom: 25px; opacity: 1; }
+        #customToast.success { background: rgba(0, 255, 127, 0.9); color: black; box-shadow: 0 5px 20px rgba(0, 255, 127, 0.5); }
 
         /* CINEMATIC ARENA ENTRY */
-        .arena-overlay {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: #040108; z-index: 9999;
-            display: none; flex-direction: column; align-items: center; justify-content: center;
-        }
+        .arena-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #040108; z-index: 9999; display: none; flex-direction: column; align-items: center; justify-content: center; }
         .arena-overlay.active { display: flex; animation: fadeInBg 0.3s forwards; }
-
-        .arena-text {
-            font-family: var(--font-head); font-size: 2.5rem; color: #fff;
-            font-weight: 900; letter-spacing: 6px; 
-            text-shadow: 0 0 25px rgba(0, 242, 255, 0.8), 0 0 50px rgba(189, 0, 255, 0.6);
-            text-align: center; text-transform: uppercase;
-            animation: cinematicEntry 2s cubic-bezier(0.25, 1, 0.5, 1) forwards;
-        }
-
+        .arena-text { font-family: var(--font-head); font-size: 2rem; color: #fff; font-weight: 900; letter-spacing: 4px; text-shadow: 0 0 20px rgba(0, 242, 255, 0.6); text-align: center; text-transform: uppercase; animation: cinematicEntry 2s cubic-bezier(0.25, 1, 0.5, 1) forwards; }
         @keyframes fadeInBg { from { opacity: 0; } to { opacity: 1; } }
-        @keyframes cinematicEntry {
-            0% { transform: scale(0.8); opacity: 0; filter: blur(15px); }
-            20% { transform: scale(1); opacity: 1; filter: blur(0); letter-spacing: 6px; }
-            80% { transform: scale(1.05); opacity: 1; filter: blur(0); letter-spacing: 8px; }
-            100% { transform: scale(1.5); opacity: 0; filter: blur(20px); letter-spacing: 12px; }
-        }
-
-        .error-msg { 
-            background: rgba(255, 77, 77, 0.1); border: 1px solid rgba(255, 77, 77, 0.4);
-            color: #ff4d4d; text-align: center; padding: 12px; border-radius: 10px;
-            margin-bottom: 15px; font-size: 0.9rem; display: none; font-family: var(--font-body); font-weight: 700;
-            box-shadow: 0 0 15px rgba(255, 77, 77, 0.2); animation: shake 0.4s ease;
-        }
-        @keyframes shake { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-5px); } 75% { transform: translateX(5px); } }
+        @keyframes cinematicEntry { 0% { transform: scale(0.8); opacity: 0; filter: blur(10px); } 20% { transform: scale(1); opacity: 1; filter: blur(0); letter-spacing: 4px; } 80% { transform: scale(1.05); opacity: 1; filter: blur(0); letter-spacing: 6px; } 100% { transform: scale(1.3); opacity: 0; filter: blur(15px); letter-spacing: 10px; } }
 
         /* --- MOBILE SPECIFIC APP-LIKE UI --- */
         @media (max-width: 768px) {
-            body { 
-                align-items: stretch; justify-content: stretch; padding: 0; 
-                touch-action: pan-y;
-            }
-            .landing-container {
-                position: absolute; top: 0; left: 0; width: 100%; height: 100dvh;
-                overflow: hidden; padding: 0; display: block; animation: none; 
-                background: transparent; border: none; box-shadow: none; border-radius: 0; backdrop-filter: none;
-            }
+            body { align-items: stretch; justify-content: stretch; padding: 0; touch-action: pan-y; }
+            .video-bg { display: none; } /* Hide video on mobile to save battery/data, fallback to gradient */
+            .landing-container { position: absolute; top: 0; left: 0; width: 100%; height: 100dvh; overflow: hidden; padding: 0; display: block; animation: none; background: transparent; border: none; box-shadow: none; border-radius: 0; backdrop-filter: none; }
 
-            .mobile-top-showcase {
-                display: block; position: absolute;
-                top: 0; left: 0; width: 100%; height: 55%;
-                z-index: 1; overflow: hidden;
-            }
-            .mts-banner {
-                position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-                background-size: cover; background-position: center;
-                opacity: 0; animation: crossfade 12s infinite;
-                will-change: opacity, transform; transform: translateZ(0); 
-            }
-            .mobile-top-showcase::after {
-                content: ''; position: absolute; bottom: 0; left: 0; width: 100%; height: 45%;
-                background: linear-gradient(to top, rgba(7,3,17,1) 0%, rgba(7,3,17,0.5) 50%, transparent 100%);
-                z-index: 2; pointer-events: none;
-            }
-            @keyframes crossfade {
-                0% { opacity: 0; transform: scale(1.02) translateZ(0); }
-                10%, 30% { opacity: 1; transform: scale(1) translateZ(0); }
-                40%, 100% { opacity: 0; transform: scale(1.02) translateZ(0); }
-            }
+            .mobile-top-showcase { display: block; position: absolute; top: 0; left: 0; width: 100%; height: 50%; z-index: 1; overflow: hidden; }
+            .mts-banner { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background-size: cover; background-position: center; opacity: 0; animation: crossfade 12s infinite; transform: translateZ(0); }
+            .mobile-top-showcase::after { content: ''; position: absolute; bottom: 0; left: 0; width: 100%; height: 50%; background: linear-gradient(to top, rgba(7,3,17,1) 0%, rgba(7,3,17,0.4) 60%, transparent 100%); z-index: 2; pointer-events: none; }
+            @keyframes crossfade { 0% { opacity: 0; transform: scale(1.05); } 10%, 30% { opacity: 1; transform: scale(1); } 40%, 100% { opacity: 0; transform: scale(1.05); } }
             
-            .floating-emoji {
-                position: absolute; font-size: 2.5rem; z-index: 3;
-                animation: floatEmoji 4s ease-in-out infinite; 
-                filter: drop-shadow(0 5px 15px rgba(0,0,0,0.6));
-                will-change: transform; transform: translateZ(0);
-            }
-            .e1 { top: 15%; left: 10%; animation-delay: 0s; }
-            .e2 { top: 12%; right: 12%; animation-delay: 1s; font-size: 3rem; }
-            .e3 { top: 35%; left: 15%; animation-delay: 2s; }
-            .e4 { top: 30%; right: 8%; animation-delay: 0.5s; font-size: 2.2rem; }
-            @keyframes floatEmoji {
-                0%, 100% { transform: translateY(0) rotate(-5deg) translateZ(0); }
-                50% { transform: translateY(-15px) rotate(10deg) translateZ(0); }
-            }
+            .floating-emoji { position: absolute; font-size: 2rem; z-index: 3; animation: floatEmoji 4s ease-in-out infinite; filter: drop-shadow(0 5px 10px rgba(0,0,0,0.8)); transform: translateZ(0); }
+            .e1 { top: 12%; left: 8%; animation-delay: 0s; font-size: 2.2rem; }
+            .e2 { top: 8%; right: 10%; animation-delay: 1s; font-size: 2.5rem; }
+            .e3 { top: 28%; left: 12%; animation-delay: 2s; font-size: 1.8rem; }
+            .e4 { top: 25%; right: 6%; animation-delay: 0.5s; font-size: 2.2rem; }
+            @keyframes floatEmoji { 0%, 100% { transform: translateY(0) rotate(-10deg); } 50% { transform: translateY(-12px) rotate(10deg); } }
 
-            .landing-content-wrapper {
-                position: absolute; bottom: 0; left: 0; width: 100%; min-height: 52%;
-                background: rgba(7,3,17,0.85); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
-                border-top: 1px solid rgba(0, 242, 255, 0.2);
-                border-radius: 40px 40px 0 0;
-                box-shadow: 0 -15px 40px rgba(0,0,0,0.9);
-                z-index: 10; padding: 0 20px 30px;
-                display: flex; flex-direction: column; justify-content: flex-start;
-                animation: slideUpContent 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
-            }
+            .landing-content-wrapper { position: absolute; bottom: 0; left: 0; width: 100%; min-height: 55%; background: rgba(7,3,17,0.85); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border-top: 1px solid rgba(0, 242, 255, 0.15); border-radius: 35px 35px 0 0; box-shadow: 0 -15px 40px rgba(0,0,0,0.9); z-index: 10; padding: 0 20px 25px; display: flex; flex-direction: column; justify-content: flex-start; animation: slideUpContent 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; }
             @keyframes slideUpContent { from { transform: translateY(100%); } to { transform: translateY(0); } }
 
-            .logo-wrapper { 
-                width: 95px; height: 95px; margin: -50px auto 10px; 
-                border-radius: 25%; background: var(--primary-bg); 
-                box-shadow: 0 10px 30px rgba(0,0,0,0.9), inset 0 0 15px rgba(0,242,255,0.4); 
-                animation: none; z-index: 15;
-            } 
+            .logo-wrapper { width: 85px; height: 85px; margin: -42px auto 10px; border-radius: 25%; background: var(--primary-bg); box-shadow: 0 10px 25px rgba(0,0,0,0.9), inset 0 0 15px rgba(0,242,255,0.3); animation: none; z-index: 15; } 
             
-            .app-name { font-size: 1.8rem; letter-spacing: 2px; margin-bottom: 2px; }
-            .app-tagline { font-size: 0.9rem; margin-bottom: 8px; }
-            .static-desc { font-size: 0.85rem; margin-bottom: 15px; color: #ccc;}
-            .features-row { gap: 8px; margin-bottom: 18px; }
-            .feature-badge { padding: 8px 12px; font-size: 0.75rem; background: rgba(0,0,0,0.6); border-color: rgba(255,255,255,0.15);}
-            .action-btn { max-width: 100%; border-radius: 16px; padding: 15px; font-size: 1rem; margin-bottom: 10px;}
+            .app-name { font-size: 1.6rem; letter-spacing: 2px; margin-bottom: 2px; }
+            .app-tagline { font-size: 0.85rem; margin-bottom: 8px; }
+            .static-desc { font-size: 0.8rem; margin-bottom: 15px; color: #bbb;}
+            .features-row { gap: 6px; margin-bottom: 20px; }
+            .feature-badge { padding: 6px 10px; font-size: 0.7rem; background: rgba(0,0,0,0.6); border-color: rgba(255,255,255,0.1); box-shadow: none;}
+            .action-btn { max-width: 100%; border-radius: 14px; padding: 14px; font-size: 0.95rem; margin-bottom: 10px;}
 
             /* Bottom Sheet Modals for Mobile */
             .modal-overlay { align-items: flex-end; padding: 0; background: rgba(0,0,0,0.7); }
-            .modal-card {
-                max-width: 100%; border-radius: 30px 30px 0 0;
-                border-bottom: none; border-left: none; border-right: none;
-                border-top: 2px solid var(--accent-cyan);
-                box-shadow: 0 -10px 40px rgba(0,0,0,0.9), inset 0 20px 30px rgba(0,242,255,0.05);
-                padding: 25px 20px;
-                padding-bottom: calc(25px + env(safe-area-inset-bottom));
-                transform: translateY(100%);
-                -webkit-overflow-scrolling: touch;
-            }
+            .modal-card { max-width: 100%; border-radius: 25px 25px 0 0; border-bottom: none; border-left: none; border-right: none; border-top: 2px solid var(--accent-cyan); box-shadow: 0 -10px 30px rgba(0,0,0,0.9); padding: 20px 15px calc(20px + env(safe-area-inset-bottom)); transform: translateY(100%); }
+            #orgModal .modal-card { border-top: 2px solid var(--accent-orange); }
             .modal-overlay.active .modal-card { transform: translateY(0); }
-            .modal-drag-pill {
-                display: block; width: 45px; height: 5px; background: rgba(255,255,255,0.25);
-                border-radius: 10px; margin: -10px auto 20px;
-            }
-            .close-modal { top: 15px; right: 20px; }
-            .arena-text { font-size: 1.6rem; letter-spacing: 3px; }
+            .modal-drag-pill { display: block; width: 40px; height: 4px; background: rgba(255,255,255,0.2); border-radius: 10px; margin: -10px auto 15px; }
+            .close-modal { top: 12px; right: 15px; font-size: 1.2rem; }
         }
     </style>
 </head>
 <body>
 
+    <!-- CACHED VIDEO BACKGROUND FOR DESKTOP -->
+    <video autoplay loop muted playsinline class="video-bg" id="bgVideo"></video>
+    <div class="bg-overlay"></div>
     <canvas id="particles-canvas"></canvas>
 
+    <!-- SMART DATALIST FOR PAN-INDIA CITIES -->
     <datalist id="indianCities">
         <option value="Mumbai"><option value="Delhi"><option value="Bangalore"><option value="Hyderabad"><option value="Ahmedabad"><option value="Chennai"><option value="Kolkata"><option value="Surat"><option value="Pune"><option value="Jaipur"><option value="Lucknow"><option value="Kanpur"><option value="Nagpur"><option value="Indore"><option value="Thane"><option value="Bhopal"><option value="Visakhapatnam"><option value="Pimpri-Chinchwad"><option value="Patna"><option value="Vadodara"><option value="Ghaziabad"><option value="Ludhiana"><option value="Agra"><option value="Nashik"><option value="Faridabad"><option value="Meerut"><option value="Rajkot"><option value="Kalyan-Dombivli"><option value="Vasai-Virar"><option value="Varanasi"><option value="Srinagar"><option value="Aurangabad"><option value="Dhanbad"><option value="Amritsar"><option value="Navi Mumbai"><option value="Allahabad"><option value="Howrah"><option value="Ranchi"><option value="Gwalior"><option value="Jabalpur"><option value="Coimbatore"><option value="Vijayawada"><option value="Jodhpur"><option value="Madurai"><option value="Raipur"><option value="Kota"><option value="Guwahati"><option value="Chandigarh"><option value="Solapur"><option value="Hubballi-Dharwad"><option value="Tiruchirappalli"><option value="Bareilly"><option value="Moradabad"><option value="Mysore"><option value="Tiruppur"><option value="Gurgaon"><option value="Aligarh"><option value="Jalandhar"><option value="Bhubaneswar"><option value="Salem"><option value="Warangal"><option value="Mira-Bhayandar"><option value="Thiruvananthapuram"><option value="Bhiwandi"><option value="Saharanpur"><option value="Guntur"><option value="Amravati"><option value="Bikaner"><option value="Noida"><option value="Jamshedpur"><option value="Bhilai"><option value="Cuttack"><option value="Firozabad"><option value="Kochi"><option value="Bhavnagar"><option value="Dehradun"><option value="Durgapur"><option value="Asansol"><option value="Nanded"><option value="Kolhapur"><option value="Ajmer"><option value="Gulbarga"><option value="Jamnagar"><option value="Ujjain"><option value="Loni"><option value="Siliguri"><option value="Jhansi"><option value="Ulhasnagar"><option value="Jammu"><option value="Sangli-Miraj & Kupwad"><option value="Mangalore"><option value="Erode"><option value="Belgaum"><option value="Kurnool"><option value="Ambattur"><option value="Rajahmundry"><option value="Tirunelveli"><option value="Malegaon"><option value="Gaya"><option value="Udaipur">
     </datalist>
 
     <div class="landing-container" id="landingView">
         
+        <!-- MOBILE ONLY: TOP CINEMATIC SHOWCASE -->
         <div class="mobile-top-showcase">
             <div class="mts-banner" style="background-image: url('https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEiJvPTY_y_XU-0Lwbnjwm7961lCDkSlQh2MtCWHunFVX6WS7WCprCtkPyB334BU_-4vGsP0NseDQf4NPBEOIxqjk7VZQqZUHpnLb4Bw-c1UeXQy2M9DzNrNdYt_aL0GEb1AlTPupC5zEjJiP3Ci0Oxk-wdg5TF5cs8_UNSe3uTT1BE884je3iXr8QlMjx8/s240/1000094210.jpg'); animation-delay: 0s;"></div>
             <div class="mts-banner" style="background-image: url('https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEj3MKUI87mMK4_3DltS3LQgqfrK1sESUIMMqlENdi0dPRtOFkeDbvPsTbSaCRaJOb17QZ5s9OO5dR6kFCYiCkgUCF2zBWwvGFSb3T-9Nz51XuIzMvIiOuqwcLzyzeFmn1orKbiETP4LrlaG-RidnWAAzBwUA3aL5_z62HP4_F7R02lAK_WSYdH0U_Gn7Es/s250/1000094211.jpg'); animation-delay: 4s;"></div>
             <div class="mts-banner" style="background-image: url('https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEhU9TzP8rO7ZqXzM_wS3N9eD_T8f4Kx0FwVp7E4Z9qZ8pX_W4E9_M4F8N9aH_bL0K5XwW9TzP8rO7ZqXzM_wS3N9eD_T8f4Kx0FwVp7E4Z9qZ8pX_W4E9_M4F8N9aH_bL0K5Xw/s1600/1000094212.jpg'); animation-delay: 8s;"></div>
             
-            <div class="floating-emoji e1">🏆</div>
+            <div class="floating-emoji e1">🎮</div>
             <div class="floating-emoji e2">🎯</div>
             <div class="floating-emoji e3">🔥</div>
-            <div class="floating-emoji e4">💎</div>
+            <div class="floating-emoji e4">🚀</div>
         </div>
 
         <div class="landing-content-wrapper">
@@ -483,23 +328,24 @@
                 <i class="fa-solid fa-user-plus"></i> Create Account
             </button>
             
+            <!-- UPGRADED ORGANIZER CTA -->
             <button class="action-btn btn-org" onclick="openModal('orgModal')">
                 <i class="fa-solid fa-crown"></i> Organizer Portal
             </button>
         </div>
     </div>
 
+    <!-- PLAYER LOGIN MODAL -->
     <div class="modal-overlay" id="loginModal">
         <div class="modal-card">
             <div class="modal-drag-pill"></div>
             <i class="fa-solid fa-xmark close-modal" onclick="closeModals()"></i>
             <h2 class="modal-title" style="color:var(--accent-cyan)">Welcome Back</h2>
-            <div class="error-msg" id="loginError"></div>
             
             <form id="playerLoginForm">
                 <div class="input-wrapper">
                     <div class="input-group">
-                        <input type="email" name="email" class="form-control" placeholder="Player Email" required>
+                        <input type="email" name="email" id="loginEmail" class="form-control" placeholder="Player Email" required>
                         <i class="fa-solid fa-envelope input-icon"></i>
                     </div>
                 </div>
@@ -510,177 +356,20 @@
                         <i class="fa-solid fa-eye pwd-toggle" onclick="togglePwd('loginPwd', this, false)"></i>
                     </div>
                 </div>
-                <button type="submit" class="submit-btn" id="btnLogin">LOGIN TO ARENA</button>
+                <button type="submit" class="slide-btn next" id="btnLogin" style="width:100%; margin-top:10px;">LOGIN TO ARENA</button>
             </form>
-            <div style="text-align:center; margin-top:20px; font-size:0.9rem; color:#888;">
+            <div style="text-align:center; margin-top:15px; font-size:0.8rem; color:#888;">
                 New here? <span class="terms-link" style="cursor:pointer;" onclick="openModal('signupModal')">Sign Up</span>
             </div>
         </div>
     </div>
 
-    <div class="modal-overlay" id="signupModal">
+    <!-- ORGANIZER MODAL (PURE GLASSMORPHISM) -->
+    <div class="modal-overlay" id="orgModal">
         <div class="modal-card">
             <div class="modal-drag-pill"></div>
             <i class="fa-solid fa-xmark close-modal" onclick="closeModals()"></i>
-            <h2 class="modal-title" style="color:var(--accent-purple)">Register</h2>
-            
-            <div class="progress-wrapper">
-                <div class="progress-bar" id="signupProgress"></div>
-            </div>
-
-            <div class="error-msg" id="signupError"></div>
-
-            <form id="playerSignupForm">
-                <div class="input-wrapper">
-                    <div class="input-group">
-                        <input type="text" name="username" class="form-control req-field" placeholder="Display Name" required>
-                        <i class="fa-solid fa-user input-icon"></i>
-                    </div>
-                </div>
-                <div class="input-wrapper">
-                    <div class="input-group">
-                        <input type="text" name="ign" class="form-control req-field" placeholder="In-Game Name (IGN)" required>
-                        <i class="fa-solid fa-gamepad input-icon"></i>
-                    </div>
-                </div>
-                <div class="input-wrapper">
-                    <div class="input-group">
-                        <input type="text" name="uid" class="form-control req-field" placeholder="Game UID (Numbers Only)" required maxlength="15" oninput="this.value=this.value.replace(/[^0-9]/g,'')">
-                        <i class="fa-solid fa-id-card input-icon"></i>
-                    </div>
-                </div>
-
-                <div class="input-wrapper">
-                    <div class="input-group">
-                        <select name="game" class="form-control req-field" required>
-                            <option value="" disabled selected>Select Primary Game</option>
-                            <option value="BGMI">BGMI</option>
-                            <option value="Free Fire">Free Fire</option>
-                            <option value="Call of Duty Mobile">Call of Duty Mobile</option>
-                            <option value="Valorant">Valorant</option>
-                        </select>
-                        <i class="fa-solid fa-crosshairs input-icon"></i>
-                    </div>
-                </div>
-
-                <div class="input-wrapper">
-                    <div class="input-group">
-                        <select name="state" class="form-control req-field" required>
-                            <option value="" disabled selected>Select State</option>
-                            <option value="Andhra Pradesh">Andhra Pradesh</option>
-                            <option value="Arunachal Pradesh">Arunachal Pradesh</option>
-                            <option value="Assam">Assam</option>
-                            <option value="Bihar">Bihar</option>
-                            <option value="Chhattisgarh">Chhattisgarh</option>
-                            <option value="Goa">Goa</option>
-                            <option value="Gujarat">Gujarat</option>
-                            <option value="Haryana">Haryana</option>
-                            <option value="Himachal Pradesh">Himachal Pradesh</option>
-                            <option value="Jharkhand">Jharkhand</option>
-                            <option value="Karnataka">Karnataka</option>
-                            <option value="Kerala">Kerala</option>
-                            <option value="Madhya Pradesh">Madhya Pradesh</option>
-                            <option value="Maharashtra">Maharashtra</option>
-                            <option value="Manipur">Manipur</option>
-                            <option value="Meghalaya">Meghalaya</option>
-                            <option value="Mizoram">Mizoram</option>
-                            <option value="Nagaland">Nagaland</option>
-                            <option value="Odisha">Odisha</option>
-                            <option value="Punjab">Punjab</option>
-                            <option value="Rajasthan">Rajasthan</option>
-                            <option value="Sikkim">Sikkim</option>
-                            <option value="Tamil Nadu">Tamil Nadu</option>
-                            <option value="Telangana">Telangana</option>
-                            <option value="Tripura">Tripura</option>
-                            <option value="Uttar Pradesh">Uttar Pradesh</option>
-                            <option value="Uttarakhand">Uttarakhand</option>
-                            <option value="West Bengal">West Bengal</option>
-                            <optgroup label="Union Territories">
-                                <option value="Andaman and Nicobar Islands">Andaman and Nicobar</option>
-                                <option value="Chandigarh">Chandigarh</option>
-                                <option value="Dadra and Nagar Haveli and Daman and Diu">Dadra & Nagar Haveli</option>
-                                <option value="Delhi">Delhi</option>
-                                <option value="Jammu and Kashmir">Jammu and Kashmir</option>
-                                <option value="Ladakh">Ladakh</option>
-                                <option value="Lakshadweep">Lakshadweep</option>
-                                <option value="Puducherry">Puducherry</option>
-                            </optgroup>
-                        </select>
-                        <i class="fa-solid fa-map input-icon"></i>
-                    </div>
-                </div>
-
-                <div class="input-wrapper">
-                    <div class="input-group">
-                        <input type="text" name="city" list="indianCities" class="form-control req-field" placeholder="City" required autocomplete="off">
-                        <i class="fa-solid fa-location-dot input-icon"></i>
-                    </div>
-                </div>
-                
-                <div class="input-wrapper">
-                    <div class="input-group">
-                        <input type="tel" name="phone" id="regPhone" class="form-control req-field" placeholder="Phone Number" value="+91 " required maxlength="14">
-                        <i class="fa-solid fa-mobile-screen input-icon"></i>
-                    </div>
-                    <div class="info-box">
-                        <i class="fa-solid fa-circle-check" style="color:var(--accent-cyan)"></i> 
-                        <span>Ensure this number is active to receive tournament alerts and real cash payouts.</span>
-                    </div>
-                </div>
-
-                <div class="input-wrapper">
-                    <div class="flex-row">
-                        <div class="input-group" style="flex: 1;">
-                            <input type="email" name="email" id="regEmail" class="form-control req-field" placeholder="Email Address" required>
-                            <i class="fa-solid fa-envelope input-icon"></i>
-                        </div>
-                        <button type="button" class="otp-btn" id="btnSendOtp" onclick="sendOtp()">SEND OTP</button>
-                    </div>
-                    
-                    <div class="input-group" id="otpGroup" style="display: none; margin-top: 10px;">
-                        <input type="number" name="otp" id="regOtp" class="form-control req-field" placeholder="Enter 4-Digit OTP">
-                        <i class="fa-solid fa-message input-icon"></i>
-                        <button type="button" class="verify-btn" id="btnVerifyOtp" onclick="verifyOtp()">VERIFY</button>
-                    </div>
-
-                    <div class="info-box purple" id="emailInfoBox">
-                        <i class="fa-solid fa-shield-halved" style="color:var(--accent-purple)"></i> 
-                        <span>Your email serves as your primary account recovery and receipt method.</span>
-                    </div>
-                </div>
-
-                <div class="input-wrapper">
-                    <div class="input-group">
-                        <input type="password" name="password" id="regPwd" class="form-control req-field" placeholder="Create Password" required>
-                        <i class="fa-solid fa-lock input-icon"></i>
-                        <i class="fa-solid fa-eye pwd-toggle" onclick="togglePwd('regPwd', this, false)"></i>
-                    </div>
-                </div>
-                
-                <div class="input-wrapper">
-                    <div class="input-group">
-                        <input type="text" name="referral" id="refInput" class="form-control" placeholder="Referral Code (Optional)">
-                        <i class="fa-solid fa-gift input-icon"></i>
-                    </div>
-                </div>
-
-                <label class="custom-checkbox-container">
-                    <input type="checkbox" class="req-field" checked required>
-                    <span class="checkmark"></span>
-                    <span>I confirm my details are correct and I agree to the <a href="terms.html" target="_blank" class="terms-link">Tournyx Terms & Conditions</a> and Fair Play rules.</span>
-                </label>
-
-                <button type="submit" class="submit-btn" id="btnSignup">CREATE ACCOUNT</button>
-            </form>
-        </div>
-    </div>
-
-    <div class="modal-overlay" id="orgModal">
-        <div class="modal-card" style="border-top-color:var(--accent-orange); box-shadow: 0 -10px 40px rgba(0,0,0,0.9), inset 0 20px 30px rgba(255,153,0,0.05);">
-            <div class="modal-drag-pill"></div>
-            <i class="fa-solid fa-xmark close-modal" onclick="closeModals()"></i>
             <h2 class="modal-title" style="color:var(--accent-orange)"><i class="fa-solid fa-crown"></i> Organizer Hub</h2>
-            <div class="error-msg" id="orgError"></div>
 
             <form id="organizerLoginForm">
                 <div class="input-wrapper">
@@ -693,24 +382,238 @@
                     <div class="input-group">
                         <input type="password" name="password" id="orgPwd" class="form-control" placeholder="Access Key" required>
                         <i class="fa-solid fa-key input-icon" style="color:var(--accent-orange)"></i>
-                        <i class="fa-solid fa-eye pwd-toggle" onclick="togglePwd('orgPwd', this, true)" style="color:var(--accent-orange)"></i>
+                        <i class="fa-solid fa-eye pwd-toggle" onclick="togglePwd('orgPwd', this, true)"></i>
                     </div>
                 </div>
-                <button type="submit" class="submit-btn" id="btnOrgLogin" style="background:linear-gradient(90deg, #ff9900, #ff4d4d); box-shadow: 0 5px 20px rgba(255,153,0,0.4);">VERIFY ADMIN</button>
+                <button type="submit" class="slide-btn next" id="btnOrgLogin" style="width:100%; margin-top:10px; background:linear-gradient(90deg, #ff9900, #ff4d4d); box-shadow: 0 5px 20px rgba(255,153,0,0.4);">VERIFY ADMIN</button>
             </form>
 
-            <div style="margin-top: 25px; padding-top: 20px; border-top: 1px solid rgba(255,255,255,0.1); text-align: center;">
-                <a href="organizerportel.html" class="terms-link" style="color:#aaa;"><i class="fa-solid fa-file-signature"></i> Apply to Host Tournaments</a>
+            <div style="margin-top: 20px; padding-top: 15px; border-top: 1px solid rgba(255,255,255,0.1); text-align: center;">
+                <a href="organizerportel.html" class="terms-link" style="color:#aaa; font-size:0.8rem;"><i class="fa-solid fa-file-signature"></i> Apply to Host Tournaments</a>
             </div>
         </div>
     </div>
 
+    <!-- SIGNUP MODAL (MULTI-SLIDE HARDWARE ACCELERATED) -->
+    <div class="modal-overlay" id="signupModal">
+        <div class="modal-card" style="padding: 20px 15px;">
+            <div class="modal-drag-pill"></div>
+            <i class="fa-solid fa-xmark close-modal" onclick="closeModals()"></i>
+            <h2 class="modal-title" style="color:var(--accent-purple); margin-bottom:10px;">Register</h2>
+            
+            <div class="step-indicators">
+                <div class="step-dot active" id="dot1"></div>
+                <div class="step-dot" id="dot2"></div>
+                <div class="step-dot" id="dot3"></div>
+            </div>
+
+            <form id="playerSignupForm">
+                <div class="slider-window">
+                    <div class="slider-track" id="sliderTrack">
+                        
+                        <!-- SLIDE 1: AUTH & COMMS -->
+                        <div class="slide-step">
+                            <div class="input-wrapper">
+                                <div class="flex-row">
+                                    <div class="input-group" style="flex: 1;">
+                                        <input type="email" name="email" id="regEmail" class="form-control req-field" placeholder="Email Address" required>
+                                        <i class="fa-solid fa-envelope input-icon"></i>
+                                    </div>
+                                    <button type="button" class="otp-btn" id="btnSendOtp" onclick="sendOtp()">SEND OTP</button>
+                                </div>
+                                
+                                <div class="input-group" id="otpGroup" style="display: none; margin-top: 8px;">
+                                    <input type="number" name="otp" id="regOtp" class="form-control" placeholder="Enter 4-Digit OTP">
+                                    <i class="fa-solid fa-message input-icon"></i>
+                                    <button type="button" class="verify-btn" id="btnVerifyOtp" onclick="verifyOtp()">VERIFY</button>
+                                </div>
+                            </div>
+
+                            <div class="input-wrapper">
+                                <div class="input-group">
+                                    <input type="password" name="password" id="regPwd" class="form-control req-field" placeholder="Create Password" required>
+                                    <i class="fa-solid fa-lock input-icon"></i>
+                                    <i class="fa-solid fa-eye pwd-toggle" onclick="togglePwd('regPwd', this, false)"></i>
+                                </div>
+                            </div>
+
+                            <div class="input-wrapper">
+                                <div class="input-group">
+                                    <input type="tel" name="phone" id="regPhone" class="form-control req-field" placeholder="Phone (+91 XXXXX XXXXX)" value="+91 " required maxlength="14">
+                                    <i class="fa-solid fa-mobile-screen input-icon"></i>
+                                </div>
+                            </div>
+
+                            <div class="input-wrapper">
+                                <div class="input-group">
+                                    <input type="text" name="referral" id="refInput" class="form-control" placeholder="Referral Code (Optional)">
+                                    <i class="fa-solid fa-gift input-icon"></i>
+                                </div>
+                            </div>
+                            
+                            <!-- Pre-Ticked Terms -->
+                            <label class="custom-checkbox-container">
+                                <input type="checkbox" id="termsCheck" checked required>
+                                <span class="checkmark"></span>
+                                <span>I agree to <a href="terms.html" target="_blank" class="terms-link">Terms</a> & Fair Play.</span>
+                            </label>
+
+                            <button type="button" class="slide-btn next" onclick="nextSlide(1)" style="width:100%;">Next <i class="fa-solid fa-arrow-right"></i></button>
+                        </div>
+
+                        <!-- SLIDE 2: GAMING IDENTITY -->
+                        <div class="slide-step">
+                            <div class="input-wrapper">
+                                <div class="input-group">
+                                    <select name="game" id="regGame" class="form-control req-field">
+                                        <option value="" disabled selected>Select Primary Game</option>
+                                        <option value="BGMI">BGMI</option>
+                                        <option value="Free Fire">Free Fire</option>
+                                        <option value="Call of Duty Mobile">Call of Duty Mobile</option>
+                                        <option value="Valorant">Valorant</option>
+                                    </select>
+                                    <i class="fa-solid fa-crosshairs input-icon"></i>
+                                </div>
+                            </div>
+                            
+                            <div class="input-wrapper">
+                                <div class="input-group">
+                                    <input type="text" name="username" id="regUser" class="form-control req-field" placeholder="Display Name">
+                                    <i class="fa-solid fa-user input-icon"></i>
+                                </div>
+                            </div>
+
+                            <div class="input-wrapper">
+                                <div class="input-group">
+                                    <input type="text" name="ign" id="regIgn" class="form-control req-field" placeholder="In-Game Name (IGN)">
+                                    <i class="fa-solid fa-gamepad input-icon"></i>
+                                </div>
+                            </div>
+
+                            <div class="input-wrapper">
+                                <div class="input-group">
+                                    <!-- STRICT NUMERIC ONLY, MAX 15 DIGITS -->
+                                    <input type="text" name="uid" id="regUid" class="form-control req-field" placeholder="Game UID (Numbers Only)" maxlength="15" oninput="this.value=this.value.replace(/[^0-9]/g,'')">
+                                    <i class="fa-solid fa-id-card input-icon"></i>
+                                </div>
+                            </div>
+
+                            <div class="slide-nav-row">
+                                <button type="button" class="slide-btn back" onclick="prevSlide(2)"><i class="fa-solid fa-arrow-left"></i> Back</button>
+                                <button type="button" class="slide-btn next" onclick="nextSlide(2)">Next <i class="fa-solid fa-arrow-right"></i></button>
+                            </div>
+                        </div>
+
+                        <!-- SLIDE 3: LOCATION & FINAL SUBMIT -->
+                        <div class="slide-step">
+                            <div class="input-wrapper">
+                                <div class="input-group">
+                                    <select name="state" id="regState" class="form-control req-field">
+                                        <option value="" disabled selected>Select State</option>
+                                        <option value="Andhra Pradesh">Andhra Pradesh</option>
+                                        <option value="Arunachal Pradesh">Arunachal Pradesh</option>
+                                        <option value="Assam">Assam</option>
+                                        <option value="Bihar">Bihar</option>
+                                        <option value="Chhattisgarh">Chhattisgarh</option>
+                                        <option value="Goa">Goa</option>
+                                        <option value="Gujarat">Gujarat</option>
+                                        <option value="Haryana">Haryana</option>
+                                        <option value="Himachal Pradesh">Himachal Pradesh</option>
+                                        <option value="Jharkhand">Jharkhand</option>
+                                        <option value="Karnataka">Karnataka</option>
+                                        <option value="Kerala">Kerala</option>
+                                        <option value="Madhya Pradesh">Madhya Pradesh</option>
+                                        <option value="Maharashtra">Maharashtra</option>
+                                        <option value="Manipur">Manipur</option>
+                                        <option value="Meghalaya">Meghalaya</option>
+                                        <option value="Mizoram">Mizoram</option>
+                                        <option value="Nagaland">Nagaland</option>
+                                        <option value="Odisha">Odisha</option>
+                                        <option value="Punjab">Punjab</option>
+                                        <option value="Rajasthan">Rajasthan</option>
+                                        <option value="Sikkim">Sikkim</option>
+                                        <option value="Tamil Nadu">Tamil Nadu</option>
+                                        <option value="Telangana">Telangana</option>
+                                        <option value="Tripura">Tripura</option>
+                                        <option value="Uttar Pradesh">Uttar Pradesh</option>
+                                        <option value="Uttarakhand">Uttarakhand</option>
+                                        <option value="West Bengal">West Bengal</option>
+                                        <optgroup label="Union Territories">
+                                            <option value="Andaman and Nicobar Islands">Andaman and Nicobar</option>
+                                            <option value="Chandigarh">Chandigarh</option>
+                                            <option value="Dadra and Nagar Haveli and Daman and Diu">Dadra & Nagar Haveli</option>
+                                            <option value="Delhi">Delhi</option>
+                                            <option value="Jammu and Kashmir">Jammu and Kashmir</option>
+                                            <option value="Ladakh">Ladakh</option>
+                                            <option value="Lakshadweep">Lakshadweep</option>
+                                            <option value="Puducherry">Puducherry</option>
+                                        </optgroup>
+                                    </select>
+                                    <i class="fa-solid fa-map input-icon"></i>
+                                </div>
+                            </div>
+
+                            <div class="input-wrapper">
+                                <div class="input-group">
+                                    <!-- LINKED TO DATALIST FOR SMART SUGGESTIONS -->
+                                    <input type="text" name="city" id="regCity" list="indianCities" class="form-control req-field" placeholder="City" autocomplete="off">
+                                    <i class="fa-solid fa-location-dot input-icon"></i>
+                                </div>
+                            </div>
+                            
+                            <div class="info-box purple">
+                                <i class="fa-solid fa-shield-halved"></i> 
+                                <span>Your location helps us recommend local LAN tournaments and regional leaderboards.</span>
+                            </div>
+
+                            <div class="slide-nav-row" style="margin-top:20px;">
+                                <button type="button" class="slide-btn back" onclick="prevSlide(3)"><i class="fa-solid fa-arrow-left"></i> Back</button>
+                                <button type="submit" class="slide-btn next" id="btnSignup"><i class="fa-solid fa-check"></i> CREATE ACCOUNT</button>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- ARENA LOADER -->
     <div id="arenaLoader" class="arena-overlay">
         <div class="arena-text">ENTERING THE ARENA</div>
     </div>
 
+    <!-- TOAST NOTIFICATION -->
+    <div id="customToast"><i class="fa-solid fa-circle-exclamation"></i> <span id="toastMsg">Alert</span></div>
+
     <script>
         const API_URL = 'https://script.google.com/macros/s/AKfycbyqqTpgaflxKJ9xH0jq7mJ_jLzcoNhas3gNo0h5gvoa_6r5Ae9NFxJAJp7ZoYNnMRKl/exec';
+
+        // --- BACKGROUND VIDEO CACHING ENGINE ---
+        async function loadVideoBackground() {
+            const videoUrl = 'https://tournyx.in/bg-video.mp4'; // Replace with actual Tournyx Video URL later
+            const videoElement = document.getElementById('bgVideo');
+            if(!videoUrl || videoUrl === '') return;
+            
+            try {
+                const cache = await caches.open('tournyx-video-cache');
+                let response = await cache.match(videoUrl);
+                
+                if (!response) {
+                    response = await fetch(videoUrl);
+                    if (response.ok) cache.put(videoUrl, response.clone());
+                }
+                
+                if (response.ok) {
+                    const blob = await response.blob();
+                    videoElement.src = URL.createObjectURL(blob);
+                }
+            } catch (e) {
+                // Failsafe stream
+                videoElement.src = videoUrl;
+            }
+        }
+        loadVideoBackground();
 
         // --- SECURE API FETCH WRAPPER ---
         async function secureFetch(payload) {
@@ -727,7 +630,15 @@
             }
         }
 
-        // --- SHOW/HIDE PASSWORD TOGGLE (WITH HAPTICS & COLOR STATE) ---
+        function showToast(msg, isSuccess = false) {
+            if(navigator.vibrate) navigator.vibrate(15);
+            const t = document.getElementById('customToast');
+            document.getElementById('toastMsg').innerText = msg;
+            t.className = isSuccess ? 'success show' : 'show';
+            setTimeout(() => { t.className = t.className.replace('show', ''); }, 3500);
+        }
+
+        // --- SHOW/HIDE PASSWORD TOGGLE ---
         function togglePwd(inputId, icon, isOrg) {
             if(navigator.vibrate) navigator.vibrate(15);
             const input = document.getElementById(inputId);
@@ -740,22 +651,18 @@
                 input.type = "password";
                 icon.classList.remove("fa-eye-slash");
                 icon.classList.add("fa-eye");
-                icon.style.color = isOrg ? "var(--accent-orange)" : "#888";
+                icon.style.color = isOrg ? "var(--accent-orange)" : "#666";
             }
         }
 
-        // --- EMAIL OTP LOGIC (FRONTEND VERIFICATION) ---
+        // --- EMAIL OTP LOGIC ---
         let isEmailVerified = false;
 
         async function sendOtp() {
             if(navigator.vibrate) navigator.vibrate(15);
             const emailInput = document.getElementById('regEmail');
             let email = emailInput.value.trim();
-            
-            if(!email.includes("@") || !email.includes(".")) { 
-                alert("Please enter a valid email address."); 
-                return; 
-            }
+            if(!email.includes("@") || !email.includes(".")) { showToast("Enter a valid email address."); return; }
             
             const btn = document.getElementById('btnSendOtp');
             btn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i>`;
@@ -763,21 +670,18 @@
 
             try {
                 const result = await secureFetch({ action: 'send_email_otp', email: email });
-
                 if (result.status === 'success') {
-                    document.getElementById('otpGroup').style.display = 'block';
+                    document.getElementById('otpGroup').style.display = 'flex';
                     document.getElementById('regOtp').setAttribute('required', 'true');
                     btn.innerHTML = `SENT <i class="fa-solid fa-check"></i>`;
-                    alert("OTP Sent Successfully! Please check your email inbox (and spam folder).");
+                    showToast("OTP Sent! Check your inbox/spam.", true);
                 } else {
-                    btn.innerHTML = `SEND OTP`;
-                    btn.disabled = false;
-                    alert("Error: " + result.data); 
+                    btn.innerHTML = `SEND OTP`; btn.disabled = false;
+                    showToast("Error: " + result.data); 
                 }
             } catch (err) {
-                btn.innerHTML = `SEND OTP`;
-                btn.disabled = false;
-                alert("Network error. Could not connect to mail server.");
+                btn.innerHTML = `SEND OTP`; btn.disabled = false;
+                showToast("Network error connecting to mail server.");
             }
         }
 
@@ -785,106 +689,85 @@
             if(navigator.vibrate) navigator.vibrate(15);
             const otpInput = document.getElementById('regOtp');
             const otp = otpInput.value.trim();
-            if(otp.length < 4) { alert("Enter a valid 4-digit OTP"); return; }
+            if(otp.length < 4) { showToast("Enter valid 4-digit OTP"); return; }
 
             const btn = document.getElementById('btnVerifyOtp');
             btn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i>`;
 
-            // UI Lock before actual backend validation happens on final submit
             setTimeout(() => {
                 btn.innerHTML = `<i class="fa-solid fa-check-double"></i> VERIFIED`;
-                btn.classList.add('verified');
-                btn.disabled = true;
-                otpInput.readOnly = true;
-                document.getElementById('regEmail').readOnly = true;
+                btn.classList.add('verified'); btn.disabled = true;
+                otpInput.readOnly = true; document.getElementById('regEmail').readOnly = true;
                 isEmailVerified = true;
-                
-                // Update styling of the info box to Green success theme
-                const infoBox = document.getElementById('emailInfoBox');
-                infoBox.innerHTML = `<i class="fa-solid fa-shield-halved" style="color:var(--accent-green)"></i> <span style="color:var(--accent-green)">Email locked! Final verification will happen when you click Create Account.</span>`;
-                infoBox.style.borderColor = "var(--accent-green)";
-                infoBox.style.background = "rgba(0, 255, 127, 0.08)";
             }, 800);
         }
 
-        // --- PHONE NUMBER STRIP AND LOCK LOGIC ---
+        function unlockEmailInput() {
+            document.getElementById('regEmail').readOnly = false;
+            isEmailVerified = false;
+            const btn = document.getElementById('btnVerifyOtp');
+            btn.innerHTML = `VERIFY`; btn.classList.remove('verified'); btn.disabled = false;
+            const otpInput = document.getElementById('regOtp');
+            otpInput.readOnly = false; otpInput.value = "";
+        }
+
+        // --- PHONE NUMBER STRIP & LOCK LOGIC ---
         const phoneInput = document.getElementById('regPhone');
         phoneInput.addEventListener('input', function(e) {
-            if (!this.value.startsWith('+91 ')) {
-                this.value = '+91 ';
-            }
+            if (!this.value.startsWith('+91 ')) this.value = '+91 ';
             let numbers = this.value.substring(4).replace(/\D/g, '');
             if (numbers.length > 10) numbers = numbers.substring(0, 10);
             this.value = '+91 ' + numbers;
         });
         phoneInput.addEventListener('keydown', function(e) {
-            if ((e.key === 'Backspace' || e.key === 'Delete') && this.selectionStart <= 4 && this.selectionEnd <= 4) {
-                e.preventDefault();
-            }
+            if ((e.key === 'Backspace' || e.key === 'Delete') && this.selectionStart <= 4 && this.selectionEnd <= 4) e.preventDefault();
         });
 
-        // --- ZERO-LAG PROGRESS BAR LOGIC ---
-        const signupForm = document.getElementById('playerSignupForm');
-        const reqFields = signupForm.querySelectorAll('.req-field');
-        const progressBar = document.getElementById('signupProgress');
-
-        // Changed to passive 'change' listener for selects to prevent keyboard lag
-        signupForm.addEventListener('change', updateProgress);
-        signupForm.addEventListener('keyup', updateProgress);
-
-        function updateProgress() {
-            let filledCount = 0;
-            reqFields.forEach(field => {
-                if (field.type === 'checkbox') {
-                    if (field.checked) filledCount++;
-                } else if (field.tagName === 'SELECT') {
-                    if (field.value !== "") filledCount++;
-                } else {
-                    if (field.value.trim().length > 0 && field.value.trim() !== "+91") filledCount++;
-                }
+        // --- MULTI-STEP SLIDER LOGIC ---
+        let currentStep = 1;
+        function updateDots() {
+            document.querySelectorAll('.step-dot').forEach((dot, idx) => {
+                dot.classList.toggle('active', idx + 1 === currentStep);
             });
-            const progress = (filledCount / reqFields.length) * 100;
-            progressBar.style.width = progress + '%';
-            
-            if(progress === 100) {
-                progressBar.style.boxShadow = "0 0 20px var(--accent-green)";
-                progressBar.style.background = "var(--accent-green)";
-            } else {
-                progressBar.style.boxShadow = "0 0 10px var(--accent-cyan)";
-                progressBar.style.background = "var(--accent-gradient)";
+        }
+        
+        function nextSlide(step) {
+            if(navigator.vibrate) navigator.vibrate(15);
+            // Validation Before Moving Forward
+            if (step === 1) {
+                if(!isEmailVerified) { showToast("Please verify email via OTP to continue."); return; }
+                if(document.getElementById('regPwd').value.length < 6) { showToast("Password must be at least 6 characters."); return; }
+                const phoneDigits = document.getElementById('regPhone').value.substring(4).replace(/\D/g, '');
+                if(phoneDigits.length !== 10) { showToast("Enter a valid 10-digit phone number."); return; }
+                if(!document.getElementById('termsCheck').checked) { showToast("You must agree to the Terms & Conditions."); return; }
             }
+            if (step === 2) {
+                if(document.getElementById('regGame').value === "") { showToast("Please select a game."); return; }
+                if(document.getElementById('regUser').value.trim() === "") { showToast("Display name is required."); return; }
+                if(document.getElementById('regIgn').value.trim() === "") { showToast("In-Game Name is required."); return; }
+                if(document.getElementById('regUid').value.trim() === "") { showToast("Game UID is required."); return; }
+            }
+
+            currentStep = step + 1;
+            document.getElementById('sliderTrack').style.transform = `translateX(-${(currentStep - 1) * 33.333}%)`;
+            updateDots();
         }
 
-        // --- PARTICLES ENGINE ---
-        const canvas = document.getElementById('particles-canvas');
-        const ctx = canvas.getContext('2d');
-        canvas.width = window.innerWidth; canvas.height = window.innerHeight;
-        let particles = [];
-        class P {
-            constructor(){ this.x=Math.random()*canvas.width; this.y=Math.random()*canvas.height; this.vx=Math.random()*0.5-0.25; this.vy=Math.random()*0.5-0.25; this.size=Math.random()*2+0.5; }
-            u(){ this.x+=this.vx; this.y+=this.vy; if(this.x<0||this.x>canvas.width)this.vx=-this.vx; if(this.y<0||this.y>canvas.height)this.vy=-this.vy; }
-            d(){ ctx.fillStyle='rgba(0,242,255,0.3)'; ctx.beginPath(); ctx.arc(this.x,this.y,this.size,0,Math.PI*2); ctx.fill(); }
+        function prevSlide(step) {
+            if(navigator.vibrate) navigator.vibrate(15);
+            currentStep = step - 1;
+            document.getElementById('sliderTrack').style.transform = `translateX(-${(currentStep - 1) * 33.333}%)`;
+            updateDots();
         }
-        for(let i=0;i<50;i++) particles.push(new P());
-        function anim(){ ctx.clearRect(0,0,canvas.width,canvas.height); particles.forEach(p=>{p.u();p.d()}); requestAnimationFrame(anim); }
-        anim();
-        window.addEventListener('resize', () => { canvas.width = window.innerWidth; canvas.height = window.innerHeight; });
 
         // --- SMART ROUTING & REFERRAL INJECTION ---
         window.addEventListener('DOMContentLoaded', () => {
             const urlParams = new URLSearchParams(window.location.search);
-            // Detect ?code= or ?ref= automatically
             const refCode = urlParams.get('ref') || urlParams.get('code');
             const tabParam = urlParams.get('tab');
 
-            if (refCode) { 
-                openModal('signupModal'); 
-                document.getElementById('refInput').value = refCode; 
-                updateProgress(); // Force UI update
-            }
+            if (refCode) { openModal('signupModal'); document.getElementById('refInput').value = refCode; }
             if (tabParam === 'organizer') openModal('orgModal');
-            
-            updateProgress(); // Initial Progress check
         });
 
         // --- MODAL LOGIC ---
@@ -896,7 +779,10 @@
         
         function closeModals() {
             document.querySelectorAll('.modal-overlay').forEach(m => m.classList.remove('active'));
-            document.querySelectorAll('.error-msg').forEach(e => e.style.display = 'none');
+            // Reset Slider if closed
+            currentStep = 1;
+            document.getElementById('sliderTrack').style.transform = `translateX(0%)`;
+            updateDots();
         }
 
         // --- ANIMATION OVERLAY LOGIC ---
@@ -910,7 +796,6 @@
             setTimeout(() => { window.location.href = redirectUrl; }, 1900);
         }
 
-        // --- AUTH LOGIC ---
         function btnLoading(btnId, text) {
             if(navigator.vibrate) navigator.vibrate(15);
             const btn = document.getElementById(btnId);
@@ -924,54 +809,22 @@
             btn.disabled = false;
         }
 
-        // ALLOW EMAIL TO BE EDITABLE IF IT EXISTS
-        function unlockEmailInput() {
-            document.getElementById('regEmail').readOnly = false;
-            
-            isEmailVerified = false;
-            
-            const btn = document.getElementById('btnVerifyOtp');
-            btn.innerHTML = `VERIFY`;
-            btn.classList.remove('verified');
-            btn.disabled = false;
-            
-            const otpInput = document.getElementById('regOtp');
-            otpInput.readOnly = false;
-            otpInput.value = "";
-            
-            const infoBox = document.getElementById('emailInfoBox');
-            infoBox.innerHTML = `<i class="fa-solid fa-shield-halved" style="color:var(--accent-purple)"></i> <span>Your email serves as your primary account recovery and receipt method. Please update and re-verify.</span>`;
-            infoBox.style.borderColor = "var(--accent-purple)";
-            infoBox.style.background = "rgba(189, 0, 255, 0.08)";
-            updateProgress();
-        }
-
-        // PLAYER SIGNUP 
+        // PLAYER SIGNUP (FINAL SUBMISSION)
         document.getElementById('playerSignupForm').addEventListener('submit', async (e) => {
             e.preventDefault();
-            const errBox = document.getElementById('signupError');
-            errBox.style.display = 'none';
 
-            if(!isEmailVerified) {
-                errBox.innerText = "Please verify your Email Address with OTP to continue.";
-                errBox.style.display = 'block';
-                return;
-            }
+            // Final Validation for Slide 3
+            if(document.getElementById('regState').value === "") { showToast("Please select a state."); return; }
+            if(document.getElementById('regCity').value.trim() === "") { showToast("Please enter your city."); return; }
 
             const phoneVal = document.getElementById('regPhone').value;
             const phoneDigits = phoneVal.substring(4).replace(/\D/g, '');
-            if (phoneDigits.length !== 10) {
-                errBox.innerText = "Please enter exactly 10 valid digits for the phone number.";
-                errBox.style.display = 'block';
-                return;
-            }
 
             btnLoading('btnSignup', 'CREATING ACCOUNT...');
 
             try {
                 const formData = new FormData(e.target);
                 const rawData = Object.fromEntries(formData);
-                const safePhoneStr = phoneDigits; 
 
                 const payload = {
                     action: 'signup',
@@ -981,7 +834,7 @@
                     game: rawData.game,
                     state: rawData.state,
                     city: rawData.city,
-                    phone: safePhoneStr,      
+                    phone: phoneDigits,      
                     email: rawData.email,
                     password: rawData.password,
                     referral: rawData.referral || "", 
@@ -993,19 +846,23 @@
                 
                 if(result.status === 'success') {
                     if(navigator.vibrate) navigator.vibrate(30);
-                    alert("Account Created! You can now Login.");
-                    openModal('loginModal');
-                } else {
-                    errBox.innerText = result.data; 
-                    errBox.style.display = 'block';
+                    showToast("Account Created! You can now Login.", true);
                     
-                    if (result.data.toLowerCase().includes("email already registered")) {
-                        unlockEmailInput();
-                    }
+                    // Auto-fill logic
+                    let safeEmail = rawData.email;
+                    
+                    setTimeout(() => {
+                        openModal('loginModal');
+                        document.getElementById('loginEmail').value = safeEmail;
+                        document.getElementById('loginPwd').focus();
+                    }, 800);
+                    
+                } else {
+                    showToast(result.data, true);
+                    if (result.data.toLowerCase().includes("email already registered")) unlockEmailInput();
                 }
             } catch (err) { 
-                errBox.innerText = "Connection Error or system unavailable."; 
-                errBox.style.display = 'block'; 
+                showToast("Connection Error or system unavailable.", true); 
             } finally { 
                 btnReset('btnSignup'); 
             }
@@ -1014,8 +871,6 @@
         // PLAYER LOGIN
         document.getElementById('playerLoginForm').addEventListener('submit', async (e) => {
             e.preventDefault();
-            const errBox = document.getElementById('loginError');
-            errBox.style.display = 'none';
             btnLoading('btnLogin', 'AUTHENTICATING...');
 
             const email = e.target.email.value;
@@ -1026,22 +881,18 @@
                 
                 if (result.status === 'success') {
                     if (result.data.role === 'organizer') {
-                        errBox.innerText = "Organizers must log in through the Organizer Portal."; errBox.style.display = 'block';
+                        showToast("Organizers must log in through the Organizer Portal.");
                     } else {
                         triggerArenaEntry(result.data, 'index.html');
                     }
-                } else { 
-                    errBox.innerText = "Invalid Credentials"; errBox.style.display = 'block'; 
-                }
-            } catch (err) { errBox.innerText = "Network Error."; errBox.style.display = 'block'; }
+                } else { showToast("Invalid Credentials"); }
+            } catch (err) { showToast("Network Error."); }
             finally { btnReset('btnLogin'); }
         });
 
         // ORGANIZER LOGIN
         document.getElementById('organizerLoginForm').addEventListener('submit', async (e) => {
             e.preventDefault();
-            const errBox = document.getElementById('orgError');
-            errBox.style.display = 'none';
             btnLoading('btnOrgLogin', 'VERIFYING...');
 
             const email = e.target.email.value;
@@ -1054,48 +905,32 @@
                     if (result.data.role === 'organizer') {
                         triggerArenaEntry(result.data, 'profile.html');
                     } else {
-                        errBox.innerText = "Players must log in through the Player Portal."; errBox.style.display = 'block';
+                        showToast("Players must log in through the Player Portal.");
                     }
-                } else { 
-                    errBox.innerText = "Invalid Admin Credentials"; errBox.style.display = 'block'; 
-                }
-            } catch (err) { errBox.innerText = "System Error."; errBox.style.display = 'block'; }
+                } else { showToast("Invalid Admin Credentials"); }
+            } catch (err) { showToast("System Error."); }
             finally { btnReset('btnOrgLogin'); }
         });
     </script>
     <script>
-function tournyxOneSignalSetup() {
-    let user = JSON.parse(localStorage.getItem('tournyx_user'));
-    
-    if (user && user.email && typeof median !== 'undefined' && median.onesignal) {
-        let cleanEmail = user.email.toLowerCase().trim();
-
-        if (median.onesignal.login) {
-            median.onesignal.login({ externalId: cleanEmail });
-            if (median.onesignal.user && median.onesignal.user.addEmail) {
-                median.onesignal.user.addEmail({ email: cleanEmail });
+    function tournyxOneSignalSetup() {
+        let user = JSON.parse(localStorage.getItem('tournyx_user'));
+        if (user && user.email && typeof median !== 'undefined' && median.onesignal) {
+            let cleanEmail = user.email.toLowerCase().trim();
+            if (median.onesignal.login) {
+                median.onesignal.login({ externalId: cleanEmail });
+                if (median.onesignal.user && median.onesignal.user.addEmail) median.onesignal.user.addEmail({ email: cleanEmail });
+            } else if (median.onesignal.setExternalUserId) {
+                median.onesignal.setExternalUserId({ externalId: cleanEmail });
+                if (median.onesignal.setEmail) median.onesignal.setEmail({ email: cleanEmail });
             }
-        } else if (median.onesignal.setExternalUserId) {
-            median.onesignal.setExternalUserId({ externalId: cleanEmail });
-            if (median.onesignal.setEmail) {
-                median.onesignal.setEmail({ email: cleanEmail });
-            }
-        }
-
-        let tagData = { 
-            "user_email": cleanEmail, 
-            "user_status": "active" 
-        };
-        
-        if (median.onesignal.tags && median.onesignal.tags.set) {
-            median.onesignal.tags.set(tagData);
-        } else if (median.onesignal.sendTags) {
-            median.onesignal.sendTags(tagData);
+            let tagData = { "user_email": cleanEmail, "user_status": "active" };
+            if (median.onesignal.tags && median.onesignal.tags.set) median.onesignal.tags.set(tagData);
+            else if (median.onesignal.sendTags) median.onesignal.sendTags(tagData);
         }
     }
-}
-document.addEventListener("median_library_ready", tournyxOneSignalSetup);
-document.addEventListener("DOMContentLoaded", tournyxOneSignalSetup);
-</script>
+    document.addEventListener("median_library_ready", tournyxOneSignalSetup);
+    document.addEventListener("DOMContentLoaded", tournyxOneSignalSetup);
+    </script>
 </body>
 </html>
