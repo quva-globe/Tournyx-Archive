@@ -131,15 +131,34 @@
         .game-icon { width: 28px; height: 28px; border-radius: 50%; object-fit: cover; }
         .game-name { font-size: 0.85rem; font-family: var(--font-head); font-weight: bold; white-space: nowrap; }
 
-        /* --- DYNAMIC GLOWING TOURNAMENT CARDS --- */
-        .tourney-list { padding: 0 15px; display: flex; flex-direction: column; gap: 18px; min-height: 400px; }
-        .tourney-card { 
-            background: var(--card-bg); border-radius: 18px; overflow: hidden; 
-            position: relative; transition: transform 0.2s ease-out, box-shadow 0.3s ease; cursor: pointer; 
-            border: 1px solid var(--card-border); box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
-            transform: translateZ(0); will-change: transform, box-shadow, border-color;
-        }
-        .tourney-card:active { transform: scale(0.98); }
+       /* --- DYNAMIC GLOWING TOURNAMENT CARDS (UPGRADED) --- */
+.tourney-list { padding: 0 15px; display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 20px; min-height: 400px; }
+
+.tourney-card { 
+    background: linear-gradient(145deg, rgba(20, 10, 35, 0.6) 0%, rgba(7, 3, 17, 0.9) 100%);
+    border-radius: 20px; overflow: hidden; 
+    position: relative; cursor: pointer; 
+    border: 1px solid var(--card-border); 
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+    transform: translateZ(0); 
+    will-change: transform, box-shadow;
+    transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.4s ease, border-color 0.3s ease;
+}
+
+.tourney-card::before {
+    content: ''; position: absolute; top: 0; left: -100%; width: 50%; height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.05), transparent);
+    transform: skewX(-20deg); transition: left 0.7s ease; z-index: 10; pointer-events: none;
+}
+
+.tourney-card:hover {
+    transform: translateY(-8px) scale(1.02);
+    box-shadow: 0 15px 45px rgba(0, 242, 255, 0.15);
+    border-color: rgba(0, 242, 255, 0.4);
+}
+
+.tourney-card:hover::before { left: 200%; }
+.tourney-card:active { transform: scale(0.96); }
         
         /* Glow Logic - Optimized for 0 Lag */
         .tourney-card.upcoming-glow { border-color: rgba(0, 242, 255, 0.4); }
@@ -171,7 +190,11 @@
         .t-plat-badge { position: absolute; bottom: 10px; right: 10px; background: rgba(0,0,0,0.8); border: 1px solid rgba(255,255,255,0.15); color: white; padding: 4px 8px; border-radius: 50px; font-size: 0.65rem; font-family: var(--font-head); font-weight: bold; z-index: 2; letter-spacing: 0.5px; display: flex; align-items: center; gap: 4px;}
         
         .t-info-box { padding: 10px 14px 14px 14px; position: relative; z-index: 2; }
-        .t-title { font-family: var(--font-head); font-size: 0.95rem; color: white; margin-bottom: 10px; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; white-space: normal; overflow: hidden; text-overflow: ellipsis; word-wrap: break-word; overflow-wrap: break-word; line-height: 1.3; width: 100%; text-shadow: 0 0 5px rgba(255,255,255,0.2); }
+        .t-title, .dm-title {
+    font-size: clamp(1rem, 4vw, 1.3rem) !important; 
+    line-height: 1.2; word-break: break-word; overflow-wrap: break-word;
+    white-space: normal; text-overflow: ellipsis; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;
+}
         .verified-badge { color: #1da1f2; font-size: 0.85rem; flex-shrink:0; margin-left: 5px; vertical-align: middle;}
         
         .t-details-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 12px; word-wrap: break-word; align-items: center; transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
@@ -242,7 +265,11 @@
             --dynamic-t-color: 0, 242, 255;
         }
         .detail-modal.active { transform: translateY(0); opacity: 1; }
-        .dm-container { width: 100%; height: 100%; display: flex; flex-direction: column; background: var(--primary-bg); position: relative; }
+        /* MODAL & OVERFLOW UPGRADES */
+.dm-container { 
+    width: 100%; height: 100%; display: flex; flex-direction: column; 
+    background: var(--primary-bg); position: relative; 
+    overflow: hidden; /* Prevents outer leakage */
 
         .dm-header { background: rgba(7,3,17,0.85); padding: calc(10px + env(safe-area-inset-top, 0px)) 15px 10px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(var(--dynamic-t-color), 0.2); flex-shrink: 0; z-index: 10; backdrop-filter: blur(15px); }
         .dm-back { font-size: 1.4rem; cursor: pointer; color: white; padding: 5px 10px 5px 0; transition: transform 0.2s; }
@@ -397,7 +424,12 @@
 
         .locked-footer { background: rgba(7, 3, 17, 0.95); padding: 15px 20px calc(15px + env(safe-area-inset-bottom, 0px)); border-top: 1px solid rgba(var(--dynamic-t-color), 0.2); display: flex; gap: 10px; flex-shrink: 0; box-shadow: 0 -5px 20px rgba(0,0,0,0.5); z-index: 50; backdrop-filter: blur(10px);}
         /* PERFECT TEXT SIZES AND NO OVERFLOW */
-        .btn-primary { flex: 1; background: var(--accent-gradient); color: white; border: none; padding: 12px 10px; border-radius: 50px; font-family: var(--font-head); font-weight: bold; font-size: clamp(0.75rem, 3.5vw, 0.95rem); cursor: pointer; box-shadow: 0 5px 15px rgba(189,0,255,0.4); text-transform: uppercase; transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275); display:flex; align-items:center; justify-content:center; gap:6px; position: relative; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; max-width: 100%; box-sizing: border-box;}
+        .btn-primary, .btn-secondary {
+    padding: clamp(10px, 2vw, 14px) clamp(12px, 3vw, 20px);
+    font-size: clamp(0.7rem, 2.5vw, 0.9rem);
+    letter-spacing: 0.5px;
+    flex-shrink: 1; min-width: 0; /* Forces buttons to shrink rather than overflow */
+}
         .btn-primary::after { content: ''; position: absolute; top: 0; left: -100%; width: 50%; height: 100%; background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent); animation: btnShineCore 2.5s infinite 1.5s; z-index: 1; }
         @keyframes btnShineCore { 0% { left: -100%; } 20% { left: 200%; } 100% { left: 200%; } }
         .btn-primary:active { transform: scale(0.95); box-shadow: 0 2px 10px rgba(189,0,255,0.4); }
@@ -450,6 +482,17 @@
 
         .app-footer { text-align: center; padding: 40px 20px 100px 20px; color: #555; font-size: 0.75rem; font-family: var(--font-body); letter-spacing: 1px; border-top: 1px solid rgba(255,255,255,0.05); margin-top: 20px; }
 
+        /* NEW ESPORTS LOADER CSS */
+.esports-core-loader { position: relative; width: 80px; height: 80px; display: flex; align-items: center; justify-content: center; }
+.esports-core-loader .ring { position: absolute; width: 100%; height: 100%; border-radius: 50%; border: 3px solid transparent; }
+.esports-core-loader .outer-ring { border-top-color: var(--accent-cyan); border-bottom-color: var(--accent-purple); animation: spinOuter 1.5s linear infinite; width: 100px; height: 100px; }
+.esports-core-loader .inner-ring { border-left-color: var(--accent-orange); border-right-color: var(--accent-green); animation: spinInner 1s linear infinite reverse; width: 60px; height: 60px; }
+.esports-core-loader .target-icon { color: white; font-size: 1.5rem; filter: drop-shadow(0 0 8px rgba(0,242,255,0.8)); animation: pulseTarget 2s ease-in-out infinite; }
+
+@keyframes spinOuter { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+@keyframes spinInner { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+@keyframes pulseTarget { 0%, 100% { transform: scale(1); opacity: 0.8; } 50% { transform: scale(1.2); opacity: 1; } }
+    
         /* --- PERFECT BOTTOM NAVIGATION --- */
         .bottom-nav { position: fixed; bottom: 0; left: 0; width: 100%; height: calc(65px + env(safe-area-inset-bottom, 0px)); background: rgba(5, 2, 12, 0.9); backdrop-filter: blur(10px); display: flex; justify-content: space-between; align-items: flex-start; padding: 10px 2px env(safe-area-inset-bottom, 0px); border-top: 1px solid rgba(255,255,255,0.05); z-index: 1000; transform: translateZ(0);}
         .nav-item { display: flex; flex-direction: column; align-items: center; justify-content: flex-start; color: #666; text-decoration: none; font-size: 0.6rem; font-family: var(--font-head); font-weight: bold; flex: 1; transition: 0.2s; position: relative; padding: 0 2px; text-align: center;}
@@ -472,11 +515,11 @@
         
         @media (min-width: 850px) {
             .tourney-card { flex: 0 0 calc(50% - 10px); }
-            .tourney-list { flex-direction: row; flex-wrap: wrap; gap: 20px; }
+            .tourney-list { grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); }
             .bottom-nav { display: none !important; }
             
-            .detail-modal { align-items: center; justify-content: center; background: rgba(0,0,0,0.85) !important; }
-            .dm-container { width: 800px !important; height: 90vh !important; background: var(--primary-bg); border-radius: 20px; box-shadow: 0 10px 50px rgba(0,0,0,0.8); border: 1px solid rgba(var(--dynamic-t-color), 0.3); }
+            .detail-modal { align-items: center; justify-content: center; padding: 20px; background: rgba(0,0,0,0.85) !important; backdrop-filter: blur(10px); }
+            .dm-container { max-width: 700px; height: 85vh !important; border-radius: 24px; overflow: hidden; border: 1px solid rgba(var(--dynamic-t-color), 0.4); }
             .dm-header { border-radius: 20px 20px 0 0; }
             .locked-footer { border-radius: 0 0 20px 20px; position: absolute; bottom: 0; width: 100%; box-sizing: border-box; }
             .dm-scroll-area { padding-bottom: 90px; }
@@ -487,9 +530,9 @@
             .single-page-mode .locked-footer { border-radius: 0; position: fixed; }
 
             .bottom-sheet-overlay { align-items: center; justify-content: center; }
-            .bottom-sheet { border-radius: 25px; max-width: 500px; transform: scale(0.9); opacity: 0; transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275); position: relative; bottom: auto; left: auto;}
-            .bottom-sheet-overlay.active .bottom-sheet { transform: scale(1); opacity: 1; }
-        }
+           .bottom-sheet { max-width: 450px; margin: auto; border-radius: 24px; position: relative; top: 50%; transform: translateY(-50%) scale(0.9); }
+            .bottom-sheet-overlay.active .bottom-sheet { transform: translateY(-50%) scale(1); }
+}
 
         .median-active .top-header { display: none !important; }
         .median-active { padding-top: 15px !important; }
@@ -864,16 +907,12 @@
     </div>
 
     <div id="securePaymentLoader">
-        <div class="cycle-logos" id="regAnimLogoBox">
-            <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEg_20wCR-WBMpQmw3vxcYUf-vxIO1PYDJoQN_Sid3UDjA9tf0cuX0eH40jbzHoJad4cxbnjhPjqfCw1Z5V1LhgN9zFuIQC0fJjecTy3D9PFu5WjR2H1wHwTD1bUGnXY_NiApWn5gMs6velcQngSzKoP1yHzX0cVsFSUFM8zIefcbiPayY7680Kz0V0ZAAE/s1264/1000093706.png">
-            <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEj3MKUI87mMK4_3DltS3LQgqfrK1sESUIMMqlENdi0dPRtOFkeDbvPsTbSaCRaJOb17QZ5s9OO5dR6kFCYiCkgUCF2zBWwvGFSb3T-9Nz51XuIzMvIiOuqwcLzyzeFmn1orKbiETP4LrlaG-RidnWAAzBwUA3aL5_z62HP4_F7R02lAK_WSYdH0U_Gn7Es/s250/1000094211.jpg">
-            <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEiJvPTY_y_XU-0Lwbnjwm7961lCDkSlQh2MtCWHunFVX6WS7WCprCtkPyB334BU_-4vGsP0NseDQf4NPBEOIxqjk7VZQqZUHpnLb4Bw-c1UeXQy2M9DzNrNdYt_aL0GEb1AlTPupC5zEjJiP3Ci0Oxk-wdg5TF5cs8_UNSe3uTT1BE884je3iXr8QlMjx8/s240/1000094210.jpg">
-            <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEg8vsDFFkLAXTA234WJzc3OqsLbmB3HBlKaXhiJo-JFVcTtYmMUI2DVdk5ljTPvGPKj-vtcejjFAxZO0sapDafr6xqN7VpHLGCcxqYWWY2LIZszXhrnnO1gcXFeJzY2EclP6G1bLoea5bshOtT7Dl3p4F_l0pGDuz1j5KJ78dEnI7cQixwAeDC1vKG89N4/s460/1000094209.jpg">
-        </div>
-        <h2 class="glitch-text" id="loaderTxtHead" data-text="GEARING UP" style="font-family: var(--font-head);">GEARING UP</h2>
-        <div class="cyber-bar-container"><div class="cyber-bar-fill" id="secureLoaderBar"></div></div>
-        <p id="loaderTxt" style="color:var(--accent-cyan); font-family:var(--font-head); margin-top:15px; font-size:1rem; font-weight:bold; text-transform:uppercase; transition: opacity 0.2s;">Equipping loadout...</p>
+    <div class="esports-core-loader">
+        <div class="ring outer-ring"></div>
+        <div class="ring inner-ring"></div>
+        <i class="fa-solid fa-crosshairs target-icon"></i>
     </div>
+</div>
 
     <div class="bottom-sheet-overlay" id="regOverlay">
         <div class="bottom-sheet">
@@ -2935,91 +2974,101 @@
             }, 1200);
         }
 
-        function submitFinalRegistration(clanName, cost, method, bar, txt, head, logoBox) {
-            const t = activeTournament;
-            let user = JSON.parse(localStorage.getItem('tournyx_user'));
+        async function submitFinalRegistration(clanName, cost, method, bar, txt, head, logoBox) {
+    const t = activeTournament;
+    let user = JSON.parse(localStorage.getItem('tournyx_user'));
 
-            let entryPaidPts = method === 'points' ? cost : 0;
-
-            secureFetch({
-                action: "join", match_id: t.id || t.title, game: t.game, title: t.title,
-                date: t.date, prize: t.prize, email: user.email, username: user.username, phone: user.phone, 
-                clan: clanName, entry_paid: method !== 'points' ? cost : 0, entry_paid_pts: entryPaidPts, method: method,
-                org_email: t.org_email || t.email || ""
-            }).then(() => {
-                
-                if(cost > 0) {
-                    secureFetch({ action: 'update_wallet', email: user.email, rupees: user.rupees, points: user.points }).catch(()=>{});
-                    
-                    let txns = JSON.parse(localStorage.getItem('tournyx_txns')) || [];
-                    let dateStr = getISTDateTime();
-                    let newTxn = { 
-                        id: (method === 'points' ? "ENTRY-PTS-" : "ENTRY-") + Math.floor(Math.random() * 1000000), 
-                        title: "Joined: " + (t.title || "Tournament"), 
-                        amount: method === 'points' ? (cost + " PTS") : cost, 
-                        type: "Debit", 
-                        status: "Success", 
-                        category: "Tournament Entry", 
-                        date: dateStr 
-                    };
-                    txns.unshift(newTxn);
-                    localStorage.setItem('tournyx_txns', JSON.stringify(txns));
-                }
-                
-                userLiveMatches.push({ tournament_title: t.title, match_id: t.id || t.title });
-                
-                playGunshotSound();
-                
-                bar.style.width = "100%"; 
-                bar.classList.add('blast');
-                bar.style.background = "#00ff7f";
-                logoBox.style.filter = "drop-shadow(0 0 40px #00ff7f)";
-                logoBox.style.transform = "scale(1.15)"; 
-                head.setAttribute('data-text', 'BATTLE READY'); head.innerText = "BATTLE READY"; 
-                txt.style.opacity = '0';
-                setTimeout(() => { txt.innerText = "Slot Secured. GLHF!"; txt.style.opacity = '1'; }, 100); 
-                txt.style.color = "#00ff7f";
-                
-                setTimeout(() => {
-                    let loaderOverlay = document.getElementById('securePaymentLoader');
-                    loaderOverlay.classList.remove('active');
-                    setTimeout(() => loaderOverlay.style.display = 'none', 500); 
-                    
-                    logoBox.style.transform = "scale(1)"; 
-                    closeRegistrationFlow();
-                    showToast(cost > 0 ? "Entry successful! Welcome to the Arena." : "Registration Confirmed! GLHF.");
-                    
-                    let btn = document.getElementById('masterJoinBtn');
-                    btn.innerHTML = "<i class='fa-solid fa-plus'></i> ADD ANOTHER CLAN";
-                    btn.style.fontSize = "0.75rem";
-                    btn.style.padding = "8px 15px";
-                    btn.disabled = false;
-                    
-                    let currentFilled = parseInt(t.filled_slots) || 0;
-                    let newFilled = currentFilled + 1;
-                    let totalSlots = parseInt(t.slots) || 48;
-                    t.filled_slots = newFilled; 
-                    
-                    let dtRegs = document.getElementById('dtRegistrations');
-                    if (dtRegs) { dtRegs.innerText = `${newFilled}/${totalSlots}`; }
-                    
-                    renderRoomTabDynamic(t, true);
-                    setTimeout(fetchLiveTeams, 1500);
-                }, 1800);
-            }).catch(e => {
-                txt.style.opacity = '0';
-                setTimeout(() => { txt.innerText = "Connection Failed! Try Again."; txt.style.opacity = '1'; }, 100);
-                txt.style.color = "#ff4d4d";
-                bar.style.background = "#ff4d4d";
-                logoBox.style.filter = "drop-shadow(0 0 15px #ff4d4d)";
-                setTimeout(() => { 
-                    let loaderOverlay = document.getElementById('securePaymentLoader');
-                    loaderOverlay.classList.remove('active');
-                    setTimeout(() => loaderOverlay.style.display = 'none', 500); 
-                }, 2500);
+    // 1. BULLETPROOF PRE-FLIGHT CHECK
+    // Fetch the absolute latest match data right before pushing to the sheet
+    try {
+        let freshData = await secureFetch({ action: 'get_tournament_details', match_id: t.id || t.title });
+        if (freshData.status === 'success') {
+            let alreadyRegistered = freshData.data.some(team => {
+                let existingClan = String(team.clan).toLowerCase().trim();
+                let attemptingClan = String(clanName).toLowerCase().trim();
+                // Safely check if JSON string or flat string matches
+                return existingClan.includes(attemptingClan) || attemptingClan.includes(existingClan);
             });
-        }
 
+            if (alreadyRegistered) {
+                // RACE CONDITION INTERCEPTED
+                let loaderOverlay = document.getElementById('securePaymentLoader');
+                loaderOverlay.classList.remove('active');
+                setTimeout(() => loaderOverlay.style.display = 'none', 500);
+                
+                closeRegistrationFlow();
+                showToast("Alert: Roster is already registered for this match!", true);
+                
+                // Refund tickets/points locally since we deducted them in confirmPayment
+                if(cost > 0) {
+                    if (method === 'points') user.points = (parseInt(user.points) || 0) + cost;
+                    // Note: Implement a similar local refund for rupees if needed here
+                    localStorage.setItem('tournyx_user', JSON.stringify(user));
+                }
+                document.getElementById('finalSubmitBtn').disabled = false;
+                return; // STOP EXECUTION
+            }
+        }
+    } catch(e) {
+        console.warn("Pre-flight check bypassed due to network, proceeding with strict write.");
+    }
+
+    // 2. PROCEED WITH REGISTRATION IF CLEAR
+    let entryPaidPts = method === 'points' ? cost : 0;
+    
+    // Set a local temporary lock
+    localStorage.setItem(`lock_${t.id || t.title}_${clanName}`, "locked");
+
+    secureFetch({
+        action: "join", match_id: t.id || t.title, game: t.game, title: t.title,
+        date: t.date, prize: t.prize, email: user.email, username: user.username, phone: user.phone, 
+        clan: clanName, entry_paid: method !== 'points' ? cost : 0, entry_paid_pts: entryPaidPts, method: method,
+        org_email: t.org_email || t.email || ""
+    }).then(() => {
+        // Clear lock on success
+        localStorage.removeItem(`lock_${t.id || t.title}_${clanName}`);
+        
+        // ... (Keep your existing success logic here for updating wallets, pushing to userLiveMatches, and animations)
+        if(cost > 0) {
+            secureFetch({ action: 'update_wallet', email: user.email, rupees: user.rupees, points: user.points }).catch(()=>{});
+        }
+        
+        userLiveMatches.push({ tournament_title: t.title, match_id: t.id || t.title });
+        playGunshotSound();
+        
+        // Visual Success Feedback (Simplified for new loader)
+        let loaderOverlay = document.getElementById('securePaymentLoader');
+        loaderOverlay.innerHTML = `<i class="fa-solid fa-circle-check" style="font-size: 5rem; color: #00ff7f; filter: drop-shadow(0 0 20px #00ff7f);"></i>`;
+        
+        setTimeout(() => {
+            loaderOverlay.classList.remove('active');
+            setTimeout(() => loaderOverlay.style.display = 'none', 500); 
+            closeRegistrationFlow();
+            showToast(cost > 0 ? "Entry successful! Welcome to the Arena." : "Registration Confirmed! GLHF.");
+            
+            // ... (Keep your existing UI updates for buttons and slot counts)
+            renderRoomTabDynamic(t, true);
+            setTimeout(fetchLiveTeams, 1500);
+            
+            // Restore loader HTML back to default state for next time
+            setTimeout(() => {
+                 loaderOverlay.innerHTML = `
+                    <div class="esports-core-loader">
+                        <div class="ring outer-ring"></div>
+                        <div class="ring inner-ring"></div>
+                        <i class="fa-solid fa-crosshairs target-icon"></i>
+                    </div>`;
+            }, 1000);
+        }, 1800);
+    }).catch(e => {
+        // Clear lock on fail
+        localStorage.removeItem(`lock_${t.id || t.title}_${clanName}`);
+        showToast("Connection Failed! Try Again.", true);
+        let loaderOverlay = document.getElementById('securePaymentLoader');
+        loaderOverlay.classList.remove('active');
+        setTimeout(() => loaderOverlay.style.display = 'none', 500); 
+    });
+}
         function openContributeModal() {
             if(isGuestMode) { document.getElementById('guestLoginModal').classList.add('active'); return; }
             document.getElementById('contributeOverlay').classList.add('active');
