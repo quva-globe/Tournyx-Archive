@@ -7,7 +7,7 @@
 
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-        <title>Login / Register - Tournyx Esports</title>
+    <title>Login / Register - Tournyx Esports</title>
     <meta name="description" content="Sign in to your Tournyx account to join premium BGMI and Free Fire esports tournaments, manage your clan, and withdraw your winnings.">
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -25,6 +25,7 @@
             --accent-cyan: #00f2ff;
             --accent-purple: #bd00ff;
             --accent-green: #00ff7f;
+            --accent-orange: #ff9900;
             --accent-gradient: linear-gradient(90deg, #bd00ff, #00f2ff);
             --text-main: #ffffff;
             --font-head: 'Orbitron', sans-serif;
@@ -50,14 +51,19 @@
         /* --- BACKGROUND --- */
         #particles-canvas {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            z-index: -1;
+            z-index: -1; transform: translateZ(0); /* Hardware Acceleration */
             background: radial-gradient(circle at 50% 30%, #15062e 0%, #070311 100%);
         }
 
         /* --- DESKTOP LANDING HERO SECTION --- */
         .landing-container {
-            text-align: center; z-index: 10; padding: 15px;
-            animation: cinematicZoomIn 1.2s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; width: 100%; max-width: 500px;
+            text-align: center; z-index: 10; padding: 30px;
+            animation: cinematicZoomIn 1s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; 
+            width: 100%; max-width: 600px;
+            background: rgba(10, 5, 20, 0.6);
+            backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(0, 242, 255, 0.15);
+            border-radius: 30px; box-shadow: 0 20px 60px rgba(0,0,0,0.8);
         }
 
         @keyframes cinematicZoomIn {
@@ -65,14 +71,12 @@
             100% { transform: scale(1); opacity: 1; filter: blur(0); }
         }
 
-        /* Mobile Top Showcase - Hidden on Desktop */
         .mobile-top-showcase { display: none; }
         .landing-content-wrapper { display: block; }
 
-        /* NORMAL APP ICON SHAPE */
         .logo-wrapper {
             position: relative;
-            width: 110px; height: 110px; margin: 0 auto 12px;
+            width: 120px; height: 120px; margin: 0 auto 15px;
             background: linear-gradient(135deg, rgba(189, 0, 255, 0.15), rgba(0, 242, 255, 0.15));
             border-radius: 28%;
             display: flex; align-items: center; justify-content: center;
@@ -89,14 +93,13 @@
         }
 
         .app-name { 
-            font-family: var(--font-head); font-size: 2rem; letter-spacing: 3px; font-weight: 900;
+            font-family: var(--font-head); font-size: 2.2rem; letter-spacing: 3px; font-weight: 900;
             background: var(--accent-gradient); -webkit-background-clip: text; -webkit-text-fill-color: transparent;
             margin-bottom: 2px; text-shadow: 0 0 15px rgba(0,242,255,0.3);
         }
 
-        /* SHIMMERING TAGLINE */
         .app-tagline { 
-            font-size: 1rem; margin-bottom: 10px; font-weight: 600; letter-spacing: 1px; 
+            font-size: 1.1rem; margin-bottom: 12px; font-weight: 600; letter-spacing: 1px; 
             background: linear-gradient(90deg, #888, #fff, #888, #fff);
             background-size: 300% auto;
             -webkit-background-clip: text; -webkit-text-fill-color: transparent;
@@ -104,18 +107,16 @@
         }
         @keyframes shineText { to { background-position: 300% center; } }
 
-        /* INSTANT STATIC DESCRIPTION */
         .static-desc {
-            font-size: 0.9rem; color: #00f2ff; font-family: var(--font-body);
-            margin-bottom: 20px; padding: 0 10px; line-height: 1.4;
-            text-shadow: 0 0 8px rgba(0, 242, 255, 0.5); font-weight: 500;
+            font-size: 0.95rem; color: #00f2ff; font-family: var(--font-body);
+            margin-bottom: 25px; padding: 0 15px; line-height: 1.5;
+            text-shadow: 0 0 8px rgba(0, 242, 255, 0.4); font-weight: 500;
         }
 
-        /* FLOATING FEATURE BADGES */
-        .features-row { display: flex; justify-content: center; gap: 10px; margin-bottom: 25px; flex-wrap: wrap; }
+        .features-row { display: flex; justify-content: center; gap: 12px; margin-bottom: 30px; flex-wrap: wrap; }
         .feature-badge {
             background: rgba(255,255,255,0.05); border: 1px solid rgba(0, 242, 255, 0.3);
-            padding: 6px 14px; border-radius: 20px; font-size: 0.8rem; color: var(--accent-cyan);
+            padding: 8px 16px; border-radius: 20px; font-size: 0.85rem; color: var(--accent-cyan);
             font-family: var(--font-head); letter-spacing: 1px;
             box-shadow: inset 0 0 10px rgba(0,242,255,0.15);
             transition: 0.3s;
@@ -125,11 +126,11 @@
         .feature-badge:nth-child(3) { animation: floatBadge 3s ease-in-out infinite 1s; }
         @keyframes floatBadge { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-4px); box-shadow: inset 0 0 15px rgba(0,242,255,0.3); border-color: var(--accent-cyan); } }
 
-        /* LIQUID SUBMIT BUTTONS (COMPACT) */
+        /* BUTTONS */
         .action-btn {
-            width: 100%; max-width: 300px; margin: 0 auto 10px; padding: 14px;
-            border-radius: 12px; font-family: var(--font-head); font-size: 1.05rem; font-weight: bold; letter-spacing: 1px;
-            cursor: pointer; transition: 0.3s; display: flex; align-items: center; justify-content: center; gap: 8px;
+            width: 100%; max-width: 320px; margin: 0 auto 12px; padding: 15px;
+            border-radius: 14px; font-family: var(--font-head); font-size: 1.05rem; font-weight: bold; letter-spacing: 1px;
+            cursor: pointer; transition: 0.3s; display: flex; align-items: center; justify-content: center; gap: 10px;
             text-transform: uppercase; position: relative; overflow: hidden; z-index: 1;
         }
         .action-btn::before {
@@ -147,72 +148,58 @@
         .btn-secondary:hover { background: rgba(0,242,255,0.15); box-shadow: 0 0 20px rgba(0,242,255,0.5); transform: scale(1.02); }
         .btn-secondary:active { transform: scale(0.96); }
 
-        .btn-ghost { background: transparent; color: #888; border: none; margin-top: 2px; font-size: 0.85rem; text-decoration: underline; font-family: var(--font-body); transition: 0.3s; }
-        .btn-ghost:hover { color: var(--accent-orange); text-shadow: 0 0 15px rgba(255,153,0,0.6); transform: scale(1.05); }
+        /* Upgraded Organizer Portal Button */
+        .btn-org {
+            background: rgba(255, 153, 0, 0.1); color: var(--accent-orange); 
+            border: 1px solid var(--accent-orange); box-shadow: 0 0 15px rgba(255,153,0,0.2);
+            margin: 15px auto 0;
+        }
+        .btn-org:hover { background: rgba(255, 153, 0, 0.2); box-shadow: 0 0 25px rgba(255, 153, 0, 0.5); transform: scale(1.02); color: white;}
+        .btn-org:active { transform: scale(0.96); }
 
         /* --- MODALS --- */
         .modal-overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0, 0, 0, 0.5); z-index: 50; display: none;
-            align-items: center; justify-content: center; backdrop-filter: blur(5px);
+            background: rgba(0, 0, 0, 0.6); z-index: 50; display: none;
+            align-items: center; justify-content: center; backdrop-filter: blur(8px);
             opacity: 0; transition: opacity 0.3s ease; padding: 15px;
         }
-        .modal-overlay.active { display: flex; opacity: 1; animation: modalBgFade 0.4s forwards; }
-
-        @keyframes modalBgFade { from { opacity: 0; backdrop-filter: blur(0px); } to { opacity: 1; backdrop-filter: blur(5px); } }
+        .modal-overlay.active { display: flex; opacity: 1; }
 
         .modal-drag-pill { display: none; }
         
         .modal-card {
             background: var(--card-bg); border: 1px solid var(--card-border);
-            width: 100%; max-width: 400px; border-radius: 18px; padding: 20px;
+            width: 100%; max-width: 420px; border-radius: 20px; padding: 25px;
             box-shadow: 0 20px 50px rgba(0,0,0,0.9), 0 0 15px rgba(189,0,255,0.3), inset 0 0 30px rgba(0,242,255,0.15);
-            transform: translateY(50px) scale(0.95); transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            max-height: 88vh; overflow-y: auto; position: relative;
+            transform: translateY(30px) scale(0.95); transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            max-height: 90vh; overflow-y: auto; position: relative; overscroll-behavior: contain;
         }
         .modal-overlay.active .modal-card { transform: translateY(0) scale(1); }
 
         .close-modal {
-            position: absolute; top: 12px; right: 18px; font-size: 1.4rem; color: #aaa;
+            position: absolute; top: 15px; right: 20px; font-size: 1.5rem; color: #aaa;
             cursor: pointer; transition: 0.3s; z-index: 10;
         }
         .close-modal:hover { color: var(--accent-cyan); transform: rotate(90deg) scale(1.2); text-shadow: 0 0 15px var(--accent-cyan); }
 
-        .modal-title { font-family: var(--font-head); font-size: 1.3rem; color: white; margin-bottom: 15px; text-align: center; text-transform: uppercase; letter-spacing: 1px; text-shadow: 0 0 15px currentColor; }
+        .modal-title { font-family: var(--font-head); font-size: 1.4rem; color: white; margin-bottom: 20px; text-align: center; text-transform: uppercase; letter-spacing: 1px; text-shadow: 0 0 15px currentColor; }
 
         /* COMET PROGRESS BAR */
         .progress-wrapper { width: 100%; height: 4px; background: rgba(255,255,255,0.1); border-radius: 2px; margin-bottom: 20px; overflow: hidden; position: relative; }
         .progress-bar { height: 100%; width: 0%; background: var(--accent-gradient); transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1); box-shadow: 0 0 10px var(--accent-cyan); position: relative; }
         .progress-bar::after { content:''; position: absolute; top:0; right:0; width: 20px; height: 100%; background: #fff; box-shadow: 0 0 10px #fff; filter: blur(2px); }
 
-        /* STAGGERED MODAL ENTRY */
-        .input-wrapper { opacity: 0; transform: translateX(-20px); margin-bottom: 15px; }
-        .modal-overlay.active .input-wrapper { animation: slideInRight 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; }
-        .modal-overlay.active .input-wrapper:nth-child(1) { animation-delay: 0.1s; }
-        .modal-overlay.active .input-wrapper:nth-child(2) { animation-delay: 0.15s; }
-        .modal-overlay.active .input-wrapper:nth-child(3) { animation-delay: 0.2s; }
-        .modal-overlay.active .input-wrapper:nth-child(4) { animation-delay: 0.25s; }
-        .modal-overlay.active .input-wrapper:nth-child(5) { animation-delay: 0.3s; }
-        .modal-overlay.active .input-wrapper:nth-child(6) { animation-delay: 0.35s; }
-        .modal-overlay.active .input-wrapper:nth-child(7) { animation-delay: 0.4s; }
-        .modal-overlay.active .input-wrapper:nth-child(8) { animation-delay: 0.45s; }
-        .modal-overlay.active .input-wrapper:nth-child(9) { animation-delay: 0.5s; }
-        .modal-overlay.active .input-wrapper:nth-child(10) { animation-delay: 0.55s; }
-        .modal-overlay.active .custom-checkbox-container { opacity: 0; animation: fadeUp 0.4s ease 0.65s forwards; }
-        .modal-overlay.active .submit-btn { opacity: 0; animation: fadeUp 0.4s ease 0.75s forwards; }
-        
-        @keyframes slideInRight { to { opacity: 1; transform: translateX(0); } }
-        @keyframes fadeUp { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-
-        /* --- FORMS & INPUTS --- */
-        .input-group { position: relative; }
+        /* --- FORMS & INPUTS (ZERO LAG RENDER) --- */
+        .input-wrapper { margin-bottom: 15px; width: 100%; }
+        .input-group { position: relative; width: 100%; }
         .input-icon { position: absolute; left: 14px; top: 50%; transform: translateY(-50%); color: #666; transition: 0.3s; pointer-events: none; }
         
         .form-control {
             width: 100%; background: var(--input-bg);
-            border: 1px solid rgba(255,255,255,0.1); border-radius: 10px;
-            padding: 12px 14px 12px 40px; color: white;
-            font-family: var(--font-body); font-size: 0.95rem; outline: none; transition: 0.3s;
+            border: 1px solid rgba(255,255,255,0.1); border-radius: 12px;
+            padding: 14px 14px 14px 42px; color: white;
+            font-family: var(--font-body); font-size: 0.95rem; outline: none; transition: 0.2s;
             box-shadow: inset 0 0 10px rgba(0,0,0,0.5);
             appearance: none; -webkit-appearance: none;
         }
@@ -220,7 +207,6 @@
         select.form-control option, select.form-control optgroup { background: var(--primary-bg); color: white; font-family: var(--font-body); }
         
         .form-control:focus { 
-            transform: scale(1.02);
             border-color: var(--accent-cyan); 
             box-shadow: 0 0 15px rgba(0, 242, 255, 0.4), inset 0 0 10px rgba(0,0,0,0.5); 
         }
@@ -229,25 +215,25 @@
         }
         input:-webkit-autofill { -webkit-box-shadow: 0 0 0 30px var(--input-bg) inset !important; -webkit-text-fill-color: white !important; }
         
-        .form-control:read-only { opacity: 0.7; }
+        .form-control:read-only { opacity: 0.6; pointer-events: none;}
 
         /* EYE ICON FLASH */
         .pwd-toggle {
             position: absolute; right: 14px; top: 50%; transform: translateY(-50%);
-            color: #888; cursor: pointer; transition: 0.3s; font-size: 1rem;
+            color: #888; cursor: pointer; transition: 0.3s; font-size: 1.1rem;
         }
         .pwd-toggle:hover { color: var(--accent-cyan); text-shadow: 0 0 15px var(--accent-cyan); transform: translateY(-50%) scale(1.1); }
 
         /* INFO BOX PULSES */
         .info-box {
             background: rgba(0, 242, 255, 0.08); border-left: 3px solid var(--accent-cyan);
-            color: #ccc; font-size: 0.75rem; padding: 8px 10px; margin-top: 6px; border-radius: 0 6px 6px 0;
+            color: #ccc; font-size: 0.75rem; padding: 10px; margin-top: 8px; border-radius: 0 8px 8px 0;
             text-align: left; font-family: var(--font-body); font-weight: 500;
             box-shadow: 0 4px 10px rgba(0,0,0,0.2); animation: infoBreathing 3s infinite alternate;
-            display: flex; align-items: flex-start; gap: 8px; line-height: 1.3; transition: 0.4s ease;
+            display: flex; align-items: flex-start; gap: 8px; line-height: 1.4; transition: 0.4s ease;
         }
         .info-box.purple { border-left-color: var(--accent-purple); background: rgba(189, 0, 255, 0.08); animation: infoBreathingPurple 3s infinite alternate; }
-        .info-box i { margin-top: 2px; text-shadow: 0 0 8px currentColor; font-size: 0.9rem; transition: 0.3s ease; }
+        .info-box i { margin-top: 2px; text-shadow: 0 0 8px currentColor; font-size: 0.95rem; transition: 0.3s ease; }
         @keyframes infoBreathing { from { box-shadow: 0 4px 10px rgba(0,0,0,0.2); } to { box-shadow: 0 4px 15px rgba(0,242,255,0.2); border-left-color: #fff; } }
         @keyframes infoBreathingPurple { from { box-shadow: 0 4px 10px rgba(0,0,0,0.2); } to { box-shadow: 0 4px 15px rgba(189,0,255,0.2); border-left-color: #fff; } }
 
@@ -255,7 +241,7 @@
         .flex-row { display: flex; gap: 8px; }
         .otp-btn {
             background: rgba(189,0,255,0.1); border: 1px solid var(--accent-purple);
-            color: var(--accent-purple); border-radius: 10px; font-family: var(--font-head);
+            color: var(--accent-purple); border-radius: 12px; font-family: var(--font-head);
             font-size: 0.85rem; font-weight: bold; cursor: pointer; transition: 0.3s;
             padding: 0 15px; text-transform: uppercase; white-space: nowrap; outline: none;
         }
@@ -274,14 +260,14 @@
 
         /* TERMS LINK & SPRING-LOADED CHECKBOX */
         .custom-checkbox-container {
-            display: flex; align-items: flex-start; gap: 10px; margin-bottom: 18px;
-            cursor: pointer; font-size: 0.8rem; color: #aaa; text-align: left;
+            display: flex; align-items: flex-start; gap: 10px; margin-top: 5px; margin-bottom: 20px;
+            cursor: pointer; font-size: 0.85rem; color: #aaa; text-align: left;
             user-select: none; transition: 0.3s; line-height: 1.4;
         }
         .custom-checkbox-container:hover { color: #fff; }
         .custom-checkbox-container input { display: none; }
         .checkmark {
-            min-width: 18px; height: 18px; border: 2px solid #555; border-radius: 4px;
+            min-width: 20px; height: 20px; border: 2px solid #555; border-radius: 6px;
             display: flex; align-items: center; justify-content: center; transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
             background: rgba(0,0,0,0.5); margin-top: 2px; position: relative;
         }
@@ -291,7 +277,7 @@
         }
         .custom-checkbox-container input:checked + .checkmark::after {
             content: '\f00c'; font-family: "Font Awesome 6 Free"; font-weight: 900;
-            color: var(--accent-green); font-size: 10px; text-shadow: 0 0 8px var(--accent-green);
+            color: var(--accent-green); font-size: 12px; text-shadow: 0 0 8px var(--accent-green);
         }
         
         .terms-link {
@@ -306,9 +292,9 @@
         .terms-link:hover::after { width: 100%; }
 
         .submit-btn {
-            width: 100%; padding: 14px; background: var(--accent-gradient);
-            border: none; border-radius: 10px; color: white;
-            font-family: var(--font-head); font-size: 1.05rem; font-weight: 800; letter-spacing: 1px;
+            width: 100%; padding: 15px; background: var(--accent-gradient);
+            border: none; border-radius: 12px; color: white;
+            font-family: var(--font-head); font-size: 1.1rem; font-weight: 800; letter-spacing: 1px;
             cursor: pointer; transition: 0.3s; margin-top: 5px;
             box-shadow: 0 5px 20px rgba(189,0,255,0.4); text-transform: uppercase;
             position: relative; overflow: hidden; z-index: 1;
@@ -325,14 +311,13 @@
         /* CINEMATIC ARENA ENTRY */
         .arena-overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: #040108;
-            z-index: 9999;
+            background: #040108; z-index: 9999;
             display: none; flex-direction: column; align-items: center; justify-content: center;
         }
         .arena-overlay.active { display: flex; animation: fadeInBg 0.3s forwards; }
 
         .arena-text {
-            font-family: var(--font-head); font-size: 2.2rem; color: #fff;
+            font-family: var(--font-head); font-size: 2.5rem; color: #fff;
             font-weight: 900; letter-spacing: 6px; 
             text-shadow: 0 0 25px rgba(0, 242, 255, 0.8), 0 0 50px rgba(189, 0, 255, 0.6);
             text-align: center; text-transform: uppercase;
@@ -349,24 +334,24 @@
 
         .error-msg { 
             background: rgba(255, 77, 77, 0.1); border: 1px solid rgba(255, 77, 77, 0.4);
-            color: #ff4d4d; text-align: center; padding: 10px; border-radius: 8px;
-            margin-bottom: 12px; font-size: 0.85rem; display: none; font-family: var(--font-body); font-weight: 700;
+            color: #ff4d4d; text-align: center; padding: 12px; border-radius: 10px;
+            margin-bottom: 15px; font-size: 0.9rem; display: none; font-family: var(--font-body); font-weight: 700;
             box-shadow: 0 0 15px rgba(255, 77, 77, 0.2); animation: shake 0.4s ease;
         }
         @keyframes shake { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-5px); } 75% { transform: translateX(5px); } }
 
-        /* --- MOBILE SPECIFIC APP-LIKE UI (NO DESKTOP CHANGE) --- */
+        /* --- MOBILE SPECIFIC APP-LIKE UI --- */
         @media (max-width: 768px) {
             body { 
                 align-items: stretch; justify-content: stretch; padding: 0; 
-                touch-action: pan-y; /* Prevent overscroll bouncing */
+                touch-action: pan-y;
             }
             .landing-container {
                 position: absolute; top: 0; left: 0; width: 100%; height: 100dvh;
                 overflow: hidden; padding: 0; display: block; animation: none; 
+                background: transparent; border: none; box-shadow: none; border-radius: 0; backdrop-filter: none;
             }
 
-            /* The Top Banners Showcase - Hardware Accelerated */
             .mobile-top-showcase {
                 display: block; position: absolute;
                 top: 0; left: 0; width: 100%; height: 55%;
@@ -376,9 +361,8 @@
                 position: absolute; top: 0; left: 0; width: 100%; height: 100%;
                 background-size: cover; background-position: center;
                 opacity: 0; animation: crossfade 12s infinite;
-                will-change: opacity, transform; transform: translateZ(0); /* Zero Lag */
+                will-change: opacity, transform; transform: translateZ(0); 
             }
-            /* Premium Fade into the Glass UI */
             .mobile-top-showcase::after {
                 content: ''; position: absolute; bottom: 0; left: 0; width: 100%; height: 45%;
                 background: linear-gradient(to top, rgba(7,3,17,1) 0%, rgba(7,3,17,0.5) 50%, transparent 100%);
@@ -405,7 +389,6 @@
                 50% { transform: translateY(-15px) rotate(10deg) translateZ(0); }
             }
 
-            /* The Bottom Glass UI */
             .landing-content-wrapper {
                 position: absolute; bottom: 0; left: 0; width: 100%; min-height: 52%;
                 background: rgba(7,3,17,0.85); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
@@ -442,7 +425,7 @@
                 padding: 25px 20px;
                 padding-bottom: calc(25px + env(safe-area-inset-bottom));
                 transform: translateY(100%);
-                -webkit-overflow-scrolling: touch; /* Smooth scroll inside modal */
+                -webkit-overflow-scrolling: touch;
             }
             .modal-overlay.active .modal-card { transform: translateY(0); }
             .modal-drag-pill {
@@ -450,8 +433,6 @@
                 border-radius: 10px; margin: -10px auto 20px;
             }
             .close-modal { top: 15px; right: 20px; }
-            .form-control { font-size: 0.95rem; padding: 14px 14px 14px 40px; }
-            .input-icon { left: 14px; }
             .arena-text { font-size: 1.6rem; letter-spacing: 3px; }
         }
     </style>
@@ -460,9 +441,12 @@
 
     <canvas id="particles-canvas"></canvas>
 
+    <datalist id="indianCities">
+        <option value="Mumbai"><option value="Delhi"><option value="Bangalore"><option value="Hyderabad"><option value="Ahmedabad"><option value="Chennai"><option value="Kolkata"><option value="Surat"><option value="Pune"><option value="Jaipur"><option value="Lucknow"><option value="Kanpur"><option value="Nagpur"><option value="Indore"><option value="Thane"><option value="Bhopal"><option value="Visakhapatnam"><option value="Pimpri-Chinchwad"><option value="Patna"><option value="Vadodara"><option value="Ghaziabad"><option value="Ludhiana"><option value="Agra"><option value="Nashik"><option value="Faridabad"><option value="Meerut"><option value="Rajkot"><option value="Kalyan-Dombivli"><option value="Vasai-Virar"><option value="Varanasi"><option value="Srinagar"><option value="Aurangabad"><option value="Dhanbad"><option value="Amritsar"><option value="Navi Mumbai"><option value="Allahabad"><option value="Howrah"><option value="Ranchi"><option value="Gwalior"><option value="Jabalpur"><option value="Coimbatore"><option value="Vijayawada"><option value="Jodhpur"><option value="Madurai"><option value="Raipur"><option value="Kota"><option value="Guwahati"><option value="Chandigarh"><option value="Solapur"><option value="Hubballi-Dharwad"><option value="Tiruchirappalli"><option value="Bareilly"><option value="Moradabad"><option value="Mysore"><option value="Tiruppur"><option value="Gurgaon"><option value="Aligarh"><option value="Jalandhar"><option value="Bhubaneswar"><option value="Salem"><option value="Warangal"><option value="Mira-Bhayandar"><option value="Thiruvananthapuram"><option value="Bhiwandi"><option value="Saharanpur"><option value="Guntur"><option value="Amravati"><option value="Bikaner"><option value="Noida"><option value="Jamshedpur"><option value="Bhilai"><option value="Cuttack"><option value="Firozabad"><option value="Kochi"><option value="Bhavnagar"><option value="Dehradun"><option value="Durgapur"><option value="Asansol"><option value="Nanded"><option value="Kolhapur"><option value="Ajmer"><option value="Gulbarga"><option value="Jamnagar"><option value="Ujjain"><option value="Loni"><option value="Siliguri"><option value="Jhansi"><option value="Ulhasnagar"><option value="Jammu"><option value="Sangli-Miraj & Kupwad"><option value="Mangalore"><option value="Erode"><option value="Belgaum"><option value="Kurnool"><option value="Ambattur"><option value="Rajahmundry"><option value="Tirunelveli"><option value="Malegaon"><option value="Gaya"><option value="Udaipur">
+    </datalist>
+
     <div class="landing-container" id="landingView">
         
-        <!-- MOBILE ONLY: TOP CINEMATIC SHOWCASE -->
         <div class="mobile-top-showcase">
             <div class="mts-banner" style="background-image: url('https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEiJvPTY_y_XU-0Lwbnjwm7961lCDkSlQh2MtCWHunFVX6WS7WCprCtkPyB334BU_-4vGsP0NseDQf4NPBEOIxqjk7VZQqZUHpnLb4Bw-c1UeXQy2M9DzNrNdYt_aL0GEb1AlTPupC5zEjJiP3Ci0Oxk-wdg5TF5cs8_UNSe3uTT1BE884je3iXr8QlMjx8/s240/1000094210.jpg'); animation-delay: 0s;"></div>
             <div class="mts-banner" style="background-image: url('https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEj3MKUI87mMK4_3DltS3LQgqfrK1sESUIMMqlENdi0dPRtOFkeDbvPsTbSaCRaJOb17QZ5s9OO5dR6kFCYiCkgUCF2zBWwvGFSb3T-9Nz51XuIzMvIiOuqwcLzyzeFmn1orKbiETP4LrlaG-RidnWAAzBwUA3aL5_z62HP4_F7R02lAK_WSYdH0U_Gn7Es/s250/1000094211.jpg'); animation-delay: 4s;"></div>
@@ -474,7 +458,6 @@
             <div class="floating-emoji e4">💎</div>
         </div>
 
-        <!-- CONTENT WRAPPER -->
         <div class="landing-content-wrapper">
             <div class="logo-wrapper">
                 <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEipVmqyUEA22VpntZdPCHuXoO_Rjco_cRaNl5CyFa-eehdtgXnHe6JoD8a5svxJRJYZfv_yXwww10T2cL2PHTiXLK-J-nWC1swmMs5RDxGVM8FBSlJORaRiX4YiD8gL8SyM4X1tRyQn_v8MsqQvbU4uEyHEU0qaySP1STWHaBEYuWKyF3-6QovSqJR-8xU/s1024/1000093705.png" alt="Tournyx Logo" class="brand-logo">
@@ -500,13 +483,12 @@
                 <i class="fa-solid fa-user-plus"></i> Create Account
             </button>
             
-            <button class="action-btn btn-ghost" onclick="openModal('orgModal')">
-                <i class="fa-solid fa-crown" style="color:var(--accent-orange)"></i> Organizer Portal
+            <button class="action-btn btn-org" onclick="openModal('orgModal')">
+                <i class="fa-solid fa-crown"></i> Organizer Portal
             </button>
         </div>
     </div>
 
-    <!-- LOGIN MODAL -->
     <div class="modal-overlay" id="loginModal">
         <div class="modal-card">
             <div class="modal-drag-pill"></div>
@@ -525,18 +507,17 @@
                     <div class="input-group">
                         <input type="password" name="password" id="loginPwd" class="form-control" placeholder="Password" required>
                         <i class="fa-solid fa-lock input-icon"></i>
-                        <i class="fa-solid fa-eye pwd-toggle" onclick="togglePwd('loginPwd', this)"></i>
+                        <i class="fa-solid fa-eye pwd-toggle" onclick="togglePwd('loginPwd', this, false)"></i>
                     </div>
                 </div>
                 <button type="submit" class="submit-btn" id="btnLogin">LOGIN TO ARENA</button>
             </form>
-            <div style="text-align:center; margin-top:20px; font-size:0.85rem; color:#888;">
+            <div style="text-align:center; margin-top:20px; font-size:0.9rem; color:#888;">
                 New here? <span class="terms-link" style="cursor:pointer;" onclick="openModal('signupModal')">Sign Up</span>
             </div>
         </div>
     </div>
 
-    <!-- SIGNUP MODAL -->
     <div class="modal-overlay" id="signupModal">
         <div class="modal-card">
             <div class="modal-drag-pill"></div>
@@ -564,7 +545,7 @@
                 </div>
                 <div class="input-wrapper">
                     <div class="input-group">
-                        <input type="text" name="uid" class="form-control req-field" placeholder="Game UID" required>
+                        <input type="text" name="uid" class="form-control req-field" placeholder="Game UID (Numbers Only)" required maxlength="15" oninput="this.value=this.value.replace(/[^0-9]/g,'')">
                         <i class="fa-solid fa-id-card input-icon"></i>
                     </div>
                 </div>
@@ -631,7 +612,7 @@
 
                 <div class="input-wrapper">
                     <div class="input-group">
-                        <input type="text" name="city" class="form-control req-field" placeholder="City" required>
+                        <input type="text" name="city" list="indianCities" class="form-control req-field" placeholder="City" required autocomplete="off">
                         <i class="fa-solid fa-location-dot input-icon"></i>
                     </div>
                 </div>
@@ -656,7 +637,7 @@
                         <button type="button" class="otp-btn" id="btnSendOtp" onclick="sendOtp()">SEND OTP</button>
                     </div>
                     
-                    <div class="input-group" id="otpGroup" style="display: none; margin-top: 10px; animation: fadeUp 0.3s ease forwards;">
+                    <div class="input-group" id="otpGroup" style="display: none; margin-top: 10px;">
                         <input type="number" name="otp" id="regOtp" class="form-control req-field" placeholder="Enter 4-Digit OTP">
                         <i class="fa-solid fa-message input-icon"></i>
                         <button type="button" class="verify-btn" id="btnVerifyOtp" onclick="verifyOtp()">VERIFY</button>
@@ -672,7 +653,7 @@
                     <div class="input-group">
                         <input type="password" name="password" id="regPwd" class="form-control req-field" placeholder="Create Password" required>
                         <i class="fa-solid fa-lock input-icon"></i>
-                        <i class="fa-solid fa-eye pwd-toggle" onclick="togglePwd('regPwd', this)"></i>
+                        <i class="fa-solid fa-eye pwd-toggle" onclick="togglePwd('regPwd', this, false)"></i>
                     </div>
                 </div>
                 
@@ -684,7 +665,7 @@
                 </div>
 
                 <label class="custom-checkbox-container">
-                    <input type="checkbox" class="req-field" required>
+                    <input type="checkbox" class="req-field" checked required>
                     <span class="checkmark"></span>
                     <span>I confirm my details are correct and I agree to the <a href="terms.html" target="_blank" class="terms-link">Tournyx Terms & Conditions</a> and Fair Play rules.</span>
                 </label>
@@ -694,7 +675,6 @@
         </div>
     </div>
 
-    <!-- ORGANIZER MODAL -->
     <div class="modal-overlay" id="orgModal">
         <div class="modal-card" style="border-top-color:var(--accent-orange); box-shadow: 0 -10px 40px rgba(0,0,0,0.9), inset 0 20px 30px rgba(255,153,0,0.05);">
             <div class="modal-drag-pill"></div>
@@ -713,19 +693,18 @@
                     <div class="input-group">
                         <input type="password" name="password" id="orgPwd" class="form-control" placeholder="Access Key" required>
                         <i class="fa-solid fa-key input-icon" style="color:var(--accent-orange)"></i>
-                        <i class="fa-solid fa-eye pwd-toggle" onclick="togglePwd('orgPwd', this)" style="color:var(--accent-orange)"></i>
+                        <i class="fa-solid fa-eye pwd-toggle" onclick="togglePwd('orgPwd', this, true)" style="color:var(--accent-orange)"></i>
                     </div>
                 </div>
                 <button type="submit" class="submit-btn" id="btnOrgLogin" style="background:linear-gradient(90deg, #ff9900, #ff4d4d); box-shadow: 0 5px 20px rgba(255,153,0,0.4);">VERIFY ADMIN</button>
             </form>
 
-            <div style="margin-top: 20px; padding-top: 15px; border-top: 1px solid rgba(255,255,255,0.1); text-align: center;">
+            <div style="margin-top: 25px; padding-top: 20px; border-top: 1px solid rgba(255,255,255,0.1); text-align: center;">
                 <a href="organizerportel.html" class="terms-link" style="color:#aaa;"><i class="fa-solid fa-file-signature"></i> Apply to Host Tournaments</a>
             </div>
         </div>
     </div>
 
-    <!-- ARENA LOADER -->
     <div id="arenaLoader" class="arena-overlay">
         <div class="arena-text">ENTERING THE ARENA</div>
     </div>
@@ -748,20 +727,20 @@
             }
         }
 
-        // --- SHOW/HIDE PASSWORD TOGGLE ---
-        function togglePwd(inputId, icon) {
+        // --- SHOW/HIDE PASSWORD TOGGLE (WITH HAPTICS & COLOR STATE) ---
+        function togglePwd(inputId, icon, isOrg) {
+            if(navigator.vibrate) navigator.vibrate(15);
             const input = document.getElementById(inputId);
             if (input.type === "password") {
                 input.type = "text";
                 icon.classList.remove("fa-eye");
                 icon.classList.add("fa-eye-slash");
-                icon.style.color = "var(--accent-cyan)";
+                icon.style.color = isOrg ? "var(--accent-orange)" : "var(--accent-cyan)";
             } else {
                 input.type = "password";
                 icon.classList.remove("fa-eye-slash");
                 icon.classList.add("fa-eye");
-                if (inputId === 'orgPwd') { icon.style.color = "var(--accent-orange)"; } 
-                else { icon.style.color = "#888"; }
+                icon.style.color = isOrg ? "var(--accent-orange)" : "#888";
             }
         }
 
@@ -769,6 +748,7 @@
         let isEmailVerified = false;
 
         async function sendOtp() {
+            if(navigator.vibrate) navigator.vibrate(15);
             const emailInput = document.getElementById('regEmail');
             let email = emailInput.value.trim();
             
@@ -802,6 +782,7 @@
         }
 
         function verifyOtp() {
+            if(navigator.vibrate) navigator.vibrate(15);
             const otpInput = document.getElementById('regOtp');
             const otp = otpInput.value.trim();
             if(otp.length < 4) { alert("Enter a valid 4-digit OTP"); return; }
@@ -842,12 +823,16 @@
             }
         });
 
-        // --- PROGRESS BAR LOGIC ---
+        // --- ZERO-LAG PROGRESS BAR LOGIC ---
         const signupForm = document.getElementById('playerSignupForm');
         const reqFields = signupForm.querySelectorAll('.req-field');
         const progressBar = document.getElementById('signupProgress');
 
-        signupForm.addEventListener('input', () => {
+        // Changed to passive 'change' listener for selects to prevent keyboard lag
+        signupForm.addEventListener('change', updateProgress);
+        signupForm.addEventListener('keyup', updateProgress);
+
+        function updateProgress() {
             let filledCount = 0;
             reqFields.forEach(field => {
                 if (field.type === 'checkbox') {
@@ -868,7 +853,7 @@
                 progressBar.style.boxShadow = "0 0 10px var(--accent-cyan)";
                 progressBar.style.background = "var(--accent-gradient)";
             }
-        });
+        }
 
         // --- PARTICLES ENGINE ---
         const canvas = document.getElementById('particles-canvas');
@@ -885,17 +870,26 @@
         anim();
         window.addEventListener('resize', () => { canvas.width = window.innerWidth; canvas.height = window.innerHeight; });
 
+        // --- SMART ROUTING & REFERRAL INJECTION ---
         window.addEventListener('DOMContentLoaded', () => {
             const urlParams = new URLSearchParams(window.location.search);
-            const refCode = urlParams.get('ref');
+            // Detect ?code= or ?ref= automatically
+            const refCode = urlParams.get('ref') || urlParams.get('code');
             const tabParam = urlParams.get('tab');
 
-            if (refCode) { openModal('signupModal'); document.getElementById('refInput').value = refCode; }
+            if (refCode) { 
+                openModal('signupModal'); 
+                document.getElementById('refInput').value = refCode; 
+                updateProgress(); // Force UI update
+            }
             if (tabParam === 'organizer') openModal('orgModal');
+            
+            updateProgress(); // Initial Progress check
         });
 
         // --- MODAL LOGIC ---
         function openModal(id) {
+            if(navigator.vibrate) navigator.vibrate(15);
             closeModals(); 
             document.getElementById(id).classList.add('active');
         }
@@ -907,6 +901,7 @@
 
         // --- ANIMATION OVERLAY LOGIC ---
         function triggerArenaEntry(user, redirectUrl) {
+            if(navigator.vibrate) navigator.vibrate([20, 50, 20]);
             closeModals();
             localStorage.setItem('tournyx_user', JSON.stringify(user));
             const loader = document.getElementById('arenaLoader');
@@ -917,6 +912,7 @@
 
         // --- AUTH LOGIC ---
         function btnLoading(btnId, text) {
+            if(navigator.vibrate) navigator.vibrate(15);
             const btn = document.getElementById(btnId);
             btn.dataset.original = btn.innerHTML;
             btn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> ${text}`;
@@ -947,6 +943,7 @@
             infoBox.innerHTML = `<i class="fa-solid fa-shield-halved" style="color:var(--accent-purple)"></i> <span>Your email serves as your primary account recovery and receipt method. Please update and re-verify.</span>`;
             infoBox.style.borderColor = "var(--accent-purple)";
             infoBox.style.background = "rgba(189, 0, 255, 0.08)";
+            updateProgress();
         }
 
         // PLAYER SIGNUP 
@@ -995,6 +992,7 @@
                 const result = await secureFetch(payload);
                 
                 if(result.status === 'success') {
+                    if(navigator.vibrate) navigator.vibrate(30);
                     alert("Account Created! You can now Login.");
                     openModal('loginModal');
                 } else {
@@ -1072,24 +1070,18 @@ function tournyxOneSignalSetup() {
     if (user && user.email && typeof median !== 'undefined' && median.onesignal) {
         let cleanEmail = user.email.toLowerCase().trim();
 
-        // 1. THE MODERN LOGIN: Uses proper Objects for Median V5
         if (median.onesignal.login) {
-            // Bind External ID
             median.onesignal.login({ externalId: cleanEmail });
-            
-            // NEW: Bind Email so it shows up in the OneSignal Dashboard!
             if (median.onesignal.user && median.onesignal.user.addEmail) {
                 median.onesignal.user.addEmail({ email: cleanEmail });
             }
         } else if (median.onesignal.setExternalUserId) {
-            // Fallback for older Median builds
             median.onesignal.setExternalUserId({ externalId: cleanEmail });
             if (median.onesignal.setEmail) {
                 median.onesignal.setEmail({ email: cleanEmail });
             }
         }
 
-        // 2. SET TAGS PERFECTLY (We will use this to target them!)
         let tagData = { 
             "user_email": cleanEmail, 
             "user_status": "active" 
@@ -1102,8 +1094,6 @@ function tournyxOneSignalSetup() {
         }
     }
 }
-
-// Fire securely when the Median native app bridge is fully loaded
 document.addEventListener("median_library_ready", tournyxOneSignalSetup);
 document.addEventListener("DOMContentLoaded", tournyxOneSignalSetup);
 </script>
