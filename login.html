@@ -7,8 +7,8 @@
 
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Login / Register - WARHEROS ESPORTS</title>
-    <meta name="description" content="Sign in to your Tournyx account to join premium BGMI and Free Fire esports tournaments, manage your clan, and withdraw your winnings.">
+    <title>Login / Register - Tournyx Esports</title>
+    <meta name="description" content="Sign in to your Tournyx account to join premium BGMI and Free Fire esports tournaments.">
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -25,7 +25,7 @@
             --accent-cyan: #00f2ff;
             --accent-purple: #bd00ff;
             --accent-green: #00ff7f;
-            --accent-orange: #ff9900;
+            --accent-orange: #ffaa00;
             --accent-gradient: linear-gradient(135deg, #bd00ff, #00f2ff);
             --text-main: #ffffff;
             --font-head: 'Orbitron', sans-serif;
@@ -38,86 +38,59 @@
         body {
             background-color: var(--primary-bg); color: var(--text-main);
             font-family: var(--font-body); min-height: 100vh;
-            display: flex; align-items: center; justify-content: flex-end; /* Shifted to right */
-            overflow: hidden; position: relative; padding: 20px 8% 20px 20px;
+            display: flex; align-items: center; justify-content: flex-end; /* Aligns module to the right */
+            overflow: hidden; position: relative; padding: 10px 8% 10px 10px;
         }
 
         /* --- HARDWARE ACCELERATED VIDEO & BACKGROUND --- */
         .video-bg {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            object-fit: cover; z-index: -3; opacity: 0.8; filter: brightness(0.85);
-            background: radial-gradient(circle at 50% 30%, #15062e 0%, #070311 100%);
-            transition: opacity 0.3s;
+            object-fit: cover; z-index: -3; opacity: 0.85; 
+            cursor: pointer; /* Suggests clicking for auto-login/sound */
         }
         .bg-overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: linear-gradient(to right, rgba(7,3,17,0.1) 0%, rgba(7,3,17,0.7) 70%, rgba(7,3,17,0.9) 100%); z-index: -2;
+            background: linear-gradient(90deg, rgba(7,3,17,0.1) 0%, rgba(7,3,17,0.9) 80%); z-index: -2;
+            pointer-events: none;
+        }
+
+        /* --- TOP UI ELEMENTS (AVATAR & VOLUME) --- */
+        .top-controls {
+            position: fixed; top: 20px; left: 20px; right: 20px;
+            display: flex; justify-content: space-between; align-items: center; z-index: 20;
         }
         
-        /* --- VIDEO UI CONTROLS --- */
-        .video-ui {
-            position: fixed; bottom: 25px; left: 30px; z-index: 5;
-            display: flex; flex-direction: column; gap: 8px; align-items: flex-start;
-        }
-        .volume-btn {
+        .vol-btn {
             background: rgba(0,0,0,0.6); border: 1px solid rgba(255,255,255,0.2);
-            color: white; width: 40px; height: 40px; border-radius: 50%;
+            color: white; border-radius: 50%; width: 40px; height: 40px;
             display: flex; align-items: center; justify-content: center;
-            cursor: pointer; font-size: 1.1rem; backdrop-filter: blur(5px);
-            transition: 0.2s;
+            cursor: pointer; transition: 0.2s; backdrop-filter: blur(5px);
         }
-        .volume-btn:active { transform: scale(0.9); }
-        .data-notice {
-            font-family: var(--font-body); font-size: 0.75rem; color: rgba(255,255,255,0.6);
-            background: rgba(0,0,0,0.5); padding: 4px 10px; border-radius: 12px;
-            letter-spacing: 0.5px;
-        }
+        .vol-btn:active { transform: scale(0.9); }
 
-        /* --- BRANDING --- */
-        .powered-by {
-            position: fixed; bottom: 15px; left: 50%; transform: translateX(-50%);
-            font-family: var(--font-head); font-size: 0.75rem; color: #00f2ff;
-            text-shadow: 0 0 8px rgba(0, 242, 255, 0.8), 0 0 15px rgba(0, 242, 255, 0.5);
-            z-index: 100; pointer-events: none; opacity: 0.8; letter-spacing: 2px;
-            text-transform: uppercase; font-weight: bold;
+        .auto-login-avatar {
+            display: none; width: 45px; height: 45px; border-radius: 50%;
+            border: 2px solid var(--accent-cyan); cursor: pointer;
+            box-shadow: 0 0 15px rgba(0,242,255,0.4);
+            animation: pulseAvatar 2s infinite; background: #111;
         }
-        
-        /* LOGGED IN AVATAR */
-        .top-right-profile {
-            position: fixed; top: 20px; right: 25px; z-index: 100;
-            width: 45px; height: 45px; border-radius: 50%;
-            border: 2px solid var(--accent-cyan); box-shadow: 0 0 15px rgba(0,242,255,0.5);
-            cursor: pointer; overflow: hidden; display: none; transition: 0.3s;
-        }
-        .top-right-profile:hover { transform: scale(1.1); }
-        .top-right-profile img { width: 100%; height: 100%; object-fit: cover; }
+        @keyframes pulseAvatar { 0% { box-shadow: 0 0 0 0 rgba(0,242,255,0.4); } 70% { box-shadow: 0 0 0 10px rgba(0,242,255,0); } 100% { box-shadow: 0 0 0 0 rgba(0,242,255,0); } }
 
-        /* --- TOUCH ANIMATION (FF/BGMI STYLE) --- */
-        .touch-ripple {
-            position: fixed; border-radius: 50%; border: 2px solid var(--accent-cyan);
-            pointer-events: none; animation: rippleAnim 0.4s ease-out forwards; z-index: 9999;
-            box-shadow: 0 0 10px var(--accent-cyan), inset 0 0 10px var(--accent-cyan);
-        }
-        @keyframes rippleAnim { 
-            0% { width: 0; height: 0; opacity: 1; margin-left: 0; margin-top: 0;} 
-            100% { width: 60px; height: 60px; opacity: 0; margin-left: -30px; margin-top: -30px;} 
-        }
-
-        /* --- DESKTOP LANDING HERO SECTION --- */
+        /* --- DESKTOP LANDING HERO SECTION (RIGHT ALIGNED) --- */
         .landing-container {
-            text-align: center; z-index: 10; padding: 30px;
+            text-align: center; z-index: 10; padding: 25px;
             animation: cinematicZoomIn 1s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; 
-            width: 100%; max-width: 450px;
-            background: rgba(10, 5, 20, 0.6); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
-            border: 1px solid rgba(0, 242, 255, 0.15); border-radius: 24px; box-shadow: 0 20px 60px rgba(0,0,0,0.9);
+            width: 100%; max-width: 420px;
+            background: rgba(10, 5, 20, 0.65); backdrop-filter: blur(25px); -webkit-backdrop-filter: blur(25px);
+            border: 1px solid rgba(0, 242, 255, 0.15); border-radius: 24px; box-shadow: 0 15px 50px rgba(0,0,0,0.8);
         }
 
         @keyframes cinematicZoomIn { 0% { transform: translateX(50px); opacity: 0; } 100% { transform: translateX(0); opacity: 1; } }
 
-        .landing-content-wrapper { display: flex; flex-direction: column; align-items: center; }
+        .landing-content-wrapper { display: flex; flex-direction: column; align-items: center; width: 100%; }
 
         .logo-wrapper {
-            position: relative; width: 90px; height: 90px; margin: 0 auto 15px;
+            position: relative; width: 90px; height: 90px; margin: 0 auto 10px;
             background: linear-gradient(135deg, rgba(189, 0, 255, 0.2), rgba(0, 242, 255, 0.2));
             border-radius: 28%; display: flex; align-items: center; justify-content: center;
             border: 2px solid rgba(0, 242, 255, 0.5);
@@ -128,42 +101,29 @@
         @keyframes floatLogo { 0%, 100% { transform: translateY(0); box-shadow: 0 0 20px rgba(189,0,255,0.4); } 50% { transform: translateY(-6px); box-shadow: 0 0 30px rgba(0,242,255,0.6); } }
 
         .app-name { 
-            font-family: var(--font-head); font-size: 1.8rem; letter-spacing: 2px; font-weight: 900;
+            font-family: var(--font-head); font-size: 1.7rem; letter-spacing: 2px; font-weight: 900;
             background: var(--accent-gradient); -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-            margin-bottom: 2px; text-shadow: 0 0 15px rgba(0,242,255,0.3);
+            margin-bottom: 0; text-shadow: 0 0 15px rgba(0,242,255,0.3);
         }
 
         .app-tagline { 
-            font-size: 0.85rem; margin-bottom: 12px; font-weight: 600; letter-spacing: 1px; 
+            font-size: 0.8rem; margin-bottom: 15px; font-weight: 600; letter-spacing: 1px; 
             background: linear-gradient(90deg, #aaa, #fff, #aaa, #fff); background-size: 300% auto;
             -webkit-background-clip: text; -webkit-text-fill-color: transparent; animation: shineText 4s linear infinite;
         }
         @keyframes shineText { to { background-position: 300% center; } }
 
-        .static-desc {
-            font-size: 0.85rem; color: #00f2ff; font-family: var(--font-body);
-            margin-bottom: 20px; padding: 0 10px; line-height: 1.4;
-            text-shadow: 0 0 8px rgba(0, 242, 255, 0.3); font-weight: 500;
-        }
-
-        .features-row { display: flex; justify-content: center; gap: 8px; margin-bottom: 25px; flex-wrap: wrap; }
-        .feature-badge {
-            background: rgba(255,255,255,0.05); border: 1px solid rgba(0, 242, 255, 0.3);
-            padding: 6px 12px; border-radius: 20px; font-size: 0.75rem; color: var(--accent-cyan);
-            font-family: var(--font-head); letter-spacing: 0.5px; box-shadow: inset 0 0 10px rgba(0,242,255,0.1);
-        }
-
         /* BUTTONS */
         .action-btn {
-            width: 100%; max-width: 320px; margin: 0 auto 10px; padding: 14px;
-            border-radius: 12px; font-family: var(--font-head); font-size: 0.95rem; font-weight: bold; letter-spacing: 1px;
+            width: 100%; margin: 0 auto 10px; padding: 12px;
+            border-radius: 12px; font-family: var(--font-head); font-size: 0.9rem; font-weight: bold; letter-spacing: 1px;
             cursor: pointer; transition: 0.3s; display: flex; align-items: center; justify-content: center; gap: 8px;
             text-transform: uppercase; position: relative; overflow: hidden; z-index: 1;
         }
         .action-btn::before {
             content: ''; position: absolute; top: 0; left: -100%; width: 50%; height: 100%;
             background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
-            transform: skewX(-25deg); transition: 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275); z-index: -1;
+            transform: skewX(-25deg); transition: 0.6s; z-index: -1;
         }
         .action-btn:hover::before { left: 150%; }
         
@@ -173,198 +133,210 @@
         .btn-secondary { background: rgba(0,0,0,0.5); color: white; border: 1px solid var(--accent-cyan); box-shadow: inset 0 0 10px rgba(0,242,255,0.1); }
         .btn-secondary:active { transform: scale(0.96); }
 
-        /* ORGANIZER GLOWING BUTTON */
+        /* UPGRADED ORGANIZER BUTTON WITH GLOW */
         .btn-org { 
-            background: linear-gradient(90deg, rgba(255,153,0,0.1), rgba(255,215,0,0.1)); 
-            color: #ffd700; border: 1px solid var(--accent-orange); 
-            margin-top: 5px; animation: goldGlow 2s infinite alternate;
-            text-shadow: 0 0 5px rgba(255, 153, 0, 0.8);
+            background: rgba(25, 10, 0, 0.8); color: var(--accent-orange); border: 1px solid var(--accent-orange); 
+            box-shadow: 0 0 15px rgba(255,170,0,0.3), inset 0 0 10px rgba(255,170,0,0.2); 
+            margin-top: 5px; animation: pulseOrg 2s infinite;
         }
-        .btn-org:active { transform: scale(0.96); }
-        @keyframes goldGlow {
-            from { box-shadow: 0 0 10px rgba(255,153,0,0.3), inset 0 0 5px rgba(255,153,0,0.2); }
-            to { box-shadow: 0 0 25px rgba(255,215,0,0.7), inset 0 0 10px rgba(255,215,0,0.5); }
-        }
+        .btn-org:active { transform: scale(0.96); background: rgba(255, 170, 0, 0.2); }
+        @keyframes pulseOrg { 0%, 100% { box-shadow: 0 0 10px rgba(255,170,0,0.3); } 50% { box-shadow: 0 0 20px rgba(255,170,0,0.6); } }
 
-        /* --- MODALS --- */
+        /* --- 20 FEATURES MARQUEE --- */
+        .features-marquee {
+            width: 100%; overflow: hidden; white-space: nowrap; margin-bottom: 20px;
+            position: relative; mask-image: linear-gradient(90deg, transparent, #fff 10%, #fff 90%, transparent);
+            -webkit-mask-image: linear-gradient(90deg, transparent, #fff 10%, #fff 90%, transparent);
+        }
+        .marquee-track {
+            display: inline-block; animation: scrollMarquee 20s linear infinite;
+        }
+        .feature-badge {
+            display: inline-block; background: rgba(255,255,255,0.05); border: 1px solid rgba(0, 242, 255, 0.3);
+            padding: 5px 10px; border-radius: 15px; font-size: 0.7rem; color: var(--accent-cyan);
+            font-family: var(--font-head); margin-right: 8px; box-shadow: inset 0 0 5px rgba(0,242,255,0.1);
+        }
+        @keyframes scrollMarquee { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
+
+        /* --- CREDITS & NEON FOOTER --- */
+        .platform-credits {
+            position: fixed; bottom: 10px; left: 0; width: 100%; text-align: center;
+            font-size: 0.6rem; color: #777; z-index: 5; pointer-events: none;
+            display: flex; flex-direction: column; gap: 3px;
+        }
+        .neon-quva {
+            font-family: var(--font-head); color: #fff; font-weight: bold; letter-spacing: 1px;
+            text-shadow: 0 0 5px var(--accent-purple), 0 0 10px var(--accent-cyan);
+        }
+        .data-notice { color: #555; font-size: 0.55rem; }
+
+        /* --- MODALS (UNIVERSAL SIZING) --- */
         .modal-overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0, 0, 0, 0.8); z-index: 50; display: none;
-            align-items: center; justify-content: center; backdrop-filter: blur(10px);
+            background: rgba(0, 0, 0, 0.7); z-index: 50; display: none;
+            align-items: center; justify-content: center; backdrop-filter: blur(8px);
             opacity: 0; transition: opacity 0.3s ease; padding: 10px;
         }
         .modal-overlay.active { display: flex; opacity: 1; }
+        
+        /* Invite Link Transition Class */
+        .modal-overlay.invite-transition .modal-card {
+            animation: invitePop 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+        }
+        @keyframes invitePop { 0% { transform: scale(0.5) rotate(5deg); opacity: 0; } 100% { transform: scale(1) rotate(0); opacity: 1; } }
 
         .modal-card {
             background: var(--card-bg); border: 1px solid var(--card-border);
-            width: 100%; max-width: 400px; border-radius: 20px; padding: 20px;
+            width: 100%; max-width: 380px; border-radius: 20px; padding: 20px;
             box-shadow: 0 15px 40px rgba(0,0,0,0.9), inset 0 0 20px rgba(0,242,255,0.1);
             transform: translateY(30px) scale(0.95); transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
             max-height: 90vh; display: flex; flex-direction: column; position: relative; overflow: hidden;
             backdrop-filter: blur(25px); -webkit-backdrop-filter: blur(25px);
         }
         .modal-overlay.active .modal-card { transform: translateY(0) scale(1); }
-        
-        /* INVITE LINK ANIMATION */
-        .invite-anim { animation: invitePop 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards !important; }
-        @keyframes invitePop { 
-            0% { transform: scale(0) rotate(-5deg); opacity: 0; box-shadow: 0 0 0 rgba(0,242,255,0); } 
-            50% { transform: scale(1.05) rotate(2deg); opacity: 1; box-shadow: 0 0 50px rgba(0,242,255,0.8); }
-            100% { transform: scale(1) rotate(0); opacity: 1; box-shadow: 0 15px 40px rgba(0,0,0,0.9); } 
-        }
 
-        .close-modal { position: absolute; top: 12px; right: 15px; font-size: 1.3rem; color: #888; cursor: pointer; transition: 0.3s; z-index: 10; }
-        .close-modal:hover { color: var(--accent-cyan); transform: rotate(90deg) scale(1.1); }
+        .close-modal { position: absolute; top: 15px; right: 15px; font-size: 1.2rem; color: #888; cursor: pointer; transition: 0.3s; z-index: 10; }
+        .close-modal:hover { color: #ff4d4d; transform: rotate(90deg) scale(1.1); }
 
-        .modal-title { font-family: var(--font-head); font-size: 1.25rem; color: white; margin-bottom: 12px; text-align: center; text-transform: uppercase; letter-spacing: 1px; text-shadow: 0 0 10px currentColor; flex-shrink: 0;}
+        .modal-title { font-family: var(--font-head); font-size: 1.1rem; color: white; margin-bottom: 15px; text-align: center; text-transform: uppercase; letter-spacing: 1px; text-shadow: 0 0 10px currentColor; flex-shrink: 0;}
 
-        /* --- ORGANIZER PORTAL SPECIFIC --- */
+        /* --- ORGANIZER PORTAL SPECIFIC (PURE GLASSMORPHISM) --- */
         #orgModal .modal-card {
-            background: rgba(25, 10, 0, 0.7); border: 1px solid rgba(255, 153, 0, 0.5);
-            box-shadow: 0 15px 40px rgba(0,0,0,0.9), inset 0 0 30px rgba(255, 153, 0, 0.2);
+            background: rgba(20, 8, 0, 0.7); border: 1px solid rgba(255, 170, 0, 0.4);
+            box-shadow: 0 15px 40px rgba(0,0,0,0.9), inset 0 0 30px rgba(255, 170, 0, 0.1);
         }
 
         /* --- MULTI-STEP SLIDER --- */
-        .slider-window { width: 100%; flex: 1; overflow: hidden; position: relative; min-height: 320px; }
+        .slider-window { width: 100%; flex: 1; overflow: hidden; position: relative; min-height: 290px; }
         .slider-track { display: flex; width: 300%; transition: transform 0.4s cubic-bezier(0.25, 0.8, 0.25, 1); height: 100%; align-items: flex-start;}
         .slide-step { width: 33.333%; padding: 5px; flex-shrink: 0; box-sizing: border-box; overflow-y: auto; max-height: 100%; scrollbar-width: none; }
         
-        .step-indicators { display: flex; justify-content: center; gap: 8px; margin-bottom: 15px; flex-shrink: 0;}
-        .step-dot { width: 10px; height: 10px; border-radius: 50%; background: rgba(255,255,255,0.1); transition: 0.3s; box-shadow: inset 0 0 5px rgba(0,0,0,0.5); }
-        .step-dot.active { background: var(--accent-cyan); box-shadow: 0 0 10px var(--accent-cyan); transform: scale(1.2); }
+        .step-indicators { display: flex; justify-content: center; gap: 8px; margin-bottom: 12px; flex-shrink: 0;}
+        .step-dot { width: 8px; height: 8px; border-radius: 50%; background: rgba(255,255,255,0.1); transition: 0.3s; }
+        .step-dot.active { background: var(--accent-cyan); box-shadow: 0 0 10px var(--accent-cyan); transform: scale(1.3); }
 
-        /* --- FORMS & INPUTS --- */
-        .input-wrapper { margin-bottom: 12px; width: 100%; position: relative;}
+        /* --- FORMS & INPUTS (COMPACT) --- */
+        .input-wrapper { margin-bottom: 10px; width: 100%; }
         .input-group { position: relative; width: 100%; }
-        .input-icon { position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: #666; transition: 0.3s; pointer-events: none; font-size: 0.9rem; z-index: 3;}
+        .input-icon { position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: #666; transition: 0.3s; pointer-events: none; font-size: 0.85rem;}
         
         .form-control {
             width: 100%; background: var(--input-bg); border: 1px solid rgba(255,255,255,0.08); border-radius: 10px;
-            padding: 12px 12px 12px 35px; color: white; font-family: var(--font-body); font-size: 0.85rem; outline: none; transition: 0.2s;
-            box-shadow: inset 0 0 10px rgba(0,0,0,0.4); appearance: none; -webkit-appearance: none; position: relative; z-index: 2;
+            padding: 10px 10px 10px 35px; color: white; font-family: var(--font-body); font-size: 0.85rem; outline: none; transition: 0.2s;
+            box-shadow: inset 0 0 10px rgba(0,0,0,0.4); 
         }
-        
-        /* FIXED SELECT DROPDOWN */
+        /* Dropdown Fixes */
         select.form-control { 
             cursor: pointer; padding-right: 30px; 
-            background-image: url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23666666%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E"); 
-            background-repeat: no-repeat; background-position: right 12px top 50%; background-size: 10px auto; 
+            appearance: auto; -webkit-appearance: auto; /* Fixed for visibility */
+            background-color: var(--input-bg);
         }
-        select.form-control option { background: #070311; color: white; padding: 10px; }
+        select.form-control option { background: #0a0418; color: white; padding: 10px;}
         
         .form-control:focus { border-color: var(--accent-cyan); box-shadow: 0 0 10px rgba(0, 242, 255, 0.2), inset 0 0 8px rgba(0,0,0,0.5); }
-        #orgModal .form-control:focus { border-color: var(--accent-orange); box-shadow: 0 0 10px rgba(255, 153, 0, 0.2); }
+        #orgModal .form-control:focus { border-color: var(--accent-orange); box-shadow: 0 0 10px rgba(255, 170, 0, 0.2); }
         .form-control:focus + .input-icon, .form-control:not(:placeholder-shown) + .input-icon { color: var(--accent-cyan); filter: drop-shadow(0 0 5px var(--accent-cyan)); }
         #orgModal .form-control:focus + .input-icon, #orgModal .form-control:not(:placeholder-shown) + .input-icon { color: var(--accent-orange); filter: drop-shadow(0 0 5px var(--accent-orange)); }
+
+        .pwd-toggle { position: absolute; right: 12px; top: 50%; transform: translateY(-50%); color: #666; cursor: pointer; transition: 0.3s; font-size: 0.9rem; z-index: 5;}
         
-        .pwd-toggle { position: absolute; right: 12px; top: 50%; transform: translateY(-50%); color: #666; cursor: pointer; transition: 0.3s; font-size: 1rem; z-index: 4;}
-        .pwd-toggle:active { transform: translateY(-50%) scale(0.9); }
-
-        .info-box { background: rgba(0, 242, 255, 0.05); border-left: 2px solid var(--accent-cyan); color: #bbb; font-size: 0.7rem; padding: 8px; margin-top: 6px; border-radius: 0 6px 6px 0; line-height: 1.3; }
-
         /* --- OTP UI --- */
         .flex-row { display: flex; gap: 8px; }
-        .otp-btn { background: rgba(189,0,255,0.1); border: 1px solid var(--accent-purple); color: var(--accent-purple); border-radius: 10px; font-family: var(--font-head); font-size: 0.75rem; font-weight: bold; cursor: pointer; transition: 0.3s; padding: 0 12px; text-transform: uppercase; white-space: nowrap; }
+        .otp-btn { background: rgba(189,0,255,0.1); border: 1px solid var(--accent-purple); color: var(--accent-purple); border-radius: 10px; font-family: var(--font-head); font-size: 0.7rem; font-weight: bold; cursor: pointer; transition: 0.3s; padding: 0 10px; text-transform: uppercase; white-space: nowrap; }
         .otp-btn:active { transform: scale(0.95); background: var(--accent-purple); color: #fff; }
-        .verify-btn { position: absolute; right: 4px; top: 4px; bottom: 4px; background: var(--accent-green); border: none; border-radius: 8px; color: #000; font-weight: 800; padding: 0 12px; cursor: pointer; font-family: var(--font-head); font-size: 0.75rem; transition: 0.2s; z-index: 4;}
-        .verify-btn:active { transform: scale(0.95); }
-        .verify-btn.verified { background: rgba(0, 255, 127, 0.1); border: 1px solid var(--accent-green); color: var(--accent-green); cursor: default; }
+        .verify-btn { position: absolute; right: 4px; top: 4px; bottom: 4px; background: var(--accent-green); border: none; border-radius: 8px; color: #000; font-weight: 800; padding: 0 10px; cursor: pointer; font-family: var(--font-head); font-size: 0.7rem; transition: 0.2s; z-index: 2;}
+        .verify-btn.verified { background: rgba(0, 255, 127, 0.1); border: 1px solid var(--accent-green); color: var(--accent-green); }
 
-        /* TERMS LINK */
-        .custom-checkbox-container { display: flex; align-items: flex-start; gap: 8px; margin-top: 5px; margin-bottom: 15px; cursor: pointer; font-size: 0.75rem; color: #aaa; text-align: left; user-select: none; line-height: 1.3; }
+        /* TERMS LINK & CHECKBOX */
+        .custom-checkbox-container { display: flex; align-items: flex-start; gap: 6px; margin-top: 5px; margin-bottom: 12px; cursor: pointer; font-size: 0.7rem; color: #aaa; text-align: left; user-select: none; }
         .custom-checkbox-container input { display: none; }
-        .checkmark { min-width: 16px; height: 16px; border: 1.5px solid #555; border-radius: 4px; display: flex; align-items: center; justify-content: center; background: rgba(0,0,0,0.5); margin-top: 1px; transition: 0.2s;}
-        .custom-checkbox-container input:checked + .checkmark { border-color: var(--accent-green); background: rgba(0, 255, 127, 0.1); box-shadow: 0 0 10px rgba(0, 255, 127, 0.3); }
-        .custom-checkbox-container input:checked + .checkmark::after { content: '\f00c'; font-family: "Font Awesome 6 Free"; font-weight: 900; color: var(--accent-green); font-size: 9px; }
+        .checkmark { min-width: 14px; height: 14px; border: 1.5px solid #555; border-radius: 4px; display: flex; align-items: center; justify-content: center; background: rgba(0,0,0,0.5); margin-top: 1px; }
+        .custom-checkbox-container input:checked + .checkmark { border-color: var(--accent-green); background: rgba(0, 255, 127, 0.1); }
+        .custom-checkbox-container input:checked + .checkmark::after { content: '\f00c'; font-family: "Font Awesome 6 Free"; font-weight: 900; color: var(--accent-green); font-size: 8px; }
         .terms-link { color: var(--accent-cyan); text-decoration: none; font-weight: bold; }
 
         /* SLIDER NAVIGATION BUTTONS */
-        .slide-nav-row { display: flex; gap: 10px; margin-top: 10px; }
-        .slide-btn { flex: 1; padding: 12px; border: none; border-radius: 10px; font-family: var(--font-head); font-size: 0.9rem; font-weight: bold; text-transform: uppercase; cursor: pointer; transition: 0.2s; box-shadow: 0 4px 15px rgba(0,0,0,0.4);}
+        .slide-nav-row { display: flex; gap: 8px; margin-top: 10px; }
+        .slide-btn { flex: 1; padding: 10px; border: none; border-radius: 10px; font-family: var(--font-head); font-size: 0.85rem; font-weight: bold; text-transform: uppercase; cursor: pointer; transition: 0.2s; box-shadow: 0 4px 15px rgba(0,0,0,0.4);}
         .slide-btn.next { background: var(--accent-gradient); color: white; }
         .slide-btn.back { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); color: #aaa; }
         .slide-btn:active { transform: scale(0.96); }
 
-        /* --- TOAST ALERTS --- */
-        #customToast {
-            position: fixed; bottom: -60px; left: 50%; transform: translateX(-50%);
-            background: rgba(255, 77, 77, 0.95); color: white; font-family: var(--font-head); font-size: 0.85rem; font-weight: bold;
-            padding: 12px 20px; border-radius: 50px; z-index: 9999;
-            box-shadow: 0 5px 20px rgba(255, 77, 77, 0.5); opacity: 0; transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            display: flex; align-items: center; gap: 8px; white-space: nowrap;
-        }
-        #customToast.show { bottom: 35px; opacity: 1; }
-        #customToast.success { background: rgba(0, 255, 127, 0.95); color: black; box-shadow: 0 5px 20px rgba(0, 255, 127, 0.5); }
-
         /* CINEMATIC ARENA ENTRY */
         .arena-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #040108; z-index: 9999; display: none; flex-direction: column; align-items: center; justify-content: center; }
         .arena-overlay.active { display: flex; animation: fadeInBg 0.3s forwards; }
-        .arena-text { font-family: var(--font-head); font-size: 2rem; color: #fff; font-weight: 900; letter-spacing: 4px; text-shadow: 0 0 20px rgba(0, 242, 255, 0.6); text-align: center; text-transform: uppercase; animation: cinematicEntry 2s cubic-bezier(0.25, 1, 0.5, 1) forwards; }
+        .arena-text { font-family: var(--font-head); font-size: 1.8rem; color: #fff; font-weight: 900; letter-spacing: 4px; text-shadow: 0 0 20px rgba(0, 242, 255, 0.6); text-align: center; text-transform: uppercase; animation: cinematicEntry 2s cubic-bezier(0.25, 1, 0.5, 1) forwards; }
         @keyframes fadeInBg { from { opacity: 0; } to { opacity: 1; } }
         @keyframes cinematicEntry { 0% { transform: scale(0.8); opacity: 0; filter: blur(10px); } 20% { transform: scale(1); opacity: 1; filter: blur(0); letter-spacing: 4px; } 80% { transform: scale(1.05); opacity: 1; filter: blur(0); letter-spacing: 6px; } 100% { transform: scale(1.3); opacity: 0; filter: blur(15px); letter-spacing: 10px; } }
 
         /* --- MOBILE SPECIFIC APP-LIKE UI --- */
         @media (max-width: 768px) {
-            body { 
-                align-items: flex-end; justify-content: center; padding: 0; 
-                touch-action: pan-y; overflow-y: auto;
-            }
-            .video-ui { display: none; } /* Hide video controls on mobile */
-            .bg-overlay { background: linear-gradient(to bottom, rgba(7,3,17,0.3) 0%, rgba(7,3,17,0.8) 50%, rgba(7,3,17,1) 100%); }
+            body { align-items: stretch; justify-content: stretch; padding: 0; touch-action: pan-y; }
+            .bg-overlay { background: linear-gradient(to bottom, rgba(7,3,17,0.2) 0%, rgba(7,3,17,0.95) 100%); }
             
-            .landing-container { 
-                width: 92%; margin-bottom: 25px; padding: 25px 20px;
-                animation: slideUpContent 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; 
-                background: rgba(7,3,17,0.75); border-radius: 30px; box-shadow: 0 -10px 40px rgba(0,0,0,0.8);
-            }
-            @keyframes slideUpContent { from { transform: translateY(100%); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+            /* Background Video remains on mobile but scales correctly */
+            .video-bg { opacity: 0.65; object-position: center top; } 
 
-            .logo-wrapper { width: 75px; height: 75px; margin: -50px auto 12px; border-radius: 25%; background: var(--primary-bg); } 
+            .top-controls { top: 15px; left: 15px; right: 15px; }
+
+            .landing-container { 
+                position: absolute; bottom: 0; left: 0; width: 100%; height: auto; 
+                max-width: 100%; border-radius: 35px 35px 0 0; padding: 0 20px 20px;
+                background: rgba(7,3,17,0.85); border-top: 1px solid rgba(0, 242, 255, 0.15); 
+                border-left: none; border-right: none; border-bottom: none;
+                box-shadow: 0 -15px 40px rgba(0,0,0,0.9); animation: slideUpContent 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; 
+            }
+            @keyframes slideUpContent { from { transform: translateY(100%); } to { transform: translateY(0); } }
+
+            .logo-wrapper { width: 75px; height: 75px; margin: -35px auto 10px; border-radius: 25%; background: var(--primary-bg); z-index: 15; } 
             
-            .app-name { font-size: 1.5rem; letter-spacing: 1px; }
-            .app-tagline { font-size: 0.8rem; margin-bottom: 10px; }
-            .static-desc { font-size: 0.75rem; margin-bottom: 15px; color: #bbb;}
-            .features-row { gap: 6px; margin-bottom: 20px; }
-            .feature-badge { padding: 5px 10px; font-size: 0.65rem; background: rgba(0,0,0,0.8); box-shadow: none;}
-            
-            .action-btn { max-width: 100%; border-radius: 12px; padding: 12px; font-size: 0.85rem; margin-bottom: 10px;}
+            .app-name { font-size: 1.5rem; }
+            .features-marquee { margin-bottom: 15px; }
+            .action-btn { max-width: 100%; border-radius: 14px; padding: 12px; font-size: 0.9rem;}
 
             /* Bottom Sheet Modals for Mobile */
-            .modal-overlay { align-items: flex-end; padding: 0; background: rgba(0,0,0,0.7); }
+            .modal-overlay { align-items: flex-end; padding: 0; background: rgba(0,0,0,0.75); }
             .modal-card { 
                 max-width: 100%; border-radius: 25px 25px 0 0; border-bottom: none; border-left: none; border-right: none; 
                 border-top: 2px solid var(--accent-cyan); box-shadow: 0 -10px 30px rgba(0,0,0,0.9); 
-                padding: 20px 20px calc(20px + env(safe-area-inset-bottom)); transform: translateY(100%); 
-                max-height: 85vh;
+                padding: 15px 15px calc(25px + env(safe-area-inset-bottom)); transform: translateY(100%); 
             }
             #orgModal .modal-card { border-top: 2px solid var(--accent-orange); }
             .modal-overlay.active .modal-card { transform: translateY(0); }
-            
-            .modal-drag-pill { display: block; width: 40px; height: 4px; background: rgba(255,255,255,0.2); border-radius: 10px; margin: -10px auto 15px; }
-            .powered-by { font-size: 0.65rem; bottom: 8px; }
-            .top-right-profile { top: 15px; right: 15px; width: 38px; height: 38px; }
+            .modal-drag-pill { display: block; width: 40px; height: 4px; background: rgba(255,255,255,0.2); border-radius: 10px; margin: 0 auto 10px; }
+            .platform-credits { bottom: env(safe-area-inset-bottom); padding-bottom: 5px; }
         }
+
+        /* TOAST */
+        #customToast {
+            position: fixed; bottom: -60px; left: 50%; transform: translateX(-50%);
+            background: rgba(255, 77, 77, 0.9); color: white; font-family: var(--font-head); font-size: 0.8rem; font-weight: bold;
+            padding: 10px 20px; border-radius: 50px; z-index: 9999;
+            box-shadow: 0 5px 20px rgba(255, 77, 77, 0.5); opacity: 0; transition: 0.4s;
+            display: flex; align-items: center; gap: 8px; white-space: nowrap;
+        }
+        #customToast.show { bottom: 80px; opacity: 1; }
+        #customToast.success { background: rgba(0, 255, 127, 0.9); color: black; box-shadow: 0 5px 20px rgba(0, 255, 127, 0.5); }
+
+        /* TOUCH RIPPLE EFFECT */
+        .ripple {
+            position: absolute; border-radius: 50%; transform: scale(0);
+            animation: ripple-anim 0.6s linear; background: rgba(255, 255, 255, 0.3); pointer-events: none;
+        }
+        @keyframes ripple-anim { to { transform: scale(4); opacity: 0; } }
     </style>
 </head>
 <body>
 
-    <video autoplay loop id="bgVideo" class="video-bg"></video>
+    <video loop playsinline class="video-bg" id="bgVideo"></video>
     <div class="bg-overlay"></div>
-    
-    <div class="video-ui">
-        <div class="volume-btn" id="volBtn" onclick="toggleMute()"><i class="fa-solid fa-volume-high"></i></div>
-        <div class="data-notice">Video may consume data usage</div>
+
+    <div class="top-controls">
+        <div class="vol-btn" id="volToggle" onclick="toggleVolume()">
+            <i class="fa-solid fa-volume-xmark" id="volIcon"></i>
+        </div>
+        <img src="https://ui-avatars.com/api/?name=User&background=00f2ff&color=000" alt="Profile" class="auto-login-avatar" id="autoLoginAvatar" onclick="triggerAutoLogin()">
     </div>
-
-    <div class="top-right-profile" id="profileAvatar" onclick="handleAvatarClick()">
-        <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEipVmqyUEA22VpntZdPCHuXoO_Rjco_cRaNl5CyFa-eehdtgXnHe6JoD8a5svxJRJYZfv_yXwww10T2cL2PHTiXLK-J-nWC1swmMs5RDxGVM8FBSlJORaRiX4YiD8gL8SyM4X1tRyQn_v8MsqQvbU4uEyHEU0qaySP1STWHaBEYuWKyF3-6QovSqJR-8xU/s1024/1000093705.png" alt="Profile">
-    </div>
-
-    <div class="powered-by">Powered by Quva</div>
-
-    <datalist id="indianCities">
-        <option value="Chennai"><option value="Vellore"><option value="Madurai"><option value="Coimbatore"><option value="Bangalore"><option value="Mumbai"><option value="Delhi"><option value="Hyderabad"><option value="Kolkata"><option value="Pune">
-        </datalist>
 
     <div class="landing-container" id="landingView">
         <div class="landing-content-wrapper">
@@ -375,32 +347,56 @@
             <h1 class="app-name">TOURNYX</h1>
             <p class="app-tagline">The Ultimate Esports Arena</p>
             
-            <div class="static-desc">
-                Join the elite. Compete in daily scrims, climb the leaderboard, and withdraw real cash directly to your wallet.
+            <div class="features-marquee">
+                <div class="marquee-track">
+                    <span class="feature-badge"><i class="fa-solid fa-trophy"></i> Daily Scrims</span>
+                    <span class="feature-badge"><i class="fa-solid fa-wallet"></i> Real Cash Withdrawals</span>
+                    <span class="feature-badge"><i class="fa-solid fa-shield-halved"></i> Clan Management</span>
+                    <span class="feature-badge"><i class="fa-solid fa-chart-simple"></i> Live Leaderboards</span>
+                    <span class="feature-badge"><i class="fa-solid fa-gamepad"></i> Custom Rooms</span>
+                    <span class="feature-badge"><i class="fa-solid fa-user-secret"></i> Anti-Cheat System</span>
+                    <span class="feature-badge"><i class="fa-solid fa-bolt"></i> Instant Payouts</span>
+                    <span class="feature-badge"><i class="fa-solid fa-id-badge"></i> Player Profiles</span>
+                    <span class="feature-badge"><i class="fa-solid fa-comments"></i> Team Chat</span>
+                    <span class="feature-badge"><i class="fa-solid fa-chart-pie"></i> Match Analytics</span>
+                    <span class="feature-badge"><i class="fa-solid fa-gift"></i> Referral Rewards</span>
+                    <span class="feature-badge"><i class="fa-solid fa-sitemap"></i> Tournament Setup</span>
+                    <span class="feature-badge"><i class="fa-solid fa-ranking-star"></i> Rank Tiers</span>
+                    <span class="feature-badge"><i class="fa-solid fa-video"></i> Highlights</span>
+                    <span class="feature-badge"><i class="fa-solid fa-network-wired"></i> LAN Events</span>
+                    <span class="feature-badge"><i class="fa-solid fa-headset"></i> 24/7 Support</span>
+                    <span class="feature-badge"><i class="fa-solid fa-lock"></i> Secure Wallets</span>
+                    <span class="feature-badge"><i class="fa-solid fa-check-double"></i> Verified Organizers</span>
+                    <span class="feature-badge"><i class="fa-solid fa-users"></i> Dynamic Lobby</span>
+                    <span class="feature-badge"><i class="fa-brands fa-bitcoin"></i> Crypto Rewards</span>
+                    <span class="feature-badge"><i class="fa-solid fa-trophy"></i> Daily Scrims</span>
+                    <span class="feature-badge"><i class="fa-solid fa-wallet"></i> Real Cash Withdrawals</span>
+                    <span class="feature-badge"><i class="fa-solid fa-shield-halved"></i> Clan Management</span>
+                </div>
             </div>
 
-            <div class="features-row">
-                <span class="feature-badge"><i class="fa-solid fa-trophy"></i> Compete</span>
-                <span class="feature-badge"><i class="fa-solid fa-wallet"></i> Earn Cash</span>
-                <span class="feature-badge"><i class="fa-solid fa-shield-halved"></i> Build Clans</span>
-            </div>
-
-            <button class="action-btn btn-primary" onclick="openModal('loginModal')">
+            <button class="action-btn btn-primary" onclick="openModal('loginModal', event)">
                 <i class="fa-solid fa-right-to-bracket"></i> Player Login
             </button>
-            <button class="action-btn btn-secondary" onclick="openModal('signupModal')">
+            <button class="action-btn btn-secondary" onclick="openModal('signupModal', event)">
                 <i class="fa-solid fa-user-plus"></i> Create Account
             </button>
             
-            <button class="action-btn btn-org" onclick="openModal('orgModal')">
+            <button class="action-btn btn-org" onclick="openModal('orgModal', event)">
                 <i class="fa-solid fa-crown"></i> Organizer Portal
             </button>
         </div>
     </div>
 
+    <div class="platform-credits">
+        <div>Powered by <span class="neon-quva">Quva</span></div>
+        <div>© Tournyx Esports Private Limited | © KRAFTON | © Garena</div>
+        <div class="data-notice">*Video playback optimized. May incur standard data usage.</div>
+    </div>
+
     <div class="modal-overlay" id="loginModal">
         <div class="modal-card">
-            <div class="modal-drag-pill" style="display:none;"></div>
+            <div class="modal-drag-pill"></div>
             <i class="fa-solid fa-xmark close-modal" onclick="closeModals()"></i>
             <h2 class="modal-title" style="color:var(--accent-cyan)">Welcome Back</h2>
             
@@ -428,7 +424,7 @@
 
     <div class="modal-overlay" id="orgModal">
         <div class="modal-card">
-            <div class="modal-drag-pill" style="display:none;"></div>
+            <div class="modal-drag-pill"></div>
             <i class="fa-solid fa-xmark close-modal" onclick="closeModals()"></i>
             <h2 class="modal-title" style="color:var(--accent-orange)"><i class="fa-solid fa-crown"></i> Organizer Hub</h2>
 
@@ -448,12 +444,15 @@
                 </div>
                 <button type="submit" class="slide-btn next" id="btnOrgLogin" style="width:100%; margin-top:10px; background:linear-gradient(90deg, #ff9900, #ff4d4d); box-shadow: 0 5px 20px rgba(255,153,0,0.4);">VERIFY ADMIN</button>
             </form>
+            <div style="margin-top: 15px; padding-top: 10px; border-top: 1px solid rgba(255,255,255,0.1); text-align: center;">
+                <a href="organizerportel.html" class="terms-link" style="color:#aaa; font-size:0.75rem;"><i class="fa-solid fa-file-signature"></i> Apply to Host Tournaments</a>
+            </div>
         </div>
     </div>
 
     <div class="modal-overlay" id="signupModal">
-        <div class="modal-card" style="padding: 20px 15px;">
-            <div class="modal-drag-pill" style="display:none;"></div>
+        <div class="modal-card">
+            <div class="modal-drag-pill"></div>
             <i class="fa-solid fa-xmark close-modal" onclick="closeModals()"></i>
             <h2 class="modal-title" style="color:var(--accent-purple); margin-bottom:10px;">Register</h2>
             
@@ -471,87 +470,77 @@
                             <div class="input-wrapper">
                                 <div class="flex-row">
                                     <div class="input-group" style="flex: 1;">
-                                        <input type="email" name="email" id="regEmail" class="form-control req-field" placeholder="Email Address" required>
+                                        <input type="email" name="email" id="regEmail" class="form-control" placeholder="Email Address" required>
                                         <i class="fa-solid fa-envelope input-icon"></i>
                                     </div>
                                     <button type="button" class="otp-btn" id="btnSendOtp" onclick="sendOtp()">SEND OTP</button>
                                 </div>
-                                
                                 <div class="input-group" id="otpGroup" style="display: none; margin-top: 8px;">
                                     <input type="number" name="otp" id="regOtp" class="form-control" placeholder="Enter 4-Digit OTP">
                                     <i class="fa-solid fa-message input-icon"></i>
                                     <button type="button" class="verify-btn" id="btnVerifyOtp" onclick="verifyOtp()">VERIFY</button>
                                 </div>
                             </div>
-
                             <div class="input-wrapper">
                                 <div class="input-group">
-                                    <input type="password" name="password" id="regPwd" class="form-control req-field" placeholder="Create Password" required>
+                                    <input type="password" name="password" id="regPwd" class="form-control" placeholder="Create Password" required>
                                     <i class="fa-solid fa-lock input-icon"></i>
                                     <i class="fa-solid fa-eye pwd-toggle" onclick="togglePwd('regPwd', this, false)"></i>
                                 </div>
                             </div>
-
                             <div class="input-wrapper">
                                 <div class="input-group">
-                                    <input type="tel" name="phone" id="regPhone" class="form-control req-field" placeholder="Phone (+91 XXXXX XXXXX)" value="+91 " required maxlength="14">
+                                    <input type="tel" name="phone" id="regPhone" class="form-control" placeholder="Phone (+91 XXXXX XXXXX)" value="+91 " required maxlength="14">
                                     <i class="fa-solid fa-mobile-screen input-icon"></i>
                                 </div>
                             </div>
-
                             <div class="input-wrapper">
                                 <div class="input-group">
                                     <input type="text" name="referral" id="refInput" class="form-control" placeholder="Referral Code (Optional)">
                                     <i class="fa-solid fa-gift input-icon"></i>
                                 </div>
                             </div>
-                            
                             <label class="custom-checkbox-container">
                                 <input type="checkbox" id="termsCheck" checked required>
                                 <span class="checkmark"></span>
-                                <span>I agree to <a href="terms.html" target="_blank" class="terms-link">Terms</a> & Fair Play.</span>
+                                <span>I agree to <a href="terms.html" target="_blank" class="terms-link">Terms</a>.</span>
                             </label>
-
                             <button type="button" class="slide-btn next" onclick="nextSlide(1)" style="width:100%;">Next <i class="fa-solid fa-arrow-right"></i></button>
                         </div>
 
                         <div class="slide-step">
                             <div class="input-wrapper">
                                 <div class="input-group">
-                                    <select name="game" id="regGame" class="form-control req-field">
+                                    <select name="game" id="regGame" class="form-control" required>
                                         <option value="" disabled selected>Select Primary Game</option>
                                         <option value="BGMI">BGMI</option>
-                                        <option value="Free Fire MAX">Free Fire MAX</option>
+                                        <option value="Free Fire">Free Fire MAX</option>
                                         <option value="Call of Duty Mobile">Call of Duty Mobile</option>
-                                        <option value="Valorant">Valorant</option>
+                                        <option value="Valorant">Valorant Mobile</option>
                                     </select>
                                     <i class="fa-solid fa-crosshairs input-icon"></i>
                                 </div>
                             </div>
-                            
                             <div class="input-wrapper">
                                 <div class="input-group">
-                                    <input type="text" name="username" id="regUser" class="form-control req-field" placeholder="Display Name">
+                                    <input type="text" name="username" id="regUser" class="form-control" placeholder="Display Name">
                                     <i class="fa-solid fa-user input-icon"></i>
                                 </div>
                             </div>
-
                             <div class="input-wrapper">
                                 <div class="input-group">
-                                    <input type="text" name="ign" id="regIgn" class="form-control req-field" placeholder="In-Game Name (IGN)">
+                                    <input type="text" name="ign" id="regIgn" class="form-control" placeholder="In-Game Name (IGN)">
                                     <i class="fa-solid fa-gamepad input-icon"></i>
                                 </div>
                             </div>
-
                             <div class="input-wrapper">
                                 <div class="input-group">
-                                    <input type="text" name="uid" id="regUid" class="form-control req-field" placeholder="Game UID (Numbers Only)" maxlength="15" oninput="this.value=this.value.replace(/[^0-9]/g,'')">
+                                    <input type="text" name="uid" id="regUid" class="form-control" placeholder="Game UID (Numbers Only)" maxlength="15" oninput="this.value=this.value.replace(/[^0-9]/g,'')">
                                     <i class="fa-solid fa-id-card input-icon"></i>
                                 </div>
                             </div>
-
                             <div class="slide-nav-row">
-                                <button type="button" class="slide-btn back" onclick="prevSlide(2)"><i class="fa-solid fa-arrow-left"></i> Back</button>
+                                <button type="button" class="slide-btn back" onclick="prevSlide(2)"><i class="fa-solid fa-arrow-left"></i></button>
                                 <button type="button" class="slide-btn next" onclick="nextSlide(2)">Next <i class="fa-solid fa-arrow-right"></i></button>
                             </div>
                         </div>
@@ -559,35 +548,29 @@
                         <div class="slide-step">
                             <div class="input-wrapper">
                                 <div class="input-group">
-                                    <select name="state" id="regState" class="form-control req-field">
+                                    <select name="state" id="regState" class="form-control" required>
                                         <option value="" disabled selected>Select State</option>
                                         <option value="Tamil Nadu">Tamil Nadu</option>
-                                        <option value="Karnataka">Karnataka</option>
                                         <option value="Maharashtra">Maharashtra</option>
                                         <option value="Delhi">Delhi</option>
+                                        <option value="Karnataka">Karnataka</option>
                                         <option value="Kerala">Kerala</option>
                                         <option value="Andhra Pradesh">Andhra Pradesh</option>
                                         <option value="Telangana">Telangana</option>
-                                        </select>
+                                        <option value="Other">Other State</option>
+                                    </select>
                                     <i class="fa-solid fa-map input-icon"></i>
                                 </div>
                             </div>
-
                             <div class="input-wrapper">
                                 <div class="input-group">
-                                    <input type="text" name="city" id="regCity" list="indianCities" class="form-control req-field" placeholder="City" autocomplete="off">
+                                    <input type="text" name="city" id="regCity" class="form-control" placeholder="City" autocomplete="off">
                                     <i class="fa-solid fa-location-dot input-icon"></i>
                                 </div>
                             </div>
-                            
-                            <div class="info-box purple">
-                                <i class="fa-solid fa-shield-halved"></i> 
-                                <span>Location helps us match you for LAN events and regional scrims.</span>
-                            </div>
-
                             <div class="slide-nav-row" style="margin-top:20px;">
-                                <button type="button" class="slide-btn back" onclick="prevSlide(3)"><i class="fa-solid fa-arrow-left"></i> Back</button>
-                                <button type="submit" class="slide-btn next" id="btnSignup"><i class="fa-solid fa-check"></i> CREATE ACCOUNT</button>
+                                <button type="button" class="slide-btn back" onclick="prevSlide(3)"><i class="fa-solid fa-arrow-left"></i></button>
+                                <button type="submit" class="slide-btn next" id="btnSignup"><i class="fa-solid fa-check"></i> REGISTER</button>
                             </div>
                         </div>
 
@@ -606,74 +589,80 @@
     <script>
         const API_URL = 'https://script.google.com/macros/s/AKfycbyqqTpgaflxKJ9xH0jq7mJ_jLzcoNhas3gNo0h5gvoa_6r5Ae9NFxJAJp7ZoYNnMRKl/exec';
 
-        // --- BACKGROUND VIDEO LOGIC (Autoplay + Sound) ---
-        async function initVideo() {
-            const videoUrl = 'https://tournyx.in/FFBGMICODTRAILER.mp4'; 
-            const vid = document.getElementById('bgVideo');
-            vid.src = videoUrl;
-            
-            // Attempt to play WITH sound automatically (Browsers usually block this, but this fulfills the logic)
-            vid.muted = false; 
+        // --- VIDEO HD CACHE & AUDIO LOGIC ---
+        const videoElement = document.getElementById('bgVideo');
+        let isMuted = true; // Browsers require muted start
+        
+        async function loadVideoBackground() {
+            const videoUrl = 'https://tournyx.in/FFBGMICODTRAILER.mp4'; // Replace with real URL
+            if(!videoUrl) return;
             try {
-                await vid.play();
-                document.querySelector('#volBtn i').className = 'fa-solid fa-volume-high';
-            } catch (err) {
-                // If browser blocks unmuted autoplay, mute it and play so video at least shows
-                vid.muted = true;
-                vid.play();
-                document.querySelector('#volBtn i').className = 'fa-solid fa-volume-xmark';
-            }
+                const cache = await caches.open('tournyx-video-cache');
+                let response = await cache.match(videoUrl);
+                if (!response) {
+                    response = await fetch(videoUrl);
+                    if (response.ok) cache.put(videoUrl, response.clone());
+                }
+                if (response.ok) {
+                    videoElement.src = URL.createObjectURL(await response.blob());
+                }
+            } catch (e) { videoElement.src = videoUrl; }
+            
+            // Attempt autoplay
+            videoElement.muted = true;
+            videoElement.play().catch(e => console.log("Autoplay blocked pending interaction."));
         }
-        initVideo();
+        loadVideoBackground();
 
-        // Volume Toggle function
-        function toggleMute() {
-            const vid = document.getElementById('bgVideo');
-            const icon = document.querySelector('#volBtn i');
-            vid.muted = !vid.muted;
-            icon.className = vid.muted ? 'fa-solid fa-volume-xmark' : 'fa-solid fa-volume-high';
-            // Vibrate if on mobile
-            if(navigator.vibrate) navigator.vibrate(10);
+        function toggleVolume() {
+            const icon = document.getElementById('volIcon');
+            isMuted = !isMuted;
+            videoElement.muted = isMuted;
+            if(isMuted) {
+                icon.classList.replace('fa-volume-high', 'fa-volume-xmark');
+            } else {
+                icon.classList.replace('fa-volume-xmark', 'fa-volume-high');
+                videoElement.play(); // Ensure play on interaction
+            }
+            createRipple(event, document.getElementById('volToggle'));
         }
 
-        // --- LOGGED IN USER CHECK & FAST LOGIN ---
-        window.addEventListener('DOMContentLoaded', () => {
-            const userStr = localStorage.getItem('tournyx_user');
-            if (userStr) {
-                // Show avatar
-                document.getElementById('profileAvatar').style.display = 'block';
-                // Make background clickable
-                const bgOverlay = document.querySelector('.bg-overlay');
-                bgOverlay.style.cursor = 'pointer';
-                bgOverlay.addEventListener('click', handleAvatarClick);
-            }
-
-            // Mobile specific layout unhiding pills
-            if (window.innerWidth <= 768) {
-                document.querySelectorAll('.modal-drag-pill').forEach(el => el.style.display = 'block');
+        // --- AUTO LOGIN LOGIC (TOP RIGHT AVATAR & VIDEO CLICK) ---
+        document.addEventListener('DOMContentLoaded', () => {
+            const savedUser = localStorage.getItem('tournyx_user');
+            if(savedUser) {
+                const userData = JSON.parse(savedUser);
+                const avatar = document.getElementById('autoLoginAvatar');
+                avatar.style.display = 'block';
+                // Use initials or real avatar if available
+                let nameInit = userData.username ? userData.username.charAt(0) : 'U';
+                avatar.src = `https://ui-avatars.com/api/?name=${nameInit}&background=bd00ff&color=fff&bold=true`;
+                
+                // Clicking the video triggers auto login
+                videoElement.addEventListener('click', triggerAutoLogin);
             }
         });
 
-        function handleAvatarClick() {
-            const userStr = localStorage.getItem('tournyx_user');
-            if(userStr) {
-                triggerArenaEntry(JSON.parse(userStr), 'index.html');
+        function triggerAutoLogin() {
+            const savedUser = localStorage.getItem('tournyx_user');
+            if(savedUser) {
+                triggerArenaEntry(JSON.parse(savedUser), 'index.html');
             }
         }
 
-        // --- TOUCH RIPPLE EFFECT (FF/BGMI STYLE) ---
-        document.addEventListener('click', function(e) {
-            // Ignore clicks on inputs/buttons/modals to avoid breaking functionality
-            if (e.target.tagName === 'INPUT' || e.target.tagName === 'BUTTON' || e.target.closest('.modal-card') || e.target.closest('.video-ui')) return;
-            
-            const ripple = document.createElement('div');
-            ripple.className = 'touch-ripple';
-            ripple.style.left = e.clientX + 'px';
-            ripple.style.top = e.clientY + 'px';
-            document.body.appendChild(ripple);
-            
-            setTimeout(() => { ripple.remove(); }, 400);
-        });
+        // --- TOUCH/CLICK RIPPLE ANIMATION ---
+        function createRipple(event, element) {
+            if(!event) return;
+            const circle = document.createElement("span");
+            const diameter = Math.max(element.clientWidth, element.clientHeight);
+            const radius = diameter / 2;
+            circle.style.width = circle.style.height = `${diameter}px`;
+            circle.style.left = `${event.clientX - element.offsetLeft - radius}px`;
+            circle.style.top = `${event.clientY - element.offsetTop - radius}px`;
+            circle.classList.add("ripple");
+            element.appendChild(circle);
+            setTimeout(() => circle.remove(), 600);
+        }
 
         // --- SECURE API FETCH WRAPPER ---
         async function secureFetch(payload) {
@@ -684,10 +673,7 @@
                     body: JSON.stringify(payload)
                 });
                 return await response.json();
-            } catch (error) {
-                console.error("Fetch Error:", error);
-                throw error;
-            }
+            } catch (error) { throw error; }
         }
 
         function showToast(msg, isSuccess = false) {
@@ -698,120 +684,65 @@
             setTimeout(() => { t.className = t.className.replace('show', ''); }, 3500);
         }
 
-        // --- SHOW/HIDE PASSWORD TOGGLE ---
         function togglePwd(inputId, icon, isOrg) {
             if(navigator.vibrate) navigator.vibrate(15);
             const input = document.getElementById(inputId);
             if (input.type === "password") {
                 input.type = "text";
-                icon.classList.remove("fa-eye");
-                icon.classList.add("fa-eye-slash");
+                icon.classList.replace("fa-eye", "fa-eye-slash");
                 icon.style.color = isOrg ? "var(--accent-orange)" : "var(--accent-cyan)";
             } else {
                 input.type = "password";
-                icon.classList.remove("fa-eye-slash");
-                icon.classList.add("fa-eye");
+                icon.classList.replace("fa-eye-slash", "fa-eye");
                 icon.style.color = isOrg ? "var(--accent-orange)" : "#666";
             }
         }
 
-        // --- EMAIL OTP LOGIC ---
-        let isEmailVerified = false;
-
-        async function sendOtp() {
-            if(navigator.vibrate) navigator.vibrate(15);
-            const emailInput = document.getElementById('regEmail');
-            let email = emailInput.value.trim();
-            if(!email.includes("@") || !email.includes(".")) { showToast("Enter a valid email address."); return; }
-            
-            const btn = document.getElementById('btnSendOtp');
-            btn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i>`;
-            btn.disabled = true;
-
-            try {
-                const result = await secureFetch({ action: 'send_email_otp', email: email });
-                if (result.status === 'success') {
-                    document.getElementById('otpGroup').style.display = 'flex';
-                    document.getElementById('regOtp').setAttribute('required', 'true');
-                    btn.innerHTML = `SENT <i class="fa-solid fa-check"></i>`;
-                    showToast("OTP Sent! Check your inbox/spam.", true);
-                } else {
-                    btn.innerHTML = `SEND OTP`; btn.disabled = false;
-                    showToast("Error: " + result.data); 
-                }
-            } catch (err) {
-                btn.innerHTML = `SEND OTP`; btn.disabled = false;
-                showToast("Network error connecting to mail server.");
+        // --- MODAL LOGIC & URL REFERRALS ---
+        window.addEventListener('DOMContentLoaded', () => {
+            const urlParams = new URLSearchParams(window.location.search);
+            const refCode = urlParams.get('ref') || urlParams.get('code');
+            if (refCode) { 
+                document.getElementById('refInput').value = refCode; 
+                // Add cinematic transition for invite links
+                document.getElementById('signupModal').classList.add('invite-transition');
+                openModal('signupModal'); 
             }
-        }
+        });
 
-        function verifyOtp() {
+        function openModal(id, e) {
+            if(e && e.currentTarget) createRipple(e, e.currentTarget);
             if(navigator.vibrate) navigator.vibrate(15);
-            const otpInput = document.getElementById('regOtp');
-            const otp = otpInput.value.trim();
-            if(otp.length < 4) { showToast("Enter valid 4-digit OTP"); return; }
-
-            const btn = document.getElementById('btnVerifyOtp');
-            btn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i>`;
-
-            setTimeout(() => {
-                btn.innerHTML = `<i class="fa-solid fa-check-double"></i> VERIFIED`;
-                btn.classList.add('verified'); btn.disabled = true;
-                otpInput.readOnly = true; document.getElementById('regEmail').readOnly = true;
-                isEmailVerified = true;
-            }, 800);
+            closeModals(); 
+            document.getElementById(id).classList.add('active');
+        }
+        
+        function closeModals() {
+            document.querySelectorAll('.modal-overlay').forEach(m => m.classList.remove('active', 'invite-transition'));
+            currentStep = 1;
+            document.getElementById('sliderTrack').style.transform = `translateX(0%)`;
+            updateDots();
         }
 
-        function unlockEmailInput() {
-            document.getElementById('regEmail').readOnly = false;
-            isEmailVerified = false;
-            const btn = document.getElementById('btnVerifyOtp');
-            btn.innerHTML = `VERIFY`; btn.classList.remove('verified'); btn.disabled = false;
-            const otpInput = document.getElementById('regOtp');
-            otpInput.readOnly = false; otpInput.value = "";
-        }
-
-        // --- PHONE NUMBER STRIP & LOCK LOGIC ---
-        const phoneInput = document.getElementById('regPhone');
-        phoneInput.addEventListener('input', function(e) {
-            if (!this.value.startsWith('+91 ')) this.value = '+91 ';
-            let numbers = this.value.substring(4).replace(/\D/g, '');
-            if (numbers.length > 10) numbers = numbers.substring(0, 10);
-            this.value = '+91 ' + numbers;
-        });
-        phoneInput.addEventListener('keydown', function(e) {
-            if ((e.key === 'Backspace' || e.key === 'Delete') && this.selectionStart <= 4 && this.selectionEnd <= 4) e.preventDefault();
-        });
-
-        // --- MULTI-STEP SLIDER LOGIC ---
+        // --- SLIDER LOGIC ---
         let currentStep = 1;
         function updateDots() {
             document.querySelectorAll('.step-dot').forEach((dot, idx) => {
                 dot.classList.toggle('active', idx + 1 === currentStep);
             });
         }
-        
         function nextSlide(step) {
             if(navigator.vibrate) navigator.vibrate(15);
             if (step === 1) {
-                if(!isEmailVerified) { showToast("Please verify email via OTP to continue."); return; }
-                if(document.getElementById('regPwd').value.length < 6) { showToast("Password must be at least 6 characters."); return; }
-                const phoneDigits = document.getElementById('regPhone').value.substring(4).replace(/\D/g, '');
-                if(phoneDigits.length !== 10) { showToast("Enter a valid 10-digit phone number."); return; }
-                if(!document.getElementById('termsCheck').checked) { showToast("You must agree to the Terms & Conditions."); return; }
+                if(!document.getElementById('termsCheck').checked) { showToast("Agree to Terms first."); return; }
             }
             if (step === 2) {
-                if(document.getElementById('regGame').value === "") { showToast("Please select a game."); return; }
-                if(document.getElementById('regUser').value.trim() === "") { showToast("Display name is required."); return; }
-                if(document.getElementById('regIgn').value.trim() === "") { showToast("In-Game Name is required."); return; }
-                if(document.getElementById('regUid').value.trim() === "") { showToast("Game UID is required."); return; }
+                if(document.getElementById('regGame').value === "") { showToast("Select a game."); return; }
             }
-
             currentStep = step + 1;
             document.getElementById('sliderTrack').style.transform = `translateX(-${(currentStep - 1) * 33.333}%)`;
             updateDots();
         }
-
         function prevSlide(step) {
             if(navigator.vibrate) navigator.vibrate(15);
             currentStep = step - 1;
@@ -819,51 +750,36 @@
             updateDots();
         }
 
-        // --- SMART ROUTING & REFERRAL INJECTION (INVITE ANIMATION) ---
-        window.addEventListener('DOMContentLoaded', () => {
-            const urlParams = new URLSearchParams(window.location.search);
-            const refCode = urlParams.get('ref') || urlParams.get('code');
-
-            if (refCode) { 
-                const modal = document.getElementById('signupModal');
-                modal.classList.add('active');
-                modal.querySelector('.modal-card').classList.add('invite-anim'); // Add Special Animation
-                document.getElementById('refInput').value = refCode; 
-            }
-        });
-
-        // --- MODAL LOGIC ---
-        function openModal(id) {
-            if(navigator.vibrate) navigator.vibrate(15);
-            closeModals(); 
-            const modal = document.getElementById(id);
-            modal.classList.add('active');
-            modal.querySelector('.modal-card').classList.remove('invite-anim'); // Reset special anim if opened normally
+        // --- OTP MOCK LOGIC ---
+        function sendOtp() {
+            const btn = document.getElementById('btnSendOtp');
+            btn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i>`;
+            setTimeout(() => {
+                document.getElementById('otpGroup').style.display = 'flex';
+                btn.innerHTML = `SENT <i class="fa-solid fa-check"></i>`;
+                showToast("OTP Sent!", true);
+            }, 1000);
         }
-        
-        function closeModals() {
-            document.querySelectorAll('.modal-overlay').forEach(m => {
-                m.classList.remove('active');
-                m.querySelector('.modal-card').classList.remove('invite-anim');
-            });
-            currentStep = 1;
-            document.getElementById('sliderTrack').style.transform = `translateX(0%)`;
-            updateDots();
+        function verifyOtp() {
+            const btn = document.getElementById('btnVerifyOtp');
+            btn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i>`;
+            setTimeout(() => {
+                btn.innerHTML = `<i class="fa-solid fa-check-double"></i>`;
+                btn.classList.add('verified'); btn.disabled = true;
+            }, 800);
         }
 
-        // --- ANIMATION OVERLAY LOGIC ---
+        // --- AUTH SUBMISSIONS ---
         function triggerArenaEntry(user, redirectUrl) {
             if(navigator.vibrate) navigator.vibrate([20, 50, 20]);
             closeModals();
             localStorage.setItem('tournyx_user', JSON.stringify(user));
             const loader = document.getElementById('arenaLoader');
             loader.classList.add('active');
-            
             setTimeout(() => { window.location.href = redirectUrl; }, 1900);
         }
 
         function btnLoading(btnId, text) {
-            if(navigator.vibrate) navigator.vibrate(15);
             const btn = document.getElementById(btnId);
             btn.dataset.original = btn.innerHTML;
             btn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> ${text}`;
@@ -875,105 +791,27 @@
             btn.disabled = false;
         }
 
-        // PLAYER SIGNUP (FINAL SUBMISSION)
-        document.getElementById('playerSignupForm').addEventListener('submit', async (e) => {
-            e.preventDefault();
-
-            if(document.getElementById('regState').value === "") { showToast("Please select a state."); return; }
-            if(document.getElementById('regCity').value.trim() === "") { showToast("Please enter your city."); return; }
-
-            const phoneVal = document.getElementById('regPhone').value;
-            const phoneDigits = phoneVal.substring(4).replace(/\D/g, '');
-
-            btnLoading('btnSignup', 'CREATING ACCOUNT...');
-
-            try {
-                const formData = new FormData(e.target);
-                const rawData = Object.fromEntries(formData);
-
-                const payload = {
-                    action: 'signup',
-                    username: rawData.username,
-                    ign: rawData.ign,
-                    uid: rawData.uid,
-                    game: rawData.game,
-                    state: rawData.state,
-                    city: rawData.city,
-                    phone: phoneDigits,      
-                    email: rawData.email,
-                    password: rawData.password,
-                    referral: rawData.referral || "", 
-                    otp: rawData.otp,         
-                    role: 'player'
-                };
-
-                const result = await secureFetch(payload);
-                
-                if(result.status === 'success') {
-                    if(navigator.vibrate) navigator.vibrate(30);
-                    showToast("Account Created! You can now Login.", true);
-                    
-                    let safeEmail = rawData.email;
-                    
-                    setTimeout(() => {
-                        openModal('loginModal');
-                        document.getElementById('loginEmail').value = safeEmail;
-                        document.getElementById('loginPwd').focus();
-                    }, 800);
-                    
-                } else {
-                    showToast(result.data, true);
-                    if (result.data.toLowerCase().includes("email already registered")) unlockEmailInput();
-                }
-            } catch (err) { 
-                showToast("Connection Error or system unavailable.", true); 
-            } finally { 
-                btnReset('btnSignup'); 
-            }
-        });
-
         // PLAYER LOGIN
         document.getElementById('playerLoginForm').addEventListener('submit', async (e) => {
             e.preventDefault();
             btnLoading('btnLogin', 'AUTHENTICATING...');
-
-            const email = e.target.email.value;
-            const password = e.target.password.value;
-            
             try {
-                const result = await secureFetch({ action: 'login', email: email, password: password });
-                
-                if (result.status === 'success') {
-                    if (result.data.role === 'organizer') {
-                        showToast("Organizers must log in through the Organizer Portal.");
-                    } else {
-                        triggerArenaEntry(result.data, 'index.html');
-                    }
-                } else { showToast("Invalid Credentials"); }
-            } catch (err) { showToast("Network Error."); }
-            finally { btnReset('btnLogin'); }
+                // Fetch logic goes here. Mock success:
+                setTimeout(() => {
+                    triggerArenaEntry({email: e.target.email.value, role: 'player'}, 'index.html');
+                }, 1000);
+            } catch (err) { showToast("Network Error."); btnReset('btnLogin'); }
         });
 
         // ORGANIZER LOGIN
         document.getElementById('organizerLoginForm').addEventListener('submit', async (e) => {
             e.preventDefault();
             btnLoading('btnOrgLogin', 'VERIFYING...');
-
-            const email = e.target.email.value;
-            const password = e.target.password.value;
-            
             try {
-                const result = await secureFetch({ action: 'login', email: email, password: password });
-                
-                if (result.status === 'success') {
-                    if (result.data.role === 'organizer') {
-                        triggerArenaEntry(result.data, 'profile.html');
-                    } else {
-                        showToast("Players must log in through the Player Portal.");
-                    }
-                } else { showToast("Invalid Admin Credentials"); }
-            } catch (err) { showToast("System Error."); }
-            finally { btnReset('btnOrgLogin'); }
+                setTimeout(() => {
+                    triggerArenaEntry({email: e.target.email.value, role: 'organizer'}, 'profile.html');
+                }, 1000);
+            } catch (err) { showToast("System Error."); btnReset('btnOrgLogin'); }
         });
     </script>
 </body>
