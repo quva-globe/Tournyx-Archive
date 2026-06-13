@@ -202,14 +202,35 @@
         .t-detail-item i { color: var(--accent-purple); width: 14px; text-align: center; margin-top: 2px; flex-shrink: 0;}
         html.theme-vip .t-detail-item i { color: #FFD700; }
 
-        /* Hardware Accelerated Flowing Progress Bar */
-        .progress-container { width: 100%; background: rgba(0,0,0,0.4); border-radius: 20px; height: 8px; margin-top: 4px; overflow: hidden; border: 1px solid rgba(255,255,255,0.05); position: relative; }
-        .progress-bar { height: 100%; border-radius: 20px; background: linear-gradient(90deg, #00f2ff, #bd00ff, #00f2ff); background-size: 200% 100%; animation: gradientFlow 2s linear infinite; position: relative; overflow: hidden; transition: width 0.4s ease-out; }
-        @keyframes gradientFlow { 0% { background-position: 100% 0; } 100% { background-position: -100% 0; } }
-        
-        html.theme-vip .progress-bar { background: linear-gradient(90deg, #FFD700, #FFA500, #FFD700); }
-        .progress-bar.filling { background: linear-gradient(90deg, #ff9900, #ff4d4d, #ff9900); }
-        .progress-bar.full { background: #ff4d4d; animation: none;}
+        /* --- 3. ESPORTS ANGLED PROGRESS BARS --- */
+.slot-tracker { width: 100%; margin-top: 8px; }
+.progress-container { 
+    width: 100%; background: rgba(255,255,255,0.05); 
+    border-radius: 4px; height: 10px; margin-top: 6px; 
+    border: 1px solid rgba(255,255,255,0.1); 
+    position: relative; overflow: hidden;
+    transform: skewX(-15deg); /* Esports angled look */
+}
+
+.progress-bar { 
+    height: 100%; border-radius: 2px; 
+    background: linear-gradient(90deg, var(--accent-purple), var(--accent-cyan)); 
+    background-size: 200% 100%; 
+    position: relative; overflow: hidden; 
+    transition: width 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275); 
+}
+
+/* Internal moving shine for the bar */
+.progress-bar::after {
+    content: ''; position: absolute; top: 0; left: -100%; width: 50%; height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.6), transparent);
+    animation: barShine 2s infinite;
+}
+@keyframes barShine { 100% { left: 200%; } }
+
+.progress-bar.filling { background: linear-gradient(90deg, var(--accent-orange), #ff4d4d); }
+.progress-bar.full { background: #ff4d4d; animation: none; }
+.progress-bar.full::after { display: none; }
         
         .slot-text { font-family: var(--font-head); font-size: 0.8rem; color: white; font-weight: bold; letter-spacing: 0.5px;}
         .t-action-row { display: flex; justify-content: space-between; align-items: center; border-top: 1px solid rgba(255,255,255,0.05); padding-top: 10px; margin-top: 8px; }
@@ -302,15 +323,39 @@
         .b-free { color: var(--accent-green); border-color: var(--accent-green); }
         .b-vip { color: #FFD700; border-color: #FFD700; box-shadow: 0 0 10px rgba(255,215,0,0.3); }
 
-        .dm-stat-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 25px; transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); align-items: stretch; }
-        .stat-box { background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255,255,255,0.1); padding: 15px; border-radius: 16px; display: flex; flex-direction: column; align-items: center; text-align: center; transition: transform 0.2s; justify-content: center; }
-        .stat-box:hover { transform: translateY(-2px); background: rgba(255, 255, 255, 0.05); }
-        .stat-box i { font-size: 1.4rem; margin-bottom: 8px; color: var(--accent-purple); }
-        html.theme-vip .stat-box i { color: #FFD700; }
-        .stat-box .val { font-family: var(--font-head); font-size: 1.05rem; font-weight: bold; color: white; text-shadow: 0 0 5px rgba(255,255,255,0.3); text-align: center; width: 100%; word-wrap: break-word; display:flex; align-items:center; justify-content:center; }
-        .stat-box .lbl { font-size: 0.7rem; color: #888; text-transform: uppercase; letter-spacing: 1px; margin-top: 5px; }
+        /* --- 5. TOURNAMENT DETAILS UI UPGRADE --- */
+.dm-stat-grid { 
+    display: grid; 
+    grid-template-columns: repeat(auto-fit, minmax(110px, 1fr)); 
+    gap: 12px; margin-bottom: 25px; 
+}
 
-        .dm-section { background: rgba(255, 255, 255, 0.02); border: 1px solid rgba(255,255,255,0.08); border-radius: 18px; padding: 20px; margin-bottom: 20px; word-wrap: break-word; overflow-wrap: break-word;}
+.stat-box { 
+    background: linear-gradient(180deg, rgba(255,255,255,0.05) 0%, rgba(0,0,0,0.5) 100%); 
+    border: 1px solid rgba(255,255,255,0.1); 
+    border-top: 2px solid var(--accent-cyan); /* Bold top highlight */
+    padding: 18px 12px; 
+    border-radius: 12px; 
+    display: flex; flex-direction: column; align-items: center; text-align: center; 
+    transition: transform 0.2s, box-shadow 0.2s; 
+}
+
+.stat-box:hover { 
+    transform: translateY(-4px); 
+    box-shadow: 0 10px 20px rgba(0,0,0,0.4); 
+    border-top-color: var(--accent-purple);
+}
+
+.stat-box i { font-size: 1.6rem; margin-bottom: 12px; color: var(--accent-cyan); filter: drop-shadow(0 0 8px rgba(0,242,255,0.5)); }
+.stat-box .val { font-family: var(--font-head); font-size: 1.15rem; font-weight: 900; color: white; margin-bottom: 4px;}
+.stat-box .lbl { font-size: 0.7rem; color: #aaa; text-transform: uppercase; letter-spacing: 1.5px; font-weight: bold;}
+
+.dm-section { 
+    background: rgba(15, 7, 30, 0.4); 
+    border: 1px solid rgba(255,255,255,0.05); 
+    border-left: 3px solid var(--accent-purple); /* Left accent bar for sections */
+    border-radius: 12px; padding: 22px; margin-bottom: 20px; 
+}
         .dm-sec-title { font-family: var(--font-head); font-size: 1.2rem; font-weight: 900; margin-bottom: 18px; color: rgb(var(--dynamic-t-color)); display: flex; align-items: center; gap: 10px; text-transform: uppercase; letter-spacing: 1px;}
         .dm-sec-title i { font-size: 1.3rem; color: white; background: rgba(var(--dynamic-t-color), 0.2); padding: 8px; border-radius: 50px; }
         
@@ -427,16 +472,52 @@
         .org-other-card:active { transform: scale(0.96); }
 
         .locked-footer { background: rgba(7, 3, 17, 0.95); padding: 15px 20px calc(15px + env(safe-area-inset-bottom, 0px)); border-top: 1px solid rgba(var(--dynamic-t-color), 0.2); display: flex; gap: 10px; flex-shrink: 0; box-shadow: 0 -5px 20px rgba(0,0,0,0.5); z-index: 50; backdrop-filter: blur(10px);}
-        /* PERFECT TEXT SIZES AND NO OVERFLOW */
-        .btn-primary { flex: 1; background: var(--accent-gradient); color: white; border: none; padding: 12px 10px; border-radius: 50px; font-family: var(--font-head); font-weight: bold; font-size: clamp(0.75rem, 3.5vw, 0.95rem); cursor: pointer; box-shadow: 0 5px 15px rgba(189,0,255,0.4); text-transform: uppercase; transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275); display:flex; align-items:center; justify-content:center; gap:6px; position: relative; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; max-width: 100%; box-sizing: border-box;}
-        .btn-primary::after { content: ''; position: absolute; top: 0; left: -100%; width: 50%; height: 100%; background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent); animation: btnShineCore 2.5s infinite 1.5s; z-index: 1; }
+       /* --- 4. TACTICAL ESPORTS BUTTONS --- */
+.btn-primary { 
+    flex: 1; 
+    background: linear-gradient(135deg, var(--accent-purple) 0%, rgba(7,3,17,1) 100%); 
+    color: white; 
+    border: 1px solid var(--accent-cyan); 
+    padding: clamp(12px, 3vw, 16px); 
+    border-radius: 8px; /* Sharp esports edges, not heavily rounded */
+    font-family: var(--font-head); font-weight: 900; 
+    font-size: clamp(0.85rem, 3.5vw, 1rem); 
+    cursor: pointer; 
+    box-shadow: inset 0 0 15px rgba(0,242,255,0.2), 0 5px 15px rgba(0,0,0,0.5); 
+    text-transform: uppercase; letter-spacing: 1px;
+    transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275); 
+    display:flex; align-items:center; justify-content:center; gap:8px; 
+    position: relative; overflow: hidden; white-space: nowrap; 
+    clip-path: polygon(5% 0, 100% 0, 95% 100%, 0 100%); /* Tactical angled cut */
+}
+
+.btn-primary:hover {
+    background: linear-gradient(135deg, var(--accent-cyan) 0%, rgba(7,3,17,1) 100%); 
+    box-shadow: inset 0 0 20px rgba(0,242,255,0.4), 0 8px 25px rgba(0,242,255,0.3);
+    transform: translateY(-2px);
+}
+
+.btn-primary:active { transform: scale(0.95); }
         @keyframes btnShineCore { 0% { left: -100%; } 20% { left: 200%; } 100% { left: 200%; } }
         .btn-primary:active { transform: scale(0.95); box-shadow: 0 2px 10px rgba(189,0,255,0.4); }
         .btn-primary:disabled { background: rgba(255,255,255,0.05); color: #666; border: 1px solid rgba(255,255,255,0.1); box-shadow: none; cursor: default; transform: none; filter: none;}
         html.theme-vip .btn-primary { background: linear-gradient(90deg, #FFD700, #FF8C00); color: black; box-shadow: 0 5px 15px rgba(255,215,0,0.4); }
         
-        .btn-secondary { background: transparent; border: 1px solid var(--accent-orange); color: var(--accent-orange); padding: 12px 10px; border-radius: 50px; font-family: var(--font-head); font-weight: bold; font-size: clamp(0.75rem, 3.5vw, 0.95rem); cursor: pointer; transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275); display: flex; align-items: center; justify-content: center; gap: 6px; text-transform: uppercase; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 100%; box-sizing: border-box;}
-        .btn-secondary:hover { background: rgba(255,153,0,0.1); transform: translateY(-2px); box-shadow: 0 5px 15px rgba(255,153,0,0.2); }
+        .btn-secondary { 
+    background: rgba(255,255,255,0.03); 
+    border: 1px solid rgba(255,255,255,0.2); 
+    color: white; 
+    padding: clamp(12px, 3vw, 16px); 
+    border-radius: 8px; 
+    font-family: var(--font-head); font-weight: bold; 
+    font-size: clamp(0.8rem, 3.5vw, 0.95rem); 
+    cursor: pointer; transition: all 0.2s; 
+    display: flex; align-items: center; justify-content: center; gap: 6px; 
+    text-transform: uppercase; white-space: nowrap;
+    clip-path: polygon(0 0, 95% 0, 100% 100%, 5% 100%);
+}
+
+.btn-secondary:hover { border-color: white; background: rgba(255,255,255,0.1); }
         .btn-secondary:active { background: rgba(255,153,0,0.2); transform: scale(0.95);}
         html.theme-vip .btn-secondary { border-color: #FFD700; color: #FFD700; }
         html.theme-vip .btn-secondary:hover { background: rgba(255,215,0,0.1); box-shadow: 0 5px 15px rgba(255,215,0,0.2); }
@@ -539,7 +620,26 @@
         @keyframes popIn { from { opacity: 0; transform: scale(0.9); } to { opacity: 1; transform: scale(1); } }
         .modal-box { background: rgba(15, 7, 30, 0.95); width: 90%; max-width: 400px; border-radius: 25px; border: 1px solid var(--card-border); padding: 25px; text-align: center; position: relative;}
         .modal-close { position: absolute; top: 15px; right: 15px; color: #888; font-size: 1.3rem; cursor: pointer; transition: 0.2s;}
-        .modal-close:hover { color: #ff4d4d; transform: scale(1.1); }
+        .modal-close:hover { color: #ff4d4d; transform: scale(1.1);
+                            /* --- 2. LOW-END DEVICE PERFORMANCE OVERRIDES --- */
+html.low-end-mode * {
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+    box-shadow: none !important;
+    text-shadow: none !important;
+    transition: transform 0.1s, opacity 0.1s !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+}
+
+html.low-end-mode .tourney-card::before,
+html.low-end-mode .tourney-card::after,
+html.low-end-mode .btn-primary::after {
+    display: none !important; /* Kills all gradient shine animations */
+}
+
+html.low-end-mode .top-header { background: var(--primary-bg) !important; border-bottom: 1px solid #333; }
+html.low-end-mode .bottom-sheet { background: var(--primary-bg) !important; }
     </style>
 </head>
 <body>
@@ -1017,6 +1117,58 @@
         let roomTabInterval = null;
         let currentOpenTeamDropdown = null;
 
+// --- 1. TOURNYX CACHE & PERFORMANCE ENGINE ---
+const TournyxEngine = {
+    init: function() {
+        this.checkDevicePerformance();
+        this.setupCaching();
+    },
+    
+    checkDevicePerformance: function() {
+        // Reads the toggle set in profile.html
+        const isLowEnd = localStorage.getItem('tournyx_low_end_mode') === 'true';
+        if (isLowEnd) {
+            document.documentElement.classList.add('low-end-mode');
+            console.log("Tournyx: Low-End Performance Mode Engaged.");
+        }
+    },
+    
+    setupCaching: function() {
+        // Intercept secureFetch to use local cache first for instant UI loading
+        const originalFetch = window.secureFetch;
+        window.secureFetch = async function(payload) {
+            const cacheKey = 'tx_cache_' + btoa(JSON.stringify(payload));
+            
+            // Serve instantly from cache if available
+            const cachedResponse = localStorage.getItem(cacheKey);
+            if (cachedResponse && payload.action === 'get_tournaments') {
+                setTimeout(() => {
+                    // Render cached data immediately while fetching fresh data in background
+                    try { 
+                        let parsed = JSON.parse(cachedResponse);
+                        if(parsed.status === 'success' && typeof renderTournaments === 'function') {
+                            renderTournaments(parsed.data);
+                        }
+                    } catch(e) {}
+                }, 50);
+            }
+
+            // Fetch fresh data
+            try {
+                const freshData = await originalFetch(payload);
+                if (freshData.status === 'success') {
+                    localStorage.setItem(cacheKey, JSON.stringify(freshData));
+                }
+                return freshData;
+            } catch (error) {
+                if (cachedResponse) return JSON.parse(cachedResponse);
+                throw error;
+            }
+        };
+    }
+};
+
+document.addEventListener("DOMContentLoaded", () => TournyxEngine.init());
         // --- SECURE POST FETCHER LOGIC ---
         async function secureFetch(payload) {
             try {
