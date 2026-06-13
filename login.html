@@ -8,7 +8,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Login / Register - Tournyx Esports</title>
-    <meta name="description" content="Sign in to your Tournyx account to join premium BGMI and Free Fire esports tournaments.">
+    <meta name="description" content="Sign in to your Tournyx account to join premium BGMI and Free Fire esports tournaments, manage your clan, and withdraw your winnings.">
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -19,7 +19,7 @@
         /* --- GLOBAL VARIABLES --- */
         :root {
             --primary-bg: #070311;
-            --card-bg: rgba(15, 5, 25, 0.75);
+            --card-bg: rgba(15, 5, 25, 0.7);
             --input-bg: rgba(5, 2, 12, 0.8);
             --card-border: rgba(0, 242, 255, 0.25);
             --accent-cyan: #00f2ff;
@@ -38,342 +38,304 @@
         body {
             background-color: var(--primary-bg); color: var(--text-main);
             font-family: var(--font-body); min-height: 100vh;
-            display: flex; align-items: center; justify-content: flex-end; /* Moved to Right */
-            overflow: hidden; position: relative; padding: 5vw 8vw;
+            display: flex; flex-direction: column; align-items: center; justify-content: space-between;
+            overflow: hidden; position: relative; padding: 0;
         }
 
         /* --- HARDWARE ACCELERATED VIDEO & BACKGROUND --- */
         .video-bg {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            object-fit: cover; z-index: -3; opacity: 0.85; 
+            object-fit: cover; z-index: -4; filter: brightness(0.75);
+            background: radial-gradient(circle at 50% 30%, #15062e 0%, #070311 100%);
         }
         .bg-overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: linear-gradient(to right, rgba(7,3,17,0.1) 0%, rgba(7,3,17,0.9) 100%); z-index: -2;
+            background: radial-gradient(circle at center, transparent 40%, rgba(7,3,17,0.8) 100%); z-index: -3;
         }
         #particles-canvas {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            z-index: -1; transform: translateZ(0); pointer-events: none;
+            z-index: -2; transform: translateZ(0); pointer-events: none;
         }
 
-        /* --- TOUCH RIPPLE EFFECT --- */
-        .touch-ripple {
-            position: absolute; width: 20px; height: 20px;
-            background: rgba(0, 242, 255, 0.6); border-radius: 50%;
-            transform: translate(-50%, -50%) scale(0);
-            animation: rippleAnim 0.5s ease-out; pointer-events: none; z-index: 9999;
-        }
-        @keyframes rippleAnim { to { transform: translate(-50%, -50%) scale(5); opacity: 0; } }
-
-        /* --- AUTO LOGIN AVATAR --- */
-        .logged-in-avatar {
-            position: fixed; top: 20px; right: 20px; width: 50px; height: 50px;
-            border-radius: 50%; border: 2px solid var(--accent-cyan);
-            box-shadow: 0 0 15px rgba(0, 242, 255, 0.5); cursor: pointer; z-index: 100;
-            overflow: hidden; transition: 0.3s; animation: floatLogo 3s ease-in-out infinite;
-        }
-        .logged-in-avatar:hover { transform: scale(1.1); box-shadow: 0 0 25px rgba(0, 242, 255, 0.8); }
-        .logged-in-avatar img { width: 100%; height: 100%; object-fit: cover; }
-
-        /* --- VOLUME CONTROL --- */
-        .volume-btn {
+        /* SIMPLE VOLUME TOGGLE */
+        .vol-btn {
             position: fixed; top: 20px; left: 20px; z-index: 100;
-            background: rgba(0,0,0,0.5); border: 1px solid var(--accent-cyan);
-            color: var(--accent-cyan); width: 40px; height: 40px; border-radius: 50%;
-            display: flex; align-items: center; justify-content: center; cursor: pointer;
-            backdrop-filter: blur(5px); transition: 0.3s;
+            width: 36px; height: 36px; border-radius: 50%; background: rgba(0,0,0,0.5);
+            border: 1px solid #555; color: white; font-size: 0.9rem;
+            display: flex; align-items: center; justify-content: center;
+            cursor: pointer; backdrop-filter: blur(5px); transition: 0.2s;
         }
-        .volume-btn:hover { background: var(--accent-cyan); color: #000; }
+        .vol-btn:active { transform: scale(0.9); }
 
-        /* --- FOOTER CREDITS --- */
-        .footer-credits {
-            position: fixed; bottom: 10px; left: 0; width: 100%; text-align: center;
-            z-index: 5; font-size: 0.7rem; color: rgba(255,255,255,0.5);
-            display: flex; flex-direction: column; gap: 4px; pointer-events: none;
+        /* LOGGED IN PROFILE CORNER */
+        .top-profile-corner {
+            position: fixed; top: 20px; right: 20px; z-index: 100;
+            display: flex; align-items: center; gap: 10px; background: rgba(0,0,0,0.6);
+            padding: 5px 15px 5px 5px; border-radius: 50px; border: 1px solid rgba(255,255,255,0.1);
+            backdrop-filter: blur(10px); cursor: pointer; transition: 0.3s;
+            animation: fadeInDown 1s ease forwards;
         }
-        .data-warning { color: rgba(255, 255, 255, 0.7); }
-        .neon-quva {
-            font-family: var(--font-head); font-weight: 900; color: #fff;
-            text-shadow: 0 0 5px #ff00ff, 0 0 10px #ff00ff, 0 0 20px #ff00ff; letter-spacing: 1px;
+        .top-profile-corner:active { transform: scale(0.95); }
+        .top-profile-corner img {
+            width: 35px; height: 35px; border-radius: 50%; border: 2px solid var(--accent-cyan);
+            object-fit: cover; box-shadow: 0 0 10px rgba(0,242,255,0.4);
+        }
+        .top-profile-corner .user-name {
+            font-family: var(--font-head); font-size: 0.85rem; font-weight: bold; color: white;
+            text-transform: uppercase; letter-spacing: 1px;
+        }
+        .hidden { display: none !important; }
+
+        /* --- AAA GAME ENTRY SCREEN (NO BOX) --- */
+        .game-entry-screen {
+            display: flex; flex-direction: column; align-items: center; justify-content: space-between;
+            width: 100%; height: 100vh; padding: 10vh 20px 8vh; position: relative; z-index: 10;
         }
 
-        /* --- DESKTOP LANDING HERO SECTION --- */
-        .landing-container {
-            text-align: center; z-index: 10; padding: 30px;
-            animation: cinematicZoomIn 1s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; 
-            width: 100%; max-width: 420px;
-            background: rgba(10, 5, 20, 0.6); backdrop-filter: blur(25px); -webkit-backdrop-filter: blur(25px);
-            border: 1px solid rgba(0, 242, 255, 0.2); border-radius: 24px; box-shadow: 0 15px 50px rgba(0,0,0,0.8);
+        .center-logo-area {
+            display: flex; flex-direction: column; align-items: center;
+            animation: cinematicZoomIn 1.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
         }
-
-        @keyframes cinematicZoomIn { 0% { transform: translateX(50px) scale(0.9); opacity: 0; } 100% { transform: translateX(0) scale(1); opacity: 1; } }
-
-        .landing-content-wrapper { display: flex; flex-direction: column; align-items: center; }
-
-        .logo-wrapper {
-            position: relative; width: 90px; height: 90px; margin: 0 auto 15px;
-            background: linear-gradient(135deg, rgba(189, 0, 255, 0.2), rgba(0, 242, 255, 0.2));
-            border-radius: 25%; display: flex; align-items: center; justify-content: center;
-            border: 2px solid rgba(0, 242, 255, 0.5);
-            box-shadow: 0 0 20px rgba(189, 0, 255, 0.4), inset 0 0 15px rgba(0, 242, 255, 0.3);
-            animation: floatLogo 4s ease-in-out infinite; overflow: hidden;
+        .center-logo-area img {
+            width: 130px; height: 130px; border-radius: 25px; object-fit: cover;
+            border: 2px solid rgba(0, 242, 255, 0.6);
+            box-shadow: 0 0 30px rgba(189, 0, 255, 0.6), inset 0 0 20px rgba(0, 242, 255, 0.4);
+            animation: floatLogo 4s ease-in-out infinite; margin-bottom: 15px;
+            background: var(--primary-bg);
         }
-        .brand-logo { width: 100%; height: 100%; object-fit: cover; }
-        @keyframes floatLogo { 0%, 100% { transform: translateY(0); box-shadow: 0 0 20px rgba(189,0,255,0.4); } 50% { transform: translateY(-6px); box-shadow: 0 0 30px rgba(0,242,255,0.6); } }
-
+        @keyframes cinematicZoomIn { 0% { transform: scale(0.8); opacity: 0; filter: blur(10px); } 100% { transform: scale(1); opacity: 1; filter: blur(0); } }
+        @keyframes floatLogo { 0%, 100% { transform: translateY(0); box-shadow: 0 0 30px rgba(189,0,255,0.6); } 50% { transform: translateY(-10px); box-shadow: 0 0 40px rgba(0,242,255,0.8); } }
+        
         .app-name { 
-            font-family: var(--font-head); font-size: 1.8rem; letter-spacing: 2px; font-weight: 900;
+            font-family: var(--font-head); font-size: 2.5rem; letter-spacing: 4px; font-weight: 900;
             background: var(--accent-gradient); -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-            margin-bottom: 2px; text-shadow: 0 0 15px rgba(0,242,255,0.3);
+            margin-bottom: 5px; text-shadow: 0 0 20px rgba(0,242,255,0.4);
         }
 
-        .app-tagline { 
-            font-size: 0.9rem; margin-bottom: 12px; font-weight: 600; letter-spacing: 1px; 
-            background: linear-gradient(90deg, #aaa, #fff, #aaa, #fff); background-size: 300% auto;
-            -webkit-background-clip: text; -webkit-text-fill-color: transparent; animation: shineText 4s linear infinite;
+        /* BOTTOM HUD BUTTONS */
+        .auth-buttons-container {
+            display: flex; flex-direction: column; gap: 12px; width: 100%; max-width: 340px;
+            animation: slideUpHUD 1s ease forwards;
         }
-        @keyframes shineText { to { background-position: 300% center; } }
+        @keyframes slideUpHUD { from { transform: translateY(50px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
 
-        .static-desc {
-            font-size: 0.85rem; color: #00f2ff; font-family: var(--font-body);
-            margin-bottom: 20px; padding: 0 10px; line-height: 1.4;
-            text-shadow: 0 0 8px rgba(0, 242, 255, 0.3); font-weight: 500;
+        .game-btn {
+            width: 100%; padding: 15px; border-radius: 12px; font-family: var(--font-head);
+            font-size: 0.95rem; font-weight: 900; letter-spacing: 1px; cursor: pointer; transition: 0.2s;
+            text-transform: uppercase; display: flex; align-items: center; justify-content: center; gap: 8px;
+            position: relative; overflow: hidden; border: none; z-index: 1;
         }
-
-        .features-row { display: flex; justify-content: center; gap: 8px; margin-bottom: 25px; flex-wrap: wrap; }
-        .feature-badge {
-            background: rgba(255,255,255,0.05); border: 1px solid rgba(0, 242, 255, 0.3);
-            padding: 6px 12px; border-radius: 20px; font-size: 0.75rem; color: var(--accent-cyan);
-            font-family: var(--font-head); letter-spacing: 0.5px; box-shadow: inset 0 0 10px rgba(0,242,255,0.1);
-        }
-
-        /* BUTTONS */
-        .action-btn {
-            width: 100%; max-width: 320px; margin: 0 auto 12px; padding: 14px;
-            border-radius: 12px; font-family: var(--font-head); font-size: 0.95rem; font-weight: bold; letter-spacing: 1px;
-            cursor: pointer; transition: 0.3s; display: flex; align-items: center; justify-content: center; gap: 8px;
-            text-transform: uppercase; position: relative; overflow: hidden; z-index: 1;
-        }
-        .action-btn::before {
+        .game-btn::after {
             content: ''; position: absolute; top: 0; left: -100%; width: 50%; height: 100%;
             background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
-            transform: skewX(-25deg); transition: 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275); z-index: -1;
+            transform: skewX(-25deg); transition: 0.5s; z-index: -1;
         }
-        .action-btn:hover::before { left: 150%; }
+        .game-btn:hover::after { left: 150%; transition: 0.7s; }
+        .game-btn:active { transform: scale(0.96); }
+
+        .login-btn { background: var(--accent-gradient); color: white; box-shadow: 0 5px 20px rgba(189,0,255,0.5); }
+        .register-btn { background: rgba(0,0,0,0.6); color: white; border: 1px solid var(--accent-cyan); box-shadow: inset 0 0 15px rgba(0,242,255,0.2); backdrop-filter: blur(10px); }
         
-        .btn-primary { background: var(--accent-gradient); color: white; border: none; box-shadow: 0 4px 15px rgba(189,0,255,0.4); }
-        .btn-primary:active { transform: scale(0.96); box-shadow: 0 2px 10px rgba(0,242,255,0.5); }
-
-        .btn-secondary { background: rgba(0,0,0,0.5); color: white; border: 1px solid var(--accent-cyan); box-shadow: inset 0 0 10px rgba(0,242,255,0.1); }
-        .btn-secondary:active { transform: scale(0.96); }
-
-        .btn-org { 
-            background: rgba(255, 153, 0, 0.1); color: var(--accent-orange); border: 1px solid var(--accent-orange); 
-            box-shadow: 0 0 15px rgba(255,153,0,0.4); margin-top: 5px; animation: orgPulse 2s infinite;
+        .org-btn { 
+            background: rgba(255, 153, 0, 0.15); color: var(--accent-orange); 
+            border: 1px solid var(--accent-orange); box-shadow: 0 0 20px rgba(255,153,0,0.4), inset 0 0 10px rgba(255,153,0,0.2);
+            backdrop-filter: blur(10px); animation: orgGlow 2s infinite alternate; margin-top: 5px;
         }
-        .btn-org:active { transform: scale(0.96); background: rgba(255, 153, 0, 0.3); }
-        @keyframes orgPulse { 0%, 100% { box-shadow: 0 0 10px rgba(255,153,0,0.4); } 50% { box-shadow: 0 0 25px rgba(255,153,0,0.8); } }
+        @keyframes orgGlow { from { box-shadow: 0 0 15px rgba(255,153,0,0.3); } to { box-shadow: 0 0 30px rgba(255,153,0,0.6); border-color: #ffd700; color: #ffd700; } }
 
-        /* --- MODALS (UNIVERSAL SIZING) --- */
+        /* TAP TO START ENGINE */
+        .tap-to-start {
+            font-family: var(--font-head); font-size: 1.3rem; font-weight: 900; color: white;
+            letter-spacing: 2px; text-transform: uppercase; cursor: pointer;
+            text-shadow: 0 0 15px var(--accent-cyan), 0 0 30px var(--accent-purple);
+            animation: pulseTap 1.5s infinite alternate; padding: 20px; width: 100%; text-align: center;
+        }
+        @keyframes pulseTap { 0% { opacity: 0.4; transform: scale(0.95); } 100% { opacity: 1; transform: scale(1.05); } }
+
+        /* TOUCH RIPPLE FX */
+        .ripple {
+            position: absolute; border-radius: 50%; transform: scale(0);
+            animation: ripple-anim 0.6s linear; background: rgba(0, 242, 255, 0.4); z-index: 9999; pointer-events: none;
+        }
+        @keyframes ripple-anim { to { transform: scale(4); opacity: 0; } }
+
+        /* LEGAL FOOTER CREDITS */
+        .credits-footer {
+            position: fixed; bottom: 10px; width: 100%; text-align: center;
+            z-index: 5; pointer-events: none; display: flex; flex-direction: column; gap: 4px;
+        }
+        .data-notice { font-size: 0.65rem; color: #00ff7f; font-family: var(--font-body); font-weight: bold; letter-spacing: 0.5px; text-shadow: 0 0 5px rgba(0,255,127,0.5);}
+        .copyrights { font-size: 0.55rem; color: #888; font-family: var(--font-body); letter-spacing: 0.5px; }
+        .quva-credit { font-size: 0.65rem; color: #aaa; font-family: var(--font-body); letter-spacing: 1px; margin-top: 2px;}
+        .neon-quva { font-family: var(--font-head); font-weight: 900; color: white; text-shadow: 0 0 8px #00f2ff, 0 0 15px #bd00ff; letter-spacing: 2px;}
+
+        /* --- MODALS (UNIVERSAL SIZING & Z-INDEX FIX) --- */
         .modal-overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0, 0, 0, 0.8); z-index: 50; display: none;
+            background: rgba(0, 0, 0, 0.75); z-index: 5000; display: none;
             align-items: center; justify-content: center; backdrop-filter: blur(10px);
             opacity: 0; transition: opacity 0.3s ease; padding: 15px;
         }
-        .modal-overlay.active { display: flex; opacity: 1; animation: modalPop 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; }
-        @keyframes modalPop { from { opacity: 0; transform: scale(0.9); } to { opacity: 1; transform: scale(1); } }
-
+        .modal-overlay.active { display: flex; opacity: 1; }
+        
         .modal-card {
             background: var(--card-bg); border: 1px solid var(--card-border);
-            width: 100%; max-width: 420px; border-radius: 20px; padding: 25px;
-            box-shadow: 0 15px 40px rgba(0,0,0,0.9), inset 0 0 20px rgba(0,242,255,0.15);
+            width: 100%; max-width: 400px; border-radius: 20px; padding: 25px 20px;
+            box-shadow: 0 15px 40px rgba(0,0,0,0.9), inset 0 0 25px rgba(0,242,255,0.15);
+            transform: scale(0.9); transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
             max-height: 90vh; display: flex; flex-direction: column; position: relative;
-            backdrop-filter: blur(25px); -webkit-backdrop-filter: blur(25px);
+            backdrop-filter: blur(30px); -webkit-backdrop-filter: blur(30px);
         }
+        .modal-overlay.active .modal-card { transform: scale(1); }
 
-        .close-modal { position: absolute; top: 15px; right: 20px; font-size: 1.5rem; color: #888; cursor: pointer; transition: 0.3s; z-index: 10; }
-        .close-modal:hover { color: #ff4d4d; transform: rotate(90deg) scale(1.1); }
+        .close-modal { position: absolute; top: 15px; right: 18px; font-size: 1.3rem; color: #888; cursor: pointer; transition: 0.3s; z-index: 100; }
+        .close-modal:hover { color: var(--accent-red); transform: rotate(90deg) scale(1.1); }
 
-        .modal-title { font-family: var(--font-head); font-size: 1.4rem; color: white; margin-bottom: 15px; text-align: center; text-transform: uppercase; letter-spacing: 1px; text-shadow: 0 0 10px currentColor; flex-shrink: 0;}
+        .modal-title { font-family: var(--font-head); font-size: 1.25rem; color: white; margin-bottom: 20px; text-align: center; text-transform: uppercase; letter-spacing: 1px; text-shadow: 0 0 10px currentColor; flex-shrink: 0;}
 
-        /* --- ORGANIZER PORTAL SPECIFIC (PURE GLASSMORPHISM) --- */
+        /* ORGANIZER PORTAL MODAL GLOW */
         #orgModal .modal-card {
-            background: rgba(25, 10, 0, 0.75); border: 1px solid rgba(255, 153, 0, 0.5);
-            box-shadow: 0 15px 40px rgba(0,0,0,0.9), inset 0 0 30px rgba(255, 153, 0, 0.2);
+            background: rgba(20, 5, 0, 0.75); border: 1px solid rgba(255, 153, 0, 0.6);
+            box-shadow: 0 15px 40px rgba(0,0,0,0.9), inset 0 0 40px rgba(255, 153, 0, 0.25);
         }
 
         /* --- MULTI-STEP SLIDER --- */
-        .slider-window { width: 100%; flex: 1; overflow-x: hidden; overflow-y: visible; position: relative; min-height: 350px; }
+        .slider-window { width: 100%; flex: 1; overflow: hidden; position: relative; min-height: 280px; }
         .slider-track { display: flex; width: 300%; transition: transform 0.4s cubic-bezier(0.25, 0.8, 0.25, 1); height: 100%; align-items: flex-start;}
-        .slide-step { width: 33.333%; padding: 5px; flex-shrink: 0; box-sizing: border-box; }
+        .slide-step { width: 33.333%; padding: 5px; flex-shrink: 0; box-sizing: border-box; overflow-y: auto; max-height: 100%; scrollbar-width: none; }
         
-        .step-indicators { display: flex; justify-content: center; gap: 10px; margin-bottom: 20px; flex-shrink: 0;}
-        .step-dot { width: 12px; height: 12px; border-radius: 50%; background: rgba(255,255,255,0.1); transition: 0.3s; box-shadow: inset 0 0 5px rgba(0,0,0,0.5); }
-        .step-dot.active { background: var(--accent-cyan); box-shadow: 0 0 10px var(--accent-cyan); transform: scale(1.2); }
+        .step-indicators { display: flex; justify-content: center; gap: 8px; margin-bottom: 15px; flex-shrink: 0;}
+        .step-dot { width: 8px; height: 8px; border-radius: 50%; background: rgba(255,255,255,0.1); transition: 0.3s; box-shadow: inset 0 0 5px rgba(0,0,0,0.5); }
+        .step-dot.active { background: var(--accent-cyan); box-shadow: 0 0 10px var(--accent-cyan); transform: scale(1.3); }
 
-        /* --- FORMS & INPUTS (COMPACT) --- */
-        .input-wrapper { margin-bottom: 15px; width: 100%; }
+        /* --- FORMS & INPUTS (REDUCED SIZE FOR NO OVERFLOW) --- */
+        .input-wrapper { margin-bottom: 12px; width: 100%; }
         .input-group { position: relative; width: 100%; }
-        .input-icon { position: absolute; left: 15px; top: 50%; transform: translateY(-50%); color: #888; transition: 0.3s; pointer-events: none; font-size: 1rem;}
+        /* FIX: Pointer events none allows clicks to pass through to the select field */
+        .input-icon { position: absolute; left: 14px; top: 50%; transform: translateY(-50%); color: #666; transition: 0.3s; pointer-events: none; font-size: 0.85rem; z-index: 3;}
         
         .form-control {
-            width: 100%; background: var(--input-bg); border: 1px solid rgba(255,255,255,0.1); border-radius: 12px;
-            padding: 14px 14px 14px 40px; color: white; font-family: var(--font-body); font-size: 0.95rem; outline: none; transition: 0.2s;
-            box-shadow: inset 0 0 10px rgba(0,0,0,0.6); appearance: none; -webkit-appearance: none;
+            width: 100%; background: var(--input-bg); border: 1px solid rgba(255,255,255,0.1); border-radius: 10px;
+            padding: 12px 12px 12px 40px; color: white; font-family: var(--font-body); font-size: 0.85rem; outline: none; transition: 0.2s;
+            box-shadow: inset 0 0 10px rgba(0,0,0,0.5); appearance: none; -webkit-appearance: none; position: relative; z-index: 2;
         }
         
-        /* Dropdown Fix */
-        select.form-control { cursor: pointer; padding-right: 30px; background-image: url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23666666%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E"); background-repeat: no-repeat; background-position: right 15px top 50%; background-size: 12px auto; }
-        select.form-control option { background: #110822; color: white; padding: 10px; }
+        select.form-control { cursor: pointer; padding-right: 30px; background-image: url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23666666%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E"); background-repeat: no-repeat; background-position: right 12px top 50%; background-size: 10px auto; background-color: var(--input-bg);}
+        select.form-control option { background: var(--primary-bg); color: white; }
         
-        .form-control:focus { border-color: var(--accent-cyan); box-shadow: 0 0 15px rgba(0, 242, 255, 0.3), inset 0 0 10px rgba(0,0,0,0.5); }
-        #orgModal .form-control:focus { border-color: var(--accent-orange); box-shadow: 0 0 15px rgba(255, 153, 0, 0.3); }
-        .form-control:focus + .input-icon, .form-control:not(:placeholder-shown) + .input-icon { color: var(--accent-cyan); filter: drop-shadow(0 0 5px var(--accent-cyan)); }
-        #orgModal .form-control:focus + .input-icon, #orgModal .form-control:not(:placeholder-shown) + .input-icon { color: var(--accent-orange); filter: drop-shadow(0 0 5px var(--accent-orange)); }
+        .form-control:focus { border-color: var(--accent-cyan); box-shadow: 0 0 10px rgba(0, 242, 255, 0.3), inset 0 0 8px rgba(0,0,0,0.6); }
+        #orgModal .form-control:focus { border-color: var(--accent-orange); box-shadow: 0 0 10px rgba(255, 153, 0, 0.3); }
+        
+        .form-control:focus + .input-icon, .form-control:not(:placeholder-shown) + .input-icon, .input-group:focus-within .input-icon { color: var(--accent-cyan); filter: drop-shadow(0 0 5px var(--accent-cyan)); }
+        #orgModal .input-group:focus-within .input-icon { color: var(--accent-orange); filter: drop-shadow(0 0 5px var(--accent-orange)); }
         
         .form-control:read-only { opacity: 0.6; pointer-events: none; }
 
-        .pwd-toggle { position: absolute; right: 15px; top: 50%; transform: translateY(-50%); color: #888; cursor: pointer; transition: 0.3s; font-size: 1.1rem; }
-        .pwd-toggle:active { transform: translateY(-50%) scale(0.8); }
+        .pwd-toggle { position: absolute; right: 14px; top: 50%; transform: translateY(-50%); color: #666; cursor: pointer; transition: 0.3s; font-size: 0.9rem; z-index: 10;}
+        .pwd-toggle:active { transform: translateY(-50%) scale(0.9); }
 
-        .info-box { background: rgba(0, 242, 255, 0.08); border-left: 3px solid var(--accent-cyan); color: #ccc; font-size: 0.8rem; padding: 10px; margin-top: 10px; border-radius: 0 8px 8px 0; line-height: 1.4; }
+        .info-box { background: rgba(0, 242, 255, 0.05); border-left: 2px solid var(--accent-cyan); color: #bbb; font-size: 0.65rem; padding: 6px 10px; margin-top: 6px; border-radius: 0 6px 6px 0; line-height: 1.3; }
 
         /* --- OTP UI --- */
-        .flex-row { display: flex; gap: 10px; }
-        .otp-btn { background: rgba(189,0,255,0.15); border: 1px solid var(--accent-purple); color: var(--accent-purple); border-radius: 12px; font-family: var(--font-head); font-size: 0.8rem; font-weight: bold; cursor: pointer; transition: 0.3s; padding: 0 15px; text-transform: uppercase; white-space: nowrap; }
+        .flex-row { display: flex; gap: 8px; }
+        .otp-btn { background: rgba(189,0,255,0.15); border: 1px solid var(--accent-purple); color: var(--accent-purple); border-radius: 10px; font-family: var(--font-head); font-size: 0.75rem; font-weight: bold; cursor: pointer; transition: 0.3s; padding: 0 12px; text-transform: uppercase; white-space: nowrap; height: 100%;}
         .otp-btn:active { transform: scale(0.95); background: var(--accent-purple); color: #fff; }
-        .verify-btn { position: absolute; right: 5px; top: 5px; bottom: 5px; background: var(--accent-green); border: none; border-radius: 8px; color: #000; font-weight: 800; padding: 0 15px; cursor: pointer; font-family: var(--font-head); font-size: 0.8rem; transition: 0.2s;}
+        .verify-btn { position: absolute; right: 5px; top: 5px; bottom: 5px; background: var(--accent-green); border: none; border-radius: 8px; color: #000; font-weight: 800; padding: 0 12px; cursor: pointer; font-family: var(--font-head); font-size: 0.75rem; transition: 0.2s; z-index: 10;}
         .verify-btn:active { transform: scale(0.95); }
-        .verify-btn.verified { background: rgba(0, 255, 127, 0.15); border: 1px solid var(--accent-green); color: var(--accent-green); cursor: default; }
+        .verify-btn.verified { background: rgba(0, 255, 127, 0.1); border: 1px solid var(--accent-green); color: var(--accent-green); cursor: default; }
 
         /* TERMS LINK & CHECKBOX */
-        .custom-checkbox-container { display: flex; align-items: center; gap: 10px; margin-top: 10px; margin-bottom: 20px; cursor: pointer; font-size: 0.85rem; color: #bbb; text-align: left; user-select: none; }
+        .custom-checkbox-container { display: flex; align-items: flex-start; gap: 10px; margin-top: 8px; margin-bottom: 15px; cursor: pointer; font-size: 0.75rem; color: #aaa; text-align: left; user-select: none; line-height: 1.3; }
         .custom-checkbox-container input { display: none; }
-        .checkmark { min-width: 20px; height: 20px; border: 2px solid #666; border-radius: 5px; display: flex; align-items: center; justify-content: center; background: rgba(0,0,0,0.6); }
-        .custom-checkbox-container input:checked + .checkmark { border-color: var(--accent-green); background: rgba(0, 255, 127, 0.2); box-shadow: 0 0 10px rgba(0, 255, 127, 0.4); }
-        .custom-checkbox-container input:checked + .checkmark::after { content: '\f00c'; font-family: "Font Awesome 6 Free"; font-weight: 900; color: var(--accent-green); font-size: 12px; }
+        .checkmark { min-width: 18px; height: 18px; border: 1.5px solid #555; border-radius: 4px; display: flex; align-items: center; justify-content: center; background: rgba(0,0,0,0.5); margin-top: 1px; transition: 0.2s;}
+        .custom-checkbox-container input:checked + .checkmark { border-color: var(--accent-green); background: rgba(0, 255, 127, 0.15); box-shadow: 0 0 10px rgba(0, 255, 127, 0.4); }
+        .custom-checkbox-container input:checked + .checkmark::after { content: '\f00c'; font-family: "Font Awesome 6 Free"; font-weight: 900; color: var(--accent-green); font-size: 10px; }
         .terms-link { color: var(--accent-cyan); text-decoration: none; font-weight: bold; }
 
         /* SLIDER NAVIGATION BUTTONS */
-        .slide-nav-row { display: flex; gap: 15px; margin-top: 15px; }
-        .slide-btn { flex: 1; padding: 14px; border: none; border-radius: 12px; font-family: var(--font-head); font-size: 1rem; font-weight: bold; text-transform: uppercase; cursor: pointer; transition: 0.2s; box-shadow: 0 4px 15px rgba(0,0,0,0.5);}
+        .slide-nav-row { display: flex; gap: 8px; margin-top: 10px; }
+        .slide-btn { flex: 1; padding: 12px; border: none; border-radius: 10px; font-family: var(--font-head); font-size: 0.85rem; font-weight: bold; text-transform: uppercase; cursor: pointer; transition: 0.2s; box-shadow: 0 4px 15px rgba(0,0,0,0.4); display: flex; align-items: center; justify-content: center; gap: 6px;}
         .slide-btn.next { background: var(--accent-gradient); color: white; }
-        .slide-btn.back { background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.15); color: #bbb; }
+        .slide-btn.back { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.15); color: #aaa; }
         .slide-btn:active { transform: scale(0.96); }
-        .slide-btn:disabled { opacity: 0.5; filter: grayscale(1); cursor: not-allowed; }
 
         /* --- TOAST ALERTS --- */
         #customToast {
-            position: fixed; bottom: -80px; left: 50%; transform: translateX(-50%);
-            background: rgba(255, 77, 77, 0.95); color: white; font-family: var(--font-head); font-size: 0.9rem; font-weight: bold;
-            padding: 14px 25px; border-radius: 50px; z-index: 9999;
-            box-shadow: 0 5px 25px rgba(255, 77, 77, 0.6); opacity: 0; transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            display: flex; align-items: center; gap: 10px; white-space: nowrap; backdrop-filter: blur(5px);
+            position: fixed; bottom: -60px; left: 50%; transform: translateX(-50%);
+            background: rgba(255, 77, 77, 0.95); color: white; font-family: var(--font-head); font-size: 0.75rem; font-weight: bold;
+            padding: 10px 20px; border-radius: 50px; z-index: 9999;
+            box-shadow: 0 5px 20px rgba(255, 77, 77, 0.6); opacity: 0; transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            display: flex; align-items: center; gap: 8px; white-space: nowrap; backdrop-filter: blur(10px);
         }
-        #customToast.show { bottom: 40px; opacity: 1; }
-        #customToast.success { background: rgba(0, 255, 127, 0.95); color: black; box-shadow: 0 5px 25px rgba(0, 255, 127, 0.6); }
+        #customToast.show { bottom: 35px; opacity: 1; }
+        #customToast.success { background: rgba(0, 255, 127, 0.95); color: black; box-shadow: 0 5px 20px rgba(0, 255, 127, 0.6); }
 
         /* CINEMATIC ARENA ENTRY */
         .arena-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #040108; z-index: 9999; display: none; flex-direction: column; align-items: center; justify-content: center; }
         .arena-overlay.active { display: flex; animation: fadeInBg 0.3s forwards; }
-        .arena-text { font-family: var(--font-head); font-size: 2.5rem; color: #fff; font-weight: 900; letter-spacing: 4px; text-shadow: 0 0 25px rgba(0, 242, 255, 0.8); text-align: center; text-transform: uppercase; animation: cinematicEntry 2s cubic-bezier(0.25, 1, 0.5, 1) forwards; }
+        .arena-text { font-family: var(--font-head); font-size: 1.8rem; color: #fff; font-weight: 900; letter-spacing: 4px; text-shadow: 0 0 20px rgba(0, 242, 255, 0.6); text-align: center; text-transform: uppercase; animation: cinematicEntry 2s cubic-bezier(0.25, 1, 0.5, 1) forwards; }
         @keyframes fadeInBg { from { opacity: 0; } to { opacity: 1; } }
-        @keyframes cinematicEntry { 0% { transform: scale(0.8); opacity: 0; filter: blur(10px); } 20% { transform: scale(1); opacity: 1; filter: blur(0); letter-spacing: 4px; } 80% { transform: scale(1.05); opacity: 1; filter: blur(0); letter-spacing: 8px; } 100% { transform: scale(1.3); opacity: 0; filter: blur(15px); letter-spacing: 15px; } }
+        @keyframes cinematicEntry { 0% { transform: scale(0.8); opacity: 0; filter: blur(10px); } 20% { transform: scale(1); opacity: 1; filter: blur(0); letter-spacing: 4px; } 80% { transform: scale(1.05); opacity: 1; filter: blur(0); letter-spacing: 6px; } 100% { transform: scale(1.3); opacity: 0; filter: blur(15px); letter-spacing: 10px; } }
 
-        /* --- MOBILE SPECIFIC APP-LIKE UI (NEW REDESIGN) --- */
-        @media (max-width: 768px) {
-            body { align-items: flex-end; justify-content: center; padding: 0; touch-action: pan-y; }
-            
-            /* Keep video playing on mobile, adjust overlay */
-            .video-bg { display: block; opacity: 0.9; } 
-            .bg-overlay { background: linear-gradient(to bottom, rgba(7,3,17,0.2) 0%, rgba(7,3,17,1) 100%); }
-
-            .landing-container { 
-                position: relative; width: 100%; height: auto; padding: 30px 20px 40px;
-                border-radius: 40px 40px 0 0; background: rgba(10,5,20,0.85);
-                border: none; border-top: 1px solid rgba(0, 242, 255, 0.3);
-                box-shadow: 0 -15px 50px rgba(0,0,0,0.9); animation: slideUpContent 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
-            }
-            @keyframes slideUpContent { from { transform: translateY(100%); } to { transform: translateY(0); } }
-
-            .logo-wrapper { width: 80px; height: 80px; margin: -65px auto 15px; background: var(--primary-bg); z-index: 15; } 
-            
-            .app-name { font-size: 1.6rem; letter-spacing: 2px; margin-bottom: 5px; }
-            .static-desc { font-size: 0.8rem; margin-bottom: 20px; color: #ccc;}
-            
-            /* Bottom Sheet Modals for Mobile */
-            .modal-overlay { align-items: flex-end; padding: 0; }
-            .modal-card { 
-                max-width: 100%; border-radius: 35px 35px 0 0; border-bottom: none; border-left: none; border-right: none; 
-                border-top: 2px solid var(--accent-cyan); box-shadow: 0 -10px 40px rgba(0,0,0,0.9); 
-                padding: 25px 20px calc(25px + env(safe-area-inset-bottom)); transform: translateY(100%); 
-            }
-            #orgModal .modal-card { border-top: 2px solid var(--accent-orange); }
-            .modal-overlay.active .modal-card { transform: translateY(0); transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
-            .modal-drag-pill { display: block; width: 50px; height: 5px; background: rgba(255,255,255,0.3); border-radius: 10px; margin: -10px auto 20px; }
-            .close-modal { top: 15px; right: 20px; font-size: 1.4rem; }
-
-            .footer-credits { bottom: 5px; font-size: 0.6rem; }
+        /* DESKTOP EXCLUSIVE ALIGNMENT */
+        @media (min-width: 769px) {
+            .game-entry-screen { align-items: flex-end; padding-right: 10%; }
         }
+        
     </style>
 </head>
-<body>
+<body id="mainBody">
 
     <video loop playsinline class="video-bg" id="bgVideo"></video>
-    <div class="bg-overlay" id="screenOverlay"></div>
+    <div class="bg-overlay"></div>
     <canvas id="particles-canvas"></canvas>
 
-    <button id="volumeToggle" class="volume-btn" onclick="toggleVolume()"><i class="fa-solid fa-volume-high"></i></button>
+    <button id="volToggle" class="vol-btn simple-vol" onclick="toggleVolume()">
+        <i id="volIcon" class="fa-solid fa-volume-xmark"></i>
+    </button>
 
-    <div id="loggedInAvatar" class="logged-in-avatar" style="display:none;" onclick="autoLogin()"></div>
-
-    <div class="footer-credits">
-        <span class="data-warning">Note: Video playback may incur data usage.</span>
-        <span class="copyright">© Tournyx Esports private limited | ©krafton | ©garena</span>
-        <span class="powered-by">Powered by <span class="neon-quva">Quva</span></span>
+    <div id="loggedInProfile" class="top-profile-corner hidden" onclick="quickLogin()">
+        <img id="loggedInAvatar" src="" alt="Avatar">
+        <span id="loggedInName" class="user-name"></span>
     </div>
 
-    <datalist id="indianCities">
-        <option value="Mumbai"><option value="Delhi"><option value="Bangalore"><option value="Hyderabad"><option value="Chennai"><option value="Kolkata"><option value="Pune"><option value="Ahmedabad"><option value="Jaipur"><option value="Lucknow">
-        </datalist>
-
-    <div class="landing-container" id="landingView">
-        <div class="landing-content-wrapper">
-            <div class="logo-wrapper">
-                <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEipVmqyUEA22VpntZdPCHuXoO_Rjco_cRaNl5CyFa-eehdtgXnHe6JoD8a5svxJRJYZfv_yXwww10T2cL2PHTiXLK-J-nWC1swmMs5RDxGVM8FBSlJORaRiX4YiD8gL8SyM4X1tRyQn_v8MsqQvbU4uEyHEU0qaySP1STWHaBEYuWKyF3-6QovSqJR-8xU/s1024/1000093705.png" alt="Tournyx Logo" class="brand-logo">
-            </div>
-            
+    <div class="game-entry-screen" id="entryScreen">
+        
+        <div class="center-logo-area">
+            <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEipVmqyUEA22VpntZdPCHuXoO_Rjco_cRaNl5CyFa-eehdtgXnHe6JoD8a5svxJRJYZfv_yXwww10T2cL2PHTiXLK-J-nWC1swmMs5RDxGVM8FBSlJORaRiX4YiD8gL8SyM4X1tRyQn_v8MsqQvbU4uEyHEU0qaySP1STWHaBEYuWKyF3-6QovSqJR-8xU/s1024/1000093705.png" alt="Tournyx Logo">
             <h1 class="app-name">TOURNYX</h1>
-            <p class="app-tagline">The Ultimate Esports Arena</p>
-            
-            <div class="static-desc">
-                Join the elite. Compete in daily scrims, climb the leaderboard, and withdraw real cash directly to your wallet.
-            </div>
-
-            <div class="features-row">
-                <span class="feature-badge"><i class="fa-solid fa-trophy"></i> Compete</span>
-                <span class="feature-badge"><i class="fa-solid fa-wallet"></i> Earn Cash</span>
-                <span class="feature-badge"><i class="fa-solid fa-shield-halved"></i> Build Clans</span>
-            </div>
-
-            <button class="action-btn btn-primary touch-target" onclick="openModal('loginModal')">
-                <i class="fa-solid fa-right-to-bracket"></i> Player Login
+        </div>
+        
+        <div id="authButtons" class="auth-buttons-container">
+            <button class="game-btn login-btn" onclick="openModal('loginModal')">
+                <i class="fa-solid fa-right-to-bracket"></i> PLAYER LOGIN
             </button>
-            <button class="action-btn btn-secondary touch-target" onclick="openModal('signupModal')">
-                <i class="fa-solid fa-user-plus"></i> Create Account
+            <button class="game-btn register-btn" onclick="openModal('signupModal')">
+                <i class="fa-solid fa-user-plus"></i> CREATE ACCOUNT
             </button>
-            
-            <button class="action-btn btn-org touch-target" onclick="openModal('orgModal')">
-                <i class="fa-solid fa-crown"></i> Organizer Portal
+            <button class="game-btn org-btn" onclick="openModal('orgModal')">
+                <i class="fa-solid fa-crown"></i> ORGANIZER PORTAL
             </button>
+        </div>
+        
+        <div id="tapToStart" class="tap-to-start hidden" onclick="quickLogin()">
+            TAP TO ENTER ARENA
         </div>
     </div>
 
+    <div class="credits-footer">
+        <div class="data-notice"><i class="fa-solid fa-cloud-arrow-down"></i> Video cached. Zero data usage.</div>
+        <div class="copyrights">© Tournyx Esports private limited | © KRAFTON | © Garena</div>
+        <div class="quva-credit">Powered by <span class="neon-quva">QUVA</span></div>
+    </div>
+
+    <datalist id="indianCities">
+        <option value="Mumbai"><option value="Delhi"><option value="Bangalore"><option value="Hyderabad"><option value="Ahmedabad"><option value="Chennai"><option value="Kolkata"><option value="Surat"><option value="Pune"><option value="Jaipur"><option value="Lucknow"><option value="Kanpur"><option value="Nagpur"><option value="Indore"><option value="Thane"><option value="Bhopal"><option value="Visakhapatnam"><option value="Pimpri-Chinchwad"><option value="Patna"><option value="Vadodara"><option value="Ghaziabad"><option value="Ludhiana"><option value="Agra"><option value="Nashik"><option value="Faridabad"><option value="Meerut"><option value="Rajkot"><option value="Kalyan-Dombivli"><option value="Vasai-Virar"><option value="Varanasi"><option value="Srinagar"><option value="Aurangabad"><option value="Dhanbad"><option value="Amritsar"><option value="Navi Mumbai"><option value="Allahabad"><option value="Howrah"><option value="Ranchi"><option value="Gwalior"><option value="Jabalpur"><option value="Coimbatore"><option value="Vijayawada"><option value="Jodhpur"><option value="Madurai"><option value="Raipur"><option value="Kota"><option value="Guwahati"><option value="Chandigarh"><option value="Solapur"><option value="Hubballi-Dharwad"><option value="Tiruchirappalli"><option value="Bareilly"><option value="Moradabad"><option value="Mysore"><option value="Tiruppur"><option value="Gurgaon"><option value="Aligarh"><option value="Jalandhar"><option value="Bhubaneswar"><option value="Salem"><option value="Warangal"><option value="Mira-Bhayandar"><option value="Thiruvananthapuram"><option value="Bhiwandi"><option value="Saharanpur"><option value="Guntur"><option value="Amravati"><option value="Bikaner"><option value="Noida"><option value="Jamshedpur"><option value="Bhilai"><option value="Cuttack"><option value="Firozabad"><option value="Kochi"><option value="Bhavnagar"><option value="Dehradun"><option value="Durgapur"><option value="Asansol"><option value="Nanded"><option value="Kolhapur"><option value="Ajmer"><option value="Gulbarga"><option value="Jamnagar"><option value="Ujjain"><option value="Loni"><option value="Siliguri"><option value="Jhansi"><option value="Ulhasnagar"><option value="Jammu"><option value="Sangli-Miraj & Kupwad"><option value="Mangalore"><option value="Erode"><option value="Belgaum"><option value="Kurnool"><option value="Ambattur"><option value="Rajahmundry"><option value="Tirunelveli"><option value="Malegaon"><option value="Gaya"><option value="Udaipur">
+    </datalist>
+
     <div class="modal-overlay" id="loginModal">
         <div class="modal-card">
-            <div class="modal-drag-pill"></div>
-            <i class="fa-solid fa-xmark close-modal touch-target" onclick="closeModals()"></i>
+            <i class="fa-solid fa-xmark close-modal" onclick="closeModals()"></i>
             <h2 class="modal-title" style="color:var(--accent-cyan)">Welcome Back</h2>
             
             <form id="playerLoginForm">
@@ -387,21 +349,20 @@
                     <div class="input-group">
                         <input type="password" name="password" id="loginPwd" class="form-control" placeholder="Password" required>
                         <i class="fa-solid fa-lock input-icon"></i>
-                        <i class="fa-solid fa-eye pwd-toggle touch-target" onclick="togglePwd('loginPwd', this, false)"></i>
+                        <i class="fa-solid fa-eye pwd-toggle" onclick="togglePwd('loginPwd', this, false)"></i>
                     </div>
                 </div>
-                <button type="submit" class="slide-btn next touch-target" id="btnLogin" style="width:100%; margin-top:15px;">LOGIN TO ARENA</button>
+                <button type="submit" class="slide-btn next" id="btnLogin" style="width:100%; margin-top:10px;">LOGIN TO ARENA</button>
             </form>
-            <div style="text-align:center; margin-top:20px; font-size:0.9rem; color:#888;">
-                New here? <span class="terms-link touch-target" style="cursor:pointer;" onclick="openModal('signupModal')">Sign Up</span>
+            <div style="text-align:center; margin-top:15px; font-size:0.8rem; color:#888;">
+                New here? <span class="terms-link" style="cursor:pointer;" onclick="openModal('signupModal')">Sign Up</span>
             </div>
         </div>
     </div>
 
     <div class="modal-overlay" id="orgModal">
         <div class="modal-card">
-            <div class="modal-drag-pill"></div>
-            <i class="fa-solid fa-xmark close-modal touch-target" onclick="closeModals()"></i>
+            <i class="fa-solid fa-xmark close-modal" onclick="closeModals()"></i>
             <h2 class="modal-title" style="color:var(--accent-orange)"><i class="fa-solid fa-crown"></i> Organizer Hub</h2>
 
             <form id="organizerLoginForm">
@@ -415,23 +376,22 @@
                     <div class="input-group">
                         <input type="password" name="password" id="orgPwd" class="form-control" placeholder="Access Key" required>
                         <i class="fa-solid fa-key input-icon" style="color:var(--accent-orange)"></i>
-                        <i class="fa-solid fa-eye pwd-toggle touch-target" onclick="togglePwd('orgPwd', this, true)"></i>
+                        <i class="fa-solid fa-eye pwd-toggle" onclick="togglePwd('orgPwd', this, true)"></i>
                     </div>
                 </div>
-                <button type="submit" class="slide-btn next touch-target" id="btnOrgLogin" style="width:100%; margin-top:15px; background:linear-gradient(90deg, #ff9900, #ff4d4d); box-shadow: 0 5px 20px rgba(255,153,0,0.5);">VERIFY ADMIN</button>
+                <button type="submit" class="slide-btn next" id="btnOrgLogin" style="width:100%; margin-top:10px; background:linear-gradient(90deg, #ff9900, #ff4d4d); box-shadow: 0 5px 20px rgba(255,153,0,0.4); border:none;">VERIFY ADMIN</button>
             </form>
 
-            <div style="margin-top: 25px; padding-top: 15px; border-top: 1px solid rgba(255,255,255,0.1); text-align: center;">
-                <a href="organizerportel.html" class="terms-link touch-target" style="color:#ccc; font-size:0.85rem;"><i class="fa-solid fa-file-signature"></i> Apply to Host Tournaments</a>
+            <div style="margin-top: 20px; padding-top: 15px; border-top: 1px solid rgba(255,255,255,0.1); text-align: center;">
+                <a href="organizerportel.html" class="terms-link" style="color:#aaa; font-size:0.75rem;"><i class="fa-solid fa-file-signature"></i> Apply to Host Tournaments</a>
             </div>
         </div>
     </div>
 
     <div class="modal-overlay" id="signupModal">
         <div class="modal-card" style="padding: 25px 20px;">
-            <div class="modal-drag-pill"></div>
-            <i class="fa-solid fa-xmark close-modal touch-target" onclick="closeModals()"></i>
-            <h2 class="modal-title" style="color:var(--accent-purple); margin-bottom:15px;">Register</h2>
+            <i class="fa-solid fa-xmark close-modal" onclick="closeModals()"></i>
+            <h2 class="modal-title" style="color:var(--accent-purple); margin-bottom:10px;">Register</h2>
             
             <div class="step-indicators">
                 <div class="step-dot active" id="dot1"></div>
@@ -450,13 +410,13 @@
                                         <input type="email" name="email" id="regEmail" class="form-control req-field" placeholder="Email Address" required>
                                         <i class="fa-solid fa-envelope input-icon"></i>
                                     </div>
-                                    <button type="button" class="otp-btn touch-target" id="btnSendOtp" onclick="sendOtp()">SEND OTP</button>
+                                    <button type="button" class="otp-btn" id="btnSendOtp" onclick="sendOtp()">SEND OTP</button>
                                 </div>
                                 
-                                <div class="input-group" id="otpGroup" style="display: none; margin-top: 10px;">
+                                <div class="input-group" id="otpGroup" style="display: none; margin-top: 8px;">
                                     <input type="number" name="otp" id="regOtp" class="form-control" placeholder="Enter 4-Digit OTP">
                                     <i class="fa-solid fa-message input-icon"></i>
-                                    <button type="button" class="verify-btn touch-target" id="btnVerifyOtp" onclick="verifyOtp()">VERIFY</button>
+                                    <button type="button" class="verify-btn" id="btnVerifyOtp" onclick="verifyOtp()">VERIFY</button>
                                 </div>
                             </div>
 
@@ -464,7 +424,7 @@
                                 <div class="input-group">
                                     <input type="password" name="password" id="regPwd" class="form-control req-field" placeholder="Create Password" required>
                                     <i class="fa-solid fa-lock input-icon"></i>
-                                    <i class="fa-solid fa-eye pwd-toggle touch-target" onclick="togglePwd('regPwd', this, false)"></i>
+                                    <i class="fa-solid fa-eye pwd-toggle" onclick="togglePwd('regPwd', this, false)"></i>
                                 </div>
                             </div>
 
@@ -481,23 +441,17 @@
                                     <i class="fa-solid fa-gift input-icon"></i>
                                 </div>
                             </div>
-                            
-                            <label class="custom-checkbox-container touch-target">
-                                <input type="checkbox" id="termsCheck" checked required>
-                                <span class="checkmark"></span>
-                                <span>I agree to <a href="terms.html" target="_blank" class="terms-link">Terms</a> & Fair Play.</span>
-                            </label>
 
-                            <button type="button" class="slide-btn next touch-target" onclick="nextSlide(1)" style="width:100%;">Next <i class="fa-solid fa-arrow-right"></i></button>
+                            <button type="button" class="slide-btn next" onclick="nextSlide(1)" style="width:100%; margin-top:5px;">Next <i class="fa-solid fa-arrow-right"></i></button>
                         </div>
 
                         <div class="slide-step">
                             <div class="input-wrapper">
                                 <div class="input-group">
-                                    <select name="game" id="regGame" class="form-control req-field" required>
+                                    <select name="game" id="regGame" class="form-control req-field">
                                         <option value="" disabled selected>Select Primary Game</option>
-                                        <option value="BGMI">Battlegrounds Mobile India (BGMI)</option>
-                                        <option value="Free Fire">Free Fire MAX</option>
+                                        <option value="BGMI">BGMI</option>
+                                        <option value="Free Fire">Free Fire</option>
                                         <option value="Call of Duty Mobile">Call of Duty Mobile</option>
                                         <option value="Valorant">Valorant</option>
                                     </select>
@@ -527,20 +481,44 @@
                             </div>
 
                             <div class="slide-nav-row">
-                                <button type="button" class="slide-btn back touch-target" onclick="prevSlide(2)"><i class="fa-solid fa-arrow-left"></i> Back</button>
-                                <button type="button" class="slide-btn next touch-target" onclick="nextSlide(2)">Next <i class="fa-solid fa-arrow-right"></i></button>
+                                <button type="button" class="slide-btn back" onclick="prevSlide(2)"><i class="fa-solid fa-arrow-left"></i> Back</button>
+                                <button type="button" class="slide-btn next" onclick="nextSlide(2)">Next <i class="fa-solid fa-arrow-right"></i></button>
                             </div>
                         </div>
 
                         <div class="slide-step">
                             <div class="input-wrapper">
                                 <div class="input-group">
-                                    <select name="state" id="regState" class="form-control req-field" required>
+                                    <select name="state" id="regState" class="form-control req-field">
                                         <option value="" disabled selected>Select State</option>
-                                        <option value="Tamil Nadu">Tamil Nadu</option>
+                                        <option value="Andhra Pradesh">Andhra Pradesh</option>
+                                        <option value="Arunachal Pradesh">Arunachal Pradesh</option>
+                                        <option value="Assam">Assam</option>
+                                        <option value="Bihar">Bihar</option>
+                                        <option value="Chhattisgarh">Chhattisgarh</option>
+                                        <option value="Goa">Goa</option>
+                                        <option value="Gujarat">Gujarat</option>
+                                        <option value="Haryana">Haryana</option>
+                                        <option value="Himachal Pradesh">Himachal Pradesh</option>
+                                        <option value="Jharkhand">Jharkhand</option>
+                                        <option value="Karnataka">Karnataka</option>
+                                        <option value="Kerala">Kerala</option>
+                                        <option value="Madhya Pradesh">Madhya Pradesh</option>
                                         <option value="Maharashtra">Maharashtra</option>
-                                        <option value="Delhi">Delhi</option>
-                                        <option value="Other">Other</option>
+                                        <option value="Manipur">Manipur</option>
+                                        <option value="Meghalaya">Meghalaya</option>
+                                        <option value="Mizoram">Mizoram</option>
+                                        <option value="Nagaland">Nagaland</option>
+                                        <option value="Odisha">Odisha</option>
+                                        <option value="Punjab">Punjab</option>
+                                        <option value="Rajasthan">Rajasthan</option>
+                                        <option value="Sikkim">Sikkim</option>
+                                        <option value="Tamil Nadu">Tamil Nadu</option>
+                                        <option value="Telangana">Telangana</option>
+                                        <option value="Tripura">Tripura</option>
+                                        <option value="Uttar Pradesh">Uttar Pradesh</option>
+                                        <option value="Uttarakhand">Uttarakhand</option>
+                                        <option value="West Bengal">West Bengal</option>
                                     </select>
                                     <i class="fa-solid fa-map input-icon"></i>
                                 </div>
@@ -553,14 +531,15 @@
                                 </div>
                             </div>
                             
-                            <div class="info-box purple">
-                                <i class="fa-solid fa-shield-halved"></i> 
-                                <span>Your location helps us recommend local LAN tournaments and regional leaderboards.</span>
-                            </div>
+                            <label class="custom-checkbox-container">
+                                <input type="checkbox" id="termsCheck" checked required>
+                                <span class="checkmark"></span>
+                                <span>I agree to <a href="terms.html" target="_blank" class="terms-link">Terms</a> & Fair Play.</span>
+                            </label>
 
-                            <div class="slide-nav-row" style="margin-top:25px;">
-                                <button type="button" class="slide-btn back touch-target" onclick="prevSlide(3)"><i class="fa-solid fa-arrow-left"></i> Back</button>
-                                <button type="submit" class="slide-btn next touch-target" id="btnSignup"><i class="fa-solid fa-check"></i> CREATE ACCOUNT</button>
+                            <div class="slide-nav-row" style="margin-top:20px;">
+                                <button type="button" class="slide-btn back" onclick="prevSlide(3)"><i class="fa-solid fa-arrow-left"></i> Back</button>
+                                <button type="submit" class="slide-btn next" id="btnSignup" style="background:var(--accent-green); color:black;"><i class="fa-solid fa-check"></i> FINISH</button>
                             </div>
                         </div>
 
@@ -578,12 +557,23 @@
 
     <script>
         const API_URL = 'https://script.google.com/macros/s/AKfycbyqqTpgaflxKJ9xH0jq7mJ_jLzcoNhas3gNo0h5gvoa_6r5Ae9NFxJAJp7ZoYNnMRKl/exec';
-        const videoElement = document.getElementById('bgVideo');
-        const volBtn = document.getElementById('volumeToggle');
 
-        // --- BACKGROUND VIDEO ENGINE & AUDIO ---
+        // --- GLOBAL TOUCH RIPPLE ENGINE (ESPORTS FEEL) ---
+        document.body.addEventListener('click', function (e) {
+            const ripple = document.createElement('div');
+            ripple.className = 'ripple';
+            document.body.appendChild(ripple);
+            ripple.style.left = `${e.clientX - 20}px`;
+            ripple.style.top = `${e.clientY - 20}px`;
+            setTimeout(() => { ripple.remove(); }, 600);
+        });
+
+        function doHaptic() { if(navigator.vibrate) navigator.vibrate(15); }
+
+        // --- BACKGROUND VIDEO CACHING & AUDIO ENGINE ---
         async function loadVideoBackground() {
-            const videoUrl = 'https://tournyx.in/FFBGMICODTRAILER.mp4'; 
+            const videoUrl = 'https://tournyx.in/FFBGMICODTRAILER.mp4'; // Replace with actual Tournyx Video URL
+            const videoElement = document.getElementById('bgVideo');
             if(!videoUrl || videoUrl === '') return;
             
             try {
@@ -599,68 +589,38 @@
                     const blob = await response.blob();
                     videoElement.src = URL.createObjectURL(blob);
                 }
-            } catch (e) { videoElement.src = videoUrl; }
+            } catch (e) {
+                videoElement.src = videoUrl; // Failsafe
+            }
 
-            // Attempt to play unmuted. Browsers strictly block this usually.
+            // Audio Auto-play Logic (Try Unmuted First)
             videoElement.muted = false;
             let playPromise = videoElement.play();
-            
             if (playPromise !== undefined) {
                 playPromise.catch(error => {
-                    // Browser blocked unmuted autoplay. Fallback to muted.
+                    // Browser blocked unmuted auto-play. Fallback to muted.
                     videoElement.muted = true;
                     videoElement.play();
-                    volBtn.innerHTML = '<i class="fa-solid fa-volume-xmark"></i>';
-                    volBtn.style.color = '#ff4d4d';
-                    volBtn.style.borderColor = '#ff4d4d';
+                    document.getElementById('volIcon').className = 'fa-solid fa-volume-xmark';
+                }).then(() => {
+                    if(!videoElement.muted) document.getElementById('volIcon').className = 'fa-solid fa-volume-high';
                 });
             }
         }
-        loadVideoBackground();
-
+        
         function toggleVolume() {
-            if(navigator.vibrate) navigator.vibrate(15);
-            if (videoElement.muted) {
-                videoElement.muted = false;
-                volBtn.innerHTML = '<i class="fa-solid fa-volume-high"></i>';
-                volBtn.style.color = 'var(--accent-cyan)';
-                volBtn.style.borderColor = 'var(--accent-cyan)';
+            doHaptic();
+            const video = document.getElementById('bgVideo');
+            const icon = document.getElementById('volIcon');
+            if(video.muted) {
+                video.muted = false;
+                icon.className = 'fa-solid fa-volume-high';
             } else {
-                videoElement.muted = true;
-                volBtn.innerHTML = '<i class="fa-solid fa-volume-xmark"></i>';
-                volBtn.style.color = '#ff4d4d';
-                volBtn.style.borderColor = '#ff4d4d';
+                video.muted = true;
+                icon.className = 'fa-solid fa-volume-xmark';
             }
         }
-
-        // --- AUTO LOGIN CHECK ---
-        window.addEventListener('DOMContentLoaded', () => {
-            let savedUser = localStorage.getItem('tournyx_user');
-            if(savedUser) {
-                let userObj = JSON.parse(savedUser);
-                let avatarDiv = document.getElementById('loggedInAvatar');
-                avatarDiv.style.display = 'block';
-                avatarDiv.innerHTML = `<img src="https://ui-avatars.com/api/?name=${userObj.username}&background=0D8ABC&color=fff&bold=true" alt="Profile">`;
-                
-                // Allow clicking screen to auto-login
-                document.getElementById('screenOverlay').addEventListener('click', autoLogin);
-            }
-        });
-
-        function autoLogin() {
-            let savedUser = localStorage.getItem('tournyx_user');
-            if(savedUser) triggerArenaEntry(JSON.parse(savedUser), 'index.html');
-        }
-
-        // --- TOUCH RIPPLE EFFECT ---
-        document.addEventListener('click', function(e) {
-            let ripple = document.createElement('div');
-            ripple.className = 'touch-ripple';
-            ripple.style.left = e.clientX + 'px';
-            ripple.style.top = e.clientY + 'px';
-            document.body.appendChild(ripple);
-            setTimeout(() => ripple.remove(), 500);
-        });
+        loadVideoBackground();
 
         // --- SECURE API FETCH WRAPPER ---
         async function secureFetch(payload) {
@@ -675,7 +635,7 @@
         }
 
         function showToast(msg, isSuccess = false) {
-            if(navigator.vibrate) navigator.vibrate(15);
+            doHaptic();
             const t = document.getElementById('customToast');
             document.getElementById('toastMsg').innerText = msg;
             t.className = isSuccess ? 'success show' : 'show';
@@ -684,7 +644,7 @@
 
         // --- SHOW/HIDE PASSWORD TOGGLE ---
         function togglePwd(inputId, icon, isOrg) {
-            if(navigator.vibrate) navigator.vibrate(15);
+            doHaptic();
             const input = document.getElementById(inputId);
             if (input.type === "password") {
                 input.type = "text";
@@ -695,7 +655,7 @@
                 input.type = "password";
                 icon.classList.remove("fa-eye-slash");
                 icon.classList.add("fa-eye");
-                icon.style.color = isOrg ? "var(--accent-orange)" : "#888";
+                icon.style.color = isOrg ? "var(--accent-orange)" : "#666";
             }
         }
 
@@ -703,7 +663,7 @@
         let isEmailVerified = false;
 
         async function sendOtp() {
-            if(navigator.vibrate) navigator.vibrate(15);
+            doHaptic();
             const emailInput = document.getElementById('regEmail');
             let email = emailInput.value.trim();
             if(!email.includes("@") || !email.includes(".")) { showToast("Enter a valid email address."); return; }
@@ -730,7 +690,7 @@
         }
 
         function verifyOtp() {
-            if(navigator.vibrate) navigator.vibrate(15);
+            doHaptic();
             const otpInput = document.getElementById('regOtp');
             const otp = otpInput.value.trim();
             if(otp.length < 4) { showToast("Enter valid 4-digit OTP"); return; }
@@ -776,13 +736,13 @@
         }
         
         function nextSlide(step) {
-            if(navigator.vibrate) navigator.vibrate(15);
+            doHaptic();
+            // Validation Before Moving Forward
             if (step === 1) {
                 if(!isEmailVerified) { showToast("Please verify email via OTP to continue."); return; }
                 if(document.getElementById('regPwd').value.length < 6) { showToast("Password must be at least 6 characters."); return; }
                 const phoneDigits = document.getElementById('regPhone').value.substring(4).replace(/\D/g, '');
                 if(phoneDigits.length !== 10) { showToast("Enter a valid 10-digit phone number."); return; }
-                if(!document.getElementById('termsCheck').checked) { showToast("You must agree to the Terms & Conditions."); return; }
             }
             if (step === 2) {
                 if(document.getElementById('regGame').value === "") { showToast("Please select a game."); return; }
@@ -797,25 +757,72 @@
         }
 
         function prevSlide(step) {
-            if(navigator.vibrate) navigator.vibrate(15);
+            doHaptic();
             currentStep = step - 1;
             document.getElementById('sliderTrack').style.transform = `translateX(-${(currentStep - 1) * 33.333}%)`;
             updateDots();
         }
 
-        // --- SMART ROUTING & REFERRAL INJECTION ---
+        // High-Quality Anime Avatar Engine
+        function formatImageUrl(url, fallbackName) {
+            let safeName = fallbackName || "User";
+            let animeFallback = `https://api.dicebear.com/7.x/adventurer/svg?seed=${encodeURIComponent(safeName)}&size=150&backgroundColor=0a0520,0d0825`;
+            
+            if (!url) return animeFallback;
+            let strUrl = String(url).trim().replace(/[\r\n\t]/g, '');
+            if (strUrl.length < 5) return animeFallback;
+            if (strUrl.startsWith('data:image') || strUrl.includes('imgbb') || strUrl.includes('ibb.co')) return strUrl;
+            if (strUrl.includes('drive.google.com/file/d/')) {
+                let id = strUrl.split('/d/')[1].split('/')[0];
+                return `https://drive.google.com/uc?export=view&id=${id}`; 
+            }
+            return strUrl;
+        }
+
+        // --- SMART ROUTING & SESSION LOGIC ---
         window.addEventListener('DOMContentLoaded', () => {
             const urlParams = new URLSearchParams(window.location.search);
             const refCode = urlParams.get('ref') || urlParams.get('code');
             const tabParam = urlParams.get('tab');
 
-            if (refCode) { openModal('signupModal'); document.getElementById('refInput').value = refCode; }
+            // Check if already logged in
+            let user = JSON.parse(localStorage.getItem('tournyx_user'));
+            if(user && user.email) {
+                document.getElementById('authButtons').classList.add('hidden');
+                document.getElementById('tapToStart').classList.remove('hidden');
+                document.getElementById('loggedInProfile').classList.remove('hidden');
+                
+                let displayName = user.ign || user.username || "Player";
+                document.getElementById('loggedInName').innerText = displayName;
+                document.getElementById('loggedInAvatar').src = formatImageUrl(user.avatar, displayName);
+                
+                // Clicking anywhere on the background triggers login
+                document.getElementById('mainBody').addEventListener('click', function(e) {
+                    if(!document.querySelector('.modal-overlay.active')) quickLogin();
+                });
+            }
+
+            if (refCode) { 
+                setTimeout(() => {
+                    openModal('signupModal'); 
+                    document.getElementById('refInput').value = refCode;
+                    document.getElementById('refInput').style.borderColor = "var(--accent-green)";
+                    document.getElementById('refInput').style.boxShadow = "0 0 15px rgba(0,255,127,0.4)";
+                }, 800); 
+            }
             if (tabParam === 'organizer') openModal('orgModal');
         });
 
+        // --- TAP TO START QUICK LOGIN ---
+        function quickLogin() {
+            doHaptic();
+            let user = JSON.parse(localStorage.getItem('tournyx_user'));
+            if(user) triggerArenaEntry(user, 'index.html');
+        }
+
         // --- MODAL LOGIC ---
         function openModal(id) {
-            if(navigator.vibrate) navigator.vibrate(15);
+            doHaptic();
             closeModals(); 
             document.getElementById(id).classList.add('active');
         }
@@ -834,12 +841,11 @@
             localStorage.setItem('tournyx_user', JSON.stringify(user));
             const loader = document.getElementById('arenaLoader');
             loader.classList.add('active');
-            
             setTimeout(() => { window.location.href = redirectUrl; }, 1900);
         }
 
         function btnLoading(btnId, text) {
-            if(navigator.vibrate) navigator.vibrate(15);
+            doHaptic();
             const btn = document.getElementById(btnId);
             btn.dataset.original = btn.innerHTML;
             btn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> ${text}`;
@@ -851,10 +857,12 @@
             btn.disabled = false;
         }
 
-        // PLAYER SIGNUP
+        // PLAYER SIGNUP (FINAL SUBMISSION & AUTO-LOGIN FLOW)
         document.getElementById('playerSignupForm').addEventListener('submit', async (e) => {
             e.preventDefault();
 
+            // Final Validation for Slide 3
+            if(!document.getElementById('termsCheck').checked) { showToast("You must agree to the Terms & Conditions."); return; }
             if(document.getElementById('regState').value === "") { showToast("Please select a state."); return; }
             if(document.getElementById('regCity').value.trim() === "") { showToast("Please enter your city."); return; }
 
@@ -887,22 +895,27 @@
                 
                 if(result.status === 'success') {
                     if(navigator.vibrate) navigator.vibrate(30);
-                    showToast("Account Created! You can now Login.", true);
+                    showToast("Account Created! Securely entering arena...", true);
                     
+                    // Auto-fill logic & Transition to Login
                     let safeEmail = rawData.email;
+                    let safePwd = rawData.password;
                     
                     setTimeout(() => {
+                        closeModals();
                         openModal('loginModal');
                         document.getElementById('loginEmail').value = safeEmail;
-                        document.getElementById('loginPwd').focus();
-                    }, 800);
+                        document.getElementById('loginPwd').value = safePwd;
+                        // Auto-trigger login click
+                        setTimeout(() => document.getElementById('btnLogin').click(), 500);
+                    }, 1500);
                     
                 } else {
-                    showToast(result.data, true);
+                    showToast(result.data);
                     if (result.data.toLowerCase().includes("email already registered")) unlockEmailInput();
                 }
             } catch (err) { 
-                showToast("Connection Error or system unavailable.", true); 
+                showToast("Connection Error or system unavailable."); 
             } finally { 
                 btnReset('btnSignup'); 
             }
@@ -951,6 +964,22 @@
             } catch (err) { showToast("System Error."); }
             finally { btnReset('btnOrgLogin'); }
         });
+
+        // --- PARTICLES ENGINE ---
+        const canvas = document.getElementById('particles-canvas');
+        const ctx = canvas.getContext('2d');
+        canvas.width = window.innerWidth; canvas.height = window.innerHeight;
+        let particles = [];
+        class P {
+            constructor(){ this.x=Math.random()*canvas.width; this.y=Math.random()*canvas.height; this.vx=Math.random()*0.5-0.25; this.vy=Math.random()*0.5-0.25; this.size=Math.random()*2+0.5; }
+            u(){ this.x+=this.vx; this.y+=this.vy; if(this.x<0||this.x>canvas.width)this.vx=-this.vx; if(this.y<0||this.y>canvas.height)this.vy=-this.vy; }
+            d(){ ctx.fillStyle='rgba(0,242,255,0.3)'; ctx.beginPath(); ctx.arc(this.x,this.y,this.size,0,Math.PI*2); ctx.fill(); }
+        }
+        for(let i=0;i<40;i++) particles.push(new P());
+        function anim(){ ctx.clearRect(0,0,canvas.width,canvas.height); particles.forEach(p=>{p.u();p.d()}); requestAnimationFrame(anim); }
+        anim();
+        window.addEventListener('resize', () => { canvas.width = window.innerWidth; canvas.height = window.innerHeight; });
+
     </script>
     <script>
     function tournyxOneSignalSetup() {
