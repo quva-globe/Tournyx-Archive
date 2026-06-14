@@ -319,8 +319,8 @@
     <video src="https://tournyx.in/FFBGMICODTRAILER.mp4" 
            poster="https://tournyx.in/hq-fallback-bg.jpg" 
            autoplay loop muted playsinline webkit-playsinline preload="auto" 
-           class="video-bg" id="bgVideo" style="opacity: 0; z-index: -4;"></video>
-           
+           class="video-bg" id="bgVideo" style="z-index: -4;"></video>
+    
     <div class="bg-overlay"></div>
     <canvas id="particles-canvas"></canvas>
     <div class="hud-top-left">Beta Version 1.2.0.</div>
@@ -689,7 +689,7 @@
         }
 
         // ==========================================
-        // TOURNYX 3D LOGO & BG VIDEO ENGINE 
+        // TOURNYX 3D LOGO & BG VIDEO ENGINE (STRICT OVERRIDE)
         // ==========================================
         function initMasterVideoEngine() {
             const bgVideo = document.getElementById('bgVideo');
@@ -700,32 +700,32 @@
 
             // --- SEAMLESS TRANSITION FUNCTION ---
             const transitionToArena = () => {
-                // Fade out the fire logo background
+                // Fade out the fire logo background to reveal the playing video
                 introOverlay.style.opacity = '0';
-                setTimeout(() => { introOverlay.style.display = 'none'; }, 800); // completely remove from layout
+                setTimeout(() => { introOverlay.style.display = 'none'; }, 800); 
                 
-                // Fade in UI and BG Video (Video is already playing thanks to HTML autoplay)
                 uiContainer.classList.add('active'); 
-                bgVideo.style.opacity = '1';
                 
-                // Failsafe: if the browser paused the video because it was hidden, force play now.
+                // OS Failsafe: If the browser blocked the HTML autoplay, this forces it now.
                 if (bgVideo.paused) {
-                    bgVideo.play().catch(e => console.warn("BG Video autoplay paused by browser."));
+                    bgVideo.play().catch(e => console.warn("Video strictly blocked by device OS until user taps."));
                 }
             };
 
-            // Run the fire logo animation for exactly 2.8 seconds, then transition
+            // Run the fire logo animation for exactly 2.8 seconds, then reveal the arena
             setTimeout(transitionToArena, 2800);
 
-            // --- INVISIBLE AUDIO UNLOCKER ---
-            // The millisecond they touch the screen (or hit a button), audio unlocks!
-            const unlockAudioAndPlay = () => {
-                bgVideo.muted = false;
-                bgVideo.volume = 1.0; // Max Volume
-                
+            // --- THE MASTER TAP OVERRIDE ---
+            // Browsers CANNOT block a video or audio if the user physically taps the screen.
+            const forcePlayAndAudio = () => {
+                // Force video to play if it was stuck
                 if (bgVideo.paused) {
-                    bgVideo.play().catch(e => console.warn("Play permanently blocked by OS."));
+                    bgVideo.play().catch(e => console.warn("OS permanently blocked media."));
                 }
+                
+                // Force audio to max
+                bgVideo.muted = false;
+                bgVideo.volume = 1.0; 
                 
                 // Update volume icon visually
                 let vIcon = document.getElementById('volIcon');
@@ -733,12 +733,13 @@
                 window.hasUnmuted = true;
 
                 // Remove listeners so it only fires once
-                document.removeEventListener('touchstart', unlockAudioAndPlay);
-                document.removeEventListener('click', unlockAudioAndPlay);
+                document.removeEventListener('touchstart', forcePlayAndAudio);
+                document.removeEventListener('click', forcePlayAndAudio);
             };
 
-            document.addEventListener('touchstart', unlockAudioAndPlay, {once:true});
-            document.addEventListener('click', unlockAudioAndPlay, {once:true});
+            // Attach to the entire document. The second they touch anything, media unlocks.
+            document.addEventListener('touchstart', forcePlayAndAudio, {once:true});
+            document.addEventListener('click', forcePlayAndAudio, {once:true});
         }
 
         // Boot the engine instantly
