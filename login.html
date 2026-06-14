@@ -30,15 +30,13 @@
             --font-body: 'Rajdhani', sans-serif;
         }
 
-        /* STRICT OVERFLOW CONTAINMENT */
-        * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+        * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; touch-action: manipulation; }
         *::-webkit-scrollbar { display: none !important; width: 0 !important; height: 0 !important; }
 
         html, body {
             background-color: #000; color: var(--text-main);
-            font-family: var(--font-body); min-height: 100vh; width: 100vw;
-            max-width: 100vw; /* Fixes x-overflow */
-            overflow-x: hidden; /* Bulletproof wrap */
+            font-family: var(--font-body); height: 100dvh; width: 100vw;
+            max-width: 100vw; overflow: hidden;
             display: flex; flex-direction: column; align-items: center; justify-content: center;
             position: relative; padding: 0;
         }
@@ -46,128 +44,123 @@
         /* --- DUAL VIDEO ENGINE --- */
         .video-bg {
             position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-            object-fit: cover; z-index: -4; filter: brightness(0.8);
-            transition: opacity 1s ease-in-out;
+            object-fit: cover; z-index: -4; filter: brightness(0.85);
+            transition: opacity 0.8s ease-in-out;
         }
-        #introVideo { z-index: 9999; filter: brightness(1); background: #000; }
+        #introVideo { z-index: -2; filter: brightness(1); background: #000; }
         .bg-overlay {
             position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-            background: linear-gradient(to top, rgba(0,0,0,0.95) 0%, transparent 40%, rgba(0,0,0,0.3) 100%);
+            background: linear-gradient(to top, rgba(0,0,0,0.95) 0%, transparent 45%, rgba(0,0,0,0.4) 100%);
             z-index: -3; pointer-events: none;
         }
 
-        /* SIMPLE VOLUME TOGGLE */
-        .vol-btn {
-            position: absolute; top: 20px; left: 20px; z-index: 100;
-            width: 32px; height: 32px; border-radius: 50%; background: rgba(0,0,0,0.5);
-            border: 1px solid #555; color: white; font-size: 0.8rem;
-            display: flex; align-items: center; justify-content: center;
-            cursor: pointer; backdrop-filter: blur(5px); transition: 0.2s;
-        }
-        .vol-btn:active { transform: scale(0.9); }
-
-        /* AAA GAME HUD (TOP LEFT / RIGHT) */
+        /* AAA GAME HUD */
         .hud-top-left {
-            position: absolute; top: 65px; left: 20px; z-index: 100;
-            font-family: var(--font-body); font-size: 0.65rem; color: rgba(255,255,255,0.6);
+            position: absolute; top: 20px; left: 20px; z-index: 100;
+            font-family: var(--font-body); font-size: 0.65rem; color: rgba(255,255,255,0.7);
             font-weight: bold; letter-spacing: 1px; text-shadow: 1px 1px 2px black;
         }
         
         .hud-top-right {
-            position: absolute; top: 20px; right: 15px; z-index: 100;
-            display: flex; flex-direction: column; gap: 12px; align-items: center;
+            position: absolute; top: 20px; right: 20px; z-index: 100;
+            display: flex; flex-direction: row; gap: 15px; align-items: flex-start; /* Fixed Horizontal Row */
         }
         .hud-tool-btn {
-            display: flex; flex-direction: column; align-items: center; gap: 3px;
-            color: rgba(255,255,255,0.8); font-size: 0.6rem; font-family: var(--font-body);
-            font-weight: bold; cursor: pointer; text-shadow: 1px 1px 2px black; transition: 0.2s;
+            display: flex; flex-direction: column; align-items: center; gap: 4px;
+            color: rgba(255,255,255,0.9); font-size: 0.6rem; font-family: var(--font-body);
+            font-weight: bold; cursor: pointer; text-shadow: 1px 1px 3px black; transition: 0.2s;
             text-transform: uppercase;
         }
         .hud-tool-btn i {
-            width: 30px; height: 30px; border-radius: 50%; background: rgba(0,0,0,0.6);
+            width: 32px; height: 32px; border-radius: 50%; background: rgba(0,0,0,0.6);
             border: 1px solid rgba(255,255,255,0.3); display: flex; align-items: center; justify-content: center;
-            font-size: 0.9rem; backdrop-filter: blur(5px); transition: 0.2s; box-shadow: 0 4px 10px rgba(0,0,0,0.5);
+            font-size: 0.9rem; backdrop-filter: blur(5px); transition: 0.2s; box-shadow: 0 4px 10px rgba(0,0,0,0.6);
         }
         .hud-tool-btn:active i { transform: scale(0.9); background: var(--accent-cyan); color: black; border-color: var(--accent-cyan); box-shadow: 0 0 15px var(--accent-cyan);}
 
         /* LOGGED IN PROFILE CORNER */
         .top-profile-corner {
-            position: absolute; top: 20px; right: 65px; z-index: 100;
+            position: absolute; top: 65px; right: 20px; z-index: 100;
             display: flex; align-items: center; gap: 8px; background: rgba(0,0,0,0.7);
             padding: 4px 12px 4px 4px; border-radius: 50px; border: 1px solid rgba(0,242,255,0.4);
             backdrop-filter: blur(10px); transition: 0.3s; box-shadow: 0 4px 15px rgba(0,0,0,0.6);
         }
-        .top-profile-corner:active { transform: scale(0.95); }
-        .top-profile-corner img {
-            width: 28px; height: 28px; border-radius: 50%; border: 2px solid var(--accent-cyan);
-            object-fit: cover; box-shadow: 0 0 10px rgba(0,242,255,0.5); cursor: pointer;
-        }
+        .top-profile-corner img { width: 28px; height: 28px; border-radius: 50%; border: 2px solid var(--accent-cyan); object-fit: cover;}
         .top-profile-corner .user-info { display: flex; flex-direction: column; justify-content: center; }
-        .top-profile-corner .user-name { font-family: var(--font-head); font-size: 0.7rem; font-weight: bold; color: white; text-transform: uppercase; letter-spacing: 1px; cursor: pointer; text-shadow: 1px 1px 2px black; }
+        .top-profile-corner .user-name { font-family: var(--font-head); font-size: 0.7rem; font-weight: bold; color: white; text-transform: uppercase; letter-spacing: 1px; text-shadow: 1px 1px 2px black; }
         .top-profile-corner .logout-text { font-family: var(--font-body); font-size: 0.55rem; color: #ff4d4d; font-weight: bold; cursor: pointer; text-transform: uppercase; text-shadow: 1px 1px 2px black; }
         .hidden { display: none !important; }
 
+        /* FULLSCREEN TAP TO ENTER (LOGGED IN) */
+        #fullScreenTap {
+            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; z-index: 4000;
+            display: flex; align-items: center; justify-content: center; cursor: pointer;
+        }
+
         /* --- MAIN UI CONTAINER --- */
         .main-ui-container {
-            width: 100%; max-width: 100vw; height: 100vh; display: flex; flex-direction: column;
-            justify-content: flex-end; align-items: center; padding-bottom: 30px;
-            opacity: 0; transition: opacity 1s ease; z-index: 10; overflow-x: hidden;
+            width: 100%; height: 100dvh; display: flex; flex-direction: column;
+            justify-content: flex-end; align-items: center; 
+            opacity: 0; transition: opacity 1s ease; z-index: 10;
         }
         .main-ui-container.active { opacity: 1; }
 
-        /* DESKTOP LAYOUT (RIGHT ALIGNED) */
+        /* DESKTOP LAYOUT (CENTERED LIKE BGMI/FREE FIRE) */
         @media (min-width: 769px) {
-            .main-ui-container { align-items: flex-end; padding-right: 10%; padding-bottom: 50px; justify-content: center;}
-            .auth-card-wrapper { width: 380px; }
+            .main-ui-container { justify-content: flex-end; padding-bottom: 8vh; }
+            .auth-card-wrapper { 
+                width: 420px; background: transparent !important; box-shadow: none !important; 
+                border: none !important; backdrop-filter: none !important; 
+            }
             .logo-overlap { margin-bottom: 20px; display: flex; flex-direction: column; align-items: center; }
-            .logo-overlap img { width: 100px; height: 100px; border-radius: 25%; border: 2px solid var(--accent-cyan); box-shadow: 0 0 20px rgba(0,242,255,0.5); margin-bottom: 10px; animation: floatLogo 4s infinite ease-in-out;}
-            .app-name { font-family: var(--font-head); font-size: 1.5rem; letter-spacing: 4px; font-weight: 900; background: var(--accent-gradient); -webkit-background-clip: text; -webkit-text-fill-color: transparent; text-transform: uppercase; filter: drop-shadow(0 0 10px rgba(0,242,255,0.4));}
-            .app-tagline { display: none; }
-            .feature-badges { display: none; }
-            .credits-footer { flex-direction: row; justify-content: space-between; bottom: 15px; padding: 0 30px; width: 100%; position: absolute;}
-            .footer-left, .footer-center, .footer-right { flex: 1; }
-            .footer-center { text-align: center; } .footer-right { text-align: right; } .footer-left { text-align: left; }
+            .logo-overlap img { width: 80px; height: 80px; border-radius: 20%; border: 2px solid var(--accent-cyan); box-shadow: 0 0 20px rgba(0,242,255,0.5); margin-bottom: 15px; animation: floatLogo 4s infinite ease-in-out;}
+            .app-name { font-family: var(--font-head); font-size: 2rem; letter-spacing: 4px; font-weight: 900; color: white; text-transform: uppercase; filter: drop-shadow(0 0 10px rgba(0,242,255,0.6)); text-align: center; line-height: 1.1;}
+            .app-name .esports-text { font-size: 0.5em; letter-spacing: 6px; color: var(--accent-cyan); display: block; margin-top: 2px; }
+            .app-tagline, .static-desc, .feature-badges { display: none; }
+            .credits-footer { position: absolute; bottom: 15px; width: 100%; display: flex; justify-content: space-between; padding: 0 30px; }
             .terms-gate { justify-content: center; }
         }
 
-        /* MOBILE LAYOUT (IMAGE MATCHED & OVERFLOW FIXED) */
+        /* MOBILE LAYOUT (NO SCROLL, PERFECT FIT) */
         @media (max-width: 768px) {
-            /* NUKE PROMO VIDEO ON MOBILE */
-            #introVideo { display: none !important; opacity: 0 !important; }
-            .video-bg { z-index: -4 !important; }
-            
-            .main-ui-container { padding-bottom: 0; justify-content: flex-end; }
+            .main-ui-container { padding-bottom: 0; }
             .auth-card-wrapper {
-                width: 100%; max-width: 100vw; background: rgba(10, 5, 20, 0.85); backdrop-filter: blur(25px); -webkit-backdrop-filter: blur(25px);
+                width: 100%; max-width: 100vw; background: rgba(10, 5, 20, 0.85); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
                 border-top: 1px solid rgba(0, 242, 255, 0.3); border-radius: 35px 35px 0 0;
-                padding: 0 25px 25px; display: flex; flex-direction: column; align-items: center;
-                box-shadow: 0 -15px 40px rgba(0,0,0,0.8); position: relative;
+                padding: 0 20px 20px; display: flex; flex-direction: column; align-items: center;
+                box-shadow: 0 -15px 40px rgba(0,0,0,0.9); position: relative;
             }
-            .logo-overlap { margin-top: -45px; display: flex; flex-direction: column; align-items: center; margin-bottom: 15px;}
-            .logo-overlap img { width: 90px; height: 90px; border-radius: 25%; border: 2px solid var(--accent-cyan); box-shadow: 0 10px 25px rgba(0,0,0,0.9), inset 0 0 15px rgba(0,242,255,0.4); background: var(--primary-bg);}
-            .app-name { font-family: var(--font-head); font-size: 1.8rem; letter-spacing: 2px; font-weight: 900; background: var(--accent-gradient); -webkit-background-clip: text; -webkit-text-fill-color: transparent; text-transform: uppercase; margin-top: 10px; margin-bottom: 2px;}
-            .app-tagline { font-size: 0.8rem; color: #ccc; font-weight: 600; letter-spacing: 1px; margin-bottom: 15px; }
-            .static-desc { font-size: 0.75rem; color: #aaa; text-align: center; line-height: 1.4; margin-bottom: 15px; }
+            .logo-overlap { margin-top: -35px; display: flex; flex-direction: column; align-items: center; margin-bottom: 12px;}
             
-            .feature-badges { display: flex; justify-content: center; gap: 8px; margin-bottom: 20px; flex-wrap: wrap; }
-            .f-badge { border: 1px solid var(--accent-cyan); color: var(--accent-cyan); padding: 5px 12px; border-radius: 20px; font-size: 0.65rem; font-family: var(--font-head); font-weight: bold; background: rgba(0,242,255,0.05); }
+            /* Minimal Logo */
+            .logo-overlap img { width: 65px; height: 65px; border-radius: 22%; border: 2px solid var(--accent-cyan); box-shadow: 0 10px 20px rgba(0,0,0,0.9), inset 0 0 10px rgba(0,242,255,0.4); background: var(--primary-bg);}
             
-            .credits-footer { display: flex; flex-direction: column; align-items: center; gap: 4px; padding-bottom: 10px; margin-top: 15px;}
-            .terms-gate { justify-content: flex-start; margin-bottom: 15px; font-size: 0.7rem !important; }
+            /* Attractive Gaming Font setup */
+            .app-name { font-family: var(--font-head); font-size: 1.6rem; letter-spacing: 2px; font-weight: 900; color: white; text-transform: uppercase; margin-top: 8px; text-align: center; line-height: 1.1;}
+            .app-name .esports-text { font-size: 0.55em; letter-spacing: 4px; color: var(--accent-cyan); display: block; margin-top: 2px; text-shadow: 0 0 10px var(--accent-cyan); }
+            
+            .app-tagline { display: none; } /* Hidden for minimal look */
+            .static-desc { font-size: 0.7rem; color: #bbb; text-align: center; line-height: 1.3; margin-bottom: 12px; padding: 0 10px;}
+            
+            .feature-badges { display: flex; justify-content: center; gap: 8px; margin-bottom: 15px; flex-wrap: wrap; }
+            .f-badge { border: 1px solid var(--accent-cyan); color: var(--accent-cyan); padding: 4px 10px; border-radius: 20px; font-size: 0.6rem; font-family: var(--font-head); font-weight: bold; background: rgba(0,242,255,0.05); }
+            
+            .credits-footer { display: flex; flex-direction: column; align-items: center; gap: 3px; margin-top: 10px;}
+            .terms-gate { justify-content: flex-start; margin-bottom: 12px; font-size: 0.7rem !important; width: 100%;}
         }
 
         @keyframes floatLogo { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-8px); } }
 
         /* Terms Gate */
-        .terms-gate { display: flex; align-items: center; gap: 8px; cursor: pointer; color: #ccc; font-weight: 600; text-shadow: 1px 1px 2px black; width: 100%; }
+        .terms-gate { display: flex; align-items: center; gap: 8px; cursor: pointer; color: #ccc; font-weight: 600; text-shadow: 1px 1px 2px black; }
         .terms-gate input { display: none; }
-        .terms-checkmark { width: 18px; height: 18px; border: 2px solid #888; border-radius: 4px; display: flex; align-items: center; justify-content: center; transition: 0.3s; background: rgba(0,0,0,0.5); flex-shrink: 0;}
+        .terms-checkmark { width: 16px; height: 16px; border: 2px solid #888; border-radius: 4px; display: flex; align-items: center; justify-content: center; transition: 0.3s; background: rgba(0,0,0,0.5); flex-shrink: 0;}
         .terms-gate input:checked + .terms-checkmark { border-color: var(--accent-green); background: rgba(0, 255, 127, 0.2); box-shadow: 0 0 10px var(--accent-green); }
-        .terms-gate input:checked + .terms-checkmark::after { content: '\f00c'; font-family: "Font Awesome 6 Free"; font-weight: 900; color: var(--accent-green); font-size: 10px; }
+        .terms-gate input:checked + .terms-checkmark::after { content: '\f00c'; font-family: "Font Awesome 6 Free"; font-weight: 900; color: var(--accent-green); font-size: 9px; }
         .terms-link { color: var(--accent-cyan); text-decoration: underline; font-weight: bold; }
 
-        /* BUTTONS (MINIMAL, NO OVERFLOW) */
-        .auth-buttons-container { width: 100%; display: flex; flex-direction: column; gap: 10px; }
+        /* BUTTONS */
+        .auth-buttons-container { width: 100%; display: flex; flex-direction: column; gap: 8px; }
         .action-btn {
             width: 100%; padding: 12px; border-radius: 10px; font-family: var(--font-head);
             font-size: 0.85rem; font-weight: 900; letter-spacing: 1px; cursor: pointer; transition: 0.2s;
@@ -187,15 +180,15 @@
         
         .org-btn { 
             background: transparent; color: var(--accent-orange); font-size: 0.75rem; 
-            margin-top: 5px; text-decoration: none; display: flex; align-items: center; justify-content: center; gap: 5px;
+            margin-top: 2px; text-decoration: none; display: flex; align-items: center; justify-content: center; gap: 5px;
             text-shadow: 0 0 10px rgba(255,153,0,0.5); border: none; box-shadow: none;
         }
         .org-btn:active { transform: scale(0.95); }
 
         /* TAP TO START ENGINE */
         .tap-to-start {
-            font-family: var(--font-head); font-size: 1.2rem; font-weight: 900; color: white;
-            letter-spacing: 3px; text-transform: uppercase; cursor: pointer;
+            font-family: var(--font-head); font-size: 1.3rem; font-weight: 900; color: white;
+            letter-spacing: 4px; text-transform: uppercase; cursor: pointer;
             text-shadow: 0 0 15px var(--accent-cyan), 0 0 25px var(--accent-purple);
             animation: pulseTap 1.5s infinite alternate; padding: 20px; width: 100%; text-align: center;
         }
@@ -214,11 +207,11 @@
         .quva-credit { font-size: 0.55rem; color: #aaa; font-family: var(--font-body); letter-spacing: 1px; text-shadow: 1px 1px 2px black;}
         .neon-quva { font-family: var(--font-head); font-weight: 900; color: white; text-shadow: 0 0 8px #00f2ff, 0 0 15px #bd00ff; letter-spacing: 2px;}
 
-        /* --- MODALS (UNIVERSAL SIZING & Z-INDEX FIX) --- */
+        /* --- MODALS --- */
         .modal-overlay {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            position: fixed; top: 0; left: 0; width: 100vw; height: 100dvh;
             background: rgba(0, 0, 0, 0.8); z-index: 5000; display: none;
-            align-items: center; justify-content: center; backdrop-filter: blur(10px);
+            align-items: center; justify-content: center; backdrop-filter: blur(15px);
             opacity: 0; transition: opacity 0.3s ease; padding: 15px;
         }
         .modal-overlay.active { display: flex; opacity: 1; }
@@ -229,8 +222,7 @@
             box-shadow: 0 15px 40px rgba(0,0,0,0.9), inset 0 0 25px rgba(0,242,255,0.15);
             transform: scale(0.9); transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
             max-height: 85vh; display: flex; flex-direction: column; position: relative;
-            backdrop-filter: blur(30px); -webkit-backdrop-filter: blur(30px);
-            overflow-x: hidden; overflow-y: auto; /* Absolute Overflow Lock */
+            overflow-x: hidden; overflow-y: auto; 
         }
         .modal-overlay.active .modal-card { transform: scale(1); }
 
@@ -249,10 +241,9 @@
         .step-dot { width: 6px; height: 6px; border-radius: 50%; background: rgba(255,255,255,0.2); transition: 0.3s; }
         .step-dot.active { background: var(--accent-cyan); box-shadow: 0 0 10px var(--accent-cyan); transform: scale(1.4); }
 
-        /* --- FORMS & INPUTS (MICRO-SCALED FOR NO OVERFLOW) --- */
+        /* --- FORMS & INPUTS --- */
         .input-wrapper { margin-bottom: 10px; width: 100%; }
         .input-group { position: relative; width: 100%; }
-        /* DROPDOWN FIX: Pointer-events none on icon, High Z-Index on Select */
         .input-icon { position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: #666; transition: 0.3s; pointer-events: none; font-size: 0.8rem; z-index: 10;}
         
         .form-control {
@@ -260,7 +251,6 @@
             padding: 10px 10px 10px 35px; color: white; font-family: var(--font-body); font-size: 0.8rem; outline: none; transition: 0.2s;
             box-shadow: inset 0 0 10px rgba(0,0,0,0.5); appearance: none; -webkit-appearance: none; position: relative; z-index: 2;
         }
-        
         select.form-control { cursor: pointer; padding-right: 30px; z-index: 5; background-image: url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23666666%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E"); background-repeat: no-repeat; background-position: right 10px top 50%; background-size: 10px auto; background-color: var(--input-bg);}
         select.form-control option { background: var(--primary-bg); color: white; }
         
@@ -280,7 +270,7 @@
         .verify-btn:active { transform: scale(0.95); }
         .verify-btn.verified { background: rgba(0, 255, 127, 0.1); border: 1px solid var(--accent-green); color: var(--accent-green); cursor: default; }
 
-        /* SLIDER NAVIGATION BUTTONS (UNIFORM SIZE) */
+        /* SLIDER NAVIGATION BUTTONS */
         .slide-nav-row { display: flex; gap: 8px; margin-top: 10px; }
         .slide-btn { flex: 1; height: 40px; border: none; border-radius: 8px; font-family: var(--font-head); font-size: 0.8rem; font-weight: bold; text-transform: uppercase; cursor: pointer; transition: 0.2s; display: flex; align-items: center; justify-content: center; gap: 6px;}
         .slide-btn.next { background: var(--accent-gradient); color: white; box-shadow: 0 4px 15px rgba(0,0,0,0.4); }
@@ -299,7 +289,7 @@
         #customToast.success { background: rgba(0, 255, 127, 0.95); color: black; box-shadow: 0 5px 20px rgba(0, 255, 127, 0.6); }
 
         /* CINEMATIC ARENA ENTRY */
-        .arena-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #040108; z-index: 9999; display: none; flex-direction: column; align-items: center; justify-content: center; }
+        .arena-overlay { position: fixed; top: 0; left: 0; width: 100vw; height: 100dvh; background: #040108; z-index: 9999; display: none; flex-direction: column; align-items: center; justify-content: center; backdrop-filter: blur(20px);}
         .arena-overlay.active { display: flex; animation: fadeInBg 0.3s forwards; }
         .arena-text { font-family: var(--font-head); font-size: 1.8rem; color: #fff; font-weight: 900; letter-spacing: 4px; text-shadow: 0 0 20px rgba(0, 242, 255, 0.6); text-align: center; text-transform: uppercase; animation: cinematicEntry 2s cubic-bezier(0.25, 1, 0.5, 1) forwards; }
         @keyframes fadeInBg { from { opacity: 0; } to { opacity: 1; } }
@@ -309,15 +299,15 @@
 </head>
 <body id="mainBody">
 
-    <video playsinline muted class="video-bg" id="introVideo" style="opacity: 1;"></video>
-    <video loop playsinline class="video-bg" id="bgVideo" style="opacity: 0;"></video>
+    <video playsinline muted autoplay class="video-bg" id="introVideo" style="opacity: 1;"></video>
+    <video playsinline muted loop class="video-bg" id="bgVideo" style="opacity: 0;"></video>
     <div class="bg-overlay"></div>
     <canvas id="particles-canvas"></canvas>
 
     <div class="hud-top-left">Beta Version 4.2.0.19751</div>
     
     <div class="hud-top-right">
-        <div class="hud-tool-btn vol-btn" onclick="toggleVolume(event)">
+        <div class="hud-tool-btn vol-btn" onclick="toggleVolume(event)" style="margin-right: 5px;">
             <i id="volIcon" class="fa-solid fa-volume-xmark"></i>
         </div>
         <div class="hud-tool-btn" onclick="openModal('helpModal')"><i class="fa-solid fa-headset"></i><span id="txtHelp">Help</span></div>
@@ -329,15 +319,18 @@
         <img id="loggedInAvatar" src="" alt="Avatar" onclick="quickLogin()">
         <div class="user-info">
             <span id="loggedInName" class="user-name" onclick="quickLogin()"></span>
-            <span class="logout-text" onclick="logoutUser(event)">Logout <i class="fa-solid fa-right-from-bracket"></i></span>
+            <span class="logout-text" onclick="logoutUser(event)"><span id="txtLogout">Logout</span> <i class="fa-solid fa-right-from-bracket"></i></span>
         </div>
     </div>
+
+    <div id="fullScreenTap" class="hidden" onclick="quickLogin()"></div>
 
     <div class="main-ui-container" id="mainUiContainer">
         <div class="auth-card-wrapper">
             <div class="logo-overlap center-logo-area">
                 <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEipVmqyUEA22VpntZdPCHuXoO_Rjco_cRaNl5CyFa-eehdtgXnHe6JoD8a5svxJRJYZfv_yXwww10T2cL2PHTiXLK-J-nWC1swmMs5RDxGVM8FBSlJORaRiX4YiD8gL8SyM4X1tRyQn_v8MsqQvbU4uEyHEU0qaySP1STWHaBEYuWKyF3-6QovSqJR-8xU/s1024/1000093705.png" alt="Tournyx Logo">
-                <h1 class="app-name">TOURNYX</h1>
+                <h1 class="app-name">TOURNYX <span class="esports-text">ESPORTS</span></h1>
+                
                 <p class="app-tagline">The Ultimate Esports Arena</p>
                 <div class="static-desc" id="txtDesc">Join the elite. Compete in daily scrims, climb the leaderboard, and withdraw real cash directly to your wallet.</div>
                 
@@ -351,7 +344,7 @@
             <label class="terms-gate" id="termsGateContainer" onclick="doHaptic()">
                 <input type="checkbox" id="masterTerms" checked>
                 <span class="terms-checkmark"></span>
-                <span>I have read and agree to the <span class="terms-link" onclick="window.open('terms.html','_blank')">Terms of Service</span>.</span>
+                <span id="txtTermsText">I have read and agree to the <span class="terms-link" onclick="window.open('terms.html','_blank')">Terms of Service</span>.</span>
             </label>
 
             <div id="authButtons" class="auth-buttons-container">
@@ -366,13 +359,13 @@
                 </button>
             </div>
             
-            <div id="tapToStartHitbox" class="tap-to-start hidden" onclick="quickLogin()">
-                TAP TO ENTER ARENA
+            <div id="tapToStartHitbox" class="tap-to-start hidden" style="z-index: 5000; position:relative;">
+                <span id="txtTapEnter">TAP TO ENTER ARENA</span>
             </div>
         </div>
 
         <div class="credits-footer">
-            <div class="footer-left data-notice"><i class="fa-solid fa-cloud-arrow-down"></i> Video cached. Zero data usage.</div>
+            <div class="footer-left data-notice"><i class="fa-solid fa-cloud-arrow-down"></i> <span id="txtData">Video cached. Zero data usage.</span></div>
             <div class="footer-center copyrights">© Tournyx Esports private limited | © KRAFTON | © Garena</div>
             <div class="footer-right quva-credit">Powered by <span class="neon-quva">QUVA</span></div>
         </div>
@@ -401,7 +394,7 @@
                         <i class="fa-solid fa-eye pwd-toggle" onclick="togglePwd('loginPwd', this, false)"></i>
                     </div>
                 </div>
-                <button type="submit" class="slide-btn next" id="btnLogin" style="width:100%;">ENTER ARENA <i class="fa-solid fa-arrow-right"></i></button>
+                <button type="submit" class="slide-btn next" id="btnLogin" style="width:100%;"><span id="txtEnterArena">ENTER ARENA</span> <i class="fa-solid fa-arrow-right"></i></button>
             </form>
         </div>
     </div>
@@ -409,7 +402,7 @@
     <div class="modal-overlay" id="orgModal">
         <div class="modal-card">
             <i class="fa-solid fa-xmark close-modal" onclick="closeModals()"></i>
-            <h2 class="modal-title" style="color:var(--accent-orange)"><i class="fa-solid fa-crown"></i> Organizer Hub</h2>
+            <h2 class="modal-title" style="color:var(--accent-orange)" id="lblOrg"><i class="fa-solid fa-crown"></i> Organizer Hub</h2>
 
             <form id="organizerLoginForm">
                 <div class="input-wrapper">
@@ -425,8 +418,12 @@
                         <i class="fa-solid fa-eye pwd-toggle" onclick="togglePwd('orgPwd', this, true)"></i>
                     </div>
                 </div>
-                <button type="submit" class="slide-btn next" id="btnOrgLogin" style="width:100%; background:linear-gradient(90deg, #ff9900, #ff4d4d); box-shadow: 0 4px 15px rgba(255,153,0,0.4); border:none;">VERIFY ADMIN <i class="fa-solid fa-bolt"></i></button>
+                <button type="submit" class="slide-btn next" id="btnOrgLogin" style="width:100%; background:linear-gradient(90deg, #ff9900, #ff4d4d); box-shadow: 0 4px 15px rgba(255,153,0,0.4); border:none;"><span id="txtVerifyAdmin">VERIFY ADMIN</span> <i class="fa-solid fa-bolt"></i></button>
             </form>
+            
+            <div style="text-align:center; margin-top:15px; font-size:0.75rem;">
+                <a href="organizerportal.html" style="color:var(--accent-orange); font-weight:bold; text-decoration:none; text-shadow:0 0 5px rgba(255,153,0,0.5);" id="txtApplyHost">Apply to Host Tournaments</a>
+            </div>
         </div>
     </div>
 
@@ -484,14 +481,14 @@
                                 </div>
                             </div>
 
-                            <button type="button" class="slide-btn next" onclick="nextSlide(1)" style="width:100%; margin-top:5px;">Next <i class="fa-solid fa-arrow-right"></i></button>
+                            <button type="button" class="slide-btn next" onclick="nextSlide(1)" style="width:100%; margin-top:5px;"><span class="txtNext">Next</span> <i class="fa-solid fa-arrow-right"></i></button>
                         </div>
 
                         <div class="slide-step">
                             <div class="input-wrapper">
                                 <div class="input-group">
                                     <select name="game" id="regGame" class="form-control req-field">
-                                        <option value="" disabled selected>Select Primary Game</option>
+                                        <option value="" disabled selected id="txtSelGame">Select Primary Game</option>
                                         <option value="BGMI">BGMI</option>
                                         <option value="Free Fire">Free Fire</option>
                                         <option value="Call of Duty Mobile">Call of Duty Mobile</option>
@@ -523,8 +520,8 @@
                             </div>
 
                             <div class="slide-nav-row">
-                                <button type="button" class="slide-btn back" onclick="prevSlide(2)"><i class="fa-solid fa-arrow-left"></i> Back</button>
-                                <button type="button" class="slide-btn next" onclick="nextSlide(2)">Next <i class="fa-solid fa-arrow-right"></i></button>
+                                <button type="button" class="slide-btn back" onclick="prevSlide(2)"><i class="fa-solid fa-arrow-left"></i> <span class="txtBack">Back</span></button>
+                                <button type="button" class="slide-btn next" onclick="nextSlide(2)"><span class="txtNext">Next</span> <i class="fa-solid fa-arrow-right"></i></button>
                             </div>
                         </div>
 
@@ -532,7 +529,7 @@
                             <div class="input-wrapper">
                                 <div class="input-group">
                                     <select name="state" id="regState" class="form-control req-field">
-                                        <option value="" disabled selected>Select State</option>
+                                        <option value="" disabled selected id="txtSelState">Select State</option>
                                         <option value="Tamil Nadu">Tamil Nadu</option>
                                         <option value="Maharashtra">Maharashtra</option>
                                         <option value="Delhi">Delhi</option>
@@ -552,8 +549,8 @@
                             </div>
                             
                             <div class="slide-nav-row" style="margin-top:20px;">
-                                <button type="button" class="slide-btn back" onclick="prevSlide(3)"><i class="fa-solid fa-arrow-left"></i> Back</button>
-                                <button type="submit" class="slide-btn next" id="btnSignup" style="background:var(--accent-green); color:black;"><i class="fa-solid fa-check"></i> FINISH</button>
+                                <button type="button" class="slide-btn back" onclick="prevSlide(3)"><i class="fa-solid fa-arrow-left"></i> <span class="txtBack">Back</span></button>
+                                <button type="submit" class="slide-btn next" id="btnSignup" style="background:var(--accent-green); color:black;"><i class="fa-solid fa-check"></i> <span id="txtFinish">FINISH</span></button>
                             </div>
                         </div>
 
@@ -566,7 +563,7 @@
     <div class="modal-overlay" id="helpModal">
         <div class="modal-card">
             <i class="fa-solid fa-xmark close-modal" onclick="closeModals()"></i>
-            <h2 class="modal-title" style="color:var(--accent-cyan)"><i class="fa-solid fa-headset"></i> Support</h2>
+            <h2 class="modal-title" style="color:var(--accent-cyan)"><i class="fa-solid fa-headset"></i> <span id="lblHelp">Support</span></h2>
             <form onsubmit="submitHelp(event)">
                 <div class="input-wrapper"><div class="input-group">
                     <input type="email" id="helpEmail" class="form-control" placeholder="Your Email Address" required>
@@ -575,7 +572,7 @@
                 <div class="input-wrapper"><div class="input-group">
                     <textarea class="form-control" id="helpMsg" placeholder="Describe your issue..." style="height:100px; resize:none;" required></textarea>
                 </div></div>
-                <button type="submit" class="slide-btn next" id="btnHelp" style="width:100%;">SEND MESSAGE</button>
+                <button type="submit" class="slide-btn next" id="btnHelp" style="width:100%;"><span id="txtSendMsg">SEND MESSAGE</span></button>
             </form>
         </div>
     </div>
@@ -584,11 +581,14 @@
         <div class="modal-card">
             <i class="fa-solid fa-xmark close-modal" onclick="closeModals()"></i>
             <h2 class="modal-title" style="color:var(--accent-cyan)"><i class="fa-solid fa-earth-americas"></i> Select Language</h2>
-            <div style="display: flex; flex-direction: column; gap: 8px; max-height: 50vh; overflow-y: auto; padding-right: 5px;">
+            <div style="display: flex; flex-direction: column; gap: 8px; max-height: 50vh; overflow-x: hidden; overflow-y: auto; padding-right: 5px;">
                 <div class="slide-btn back" style="justify-content:flex-start;" onclick="setLanguage('en')"><span style="font-size:1.2rem;">🇮🇳</span> English (India)</div>
                 <div class="slide-btn back" style="justify-content:flex-start;" onclick="setLanguage('hi')"><span style="font-size:1.2rem;">🇮🇳</span> हिन्दी (Hindi)</div>
                 <div class="slide-btn back" style="justify-content:flex-start;" onclick="setLanguage('ta')"><span style="font-size:1.2rem;">🇮🇳</span> தமிழ் (Tamil)</div>
+                <div class="slide-btn back" style="justify-content:flex-start;" onclick="setLanguage('ml')"><span style="font-size:1.2rem;">🇮🇳</span> മലയാളം (Malayalam)</div>
+                <div class="slide-btn back" style="justify-content:flex-start;" onclick="setLanguage('kn')"><span style="font-size:1.2rem;">🇮🇳</span> ಕನ್ನಡ (Kannada)</div>
                 <div class="slide-btn back" style="justify-content:flex-start;" onclick="setLanguage('te')"><span style="font-size:1.2rem;">🇮🇳</span> తెలుగు (Telugu)</div>
+                <div class="slide-btn back" style="justify-content:flex-start;" onclick="setLanguage('mr')"><span style="font-size:1.2rem;">🇮🇳</span> मराठी (Marathi)</div>
             </div>
         </div>
     </div>
@@ -596,7 +596,7 @@
     <div class="modal-overlay" id="accountsModal">
         <div class="modal-card">
             <i class="fa-solid fa-xmark close-modal" onclick="closeModals()"></i>
-            <h2 class="modal-title" style="color:var(--accent-cyan)"><i class="fa-solid fa-users-gear"></i> Recent Accounts</h2>
+            <h2 class="modal-title" style="color:var(--accent-cyan)"><i class="fa-solid fa-users-gear"></i> <span id="lblAcc">Recent Accounts</span></h2>
             <div id="accountsListArea" style="display: flex; flex-direction: column; gap: 8px; max-height: 50vh; overflow-y: auto; padding-right: 5px;">
                 <div style="text-align:center; color:#888; font-size:0.75rem;">No recent accounts found.</div>
             </div>
@@ -604,30 +604,29 @@
     </div>
 
     <div id="arenaLoader" class="arena-overlay">
-        <div class="arena-text">ENTERING THE ARENA</div>
+        <div class="arena-text" id="txtLoading">ENTERING THE ARENA</div>
     </div>
 
     <div id="customToast"><i class="fa-solid fa-circle-exclamation"></i> <span id="toastMsg">Alert</span></div>
 
     <script>
         /* =========================================
-           TOURNYX ULTIMATE BULLETPROOF ENGINE v4.0
+           TOURNYX ULTIMATE BULLETPROOF ENGINE v5.0
            ========================================= */
 
-        // 1. SILENT ERROR ASSASSIN (Prevents DOM crashes)
-        window.addEventListener('error', function(e) {
-            console.warn("Tournyx Engine gracefully caught error:", e.message);
-            e.preventDefault();
-        });
+        window.addEventListener('error', function(e) { console.warn("Engine Caught Error:", e.message); e.preventDefault(); });
 
         const API_URL = 'https://script.google.com/macros/s/AKfycbyqqTpgaflxKJ9xH0jq7mJ_jLzcoNhas3gNo0h5gvoa_6r5Ae9NFxJAJp7ZoYNnMRKl/exec';
 
-        // 2. DYNAMIC LOCALIZATION ENGINE (The Language Module Fix)
+        // --- 7-LANGUAGE AI ENGINE (LOCALIZATION) ---
         const langData = {
-            'en': { login: "PLAYER LOGIN", reg: "CREATE ACCOUNT", org: "ORGANIZER PORTAL", desc: "Join the elite. Compete in daily scrims, climb the leaderboard, and withdraw real cash directly to your wallet.", logTitle: "Player Login", regTitle: "Create Account" },
-            'hi': { login: "खिलाड़ी लॉगिन", reg: "खाता बनाएं", org: "आयोजक पोर्टल", desc: "कुलीन वर्ग में शामिल हों। दैनिक स्क्रिम्स में प्रतिस्पर्धा करें और असली नकद जीतें।", logTitle: "लॉगिन", regTitle: "खाता बनाएं" },
-            'ta': { login: "வீரர் உள்நுழைவு", reg: "கணக்கை உருவாக்கு", org: "அமைப்பாளர் போர்டல்", desc: "எலைட் அணியில் சேருங்கள். தினசரி போட்டிகளில் பங்கேற்று உண்மையான பணத்தை வெல்லுங்கள்.", logTitle: "உள்நுழைவு", regTitle: "உருவாக்கு" },
-            'te': { login: "ప్లేయర్ లాగిన్", reg: "ఖాతాను సృష్టించండి", org: "ఆర్గనైజర్ పోర్టల్", desc: "ఎలైట్‌లో చేరండి. రోజువారీ స్కిర్మ్‌లలో పోటీపడి నిజమైన నగదును గెలుచుకోండి.", logTitle: "లాగిన్", regTitle: "సృష్టించండి" }
+            'en': { login: "PLAYER LOGIN", reg: "CREATE ACCOUNT", org: "ORGANIZER PORTAL", desc: "Join the elite. Compete in daily scrims, climb the leaderboard, and withdraw real cash directly to your wallet.", logTitle: "Player Login", regTitle: "Create Account", help: "Help", lang: "Lang", acc: "Accounts", enter: "ENTER ARENA", terms: "I have read and agree to the Terms of Service.", tap: "TAP TO ENTER ARENA", applyHost: "Apply to Host Tournaments", admin: "VERIFY ADMIN", back: "Back", next: "Next" },
+            'hi': { login: "खिलाड़ी लॉगिन", reg: "खाता बनाएं", org: "आयोजक पोर्टल", desc: "कुलीन वर्ग में शामिल हों। दैनिक स्क्रिम्स में प्रतिस्पर्धा करें और असली नकद जीतें।", logTitle: "लॉगिन", regTitle: "खाता बनाएं", help: "मदद", lang: "भाषा", acc: "खाते", enter: "मैदान में प्रवेश करें", terms: "मैंने सेवा की शर्तें पढ़ ली हैं।", tap: "प्रवेश के लिए टैप करें", applyHost: "टूर्नामेंट होस्ट करें", admin: "एडमिन सत्यापित करें", back: "पीछे", next: "आगे" },
+            'ta': { login: "வீரர் உள்நுழைவு", reg: "கணக்கை உருவாக்கு", org: "அமைப்பாளர் போர்டல்", desc: "எலைட் அணியில் சேருங்கள். தினசரி போட்டிகளில் பங்கேற்று உண்மையான பணத்தை வெல்லுங்கள்.", logTitle: "உள்நுழைவு", regTitle: "உருவாக்கு", help: "உதவி", lang: "மொழி", acc: "கணக்குகள்", enter: "உள்ளே செல்லவும்", terms: "சேவை விதிமுறைகளை நான் ஏற்றுக்கொள்கிறேன்.", tap: "உள்ளே செல்ல தட்டவும்", applyHost: "போட்டியை நடத்த விண்ணப்பிக்கவும்", admin: "நிர்வாகியை சரிபார்க்கவும்", back: "பின்னால்", next: "அடுத்து" },
+            'te': { login: "ప్లేయర్ లాగిన్", reg: "ఖాతా సృష్టించండి", org: "ఆర్గనైజర్ పోర్టల్", desc: "ఎలైట్‌లో చేరండి. రోజువారీ స్కిర్మ్‌లలో పోటీపడి నిజమైన నగదు గెలుచుకోండి.", logTitle: "లాగిన్", regTitle: "సృష్టించండి", help: "సహాయం", lang: "భాష", acc: "ఖాతాలు", enter: "ఎంటర్ అవ్వండి", terms: "నేను సేవా నిబంధనలను అంగీకరిస్తున్నాను.", tap: "ప్రవేశించడానికి నొక్కండి", applyHost: "హోస్ట్ కోసం దరఖాస్తు చేయండి", admin: "నిర్వాహకుడిని ధృవీకరించండి", back: "వెనుకకు", next: "తదుపరి" },
+            'ml': { login: "ലോഗിൻ", reg: "അക്കൗണ്ട് സൃഷ്ടിക്കുക", org: "ഓർഗനൈസർ പോർട്ടൽ", desc: "എലൈറ്റിൽ ചേരുക. യഥാർത്ഥ പണം നേടുക.", logTitle: "ലോഗിൻ", regTitle: "സൃഷ്ടിക്കുക", help: "സഹായം", lang: "ഭാഷ", acc: "അക്കൗണ്ടുകൾ", enter: "പ്രവേശിക്കുക", terms: "ഞാൻ നിബന്ധനകൾ അംഗീകരിക്കുന്നു.", tap: "പ്രവേശിക്കാൻ ടാപ്പുചെയ്യുക", applyHost: "ഹോസ്റ്റുചെയ്യാൻ അപേക്ഷിക്കുക", admin: "പരിശോധിക്കുക", back: "തിരികെ", next: "അടുത്തത്" },
+            'kn': { login: "ಲಾಗಿನ್", reg: "ಖಾತೆ ರಚಿಸಿ", org: "ಸಂಘಟಕರ ಪೋರ್ಟಲ್", desc: "ಎಲೈಟ್ ಸೇರಿ. ನೈಜ ಹಣವನ್ನು ಗೆದ್ದಿರಿ.", logTitle: "ಲಾಗಿನ್", regTitle: "ರಚಿಸಿ", help: "ಸಹಾಯ", lang: "ಭಾಷೆ", acc: "ಖಾತೆಗಳು", enter: "ಪ್ರವೇಶಿಸಿ", terms: "ನಾನು ನಿಯಮಗಳನ್ನು ಒಪ್ಪುತ್ತೇನೆ.", tap: "ಪ್ರವೇಶಿಸಲು ಟ್ಯಾಪ್ ಮಾಡಿ", applyHost: "ಹೋಸ್ಟ್ ಮಾಡಲು ಅರ್ಜಿ ಸಲ್ಲಿಸಿ", admin: "ಪರಿಶೀಲಿಸಿ", back: "ಹಿಂದೆ", next: "ಮುಂದೆ" },
+            'mr': { login: "लॉगिन", reg: "खाते तयार करा", org: "आयोजक पोर्टल", desc: "एलिटमध्ये सामील व्हा. खरी रोकड जिंका.", logTitle: "लॉगिन", regTitle: "तयार करा", help: "मदत", lang: "भाषा", acc: "खाती", enter: "प्रवेश करा", terms: "मी अटी मान्य करतो.", tap: "प्रवेश करण्यासाठी टॅप करा", applyHost: "होस्ट करण्यासाठी अर्ज करा", admin: "पडताळणी करा", back: "मागे", next: "पुढे" }
         };
 
         function applyLanguageEngine() {
@@ -640,7 +639,17 @@
                     document.getElementById('txtDesc').innerText = langData[lang].desc;
                     document.getElementById('lblLog').innerText = langData[lang].logTitle;
                     document.getElementById('lblReg').innerText = langData[lang].regTitle;
-                } catch(e) { console.log("i18n pass"); }
+                    document.getElementById('txtHelp').innerText = langData[lang].help;
+                    document.getElementById('txtLang').innerText = langData[lang].lang;
+                    document.getElementById('txtAcc').innerText = langData[lang].acc;
+                    document.getElementById('txtEnterArena').innerText = langData[lang].enter;
+                    document.getElementById('txtTapEnter').innerText = langData[lang].tap;
+                    document.getElementById('txtVerifyAdmin').innerText = langData[lang].admin;
+                    document.getElementById('txtApplyHost').innerText = langData[lang].applyHost;
+                    
+                    document.querySelectorAll('.txtBack').forEach(el => el.innerText = langData[lang].back);
+                    document.querySelectorAll('.txtNext').forEach(el => el.innerText = langData[lang].next);
+                } catch(e) {}
             }
         }
         document.addEventListener("DOMContentLoaded", applyLanguageEngine);
@@ -651,11 +660,11 @@
             setTimeout(() => {
                 localStorage.setItem('tournyx_lang', langCode);
                 showToast("Language applied successfully!", true);
-                setTimeout(() => window.location.reload(), 1000);
-            }, 1500);
+                setTimeout(() => window.location.reload(), 800);
+            }, 1000);
         }
 
-        // 3. GLOBAL TOUCH RIPPLE ENGINE
+        // --- GLOBAL TOUCH & HAPTIC ENGINE ---
         document.body.addEventListener('click', function (e) {
             const video = document.getElementById('bgVideo');
             if(video && video.muted && !window.hasUnmuted && window.innerWidth > 768) {
@@ -686,8 +695,8 @@
             openModal(modalId);
         }
 
-        // 4. SMART CACHING DUAL VIDEO ENGINE (MOBILE FIX IMPLEMENTED)
-        async function loadVideoSequence() {
+        // --- SEAMLESS DUAL VIDEO ENGINE FIX ---
+        function runSeamlessVideoEngine() {
             const introUrl = 'https://tournyx.in/Tournyxpromo.mp4'; 
             const mainUrl = 'https://tournyx.in/FFBGMICODTRAILER.mp4';     
             
@@ -695,64 +704,43 @@
             const mainVideo = document.getElementById('bgVideo');
             const uiContainer = document.getElementById('mainUiContainer');
 
-            // MOBILE BYPASS RULE: If screen is small, instantly nuke the promo and show BG.
-            if(window.innerWidth <= 768) {
-                introVideo.style.display = 'none';
-                uiContainer.classList.add('active');
-                mainVideo.src = mainUrl;
-                mainVideo.muted = true;
-                mainVideo.play().catch(()=>{});
-                return;
-            }
-            
-            if(!introUrl || introUrl === '' || !mainUrl || mainUrl === '') return;
-            
-            try {
-                const cache = await caches.open('tournyx-video-cache');
-                
-                let resIntro = await cache.match(introUrl);
-                if (!resIntro) { resIntro = await fetch(introUrl); if (resIntro.ok) cache.put(introUrl, resIntro.clone()); }
-                if (resIntro.ok) { const blob = await resIntro.blob(); introVideo.src = URL.createObjectURL(blob); }
-                
-                let resMain = await cache.match(mainUrl);
-                if (!resMain) { resMain = await fetch(mainUrl); if (resMain.ok) cache.put(mainUrl, resMain.clone()); }
-                if (resMain.ok) { const blob = await resMain.blob(); mainVideo.src = URL.createObjectURL(blob); }
-                
-            } catch (e) {
-                introVideo.src = introUrl;
-                mainVideo.src = mainUrl; 
+            // Set sources immediately
+            introVideo.src = introUrl;
+            mainVideo.src = mainUrl;
+
+            // Start Intro
+            let introPromise = introVideo.play();
+            if (introPromise !== undefined) {
+                introPromise.catch(e => {
+                    // Autoplay blocked, skip to UI immediately
+                    introVideo.style.opacity = '0';
+                    uiContainer.classList.add('active');
+                    mainVideo.style.opacity = '1';
+                });
             }
 
-            introVideo.muted = true;
-            introVideo.play().catch(()=>{});
-            
+            // When Intro finishes -> Swap to BG seamlessly
             introVideo.onended = () => {
                 introVideo.style.opacity = '0';
                 uiContainer.classList.add('active'); 
+                mainVideo.style.opacity = '1';
                 
-                mainVideo.muted = false;
-                let playPromise = mainVideo.play();
-                if (playPromise !== undefined) {
-                    playPromise.catch(error => {
-                        mainVideo.muted = true;
-                        mainVideo.play();
-                        document.getElementById('volIcon').className = 'fa-solid fa-volume-xmark';
-                    }).then(() => {
-                        if(!mainVideo.muted) document.getElementById('volIcon').className = 'fa-solid fa-volume-high';
-                    });
-                }
+                mainVideo.play().catch(e => console.log("BG Video Play Blocked"));
+                
+                // Cleanup intro video
                 setTimeout(() => { introVideo.style.display = 'none'; }, 1000);
             };
-            
-            // Failsafe Timeout
+
+            // Failsafe: If intro hangs for more than 4 seconds, force UI show
             setTimeout(() => {
                 if(introVideo.style.opacity !== '0') {
                     introVideo.style.opacity = '0';
                     uiContainer.classList.add('active');
-                    mainVideo.muted = true; mainVideo.play();
+                    mainVideo.style.opacity = '1';
+                    mainVideo.play().catch(()=>{});
                     setTimeout(() => { introVideo.style.display = 'none'; }, 1000);
                 }
-            }, 4000);
+            }, 4500);
         }
         
         function toggleVolume(e) {
@@ -769,9 +757,11 @@
                 icon.className = 'fa-solid fa-volume-xmark';
             }
         }
-        loadVideoSequence();
+        
+        // Init Video
+        runSeamlessVideoEngine();
 
-        // 5. SECURE API FETCH WRAPPER
+        // --- SECURE API FETCH WRAPPER ---
         async function secureFetch(payload) {
             try {
                 const response = await fetch(API_URL, {
@@ -807,7 +797,7 @@
             }
         }
 
-        // 6. BULLETPROOF OTP LOGIC
+        // --- BULLETPROOF OTP LOGIC ---
         let isEmailVerified = false;
 
         async function sendOtp() {
@@ -854,16 +844,7 @@
             }, 800);
         }
 
-        function unlockEmailInput() {
-            document.getElementById('regEmail').readOnly = false;
-            isEmailVerified = false;
-            const btn = document.getElementById('btnVerifyOtp');
-            btn.innerHTML = `VERIFY`; btn.classList.remove('verified'); btn.disabled = false;
-            const otpInput = document.getElementById('regOtp');
-            otpInput.readOnly = false; otpInput.value = "";
-        }
-
-        // 7. PHONE NUMBER FORMAT LOCK
+        // --- PHONE NUMBER FORMAT LOCK ---
         const phoneInput = document.getElementById('regPhone');
         phoneInput.addEventListener('input', function(e) {
             if (!this.value.startsWith('+91 ')) this.value = '+91 ';
@@ -875,7 +856,7 @@
             if ((e.key === 'Backspace' || e.key === 'Delete') && this.selectionStart <= 4 && this.selectionEnd <= 4) e.preventDefault();
         });
 
-        // 8. MULTI-STEP SLIDER LOGIC
+        // --- MULTI-STEP SLIDER LOGIC ---
         let currentStep = 1;
         function updateDots() {
             document.querySelectorAll('.step-dot').forEach((dot, idx) => {
@@ -990,6 +971,9 @@
                 document.getElementById('termsGateContainer').classList.add('hidden');
                 document.getElementById('tapToStartHitbox').classList.remove('hidden');
                 document.getElementById('loggedInProfile').classList.remove('hidden');
+                
+                // Activate Fullscreen Tap Box
+                document.getElementById('fullScreenTap').classList.remove('hidden');
                 
                 let displayName = user.ign || user.username || "Player";
                 document.getElementById('loggedInName').innerText = displayName;
