@@ -41,22 +41,40 @@
             position: relative; padding: 0;
         }
 
-        /* --- DUAL VIDEO ENGINE --- */
+        /* --- 3D FIRE LOGO ANIMATION --- */
+        #logoIntroOverlay {
+            position: fixed; top: 0; left: 0; width: 100vw; height: 100dvh;
+            background: #000; z-index: 9999; display: flex; align-items: center; justify-content: center;
+            transition: opacity 0.8s ease, visibility 0.8s ease;
+        }
+        .fire-logo {
+            width: 120px; height: 120px; border-radius: 22%;
+            animation: fire3DReveal 3s cubic-bezier(0.25, 1, 0.5, 1) forwards;
+        }
+        @keyframes fire3DReveal {
+            0% { transform: scale(0.1); opacity: 0; filter: drop-shadow(0 0 10px #ff3300) drop-shadow(0 0 30px #ff9900) drop-shadow(0 0 60px #ffcc00); }
+            40% { opacity: 1; filter: drop-shadow(0 0 25px #ff3300) drop-shadow(0 0 50px #ff9900) drop-shadow(0 0 90px #ffcc00); }
+            80% { transform: scale(1.6); filter: drop-shadow(0 0 15px #ff3300) drop-shadow(0 0 40px #ff9900); opacity: 1; }
+            100% { transform: scale(2.5); opacity: 0; filter: none; }
+        }
+
+        /* --- BACKGROUND VIDEO --- */
         .video-bg {
             position: absolute; top: 0; left: 0; width: 100%; height: 100%;
             object-fit: cover; z-index: -4; filter: brightness(0.85);
             transition: opacity 0.8s ease-in-out;
         }
+
         /* AAA GAME HUD */
         .hud-top-left {
-            position: absolute; top: 20px; left: 20px; z-index: 100;
+            position: absolute; top: 20px; left: 20px; z-index: 6000;
             font-family: var(--font-body); font-size: 0.65rem; color: rgba(255,255,255,0.7);
             font-weight: bold; letter-spacing: 1px; text-shadow: 1px 1px 2px black;
         }
         
         .hud-top-right {
-            position: absolute; top: 20px; right: 20px; z-index: 100;
-            display: flex; flex-direction: row; gap: 15px; align-items: flex-start; /* Fixed Horizontal Row */
+            position: absolute; top: 20px; right: 20px; z-index: 6000;
+            display: flex; flex-direction: row; gap: 15px; align-items: flex-start;
         }
         .hud-tool-btn {
             display: flex; flex-direction: column; align-items: center; gap: 4px;
@@ -72,9 +90,8 @@
         .hud-tool-btn:active i { transform: scale(0.9); background: var(--accent-cyan); color: black; border-color: var(--accent-cyan); box-shadow: 0 0 15px var(--accent-cyan);}
 
         /* LOGGED IN PROFILE CORNER */
-       /* LOGGED IN PROFILE CORNER */
         .top-profile-corner {
-            position: absolute; top: 65px; right: 20px; z-index: 6000; /* FIXED: Now sits above the tap overlay */
+            position: absolute; top: 65px; right: 20px; z-index: 6000;
             display: flex; align-items: center; gap: 8px; background: rgba(0,0,0,0.7);
             padding: 4px 12px 4px 4px; border-radius: 50px; border: 1px solid rgba(0,242,255,0.4);
             backdrop-filter: blur(10px); transition: 0.3s; box-shadow: 0 4px 15px rgba(0,0,0,0.6);
@@ -99,7 +116,7 @@
         }
         .main-ui-container.active { opacity: 1; }
 
-        /* DESKTOP LAYOUT (CENTERED LIKE BGMI/FREE FIRE) */
+        /* DESKTOP LAYOUT */
         @media (min-width: 769px) {
             .main-ui-container { justify-content: flex-end; padding-bottom: 8vh; }
             .auth-card-wrapper { 
@@ -111,32 +128,15 @@
             .app-name { font-family: var(--font-head); font-size: 2rem; letter-spacing: 4px; font-weight: 900; color: white; text-transform: uppercase; filter: drop-shadow(0 0 10px rgba(0,242,255,0.6)); text-align: center; line-height: 1.1;}
             .app-name .esports-text { font-size: 0.5em; letter-spacing: 6px; color: var(--accent-cyan); display: block; margin-top: 2px; }
             .app-tagline, .static-desc, .feature-badges { display: none; }
-            .credits-footer { position: absolute; bottom: 15px; width: 100%; display: flex; justify-content: space-between; padding: 0 30px; }
-            .terms-gate { justify-content: center; }
-        }
-        /* --- 3D FIRE LOGO ANIMATION --- */
-        #logoIntroOverlay {
-            position: fixed; top: 0; left: 0; width: 100vw; height: 100dvh;
-            background: #000; z-index: 9999; display: flex; align-items: center; justify-content: center;
-            transition: opacity 0.8s ease, visibility 0.8s ease;
-        }
-        .fire-logo {
-            width: 120px; height: 120px; border-radius: 22%;
-            /* The 3-second cinematic fire reveal */
-            animation: fire3DReveal 3s cubic-bezier(0.25, 1, 0.5, 1) forwards;
-        }
-        @keyframes fire3DReveal {
-            0% { transform: scale(0.1); opacity: 0; filter: drop-shadow(0 0 10px #ff3300) drop-shadow(0 0 30px #ff9900) drop-shadow(0 0 60px #ffcc00); }
-            40% { opacity: 1; filter: drop-shadow(0 0 25px #ff3300) drop-shadow(0 0 50px #ff9900) drop-shadow(0 0 90px #ffcc00); }
-            80% { transform: scale(1.6); filter: drop-shadow(0 0 15px #ff3300) drop-shadow(0 0 40px #ff9900); opacity: 1; }
-            100% { transform: scale(2.5); opacity: 0; filter: none; }
+            
+            .credits-footer { position: absolute; bottom: 15px; width: 100%; display: flex; justify-content: center; gap: 40px; padding: 0 30px; }
+            .footer-center.copyrights { font-size: 0.75rem; font-weight: 700; letter-spacing: 1px; color: rgba(255, 255, 255, 0.8); text-align: center; }
+            .footer-left.data-notice, .footer-right.quva-credit { font-size: 0.65rem; }
+            
+            .terms-gate { justify-content: center; margin-bottom: 25px; padding-bottom: 5px; }
         }
 
-        /* --- MOBILE VOLUME BUTTON Z-INDEX FIX --- */
-        /* Forces the HUD to sit ABOVE the invisible Fullscreen Tap layer */
-        .hud-top-right, .hud-top-left { z-index: 6000 !important; }
-        
-        /* MOBILE LAYOUT (NO SCROLL, PERFECT FIT) */
+        /* MOBILE LAYOUT */
         @media (max-width: 768px) {
             .main-ui-container { padding-bottom: 0; }
             .auth-card-wrapper {
@@ -147,21 +147,21 @@
             }
             .logo-overlap { margin-top: -35px; display: flex; flex-direction: column; align-items: center; margin-bottom: 12px;}
             
-            /* Minimal Logo */
             .logo-overlap img { width: 65px; height: 65px; border-radius: 22%; border: 2px solid var(--accent-cyan); box-shadow: 0 10px 20px rgba(0,0,0,0.9), inset 0 0 10px rgba(0,242,255,0.4); background: var(--primary-bg);}
             
-            /* Attractive Gaming Font setup */
             .app-name { font-family: var(--font-head); font-size: 1.6rem; letter-spacing: 2px; font-weight: 900; color: white; text-transform: uppercase; margin-top: 8px; text-align: center; line-height: 1.1;}
             .app-name .esports-text { font-size: 0.55em; letter-spacing: 4px; color: var(--accent-cyan); display: block; margin-top: 2px; text-shadow: 0 0 10px var(--accent-cyan); }
             
-            .app-tagline { display: none; } /* Hidden for minimal look */
+            .app-tagline { display: none; }
             .static-desc { font-size: 0.7rem; color: #bbb; text-align: center; line-height: 1.3; margin-bottom: 12px; padding: 0 10px;}
             
             .feature-badges { display: flex; justify-content: center; gap: 8px; margin-bottom: 15px; flex-wrap: wrap; }
             .f-badge { border: 1px solid var(--accent-cyan); color: var(--accent-cyan); padding: 4px 10px; border-radius: 20px; font-size: 0.6rem; font-family: var(--font-head); font-weight: bold; background: rgba(0,242,255,0.05); }
             
             .credits-footer { display: flex; flex-direction: column; align-items: center; gap: 3px; margin-top: 10px;}
-            .terms-gate { justify-content: flex-start; margin-bottom: 12px; font-size: 0.7rem !important; width: 100%;}
+            .footer-center.copyrights { font-size: 0.6rem; text-align: center; font-weight: 600; color: rgba(255, 255, 255, 0.7); }
+            
+            .terms-gate { justify-content: flex-start; margin-bottom: 25px; padding-bottom: 5px; font-size: 0.7rem; width: 100%;}
         }
 
         @keyframes floatLogo { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-8px); } }
@@ -218,7 +218,6 @@
 
         /* LEGAL FOOTER CREDITS */
         .data-notice { font-size: 0.55rem; color: var(--accent-green); font-family: var(--font-body); font-weight: bold; letter-spacing: 0.5px; text-shadow: 1px 1px 2px black;}
-        .copyrights { font-size: 0.5rem; color: rgba(255,255,255,0.5); font-family: var(--font-body); letter-spacing: 0.5px; text-shadow: 1px 1px 2px black;}
         .quva-credit { font-size: 0.55rem; color: #aaa; font-family: var(--font-body); letter-spacing: 1px; text-shadow: 1px 1px 2px black;}
         .neon-quva { font-family: var(--font-head); font-weight: 900; color: white; text-shadow: 0 0 8px #00f2ff, 0 0 15px #bd00ff; letter-spacing: 2px;}
 
@@ -309,59 +308,22 @@
         .arena-text { font-family: var(--font-head); font-size: 1.8rem; color: #fff; font-weight: 900; letter-spacing: 4px; text-shadow: 0 0 20px rgba(0, 242, 255, 0.6); text-align: center; text-transform: uppercase; animation: cinematicEntry 2s cubic-bezier(0.25, 1, 0.5, 1) forwards; }
         @keyframes fadeInBg { from { opacity: 0; } to { opacity: 1; } }
         @keyframes cinematicEntry { 0% { transform: scale(0.8); opacity: 0; filter: blur(10px); } 20% { transform: scale(1); opacity: 1; filter: blur(0); letter-spacing: 4px; } 80% { transform: scale(1.05); opacity: 1; filter: blur(0); letter-spacing: 6px; } 100% { transform: scale(1.3); opacity: 0; filter: blur(15px); letter-spacing: 10px; } }
-        /* --- FINAL POLISH CSS OVERRIDES --- */
-        
-        /* 1. Gap between Terms Box and Login Buttons */
-        .terms-gate {
-            margin-bottom: 25px !important; /* Perfect breathing room */
-            padding-bottom: 5px;
-        }
-
-        /* 2. Desktop Credits Fix (Centered & Larger) */
-        @media (min-width: 769px) {
-            .credits-footer { 
-                justify-content: center !important; 
-                gap: 40px; 
-            }
-            .footer-center.copyrights { 
-                font-size: 0.75rem !important; /* Increased size */
-                font-weight: 700;
-                letter-spacing: 1px;
-                color: rgba(255, 255, 255, 0.8) !important;
-                text-align: center;
-                flex: none !important;
-            }
-            .footer-left.data-notice, .footer-right.quva-credit {
-                font-size: 0.65rem !important;
-            }
-        }
-        
-        /* Mobile Credits Fix */
-        @media (max-width: 768px) {
-            .footer-center.copyrights { 
-                font-size: 0.6rem !important; /* Slightly larger on mobile too */
-                text-align: center;
-                font-weight: 600;
-                color: rgba(255, 255, 255, 0.7);
-            }
-        }
     </style>
 </head>
 <body id="mainBody">
 
-  <video src="https://tournyx.in/Tournyxpromo.mp4" 
-           poster="https://tournyx.in/hq-fallback-intro.jpg" 
-           autoplay muted playsinline webkit-playsinline preload="auto" 
-           class="video-bg" id="introVideo" style="opacity: 1; z-index: -2;"></video>
-           
+    <div id="logoIntroOverlay">
+        <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEipVmqyUEA22VpntZdPCHuXoO_Rjco_cRaNl5CyFa-eehdtgXnHe6JoD8a5svxJRJYZfv_yXwww10T2cL2PHTiXLK-J-nWC1swmMs5RDxGVM8FBSlJORaRiX4YiD8gL8SyM4X1tRyQn_v8MsqQvbU4uEyHEU0qaySP1STWHaBEYuWKyF3-6QovSqJR-8xU/s1024/1000093705.png" alt="Tournyx Logo" class="fire-logo">
+    </div>
+
     <video src="https://tournyx.in/FFBGMICODTRAILER.mp4" 
            poster="https://tournyx.in/hq-fallback-bg.jpg" 
-           loop muted playsinline webkit-playsinline preload="auto" 
+           autoplay loop muted playsinline webkit-playsinline preload="auto" 
            class="video-bg" id="bgVideo" style="opacity: 0; z-index: -4;"></video>
+           
     <div class="bg-overlay"></div>
     <canvas id="particles-canvas"></canvas>
     <div class="hud-top-left">Beta Version 1.2.0.</div>
-
     
     <div class="hud-top-right">
         <div class="hud-tool-btn vol-btn" onclick="toggleVolume(event)" style="margin-right: 5px;">
@@ -673,7 +635,7 @@
 
     <script>
         /* =========================================
-           TOURNYX ULTIMATE BULLETPROOF ENGINE v6.0
+           TOURNYX ULTIMATE BULLETPROOF ENGINE v7.0
            ========================================= */
 
         window.addEventListener('error', function(e) { console.warn("Engine Caught Error:", e.message); e.preventDefault(); });
@@ -726,16 +688,64 @@
             }, 1000);
         }
 
-        // --- GLOBAL TOUCH & HAPTIC ENGINE ---
-        document.body.addEventListener('click', function (e) {
-            const video = document.getElementById('bgVideo');
-            if(video && video.muted && !window.hasUnmuted && window.innerWidth > 768) {
-                video.muted = false;
+        // ==========================================
+        // TOURNYX 3D LOGO & BG VIDEO ENGINE 
+        // ==========================================
+        function initMasterVideoEngine() {
+            const bgVideo = document.getElementById('bgVideo');
+            const uiContainer = document.getElementById('mainUiContainer');
+            const introOverlay = document.getElementById('logoIntroOverlay');
+            
+            if (!bgVideo) return;
+
+            // --- SEAMLESS TRANSITION FUNCTION ---
+            const transitionToArena = () => {
+                // Fade out the fire logo background
+                introOverlay.style.opacity = '0';
+                setTimeout(() => { introOverlay.style.display = 'none'; }, 800); // completely remove from layout
+                
+                // Fade in UI and BG Video (Video is already playing thanks to HTML autoplay)
+                uiContainer.classList.add('active'); 
+                bgVideo.style.opacity = '1';
+                
+                // Failsafe: if the browser paused the video because it was hidden, force play now.
+                if (bgVideo.paused) {
+                    bgVideo.play().catch(e => console.warn("BG Video autoplay paused by browser."));
+                }
+            };
+
+            // Run the fire logo animation for exactly 2.8 seconds, then transition
+            setTimeout(transitionToArena, 2800);
+
+            // --- INVISIBLE AUDIO UNLOCKER ---
+            // The millisecond they touch the screen (or hit a button), audio unlocks!
+            const unlockAudioAndPlay = () => {
+                bgVideo.muted = false;
+                bgVideo.volume = 1.0; // Max Volume
+                
+                if (bgVideo.paused) {
+                    bgVideo.play().catch(e => console.warn("Play permanently blocked by OS."));
+                }
+                
+                // Update volume icon visually
                 let vIcon = document.getElementById('volIcon');
                 if(vIcon) vIcon.className = 'fa-solid fa-volume-high';
                 window.hasUnmuted = true;
-            }
 
+                // Remove listeners so it only fires once
+                document.removeEventListener('touchstart', unlockAudioAndPlay);
+                document.removeEventListener('click', unlockAudioAndPlay);
+            };
+
+            document.addEventListener('touchstart', unlockAudioAndPlay, {once:true});
+            document.addEventListener('click', unlockAudioAndPlay, {once:true});
+        }
+
+        // Boot the engine instantly
+        initMasterVideoEngine();
+
+        // --- GLOBAL TOUCH & HAPTIC ENGINE ---
+        document.body.addEventListener('click', function (e) {
             const ripple = document.createElement('div');
             ripple.className = 'ripple';
             document.body.appendChild(ripple);
@@ -743,6 +753,25 @@
             ripple.style.top = `${e.clientY - 20}px`;
             setTimeout(() => { ripple.remove(); }, 600);
         });
+
+        // --- VOLUME BUTTON FIX (MOBILE PROTECTED) ---
+        function toggleVolume(e) {
+            if(e) { e.preventDefault(); e.stopPropagation(); } // Prevents the click from getting hijacked
+            doHaptic();
+            const video = document.getElementById('bgVideo');
+            const icon = document.getElementById('volIcon');
+            
+            if(video.muted) {
+                video.muted = false;
+                video.volume = 1.0;
+                icon.className = 'fa-solid fa-volume-high';
+                window.hasUnmuted = true;
+                if(video.paused) video.play().catch(()=>{}); 
+            } else {
+                video.muted = true;
+                icon.className = 'fa-solid fa-volume-xmark';
+            }
+        }
 
         function doHaptic() { if(navigator.vibrate) navigator.vibrate(15); }
 
@@ -818,7 +847,6 @@
             
             doHaptic();
 
-            // If user selects "Other" State
             if (state === "Other") {
                 customStateWrap.style.display = 'block';
                 citySelect.innerHTML = '<option value="Other">Other (Type Manually)</option>';
@@ -831,7 +859,6 @@
                 customCityWrap.style.display = 'none';
             }
 
-            // Populate corresponding Cities
             citySelect.innerHTML = '<option value="" disabled selected id="txtSelCity">Select City</option>';
             if (indiaData[state]) {
                 indiaData[state].forEach(city => {
@@ -840,7 +867,6 @@
                     citySelect.appendChild(opt);
                 });
             }
-            // Append "Other" City
             let optOther = document.createElement('option');
             optOther.value = "Other"; optOther.innerHTML = "➕ Other (Type Manually)";
             optOther.style.color = "var(--accent-cyan)";
@@ -862,65 +888,6 @@
 
         // Initialize lists when DOM loads
         document.addEventListener('DOMContentLoaded', initLocations);
-        
-         // ==========================================
-        // TOURNYX ANTI-CRASH VIDEO & AUDIO ENGINE
-        // ==========================================
-        function initMasterVideoEngine() {
-            const introVideo = document.getElementById('introVideo');
-            const bgVideo = document.getElementById('bgVideo');
-            const uiContainer = document.getElementById('mainUiContainer');
-
-            // --- FUNCTION TO TRANSITION TO UI & BACKGROUND ---
-            const transitionToArena = () => {
-                introVideo.style.opacity = '0';
-                uiContainer.classList.add('active'); // Fade in UI
-                
-                bgVideo.style.opacity = '1';
-                // Attempt to play BG video. If blocked (Low Power Mode), it silently fails and shows the Poster Image.
-                bgVideo.play().catch(e => console.warn("BG Video Blocked - Showing Ultra-HD Fallback Image."));
-                
-                setTimeout(() => { introVideo.remove(); }, 1500); // Destroy intro to clear RAM
-            };
-
-            // --- 1. ATTEMPT TO PLAY INTRO ---
-            let playPromise = introVideo.play();
-
-            if (playPromise !== undefined) {
-                playPromise.then(() => {
-                    // SUCCESS! The video is playing.
-                    introVideo.onended = transitionToArena;
-
-                    // INVISIBLE AUDIO UNLOCKER: Unmute if they touch the screen
-                    const unlockAudio = () => {
-                        introVideo.muted = false;
-                        introVideo.volume = 1.0;
-                        document.removeEventListener('touchstart', unlockAudio);
-                        document.removeEventListener('click', unlockAudio);
-                    };
-                    document.addEventListener('touchstart', unlockAudio, {once:true});
-                    document.addEventListener('click', unlockAudio, {once:true});
-
-                }).catch(error => {
-                    // FAILED! Browser blocked the video (Low Power Mode or Strict Safari)
-                    console.warn("Browser blocked autoplay. Bypassing Intro and forcing UI.");
-                    transitionToArena(); // Skip the intro immediately so UI isn't broken
-                });
-            }
-
-            // --- 2. ULTIMATE FAILSAFE ---
-            // If the intro video hangs buffering for 4 seconds, force the UI to load.
-            setTimeout(() => {
-                if (uiContainer.classList.contains('active') === false) {
-                    console.warn("Video buffering timed out. Forcing UI.");
-                    transitionToArena();
-                }
-            }, 4000);
-        }
-
-        // Boot the engine instantly
-        initMasterVideoEngine();
-
         
         // --- SECURE API FETCH WRAPPER ---
         async function secureFetch(payload) {
@@ -1164,14 +1131,15 @@
             if(user) triggerArenaEntry(user, 'index.html');
         }
 
-       function logoutUser(e) {
-            if(e) { e.preventDefault(); e.stopPropagation(); } // Prevents the invisible tap overlay from hijacking the click
+        function logoutUser(e) {
+            if(e) { e.preventDefault(); e.stopPropagation(); } 
             doHaptic();
             localStorage.removeItem('tournyx_user');
             localStorage.removeItem('tournyx_userData');
             document.getElementById('loggedInProfile').classList.add('hidden');
             window.location.reload();
         }
+
         let isModalOpen = false;
         
         function openModal(id) {
@@ -1228,7 +1196,6 @@
 
         document.getElementById('playerSignupForm').addEventListener('submit', async (e) => {
             e.preventDefault();
-           // --- SMART LOCATION CAPTURE ---
             let finalState = document.getElementById('regState').value;
             if(finalState === "Other") finalState = document.getElementById('customState').value.trim();
             
