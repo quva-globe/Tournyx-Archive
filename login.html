@@ -11,14 +11,14 @@
     <meta name="description" content="Sign in to your Tournyx account to join premium BGMI and Free Fire esports tournaments.">
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700;900&family=Rajdhani:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:ital,wght@0,500;0,700;0,900;1,900&family=Rajdhani:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
     <style>
         :root {
             --primary-bg: #070311;
-            --card-bg: rgba(10, 5, 20, 0.85);
-            --input-bg: rgba(5, 2, 12, 0.9);
+            --card-bg: rgba(10, 5, 20, 0.9);
+            --input-bg: rgba(5, 2, 12, 0.95);
             --card-border: rgba(0, 242, 255, 0.3);
             --accent-cyan: #00f2ff;
             --accent-purple: #bd00ff;
@@ -43,13 +43,13 @@
         /* --- DUAL VIDEO ENGINE --- */
         .video-bg {
             position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-            object-fit: cover; z-index: -4; filter: brightness(0.8);
-            transition: opacity 1s ease-in-out;
+            object-fit: cover; z-index: -4; filter: brightness(0.7);
+            transition: opacity 1s ease-in-out; background: #000;
         }
-        #introVideo { z-index: 9999; filter: brightness(1); background: #000; }
+        #introVideo { z-index: 9999; filter: brightness(1); }
         .bg-overlay {
             position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-            background: linear-gradient(to top, rgba(0,0,0,0.95) 0%, transparent 40%, rgba(0,0,0,0.3) 100%);
+            background: radial-gradient(circle at center, transparent 30%, rgba(0,0,0,0.6) 100%);
             z-index: -3; pointer-events: none;
         }
 
@@ -57,7 +57,7 @@
         .vol-btn {
             position: absolute; top: 20px; left: 20px; z-index: 100;
             width: 32px; height: 32px; border-radius: 50%; background: rgba(0,0,0,0.5);
-            border: 1px solid #555; color: white; font-size: 0.8rem;
+            border: 1px solid rgba(255,255,255,0.3); color: white; font-size: 0.8rem;
             display: flex; align-items: center; justify-content: center;
             cursor: pointer; backdrop-filter: blur(5px); transition: 0.2s;
         }
@@ -65,148 +65,170 @@
 
         /* AAA GAME HUD (TOP LEFT / RIGHT) */
         .hud-top-left {
-            position: absolute; top: 65px; left: 20px; z-index: 100;
-            font-family: var(--font-body); font-size: 0.65rem; color: rgba(255,255,255,0.6);
-            font-weight: bold; letter-spacing: 1px; text-shadow: 1px 1px 2px black;
+            position: absolute; top: 60px; left: 20px; z-index: 100;
+            font-family: var(--font-body); font-size: 0.65rem; color: rgba(255,255,255,0.7);
+            font-weight: bold; letter-spacing: 1px; text-shadow: 1px 1px 3px black;
         }
         
         .hud-top-right {
             position: absolute; top: 20px; right: 15px; z-index: 100;
-            display: flex; flex-direction: column; gap: 12px; align-items: center;
+            display: flex; flex-direction: column; gap: 10px; align-items: center;
         }
         .hud-tool-btn {
             display: flex; flex-direction: column; align-items: center; gap: 3px;
-            color: rgba(255,255,255,0.8); font-size: 0.6rem; font-family: var(--font-body);
-            font-weight: bold; cursor: pointer; text-shadow: 1px 1px 2px black; transition: 0.2s;
+            color: rgba(255,255,255,0.9); font-size: 0.55rem; font-family: var(--font-body);
+            font-weight: bold; cursor: pointer; text-shadow: 1px 1px 3px black; transition: 0.2s;
             text-transform: uppercase;
         }
         .hud-tool-btn i {
-            width: 30px; height: 30px; border-radius: 50%; background: rgba(0,0,0,0.6);
-            border: 1px solid rgba(255,255,255,0.3); display: flex; align-items: center; justify-content: center;
-            font-size: 0.9rem; backdrop-filter: blur(5px); transition: 0.2s; box-shadow: 0 4px 10px rgba(0,0,0,0.5);
+            width: 28px; height: 28px; border-radius: 50%; background: rgba(0,0,0,0.6);
+            border: 1px solid rgba(255,255,255,0.2); display: flex; align-items: center; justify-content: center;
+            font-size: 0.85rem; backdrop-filter: blur(5px); transition: 0.2s; box-shadow: 0 4px 10px rgba(0,0,0,0.6);
         }
         .hud-tool-btn:active i { transform: scale(0.9); background: var(--accent-cyan); color: black; border-color: var(--accent-cyan); box-shadow: 0 0 15px var(--accent-cyan);}
 
         /* LOGGED IN PROFILE CORNER */
         .top-profile-corner {
-            position: absolute; top: 20px; right: 65px; z-index: 100;
-            display: flex; align-items: center; gap: 8px; background: rgba(0,0,0,0.7);
-            padding: 4px 12px 4px 4px; border-radius: 50px; border: 1px solid rgba(0,242,255,0.4);
-            backdrop-filter: blur(10px); transition: 0.3s; box-shadow: 0 4px 15px rgba(0,0,0,0.6);
+            position: absolute; top: 15px; right: 60px; z-index: 100;
+            display: flex; align-items: center; gap: 6px; background: rgba(0,0,0,0.8);
+            padding: 4px 12px 4px 4px; border-radius: 50px; border: 1px solid rgba(0,242,255,0.5);
+            backdrop-filter: blur(10px); transition: 0.3s; box-shadow: 0 4px 15px rgba(0,0,0,0.8);
         }
         .top-profile-corner:active { transform: scale(0.95); }
         .top-profile-corner img {
-            width: 28px; height: 28px; border-radius: 50%; border: 2px solid var(--accent-cyan);
+            width: 26px; height: 26px; border-radius: 50%; border: 2px solid var(--accent-cyan);
             object-fit: cover; box-shadow: 0 0 10px rgba(0,242,255,0.5); cursor: pointer;
         }
         .top-profile-corner .user-info { display: flex; flex-direction: column; justify-content: center; }
-        .top-profile-corner .user-name { font-family: var(--font-head); font-size: 0.7rem; font-weight: bold; color: white; text-transform: uppercase; letter-spacing: 1px; cursor: pointer; text-shadow: 1px 1px 2px black; }
+        .top-profile-corner .user-name { font-family: var(--font-head); font-size: 0.65rem; font-weight: bold; color: white; text-transform: uppercase; letter-spacing: 1px; cursor: pointer; text-shadow: 1px 1px 2px black; }
         .top-profile-corner .logout-text { font-family: var(--font-body); font-size: 0.55rem; color: #ff4d4d; font-weight: bold; cursor: pointer; text-transform: uppercase; text-shadow: 1px 1px 2px black; }
         .hidden { display: none !important; }
 
         /* --- MAIN UI CONTAINER --- */
         .main-ui-container {
             width: 100%; height: 100vh; display: flex; flex-direction: column;
-            justify-content: flex-end; align-items: center; padding-bottom: 30px;
-            opacity: 0; transition: opacity 1s ease; z-index: 10;
+            opacity: 0; transition: opacity 1s ease; z-index: 10; position: relative;
         }
         .main-ui-container.active { opacity: 1; }
 
-        /* DESKTOP LAYOUT (RIGHT ALIGNED) */
+        /* --- DESKTOP LAYOUT (AAA NO-BOX HUD) --- */
         @media (min-width: 769px) {
-            .main-ui-container { align-items: flex-end; padding-right: 10%; padding-bottom: 50px; justify-content: center;}
-            .auth-card-wrapper { width: 380px; }
-            .logo-overlap { margin-bottom: 20px; display: flex; flex-direction: column; align-items: center; }
-            .logo-overlap img { width: 100px; height: 100px; border-radius: 25%; border: 2px solid var(--accent-cyan); box-shadow: 0 0 20px rgba(0,242,255,0.5); margin-bottom: 10px; animation: floatLogo 4s infinite ease-in-out;}
-            .app-name { font-family: var(--font-head); font-size: 1.5rem; letter-spacing: 4px; font-weight: 900; background: var(--accent-gradient); -webkit-background-clip: text; -webkit-text-fill-color: transparent; text-transform: uppercase; filter: drop-shadow(0 0 10px rgba(0,242,255,0.4));}
-            .app-tagline { display: none; }
-            .feature-badges { display: none; }
-            .credits-footer { flex-direction: row; justify-content: space-between; bottom: 15px; padding: 0 30px; width: 100%; position: absolute;}
+            .main-ui-container { justify-content: flex-end; align-items: center; padding-bottom: 50px; }
+            
+            /* Completely Transparent wrapper on Desktop */
+            .auth-card-wrapper { 
+                width: 100%; max-width: 450px; background: transparent; border: none; box-shadow: none; 
+                display: flex; flex-direction: column; align-items: center; 
+            }
+            
+            .logo-overlap { display: flex; flex-direction: column; align-items: center; margin-bottom: 25px; }
+            .logo-overlap img { width: 110px; height: 110px; border-radius: 25%; border: 2px solid var(--accent-cyan); box-shadow: 0 0 25px rgba(0,242,255,0.6); margin-bottom: 10px; animation: floatLogo 4s infinite ease-in-out;}
+            
+            /* Free Fire Style Gaming Font */
+            .app-name { 
+                font-family: var(--font-head); font-size: 2.8rem; font-style: italic; letter-spacing: 3px; font-weight: 900; 
+                background: linear-gradient(to bottom, #ffffff, #b3b3b3); -webkit-background-clip: text; -webkit-text-fill-color: transparent; 
+                -webkit-text-stroke: 1.5px var(--accent-cyan); filter: drop-shadow(0 0 15px rgba(0,242,255,0.8)); text-transform: uppercase; margin: 0;
+            }
+
+            .credits-footer { display: flex; flex-direction: row; justify-content: space-between; position: absolute; bottom: 15px; width: 100%; padding: 0 30px; align-items: flex-end;}
             .footer-left, .footer-center, .footer-right { flex: 1; }
             .footer-center { text-align: center; } .footer-right { text-align: right; } .footer-left { text-align: left; }
-            .terms-gate { justify-content: center; }
+            .terms-gate { justify-content: center; text-shadow: 1px 1px 3px black; margin-bottom: 25px;}
+            
+            .auth-buttons-container { width: 100%; max-width: 350px; }
+            .action-btn { padding: 14px; font-size: 0.95rem; }
         }
 
-        /* MOBILE LAYOUT (IMAGE MATCHED) */
+        /* --- MOBILE LAYOUT (IMAGE MATCHED) --- */
         @media (max-width: 768px) {
-            .main-ui-container { padding-bottom: 0; justify-content: flex-end; }
+            .main-ui-container { padding-bottom: 0; justify-content: flex-end; align-items: center; }
+            
             .auth-card-wrapper {
-                width: 100%; background: rgba(10, 5, 20, 0.85); backdrop-filter: blur(25px); -webkit-backdrop-filter: blur(25px);
-                border-top: 1px solid rgba(0, 242, 255, 0.3); border-radius: 35px 35px 0 0;
-                padding: 0 25px 25px; display: flex; flex-direction: column; align-items: center;
-                box-shadow: 0 -15px 40px rgba(0,0,0,0.8); position: relative;
+                width: 100%; background: rgba(10, 5, 20, 0.85); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+                border-top: 1px solid rgba(0, 242, 255, 0.4); border-radius: 35px 35px 0 0;
+                padding: 0 20px 20px; display: flex; flex-direction: column; align-items: center;
+                box-shadow: 0 -15px 50px rgba(0,0,0,0.9); position: relative;
             }
-            .logo-overlap { margin-top: -45px; display: flex; flex-direction: column; align-items: center; margin-bottom: 15px;}
+            .logo-overlap { margin-top: -45px; display: flex; flex-direction: column; align-items: center; margin-bottom: 12px;}
             .logo-overlap img { width: 90px; height: 90px; border-radius: 25%; border: 2px solid var(--accent-cyan); box-shadow: 0 10px 25px rgba(0,0,0,0.9), inset 0 0 15px rgba(0,242,255,0.4); background: var(--primary-bg);}
-            .app-name { font-family: var(--font-head); font-size: 1.8rem; letter-spacing: 2px; font-weight: 900; background: var(--accent-gradient); -webkit-background-clip: text; -webkit-text-fill-color: transparent; text-transform: uppercase; margin-top: 10px; margin-bottom: 2px;}
-            .app-tagline { font-size: 0.8rem; color: #ccc; font-weight: 600; letter-spacing: 1px; margin-bottom: 15px; }
-            .static-desc { font-size: 0.75rem; color: #aaa; text-align: center; line-height: 1.4; margin-bottom: 15px; }
             
-            .feature-badges { display: flex; justify-content: center; gap: 8px; margin-bottom: 20px; flex-wrap: wrap; }
-            .f-badge { border: 1px solid var(--accent-cyan); color: var(--accent-cyan); padding: 5px 12px; border-radius: 20px; font-size: 0.65rem; font-family: var(--font-head); font-weight: bold; background: rgba(0,242,255,0.05); }
+            .app-name { font-family: var(--font-head); font-size: 1.6rem; letter-spacing: 2px; font-weight: 900; background: var(--accent-gradient); -webkit-background-clip: text; -webkit-text-fill-color: transparent; text-transform: uppercase; margin-top: 10px; margin-bottom: 0;}
             
-            .credits-footer { display: flex; flex-direction: column; align-items: center; gap: 4px; padding-bottom: 10px; margin-top: 15px;}
-            .terms-gate { justify-content: flex-start; margin-bottom: 15px; font-size: 0.7rem !important; }
+            /* Stacked Mobile Credits */
+            .credits-footer { display: flex; flex-direction: column; align-items: center; gap: 3px; padding-bottom: 5px; margin-top: 15px; position: relative;}
+            .terms-gate { justify-content: flex-start; margin-bottom: 15px; font-size: 0.65rem !important; }
+            .data-notice-mobile { position: absolute; left: 15px; top: 50%; transform: translateY(-50%); font-size: 0.5rem; color: var(--accent-green); writing-mode: vertical-rl; text-orientation: mixed; letter-spacing: 1px;}
         }
 
         @keyframes floatLogo { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-8px); } }
 
-        /* Terms Gate */
-        .terms-gate { display: flex; align-items: center; gap: 8px; cursor: pointer; color: #ccc; font-weight: 600; text-shadow: 1px 1px 2px black; width: 100%; }
+        /* TERMS GATE (Pre-ticked) */
+        .terms-gate { display: flex; align-items: center; gap: 8px; cursor: pointer; color: #ddd; font-weight: 600; width: 100%; transition: 0.3s; }
         .terms-gate input { display: none; }
-        .terms-checkmark { width: 18px; height: 18px; border: 2px solid #888; border-radius: 4px; display: flex; align-items: center; justify-content: center; transition: 0.3s; background: rgba(0,0,0,0.5); flex-shrink: 0;}
-        .terms-gate input:checked + .terms-checkmark { border-color: var(--accent-green); background: rgba(0, 255, 127, 0.2); box-shadow: 0 0 10px var(--accent-green); }
+        .terms-checkmark { width: 16px; height: 16px; border: 2px solid #888; border-radius: 4px; display: flex; align-items: center; justify-content: center; transition: 0.3s; background: rgba(0,0,0,0.6); flex-shrink: 0;}
+        .terms-gate input:checked + .terms-checkmark { border-color: var(--accent-green); background: rgba(0, 255, 127, 0.25); box-shadow: 0 0 10px var(--accent-green); }
         .terms-gate input:checked + .terms-checkmark::after { content: '\f00c'; font-family: "Font Awesome 6 Free"; font-weight: 900; color: var(--accent-green); font-size: 10px; }
         .terms-link { color: var(--accent-cyan); text-decoration: underline; font-weight: bold; }
 
-        /* BUTTONS (MINIMAL, NO OVERFLOW) */
+        /* MICRO-SIZED BUTTONS */
+        .auth-buttons-container { display: flex; flex-direction: column; gap: 10px; width: 100%; }
         .action-btn {
-            width: 100%; padding: 12px; border-radius: 10px; font-family: var(--font-head);
-            font-size: 0.85rem; font-weight: 900; letter-spacing: 1px; cursor: pointer; transition: 0.2s;
+            width: 100%; padding: 10px; border-radius: 8px; font-family: var(--font-head);
+            font-size: 0.8rem; font-weight: 900; letter-spacing: 1px; cursor: pointer; transition: 0.2s;
             text-transform: uppercase; display: flex; align-items: center; justify-content: center; gap: 8px;
-            border: none; position: relative; overflow: hidden; z-index: 1; margin-bottom: 10px;
+            border: none; position: relative; overflow: hidden; z-index: 1; 
         }
         .action-btn::after {
             content: ''; position: absolute; top: 0; left: -100%; width: 50%; height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
             transform: skewX(-25deg); transition: 0.5s; z-index: -1;
         }
         .action-btn:hover::after { left: 150%; transition: 0.7s; }
         .action-btn:active { transform: scale(0.96); }
 
         .login-btn { background: var(--accent-gradient); color: white; box-shadow: 0 4px 15px rgba(189,0,255,0.4); }
-        .register-btn { background: rgba(0,0,0,0.6); color: white; border: 1px solid var(--accent-cyan); box-shadow: inset 0 0 10px rgba(0,242,255,0.2); }
+        .register-btn { background: rgba(0,0,0,0.7); color: white; border: 1px solid var(--accent-cyan); box-shadow: inset 0 0 10px rgba(0,242,255,0.2); backdrop-filter: blur(5px);}
         
         .org-btn { 
-            background: transparent; color: var(--accent-orange); font-size: 0.75rem; 
-            margin-top: 5px; text-decoration: none; display: flex; align-items: center; justify-content: center; gap: 5px;
-            text-shadow: 0 0 10px rgba(255,153,0,0.5); border: none; box-shadow: none;
+            background: transparent; color: var(--accent-orange); font-size: 0.65rem; 
+            margin-top: 2px; text-decoration: none; display: flex; align-items: center; justify-content: center; gap: 4px;
+            text-shadow: 0 0 10px rgba(255,153,0,0.5); border: none; box-shadow: none; padding: 5px;
+        }
+        @media(min-width: 769px) {
+            .org-btn { background: rgba(255, 153, 0, 0.15); border: 1px solid var(--accent-orange); box-shadow: 0 0 15px rgba(255,153,0,0.4); padding: 12px; font-size: 0.85rem; margin-top: 8px; animation: orgGlow 2s infinite alternate;}
+            @keyframes orgGlow { from { box-shadow: 0 0 10px rgba(255,153,0,0.2); } to { box-shadow: 0 0 25px rgba(255,153,0,0.6); border-color: #ffd700; color: #ffd700; } }
         }
         .org-btn:active { transform: scale(0.95); }
 
-        /* TAP TO START ENGINE */
-        .tap-to-start {
-            font-family: var(--font-head); font-size: 1.2rem; font-weight: 900; color: white;
-            letter-spacing: 3px; text-transform: uppercase; cursor: pointer;
-            text-shadow: 0 0 15px var(--accent-cyan), 0 0 25px var(--accent-purple);
-            animation: pulseTap 1.5s infinite alternate; padding: 20px; width: 100%; text-align: center;
+        /* FULLSCREEN TAP TO ENTER */
+        .tap-to-start-hitbox {
+            position: absolute; top: 0; left: 0; width: 100vw; height: 100vh; z-index: 90;
+            display: none; flex-direction: column; align-items: center; justify-content: flex-end;
+            padding-bottom: 12vh; cursor: pointer;
         }
-        @keyframes pulseTap { 0% { opacity: 0.4; transform: scale(0.95); } 100% { opacity: 1; transform: scale(1.05); } }
+        .tap-to-start-hitbox.active { display: flex; }
+        .tap-text {
+            font-family: var(--font-head); font-size: clamp(1.2rem, 4vw, 1.8rem); font-weight: 900; color: white;
+            letter-spacing: 3px; text-transform: uppercase; text-shadow: 0 0 15px var(--accent-cyan), 0 0 30px var(--accent-purple);
+            animation: pulseTap 1.5s infinite alternate; background: rgba(0,0,0,0.5); padding: 10px 30px; border-radius: 50px; border: 1px solid rgba(0,242,255,0.3); backdrop-filter: blur(5px);
+        }
+        @keyframes pulseTap { 0% { opacity: 0.5; transform: scale(0.95); } 100% { opacity: 1; transform: scale(1.05); } }
 
         /* TOUCH RIPPLE FX */
         .ripple {
             position: absolute; border-radius: 50%; transform: scale(0);
-            animation: ripple-anim 0.5s linear; background: rgba(0, 242, 255, 0.5); z-index: 9999; pointer-events: none;
+            animation: ripple-anim 0.6s linear; background: rgba(0, 242, 255, 0.4); z-index: 9999; pointer-events: none;
         }
         @keyframes ripple-anim { to { transform: scale(4); opacity: 0; } }
 
         /* LEGAL FOOTER CREDITS */
         .data-notice { font-size: 0.55rem; color: var(--accent-green); font-family: var(--font-body); font-weight: bold; letter-spacing: 0.5px; text-shadow: 1px 1px 2px black;}
-        .copyrights { font-size: 0.5rem; color: rgba(255,255,255,0.5); font-family: var(--font-body); letter-spacing: 0.5px; text-shadow: 1px 1px 2px black;}
+        .copyrights { font-size: 0.5rem; color: rgba(255,255,255,0.5); font-family: var(--font-body); letter-spacing: 0.5px; text-shadow: 1px 1px 2px black; text-align: center;}
         .quva-credit { font-size: 0.55rem; color: #aaa; font-family: var(--font-body); letter-spacing: 1px; text-shadow: 1px 1px 2px black;}
         .neon-quva { font-family: var(--font-head); font-weight: 900; color: white; text-shadow: 0 0 8px #00f2ff, 0 0 15px #bd00ff; letter-spacing: 2px;}
 
-        /* --- MODALS (UNIVERSAL SIZING & Z-INDEX FIX) --- */
+        /* --- MODALS --- */
         .modal-overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: rgba(0, 0, 0, 0.8); z-index: 5000; display: none;
@@ -236,32 +258,31 @@
         .slider-track { display: flex; width: 300%; transition: transform 0.4s cubic-bezier(0.25, 0.8, 0.25, 1); height: 100%; align-items: flex-start;}
         .slide-step { width: 33.333%; padding: 2px; flex-shrink: 0; box-sizing: border-box; overflow-y: auto; max-height: 100%; scrollbar-width: none; }
         
-        .step-indicators { display: flex; justify-content: center; gap: 8px; margin-bottom: 15px; flex-shrink: 0;}
+        .step-indicators { display: flex; justify-content: center; gap: 8px; margin-bottom: 12px; flex-shrink: 0;}
         .step-dot { width: 6px; height: 6px; border-radius: 50%; background: rgba(255,255,255,0.2); transition: 0.3s; }
         .step-dot.active { background: var(--accent-cyan); box-shadow: 0 0 10px var(--accent-cyan); transform: scale(1.4); }
 
-        /* --- FORMS & INPUTS (MICRO-SCALED FOR NO OVERFLOW) --- */
+        /* --- FORMS & INPUTS (Z-INDEX FIXED) --- */
         .input-wrapper { margin-bottom: 10px; width: 100%; }
-        .input-group { position: relative; width: 100%; }
-        /* DROPDOWN FIX: Pointer-events none on icon, High Z-Index on Select */
-        .input-icon { position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: #666; transition: 0.3s; pointer-events: none; font-size: 0.8rem; z-index: 10;}
+        .input-group { position: relative; width: 100%; display: flex; align-items: center; }
+        .input-icon { position: absolute; left: 12px; color: #666; transition: 0.3s; pointer-events: none; font-size: 0.8rem; z-index: 10;}
         
         .form-control {
             width: 100%; background: var(--input-bg); border: 1px solid rgba(255,255,255,0.1); border-radius: 8px;
             padding: 10px 10px 10px 35px; color: white; font-family: var(--font-body); font-size: 0.8rem; outline: none; transition: 0.2s;
-            box-shadow: inset 0 0 10px rgba(0,0,0,0.5); appearance: none; -webkit-appearance: none; position: relative; z-index: 2;
+            box-shadow: inset 0 0 10px rgba(0,0,0,0.5); position: relative; z-index: 5;
         }
         
-        select.form-control { cursor: pointer; padding-right: 30px; z-index: 5; background-image: url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23666666%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E"); background-repeat: no-repeat; background-position: right 10px top 50%; background-size: 10px auto; background-color: var(--input-bg);}
+        select.form-control { cursor: pointer; padding-right: 30px; appearance: none; -webkit-appearance: none; background-image: url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23666666%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E"); background-repeat: no-repeat; background-position: right 10px center; background-size: 10px auto; background-color: var(--input-bg);}
         select.form-control option { background: var(--primary-bg); color: white; }
         
         .form-control:focus { border-color: var(--accent-cyan); box-shadow: 0 0 10px rgba(0, 242, 255, 0.3), inset 0 0 8px rgba(0,0,0,0.6); }
         #orgModal .form-control:focus { border-color: var(--accent-orange); box-shadow: 0 0 10px rgba(255, 153, 0, 0.3); }
-        .form-control:focus + .input-icon, .form-control:not(:placeholder-shown) + .input-icon, .input-group:focus-within .input-icon { color: var(--accent-cyan); filter: drop-shadow(0 0 5px var(--accent-cyan)); }
+        .form-control:focus ~ .input-icon, .form-control:not(:placeholder-shown) ~ .input-icon, .input-group:focus-within .input-icon { color: var(--accent-cyan); filter: drop-shadow(0 0 5px var(--accent-cyan)); }
         #orgModal .input-group:focus-within .input-icon { color: var(--accent-orange); filter: drop-shadow(0 0 5px var(--accent-orange)); }
         
-        .pwd-toggle { position: absolute; right: 12px; top: 50%; transform: translateY(-50%); color: #666; cursor: pointer; transition: 0.3s; font-size: 0.85rem; z-index: 10;}
-        .pwd-toggle:active { transform: translateY(-50%) scale(0.9); }
+        .pwd-toggle { position: absolute; right: 12px; color: #666; cursor: pointer; transition: 0.3s; font-size: 0.85rem; z-index: 10;}
+        .pwd-toggle:active { transform: scale(0.9); }
 
         /* --- OTP UI --- */
         .flex-row { display: flex; gap: 6px; }
@@ -271,7 +292,6 @@
         .verify-btn:active { transform: scale(0.95); }
         .verify-btn.verified { background: rgba(0, 255, 127, 0.1); border: 1px solid var(--accent-green); color: var(--accent-green); cursor: default; }
 
-        /* SLIDER NAVIGATION BUTTONS (UNIFORM SIZE) */
         .slide-nav-row { display: flex; gap: 8px; margin-top: 10px; }
         .slide-btn { flex: 1; height: 40px; border: none; border-radius: 8px; font-family: var(--font-head); font-size: 0.8rem; font-weight: bold; text-transform: uppercase; cursor: pointer; transition: 0.2s; display: flex; align-items: center; justify-content: center; gap: 6px;}
         .slide-btn.next { background: var(--accent-gradient); color: white; box-shadow: 0 4px 15px rgba(0,0,0,0.4); }
@@ -289,24 +309,21 @@
         #customToast.show { top: 35px; opacity: 1; }
         #customToast.success { background: rgba(0, 255, 127, 0.95); color: black; box-shadow: 0 5px 20px rgba(0, 255, 127, 0.6); }
 
-        /* CINEMATIC ARENA ENTRY */
-        .arena-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #040108; z-index: 9999; display: none; flex-direction: column; align-items: center; justify-content: center; }
-        .arena-overlay.active { display: flex; animation: fadeInBg 0.3s forwards; }
-        .arena-text { font-family: var(--font-head); font-size: 1.8rem; color: #fff; font-weight: 900; letter-spacing: 4px; text-shadow: 0 0 20px rgba(0, 242, 255, 0.6); text-align: center; text-transform: uppercase; animation: cinematicEntry 2s cubic-bezier(0.25, 1, 0.5, 1) forwards; }
-        @keyframes fadeInBg { from { opacity: 0; } to { opacity: 1; } }
-        @keyframes cinematicEntry { 0% { transform: scale(0.8); opacity: 0; filter: blur(10px); } 20% { transform: scale(1); opacity: 1; filter: blur(0); letter-spacing: 4px; } 80% { transform: scale(1.05); opacity: 1; filter: blur(0); letter-spacing: 6px; } 100% { transform: scale(1.3); opacity: 0; filter: blur(15px); letter-spacing: 10px; } }
-
+        /* UTILITY MODALS (Help, Lang, Accounts) */
+        .util-list { display: flex; flex-direction: column; gap: 8px; max-height: 50vh; overflow-y: auto; padding-right: 5px;}
+        .util-item { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); padding: 10px; border-radius: 10px; cursor: pointer; display: flex; align-items: center; gap: 10px; transition: 0.2s;}
+        .util-item:active { transform: scale(0.96); border-color: var(--accent-cyan); background: rgba(0,242,255,0.1);}
+        textarea.form-control { height: 90px; resize: none; font-family: var(--font-body); }
+        
     </style>
 </head>
 <body id="mainBody">
 
-    <!-- CACHED DUAL VIDEO ENGINE -->
     <video playsinline muted class="video-bg" id="introVideo" style="opacity: 1;"></video>
     <video loop playsinline class="video-bg" id="bgVideo" style="opacity: 0;"></video>
     <div class="bg-overlay"></div>
     <canvas id="particles-canvas"></canvas>
 
-    <!-- AAA HUD ELEMENTS -->
     <div class="hud-top-left">Beta Version 4.2.0.19751</div>
     
     <div class="hud-top-right">
@@ -318,36 +335,25 @@
         <div class="hud-tool-btn" onclick="openAccountsModal()"><i class="fa-solid fa-users-gear"></i>Accounts</div>
     </div>
 
-    <!-- LOGGED IN PROFILE CORNER -->
-    <div id="loggedInProfile" class="top-profile-corner hidden">
-        <img id="loggedInAvatar" src="" alt="Avatar" onclick="quickLogin()">
+    <div id="loggedInProfile" class="top-profile-corner hidden" onclick="quickLogin()">
+        <img id="loggedInAvatar" src="" alt="Avatar">
         <div class="user-info">
-            <span id="loggedInName" class="user-name" onclick="quickLogin()"></span>
+            <span id="loggedInName" class="user-name"></span>
             <span class="logout-text" onclick="logoutUser(event)">Logout <i class="fa-solid fa-right-from-bracket"></i></span>
         </div>
     </div>
 
-    <!-- MAIN UI CONTAINER -->
     <div class="main-ui-container" id="mainUiContainer">
         <div class="auth-card-wrapper">
             <div class="logo-overlap center-logo-area">
                 <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEipVmqyUEA22VpntZdPCHuXoO_Rjco_cRaNl5CyFa-eehdtgXnHe6JoD8a5svxJRJYZfv_yXwww10T2cL2PHTiXLK-J-nWC1swmMs5RDxGVM8FBSlJORaRiX4YiD8gL8SyM4X1tRyQn_v8MsqQvbU4uEyHEU0qaySP1STWHaBEYuWKyF3-6QovSqJR-8xU/s1024/1000093705.png" alt="Tournyx Logo">
-                <h1 class="app-name">TOURNYX</h1>
-                <p class="app-tagline">The Ultimate Esports Arena</p>
-                <div class="static-desc">Join the elite. Compete in daily scrims, climb the leaderboard, and withdraw real cash directly to your wallet.</div>
-                
-                <div class="feature-badges">
-                    <span class="f-badge"><i class="fa-solid fa-trophy"></i> Compete</span>
-                    <span class="f-badge"><i class="fa-solid fa-wallet"></i> Earn Cash</span>
-                    <span class="f-badge"><i class="fa-solid fa-shield-halved"></i> Clans</span>
-                </div>
+                <h1 class="app-name">TOURNYX ESPORTS</h1>
             </div>
 
-            <!-- PRE-ENTRY TERMS GATE -->
             <label class="terms-gate" id="termsGateContainer" onclick="doHaptic()">
                 <input type="checkbox" id="masterTerms" checked>
                 <span class="terms-checkmark"></span>
-                <span>I have read and agree to the <span class="terms-link" onclick="window.open('terms.html','_blank')">Terms of Service</span> and Privacy Policy.</span>
+                <span>I have read and agree to the <span class="terms-link" onclick="window.open('terms.html','_blank')">Terms of Service</span>.</span>
             </label>
 
             <div id="authButtons" class="auth-buttons-container">
@@ -362,28 +368,23 @@
                 </button>
             </div>
             
-            <!-- PULSING TAP TO ENTER HITBOX (IF LOGGED IN) -->
-            <div id="tapToStartHitbox" class="tap-to-start hidden" onclick="quickLogin()">
-                TAP TO ENTER ARENA
+            <div id="tapToStartHitbox" class="tap-to-start-hitbox hidden" onclick="quickLogin()">
+                <div class="tap-text">TAP TO ENTER ARENA</div>
             </div>
         </div>
 
-        <!-- LEGAL & PLATFORM CREDITS FOOTER -->
         <div class="credits-footer">
+            <div class="data-notice-mobile data-notice" style="display:none;"><i class="fa-solid fa-cloud-arrow-down"></i> Video cached. Zero data usage.</div>
             <div class="footer-left data-notice"><i class="fa-solid fa-cloud-arrow-down"></i> Video cached. Zero data usage.</div>
             <div class="footer-center copyrights">© Tournyx Esports private limited | © KRAFTON | © Garena</div>
             <div class="footer-right quva-credit">Powered by <span class="neon-quva">QUVA</span></div>
         </div>
     </div>
 
-    <!-- SMART DATALIST FOR PAN-INDIA CITIES -->
     <datalist id="indianCities">
         <option value="Mumbai"><option value="Delhi"><option value="Bangalore"><option value="Hyderabad"><option value="Ahmedabad"><option value="Chennai"><option value="Kolkata"><option value="Surat"><option value="Pune"><option value="Jaipur"><option value="Lucknow"><option value="Kanpur"><option value="Nagpur"><option value="Indore"><option value="Thane"><option value="Bhopal"><option value="Visakhapatnam"><option value="Pimpri-Chinchwad"><option value="Patna"><option value="Vadodara"><option value="Ghaziabad"><option value="Ludhiana"><option value="Agra"><option value="Nashik"><option value="Faridabad"><option value="Meerut"><option value="Rajkot"><option value="Kalyan-Dombivli"><option value="Vasai-Virar"><option value="Varanasi"><option value="Srinagar"><option value="Aurangabad"><option value="Dhanbad"><option value="Amritsar"><option value="Navi Mumbai"><option value="Allahabad"><option value="Howrah"><option value="Ranchi"><option value="Gwalior"><option value="Jabalpur"><option value="Coimbatore"><option value="Vijayawada"><option value="Jodhpur"><option value="Madurai"><option value="Raipur"><option value="Kota"><option value="Guwahati"><option value="Chandigarh"><option value="Solapur"><option value="Hubballi-Dharwad"><option value="Tiruchirappalli"><option value="Bareilly"><option value="Moradabad"><option value="Mysore"><option value="Tiruppur"><option value="Gurgaon"><option value="Aligarh"><option value="Jalandhar"><option value="Bhubaneswar"><option value="Salem"><option value="Warangal"><option value="Mira-Bhayandar"><option value="Thiruvananthapuram"><option value="Bhiwandi"><option value="Saharanpur"><option value="Guntur"><option value="Amravati"><option value="Bikaner"><option value="Noida"><option value="Jamshedpur"><option value="Bhilai"><option value="Cuttack"><option value="Firozabad"><option value="Kochi"><option value="Bhavnagar"><option value="Dehradun"><option value="Durgapur"><option value="Asansol"><option value="Nanded"><option value="Kolhapur"><option value="Ajmer"><option value="Gulbarga"><option value="Jamnagar"><option value="Ujjain"><option value="Loni"><option value="Siliguri"><option value="Jhansi"><option value="Ulhasnagar"><option value="Jammu"><option value="Sangli-Miraj & Kupwad"><option value="Mangalore"><option value="Erode"><option value="Belgaum"><option value="Kurnool"><option value="Ambattur"><option value="Rajahmundry"><option value="Tirunelveli"><option value="Malegaon"><option value="Gaya"><option value="Udaipur">
     </datalist>
 
-    <!-- ==================== MODALS ==================== -->
-
-    <!-- PLAYER LOGIN MODAL -->
     <div class="modal-overlay" id="loginModal">
         <div class="modal-card">
             <i class="fa-solid fa-xmark close-modal" onclick="closeModals()"></i>
@@ -399,16 +400,15 @@
                 <div class="input-wrapper">
                     <div class="input-group">
                         <input type="password" name="password" id="loginPwd" class="form-control" placeholder="Password" required>
-                        <i class="fa-solid fa-lock input-icon"></i>
                         <i class="fa-solid fa-eye pwd-toggle" onclick="togglePwd('loginPwd', this, false)"></i>
+                        <i class="fa-solid fa-lock input-icon"></i>
                     </div>
                 </div>
-                <button type="submit" class="slide-btn next" id="btnLogin" style="width:100%;">ENTER ARENA <i class="fa-solid fa-arrow-right"></i></button>
+                <button type="submit" class="slide-btn next" id="btnLogin" style="width:100%; margin-top:10px;">ENTER ARENA <i class="fa-solid fa-arrow-right"></i></button>
             </form>
         </div>
     </div>
 
-    <!-- ORGANIZER MODAL (AGGRESSIVE NEON ORANGE) -->
     <div class="modal-overlay" id="orgModal">
         <div class="modal-card">
             <i class="fa-solid fa-xmark close-modal" onclick="closeModals()"></i>
@@ -424,11 +424,11 @@
                 <div class="input-wrapper">
                     <div class="input-group">
                         <input type="password" name="password" id="orgPwd" class="form-control" placeholder="Access Key" required>
-                        <i class="fa-solid fa-key input-icon" style="color:var(--accent-orange)"></i>
                         <i class="fa-solid fa-eye pwd-toggle" onclick="togglePwd('orgPwd', this, true)"></i>
+                        <i class="fa-solid fa-key input-icon" style="color:var(--accent-orange)"></i>
                     </div>
                 </div>
-                <button type="submit" class="slide-btn next" id="btnOrgLogin" style="width:100%; background:linear-gradient(90deg, #ff9900, #ff4d4d); box-shadow: 0 4px 15px rgba(255,153,0,0.4); border:none;">VERIFY ADMIN <i class="fa-solid fa-bolt"></i></button>
+                <button type="submit" class="slide-btn next" id="btnOrgLogin" style="width:100%; margin-top:10px; background:linear-gradient(90deg, #ff9900, #ff4d4d); box-shadow: 0 4px 15px rgba(255,153,0,0.4); border:none;">VERIFY ADMIN <i class="fa-solid fa-bolt"></i></button>
             </form>
             <div style="text-align:center; margin-top:15px; font-size:0.7rem; color:#888;">
                 <a href="organizerportel.html" style="color:var(--accent-orange); text-decoration:none; font-weight:bold;">Apply to Host Tournaments</a>
@@ -436,7 +436,6 @@
         </div>
     </div>
 
-    <!-- SIGNUP MODAL (MULTI-SLIDE HARDWARE ACCELERATED) -->
     <div class="modal-overlay" id="signupModal">
         <div class="modal-card" style="padding: 20px 15px;">
             <i class="fa-solid fa-xmark close-modal" onclick="closeModals()"></i>
@@ -452,7 +451,6 @@
                 <div class="slider-window">
                     <div class="slider-track" id="sliderTrack">
                         
-                        <!-- SLIDE 1: AUTH & COMMS -->
                         <div class="slide-step">
                             <div class="input-wrapper">
                                 <div class="flex-row">
@@ -465,16 +463,16 @@
                                 
                                 <div class="input-group" id="otpGroup" style="display: none; margin-top: 8px;">
                                     <input type="number" name="otp" id="regOtp" class="form-control" placeholder="Enter 4-Digit OTP">
-                                    <i class="fa-solid fa-message input-icon"></i>
                                     <button type="button" class="verify-btn" id="btnVerifyOtp" onclick="verifyOtp()">VERIFY</button>
+                                    <i class="fa-solid fa-message input-icon"></i>
                                 </div>
                             </div>
 
                             <div class="input-wrapper">
                                 <div class="input-group">
                                     <input type="password" name="password" id="regPwd" class="form-control req-field" placeholder="Create Password" required>
-                                    <i class="fa-solid fa-lock input-icon"></i>
                                     <i class="fa-solid fa-eye pwd-toggle" onclick="togglePwd('regPwd', this, false)"></i>
+                                    <i class="fa-solid fa-lock input-icon"></i>
                                 </div>
                             </div>
 
@@ -495,7 +493,6 @@
                             <button type="button" class="slide-btn next" onclick="nextSlide(1)" style="width:100%; margin-top:5px;">Next <i class="fa-solid fa-arrow-right"></i></button>
                         </div>
 
-                        <!-- SLIDE 2: GAMING IDENTITY -->
                         <div class="slide-step">
                             <div class="input-wrapper">
                                 <div class="input-group">
@@ -526,7 +523,6 @@
 
                             <div class="input-wrapper">
                                 <div class="input-group">
-                                    <!-- STRICT NUMERIC ONLY, MAX 15 DIGITS -->
                                     <input type="text" name="uid" id="regUid" class="form-control req-field" placeholder="Game UID (Numbers Only)" maxlength="15" oninput="this.value=this.value.replace(/[^0-9]/g,'')">
                                     <i class="fa-solid fa-id-card input-icon"></i>
                                 </div>
@@ -538,7 +534,6 @@
                             </div>
                         </div>
 
-                        <!-- SLIDE 3: LOCATION & FINAL SUBMIT -->
                         <div class="slide-step">
                             <div class="input-wrapper">
                                 <div class="input-group">
@@ -579,7 +574,6 @@
 
                             <div class="input-wrapper">
                                 <div class="input-group">
-                                    <!-- LINKED TO DATALIST FOR SMART SUGGESTIONS -->
                                     <input type="text" name="city" id="regCity" list="indianCities" class="form-control req-field" placeholder="City" autocomplete="off">
                                     <i class="fa-solid fa-location-dot input-icon"></i>
                                 </div>
@@ -597,56 +591,47 @@
         </div>
     </div>
 
-    <!-- HELP MODAL -->
     <div class="modal-overlay" id="helpModal">
         <div class="modal-card">
             <i class="fa-solid fa-xmark close-modal" onclick="closeModals()"></i>
             <h2 class="modal-title" style="color:var(--accent-cyan)"><i class="fa-solid fa-headset"></i> Support</h2>
             <form onsubmit="submitHelp(event)">
                 <div class="input-wrapper"><div class="input-group">
-                    <input type="email" id="helpEmail" class="form-control" placeholder="Your Email Address" required>
-                    <i class="fa-solid fa-envelope input-icon"></i>
+                    <input type="text" id="helpContact" class="form-control" placeholder="Email or Phone" required>
+                    <i class="fa-solid fa-address-book input-icon"></i>
                 </div></div>
                 <div class="input-wrapper"><div class="input-group">
-                    <textarea class="form-control" id="helpMsg" placeholder="Describe your issue..." style="height:100px; resize:none;" required></textarea>
+                    <textarea class="form-control" id="helpMsg" placeholder="Describe your issue..." style="height:90px; resize:none;" required></textarea>
                 </div></div>
                 <button type="submit" class="slide-btn next" id="btnHelp" style="width:100%;">SEND MESSAGE</button>
             </form>
         </div>
     </div>
 
-    <!-- LANGUAGE MODAL -->
     <div class="modal-overlay" id="langModal">
         <div class="modal-card">
             <i class="fa-solid fa-xmark close-modal" onclick="closeModals()"></i>
             <h2 class="modal-title" style="color:var(--accent-cyan)"><i class="fa-solid fa-earth-americas"></i> Select Language</h2>
-            <div style="display: flex; flex-direction: column; gap: 8px; max-height: 50vh; overflow-y: auto; padding-right: 5px;">
-                <div class="slide-btn back" style="justify-content:flex-start;" onclick="setLanguage('en')"><span style="font-size:1.2rem;">🇮🇳</span> English (India)</div>
-                <div class="slide-btn back" style="justify-content:flex-start;" onclick="setLanguage('hi')"><span style="font-size:1.2rem;">🇮🇳</span> हिन्दी (Hindi)</div>
-                <div class="slide-btn back" style="justify-content:flex-start;" onclick="setLanguage('ta')"><span style="font-size:1.2rem;">🇮🇳</span> தமிழ் (Tamil)</div>
-                <div class="slide-btn back" style="justify-content:flex-start;" onclick="setLanguage('te')"><span style="font-size:1.2rem;">🇮🇳</span> తెలుగు (Telugu)</div>
-                <div class="slide-btn back" style="justify-content:flex-start;" onclick="setLanguage('mr')"><span style="font-size:1.2rem;">🇮🇳</span> मराठी (Marathi)</div>
+            <div class="util-list">
+                <div class="util-item" onclick="setLanguage('en')"><span style="font-size:1.2rem;">🇮🇳</span> <div style="color:white; font-family:var(--font-head); font-weight:bold; font-size:0.85rem;">English (India)</div></div>
+                <div class="util-item" onclick="setLanguage('hi')"><span style="font-size:1.2rem;">🇮🇳</span> <div style="color:white; font-family:var(--font-head); font-weight:bold; font-size:0.85rem;">हिन्दी (Hindi)</div></div>
+                <div class="util-item" onclick="setLanguage('ta')"><span style="font-size:1.2rem;">🇮🇳</span> <div style="color:white; font-family:var(--font-head); font-weight:bold; font-size:0.85rem;">தமிழ் (Tamil)</div></div>
+                <div class="util-item" onclick="setLanguage('te')"><span style="font-size:1.2rem;">🇮🇳</span> <div style="color:white; font-family:var(--font-head); font-weight:bold; font-size:0.85rem;">తెలుగు (Telugu)</div></div>
+                <div class="util-item" onclick="setLanguage('mr')"><span style="font-size:1.2rem;">🇮🇳</span> <div style="color:white; font-family:var(--font-head); font-weight:bold; font-size:0.85rem;">मराठी (Marathi)</div></div>
             </div>
         </div>
     </div>
 
-    <!-- ACCOUNTS MODAL -->
     <div class="modal-overlay" id="accountsModal">
         <div class="modal-card">
             <i class="fa-solid fa-xmark close-modal" onclick="closeModals()"></i>
             <h2 class="modal-title" style="color:var(--accent-cyan)"><i class="fa-solid fa-users-gear"></i> Recent Accounts</h2>
-            <div id="accountsListArea" style="display: flex; flex-direction: column; gap: 8px; max-height: 50vh; overflow-y: auto; padding-right: 5px;">
+            <div class="util-list" id="accountsListArea">
                 <div style="text-align:center; color:#888; font-size:0.75rem;">No recent accounts found.</div>
             </div>
         </div>
     </div>
 
-    <!-- ARENA LOADER -->
-    <div id="arenaLoader" class="arena-overlay">
-        <div class="arena-text">ENTERING THE ARENA</div>
-    </div>
-
-    <!-- TOAST NOTIFICATION -->
     <div id="customToast"><i class="fa-solid fa-circle-exclamation"></i> <span id="toastMsg">Alert</span></div>
 
     <script>
@@ -839,7 +824,7 @@
             btn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i>`;
 
             setTimeout(() => {
-                btn.innerHTML = `<i class="fa-solid fa-check-double"></i> VERIFIED`;
+                btn.innerHTML = `<i class="fa-solid fa-check-double"></i>`;
                 btn.classList.add('verified'); btn.disabled = true;
                 otpInput.readOnly = true; document.getElementById('regEmail').readOnly = true;
                 isEmailVerified = true;
@@ -938,7 +923,7 @@
                 area.innerHTML = `<div style="text-align:center; color:#888; font-size:0.75rem;">No recent accounts found.</div>`;
             } else {
                 area.innerHTML = accounts.map(a => `
-                    <div class="slide-btn back" style="justify-content:flex-start; height:auto; padding:8px 12px; text-transform:none;" onclick="autoFillLogin('${a.email}')">
+                    <div class="util-item" onclick="autoFillLogin('${a.email}')" style="background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); padding: 10px; border-radius: 10px; cursor: pointer; display: flex; align-items: center; gap: 10px; transition: 0.2s;">
                         <img src="${a.avatar}" style="width:30px; height:30px; border-radius:50%; border:1px solid var(--accent-cyan); object-fit:cover;">
                         <div style="flex:1; min-width:0; text-align:left;">
                             <div style="color:white; font-family:var(--font-head); font-weight:bold; font-size:0.8rem; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${a.ign}</div>
@@ -966,11 +951,11 @@
             doHaptic();
             btnLoading('btnHelp', 'SENDING...');
             
-            let userEmail = document.getElementById('helpEmail').value;
+            let userContact = document.getElementById('helpContact').value;
             let msg = document.getElementById('helpMsg').value;
             
-            // Fires to API URL. Ensure your backend handles 'send_support_email' action to route to 'tournyx.esports.india@gmail.com'
-            secureFetch({ action: 'send_support_email', email: userEmail, message: msg, to: 'tournyx.esports.india@gmail.com' })
+            // Fires to API URL to route to 'tournyx.esports.india@gmail.com'
+            secureFetch({ action: 'send_support_email', email: userContact, message: msg, to: 'tournyx.esports.india@gmail.com' })
             .then(res => {
                 showToast("Message sent to Support! We will contact you soon.", true);
                 setTimeout(() => closeModals(true), 1500);
@@ -1031,7 +1016,10 @@
         function quickLogin() {
             doHaptic();
             let user = JSON.parse(localStorage.getItem('tournyx_user'));
-            if(user) triggerArenaEntry(user, 'index.html');
+            if(user) {
+                document.getElementById('tapToStartHitbox').innerHTML = '<div class="tap-text" style="animation:none; text-shadow:0 0 30px var(--accent-cyan);">ENTERING ARENA...</div>';
+                setTimeout(() => { window.location.href = 'index.html'; }, 800);
+            }
         }
 
         function logoutUser(e) {
@@ -1075,18 +1063,6 @@
                 isModalOpen = false;
             }
         });
-
-        // --- ANIMATION OVERLAY LOGIC ---
-        function triggerArenaEntry(user, redirectUrl) {
-            if(navigator.vibrate) navigator.vibrate([20, 50, 20]);
-            closeModals(true);
-            saveRecentAccount(user); 
-            localStorage.setItem('tournyx_user', JSON.stringify(user));
-            const loader = document.getElementById('arenaLoader');
-            loader.classList.add('active');
-            
-            setTimeout(() => { window.location.href = redirectUrl; }, 1900);
-        }
 
         function btnLoading(btnId, text) {
             if(navigator.vibrate) navigator.vibrate(15);
@@ -1181,7 +1157,10 @@
                     if (result.data.role === 'organizer') {
                         showToast("Organizers must log in through the Organizer Portal.");
                     } else {
-                        triggerArenaEntry(result.data, 'index.html');
+                        saveRecentAccount(result.data);
+                        localStorage.setItem('tournyx_user', JSON.stringify(result.data));
+                        showToast("Login Successful! Entering Arena...", true);
+                        setTimeout(() => { window.location.href = 'index.html'; }, 1000);
                     }
                 } else { showToast("Invalid Credentials"); }
             } catch (err) { showToast("Network Error."); }
@@ -1201,7 +1180,10 @@
                 
                 if (result.status === 'success') {
                     if (result.data.role === 'organizer') {
-                        triggerArenaEntry(result.data, 'profile.html');
+                        saveRecentAccount(result.data);
+                        localStorage.setItem('tournyx_user', JSON.stringify(result.data));
+                        showToast("Admin Verified! Entering Portal...", true);
+                        setTimeout(() => { window.location.href = 'profile.html'; }, 1000);
                     } else {
                         showToast("Players must log in through the Player Portal.");
                     }
@@ -1209,7 +1191,6 @@
             } catch (err) { showToast("System Error."); }
             finally { btnReset('btnOrgLogin'); }
         });
-
     </script>
 </body>
 </html>
