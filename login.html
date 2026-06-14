@@ -294,17 +294,52 @@
         .arena-text { font-family: var(--font-head); font-size: 1.8rem; color: #fff; font-weight: 900; letter-spacing: 4px; text-shadow: 0 0 20px rgba(0, 242, 255, 0.6); text-align: center; text-transform: uppercase; animation: cinematicEntry 2s cubic-bezier(0.25, 1, 0.5, 1) forwards; }
         @keyframes fadeInBg { from { opacity: 0; } to { opacity: 1; } }
         @keyframes cinematicEntry { 0% { transform: scale(0.8); opacity: 0; filter: blur(10px); } 20% { transform: scale(1); opacity: 1; filter: blur(0); letter-spacing: 4px; } 80% { transform: scale(1.05); opacity: 1; filter: blur(0); letter-spacing: 6px; } 100% { transform: scale(1.3); opacity: 0; filter: blur(15px); letter-spacing: 10px; } }
+       /* --- FINAL POLISH CSS OVERRIDES --- */
+        
+        /* 1. Gap between Terms Box and Login Buttons */
+        .terms-gate {
+            margin-bottom: 25px !important; /* Perfect breathing room */
+            padding-bottom: 5px;
+        }
 
+        /* 2. Desktop Credits Fix (Centered & Larger) */
+        @media (min-width: 769px) {
+            .credits-footer { 
+                justify-content: center !important; 
+                gap: 40px; 
+            }
+            .footer-center.copyrights { 
+                font-size: 0.75rem !important; /* Increased size */
+                font-weight: 700;
+                letter-spacing: 1px;
+                color: rgba(255, 255, 255, 0.8) !important;
+                text-align: center;
+                flex: none !important;
+            }
+            .footer-left.data-notice, .footer-right.quva-credit {
+                font-size: 0.65rem !important;
+            }
+        }
+        
+        /* Mobile Credits Fix */
+        @media (max-width: 768px) {
+            .footer-center.copyrights { 
+                font-size: 0.6rem !important; /* Slightly larger on mobile too */
+                text-align: center;
+                font-weight: 600;
+                color: rgba(255, 255, 255, 0.7);
+            }
+        }
     </style>
 </head>
 <body id="mainBody">
 
-    <video playsinline muted autoplay class="video-bg" id="introVideo" style="opacity: 1;"></video>
-    <video playsinline muted loop class="video-bg" id="bgVideo" style="opacity: 0;"></video>
+    <video src="https://tournyx.in/Tournyxpromo.mp4" autoplay loop muted playsinline webkit-playsinline class="video-bg" id="introVideo" style="opacity: 1; z-index: -2;"></video>
+    <video src="https://tournyx.in/FFBGMICODTRAILER.mp4" loop muted playsinline webkit-playsinline class="video-bg" id="bgVideo" style="opacity: 0; z-index: -4;"></video>
     <div class="bg-overlay"></div>
     <canvas id="particles-canvas"></canvas>
 
-    <div class="hud-top-left">Beta Version 4.2.0.19751</div>
+    <div class="hud-top-left">Beta Version 1.2.0.</div>
     
     <div class="hud-top-right">
         <div class="hud-tool-btn vol-btn" onclick="toggleVolume(event)" style="margin-right: 5px;">
@@ -525,26 +560,42 @@
                             </div>
                         </div>
 
+                        <!-- SLIDE 3: LOCATION & FINAL SUBMIT -->
                         <div class="slide-step">
+                            
+                            <!-- DYNAMIC STATE DROPDOWN -->
                             <div class="input-wrapper">
                                 <div class="input-group">
-                                    <select name="state" id="regState" class="form-control req-field">
-                                        <option value="" disabled selected id="txtSelState">Select State</option>
-                                        <option value="Tamil Nadu">Tamil Nadu</option>
-                                        <option value="Maharashtra">Maharashtra</option>
-                                        <option value="Delhi">Delhi</option>
-                                        <option value="Karnataka">Karnataka</option>
-                                        <option value="Andhra Pradesh">Andhra Pradesh</option>
-                                        <option value="Kerala">Kerala</option>
+                                    <select name="state" id="regState" class="form-control req-field" onchange="handleStateChange()">
+                                        <!-- Options populated via JS Engine -->
                                     </select>
                                     <i class="fa-solid fa-map input-icon"></i>
                                 </div>
                             </div>
 
+                            <!-- HIDDEN CUSTOM STATE FIELD (Triggers if 'Other' is selected) -->
+                            <div class="input-wrapper" id="customStateWrapper" style="display: none; margin-top: 5px;">
+                                <div class="input-group">
+                                    <input type="text" id="customState" class="form-control" placeholder="Type Your State">
+                                    <i class="fa-solid fa-pen input-icon"></i>
+                                </div>
+                            </div>
+
+                            <!-- DYNAMIC CITY DROPDOWN -->
                             <div class="input-wrapper">
                                 <div class="input-group">
-                                    <input type="text" name="city" id="regCity" list="indianCities" class="form-control req-field" placeholder="City" autocomplete="off">
-                                    <i class="fa-solid fa-location-dot input-icon"></i>
+                                    <select name="city" id="regCity" class="form-control req-field" onchange="handleCityChange()" disabled>
+                                        <option value="" disabled selected id="txtSelCity">Select State First</option>
+                                    </select>
+                                    <i class="fa-solid fa-building input-icon"></i>
+                                </div>
+                            </div>
+
+                            <!-- HIDDEN CUSTOM CITY FIELD (Triggers if 'Other' is selected) -->
+                            <div class="input-wrapper" id="customCityWrapper" style="display: none; margin-top: 5px;">
+                                <div class="input-group">
+                                    <input type="text" id="customCity" class="form-control" placeholder="Type Your City">
+                                    <i class="fa-solid fa-pen input-icon"></i>
                                 </div>
                             </div>
                             
@@ -553,7 +604,6 @@
                                 <button type="submit" class="slide-btn next" id="btnSignup" style="background:var(--accent-green); color:black;"><i class="fa-solid fa-check"></i> <span id="txtFinish">FINISH</span></button>
                             </div>
                         </div>
-
                     </div>
                 </div>
             </form>
@@ -695,70 +745,132 @@
             openModal(modalId);
         }
 
-        // --- SEAMLESS DUAL VIDEO ENGINE FIX ---
-        function runSeamlessVideoEngine() {
-            const introUrl = 'https://tournyx.in/Tournyxpromo.mp4'; 
-            const mainUrl = 'https://tournyx.in/FFBGMICODTRAILER.mp4';     
+        // ==========================================
+        // SMART INDIAN CITIES & STATES ENGINE
+        // ==========================================
+        const indiaData = {
+            "Andhra Pradesh": ["Visakhapatnam", "Vijayawada", "Guntur", "Nellore", "Tirupati"],
+            "Arunachal Pradesh": ["Itanagar", "Tawang", "Naharlagun"],
+            "Assam": ["Guwahati", "Silchar", "Dibrugarh", "Jorhat"],
+            "Bihar": ["Patna", "Gaya", "Bhagalpur", "Muzaffarpur"],
+            "Chhattisgarh": ["Raipur", "Bhilai", "Bilaspur"],
+            "Delhi": ["New Delhi", "North Delhi", "South Delhi", "East Delhi", "West Delhi"],
+            "Goa": ["Panaji", "Vasco da Gama", "Margao"],
+            "Gujarat": ["Ahmedabad", "Surat", "Vadodara", "Rajkot", "Gandhinagar"],
+            "Haryana": ["Gurugram", "Faridabad", "Panipat", "Ambala", "Rohtak"],
+            "Himachal Pradesh": ["Shimla", "Manali", "Dharamshala"],
+            "Jharkhand": ["Ranchi", "Jamshedpur", "Dhanbad", "Bokaro"],
+            "Karnataka": ["Bengaluru", "Mysuru", "Mangaluru", "Hubballi", "Belagavi"],
+            "Kerala": ["Thiruvananthapuram", "Kochi", "Kozhikode", "Thrissur", "Kannur"],
+            "Madhya Pradesh": ["Indore", "Bhopal", "Jabalpur", "Gwalior", "Ujjain"],
+            "Maharashtra": ["Mumbai", "Pune", "Nagpur", "Thane", "Nashik", "Aurangabad"],
+            "Manipur": ["Imphal", "Thoubal"],
+            "Meghalaya": ["Shillong", "Tura"],
+            "Mizoram": ["Aizawl", "Lunglei"],
+            "Nagaland": ["Dimapur", "Kohima"],
+            "Odisha": ["Bhubaneswar", "Cuttack", "Rourkela", "Puri"],
+            "Punjab": ["Ludhiana", "Amritsar", "Jalandhar", "Patiala", "Mohali"],
+            "Rajasthan": ["Jaipur", "Jodhpur", "Udaipur", "Kota", "Bikaner"],
+            "Sikkim": ["Gangtok", "Namchi"],
+            "Tamil Nadu": ["Chennai", "Coimbatore", "Madurai", "Tiruchirappalli", "Salem"],
+            "Telangana": ["Hyderabad", "Warangal", "Nizamabad", "Karimnagar"],
+            "Tripura": ["Agartala", "Udaipur"],
+            "Uttar Pradesh": ["Lucknow", "Kanpur", "Agra", "Varanasi", "Noida", "Ghaziabad"],
+            "Uttarakhand": ["Dehradun", "Haridwar", "Roorkee", "Rishikesh"],
+            "West Bengal": ["Kolkata", "Howrah", "Darjeeling", "Siliguri", "Asansol"],
+            "Other Territories (UTs)": ["Chandigarh", "Puducherry", "Port Blair", "Daman", "Diu", "Leh", "Jammu", "Srinagar"]
+        };
+
+        function initLocations() {
+            const stateSelect = document.getElementById('regState');
+            stateSelect.innerHTML = '<option value="" disabled selected id="txtSelState">Select State</option>';
             
+            Object.keys(indiaData).forEach(state => {
+                let opt = document.createElement('option');
+                opt.value = state; opt.innerHTML = state;
+                stateSelect.appendChild(opt);
+            });
+            
+            // Append the "Other" option
+            let optOther = document.createElement('option');
+            optOther.value = "Other"; optOther.innerHTML = "➕ Other (Type Manually)";
+            optOther.style.color = "var(--accent-orange)";
+            stateSelect.appendChild(optOther);
+        }
+
+        function handleStateChange() {
+            const state = document.getElementById('regState').value;
+            const citySelect = document.getElementById('regCity');
+            const customStateWrap = document.getElementById('customStateWrapper');
+            const customCityWrap = document.getElementById('customCityWrapper');
+            
+            doHaptic();
+
+            // If user selects "Other" State
+            if (state === "Other") {
+                customStateWrap.style.display = 'block';
+                citySelect.innerHTML = '<option value="Other">Other (Type Manually)</option>';
+                citySelect.disabled = true; 
+                customCityWrap.style.display = 'block';
+                return;
+            } else {
+                customStateWrap.style.display = 'none';
+                citySelect.disabled = false;
+                customCityWrap.style.display = 'none';
+            }
+
+            // Populate corresponding Cities
+            citySelect.innerHTML = '<option value="" disabled selected id="txtSelCity">Select City</option>';
+            if (indiaData[state]) {
+                indiaData[state].forEach(city => {
+                    let opt = document.createElement('option');
+                    opt.value = city; opt.innerHTML = city;
+                    citySelect.appendChild(opt);
+                });
+            }
+            // Append "Other" City
+            let optOther = document.createElement('option');
+            optOther.value = "Other"; optOther.innerHTML = "➕ Other (Type Manually)";
+            optOther.style.color = "var(--accent-cyan)";
+            citySelect.appendChild(optOther);
+        }
+
+        function handleCityChange() {
+            doHaptic();
+            const city = document.getElementById('regCity').value;
+            const customCityWrap = document.getElementById('customCityWrapper');
+            
+            if (city === "Other") {
+                customCityWrap.style.display = 'block';
+                document.getElementById('customCity').focus();
+            } else {
+                customCityWrap.style.display = 'none';
+            }
+        }
+
+        // Initialize lists when DOM loads
+        document.addEventListener('DOMContentLoaded', initLocations);
+        
+        // --- BULLETPROOF SEAMLESS VIDEO ENGINE ---
+        function runSeamlessVideoEngine() {
             const introVideo = document.getElementById('introVideo');
             const mainVideo = document.getElementById('bgVideo');
             const uiContainer = document.getElementById('mainUiContainer');
 
-            // Set sources immediately
-            introVideo.src = introUrl;
-            mainVideo.src = mainUrl;
+            // Force play on load
+            introVideo.play().catch(e => console.log("Intro Play Blocked:", e));
 
-            // Start Intro
-            let introPromise = introVideo.play();
-            if (introPromise !== undefined) {
-                introPromise.catch(e => {
-                    // Autoplay blocked, skip to UI immediately
-                    introVideo.style.opacity = '0';
-                    uiContainer.classList.add('active');
-                    mainVideo.style.opacity = '1';
-                });
-            }
-
-            // When Intro finishes -> Swap to BG seamlessly
-            introVideo.onended = () => {
-                introVideo.style.opacity = '0';
-                uiContainer.classList.add('active'); 
-                mainVideo.style.opacity = '1';
-                
-                mainVideo.play().catch(e => console.log("BG Video Play Blocked"));
-                
-                // Cleanup intro video
-                setTimeout(() => { introVideo.style.display = 'none'; }, 1000);
-            };
-
-            // Failsafe: If intro hangs for more than 4 seconds, force UI show
+            // Seamless transition at 3 seconds (Adjust time based on your intro length)
             setTimeout(() => {
-                if(introVideo.style.opacity !== '0') {
-                    introVideo.style.opacity = '0';
-                    uiContainer.classList.add('active');
-                    mainVideo.style.opacity = '1';
-                    mainVideo.play().catch(()=>{});
-                    setTimeout(() => { introVideo.style.display = 'none'; }, 1000);
-                }
-            }, 4500);
+                introVideo.style.opacity = '0';
+                uiContainer.classList.add('active'); // Fade in UI
+                
+                mainVideo.style.opacity = '1';
+                mainVideo.play().catch(e => console.log("BG Play Blocked:", e));
+                
+                setTimeout(() => { introVideo.remove(); }, 1500); // Destroy intro to save RAM
+            }, 3500); // 3.5 seconds delay before switching to main background
         }
-        
-        function toggleVolume(e) {
-            if(e) e.stopPropagation();
-            doHaptic();
-            const video = document.getElementById('bgVideo');
-            const icon = document.getElementById('volIcon');
-            if(video.muted) {
-                video.muted = false;
-                icon.className = 'fa-solid fa-volume-high';
-                window.hasUnmuted = true;
-            } else {
-                video.muted = true;
-                icon.className = 'fa-solid fa-volume-xmark';
-            }
-        }
-        
-        // Init Video
         runSeamlessVideoEngine();
 
         // --- SECURE API FETCH WRAPPER ---
@@ -1067,8 +1179,17 @@
 
         document.getElementById('playerSignupForm').addEventListener('submit', async (e) => {
             e.preventDefault();
-            if(document.getElementById('regState').value === "") { showToast("Please select a state."); return; }
-            if(document.getElementById('regCity').value.trim() === "") { showToast("Please enter your city."); return; }
+           // --- SMART LOCATION CAPTURE ---
+            let finalState = document.getElementById('regState').value;
+            if(finalState === "Other") finalState = document.getElementById('customState').value.trim();
+            
+            let finalCity = document.getElementById('regCity').value;
+            if(finalCity === "Other" || document.getElementById('regState').value === "Other") {
+                finalCity = document.getElementById('customCity').value.trim();
+            }
+
+            if(!finalState || finalState === "") { showToast("Please select or type a state."); return; }
+            if(!finalCity || finalCity === "") { showToast("Please select or type a city."); return; }
 
             const phoneVal = document.getElementById('regPhone').value;
             const phoneDigits = phoneVal.substring(4).replace(/\D/g, '');
@@ -1081,8 +1202,8 @@
 
                 const payload = {
                     action: 'signup', username: rawData.username, ign: rawData.ign,
-                    uid: rawData.uid, game: rawData.game, state: rawData.state,
-                    city: rawData.city, phone: phoneDigits, email: rawData.email,
+                    uid: rawData.uid, game: rawData.game, state: finalState,
+                    city: finalCity, phone: phoneDigits, email: rawData.email,
                     password: rawData.password, referral: rawData.referral || "", 
                     otp: rawData.otp, role: 'player'
                 };
