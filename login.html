@@ -41,22 +41,7 @@
             position: relative; padding: 0;
         }
 
-        /* --- 3D FIRE LOGO ANIMATION --- */
-        #logoIntroOverlay {
-            position: fixed; top: 0; left: 0; width: 100vw; height: 100dvh;
-            background: #000; z-index: 9999; display: flex; align-items: center; justify-content: center;
-            transition: opacity 0.8s ease, visibility 0.8s ease;
-        }
-        .fire-logo {
-            width: 120px; height: 120px; border-radius: 22%;
-            animation: fire3DReveal 3s cubic-bezier(0.25, 1, 0.5, 1) forwards;
-        }
-        @keyframes fire3DReveal {
-            0% { transform: scale(0.1); opacity: 0; filter: drop-shadow(0 0 10px #ff3300) drop-shadow(0 0 30px #ff9900) drop-shadow(0 0 60px #ffcc00); }
-            40% { opacity: 1; filter: drop-shadow(0 0 25px #ff3300) drop-shadow(0 0 50px #ff9900) drop-shadow(0 0 90px #ffcc00); }
-            80% { transform: scale(1.6); filter: drop-shadow(0 0 15px #ff3300) drop-shadow(0 0 40px #ff9900); opacity: 1; }
-            100% { transform: scale(2.5); opacity: 0; filter: none; }
-        }
+      
 
         /* --- BACKGROUND VIDEO --- */
         .video-bg {
@@ -312,14 +297,10 @@
 </head>
 <body id="mainBody">
 
-    <div id="logoIntroOverlay">
-        <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEipVmqyUEA22VpntZdPCHuXoO_Rjco_cRaNl5CyFa-eehdtgXnHe6JoD8a5svxJRJYZfv_yXwww10T2cL2PHTiXLK-J-nWC1swmMs5RDxGVM8FBSlJORaRiX4YiD8gL8SyM4X1tRyQn_v8MsqQvbU4uEyHEU0qaySP1STWHaBEYuWKyF3-6QovSqJR-8xU/s1024/1000093705.png" alt="Tournyx Logo" class="fire-logo">
-    </div>
-
     <video src="https://tournyx.in/FFBGMICODTRAILER.mp4" 
            poster="https://tournyx.in/hq-fallback-bg.jpg" 
            autoplay loop muted playsinline webkit-playsinline preload="auto" 
-           class="video-bg" id="bgVideo" style="z-index: -4;"></video>
+           class="video-bg" id="bgVideo" style="opacity: 1; z-index: -4;"></video>
     
     <div class="bg-overlay"></div>
     <canvas id="particles-canvas"></canvas>
@@ -689,41 +670,32 @@
         }
 
         // ==========================================
-        // TOURNYX 3D LOGO & BG VIDEO ENGINE (STRICT OVERRIDE)
+        // TOURNYX PURE BACKGROUND VIDEO ENGINE
         // ==========================================
         function initMasterVideoEngine() {
             const bgVideo = document.getElementById('bgVideo');
             const uiContainer = document.getElementById('mainUiContainer');
-            const introOverlay = document.getElementById('logoIntroOverlay');
             
             if (!bgVideo) return;
 
-            // --- SEAMLESS TRANSITION FUNCTION ---
-            const transitionToArena = () => {
-                // Fade out the fire logo background to reveal the playing video
-                introOverlay.style.opacity = '0';
-                setTimeout(() => { introOverlay.style.display = 'none'; }, 800); 
-                
-                uiContainer.classList.add('active'); 
-                
-                // OS Failsafe: If the browser blocked the HTML autoplay, this forces it now.
-                if (bgVideo.paused) {
-                    bgVideo.play().catch(e => console.warn("Video strictly blocked by device OS until user taps."));
-                }
-            };
+            // 1. Show the UI immediately
+            uiContainer.classList.add('active');
 
-            // Run the fire logo animation for exactly 2.8 seconds, then reveal the arena
-            setTimeout(transitionToArena, 2800);
+            // 2. Force video to play silently right now
+            bgVideo.muted = true;
+            let playPromise = bgVideo.play();
+            if (playPromise !== undefined) {
+                playPromise.catch(e => console.warn("Initial autoplay blocked. OS requires user tap."));
+            }
 
-            // --- THE MASTER TAP OVERRIDE ---
-            // Browsers CANNOT block a video or audio if the user physically taps the screen.
+            // 3. THE MASTER TAP OVERRIDE (Unlocks Sound & Forces Play on first touch)
             const forcePlayAndAudio = () => {
-                // Force video to play if it was stuck
+                // If it was blocked, force it to play now
                 if (bgVideo.paused) {
                     bgVideo.play().catch(e => console.warn("OS permanently blocked media."));
                 }
                 
-                // Force audio to max
+                // Turn on the volume
                 bgVideo.muted = false;
                 bgVideo.volume = 1.0; 
                 
@@ -732,12 +704,12 @@
                 if(vIcon) vIcon.className = 'fa-solid fa-volume-high';
                 window.hasUnmuted = true;
 
-                // Remove listeners so it only fires once
+                // Remove listeners so it only triggers once
                 document.removeEventListener('touchstart', forcePlayAndAudio);
                 document.removeEventListener('click', forcePlayAndAudio);
             };
 
-            // Attach to the entire document. The second they touch anything, media unlocks.
+            // Attach to the document. The second they touch the screen, media unlocks.
             document.addEventListener('touchstart', forcePlayAndAudio, {once:true});
             document.addEventListener('click', forcePlayAndAudio, {once:true});
         }
