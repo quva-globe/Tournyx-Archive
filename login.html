@@ -41,29 +41,12 @@
             position: relative; padding: 0;
         }
 
-        /* --- DUAL VIDEO ENGINE (PERFECT SCALING) --- */
+        /* --- DUAL VIDEO ENGINE --- */
         .video-bg {
             position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-            object-fit: cover; object-position: center center; /* Forces perfect framing on all devices */
-            z-index: -4; filter: brightness(0.85);
+            object-fit: cover; z-index: -4; filter: brightness(0.85);
             transition: opacity 0.8s ease-in-out;
         }
-
-        /* --- INITIALIZATION OVERLAY (TO UNLOCK SOUND) --- */
-        #bootOverlay {
-            position: fixed; top: 0; left: 0; width: 100vw; height: 100dvh;
-            background: #000; z-index: 99999; display: flex; flex-direction: column;
-            align-items: center; justify-content: center; backdrop-filter: blur(10px);
-            transition: opacity 0.5s ease, visibility 0.5s ease;
-        }
-        .boot-btn {
-            padding: 15px 40px; background: var(--accent-gradient); border: 2px solid var(--accent-cyan);
-            border-radius: 50px; color: white; font-family: var(--font-head); font-size: 1.2rem;
-            font-weight: 900; letter-spacing: 3px; text-transform: uppercase; cursor: pointer;
-            box-shadow: 0 0 20px rgba(0, 242, 255, 0.5), inset 0 0 10px rgba(189,0,255,0.5);
-            animation: pulseTap 1.5s infinite alternate;
-        }
-
         /* AAA GAME HUD */
         .hud-top-left {
             position: absolute; top: 20px; left: 20px; z-index: 100;
@@ -89,8 +72,9 @@
         .hud-tool-btn:active i { transform: scale(0.9); background: var(--accent-cyan); color: black; border-color: var(--accent-cyan); box-shadow: 0 0 15px var(--accent-cyan);}
 
         /* LOGGED IN PROFILE CORNER */
+       /* LOGGED IN PROFILE CORNER */
         .top-profile-corner {
-            position: absolute; top: 65px; right: 20px; z-index: 100;
+            position: absolute; top: 65px; right: 20px; z-index: 6000; /* FIXED: Now sits above the tap overlay */
             display: flex; align-items: center; gap: 8px; background: rgba(0,0,0,0.7);
             padding: 4px 12px 4px 4px; border-radius: 50px; border: 1px solid rgba(0,242,255,0.4);
             backdrop-filter: blur(10px); transition: 0.3s; box-shadow: 0 4px 15px rgba(0,0,0,0.6);
@@ -344,14 +328,8 @@
 </head>
 <body id="mainBody">
 
-    <div id="bootOverlay" onclick="launchArenaEngine()">
-        <div class="boot-btn">TAP TO INITIALIZE</div>
-        <div style="color: #888; font-size: 0.75rem; margin-top: 15px; letter-spacing: 2px; font-weight: bold;">SOUND ON 🔊</div>
-    </div>
-
-    <video src="https://tournyx.in/Tournyxpromo.mp4" playsinline webkit-playsinline class="video-bg" id="introVideo" style="opacity: 1; z-index: -2;"></video>
+   <video src="https://tournyx.in/Tournyxpromo.mp4" autoplay muted playsinline webkit-playsinline class="video-bg" id="introVideo" style="opacity: 1; z-index: -2;"></video>
     <video src="https://tournyx.in/FFBGMICODTRAILER.mp4" loop muted playsinline webkit-playsinline class="video-bg" id="bgVideo" style="opacity: 0; z-index: -4;"></video>
-    
     <div class="bg-overlay"></div>
     <canvas id="particles-canvas"></canvas>
     <div class="hud-top-left">Beta Version 1.2.0.</div>
@@ -866,47 +844,55 @@
         // Initialize lists when DOM loads
         document.addEventListener('DOMContentLoaded', initLocations);
         
-        // --- BULLETPROOF AUDIO & VIDEO ENGINE ---
-        function launchArenaEngine() {
-            doHaptic();
-            const bootOverlay = document.getElementById('bootOverlay');
+        // --- BULLETPROOF SEAMLESS VIDEO ENGINE (INVISIBLE SOUND UNLOCKER) ---
+        function runSeamlessVideoEngine() {
             const introVideo = document.getElementById('introVideo');
             const mainVideo = document.getElementById('bgVideo');
             const uiContainer = document.getElementById('mainUiContainer');
 
-            // 1. Hide the Boot Screen instantly
-            bootOverlay.style.opacity = '0';
-            setTimeout(() => bootOverlay.style.visibility = 'hidden', 500);
-
-            // 2. UNLOCK AUDIO & PLAY PROMO
-            introVideo.volume = 1.0; // Sets volume to 100% max pitch
+            // 1. Force visual play (Browser allows this because it is muted)
             introVideo.play().catch(e => console.log("Intro Play Blocked:", e));
 
-            // 3. When Promo finishes -> Swap to Background Video & Show UI
+            // 2. INVISIBLE SOUND UNLOCKER: The millisecond they touch the screen, blast volume to 100%
+            const unlockSound = () => {
+                if(introVideo.muted) {
+                    introVideo.muted = false;
+                    introVideo.volume = 1.0; // Max high-pitch volume
+                }
+                // Cleanup the listeners so it only triggers once
+                document.removeEventListener('touchstart', unlockSound);
+                document.removeEventListener('click', unlockSound);
+            };
+            
+            // Attach to the entire document
+            document.addEventListener('touchstart', unlockSound, {once:true});
+            document.addEventListener('click', unlockSound, {once:true});
+
+            // 3. Seamless transition when promo ends
             introVideo.onended = () => {
                 introVideo.style.opacity = '0';
-                uiContainer.classList.add('active'); // Bring up the login UI
-                mainVideo.style.opacity = '1';
+                uiContainer.classList.add('active'); // Fade in UI
                 
+                mainVideo.style.opacity = '1';
                 mainVideo.play().catch(e => console.log("BG Video Play Blocked"));
                 
-                // Destroy intro video to save RAM and battery
-                setTimeout(() => { introVideo.remove(); }, 1000);
+                setTimeout(() => { introVideo.remove(); }, 1500); // Destroy intro to save RAM
             };
 
-            // 4. Ultimate Failsafe: If the promo video gets stuck buffering for more than 5 seconds, 
-            // force the UI to appear so the user isn't stuck on a black screen.
+            // 4. Ultimate Failsafe: Force UI to appear after 5 seconds if connection is slow
             setTimeout(() => {
                 if(introVideo.style.opacity !== '0') {
                     introVideo.style.opacity = '0';
                     uiContainer.classList.add('active');
                     mainVideo.style.opacity = '1';
                     mainVideo.play().catch(()=>{});
-                    setTimeout(() => { introVideo.remove(); }, 1000);
+                    setTimeout(() => { introVideo.remove(); }, 1500);
                 }
-            }, 5000); // 5 seconds maximum wait time
+            }, 5000);
         }
-
+        
+        // Boot the engine instantly
+        runSeamlessVideoEngine();
         // --- SECURE API FETCH WRAPPER ---
         async function secureFetch(payload) {
             try {
@@ -1149,14 +1135,14 @@
             if(user) triggerArenaEntry(user, 'index.html');
         }
 
-        function logoutUser(e) {
-            if(e) e.stopPropagation();
+       function logoutUser(e) {
+            if(e) { e.preventDefault(); e.stopPropagation(); } // Prevents the invisible tap overlay from hijacking the click
             doHaptic();
             localStorage.removeItem('tournyx_user');
             localStorage.removeItem('tournyx_userData');
+            document.getElementById('loggedInProfile').classList.add('hidden');
             window.location.reload();
         }
-
         let isModalOpen = false;
         
         function openModal(id) {
