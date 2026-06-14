@@ -6,12 +6,11 @@
     <link rel="apple-touch-icon" href="https://tournyx.in/apple-touch-icon.png">
 
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, shrink-to-fit=no">
     <title>Login / Register - Tournyx Esports</title>
     <meta name="description" content="Sign in to your Tournyx account to join premium BGMI and Free Fire esports tournaments.">
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700;900&family=Rajdhani:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
@@ -31,42 +30,34 @@
             --font-body: 'Rajdhani', sans-serif;
         }
 
-        * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+        * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; touch-action: manipulation; }
         *::-webkit-scrollbar { display: none !important; width: 0 !important; height: 0 !important; }
 
-        body {
-            background-color: var(--primary-bg); color: var(--text-main);
-            font-family: var(--font-body); min-height: 100vh; width: 100vw;
+        html, body {
+            background-color: #000; color: var(--text-main);
+            font-family: var(--font-body); height: 100dvh; width: 100vw;
+            max-width: 100vw; overflow: hidden;
             display: flex; flex-direction: column; align-items: center; justify-content: center;
-            overflow: hidden; position: relative; padding: 0;
+            position: relative; padding: 0;
         }
 
-        /* --- HARDWARE ACCELERATED VIDEO BACKGROUND --- */
+        /* --- BACKGROUND VIDEO --- */
         .video-bg {
             position: absolute; top: 0; left: 0; width: 100%; height: 100%;
             object-fit: cover; z-index: -4; filter: brightness(0.85);
-            background: #000;
-        }
-        .bg-overlay {
-            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-            background: linear-gradient(to top, rgba(0,0,0,0.95) 0%, rgba(0,0,0,0.2) 30%, transparent 60%, rgba(0,0,0,0.5) 100%);
-            z-index: -3;
-        }
-        #particles-canvas {
-            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-            z-index: -2; transform: translateZ(0); pointer-events: none;
+            transition: opacity 0.8s ease-in-out;
         }
 
-        /* --- AAA GAME HUD (TOP LEFT / RIGHT) --- */
+        /* AAA GAME HUD */
         .hud-top-left {
-            position: absolute; top: 15px; left: 15px; z-index: 100;
-            font-family: var(--font-body); font-size: 0.75rem; color: rgba(255,255,255,0.8);
-            font-weight: bold; letter-spacing: 1px; text-shadow: 1px 1px 3px black;
+            position: absolute; top: 20px; left: 20px; z-index: 6000;
+            font-family: var(--font-body); font-size: 0.65rem; color: rgba(255,255,255,0.7);
+            font-weight: bold; letter-spacing: 1px; text-shadow: 1px 1px 2px black;
         }
         
         .hud-top-right {
-            position: absolute; top: 15px; right: 15px; z-index: 100;
-            display: flex; flex-direction: column; gap: 12px; align-items: center;
+            position: absolute; top: 20px; right: 20px; z-index: 6000;
+            display: flex; flex-direction: row; gap: 15px; align-items: flex-start;
         }
         .hud-tool-btn {
             display: flex; flex-direction: column; align-items: center; gap: 4px;
@@ -75,169 +66,147 @@
             text-transform: uppercase;
         }
         .hud-tool-btn i {
-            width: 34px; height: 34px; border-radius: 50%; background: rgba(0,0,0,0.6);
+            width: 32px; height: 32px; border-radius: 50%; background: rgba(0,0,0,0.6);
             border: 1px solid rgba(255,255,255,0.3); display: flex; align-items: center; justify-content: center;
-            font-size: 1rem; backdrop-filter: blur(5px); transition: 0.2s; box-shadow: 0 4px 10px rgba(0,0,0,0.5);
+            font-size: 0.9rem; backdrop-filter: blur(5px); transition: 0.2s; box-shadow: 0 4px 10px rgba(0,0,0,0.6);
         }
         .hud-tool-btn:active i { transform: scale(0.9); background: var(--accent-cyan); color: black; border-color: var(--accent-cyan); box-shadow: 0 0 15px var(--accent-cyan);}
 
         /* LOGGED IN PROFILE CORNER */
         .top-profile-corner {
-            position: absolute; top: 15px; right: 75px; z-index: 100;
+            position: absolute; top: 65px; right: 20px; z-index: 6000;
             display: flex; align-items: center; gap: 8px; background: rgba(0,0,0,0.7);
-            padding: 5px 12px 5px 5px; border-radius: 50px; border: 1px solid rgba(0,242,255,0.4);
-            backdrop-filter: blur(10px); transition: 0.3s;
-            animation: fadeInDown 1s ease forwards; box-shadow: 0 4px 15px rgba(0,0,0,0.6);
+            padding: 4px 12px 4px 4px; border-radius: 50px; border: 1px solid rgba(0,242,255,0.4);
+            backdrop-filter: blur(10px); transition: 0.3s; box-shadow: 0 4px 15px rgba(0,0,0,0.6);
         }
-        @keyframes fadeInDown { from { opacity: 0; transform: translateY(-20px); } to { opacity: 1; transform: translateY(0); } }
-        .top-profile-corner:active { transform: scale(0.95); }
-        .top-profile-corner img {
-            width: 32px; height: 32px; border-radius: 50%; border: 2px solid var(--accent-cyan);
-            object-fit: cover; box-shadow: 0 0 10px rgba(0,242,255,0.5); cursor: pointer;
-        }
+        .top-profile-corner img { width: 28px; height: 28px; border-radius: 50%; border: 2px solid var(--accent-cyan); object-fit: cover;}
         .top-profile-corner .user-info { display: flex; flex-direction: column; justify-content: center; }
-        .top-profile-corner .user-name {
-            font-family: var(--font-head); font-size: 0.75rem; font-weight: bold; color: white;
-            text-transform: uppercase; letter-spacing: 1px; cursor: pointer; text-shadow: 1px 1px 2px black;
-        }
-        .top-profile-corner .logout-text {
-            font-family: var(--font-body); font-size: 0.6rem; color: #ff4d4d; font-weight: bold;
-            cursor: pointer; text-transform: uppercase; text-shadow: 1px 1px 2px black;
-        }
-        .top-profile-corner .logout-text:active { color: white; }
+        .top-profile-corner .user-name { font-family: var(--font-head); font-size: 0.7rem; font-weight: bold; color: white; text-transform: uppercase; letter-spacing: 1px; text-shadow: 1px 1px 2px black; }
+        .top-profile-corner .logout-text { font-family: var(--font-body); font-size: 0.55rem; color: #ff4d4d; font-weight: bold; cursor: pointer; text-transform: uppercase; text-shadow: 1px 1px 2px black; }
         .hidden { display: none !important; }
 
-        /* --- CENTER LOGO (GAME TITLE FLOATING) --- */
-        .center-logo-area {
-            display: flex; flex-direction: column; align-items: center; z-index: 10;
-            animation: cinematicZoomIn 1.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
-            pointer-events: none; margin-bottom: 25vh; /* Pushes it up, leaving room for buttons */
-        }
-        .center-logo-area img {
-            width: 140px; height: 140px; border-radius: 30%; object-fit: cover;
-            border: 2px solid rgba(0, 242, 255, 0.8);
-            box-shadow: 0 0 35px rgba(189, 0, 255, 0.8), inset 0 0 25px rgba(0, 242, 255, 0.6);
-            animation: floatLogo 4s ease-in-out infinite; margin-bottom: 10px;
-            background: var(--primary-bg);
-        }
-        .app-name { 
-            font-family: var(--font-head); font-size: clamp(2.2rem, 5vw, 3.2rem); letter-spacing: 4px; font-weight: 900;
-            background: linear-gradient(90deg, #bd00ff, #00f2ff, #ffffff); background-size: 200% auto;
-            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-            margin-bottom: 0; filter: drop-shadow(0 0 15px rgba(0,242,255,0.6));
-            text-transform: uppercase; animation: shineText 4s linear infinite;
+        /* FULLSCREEN TAP TO ENTER (LOGGED IN) */
+        #fullScreenTap {
+            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; z-index: 4000;
+            display: flex; align-items: center; justify-content: center; cursor: pointer;
         }
 
-        @keyframes cinematicZoomIn { 0% { transform: scale(0.8); opacity: 0; filter: blur(10px); } 100% { transform: scale(1); opacity: 1; filter: blur(0); } }
-        @keyframes floatLogo { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-12px); filter: drop-shadow(0 0 30px rgba(189, 0, 255, 0.8)); } }
-        @keyframes shineText { to { background-position: 200% center; } }
-
-        /* --- BOTTOM CONTROLS (AAA MENU) --- */
-        .bottom-hud {
-            position: absolute; bottom: 55px; left: 0; width: 100%;
-            display: flex; flex-direction: column; align-items: center; z-index: 20;
-            padding: 0 20px; animation: slideUpHUD 1s ease forwards;
+        /* --- MAIN UI CONTAINER --- */
+        .main-ui-container {
+            width: 100%; height: 100dvh; display: flex; flex-direction: column;
+            justify-content: flex-end; align-items: center; 
+            opacity: 0; transition: opacity 1s ease; z-index: 10;
         }
-        @keyframes slideUpHUD { from { transform: translateY(50px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+        .main-ui-container.active { opacity: 1; }
+
+        /* DESKTOP LAYOUT */
+        @media (min-width: 769px) {
+            .main-ui-container { justify-content: flex-end; padding-bottom: 8vh; }
+            .auth-card-wrapper { 
+                width: 420px; background: transparent !important; box-shadow: none !important; 
+                border: none !important; backdrop-filter: none !important; 
+            }
+            .logo-overlap { margin-bottom: 20px; display: flex; flex-direction: column; align-items: center; }
+            .logo-overlap img { width: 80px; height: 80px; border-radius: 20%; border: 2px solid var(--accent-cyan); box-shadow: 0 0 20px rgba(0,242,255,0.5); margin-bottom: 15px; animation: floatLogo 4s infinite ease-in-out;}
+            .app-name { font-family: var(--font-head); font-size: 2rem; letter-spacing: 4px; font-weight: 900; color: white; text-transform: uppercase; filter: drop-shadow(0 0 10px rgba(0,242,255,0.6)); text-align: center; line-height: 1.1;}
+            .app-name .esports-text { font-size: 0.5em; letter-spacing: 6px; color: var(--accent-cyan); display: block; margin-top: 2px; }
+            .app-tagline, .static-desc, .feature-badges { display: none; }
+            
+            .credits-footer { position: absolute; bottom: 15px; width: 100%; display: flex; justify-content: center; gap: 40px; padding: 0 30px; }
+            .footer-center.copyrights { font-size: 0.75rem; font-weight: 700; letter-spacing: 1px; color: rgba(255, 255, 255, 0.8); text-align: center; }
+            .footer-left.data-notice, .footer-right.quva-credit { font-size: 0.65rem; }
+            
+            .terms-gate { justify-content: center; margin-bottom: 25px; padding-bottom: 5px; }
+        }
+
+        /* MOBILE LAYOUT */
+        @media (max-width: 768px) {
+            .main-ui-container { padding-bottom: 0; }
+            .auth-card-wrapper {
+                width: 100%; max-width: 100vw; background: rgba(10, 5, 20, 0.85); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+                border-top: 1px solid rgba(0, 242, 255, 0.3); border-radius: 35px 35px 0 0;
+                padding: 0 20px 20px; display: flex; flex-direction: column; align-items: center;
+                box-shadow: 0 -15px 40px rgba(0,0,0,0.9); position: relative;
+            }
+            .logo-overlap { margin-top: -35px; display: flex; flex-direction: column; align-items: center; margin-bottom: 12px;}
+            
+            .logo-overlap img { width: 65px; height: 65px; border-radius: 22%; border: 2px solid var(--accent-cyan); box-shadow: 0 10px 20px rgba(0,0,0,0.9), inset 0 0 10px rgba(0,242,255,0.4); background: var(--primary-bg);}
+            
+            .app-name { font-family: var(--font-head); font-size: 1.6rem; letter-spacing: 2px; font-weight: 900; color: white; text-transform: uppercase; margin-top: 8px; text-align: center; line-height: 1.1;}
+            .app-name .esports-text { font-size: 0.55em; letter-spacing: 4px; color: var(--accent-cyan); display: block; margin-top: 2px; text-shadow: 0 0 10px var(--accent-cyan); }
+            
+            .app-tagline { display: none; }
+            .static-desc { font-size: 0.7rem; color: #bbb; text-align: center; line-height: 1.3; margin-bottom: 12px; padding: 0 10px;}
+            
+            .feature-badges { display: flex; justify-content: center; gap: 8px; margin-bottom: 15px; flex-wrap: wrap; }
+            .f-badge { border: 1px solid var(--accent-cyan); color: var(--accent-cyan); padding: 4px 10px; border-radius: 20px; font-size: 0.6rem; font-family: var(--font-head); font-weight: bold; background: rgba(0,242,255,0.05); }
+            
+            .credits-footer { display: flex; flex-direction: column; align-items: center; gap: 3px; margin-top: 10px;}
+            .footer-center.copyrights { font-size: 0.6rem; text-align: center; font-weight: 600; color: rgba(255, 255, 255, 0.7); }
+            
+            .terms-gate { justify-content: flex-start; margin-bottom: 25px; padding-bottom: 5px; font-size: 0.7rem; width: 100%;}
+        }
+
+        @keyframes floatLogo { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-8px); } }
 
         /* Terms Gate */
-        .terms-gate {
-            display: flex; align-items: center; gap: 8px; margin-bottom: 20px;
-            cursor: pointer; font-size: 0.8rem; color: #ddd; font-weight: 600; text-shadow: 1px 1px 3px black;
-        }
+        .terms-gate { display: flex; align-items: center; gap: 8px; cursor: pointer; color: #ccc; font-weight: 600; text-shadow: 1px 1px 2px black; }
         .terms-gate input { display: none; }
-        .terms-checkmark {
-            width: 20px; height: 20px; border: 2px solid #aaa; border-radius: 4px;
-            display: flex; align-items: center; justify-content: center; transition: 0.3s;
-            background: rgba(0,0,0,0.6); box-shadow: 0 4px 10px rgba(0,0,0,0.5);
-        }
-        .terms-gate input:checked + .terms-checkmark {
-            border-color: var(--accent-green); background: rgba(0, 255, 127, 0.25);
-            box-shadow: 0 0 15px var(--accent-green);
-        }
-        .terms-gate input:checked + .terms-checkmark::after {
-            content: '\f00c'; font-family: "Font Awesome 6 Free"; font-weight: 900;
-            color: var(--accent-green); font-size: 12px;
-        }
-        .terms-link { color: var(--accent-cyan); text-decoration: underline; font-weight: bold; text-shadow: 0 0 8px rgba(0,242,255,0.5);}
+        .terms-checkmark { width: 16px; height: 16px; border: 2px solid #888; border-radius: 4px; display: flex; align-items: center; justify-content: center; transition: 0.3s; background: rgba(0,0,0,0.5); flex-shrink: 0;}
+        .terms-gate input:checked + .terms-checkmark { border-color: var(--accent-green); background: rgba(0, 255, 127, 0.2); box-shadow: 0 0 10px var(--accent-green); }
+        .terms-gate input:checked + .terms-checkmark::after { content: '\f00c'; font-family: "Font Awesome 6 Free"; font-weight: 900; color: var(--accent-green); font-size: 9px; }
+        .terms-link { color: var(--accent-cyan); text-decoration: underline; font-weight: bold; }
 
-        /* Buttons Layout */
-        .auth-buttons-container {
-            display: flex; flex-direction: column; gap: 12px; width: 100%; max-width: 360px;
-            justify-content: center;
-        }
-
-        .game-btn {
-            width: 100%; padding: 14px; border-radius: 10px; font-family: var(--font-head);
-            font-size: 0.95rem; font-weight: 900; letter-spacing: 1.5px; cursor: pointer; transition: 0.2s;
+        /* BUTTONS */
+        .auth-buttons-container { width: 100%; display: flex; flex-direction: column; gap: 8px; }
+        .action-btn {
+            width: 100%; padding: 12px; border-radius: 10px; font-family: var(--font-head);
+            font-size: 0.85rem; font-weight: 900; letter-spacing: 1px; cursor: pointer; transition: 0.2s;
             text-transform: uppercase; display: flex; align-items: center; justify-content: center; gap: 8px;
-            position: relative; overflow: hidden; border: none; z-index: 1; color: white;
-            box-shadow: 0 5px 20px rgba(0,0,0,0.8);
+            border: none; position: relative; overflow: hidden; z-index: 1; margin: 0;
         }
-        .game-btn::after {
+        .action-btn::after {
             content: ''; position: absolute; top: 0; left: -100%; width: 50%; height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
             transform: skewX(-25deg); transition: 0.5s; z-index: -1;
         }
-        .game-btn:hover::after { left: 150%; transition: 0.7s; }
-        .game-btn:active { transform: scale(0.96); }
+        .action-btn:hover::after { left: 150%; transition: 0.7s; }
+        .action-btn:active { transform: scale(0.96); }
 
-        .login-btn { background: var(--accent-gradient); box-shadow: 0 5px 25px rgba(189,0,255,0.6); }
-        .register-btn { background: rgba(0,0,0,0.7); border: 2px solid var(--accent-cyan); backdrop-filter: blur(10px); }
+        .login-btn { background: var(--accent-gradient); color: white; box-shadow: 0 4px 15px rgba(189,0,255,0.4); }
+        .register-btn { background: rgba(0,0,0,0.6); color: white; border: 1px solid var(--accent-cyan); box-shadow: inset 0 0 10px rgba(0,242,255,0.2); }
         
         .org-btn { 
-            background: rgba(255, 153, 0, 0.2); color: var(--accent-orange); 
-            border: 2px solid var(--accent-orange); box-shadow: 0 0 25px rgba(255,153,0,0.5), inset 0 0 15px rgba(255,153,0,0.3);
-            backdrop-filter: blur(10px); animation: orgGlow 2s infinite alternate; margin-top: 5px;
+            background: transparent; color: var(--accent-orange); font-size: 0.75rem; 
+            margin-top: 2px; text-decoration: none; display: flex; align-items: center; justify-content: center; gap: 5px;
+            text-shadow: 0 0 10px rgba(255,153,0,0.5); border: none; box-shadow: none;
         }
-        @keyframes orgGlow { from { box-shadow: 0 0 15px rgba(255,153,0,0.4); } to { box-shadow: 0 0 35px rgba(255,153,0,0.8); border-color: #ffd700; color: #ffd700; } }
+        .org-btn:active { transform: scale(0.95); }
 
-        /* TAP TO START ENGINE (FULL SCREEN HITBOX) */
-        .tap-to-start-hitbox {
-            position: absolute; top: 0; left: 0; width: 100vw; height: 100vh; z-index: 90;
-            display: none; flex-direction: column; align-items: center; justify-content: flex-end;
-            padding-bottom: 12vh; cursor: pointer;
-        }
-        .tap-to-start-hitbox.active { display: flex; }
-        
-        .tap-text {
-            font-family: var(--font-head); font-size: clamp(1.2rem, 4vw, 1.8rem); font-weight: 900; color: white;
-            letter-spacing: 3px; text-transform: uppercase;
-            text-shadow: 0 0 15px var(--accent-cyan), 0 0 30px var(--accent-purple);
-            animation: pulseTap 1.5s infinite alternate;
+        /* TAP TO START ENGINE */
+        .tap-to-start {
+            font-family: var(--font-head); font-size: 1.3rem; font-weight: 900; color: white;
+            letter-spacing: 4px; text-transform: uppercase; cursor: pointer;
+            text-shadow: 0 0 15px var(--accent-cyan), 0 0 25px var(--accent-purple);
+            animation: pulseTap 1.5s infinite alternate; padding: 20px; width: 100%; text-align: center;
         }
         @keyframes pulseTap { 0% { opacity: 0.4; transform: scale(0.95); } 100% { opacity: 1; transform: scale(1.05); } }
 
         /* TOUCH RIPPLE FX */
         .ripple {
             position: absolute; border-radius: 50%; transform: scale(0);
-            animation: ripple-anim 0.6s linear; background: rgba(0, 242, 255, 0.5); z-index: 9999; pointer-events: none;
+            animation: ripple-anim 0.5s linear; background: rgba(0, 242, 255, 0.5); z-index: 100; pointer-events: none;
         }
         @keyframes ripple-anim { to { transform: scale(4); opacity: 0; } }
 
-        /* LEGAL FOOTER CREDITS (3-POINT DESKTOP, STACKED MOBILE) */
-        .credits-footer {
-            position: absolute; bottom: 8px; width: 100%; z-index: 5; pointer-events: none;
-            display: flex; flex-direction: column; align-items: center; gap: 4px; padding: 0 15px;
-        }
-        .data-notice { font-size: 0.6rem; color: var(--accent-green); font-family: var(--font-body); font-weight: bold; letter-spacing: 0.5px; text-shadow: 1px 1px 2px black;}
-        .copyrights { font-size: 0.5rem; color: rgba(255,255,255,0.6); font-family: var(--font-body); letter-spacing: 0.5px; text-shadow: 1px 1px 2px black; text-align: center;}
-        .quva-credit { font-size: 0.6rem; color: #aaa; font-family: var(--font-body); letter-spacing: 1px; text-shadow: 1px 1px 2px black;}
+        /* LEGAL FOOTER CREDITS */
+        .data-notice { font-size: 0.55rem; color: var(--accent-green); font-family: var(--font-body); font-weight: bold; letter-spacing: 0.5px; text-shadow: 1px 1px 2px black;}
+        .quva-credit { font-size: 0.55rem; color: #aaa; font-family: var(--font-body); letter-spacing: 1px; text-shadow: 1px 1px 2px black;}
         .neon-quva { font-family: var(--font-head); font-weight: 900; color: white; text-shadow: 0 0 8px #00f2ff, 0 0 15px #bd00ff; letter-spacing: 2px;}
 
-        @media (min-width: 769px) {
-            .credits-footer { flex-direction: row; justify-content: space-between; align-items: flex-end; bottom: 15px; padding: 0 30px;}
-            .footer-left, .footer-center, .footer-right { flex: 1; }
-            .footer-center { text-align: center; }
-            .footer-right { text-align: right; }
-            .footer-left { text-align: left; }
-            .auth-buttons-container { flex-direction: row; max-width: 800px; }
-            .game-btn { flex: 1; }
-        }
-
-        /* --- MODALS (UNIVERSAL SIZING & Z-INDEX FIX) --- */
+        /* --- MODALS --- */
         .modal-overlay {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            position: fixed; top: 0; left: 0; width: 100vw; height: 100dvh;
             background: rgba(0, 0, 0, 0.8); z-index: 5000; display: none;
             align-items: center; justify-content: center; backdrop-filter: blur(15px);
             opacity: 0; transition: opacity 0.3s ease; padding: 15px;
@@ -246,171 +215,161 @@
         
         .modal-card {
             background: var(--card-bg); border: 1px solid var(--card-border);
-            width: 100%; max-width: 380px; border-radius: 20px; padding: 25px 20px;
+            width: 100%; max-width: 360px; border-radius: 20px; padding: 20px 15px;
             box-shadow: 0 15px 40px rgba(0,0,0,0.9), inset 0 0 25px rgba(0,242,255,0.15);
             transform: scale(0.9); transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            max-height: 90vh; display: flex; flex-direction: column; position: relative;
-            backdrop-filter: blur(30px); -webkit-backdrop-filter: blur(30px);
+            max-height: 85vh; display: flex; flex-direction: column; position: relative;
+            overflow-x: hidden; overflow-y: auto; 
         }
         .modal-overlay.active .modal-card { transform: scale(1); }
 
-        .close-modal { position: absolute; top: 15px; right: 18px; font-size: 1.3rem; color: #888; cursor: pointer; transition: 0.3s; z-index: 100; }
+        .close-modal { position: absolute; top: 12px; right: 15px; font-size: 1.2rem; color: #888; cursor: pointer; transition: 0.3s; z-index: 100; }
         .close-modal:hover { color: var(--accent-red); transform: rotate(90deg) scale(1.1); }
+        .modal-title { font-family: var(--font-head); font-size: 1.1rem; color: white; margin-bottom: 15px; text-align: center; text-transform: uppercase; letter-spacing: 1px; text-shadow: 0 0 10px currentColor; flex-shrink: 0;}
 
-        .modal-title { font-family: var(--font-head); font-size: 1.2rem; color: white; margin-bottom: 20px; text-align: center; text-transform: uppercase; letter-spacing: 1px; text-shadow: 0 0 10px currentColor; flex-shrink: 0;}
-
-        /* ORGANIZER PORTAL MODAL GLOW */
-        #orgModal .modal-card {
-            background: rgba(20, 5, 0, 0.85); border: 1px solid rgba(255, 153, 0, 0.6);
-            box-shadow: 0 15px 40px rgba(0,0,0,0.9), inset 0 0 40px rgba(255, 153, 0, 0.25);
-        }
+        #orgModal .modal-card { background: rgba(20, 5, 0, 0.85); border: 1px solid rgba(255, 153, 0, 0.6); box-shadow: 0 15px 40px rgba(0,0,0,0.9), inset 0 0 40px rgba(255, 153, 0, 0.25); }
 
         /* --- MULTI-STEP SLIDER --- */
-        .slider-window { width: 100%; flex: 1; overflow: hidden; position: relative; min-height: 270px; }
+        .slider-window { width: 100%; flex: 1; overflow: hidden; position: relative; min-height: 250px; }
         .slider-track { display: flex; width: 300%; transition: transform 0.4s cubic-bezier(0.25, 0.8, 0.25, 1); height: 100%; align-items: flex-start;}
-        .slide-step { width: 33.333%; padding: 5px; flex-shrink: 0; box-sizing: border-box; overflow-y: auto; max-height: 100%; scrollbar-width: none; }
+        .slide-step { width: 33.333%; padding: 2px; flex-shrink: 0; box-sizing: border-box; overflow-x: hidden; overflow-y: auto; max-height: 100%; scrollbar-width: none; }
         
         .step-indicators { display: flex; justify-content: center; gap: 8px; margin-bottom: 15px; flex-shrink: 0;}
-        .step-dot { width: 8px; height: 8px; border-radius: 50%; background: rgba(255,255,255,0.2); transition: 0.3s; box-shadow: inset 0 0 5px rgba(0,0,0,0.5); }
-        .step-dot.active { background: var(--accent-cyan); box-shadow: 0 0 10px var(--accent-cyan); transform: scale(1.3); }
+        .step-dot { width: 6px; height: 6px; border-radius: 50%; background: rgba(255,255,255,0.2); transition: 0.3s; }
+        .step-dot.active { background: var(--accent-cyan); box-shadow: 0 0 10px var(--accent-cyan); transform: scale(1.4); }
 
-        /* --- FORMS & INPUTS (MICRO-SCALED FOR NO OVERFLOW) --- */
-        .input-wrapper { margin-bottom: 12px; width: 100%; }
+        /* --- FORMS & INPUTS --- */
+        .input-wrapper { margin-bottom: 10px; width: 100%; }
         .input-group { position: relative; width: 100%; }
-        /* DROPDOWN FIX: Make icon pointer-events none and inputs z-index high */
-        .input-icon { position: absolute; left: 14px; top: 50%; transform: translateY(-50%); color: #666; transition: 0.3s; pointer-events: none; font-size: 0.85rem; z-index: 10;}
+        .input-icon { position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: #666; transition: 0.3s; pointer-events: none; font-size: 0.8rem; z-index: 10;}
         
         .form-control {
-            width: 100%; background: var(--input-bg); border: 1px solid rgba(255,255,255,0.1); border-radius: 10px;
-            padding: 12px 12px 12px 38px; color: white; font-family: var(--font-body); font-size: 0.85rem; outline: none; transition: 0.2s;
-            box-shadow: inset 0 0 10px rgba(0,0,0,0.5); appearance: none; -webkit-appearance: none; position: relative; z-index: 5;
+            width: 100%; background: var(--input-bg); border: 1px solid rgba(255,255,255,0.1); border-radius: 8px;
+            padding: 10px 10px 10px 35px; color: white; font-family: var(--font-body); font-size: 0.8rem; outline: none; transition: 0.2s;
+            box-shadow: inset 0 0 10px rgba(0,0,0,0.5); appearance: none; -webkit-appearance: none; position: relative; z-index: 2;
         }
-        
-        select.form-control { cursor: pointer; padding-right: 30px; background-image: url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23666666%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E"); background-repeat: no-repeat; background-position: right 12px top 50%; background-size: 10px auto; background-color: var(--input-bg);}
+        select.form-control { cursor: pointer; padding-right: 30px; z-index: 5; background-image: url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23666666%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E"); background-repeat: no-repeat; background-position: right 10px top 50%; background-size: 10px auto; background-color: var(--input-bg);}
         select.form-control option { background: var(--primary-bg); color: white; }
         
         .form-control:focus { border-color: var(--accent-cyan); box-shadow: 0 0 10px rgba(0, 242, 255, 0.3), inset 0 0 8px rgba(0,0,0,0.6); }
         #orgModal .form-control:focus { border-color: var(--accent-orange); box-shadow: 0 0 10px rgba(255, 153, 0, 0.3); }
-        
         .form-control:focus + .input-icon, .form-control:not(:placeholder-shown) + .input-icon, .input-group:focus-within .input-icon { color: var(--accent-cyan); filter: drop-shadow(0 0 5px var(--accent-cyan)); }
         #orgModal .input-group:focus-within .input-icon { color: var(--accent-orange); filter: drop-shadow(0 0 5px var(--accent-orange)); }
         
-        .pwd-toggle { position: absolute; right: 14px; top: 50%; transform: translateY(-50%); color: #666; cursor: pointer; transition: 0.3s; font-size: 0.9rem; z-index: 10;}
+        .pwd-toggle { position: absolute; right: 12px; top: 50%; transform: translateY(-50%); color: #666; cursor: pointer; transition: 0.3s; font-size: 0.85rem; z-index: 10;}
         .pwd-toggle:active { transform: translateY(-50%) scale(0.9); }
 
         /* --- OTP UI --- */
-        .flex-row { display: flex; gap: 8px; }
-        .otp-btn { flex: 1; max-width: 100px; background: rgba(189,0,255,0.15); border: 1px solid var(--accent-purple); color: var(--accent-purple); border-radius: 10px; font-family: var(--font-head); font-size: 0.75rem; font-weight: bold; cursor: pointer; transition: 0.3s; text-transform: uppercase; white-space: nowrap; height: 44px; z-index: 5;}
+        .flex-row { display: flex; gap: 6px; }
+        .otp-btn { flex: 1; max-width: 90px; background: rgba(189,0,255,0.15); border: 1px solid var(--accent-purple); color: var(--accent-purple); border-radius: 8px; font-family: var(--font-head); font-size: 0.7rem; font-weight: bold; cursor: pointer; transition: 0.3s; text-transform: uppercase; white-space: nowrap; height: 38px; z-index: 5;}
         .otp-btn:active { transform: scale(0.95); background: var(--accent-purple); color: #fff; }
-        .verify-btn { position: absolute; right: 4px; top: 4px; bottom: 4px; background: var(--accent-green); border: none; border-radius: 8px; color: #000; font-weight: 800; padding: 0 12px; cursor: pointer; font-family: var(--font-head); font-size: 0.75rem; transition: 0.2s; z-index: 10;}
+        .verify-btn { position: absolute; right: 4px; top: 4px; bottom: 4px; background: var(--accent-green); border: none; border-radius: 6px; color: #000; font-weight: 800; padding: 0 10px; cursor: pointer; font-family: var(--font-head); font-size: 0.65rem; transition: 0.2s; z-index: 10;}
         .verify-btn:active { transform: scale(0.95); }
         .verify-btn.verified { background: rgba(0, 255, 127, 0.1); border: 1px solid var(--accent-green); color: var(--accent-green); cursor: default; }
 
-        /* SLIDER NAVIGATION BUTTONS (UNIFORM SIZE) */
-        .slide-nav-row { display: flex; gap: 10px; margin-top: 15px; }
-        .slide-btn { flex: 1; height: 44px; border: none; border-radius: 10px; font-family: var(--font-head); font-size: 0.85rem; font-weight: bold; text-transform: uppercase; cursor: pointer; transition: 0.2s; box-shadow: 0 4px 15px rgba(0,0,0,0.4); display: flex; align-items: center; justify-content: center; gap: 6px;}
-        .slide-btn.next { background: var(--accent-gradient); color: white; }
+        /* SLIDER NAVIGATION BUTTONS */
+        .slide-nav-row { display: flex; gap: 8px; margin-top: 10px; }
+        .slide-btn { flex: 1; height: 40px; border: none; border-radius: 8px; font-family: var(--font-head); font-size: 0.8rem; font-weight: bold; text-transform: uppercase; cursor: pointer; transition: 0.2s; display: flex; align-items: center; justify-content: center; gap: 6px;}
+        .slide-btn.next { background: var(--accent-gradient); color: white; box-shadow: 0 4px 15px rgba(0,0,0,0.4); }
         .slide-btn.back { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.15); color: #ccc; }
         .slide-btn:active { transform: scale(0.96); }
 
         /* --- TOAST ALERTS --- */
         #customToast {
             position: fixed; top: -60px; left: 50%; transform: translateX(-50%);
-            background: rgba(255, 77, 77, 0.95); color: white; font-family: var(--font-head); font-size: 0.75rem; font-weight: bold;
-            padding: 12px 20px; border-radius: 50px; z-index: 9999;
+            background: rgba(255, 77, 77, 0.95); color: white; font-family: var(--font-head); font-size: 0.7rem; font-weight: bold;
+            padding: 10px 20px; border-radius: 50px; z-index: 9999;
             box-shadow: 0 5px 20px rgba(255, 77, 77, 0.6); opacity: 0; transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            display: flex; align-items: center; gap: 8px; white-space: nowrap; backdrop-filter: blur(10px);
+            display: flex; align-items: center; gap: 6px; white-space: nowrap; backdrop-filter: blur(10px);
         }
         #customToast.show { top: 35px; opacity: 1; }
         #customToast.success { background: rgba(0, 255, 127, 0.95); color: black; box-shadow: 0 5px 20px rgba(0, 255, 127, 0.6); }
 
         /* CINEMATIC ARENA ENTRY */
-        .arena-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #040108; z-index: 9999; display: none; flex-direction: column; align-items: center; justify-content: center; }
+        .arena-overlay { position: fixed; top: 0; left: 0; width: 100vw; height: 100dvh; background: #040108; z-index: 9999; display: none; flex-direction: column; align-items: center; justify-content: center; backdrop-filter: blur(20px);}
         .arena-overlay.active { display: flex; animation: fadeInBg 0.3s forwards; }
-        .arena-text { font-family: var(--font-head); font-size: 2rem; color: #fff; font-weight: 900; letter-spacing: 4px; text-shadow: 0 0 20px rgba(0, 242, 255, 0.6); text-align: center; text-transform: uppercase; animation: cinematicEntry 2s cubic-bezier(0.25, 1, 0.5, 1) forwards; }
+        .arena-text { font-family: var(--font-head); font-size: 1.8rem; color: #fff; font-weight: 900; letter-spacing: 4px; text-shadow: 0 0 20px rgba(0, 242, 255, 0.6); text-align: center; text-transform: uppercase; animation: cinematicEntry 2s cubic-bezier(0.25, 1, 0.5, 1) forwards; }
         @keyframes fadeInBg { from { opacity: 0; } to { opacity: 1; } }
         @keyframes cinematicEntry { 0% { transform: scale(0.8); opacity: 0; filter: blur(10px); } 20% { transform: scale(1); opacity: 1; filter: blur(0); letter-spacing: 4px; } 80% { transform: scale(1.05); opacity: 1; filter: blur(0); letter-spacing: 6px; } 100% { transform: scale(1.3); opacity: 0; filter: blur(15px); letter-spacing: 10px; } }
-
-        /* UTILITY MODALS (Help, Lang, Accounts) */
-        .util-list { display: flex; flex-direction: column; gap: 10px; max-height: 50vh; overflow-y: auto; padding-right: 5px;}
-        .util-item { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); padding: 12px; border-radius: 12px; cursor: pointer; display: flex; align-items: center; gap: 10px; transition: 0.2s;}
-        .util-item:hover { background: rgba(0,242,255,0.1); border-color: var(--accent-cyan); }
-        .util-item:active { transform: scale(0.96); }
-        .util-img { width: 40px; height: 40px; border-radius: 50%; object-fit: cover; border: 1px solid var(--accent-cyan);}
-        textarea.form-control { height: 100px; resize: none; font-family: var(--font-body); }
     </style>
 </head>
 <body id="mainBody">
 
-    <video loop playsinline class="video-bg" id="bgVideo"></video>
+    <video class="video-bg" id="bgVideo" style="opacity: 0; z-index: -4;"></video>
+           
     <div class="bg-overlay"></div>
     <canvas id="particles-canvas"></canvas>
-
-    <div class="hud-top-left">Beta Version 4.2.0.19751</div>
+    <div class="hud-top-left">Beta Version 1.2.0.</div>
     
     <div class="hud-top-right">
-        <div class="hud-tool-btn vol-btn" onclick="toggleVolume(event)">
+        <div class="hud-tool-btn vol-btn" onclick="toggleVolume(event)" style="margin-right: 5px;">
             <i id="volIcon" class="fa-solid fa-volume-xmark"></i>
         </div>
-        <div class="hud-tool-btn" onclick="openModal('helpModal')"><i class="fa-solid fa-headset"></i>Help</div>
-        <div class="hud-tool-btn" onclick="openModal('langModal')"><i class="fa-solid fa-earth-americas"></i>Lang</div>
-        <div class="hud-tool-btn" onclick="openAccountsModal()"><i class="fa-solid fa-users-gear"></i>Accounts</div>
+        <div class="hud-tool-btn" onclick="openModal('helpModal')"><i class="fa-solid fa-headset"></i><span id="txtHelp">Help</span></div>
+        <div class="hud-tool-btn" onclick="openModal('langModal')"><i class="fa-solid fa-earth-americas"></i><span id="txtLang">Lang</span></div>
+        <div class="hud-tool-btn" onclick="openAccountsModal()"><i class="fa-solid fa-users-gear"></i><span id="txtAcc">Accounts</span></div>
     </div>
 
     <div id="loggedInProfile" class="top-profile-corner hidden">
         <img id="loggedInAvatar" src="" alt="Avatar" onclick="quickLogin()">
         <div class="user-info">
             <span id="loggedInName" class="user-name" onclick="quickLogin()"></span>
-            <span class="logout-text" onclick="logoutUser()">Logout <i class="fa-solid fa-right-from-bracket"></i></span>
+            <span class="logout-text" onclick="logoutUser(event)"><span id="txtLogout">Logout</span> <i class="fa-solid fa-right-from-bracket"></i></span>
         </div>
     </div>
 
-    <div class="game-entry-screen" id="entryScreen">
-        
-        <div class="center-logo-area">
-            <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEipVmqyUEA22VpntZdPCHuXoO_Rjco_cRaNl5CyFa-eehdtgXnHe6JoD8a5svxJRJYZfv_yXwww10T2cL2PHTiXLK-J-nWC1swmMs5RDxGVM8FBSlJORaRiX4YiD8gL8SyM4X1tRyQn_v8MsqQvbU4uEyHEU0qaySP1STWHaBEYuWKyF3-6QovSqJR-8xU/s1024/1000093705.png" alt="Tournyx Logo">
-            <h1 class="app-name">TOURNYX ESPORTS</h1>
-        </div>
-        
-        <div class="bottom-hud" id="bottomHudControls">
+    <div id="fullScreenTap" class="hidden" onclick="quickLogin()"></div>
+
+    <div class="main-ui-container" id="mainUiContainer">
+        <div class="auth-card-wrapper">
+            <div class="logo-overlap center-logo-area">
+                <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEipVmqyUEA22VpntZdPCHuXoO_Rjco_cRaNl5CyFa-eehdtgXnHe6JoD8a5svxJRJYZfv_yXwww10T2cL2PHTiXLK-J-nWC1swmMs5RDxGVM8FBSlJORaRiX4YiD8gL8SyM4X1tRyQn_v8MsqQvbU4uEyHEU0qaySP1STWHaBEYuWKyF3-6QovSqJR-8xU/s1024/1000093705.png" alt="Tournyx Logo">
+                <h1 class="app-name">TOURNYX <span class="esports-text">ESPORTS</span></h1>
+                
+                <p class="app-tagline">The Ultimate Esports Arena</p>
+                <div class="static-desc" id="txtDesc">Join the elite. Compete in daily scrims, climb the leaderboard, and withdraw real cash directly to your wallet.</div>
+                
+                <div class="feature-badges">
+                    <span class="f-badge"><i class="fa-solid fa-trophy"></i> Compete</span>
+                    <span class="f-badge"><i class="fa-solid fa-wallet"></i> Earn Cash</span>
+                    <span class="f-badge"><i class="fa-solid fa-shield-halved"></i> Clans</span>
+                </div>
+            </div>
+
             <label class="terms-gate" id="termsGateContainer" onclick="doHaptic()">
                 <input type="checkbox" id="masterTerms" checked>
                 <span class="terms-checkmark"></span>
-                <span>I have read and agree to the <span class="terms-link" onclick="window.open('terms.html','_blank')">Terms of Service</span> and Privacy Policy.</span>
+                <span id="txtTermsText">I have read and agree to the <span class="terms-link" onclick="window.open('terms.html','_blank')">Terms of Service</span>.</span>
             </label>
 
             <div id="authButtons" class="auth-buttons-container">
-                <button class="game-btn login-btn" onclick="checkTermsAndOpen('loginModal')">
-                    <i class="fa-solid fa-right-to-bracket"></i> PLAYER LOGIN
+                <button class="action-btn login-btn" onclick="checkTermsAndOpen('loginModal')">
+                    <i class="fa-solid fa-right-to-bracket"></i> <span id="txtBtnLogin">PLAYER LOGIN</span>
                 </button>
-                <button class="game-btn register-btn" onclick="checkTermsAndOpen('signupModal')">
-                    <i class="fa-solid fa-user-plus"></i> CREATE ACCOUNT
+                <button class="action-btn register-btn" onclick="checkTermsAndOpen('signupModal')">
+                    <i class="fa-solid fa-user-plus"></i> <span id="txtBtnReg">CREATE ACCOUNT</span>
                 </button>
-                <button class="game-btn org-btn" onclick="checkTermsAndOpen('orgModal')">
-                    <i class="fa-solid fa-crown"></i> ORGANIZER PORTAL
+                <button class="action-btn org-btn" onclick="checkTermsAndOpen('orgModal')">
+                    <i class="fa-solid fa-crown"></i> <span id="txtBtnOrg">ORGANIZER PORTAL</span>
                 </button>
             </div>
+            
+            <div id="tapToStartHitbox" class="tap-to-start hidden" style="z-index: 5000; position:relative;">
+                <span id="txtTapEnter">TAP TO ENTER ARENA</span>
+            </div>
         </div>
-        
-        <div id="tapToStartHitbox" class="tap-to-start-hitbox" onclick="quickLogin()">
-            <div class="tap-text">TAP TO ENTER ARENA</div>
+
+        <div class="credits-footer">
+            <div class="footer-left data-notice"><i class="fa-solid fa-cloud-arrow-down"></i> <span id="txtData">Video cached. Zero data usage.</span></div>
+            <div class="footer-center copyrights">© Tournyx Esports private limited | © KRAFTON | © Garena</div>
+            <div class="footer-right quva-credit">Powered by <span class="neon-quva">QUVA</span></div>
         </div>
     </div>
-
-    <div class="credits-footer">
-        <div class="footer-left data-notice"><i class="fa-solid fa-cloud-arrow-down"></i> Video cached. Zero data usage.</div>
-        <div class="footer-center copyrights">© Tournyx Esports private limited | © KRAFTON | © Garena</div>
-        <div class="footer-right quva-credit">Powered by <span class="neon-quva">QUVA</span></div>
-    </div>
-
-    <datalist id="indianCities">
-        <option value="Mumbai"><option value="Delhi"><option value="Bangalore"><option value="Hyderabad"><option value="Ahmedabad"><option value="Chennai"><option value="Kolkata"><option value="Surat"><option value="Pune"><option value="Jaipur"><option value="Lucknow"><option value="Kanpur"><option value="Nagpur"><option value="Indore"><option value="Thane"><option value="Bhopal"><option value="Visakhapatnam"><option value="Pimpri-Chinchwad"><option value="Patna"><option value="Vadodara"><option value="Ghaziabad"><option value="Ludhiana"><option value="Agra"><option value="Nashik"><option value="Faridabad"><option value="Meerut"><option value="Rajkot"><option value="Kalyan-Dombivli"><option value="Vasai-Virar"><option value="Varanasi"><option value="Srinagar"><option value="Aurangabad"><option value="Dhanbad"><option value="Amritsar"><option value="Navi Mumbai"><option value="Allahabad"><option value="Howrah"><option value="Ranchi"><option value="Gwalior"><option value="Jabalpur"><option value="Coimbatore"><option value="Vijayawada"><option value="Jodhpur"><option value="Madurai"><option value="Raipur"><option value="Kota"><option value="Guwahati"><option value="Chandigarh"><option value="Solapur"><option value="Hubballi-Dharwad"><option value="Tiruchirappalli"><option value="Bareilly"><option value="Moradabad"><option value="Mysore"><option value="Tiruppur"><option value="Gurgaon"><option value="Aligarh"><option value="Jalandhar"><option value="Bhubaneswar"><option value="Salem"><option value="Warangal"><option value="Mira-Bhayandar"><option value="Thiruvananthapuram"><option value="Bhiwandi"><option value="Saharanpur"><option value="Guntur"><option value="Amravati"><option value="Bikaner"><option value="Noida"><option value="Jamshedpur"><option value="Bhilai"><option value="Cuttack"><option value="Firozabad"><option value="Kochi"><option value="Bhavnagar"><option value="Dehradun"><option value="Durgapur"><option value="Asansol"><option value="Nanded"><option value="Kolhapur"><option value="Ajmer"><option value="Gulbarga"><option value="Jamnagar"><option value="Ujjain"><option value="Loni"><option value="Siliguri"><option value="Jhansi"><option value="Ulhasnagar"><option value="Jammu"><option value="Sangli-Miraj & Kupwad"><option value="Mangalore"><option value="Erode"><option value="Belgaum"><option value="Kurnool"><option value="Ambattur"><option value="Rajahmundry"><option value="Tirunelveli"><option value="Malegaon"><option value="Gaya"><option value="Udaipur">
-    </datalist>
 
     <div class="modal-overlay" id="loginModal">
         <div class="modal-card">
             <i class="fa-solid fa-xmark close-modal" onclick="closeModals()"></i>
-            <h2 class="modal-title" style="color:var(--accent-cyan)">Player Login</h2>
+            <h2 class="modal-title" style="color:var(--accent-cyan)" id="lblLog">Player Login</h2>
             
             <form id="playerLoginForm">
                 <div class="input-wrapper">
@@ -426,7 +385,7 @@
                         <i class="fa-solid fa-eye pwd-toggle" onclick="togglePwd('loginPwd', this, false)"></i>
                     </div>
                 </div>
-                <button type="submit" class="slide-btn next" id="btnLogin" style="width:100%;">ENTER ARENA <i class="fa-solid fa-arrow-right"></i></button>
+                <button type="submit" class="slide-btn next" id="btnLogin" style="width:100%;"><span id="txtEnterArena">ENTER ARENA</span> <i class="fa-solid fa-arrow-right"></i></button>
             </form>
         </div>
     </div>
@@ -434,7 +393,7 @@
     <div class="modal-overlay" id="orgModal">
         <div class="modal-card">
             <i class="fa-solid fa-xmark close-modal" onclick="closeModals()"></i>
-            <h2 class="modal-title" style="color:var(--accent-orange)"><i class="fa-solid fa-crown"></i> Organizer Hub</h2>
+            <h2 class="modal-title" style="color:var(--accent-orange)" id="lblOrg"><i class="fa-solid fa-crown"></i> Organizer Hub</h2>
 
             <form id="organizerLoginForm">
                 <div class="input-wrapper">
@@ -450,7 +409,7 @@
                         <i class="fa-solid fa-eye pwd-toggle" onclick="togglePwd('orgPwd', this, true)"></i>
                     </div>
                 </div>
-                <button type="submit" class="slide-btn next" id="btnOrgLogin" style="width:100%; background:linear-gradient(90deg, #ff9900, #ff4d4d); box-shadow: 0 5px 20px rgba(255,153,0,0.4); border:none;">VERIFY ADMIN <i class="fa-solid fa-bolt"></i></button>
+                <button type="submit" class="slide-btn next" id="btnOrgLogin" style="width:100%; background:linear-gradient(90deg, #ff9900, #ff4d4d); box-shadow: 0 4px 15px rgba(255,153,0,0.4); border:none;"><span id="txtVerifyAdmin">VERIFY ADMIN</span> <i class="fa-solid fa-bolt"></i></button>
             </form>
             
             <div style="text-align:center; margin-top:15px; font-size:0.75rem;">
@@ -460,9 +419,9 @@
     </div>
 
     <div class="modal-overlay" id="signupModal">
-        <div class="modal-card" style="padding: 25px 20px;">
+        <div class="modal-card" style="padding: 20px 15px;">
             <i class="fa-solid fa-xmark close-modal" onclick="closeModals()"></i>
-            <h2 class="modal-title" style="color:var(--accent-purple); margin-bottom:10px;">Create Account</h2>
+            <h2 class="modal-title" style="color:var(--accent-purple); margin-bottom:10px;" id="lblReg">Create Account</h2>
             
             <div class="step-indicators">
                 <div class="step-dot active" id="dot1"></div>
@@ -513,14 +472,14 @@
                                 </div>
                             </div>
 
-                            <button type="button" class="slide-btn next" onclick="nextSlide(1)" style="width:100%;">Next <i class="fa-solid fa-arrow-right"></i></button>
+                            <button type="button" class="slide-btn next" onclick="nextSlide(1)" style="width:100%; margin-top:5px;"><span class="txtNext">Next</span> <i class="fa-solid fa-arrow-right"></i></button>
                         </div>
 
                         <div class="slide-step">
                             <div class="input-wrapper">
                                 <div class="input-group">
                                     <select name="game" id="regGame" class="form-control req-field">
-                                        <option value="" disabled selected>Select Primary Game</option>
+                                        <option value="" disabled selected id="txtSelGame">Select Primary Game</option>
                                         <option value="BGMI">BGMI</option>
                                         <option value="Free Fire">Free Fire</option>
                                         <option value="Call of Duty Mobile">Call of Duty Mobile</option>
@@ -552,67 +511,49 @@
                             </div>
 
                             <div class="slide-nav-row">
-                                <button type="button" class="slide-btn back" onclick="prevSlide(2)"><i class="fa-solid fa-arrow-left"></i> Back</button>
-                                <button type="button" class="slide-btn next" onclick="nextSlide(2)">Next <i class="fa-solid fa-arrow-right"></i></button>
+                                <button type="button" class="slide-btn back" onclick="prevSlide(2)"><i class="fa-solid fa-arrow-left"></i> <span class="txtBack">Back</span></button>
+                                <button type="button" class="slide-btn next" onclick="nextSlide(2)"><span class="txtNext">Next</span> <i class="fa-solid fa-arrow-right"></i></button>
                             </div>
                         </div>
 
                         <div class="slide-step">
+                            
                             <div class="input-wrapper">
                                 <div class="input-group">
-                                    <select name="state" id="regState" class="form-control req-field">
-                                        <option value="" disabled selected>Select State</option>
-                                        <option value="Andhra Pradesh">Andhra Pradesh</option>
-                                        <option value="Arunachal Pradesh">Arunachal Pradesh</option>
-                                        <option value="Assam">Assam</option>
-                                        <option value="Bihar">Bihar</option>
-                                        <option value="Chhattisgarh">Chhattisgarh</option>
-                                        <option value="Goa">Goa</option>
-                                        <option value="Gujarat">Gujarat</option>
-                                        <option value="Haryana">Haryana</option>
-                                        <option value="Himachal Pradesh">Himachal Pradesh</option>
-                                        <option value="Jharkhand">Jharkhand</option>
-                                        <option value="Karnataka">Karnataka</option>
-                                        <option value="Kerala">Kerala</option>
-                                        <option value="Madhya Pradesh">Madhya Pradesh</option>
-                                        <option value="Maharashtra">Maharashtra</option>
-                                        <option value="Manipur">Manipur</option>
-                                        <option value="Meghalaya">Meghalaya</option>
-                                        <option value="Mizoram">Mizoram</option>
-                                        <option value="Nagaland">Nagaland</option>
-                                        <option value="Odisha">Odisha</option>
-                                        <option value="Punjab">Punjab</option>
-                                        <option value="Rajasthan">Rajasthan</option>
-                                        <option value="Sikkim">Sikkim</option>
-                                        <option value="Tamil Nadu">Tamil Nadu</option>
-                                        <option value="Telangana">Telangana</option>
-                                        <option value="Tripura">Tripura</option>
-                                        <option value="Uttar Pradesh">Uttar Pradesh</option>
-                                        <option value="Uttarakhand">Uttarakhand</option>
-                                        <option value="West Bengal">West Bengal</option>
-                                    </select>
+                                    <select name="state" id="regState" class="form-control req-field" onchange="handleStateChange()">
+                                        </select>
                                     <i class="fa-solid fa-map input-icon"></i>
                                 </div>
                             </div>
 
+                            <div class="input-wrapper" id="customStateWrapper" style="display: none; margin-top: 5px;">
+                                <div class="input-group">
+                                    <input type="text" id="customState" class="form-control" placeholder="Type Your State">
+                                    <i class="fa-solid fa-pen input-icon"></i>
+                                </div>
+                            </div>
+
                             <div class="input-wrapper">
                                 <div class="input-group">
-                                    <input type="text" name="city" id="regCity" list="indianCities" class="form-control req-field" placeholder="City" autocomplete="off">
-                                    <i class="fa-solid fa-location-dot input-icon"></i>
+                                    <select name="city" id="regCity" class="form-control req-field" onchange="handleCityChange()" disabled>
+                                        <option value="" disabled selected id="txtSelCity">Select State First</option>
+                                    </select>
+                                    <i class="fa-solid fa-building input-icon"></i>
+                                </div>
+                            </div>
+
+                            <div class="input-wrapper" id="customCityWrapper" style="display: none; margin-top: 5px;">
+                                <div class="input-group">
+                                    <input type="text" id="customCity" class="form-control" placeholder="Type Your City">
+                                    <i class="fa-solid fa-pen input-icon"></i>
                                 </div>
                             </div>
                             
-                            <div class="info-box">
-                                <i class="fa-solid fa-shield-check" style="color:var(--accent-cyan)"></i> 
-                                <span>Terms and conditions accepted on entry gate. Ready to deploy!</span>
-                            </div>
-
-                            <div class="slide-nav-row" style="margin-top:10px;">
-                                <button type="button" class="slide-btn back" onclick="prevSlide(3)"><i class="fa-solid fa-arrow-left"></i> Back</button>
-                                <button type="submit" class="slide-btn next" id="btnSignup" style="background:var(--accent-green); color:black;"><i class="fa-solid fa-check"></i> FINISH</button>
+                            <div class="slide-nav-row" style="margin-top:20px;">
+                                <button type="button" class="slide-btn back" onclick="prevSlide(3)"><i class="fa-solid fa-arrow-left"></i> <span class="txtBack">Back</span></button>
+                                <button type="submit" class="slide-btn next" id="btnSignup" style="background:var(--accent-green); color:black;"><i class="fa-solid fa-check"></i> <span id="txtFinish">FINISH</span></button>
                             </div>
                         </div>
-
                     </div>
                 </div>
             </form>
@@ -622,16 +563,16 @@
     <div class="modal-overlay" id="helpModal">
         <div class="modal-card">
             <i class="fa-solid fa-xmark close-modal" onclick="closeModals()"></i>
-            <h2 class="modal-title" style="color:var(--accent-cyan)"><i class="fa-solid fa-headset"></i> Support</h2>
+            <h2 class="modal-title" style="color:var(--accent-cyan)"><i class="fa-solid fa-headset"></i> <span id="lblHelp">Support</span></h2>
             <form onsubmit="submitHelp(event)">
                 <div class="input-wrapper"><div class="input-group">
-                    <input type="text" id="helpContact" class="form-control" placeholder="Email or Phone" required>
-                    <i class="fa-solid fa-address-book input-icon"></i>
+                    <input type="email" id="helpEmail" class="form-control" placeholder="Your Email Address" required>
+                    <i class="fa-solid fa-envelope input-icon"></i>
                 </div></div>
                 <div class="input-wrapper"><div class="input-group">
-                    <textarea class="form-control" id="helpMsg" placeholder="Describe your issue..." required></textarea>
+                    <textarea class="form-control" id="helpMsg" placeholder="Describe your issue..." style="height:100px; resize:none;" required></textarea>
                 </div></div>
-                <button type="submit" class="slide-btn next" style="width:100%;">SEND MESSAGE</button>
+                <button type="submit" class="slide-btn next" id="btnHelp" style="width:100%;"><span id="txtSendMsg">SEND MESSAGE</span></button>
             </form>
         </div>
     </div>
@@ -640,12 +581,14 @@
         <div class="modal-card">
             <i class="fa-solid fa-xmark close-modal" onclick="closeModals()"></i>
             <h2 class="modal-title" style="color:var(--accent-cyan)"><i class="fa-solid fa-earth-americas"></i> Select Language</h2>
-            <div class="util-list">
-                <div class="util-item" onclick="setLanguage('en')"><span style="font-size:1.5rem;">🇮🇳</span> <span style="color:white; font-family:var(--font-head); font-weight:bold;">English (India)</span></div>
-                <div class="util-item" onclick="setLanguage('hi')"><span style="font-size:1.5rem;">🇮🇳</span> <span style="color:white; font-family:var(--font-head); font-weight:bold;">हिन्दी (Hindi)</span></div>
-                <div class="util-item" onclick="setLanguage('ta')"><span style="font-size:1.5rem;">🇮🇳</span> <span style="color:white; font-family:var(--font-head); font-weight:bold;">தமிழ் (Tamil)</span></div>
-                <div class="util-item" onclick="setLanguage('te')"><span style="font-size:1.5rem;">🇮🇳</span> <span style="color:white; font-family:var(--font-head); font-weight:bold;">తెలుగు (Telugu)</span></div>
-                <div class="util-item" onclick="setLanguage('mr')"><span style="font-size:1.5rem;">🇮🇳</span> <span style="color:white; font-family:var(--font-head); font-weight:bold;">मराठी (Marathi)</span></div>
+            <div style="display: flex; flex-direction: column; gap: 8px; max-height: 50vh; overflow-x: hidden; overflow-y: auto; padding-right: 5px;">
+                <div class="slide-btn back" style="justify-content:flex-start;" onclick="setLanguage('en')"><span style="font-size:1.2rem;">🇮🇳</span> English (India)</div>
+                <div class="slide-btn back" style="justify-content:flex-start;" onclick="setLanguage('hi')"><span style="font-size:1.2rem;">🇮🇳</span> हिन्दी (Hindi)</div>
+                <div class="slide-btn back" style="justify-content:flex-start;" onclick="setLanguage('ta')"><span style="font-size:1.2rem;">🇮🇳</span> தமிழ் (Tamil)</div>
+                <div class="slide-btn back" style="justify-content:flex-start;" onclick="setLanguage('ml')"><span style="font-size:1.2rem;">🇮🇳</span> മലയാളം (Malayalam)</div>
+                <div class="slide-btn back" style="justify-content:flex-start;" onclick="setLanguage('kn')"><span style="font-size:1.2rem;">🇮🇳</span> ಕನ್ನಡ (Kannada)</div>
+                <div class="slide-btn back" style="justify-content:flex-start;" onclick="setLanguage('te')"><span style="font-size:1.2rem;">🇮🇳</span> తెలుగు (Telugu)</div>
+                <div class="slide-btn back" style="justify-content:flex-start;" onclick="setLanguage('mr')"><span style="font-size:1.2rem;">🇮🇳</span> मराठी (Marathi)</div>
             </div>
         </div>
     </div>
@@ -653,87 +596,115 @@
     <div class="modal-overlay" id="accountsModal">
         <div class="modal-card">
             <i class="fa-solid fa-xmark close-modal" onclick="closeModals()"></i>
-            <h2 class="modal-title" style="color:var(--accent-cyan)"><i class="fa-solid fa-users-gear"></i> Recent Accounts</h2>
-            <div class="util-list" id="accountsListArea">
-                <div style="text-align:center; color:#888; font-size:0.8rem;">No recent accounts found.</div>
+            <h2 class="modal-title" style="color:var(--accent-cyan)"><i class="fa-solid fa-users-gear"></i> <span id="lblAcc">Recent Accounts</span></h2>
+            <div id="accountsListArea" style="display: flex; flex-direction: column; gap: 8px; max-height: 50vh; overflow-y: auto; padding-right: 5px;">
+                <div style="text-align:center; color:#888; font-size:0.75rem;">No recent accounts found.</div>
             </div>
         </div>
     </div>
 
     <div id="arenaLoader" class="arena-overlay">
-        <div class="arena-text">ENTERING THE ARENA</div>
+        <div class="arena-text" id="txtLoading">ENTERING THE ARENA</div>
     </div>
 
     <div id="customToast"><i class="fa-solid fa-circle-exclamation"></i> <span id="toastMsg">Alert</span></div>
 
     <script>
+        /* =========================================
+           TOURNYX PURE JAVASCRIPT VIDEO ENGINE v8.0
+           ========================================= */
+
+        window.addEventListener('error', function(e) { console.warn("Engine Caught Error:", e.message); e.preventDefault(); });
+
         const API_URL = 'https://script.google.com/macros/s/AKfycbyqqTpgaflxKJ9xH0jq7mJ_jLzcoNhas3gNo0h5gvoa_6r5Ae9NFxJAJp7ZoYNnMRKl/exec';
 
-        // --- GLOBAL TOUCH RIPPLE ENGINE (ESPORTS FEEL) ---
-        document.body.addEventListener('click', function (e) {
-            // Unmute video on first interaction globally
-            const video = document.getElementById('bgVideo');
-            if(video && video.muted && !window.hasUnmuted) {
-                video.muted = false;
-                document.getElementById('volIcon').className = 'fa-solid fa-volume-high';
-                window.hasUnmuted = true;
+        // --- 7-LANGUAGE AI ENGINE (LOCALIZATION) ---
+        const langData = {
+            'en': { login: "PLAYER LOGIN", reg: "CREATE ACCOUNT", org: "ORGANIZER PORTAL", desc: "Join the elite. Compete in daily scrims, climb the leaderboard, and withdraw real cash directly to your wallet.", logTitle: "Player Login", regTitle: "Create Account", help: "Help", lang: "Lang", acc: "Accounts", enter: "ENTER ARENA", terms: "I have read and agree to the Terms of Service.", tap: "TAP TO ENTER ARENA", applyHost: "Apply to Host Tournaments", admin: "VERIFY ADMIN", back: "Back", next: "Next" },
+            'hi': { login: "खिलाड़ी लॉगिन", reg: "खाता बनाएं", org: "आयोजक पोर्टल", desc: "कुलीन वर्ग में शामिल हों। दैनिक स्क्रिम्स में प्रतिस्पर्धा करें और असली नकद जीतें।", logTitle: "लॉगिन", regTitle: "खाता बनाएं", help: "मदद", lang: "भाषा", acc: "खाते", enter: "मैदान में प्रवेश करें", terms: "मैंने सेवा की शर्तें पढ़ ली हैं।", tap: "प्रवेश के लिए टैप करें", applyHost: "टूर्नामेंट होस्ट करें", admin: "एडमिन सत्यापित करें", back: "पीछे", next: "आगे" },
+            'ta': { login: "வீரர் உள்நுழைவு", reg: "கணக்கை உருவாக்கு", org: "அமைப்பாளர் போர்டல்", desc: "எலைட் அணியில் சேருங்கள். தினசரி போட்டிகளில் பங்கேற்று உண்மையான பணத்தை வெல்லுங்கள்.", logTitle: "உள்நுழைவு", regTitle: "உருவாக்கு", help: "உதவி", lang: "மொழி", acc: "கணக்குகள்", enter: "உள்ளே செல்லவும்", terms: "சேவை விதிமுறைகளை நான் ஏற்றுக்கொள்கிறேன்.", tap: "உள்ளே செல்ல தட்டவும்", applyHost: "போட்டியை நடத்த விண்ணப்பிக்கவும்", admin: "நிர்வாகியை சரிபார்க்கவும்", back: "பின்னால்", next: "அடுத்து" },
+            'te': { login: "ప్లేయర్ లాగిన్", reg: "ఖాతా సృష్టించండి", org: "ఆర్గనైజర్ పోర్టల్", desc: "ఎలైట్‌లో చేరండి. రోజువారీ స్కిర్మ్‌లలో పోటీపడి నిజమైన నగదు గెలుచుకోండి.", logTitle: "లాగిన్", regTitle: "సృష్టించండి", help: "సహాయం", lang: "భాష", acc: "ఖాతాలు", enter: "ఎంటర్ అవ్వండి", terms: "నేను సేవా నిబంధనలను అంగీకరిస్తున్నాను.", tap: "ప్రవేశించడానికి నొక్కండి", applyHost: "హోస్ట్ కోసం దరఖాస్తు చేయండి", admin: "నిర్వాహకుడిని ధృవీకరించండి", back: "వెనుకకు", next: "తదుపరి" },
+            'ml': { login: "ലോഗിൻ", reg: "അക്കൗണ്ട് സൃഷ്ടിക്കുക", org: "ഓർഗനൈസർ പോർട്ടൽ", desc: "എലൈറ്റിൽ ചേരുക. യഥാർത്ഥ പണം നേടുക.", logTitle: "ലോഗിൻ", regTitle: "സൃഷ്ടിക്കുക", help: "സഹായം", lang: "ഭാഷ", acc: "അക്കൗണ്ടുകൾ", enter: "പ്രവേശിക്കുക", terms: "ഞാൻ നിബന്ധനകൾ അംഗീകരിക്കുന്നു.", tap: "പ്രവേശിക്കാൻ ടാപ്പുചെയ്യുക", applyHost: "ഹോസ്റ്റുചെയ്യാൻ അപേക്ഷിക്കുക", admin: "പരിശോധിക്കുക", back: "തിരികെ", next: "അടുത്തത്" },
+            'kn': { login: "ಲಾಗಿನ್", reg: "ಖಾತೆ ರಚಿಸಿ", org: "ಸಂಘಟಕರ ಪೋರ್ಟಲ್", desc: "ಎಲೈಟ್ ಸೇರಿ. ನೈಜ ಹಣವನ್ನು ಗೆದ್ದಿರಿ.", logTitle: "ಲಾಗಿನ್", regTitle: "ರಚಿಸಿ", help: "ಸഹಾಯ", lang: "ಭಾಷೆ", acc: "ಖಾತೆಗಳು", enter: "ಪ್ರವೇಶಿಸಿ", terms: "ನಾನು ನಿಯಮಗಳನ್ನು ಒಪ್ಪುತ್ತೇನೆ.", tap: "ಪ್ರವೇಶಿಸಲು ಟ್ಯಾಪ್ ಮಾಡಿ", applyHost: "ಹೋಸ್ಟ್ ಮಾಡಲು ಅರ್ಜಿ ಸಲ್ಲಿಸಿ", admin: "ಪರಿಶೀಲಿಸಿ", back: "ಹಿಂದೆ", next: "ಮುಂದೆ" },
+            'mr': { login: "लॉगिन", reg: "खाते तयार करा", org: "आयोजक पोर्टल", desc: "एलिटमध्ये सामील व्हा. खरी रोकड जिंका.", logTitle: "लॉगिन", regTitle: "तयार करा", help: "मदत", lang: "भाषा", acc: "खाती", enter: "प्रवेश करा", terms: "मी अटी मान्य करतो.", tap: "प्रवेश करण्यासाठी टॅप करा", applyHost: "होस्ट करण्यासाठी अर्ज करा", admin: "पडताळणी करा", back: "मागे", next: "पुढे" }
+        };
+
+        function applyLanguageEngine() {
+            let lang = localStorage.getItem('tournyx_lang') || 'en';
+            if(langData[lang]) {
+                try {
+                    document.getElementById('txtBtnLogin').innerText = langData[lang].login;
+                    document.getElementById('txtBtnReg').innerText = langData[lang].reg;
+                    document.getElementById('txtBtnOrg').innerText = langData[lang].org;
+                    document.getElementById('txtDesc').innerText = langData[lang].desc;
+                    document.getElementById('lblLog').innerText = langData[lang].logTitle;
+                    document.getElementById('lblReg').innerText = langData[lang].regTitle;
+                    document.getElementById('txtHelp').innerText = langData[lang].help;
+                    document.getElementById('txtLang').innerText = langData[lang].lang;
+                    document.getElementById('txtAcc').innerText = langData[lang].acc;
+                    document.getElementById('txtEnterArena').innerText = langData[lang].enter;
+                    document.getElementById('txtTapEnter').innerText = langData[lang].tap;
+                    document.getElementById('txtVerifyAdmin').innerText = langData[lang].admin;
+                    document.getElementById('txtApplyHost').innerText = langData[lang].applyHost;
+                    
+                    document.querySelectorAll('.txtBack').forEach(el => el.innerText = langData[lang].back);
+                    document.querySelectorAll('.txtNext').forEach(el => el.innerText = langData[lang].next);
+                } catch(e) {}
             }
+        }
+        document.addEventListener("DOMContentLoaded", applyLanguageEngine);
 
-            const ripple = document.createElement('div');
-            ripple.className = 'ripple';
-            document.body.appendChild(ripple);
-            ripple.style.left = `${e.clientX - 20}px`;
-            ripple.style.top = `${e.clientY - 20}px`;
-            setTimeout(() => { ripple.remove(); }, 600);
-        });
-
-        function doHaptic() { if(navigator.vibrate) navigator.vibrate(15); }
-
-        // --- TERMS & CONDITIONS GATE ---
-        function checkTermsAndOpen(modalId) {
+        function setLanguage(langCode) {
             doHaptic();
-            if(!document.getElementById('masterTerms').checked) {
-                showToast("You must agree to the Terms & Privacy Policy to enter.");
-                document.getElementById('termsGateContainer').style.animation = "shake 0.4s ease";
-                setTimeout(() => document.getElementById('termsGateContainer').style.animation = "", 400);
-                return;
-            }
-            openModal(modalId);
+            showToast("Downloading language pack...");
+            setTimeout(() => {
+                localStorage.setItem('tournyx_lang', langCode);
+                showToast("Language applied successfully!", true);
+                setTimeout(() => window.location.reload(), 800);
+            }, 1000);
         }
 
         // ==========================================
-        // 100% BULLETPROOF JAVASCRIPT VIDEO ENGINE
+        // STRICT JAVASCRIPT VIDEO ENGINE
         // ==========================================
         function initMasterVideoEngine() {
             const bgVideo = document.getElementById('bgVideo');
+            const uiContainer = document.getElementById('mainUiContainer');
+            
             if (!bgVideo) return;
 
-            // 1. INJECT ALL STRICT ATTRIBUTES VIA JS
+            // 1. Define source strictly in JS
             bgVideo.src = 'https://tournyx.in/FFBGMICODTRAILER.mp4';
             bgVideo.poster = 'https://tournyx.in/hq-fallback-bg.jpg';
             bgVideo.loop = true;
             bgVideo.muted = true;
-            bgVideo.defaultMuted = true; // Bypasses specific iOS bugs
+            bgVideo.defaultMuted = true;
             bgVideo.setAttribute('playsinline', 'true');
             bgVideo.setAttribute('webkit-playsinline', 'true');
             bgVideo.setAttribute('preload', 'auto');
             bgVideo.crossOrigin = 'anonymous'; 
 
-            // 2. BULLETPROOF PLAYBACK ATTEMPT
+            // 2. Force Playback entirely through JS Promises
             const attemptPlay = () => {
                 const playPromise = bgVideo.play();
                 
                 if (playPromise !== undefined) {
-                    playPromise.catch(error => {
-                        console.warn("OS Blocked Autoplay. Arming universal interaction traps.");
-                        // 3. UNIVERSAL INTERACTION TRAP (Fires on literally anything)
+                    playPromise.then(() => {
+                        // Success! Show UI instantly
+                        uiContainer.classList.add('active'); 
+                        bgVideo.style.opacity = '1';
+                    }).catch(error => {
+                        console.warn("Autoplay blocked by OS. Arming interaction trap.");
+                        uiContainer.classList.add('active'); 
+                        bgVideo.style.opacity = '1';
+                        
+                        // Universal trap: play on next tap anywhere
                         const forcePlayOnInteraction = () => {
-                            bgVideo.play().catch(e => {}); // Silent catch if it fails again
+                            bgVideo.play().catch(e => {}); 
                             ['click', 'touchstart', 'scroll', 'mousemove', 'keydown'].forEach(evt => 
                                 document.removeEventListener(evt, forcePlayOnInteraction)
                             );
                         };
-                        
                         ['click', 'touchstart', 'scroll', 'mousemove', 'keydown'].forEach(evt => 
                             document.addEventListener(evt, forcePlayOnInteraction, { once: true, passive: true })
                         );
@@ -741,19 +712,16 @@
                 }
             };
 
-            // Wait for metadata to load to prevent stream choking
             bgVideo.addEventListener('loadedmetadata', attemptPlay);
-            
-            // Failsafe timer just in case loadedmetadata fails to fire due to poor network
-            setTimeout(attemptPlay, 500);
+            setTimeout(attemptPlay, 500); // Failsafe if network is slow
 
-            // 4. UNIVERSAL AUDIO UNLOCKER
+            // 3. Invisible Audio Unlocker (Waits for first tap on the screen)
             const unlockAudio = () => {
                 bgVideo.muted = false;
-                bgVideo.volume = 1.0;
+                bgVideo.volume = 1.0; // Max Volume
                 
                 if (bgVideo.paused) {
-                    bgVideo.play().catch(e => console.warn("Audio unlock blocked by OS."));
+                    bgVideo.play().catch(e => console.warn("Play permanently blocked by OS."));
                 }
                 
                 let vIcon = document.getElementById('volIcon');
@@ -770,22 +738,152 @@
 
         // Boot engine instantly
         initMasterVideoEngine();
-        
+
+        // --- GLOBAL TOUCH & HAPTIC ENGINE ---
+        document.body.addEventListener('click', function (e) {
+            const ripple = document.createElement('div');
+            ripple.className = 'ripple';
+            document.body.appendChild(ripple);
+            ripple.style.left = `${e.clientX - 20}px`;
+            ripple.style.top = `${e.clientY - 20}px`;
+            setTimeout(() => { ripple.remove(); }, 600);
+        });
+
+        // --- VOLUME BUTTON FIX (MOBILE PROTECTED) ---
         function toggleVolume(e) {
-            if(e) e.stopPropagation();
+            if(e) { e.preventDefault(); e.stopPropagation(); } // Prevents the click from getting hijacked
             doHaptic();
             const video = document.getElementById('bgVideo');
             const icon = document.getElementById('volIcon');
+            
             if(video.muted) {
                 video.muted = false;
+                video.volume = 1.0;
                 icon.className = 'fa-solid fa-volume-high';
                 window.hasUnmuted = true;
+                if(video.paused) video.play().catch(()=>{}); 
             } else {
                 video.muted = true;
                 icon.className = 'fa-solid fa-volume-xmark';
             }
         }
 
+        function doHaptic() { if(navigator.vibrate) navigator.vibrate(15); }
+
+        function checkTermsAndOpen(modalId) {
+            doHaptic();
+            if(!document.getElementById('masterTerms').checked) {
+                showToast("You must agree to the Terms of Service.");
+                document.getElementById('termsGateContainer').style.animation = "shake 0.4s ease";
+                setTimeout(() => document.getElementById('termsGateContainer').style.animation = "", 400);
+                return;
+            }
+            openModal(modalId);
+        }
+
+        // ==========================================
+        // SMART INDIAN CITIES & STATES ENGINE
+        // ==========================================
+        const indiaData = {
+            "Andhra Pradesh": ["Visakhapatnam", "Vijayawada", "Guntur", "Nellore", "Tirupati"],
+            "Arunachal Pradesh": ["Itanagar", "Tawang", "Naharlagun"],
+            "Assam": ["Guwahati", "Silchar", "Dibrugarh", "Jorhat"],
+            "Bihar": ["Patna", "Gaya", "Bhagalpur", "Muzaffarpur"],
+            "Chhattisgarh": ["Raipur", "Bhilai", "Bilaspur"],
+            "Delhi": ["New Delhi", "North Delhi", "South Delhi", "East Delhi", "West Delhi"],
+            "Goa": ["Panaji", "Vasco da Gama", "Margao"],
+            "Gujarat": ["Ahmedabad", "Surat", "Vadodara", "Rajkot", "Gandhinagar"],
+            "Haryana": ["Gurugram", "Faridabad", "Panipat", "Ambala", "Rohtak"],
+            "Himachal Pradesh": ["Shimla", "Manali", "Dharamshala"],
+            "Jharkhand": ["Ranchi", "Jamshedpur", "Dhanbad", "Bokaro"],
+            "Karnataka": ["Bengaluru", "Mysuru", "Mangaluru", "Hubballi", "Belagavi"],
+            "Kerala": ["Thiruvananthapuram", "Kochi", "Kozhikode", "Thrissur", "Kannur"],
+            "Madhya Pradesh": ["Indore", "Bhopal", "Jabalpur", "Gwalior", "Ujjain"],
+            "Maharashtra": ["Mumbai", "Pune", "Nagpur", "Thane", "Nashik", "Aurangabad"],
+            "Manipur": ["Imphal", "Thoubal"],
+            "Meghalaya": ["Shillong", "Tura"],
+            "Mizoram": ["Aizawl", "Lunglei"],
+            "Nagaland": ["Dimapur", "Kohima"],
+            "Odisha": ["Bhubaneswar", "Cuttack", "Rourkela", "Puri"],
+            "Punjab": ["Ludhiana", "Amritsar", "Jalandhar", "Patiala", "Mohali"],
+            "Rajasthan": ["Jaipur", "Jodhpur", "Udaipur", "Kota", "Bikaner"],
+            "Sikkim": ["Gangtok", "Namchi"],
+            "Tamil Nadu": ["Chennai", "Coimbatore", "Madurai", "Tiruchirappalli", "Salem"],
+            "Telangana": ["Hyderabad", "Warangal", "Nizamabad", "Karimnagar"],
+            "Tripura": ["Agartala", "Udaipur"],
+            "Uttar Pradesh": ["Lucknow", "Kanpur", "Agra", "Varanasi", "Noida", "Ghaziabad"],
+            "Uttarakhand": ["Dehradun", "Haridwar", "Roorkee", "Rishikesh"],
+            "West Bengal": ["Kolkata", "Howrah", "Darjeeling", "Siliguri", "Asansol"],
+            "Other Territories (UTs)": ["Chandigarh", "Puducherry", "Port Blair", "Daman", "Diu", "Leh", "Jammu", "Srinagar"]
+        };
+
+        function initLocations() {
+            const stateSelect = document.getElementById('regState');
+            stateSelect.innerHTML = '<option value="" disabled selected id="txtSelState">Select State</option>';
+            
+            Object.keys(indiaData).forEach(state => {
+                let opt = document.createElement('option');
+                opt.value = state; opt.innerHTML = state;
+                stateSelect.appendChild(opt);
+            });
+            
+            // Append the "Other" option
+            let optOther = document.createElement('option');
+            optOther.value = "Other"; optOther.innerHTML = "➕ Other (Type Manually)";
+            optOther.style.color = "var(--accent-orange)";
+            stateSelect.appendChild(optOther);
+        }
+
+        function handleStateChange() {
+            const state = document.getElementById('regState').value;
+            const citySelect = document.getElementById('regCity');
+            const customStateWrap = document.getElementById('customStateWrapper');
+            const customCityWrap = document.getElementById('customCityWrapper');
+            
+            doHaptic();
+
+            if (state === "Other") {
+                customStateWrap.style.display = 'block';
+                citySelect.innerHTML = '<option value="Other">Other (Type Manually)</option>';
+                citySelect.disabled = true; 
+                customCityWrap.style.display = 'block';
+                return;
+            } else {
+                customStateWrap.style.display = 'none';
+                citySelect.disabled = false;
+                customCityWrap.style.display = 'none';
+            }
+
+            citySelect.innerHTML = '<option value="" disabled selected id="txtSelCity">Select City</option>';
+            if (indiaData[state]) {
+                indiaData[state].forEach(city => {
+                    let opt = document.createElement('option');
+                    opt.value = city; opt.innerHTML = city;
+                    citySelect.appendChild(opt);
+                });
+            }
+            let optOther = document.createElement('option');
+            optOther.value = "Other"; optOther.innerHTML = "➕ Other (Type Manually)";
+            optOther.style.color = "var(--accent-cyan)";
+            citySelect.appendChild(optOther);
+        }
+
+        function handleCityChange() {
+            doHaptic();
+            const city = document.getElementById('regCity').value;
+            const customCityWrap = document.getElementById('customCityWrapper');
+            
+            if (city === "Other") {
+                customCityWrap.style.display = 'block';
+                document.getElementById('customCity').focus();
+            } else {
+                customCityWrap.style.display = 'none';
+            }
+        }
+
+        // Initialize lists when DOM loads
+        document.addEventListener('DOMContentLoaded', initLocations);
+        
         // --- SECURE API FETCH WRAPPER ---
         async function secureFetch(payload) {
             try {
@@ -806,7 +904,6 @@
             setTimeout(() => { t.className = t.className.replace('show', ''); }, 3500);
         }
 
-        // --- SHOW/HIDE PASSWORD TOGGLE ---
         function togglePwd(inputId, icon, isOrg) {
             doHaptic();
             const input = document.getElementById(inputId);
@@ -823,7 +920,7 @@
             }
         }
 
-        // --- EMAIL OTP LOGIC ---
+        // --- BULLETPROOF OTP LOGIC ---
         let isEmailVerified = false;
 
         async function sendOtp() {
@@ -870,16 +967,7 @@
             }, 800);
         }
 
-        function unlockEmailInput() {
-            document.getElementById('regEmail').readOnly = false;
-            isEmailVerified = false;
-            const btn = document.getElementById('btnVerifyOtp');
-            btn.innerHTML = `VERIFY`; btn.classList.remove('verified'); btn.disabled = false;
-            const otpInput = document.getElementById('regOtp');
-            otpInput.readOnly = false; otpInput.value = "";
-        }
-
-        // --- PHONE NUMBER STRIP & LOCK LOGIC ---
+        // --- PHONE NUMBER FORMAT LOCK ---
         const phoneInput = document.getElementById('regPhone');
         phoneInput.addEventListener('input', function(e) {
             if (!this.value.startsWith('+91 ')) this.value = '+91 ';
@@ -901,18 +989,17 @@
         
         function nextSlide(step) {
             doHaptic();
-            // Validation Before Moving Forward
             if (step === 1) {
-                if(!isEmailVerified) { showToast("Please verify email via OTP to continue."); return; }
-                if(document.getElementById('regPwd').value.length < 6) { showToast("Password must be at least 6 characters."); return; }
+                if(!isEmailVerified) { showToast("Please verify email via OTP."); return; }
+                if(document.getElementById('regPwd').value.length < 6) { showToast("Password must be 6+ chars."); return; }
                 const phoneDigits = document.getElementById('regPhone').value.substring(4).replace(/\D/g, '');
                 if(phoneDigits.length !== 10) { showToast("Enter a valid 10-digit phone number."); return; }
             }
             if (step === 2) {
                 if(document.getElementById('regGame').value === "") { showToast("Please select a game."); return; }
-                if(document.getElementById('regUser').value.trim() === "") { showToast("Display name is required."); return; }
-                if(document.getElementById('regIgn').value.trim() === "") { showToast("In-Game Name is required."); return; }
-                if(document.getElementById('regUid').value.trim() === "") { showToast("Game UID is required."); return; }
+                if(document.getElementById('regUser').value.trim() === "") { showToast("Display name required."); return; }
+                if(document.getElementById('regIgn').value.trim() === "") { showToast("IGN required."); return; }
+                if(document.getElementById('regUid').value.trim() === "") { showToast("Game UID required."); return; }
             }
 
             currentStep = step + 1;
@@ -927,30 +1014,23 @@
             updateDots();
         }
 
-        // High-Quality Anime Avatar Engine
         function formatImageUrl(url, fallbackName) {
             let safeName = fallbackName || "User";
             let animeFallback = `https://api.dicebear.com/7.x/adventurer/svg?seed=${encodeURIComponent(safeName)}&size=150&backgroundColor=0a0520,0d0825`;
-            
             if (!url) return animeFallback;
             let strUrl = String(url).trim().replace(/[\r\n\t]/g, '');
             if (strUrl.length < 5) return animeFallback;
             if (strUrl.startsWith('data:image') || strUrl.includes('imgbb') || strUrl.includes('ibb.co')) return strUrl;
-            if (strUrl.includes('drive.google.com/file/d/')) {
-                let id = strUrl.split('/d/')[1].split('/')[0];
-                return `https://drive.google.com/uc?export=view&id=${id}`; 
-            }
             return strUrl;
         }
 
-        // --- RECENT ACCOUNTS ENGINE ---
         function saveRecentAccount(userObj) {
             try {
                 let accounts = JSON.parse(localStorage.getItem('tournyx_recent_accounts')) || [];
-                accounts = accounts.filter(a => a.email !== userObj.email); // Remove duplicates
+                accounts = accounts.filter(a => a.email !== userObj.email); 
                 let safeName = userObj.ign || userObj.username || "Player";
                 accounts.unshift({ ign: safeName, email: userObj.email, avatar: formatImageUrl(userObj.avatar, safeName) });
-                if(accounts.length > 5) accounts.pop(); // Keep max 5
+                if(accounts.length > 5) accounts.pop(); 
                 localStorage.setItem('tournyx_recent_accounts', JSON.stringify(accounts));
             } catch(e) {}
         }
@@ -960,14 +1040,14 @@
             let accounts = JSON.parse(localStorage.getItem('tournyx_recent_accounts')) || [];
             let area = document.getElementById('accountsListArea');
             if(accounts.length === 0) {
-                area.innerHTML = `<div style="text-align:center; color:#888; font-size:0.8rem;">No recent accounts found.</div>`;
+                area.innerHTML = `<div style="text-align:center; color:#888; font-size:0.75rem;">No recent accounts found.</div>`;
             } else {
                 area.innerHTML = accounts.map(a => `
-                    <div class="util-item" onclick="autoFillLogin('${a.email}')">
-                        <img src="${a.avatar}" class="util-img">
-                        <div style="flex:1; min-width:0;">
-                            <div style="color:white; font-family:var(--font-head); font-weight:bold; font-size:0.9rem; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${a.ign}</div>
-                            <div style="color:#888; font-size:0.7rem; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${a.email}</div>
+                    <div class="slide-btn back" style="justify-content:flex-start; height:auto; padding:8px 12px; text-transform:none;" onclick="autoFillLogin('${a.email}')">
+                        <img src="${a.avatar}" style="width:30px; height:30px; border-radius:50%; border:1px solid var(--accent-cyan); object-fit:cover;">
+                        <div style="flex:1; min-width:0; text-align:left;">
+                            <div style="color:white; font-family:var(--font-head); font-weight:bold; font-size:0.8rem; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${a.ign}</div>
+                            <div style="color:#888; font-size:0.65rem; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${a.email}</div>
                         </div>
                         <i class="fa-solid fa-right-to-bracket" style="color:var(--accent-cyan);"></i>
                     </div>
@@ -979,43 +1059,44 @@
         function autoFillLogin(email) {
             doHaptic();
             closeModals(true);
-            document.getElementById('masterTerms').checked = true; // Auto consent
+            document.getElementById('masterTerms').checked = true;
             openModal('loginModal');
             document.getElementById('loginEmail').value = email;
             document.getElementById('loginPwd').focus();
         }
 
-        // --- UTILITY FUNCTIONS ---
         function submitHelp(e) {
             e.preventDefault();
             doHaptic();
-            showToast("Message sent to Support! We will contact you soon.", true);
-            setTimeout(() => closeModals(true), 1500);
+            btnLoading('btnHelp', 'SENDING...');
+            let userEmail = document.getElementById('helpEmail').value;
+            let msg = document.getElementById('helpMsg').value;
+            
+            secureFetch({ action: 'send_support_email', email: userEmail, message: msg, to: 'tournyx.esports.india@gmail.com' })
+            .then(res => {
+                showToast("Message sent to Support!", true);
+                setTimeout(() => closeModals(true), 1500);
+            }).catch(err => {
+                showToast("Failed to send message.");
+            }).finally(() => {
+                btnReset('btnHelp');
+            });
         }
 
-        function setLanguage(langCode) {
-            doHaptic();
-            showToast("Downloading language pack...");
-            setTimeout(() => {
-                localStorage.setItem('tournyx_lang', langCode);
-                showToast("Language applied successfully!", true);
-                setTimeout(() => closeModals(true), 1000);
-            }, 1500);
-        }
-
-        // --- SMART ROUTING & SESSION LOGIC ---
         window.addEventListener('DOMContentLoaded', () => {
             const urlParams = new URLSearchParams(window.location.search);
             const refCode = urlParams.get('ref') || urlParams.get('code');
             const tabParam = urlParams.get('tab');
 
-            // Check if already logged in
             let user = JSON.parse(localStorage.getItem('tournyx_user'));
             if(user && user.email) {
                 document.getElementById('authButtons').classList.add('hidden');
-                document.getElementById('bottomHudControls').classList.add('hidden');
-                document.getElementById('tapToStartHitbox').classList.add('active');
+                document.getElementById('termsGateContainer').classList.add('hidden');
+                document.getElementById('tapToStartHitbox').classList.remove('hidden');
                 document.getElementById('loggedInProfile').classList.remove('hidden');
+                
+                // Activate Fullscreen Tap Box
+                document.getElementById('fullScreenTap').classList.remove('hidden');
                 
                 let displayName = user.ign || user.username || "Player";
                 document.getElementById('loggedInName').innerText = displayName;
@@ -1024,34 +1105,36 @@
 
             if (refCode) { 
                 setTimeout(() => {
-                    document.getElementById('masterTerms').checked = true; // Auto-consent for deep link
+                    document.getElementById('masterTerms').checked = true;
                     openModal('signupModal'); 
                     document.getElementById('refInput').value = refCode;
                     document.getElementById('refInput').style.borderColor = "var(--accent-green)";
                     document.getElementById('refInput').style.boxShadow = "0 0 15px rgba(0,255,127,0.4)";
-                }, 800); 
+                }, 4000); 
             }
             if (tabParam === 'organizer') {
-                document.getElementById('masterTerms').checked = true;
-                openModal('orgModal');
+                setTimeout(() => {
+                    document.getElementById('masterTerms').checked = true;
+                    openModal('orgModal');
+                }, 4000);
             }
         });
 
-        // --- TAP TO START QUICK LOGIN & LOGOUT ---
         function quickLogin() {
             doHaptic();
             let user = JSON.parse(localStorage.getItem('tournyx_user'));
             if(user) triggerArenaEntry(user, 'index.html');
         }
 
-        function logoutUser() {
+        function logoutUser(e) {
+            if(e) { e.preventDefault(); e.stopPropagation(); } 
             doHaptic();
             localStorage.removeItem('tournyx_user');
             localStorage.removeItem('tournyx_userData');
+            document.getElementById('loggedInProfile').classList.add('hidden');
             window.location.reload();
         }
 
-        // --- MODAL LOGIC (HISTORY API BACK BUTTON ENABLED) ---
         let isModalOpen = false;
         
         function openModal(id) {
@@ -1071,11 +1154,8 @@
             document.getElementById('sliderTrack').style.transform = `translateX(0%)`;
             updateDots();
             
-            if(isModalOpen && !internalCall) {
-                history.back();
-            } else {
-                isModalOpen = false;
-            }
+            if(isModalOpen && !internalCall) { history.back(); } 
+            else { isModalOpen = false; }
         }
 
         window.addEventListener('popstate', (e) => {
@@ -1085,11 +1165,10 @@
             }
         });
 
-        // --- ANIMATION OVERLAY LOGIC ---
         function triggerArenaEntry(user, redirectUrl) {
             if(navigator.vibrate) navigator.vibrate([20, 50, 20]);
             closeModals(true);
-            saveRecentAccount(user); // Save to Local Storage memory bank
+            saveRecentAccount(user); 
             localStorage.setItem('tournyx_user', JSON.stringify(user));
             const loader = document.getElementById('arenaLoader');
             loader.classList.add('active');
@@ -1110,13 +1189,18 @@
             btn.disabled = false;
         }
 
-        // PLAYER SIGNUP (FINAL SUBMISSION & AUTO-LOGIN FLOW)
         document.getElementById('playerSignupForm').addEventListener('submit', async (e) => {
             e.preventDefault();
+            let finalState = document.getElementById('regState').value;
+            if(finalState === "Other") finalState = document.getElementById('customState').value.trim();
+            
+            let finalCity = document.getElementById('regCity').value;
+            if(finalCity === "Other" || document.getElementById('regState').value === "Other") {
+                finalCity = document.getElementById('customCity').value.trim();
+            }
 
-            // Final Validation for Slide 3
-            if(document.getElementById('regState').value === "") { showToast("Please select a state."); return; }
-            if(document.getElementById('regCity').value.trim() === "") { showToast("Please enter your city."); return; }
+            if(!finalState || finalState === "") { showToast("Please select or type a state."); return; }
+            if(!finalCity || finalCity === "") { showToast("Please select or type a city."); return; }
 
             const phoneVal = document.getElementById('regPhone').value;
             const phoneDigits = phoneVal.substring(4).replace(/\D/g, '');
@@ -1128,19 +1212,11 @@
                 const rawData = Object.fromEntries(formData);
 
                 const payload = {
-                    action: 'signup',
-                    username: rawData.username,
-                    ign: rawData.ign,
-                    uid: rawData.uid,
-                    game: rawData.game,
-                    state: rawData.state,
-                    city: rawData.city,
-                    phone: phoneDigits,      
-                    email: rawData.email,
-                    password: rawData.password,
-                    referral: rawData.referral || "", 
-                    otp: rawData.otp,         
-                    role: 'player'
+                    action: 'signup', username: rawData.username, ign: rawData.ign,
+                    uid: rawData.uid, game: rawData.game, state: finalState,
+                    city: finalCity, phone: phoneDigits, email: rawData.email,
+                    password: rawData.password, referral: rawData.referral || "", 
+                    otp: rawData.otp, role: 'player'
                 };
 
                 const result = await secureFetch(payload);
@@ -1149,7 +1225,6 @@
                     if(navigator.vibrate) navigator.vibrate(30);
                     showToast("Account Created! Securely entering arena...", true);
                     
-                    // Auto-fill logic & Transition to Login
                     let safeEmail = rawData.email;
                     let safePwd = rawData.password;
                     
@@ -1158,7 +1233,6 @@
                         openModal('loginModal');
                         document.getElementById('loginEmail').value = safeEmail;
                         document.getElementById('loginPwd').value = safePwd;
-                        // Auto-trigger login click
                         setTimeout(() => document.getElementById('btnLogin').click(), 500);
                     }, 1500);
                     
@@ -1175,7 +1249,6 @@
             }
         });
 
-        // PLAYER LOGIN
         document.getElementById('playerLoginForm').addEventListener('submit', async (e) => {
             e.preventDefault();
             btnLoading('btnLogin', 'AUTHENTICATING...');
@@ -1197,7 +1270,6 @@
             finally { btnReset('btnLogin'); }
         });
 
-        // ORGANIZER LOGIN
         document.getElementById('organizerLoginForm').addEventListener('submit', async (e) => {
             e.preventDefault();
             btnLoading('btnOrgLogin', 'VERIFYING...');
@@ -1218,26 +1290,6 @@
             } catch (err) { showToast("System Error."); }
             finally { btnReset('btnOrgLogin'); }
         });
-    </script>
-    <script>
-    function tournyxOneSignalSetup() {
-        let user = JSON.parse(localStorage.getItem('tournyx_user'));
-        if (user && user.email && typeof median !== 'undefined' && median.onesignal) {
-            let cleanEmail = user.email.toLowerCase().trim();
-            if (median.onesignal.login) {
-                median.onesignal.login({ externalId: cleanEmail });
-                if (median.onesignal.user && median.onesignal.user.addEmail) median.onesignal.user.addEmail({ email: cleanEmail });
-            } else if (median.onesignal.setExternalUserId) {
-                median.onesignal.setExternalUserId({ externalId: cleanEmail });
-                if (median.onesignal.setEmail) median.onesignal.setEmail({ email: cleanEmail });
-            }
-            let tagData = { "user_email": cleanEmail, "user_status": "active" };
-            if (median.onesignal.tags && median.onesignal.tags.set) median.onesignal.tags.set(tagData);
-            else if (median.onesignal.sendTags) median.onesignal.sendTags(tagData);
-        }
-    }
-    document.addEventListener("median_library_ready", tournyxOneSignalSetup);
-    document.addEventListener("DOMContentLoaded", tournyxOneSignalSetup);
     </script>
 </body>
 </html>
