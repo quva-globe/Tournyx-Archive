@@ -41,17 +41,27 @@
             position: relative; padding: 0;
         }
 
-        /* --- DUAL VIDEO ENGINE --- */
+        /* --- DUAL VIDEO ENGINE (PERFECT SCALING) --- */
         .video-bg {
             position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-            object-fit: cover; z-index: -4; filter: brightness(0.85);
+            object-fit: cover; object-position: center center; /* Forces perfect framing on all devices */
+            z-index: -4; filter: brightness(0.85);
             transition: opacity 0.8s ease-in-out;
         }
-        #introVideo { z-index: -2; filter: brightness(1); background: #000; }
-        .bg-overlay {
-            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-            background: linear-gradient(to top, rgba(0,0,0,0.95) 0%, transparent 45%, rgba(0,0,0,0.4) 100%);
-            z-index: -3; pointer-events: none;
+
+        /* --- INITIALIZATION OVERLAY (TO UNLOCK SOUND) --- */
+        #bootOverlay {
+            position: fixed; top: 0; left: 0; width: 100vw; height: 100dvh;
+            background: #000; z-index: 99999; display: flex; flex-direction: column;
+            align-items: center; justify-content: center; backdrop-filter: blur(10px);
+            transition: opacity 0.5s ease, visibility 0.5s ease;
+        }
+        .boot-btn {
+            padding: 15px 40px; background: var(--accent-gradient); border: 2px solid var(--accent-cyan);
+            border-radius: 50px; color: white; font-family: var(--font-head); font-size: 1.2rem;
+            font-weight: 900; letter-spacing: 3px; text-transform: uppercase; cursor: pointer;
+            box-shadow: 0 0 20px rgba(0, 242, 255, 0.5), inset 0 0 10px rgba(189,0,255,0.5);
+            animation: pulseTap 1.5s infinite alternate;
         }
 
         /* AAA GAME HUD */
@@ -334,11 +344,16 @@
 </head>
 <body id="mainBody">
 
-    <video src="https://tournyx.in/Tournyxpromo.mp4" autoplay loop muted playsinline webkit-playsinline class="video-bg" id="introVideo" style="opacity: 1; z-index: -2;"></video>
+    <div id="bootOverlay" onclick="launchArenaEngine()">
+        <div class="boot-btn">TAP TO INITIALIZE</div>
+        <div style="color: #888; font-size: 0.75rem; margin-top: 15px; letter-spacing: 2px; font-weight: bold;">SOUND ON 🔊</div>
+    </div>
+
+    <video src="https://tournyx.in/Tournyxpromo.mp4" playsinline webkit-playsinline class="video-bg" id="introVideo" style="opacity: 1; z-index: -2;"></video>
     <video src="https://tournyx.in/FFBGMICODTRAILER.mp4" loop muted playsinline webkit-playsinline class="video-bg" id="bgVideo" style="opacity: 0; z-index: -4;"></video>
+    
     <div class="bg-overlay"></div>
     <canvas id="particles-canvas"></canvas>
-
     <div class="hud-top-left">Beta Version 1.2.0.</div>
     
     <div class="hud-top-right">
@@ -851,27 +866,46 @@
         // Initialize lists when DOM loads
         document.addEventListener('DOMContentLoaded', initLocations);
         
-        // --- BULLETPROOF SEAMLESS VIDEO ENGINE ---
-        function runSeamlessVideoEngine() {
+        // --- BULLETPROOF AUDIO & VIDEO ENGINE ---
+        function launchArenaEngine() {
+            doHaptic();
+            const bootOverlay = document.getElementById('bootOverlay');
             const introVideo = document.getElementById('introVideo');
             const mainVideo = document.getElementById('bgVideo');
             const uiContainer = document.getElementById('mainUiContainer');
 
-            // Force play on load
+            // 1. Hide the Boot Screen instantly
+            bootOverlay.style.opacity = '0';
+            setTimeout(() => bootOverlay.style.visibility = 'hidden', 500);
+
+            // 2. UNLOCK AUDIO & PLAY PROMO
+            introVideo.volume = 1.0; // Sets volume to 100% max pitch
             introVideo.play().catch(e => console.log("Intro Play Blocked:", e));
 
-            // Seamless transition at 3 seconds (Adjust time based on your intro length)
-            setTimeout(() => {
+            // 3. When Promo finishes -> Swap to Background Video & Show UI
+            introVideo.onended = () => {
                 introVideo.style.opacity = '0';
-                uiContainer.classList.add('active'); // Fade in UI
-                
+                uiContainer.classList.add('active'); // Bring up the login UI
                 mainVideo.style.opacity = '1';
-                mainVideo.play().catch(e => console.log("BG Play Blocked:", e));
                 
-                setTimeout(() => { introVideo.remove(); }, 1500); // Destroy intro to save RAM
-            }, 3500); // 3.5 seconds delay before switching to main background
+                mainVideo.play().catch(e => console.log("BG Video Play Blocked"));
+                
+                // Destroy intro video to save RAM and battery
+                setTimeout(() => { introVideo.remove(); }, 1000);
+            };
+
+            // 4. Ultimate Failsafe: If the promo video gets stuck buffering for more than 5 seconds, 
+            // force the UI to appear so the user isn't stuck on a black screen.
+            setTimeout(() => {
+                if(introVideo.style.opacity !== '0') {
+                    introVideo.style.opacity = '0';
+                    uiContainer.classList.add('active');
+                    mainVideo.style.opacity = '1';
+                    mainVideo.play().catch(()=>{});
+                    setTimeout(() => { introVideo.remove(); }, 1000);
+                }
+            }, 5000); // 5 seconds maximum wait time
         }
-        runSeamlessVideoEngine();
 
         // --- SECURE API FETCH WRAPPER ---
         async function secureFetch(payload) {
