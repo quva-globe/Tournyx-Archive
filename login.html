@@ -41,13 +41,17 @@
             position: relative; padding: 0;
         }
 
-      
-
-        /* --- BACKGROUND VIDEO --- */
+        /* --- BACKGROUND VIDEO (RESTORED OLD LOGIC) --- */
         .video-bg {
-            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-            object-fit: cover; z-index: -4; filter: brightness(0.85);
-            transition: opacity 0.8s ease-in-out;
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            object-fit: cover; z-index: -4; filter: brightness(0.85); opacity: 0.85;
+            cursor: pointer;
+        }
+
+        .bg-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: linear-gradient(to top, rgba(0,0,0,0.95) 0%, transparent 45%, rgba(0,0,0,0.4) 100%);
+            z-index: -3; pointer-events: none;
         }
 
         /* AAA GAME HUD */
@@ -96,10 +100,8 @@
         /* --- MAIN UI CONTAINER --- */
         .main-ui-container {
             width: 100%; height: 100dvh; display: flex; flex-direction: column;
-            justify-content: flex-end; align-items: center; 
-            opacity: 0; transition: opacity 1s ease; z-index: 10;
+            justify-content: flex-end; align-items: center; z-index: 10;
         }
-        .main-ui-container.active { opacity: 1; }
 
         /* DESKTOP LAYOUT */
         @media (min-width: 769px) {
@@ -297,13 +299,10 @@
 </head>
 <body id="mainBody">
 
-    <video src="https://tournyx.in/FFBGMICODTRAILER.mp4" 
-           poster="https://tournyx.in/hq-fallback-bg.jpg" 
-           autoplay loop muted playsinline webkit-playsinline preload="auto" 
-           class="video-bg" id="bgVideo" style="opacity: 1; z-index: -4;"></video>
-    
+    <video loop playsinline webkit-playsinline class="video-bg" id="bgVideo"></video>
     <div class="bg-overlay"></div>
     <canvas id="particles-canvas"></canvas>
+    
     <div class="hud-top-left">Beta Version 1.2.0.</div>
     
     <div class="hud-top-right">
@@ -615,10 +614,6 @@
     <div id="customToast"><i class="fa-solid fa-circle-exclamation"></i> <span id="toastMsg">Alert</span></div>
 
     <script>
-        /* =========================================
-           TOURNYX ULTIMATE BULLETPROOF ENGINE v7.0
-           ========================================= */
-
         window.addEventListener('error', function(e) { console.warn("Engine Caught Error:", e.message); e.preventDefault(); });
 
         const API_URL = 'https://script.google.com/macros/s/AKfycbyqqTpgaflxKJ9xH0jq7mJ_jLzcoNhas3gNo0h5gvoa_6r5Ae9NFxJAJp7ZoYNnMRKl/exec';
@@ -657,7 +652,12 @@
                 } catch(e) {}
             }
         }
-        document.addEventListener("DOMContentLoaded", applyLanguageEngine);
+        
+        document.addEventListener("DOMContentLoaded", () => {
+            applyLanguageEngine();
+            // Show UI immediately
+            document.getElementById('mainUiContainer').classList.add('active');
+        });
 
         function setLanguage(langCode) {
             doHaptic();
@@ -670,54 +670,51 @@
         }
 
         // ==========================================
-        // TOURNYX PURE BACKGROUND VIDEO ENGINE
+        // OLD CACHE-BLOB VIDEO ENGINE (RESTORED)
         // ==========================================
-        function initMasterVideoEngine() {
-            const bgVideo = document.getElementById('bgVideo');
-            const uiContainer = document.getElementById('mainUiContainer');
-            
-            if (!bgVideo) return;
-
-            // 1. Show the UI immediately
-            uiContainer.classList.add('active');
-
-            // 2. Force video to play silently right now
-            bgVideo.muted = true;
-            let playPromise = bgVideo.play();
-            if (playPromise !== undefined) {
-                playPromise.catch(e => console.warn("Initial autoplay blocked. OS requires user tap."));
-            }
-
-            // 3. THE MASTER TAP OVERRIDE (Unlocks Sound & Forces Play on first touch)
-            const forcePlayAndAudio = () => {
-                // If it was blocked, force it to play now
-                if (bgVideo.paused) {
-                    bgVideo.play().catch(e => console.warn("OS permanently blocked media."));
+        const videoElement = document.getElementById('bgVideo');
+        let isMuted = true; 
+        
+        async function loadVideoBackground() {
+            const videoUrl = 'https://tournyx.in/FFBGMICODTRAILER.mp4'; 
+            if(!videoUrl) return;
+            try {
+                const cache = await caches.open('tournyx-video-cache');
+                let response = await cache.match(videoUrl);
+                if (!response) {
+                    response = await fetch(videoUrl);
+                    if (response.ok) cache.put(videoUrl, response.clone());
                 }
-                
-                // Turn on the volume
-                bgVideo.muted = false;
-                bgVideo.volume = 1.0; 
-                
-                // Update volume icon visually
-                let vIcon = document.getElementById('volIcon');
-                if(vIcon) vIcon.className = 'fa-solid fa-volume-high';
-                window.hasUnmuted = true;
+                if (response.ok) {
+                    videoElement.src = URL.createObjectURL(await response.blob());
+                }
+            } catch (e) { videoElement.src = videoUrl; }
+            
+            // Attempt autoplay natively muted
+            videoElement.muted = true;
+            videoElement.play().catch(e => console.log("Autoplay blocked pending interaction."));
+        }
+        loadVideoBackground();
 
-                // Remove listeners so it only triggers once
-                document.removeEventListener('touchstart', forcePlayAndAudio);
-                document.removeEventListener('click', forcePlayAndAudio);
-            };
-
-            // Attach to the document. The second they touch the screen, media unlocks.
-            document.addEventListener('touchstart', forcePlayAndAudio, {once:true});
-            document.addEventListener('click', forcePlayAndAudio, {once:true});
+        // --- VOLUME BUTTON FIX (MOBILE PROTECTED) ---
+        function toggleVolume(e) {
+            if(e) { e.preventDefault(); e.stopPropagation(); } 
+            doHaptic();
+            const icon = document.getElementById('volIcon');
+            
+            isMuted = !isMuted;
+            videoElement.muted = isMuted;
+            videoElement.volume = 1.0;
+            
+            if(isMuted) {
+                icon.className = 'fa-solid fa-volume-xmark';
+            } else {
+                icon.className = 'fa-solid fa-volume-high';
+                videoElement.play().catch(()=>{}); 
+            }
         }
 
-        // Boot the engine instantly
-        initMasterVideoEngine();
-
-        // --- GLOBAL TOUCH & HAPTIC ENGINE ---
+        // --- GLOBAL TOUCH RIPPLE ENGINE ---
         document.body.addEventListener('click', function (e) {
             const ripple = document.createElement('div');
             ripple.className = 'ripple';
@@ -726,25 +723,6 @@
             ripple.style.top = `${e.clientY - 20}px`;
             setTimeout(() => { ripple.remove(); }, 600);
         });
-
-        // --- VOLUME BUTTON FIX (MOBILE PROTECTED) ---
-        function toggleVolume(e) {
-            if(e) { e.preventDefault(); e.stopPropagation(); } // Prevents the click from getting hijacked
-            doHaptic();
-            const video = document.getElementById('bgVideo');
-            const icon = document.getElementById('volIcon');
-            
-            if(video.muted) {
-                video.muted = false;
-                video.volume = 1.0;
-                icon.className = 'fa-solid fa-volume-high';
-                window.hasUnmuted = true;
-                if(video.paused) video.play().catch(()=>{}); 
-            } else {
-                video.muted = true;
-                icon.className = 'fa-solid fa-volume-xmark';
-            }
-        }
 
         function doHaptic() { if(navigator.vibrate) navigator.vibrate(15); }
 
@@ -805,7 +783,6 @@
                 stateSelect.appendChild(opt);
             });
             
-            // Append the "Other" option
             let optOther = document.createElement('option');
             optOther.value = "Other"; optOther.innerHTML = "➕ Other (Type Manually)";
             optOther.style.color = "var(--accent-orange)";
@@ -859,7 +836,6 @@
             }
         }
 
-        // Initialize lists when DOM loads
         document.addEventListener('DOMContentLoaded', initLocations);
         
         // --- SECURE API FETCH WRAPPER ---
@@ -1073,7 +1049,6 @@
                 document.getElementById('tapToStartHitbox').classList.remove('hidden');
                 document.getElementById('loggedInProfile').classList.remove('hidden');
                 
-                // Activate Fullscreen Tap Box
                 document.getElementById('fullScreenTap').classList.remove('hidden');
                 
                 let displayName = user.ign || user.username || "Player";
@@ -1088,13 +1063,13 @@
                     document.getElementById('refInput').value = refCode;
                     document.getElementById('refInput').style.borderColor = "var(--accent-green)";
                     document.getElementById('refInput').style.boxShadow = "0 0 15px rgba(0,255,127,0.4)";
-                }, 4000); 
+                }, 1000); 
             }
             if (tabParam === 'organizer') {
                 setTimeout(() => {
                     document.getElementById('masterTerms').checked = true;
                     openModal('orgModal');
-                }, 4000);
+                }, 1000);
             }
         });
 
