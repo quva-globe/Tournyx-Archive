@@ -355,7 +355,7 @@
 
     <video src="https://tournyx.in/FFBGMICODTRAILER.mp4" 
            poster="https://tournyx.in/hq-fallback-bg.jpg" 
-           loop muted playsinline webkit-playsinline preload="auto" 
+           autoplay loop muted playsinline webkit-playsinline preload="auto" 
            class="video-bg" id="bgVideo" style="opacity: 0; z-index: -4;"></video>
     <div class="bg-overlay"></div>
     <canvas id="particles-canvas"></canvas>
@@ -862,7 +862,7 @@
         document.addEventListener('DOMContentLoaded', initLocations);
         
         // ==========================================
-        // TOURNYX 3D LOGO & BG VIDEO ENGINE
+        // TOURNYX 3D LOGO & BG VIDEO ENGINE (ANTI-BLOCK VERSION)
         // ==========================================
         function initMasterVideoEngine() {
             const bgVideo = document.getElementById('bgVideo');
@@ -870,7 +870,10 @@
             const introOverlay = document.getElementById('logoIntroOverlay');
             
             if (!bgVideo) return;
-            bgVideo.muted = true; // Enforce initial mute for browser security
+
+            // 1. Force the video to start playing immediately in the background (muted)
+            bgVideo.muted = true;
+            bgVideo.play().catch(e => console.warn("Initial autoplay blocked. Will force on user tap."));
 
             // --- SEAMLESS TRANSITION FUNCTION ---
             const transitionToArena = () => {
@@ -878,14 +881,9 @@
                 introOverlay.style.opacity = '0';
                 setTimeout(() => introOverlay.style.visibility = 'hidden', 800);
                 
-                // Fade in UI and BG Video
+                // Fade in UI and BG Video (Video is already playing thanks to HTML autoplay)
                 uiContainer.classList.add('active'); 
                 bgVideo.style.opacity = '1';
-                
-                let playPromise = bgVideo.play();
-                if (playPromise !== undefined) {
-                    playPromise.catch(e => console.warn("BG Video Autoplay Blocked - Waiting for user tap."));
-                }
             };
 
             // Run the fire logo animation for exactly 2.8 seconds, then transition
@@ -897,6 +895,7 @@
                 bgVideo.muted = false;
                 bgVideo.volume = 1.0; // Max Volume
                 
+                // Failsafe: If the browser blocked the initial autoplay, this tap forces it to start
                 if (bgVideo.paused) {
                     bgVideo.play().catch(e => console.warn("Play permanently blocked by OS."));
                 }
