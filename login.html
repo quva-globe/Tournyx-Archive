@@ -288,7 +288,7 @@
         .arena-text { font-family: var(--font-head); font-size: 1.8rem; color: #fff; font-weight: 900; letter-spacing: 4px; text-shadow: 0 0 20px rgba(0, 242, 255, 0.6); text-align: center; text-transform: uppercase; animation: cinematicEntry 2s cubic-bezier(0.25, 1, 0.5, 1) forwards; }
         @keyframes fadeInBg { from { opacity: 0; } to { opacity: 1; } }
         @keyframes cinematicEntry { 0% { transform: scale(0.8); opacity: 0; filter: blur(10px); } 20% { transform: scale(1); opacity: 1; filter: blur(0); letter-spacing: 4px; } 80% { transform: scale(1.05); opacity: 1; filter: blur(0); letter-spacing: 6px; } 100% { transform: scale(1.3); opacity: 0; filter: blur(15px); letter-spacing: 10px; } }
-       /* --- FINAL POLISH CSS OVERRIDES --- */
+        /* --- FINAL POLISH CSS OVERRIDES --- */
         
         /* 1. Gap between Terms Box and Login Buttons */
         .terms-gate {
@@ -405,10 +405,6 @@
             <div class="footer-right quva-credit">Powered by <span class="neon-quva">QUVA</span></div>
         </div>
     </div>
-
-    <datalist id="indianCities">
-        <option value="Mumbai"><option value="Delhi"><option value="Bangalore"><option value="Hyderabad"><option value="Chennai"><option value="Kolkata"><option value="Pune"><option value="Jaipur"><option value="Lucknow"><option value="Kanpur"><option value="Indore"><option value="Coimbatore"><option value="Madurai"><option value="Vellore">
-    </datalist>
 
     <div class="modal-overlay" id="loginModal">
         <div class="modal-card">
@@ -560,20 +556,16 @@
                             </div>
                         </div>
 
-                        <!-- SLIDE 3: LOCATION & FINAL SUBMIT -->
                         <div class="slide-step">
                             
-                            <!-- DYNAMIC STATE DROPDOWN -->
                             <div class="input-wrapper">
                                 <div class="input-group">
                                     <select name="state" id="regState" class="form-control req-field" onchange="handleStateChange()">
-                                        <!-- Options populated via JS Engine -->
-                                    </select>
+                                        </select>
                                     <i class="fa-solid fa-map input-icon"></i>
                                 </div>
                             </div>
 
-                            <!-- HIDDEN CUSTOM STATE FIELD (Triggers if 'Other' is selected) -->
                             <div class="input-wrapper" id="customStateWrapper" style="display: none; margin-top: 5px;">
                                 <div class="input-group">
                                     <input type="text" id="customState" class="form-control" placeholder="Type Your State">
@@ -581,7 +573,6 @@
                                 </div>
                             </div>
 
-                            <!-- DYNAMIC CITY DROPDOWN -->
                             <div class="input-wrapper">
                                 <div class="input-group">
                                     <select name="city" id="regCity" class="form-control req-field" onchange="handleCityChange()" disabled>
@@ -591,7 +582,6 @@
                                 </div>
                             </div>
 
-                            <!-- HIDDEN CUSTOM CITY FIELD (Triggers if 'Other' is selected) -->
                             <div class="input-wrapper" id="customCityWrapper" style="display: none; margin-top: 5px;">
                                 <div class="input-group">
                                     <input type="text" id="customCity" class="form-control" placeholder="Type Your City">
@@ -661,7 +651,7 @@
 
     <script>
         /* =========================================
-           TOURNYX ULTIMATE BULLETPROOF ENGINE v5.0
+           TOURNYX ULTIMATE BULLETPROOF ENGINE v6.0
            ========================================= */
 
         window.addEventListener('error', function(e) { console.warn("Engine Caught Error:", e.message); e.preventDefault(); });
@@ -858,56 +848,73 @@
             const introVideo = document.getElementById('introVideo');
             const bgVideo = document.getElementById('bgVideo');
             const uiContainer = document.getElementById('mainUiContainer');
+            let isIntroFinished = false;
 
-            // --- FUNCTION TO TRANSITION TO UI & BACKGROUND ---
+            if (!introVideo || !bgVideo) return;
+
+            // 1. Enforce muted state to bypass strict mobile autoplay blocks
+            introVideo.muted = true;
+            bgVideo.muted = true;
+
             const transitionToArena = () => {
+                if (isIntroFinished) return;
+                isIntroFinished = true;
+                
                 introVideo.style.opacity = '0';
                 uiContainer.classList.add('active'); // Fade in UI
                 
                 bgVideo.style.opacity = '1';
-                // Attempt to play BG video. If blocked (Low Power Mode), it silently fails and shows the Poster Image.
-                bgVideo.play().catch(e => console.warn("BG Video Blocked - Showing Ultra-HD Fallback Image."));
+                bgVideo.play().catch(e => console.warn("BG Video Blocked"));
                 
-                setTimeout(() => { introVideo.remove(); }, 1500); // Destroy intro to clear RAM
+                setTimeout(() => { if(introVideo) introVideo.remove(); }, 1500); // Clear RAM
             };
 
-            // --- 1. ATTEMPT TO PLAY INTRO ---
+            // Transition naturally when promo finishes
+            introVideo.onended = transitionToArena;
+
+            // 2. ATTEMPT VISUAL PLAY
             let playPromise = introVideo.play();
-
             if (playPromise !== undefined) {
-                playPromise.then(() => {
-                    // SUCCESS! The video is playing.
-                    introVideo.onended = transitionToArena;
-
-                    // INVISIBLE AUDIO UNLOCKER: Unmute if they touch the screen
-                    const unlockAudio = () => {
-                        introVideo.muted = false;
-                        introVideo.volume = 1.0;
-                        document.removeEventListener('touchstart', unlockAudio);
-                        document.removeEventListener('click', unlockAudio);
-                    };
-                    document.addEventListener('touchstart', unlockAudio, {once:true});
-                    document.addEventListener('click', unlockAudio, {once:true});
-
-                }).catch(error => {
-                    // FAILED! Browser blocked the video (Low Power Mode or Strict Safari)
-                    console.warn("Browser blocked autoplay. Bypassing Intro and forcing UI.");
-                    transitionToArena(); // Skip the intro immediately so UI isn't broken
+                playPromise.catch(error => {
+                    console.warn("Autoplay blocked. Waiting for user tap.");
+                    // DO NOT transition. Wait for the user to touch the screen.
                 });
             }
 
-            // --- 2. ULTIMATE FAILSAFE ---
-            // If the intro video hangs buffering for 4 seconds, force the UI to load.
+            // 3. INVISIBLE AUDIO UNLOCKER (Triggered on any touch)
+            const unlockAudioAndPlay = () => {
+                if (isIntroFinished) return; // If promo is already done, ignore
+
+                introVideo.muted = false;
+                introVideo.volume = 1.0;
+                
+                if (introVideo.paused) {
+                    introVideo.play().catch(e => {
+                        console.warn("Play permanently blocked. Forcing UI.");
+                        transitionToArena();
+                    });
+                }
+
+                document.removeEventListener('touchstart', unlockAudioAndPlay);
+                document.removeEventListener('click', unlockAudioAndPlay);
+            };
+
+            document.addEventListener('touchstart', unlockAudioAndPlay, {once:true});
+            document.addEventListener('click', unlockAudioAndPlay, {once:true});
+
+            // 4. SMART FAILSAFE
+            // Check after 6 seconds. If it never started playing (time is 0), force the UI.
             setTimeout(() => {
-                if (uiContainer.classList.contains('active') === false) {
-                    console.warn("Video buffering timed out. Forcing UI.");
+                if (!isIntroFinished && introVideo.currentTime === 0 && introVideo.paused) {
+                    console.warn("Failsafe: Video stuck at 0:00. Forcing UI.");
                     transitionToArena();
                 }
-            }, 4000);
+            }, 6000);
         }
 
         // Boot the engine instantly
         initMasterVideoEngine();
+        
         // --- SECURE API FETCH WRAPPER ---
         async function secureFetch(payload) {
             try {
