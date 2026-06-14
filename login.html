@@ -114,7 +114,28 @@
             .credits-footer { position: absolute; bottom: 15px; width: 100%; display: flex; justify-content: space-between; padding: 0 30px; }
             .terms-gate { justify-content: center; }
         }
+        /* --- 3D FIRE LOGO ANIMATION --- */
+        #logoIntroOverlay {
+            position: fixed; top: 0; left: 0; width: 100vw; height: 100dvh;
+            background: #000; z-index: 9999; display: flex; align-items: center; justify-content: center;
+            transition: opacity 0.8s ease, visibility 0.8s ease;
+        }
+        .fire-logo {
+            width: 120px; height: 120px; border-radius: 22%;
+            /* The 3-second cinematic fire reveal */
+            animation: fire3DReveal 3s cubic-bezier(0.25, 1, 0.5, 1) forwards;
+        }
+        @keyframes fire3DReveal {
+            0% { transform: scale(0.1); opacity: 0; filter: drop-shadow(0 0 10px #ff3300) drop-shadow(0 0 30px #ff9900) drop-shadow(0 0 60px #ffcc00); }
+            40% { opacity: 1; filter: drop-shadow(0 0 25px #ff3300) drop-shadow(0 0 50px #ff9900) drop-shadow(0 0 90px #ffcc00); }
+            80% { transform: scale(1.6); filter: drop-shadow(0 0 15px #ff3300) drop-shadow(0 0 40px #ff9900); opacity: 1; }
+            100% { transform: scale(2.5); opacity: 0; filter: none; }
+        }
 
+        /* --- MOBILE VOLUME BUTTON Z-INDEX FIX --- */
+        /* Forces the HUD to sit ABOVE the invisible Fullscreen Tap layer */
+        .hud-top-right, .hud-top-left { z-index: 6000 !important; }
+        
         /* MOBILE LAYOUT (NO SCROLL, PERFECT FIT) */
         @media (max-width: 768px) {
             .main-ui-container { padding-bottom: 0; }
@@ -328,11 +349,10 @@
 </head>
 <body id="mainBody">
 
-   <video src="https://tournyx.in/Tournyxpromo.mp4" 
-           poster="https://tournyx.in/hq-fallback-intro.jpg" 
-           autoplay muted playsinline webkit-playsinline preload="auto" 
-           class="video-bg" id="introVideo" style="opacity: 1; z-index: -2;"></video>
-           
+   <div id="logoIntroOverlay">
+        <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEipVmqyUEA22VpntZdPCHuXoO_Rjco_cRaNl5CyFa-eehdtgXnHe6JoD8a5svxJRJYZfv_yXwww10T2cL2PHTiXLK-J-nWC1swmMs5RDxGVM8FBSlJORaRiX4YiD8gL8SyM4X1tRyQn_v8MsqQvbU4uEyHEU0qaySP1STWHaBEYuWKyF3-6QovSqJR-8xU/s1024/1000093705.png" alt="Tournyx Logo" class="fire-logo">
+    </div>
+
     <video src="https://tournyx.in/FFBGMICODTRAILER.mp4" 
            poster="https://tournyx.in/hq-fallback-bg.jpg" 
            loop muted playsinline webkit-playsinline preload="auto" 
@@ -842,74 +862,57 @@
         document.addEventListener('DOMContentLoaded', initLocations);
         
         // ==========================================
-        // TOURNYX ANTI-CRASH VIDEO & AUDIO ENGINE
+        // TOURNYX 3D LOGO & BG VIDEO ENGINE
         // ==========================================
         function initMasterVideoEngine() {
-            const introVideo = document.getElementById('introVideo');
             const bgVideo = document.getElementById('bgVideo');
             const uiContainer = document.getElementById('mainUiContainer');
-            let isIntroFinished = false;
+            const introOverlay = document.getElementById('logoIntroOverlay');
+            
+            if (!bgVideo) return;
+            bgVideo.muted = true; // Enforce initial mute for browser security
 
-            if (!introVideo || !bgVideo) return;
-
-            // 1. Enforce muted state to bypass strict mobile autoplay blocks
-            introVideo.muted = true;
-            bgVideo.muted = true;
-
+            // --- SEAMLESS TRANSITION FUNCTION ---
             const transitionToArena = () => {
-                if (isIntroFinished) return;
-                isIntroFinished = true;
+                // Fade out the fire logo background
+                introOverlay.style.opacity = '0';
+                setTimeout(() => introOverlay.style.visibility = 'hidden', 800);
                 
-                introVideo.style.opacity = '0';
-                uiContainer.classList.add('active'); // Fade in UI
-                
+                // Fade in UI and BG Video
+                uiContainer.classList.add('active'); 
                 bgVideo.style.opacity = '1';
-                bgVideo.play().catch(e => console.warn("BG Video Blocked"));
                 
-                setTimeout(() => { if(introVideo) introVideo.remove(); }, 1500); // Clear RAM
+                let playPromise = bgVideo.play();
+                if (playPromise !== undefined) {
+                    playPromise.catch(e => console.warn("BG Video Autoplay Blocked - Waiting for user tap."));
+                }
             };
 
-            // Transition naturally when promo finishes
-            introVideo.onended = transitionToArena;
+            // Run the fire logo animation for exactly 2.8 seconds, then transition
+            setTimeout(transitionToArena, 2800);
 
-            // 2. ATTEMPT VISUAL PLAY
-            let playPromise = introVideo.play();
-            if (playPromise !== undefined) {
-                playPromise.catch(error => {
-                    console.warn("Autoplay blocked. Waiting for user tap.");
-                    // DO NOT transition. Wait for the user to touch the screen.
-                });
-            }
-
-            // 3. INVISIBLE AUDIO UNLOCKER (Triggered on any touch)
+            // --- INVISIBLE AUDIO UNLOCKER ---
+            // The millisecond they touch the screen (or hit a button), audio unlocks!
             const unlockAudioAndPlay = () => {
-                if (isIntroFinished) return; // If promo is already done, ignore
-
-                introVideo.muted = false;
-                introVideo.volume = 1.0;
+                bgVideo.muted = false;
+                bgVideo.volume = 1.0; // Max Volume
                 
-                if (introVideo.paused) {
-                    introVideo.play().catch(e => {
-                        console.warn("Play permanently blocked. Forcing UI.");
-                        transitionToArena();
-                    });
+                if (bgVideo.paused) {
+                    bgVideo.play().catch(e => console.warn("Play permanently blocked by OS."));
                 }
+                
+                // Update volume icon visually
+                let vIcon = document.getElementById('volIcon');
+                if(vIcon) vIcon.className = 'fa-solid fa-volume-high';
+                window.hasUnmuted = true;
 
+                // Remove listeners so it only fires once
                 document.removeEventListener('touchstart', unlockAudioAndPlay);
                 document.removeEventListener('click', unlockAudioAndPlay);
             };
 
             document.addEventListener('touchstart', unlockAudioAndPlay, {once:true});
             document.addEventListener('click', unlockAudioAndPlay, {once:true});
-
-            // 4. SMART FAILSAFE
-            // Check after 6 seconds. If it never started playing (time is 0), force the UI.
-            setTimeout(() => {
-                if (!isIntroFinished && introVideo.currentTime === 0 && introVideo.paused) {
-                    console.warn("Failsafe: Video stuck at 0:00. Forcing UI.");
-                    transitionToArena();
-                }
-            }, 6000);
         }
 
         // Boot the engine instantly
