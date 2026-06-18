@@ -454,13 +454,20 @@
             }
         }
 
+        function showLoginRequiredOverlay() {
+            const overlay = document.getElementById('statusOverlay');
+            const circle = document.getElementById('statusCircle');
+            const title = document.getElementById('statusTitle');
+            const desc = document.getElementById('statusDesc');
+
+            circle.className = 'anim-circle anim-error';
+            circle.innerHTML = '<i class="fa-solid fa-lock"></i>';
+            title.innerText = 'Login Required';
+            desc.innerHTML = 'You need to be logged in to purchase a plan.<br><button onclick="hideOverlay()" style="margin-top:20px;padding:12px 30px;border:none;border-radius:12px;background:var(--accent-cyan);color:#000;font-family:var(--font-head);font-size:1rem;font-weight:900;cursor:pointer;letter-spacing:1px;box-shadow:0 5px 20px rgba(0,242,255,0.4);"><i class=\"fa-solid fa-xmark\"></i> CLOSE</button>';
+            overlay.classList.add('active');
+        }
+
         document.addEventListener("DOMContentLoaded", () => {
-            if (!currentUser || currentUser.email === "guest@tournyx.com") {
-                alert("Please log in to upgrade.");
-                window.location.href = "login.html";
-                return;
-            }
-            
             generateSparkles('sparklesElite');
             generateSparkles('sparklesOrg');
 
@@ -651,6 +658,10 @@
         // --- 5. LINK-BASED SUBSCRIPTION ENGINE (COSMOFEED LOGIC) ---
         function initiateLinkSubscription(planName, internalRole) {
             triggerHaptic();
+            if (!currentUser || currentUser.email === "guest@tournyx.com") {
+                showLoginRequiredOverlay();
+                return;
+            }
             if(!navigator.onLine) {
                 showToast("You are offline. Please connect to internet to upgrade.", true);
                 return;
