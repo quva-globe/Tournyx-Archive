@@ -844,16 +844,12 @@ async function askNotificationPermission(e) {
 
   doHaptic();
 
-  if (window.OneSignal?.Notifications?.requestPermission) {
-    try {
-      await window.OneSignal.Notifications.requestPermission();
-      showToast("Notification permission requested", true);
-    } catch (err) {
-      console.log(err);
-      showToast("Notification request failed", false);
-    }
-  } else {
-    showToast("OneSignal not ready yet", false);
+  try {
+    const result = await Notification.requestPermission();
+    showToast("Permission: " + result, result === "granted");
+  } catch (err) {
+    console.log(err);
+    showToast("Permission request failed", false);
   }
 }
         function doHaptic() { if(navigator.vibrate) navigator.vibrate(15); }
