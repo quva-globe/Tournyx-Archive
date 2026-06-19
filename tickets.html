@@ -321,9 +321,10 @@
     <div id="pdfWrapper" style="position: fixed; left: 0; top: 0; width: 100%; opacity: 0; display: flex; background:#070311; z-index: -9999; opacity: 0; pointer-events: none; justify-content:center; ">
         <div id="pdfTemplate" style="background:#070311; color:#ffffff; padding:40px; font-family:'Helvetica Neue', Arial, sans-serif; width:760px; box-sizing:border-box;">
             <div style="text-align:center; border-bottom:2px solid #1a0a3a; padding-bottom:30px; margin-bottom:30px;">
-                <div style="background: linear-gradient(90deg, #bd00ff, #00f2ff); padding: 15px; border-radius: 8px; margin-bottom: 10px; display: inline-block; width: 100%;">
-                    <h1 style="margin:0; font-size: 26px; font-weight: 900; color: #ffffff; text-transform:uppercase; letter-spacing: 2px;">Tournyx Esports</h1>
-                </div>
+                <div style="position: relative; background-color: #1a0a3a; padding: 18px; border-radius: 8px; margin-bottom: 10px; overflow: hidden; width: 100%; display: block;">
+    <div style="position: absolute; top: 0; right: 0; bottom: 0; left: 0; background: linear-gradient(90deg, #bd00ff, #00f2ff); z-index: 1;"></div>
+    <h1 style="position: relative; z-index: 2; margin: 0; font-size: 26px; font-weight: 900; color: #ffffff; text-transform: uppercase; letter-spacing: 2px; text-shadow: 0 2px 4px rgba(0,0,0,0.5);">Tournyx Esports</h1>
+</div>
                 <p style="color:#a0a0b0; margin:8px 0 0 0; font-size:13px; letter-spacing: 1px; text-transform: uppercase;">Official Transaction Ledger</p>
             </div>
             
@@ -683,7 +684,7 @@
         // ==========================================
         // 🔑 YOUR RAZORPAY KEY (PASTE IT HERE!)
         // ==========================================
-          const RAZORPAY_KEY = "paste the key";
+           const RAZORPAY_KEY = "rzp_live_SZepeOt5YOqG07";
         // ==========================================
 
         const API_URL = 'https://script.google.com/macros/s/AKfycbyqqTpgaflxKJ9xH0jq7mJ_jLzcoNhas3gNo0h5gvoa_6r5Ae9NFxJAJp7ZoYNnMRKl/exec';
@@ -702,6 +703,61 @@
         const TICKET_PRICE = 10;
         const TICKET_OFFERS = [1, 5, 10, 20]; 
         let selectedGameName = "Free Fire"; 
+
+        // ==========================================
+        // 🚀 SMART MODAL & HARDWARE BACK BUTTON LOGIC
+        // ==========================================
+        (function() {
+            let activeModals = 0;
+            
+            // 1. Observer dynamically syncs Modals with Browser History
+            const modalObserver = new MutationObserver((mutations) => {
+                mutations.forEach((mutation) => {
+                    if (mutation.attributeName === 'class') {
+                        const target = mutation.target;
+                        const isActive = target.classList.contains('active');
+                        const wasActive = mutation.oldValue && mutation.oldValue.includes('active');
+
+                        if (isActive && !wasActive) {
+                            // Modal Opened -> Push to phone history
+                            activeModals++;
+                            window.history.pushState({ modalId: target.id }, '', '');
+                        } else if (!isActive && wasActive) {
+                            // Modal Closed (via X button) -> Pop from history
+                            activeModals--;
+                            if (activeModals < 0) activeModals = 0;
+                            if (window.history.state && window.history.state.modalId === target.id) {
+                                window.history.back();
+                            }
+                        }
+                    }
+                });
+            });
+
+            document.addEventListener("DOMContentLoaded", () => {
+                // Attach observer to all popups
+                document.querySelectorAll('.bottom-sheet-overlay, .ledger-modal').forEach(el => {
+                    modalObserver.observe(el, { attributes: true, attributeOldValue: true, attributeFilter: ['class'] });
+                });
+                
+                // 2. Desktop/Touch "Tap Outside" to Close
+                document.addEventListener('click', function(e) {
+                    if (e.target.classList.contains('bottom-sheet-overlay')) {
+                        e.target.classList.remove('active'); 
+                    }
+                });
+            });
+
+            // 3. Android/iOS Hardware Back Button Listener
+            window.addEventListener('popstate', function(e) {
+                if (activeModals > 0) {
+                    document.querySelectorAll('.bottom-sheet-overlay.active, .ledger-modal.active').forEach(el => {
+                        el.classList.remove('active');
+                    });
+                }
+            });
+        })();
+        // ==========================================
 
         async function secureFetch(payload) {
             try {
@@ -1582,38 +1638,6 @@
             to { opacity: 1; transform: translate(-50%, 0); } 
         }
     </style>
-    
-    <script>
-function tournyxOneSignalSetup() {
-    let user = JSON.parse(localStorage.getItem('tournyx_user'));
-    
-    if (user && user.email && typeof median !== 'undefined' && median.onesignal) {
-        let cleanEmail = user.email.toLowerCase().trim();
 
-        if (median.onesignal.login) {
-            median.onesignal.login({ externalId: cleanEmail });
-            if (median.onesignal.user && median.onesignal.user.addEmail) {
-                median.onesignal.user.addEmail({ email: cleanEmail });
-            }
-        } else if (median.onesignal.setExternalUserId) {
-            median.onesignal.setExternalUserId({ externalId: cleanEmail });
-            if (median.onesignal.setEmail) {
-                median.onesignal.setEmail({ email: cleanEmail });
-            }
-        }
-
-        let tagData = { "user_email": cleanEmail, "user_status": "active" };
-        
-        if (median.onesignal.tags && median.onesignal.tags.set) {
-            median.onesignal.tags.set(tagData);
-        } else if (median.onesignal.sendTags) {
-            median.onesignal.sendTags(tagData);
-        }
-    }
-}
-
-document.addEventListener("median_library_ready", tournyxOneSignalSetup);
-document.addEventListener("DOMContentLoaded", tournyxOneSignalSetup);
-</script>
 </body>
 </html>
