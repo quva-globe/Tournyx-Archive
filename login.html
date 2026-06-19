@@ -176,6 +176,7 @@
             .footer-center.copyrights { font-size: 0.6rem; text-align: center; font-weight: 600; color: rgba(255, 255, 255, 0.7); }
             
             .terms-gate { justify-content: flex-start; margin-bottom: 25px; padding-bottom: 5px; font-size: 0.7rem; width: 100%;}
+
         }
 
         @keyframes floatLogo { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-8px); } }
@@ -323,6 +324,17 @@
         @keyframes fadeInBg { from { opacity: 0; } to { opacity: 1; } }
         @keyframes cinematicEntry { 0% { transform: scale(0.8); opacity: 0; filter: blur(10px); } 20% { transform: scale(1); opacity: 1; filter: blur(0); letter-spacing: 4px; } 80% { transform: scale(1.05); opacity: 1; filter: blur(0); letter-spacing: 6px; } 100% { transform: scale(1.3); opacity: 0; filter: blur(15px); letter-spacing: 10px; } }
     </style>
+    <!-- ✅ ONESIGNAL - PASTE HERE -->
+    <script src="https://cdn.onesignal.com/sdks/web/v16/OneSignalSDK.page.js" defer></script>
+    <script>
+      window.OneSignalDeferred = window.OneSignalDeferred || [];
+      OneSignalDeferred.push(async function(OneSignal) {
+  window.OneSignal = OneSignal;
+  await OneSignal.init({
+    appId: "15a8e2b2-240c-4547-929e-797d7170e988",
+  });
+});
+    </script>
 </head>
 <body id="mainBody">
 
@@ -347,14 +359,27 @@
     <canvas id="particles-canvas"></canvas>
     <div class="hud-top-left">Beta Version 1.2.0.</div>
     
-    <div class="hud-top-right">
-        <div class="hud-tool-btn vol-btn" onclick="toggleVolume(event)" style="margin-right: 5px;">
-            <i id="volIcon" class="fa-solid fa-volume-xmark"></i>
-        </div>
-        <div class="hud-tool-btn" onclick="openModal('helpModal')"><i class="fa-solid fa-headset"></i><span id="txtHelp">Help</span></div>
-        <div class="hud-tool-btn" onclick="openModal('langModal')"><i class="fa-solid fa-earth-americas"></i><span id="txtLang">Lang</span></div>
-        <div class="hud-tool-btn" onclick="openAccountsModal()"><i class="fa-solid fa-users-gear"></i><span id="txtAcc">Accounts</span></div>
-    </div>
+<div class="hud-top-right">
+  <div class="hud-tool-btn notif-btn" onclick="askNotificationPermission(event)">
+    <i id="notifIcon" class="fa-solid fa-bell"></i>
+    <span id="txtNotif">Notify</span>
+  </div>
+
+  <div class="hud-tool-btn" onclick="openModal('helpModal')">
+    <i class="fa-solid fa-headset"></i>
+    <span id="txtHelp">Help</span>
+  </div>
+
+  <div class="hud-tool-btn" onclick="openModal('langModal')">
+    <i class="fa-solid fa-earth-americas"></i>
+    <span id="txtLang">Lang</span>
+  </div>
+
+  <div class="hud-tool-btn" onclick="openAccountsModal()">
+    <i class="fa-solid fa-users-gear"></i>
+    <span id="txtAcc">Accounts</span>
+  </div>
+</div>
 
     <div id="loggedInProfile" class="top-profile-corner hidden">
         <img id="loggedInAvatar" src="" alt="Avatar" onclick="quickLogin()">
@@ -783,8 +808,8 @@
                 }
                 
                 // Update volume icon visually
-                let vIcon = document.getElementById('volIcon');
-                if(vIcon) vIcon.className = 'fa-solid fa-volume-high';
+                let nIcon = document.getElementById('notifIcon');
+                if(nIcon) nIcon.className = 'fa-solid fa-bell';
                 window.hasUnmuted = true;
 
                 // Remove listeners so it only fires once
@@ -809,25 +834,28 @@
             setTimeout(() => { ripple.remove(); }, 600);
         });
 
-        // --- VOLUME BUTTON FIX (MOBILE PROTECTED) ---
-        function toggleVolume(e) {
-            if(e) { e.preventDefault(); e.stopPropagation(); } // Prevents the click from getting hijacked
-            doHaptic();
-            const video = document.getElementById('bgVideo');
-            const icon = document.getElementById('volIcon');
-            
-            if(video.muted) {
-                video.muted = false;
-                video.volume = 1.0;
-                icon.className = 'fa-solid fa-volume-high';
-                window.hasUnmuted = true;
-                if(video.paused) video.play().catch(()=>{}); 
-            } else {
-                video.muted = true;
-                icon.className = 'fa-solid fa-volume-xmark';
-            }
-        }
 
+
+async function askNotificationPermission(e) {
+  if (e) {
+    e.preventDefault();
+    e.stopPropagation();
+  }
+
+  doHaptic();
+
+  if (window.OneSignal?.Notifications?.requestPermission) {
+    try {
+      await window.OneSignal.Notifications.requestPermission();
+      showToast("Notification permission requested", true);
+    } catch (err) {
+      console.log(err);
+      showToast("Notification request failed", false);
+    }
+  } else {
+    showToast("OneSignal not ready yet", false);
+  }
+}
         function doHaptic() { if(navigator.vibrate) navigator.vibrate(15); }
 
         function checkTermsAndOpen(modalId) {
