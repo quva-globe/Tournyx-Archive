@@ -1,12 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <link rel="manifest" href="/manifest.json">
-    <script>
-      if ('serviceWorker' in navigator) {
-        navigator.serviceWorker.register('/sw.js');
-      }
-    </script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     
@@ -15,7 +9,6 @@
     
     <link rel="icon" href="https://tournyx.in/favicon.ico" sizes="any">
     <link rel="icon" href="https://tournyx.in/favicon.png" type="image/png" sizes="192x192">
-    <link rel="apple-touch-icon" href="https://tournyx.in/apple-touch-icon.png">
     
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700;900&family=Rajdhani:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -23,115 +16,142 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
 
-    <script>
-        (function() {
-            try {
-                const THEMES = [
-                    {cyan: '#00e5ff', purple: '#b026ff'},
-                    {cyan: '#00ff7f', purple: '#00b09b'},
-                    {cyan: '#ff9900', purple: '#ff4d4d'}
-                ];
-                let tIndex = parseInt(localStorage.getItem('tournyx_theme_index')) || 0;
-                if(THEMES[tIndex]) {
-                    document.documentElement.style.setProperty('--accent-cyan', THEMES[tIndex].cyan);
-                    document.documentElement.style.setProperty('--accent-purple', THEMES[tIndex].purple);
-                    document.documentElement.style.setProperty('--accent-gradient', `linear-gradient(90deg, ${THEMES[tIndex].purple}, ${THEMES[tIndex].cyan})`);
-                }
-                
-                let user = JSON.parse(localStorage.getItem('tournyx_user'));
-                if (user && String(user.is_premium).toLowerCase() === 'true') {
-                    document.documentElement.classList.add('theme-vip');
-                }
-            } catch(e) {}
-        })();
-    </script>
-
     <style>
-        /* --- UPGRADED LOOT DROPS THEME VARIABLES --- */
+        /* --- GLOBAL VARIABLES --- */
         :root {
-            --primary-bg: #04010A; 
-            --secondary-bg: #0a0415;
-            --card-bg: rgba(15, 8, 25, 0.65);
-            --card-border: rgba(0, 242, 255, 0.25);
-            --accent-cyan: #00e5ff;
-            --accent-purple: #b026ff;
-            --accent-orange: #ff9900;
-            --accent-green: #00e676;
-            --accent-red: #ff4d4d;
-            --accent-gradient: linear-gradient(135deg, #b026ff, #00e5ff);
-            --font-head: 'Orbitron', sans-serif;
-            --font-body: 'Rajdhani', sans-serif;
+            --primary-bg: #05020c; --secondary-bg: #0a0514;
+            --card-bg: rgba(20, 10, 35, 0.5); --card-border: rgba(255, 255, 255, 0.08);
+            --accent-cyan: #00f2ff; --accent-purple: #bd00ff;
+            --accent-orange: #ff9900; --accent-green: #00ff7f; --accent-red: #ff4d4d;
+            --accent-gradient: linear-gradient(135deg, #7b2cbf, #bd00ff, #00f2ff);
+            --text-main: #ffffff; --text-muted: #a0a0b0;
+            --font-head: 'Orbitron', sans-serif; --font-body: 'Rajdhani', sans-serif;
         }
 
+        /* --- TRUE GOLDEN VIP THEME --- */
         html.theme-vip {
             --accent-cyan: #FFD700;
             --accent-purple: #FFA500;
-            --accent-gradient: linear-gradient(135deg, #FFDF00, #D4AF37, #FF8C00);
+            --accent-gradient: linear-gradient(135deg, #FFE87C, #D4AF37, #FF8C00);
             --card-border: rgba(212, 175, 55, 0.3);
         }
 
         * { -ms-overflow-style: none !important; scrollbar-width: none !important; box-sizing: border-box; -webkit-tap-highlight-color: transparent; margin: 0; padding: 0; }
-        *::-webkit-scrollbar { display: none !important; width: 0 !important; height: 0 !important; background: transparent !important; -webkit-appearance: none !important; }
-        
-        body { background-color: var(--primary-bg); color: white; font-family: var(--font-body); padding-bottom: calc(90px + env(safe-area-bottom, 0px)); padding-top: 70px; overflow-x: hidden; min-height: 100vh;}
+        *::-webkit-scrollbar { display: none !important; width: 0 !important; height: 0 !important; background: transparent !important; }
 
-        .tx-badge { font-family: var(--font-head); font-weight: 900; font-style: italic; font-size: 0.9em; letter-spacing: -0.5px; background: var(--accent-gradient); -webkit-background-clip: text; -webkit-text-fill-color: transparent; display: inline-flex; align-items: center; justify-content: center; filter: drop-shadow(0 0 5px rgba(0,242,255,0.4)); margin: 0 3px; transform: translateZ(0); }
-        html.theme-vip .tx-badge { filter: drop-shadow(0 0 5px rgba(255,215,0,0.6)); }
+        body {
+            background-color: var(--primary-bg); color: var(--text-main); font-family: var(--font-body);
+            overflow-x: hidden; width: 100%;
+            padding-bottom: calc(85px + env(safe-area-inset-bottom)); 
+            padding-top: calc(75px + env(safe-area-inset-top)); 
+        }
 
-        .tx-ticket-composite { position: relative; display: inline-flex; align-items: center; justify-content: center; }
-        .tx-ticket-composite .tx-text { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -46%); font-family: var(--font-head); font-size: 0.38em; font-weight: 900; color: var(--primary-bg) !important; -webkit-text-fill-color: var(--primary-bg) !important; letter-spacing: -0.5px; pointer-events: none; z-index: 2; font-style: normal !important; }
+        .tx-icon {
+            font-family: var(--font-head); font-weight: 900; font-style: italic; letter-spacing: -1px;
+            background: linear-gradient(135deg, var(--accent-purple), var(--accent-cyan));
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+            display: inline-flex; align-items: center; justify-content: center;
+            font-size: 1.15em; filter: drop-shadow(0 0 5px rgba(0,242,255,0.4));
+            margin-right: 2px; vertical-align: middle;
+        }
+        html.theme-vip .tx-icon { background: linear-gradient(135deg, #FFE87C, #FF8C00); -webkit-background-clip: text; -webkit-text-fill-color: transparent; filter: drop-shadow(0 0 5px rgba(255,215,0,0.6)); }
 
-        .container { max-width: 1200px; margin: 0 auto; padding: 0 15px; width: 100%; }
+        .tx-ticket-composite { position: relative; display: inline-flex; align-items: center; justify-content: center; cursor: pointer; }
+        .tx-ticket-composite i { font-size: inherit; transition: inherit; }
+        .tx-ticket-composite .tx-text { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -46%); font-family: var(--font-head); font-size: 0.38em; font-weight: 900; color: var(--primary-bg) !important; -webkit-text-fill-color: var(--primary-bg) !important; letter-spacing: -0.5px; pointer-events: none; z-index: 2; transition: 0.3s; font-style: normal !important; }
 
-        #particles-canvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; background: radial-gradient(circle at 50% 0%, #11052C 0%, #04010A 100%); transform: translateZ(0); }
+        .container, .app-footer, .top-header .header-wrapper { max-width: 800px; margin-left: auto !important; margin-right: auto !important; width: 100%; }
 
-        .top-header { position: fixed; top: 0; left: 0; width: 100%; height: 65px; padding: 0 15px; background: rgba(4, 1, 10, 0.85); backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px); border-bottom: 1px solid rgba(255, 255, 255, 0.05); z-index: 2000; box-shadow: 0 4px 30px rgba(0, 0, 0, 0.5); transform: translateZ(0); display: flex; align-items: center; }
-        .header-wrapper { max-width: 1200px; margin: 0 auto; display: flex; align-items: center; justify-content: space-between; width: 100%; gap: 5px;}
+        #particles-canvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; pointer-events: none; transform: translateZ(0); }
+        .bg-gradient { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -2; background: radial-gradient(circle at 50% 0%, #15062e 0%, #070311 100%); pointer-events: none;}
+
+        .animate-section { animation: slideUpGlow 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) both; }
+        @keyframes slideUpGlow { 0% { opacity: 0; transform: translateY(20px); } 100% { opacity: 1; transform: translateY(0); } }
+        .delay-1 { animation-delay: 0.1s; } .delay-2 { animation-delay: 0.2s; } .delay-3 { animation-delay: 0.3s; } .delay-4 { animation-delay: 0.4s; }
+
+        .skeleton-box { background: linear-gradient(90deg, rgba(255,255,255,0.03) 25%, rgba(255,255,255,0.08) 50%, rgba(255,255,255,0.03) 75%); background-size: 200% 100%; animation: shimmer 1.5s infinite linear; border-radius: 12px; }
+        @keyframes shimmer { 0% { background-position: -200% 0; } 100% { background-position: 200% 0; } }
+        #skeletonLoader { position: fixed; top: calc(65px + env(safe-area-inset-top)); bottom: calc(60px + env(safe-area-inset-bottom)); left: 0; width: 100%; background: var(--primary-bg); z-index: 990; padding: 15px; transition: opacity 0.3s ease, visibility 0.3s ease; backdrop-filter: blur(10px); overflow: hidden;}
+        #skeletonLoader.hidden { opacity: 0; visibility: hidden; pointer-events: none; }
+        .skel-wrapper { max-width: 800px; margin: 0 auto; width: 100%; }
+        .skel-card { width: 100%; height: 180px; border-radius: 20px; margin-bottom: 20px; }
+        .skel-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin-bottom: 25px; }
+        .skel-list { display: flex; flex-direction: column; gap: 10px; }
+        .skel-item { height: 65px; border-radius: 12px; }
+
+        .top-header { position: fixed; top: 0; left: 0; width: 100%; padding: calc(10px + env(safe-area-inset-top)) 10px 10px; background: rgba(5, 2, 12, 0.8); backdrop-filter: blur(20px); border-bottom: 1px solid var(--card-border); display: flex; align-items: center; justify-content: center; z-index: 2000; box-shadow: 0 4px 30px rgba(0,0,0,0.6); transform: translateZ(0); }
+        .header-wrapper { display: flex; align-items: center; justify-content: space-between; gap: 5px;}
         .header-left { display: flex; align-items: center; gap: 8px; flex: 1; min-width: 0; }
-        .app-logo { width: 30px; height: 30px; border-radius: 50%; object-fit: contain; box-shadow: 0 0 15px var(--accent-purple); border: 1px solid rgba(255,255,255,0.2); flex-shrink: 0;}
-        html.theme-vip .app-logo { box-shadow: 0 0 15px #FFD700; border-color: #FFD700;}
-        .app-title { font-family: var(--font-head); font-size: 1rem; font-weight: 700; background: var(--accent-gradient); -webkit-background-clip: text; -webkit-text-fill-color: transparent; letter-spacing: 1px;}
+        .back-btn { color: white; font-size: 1.2rem; text-decoration: none; transition: 0.3s; cursor: pointer; padding: 5px; flex-shrink:0;}
+        .back-btn:active { color: var(--accent-cyan); transform: scale(0.9); }
+        html.theme-vip .back-btn:active { color: #FFD700; }
+        .app-title { font-family: var(--font-head); font-size: 1.05rem; font-weight: 900; background: var(--accent-gradient); -webkit-background-clip: text; -webkit-text-fill-color: transparent; letter-spacing: 0px; white-space: normal; line-height: 1.1; text-transform: uppercase; margin:0;}
+        .header-greeting { font-size: 0.75rem; color: #aaa; margin-bottom: 2px; }
         
-        .desktop-nav { display: none; align-items: center; gap: 25px; }
-        .desktop-nav a { color: #aaa; text-decoration: none; font-family: var(--font-head); font-size: 0.95rem; font-weight: bold; transition: 0.2s; display: flex; align-items: center; gap: 6px; text-transform: uppercase; letter-spacing: 1px;}
-        .desktop-nav a:hover, .desktop-nav a.active { color: var(--accent-cyan); text-shadow: 0 0 10px rgba(0,242,255,0.4); }
+        .desktop-nav { display: none; gap: 20px; align-items: center; }
+        .desktop-nav a { color: var(--text-muted); text-decoration: none; font-family: var(--font-head); font-size: 0.85rem; font-weight: bold; text-transform: uppercase; transition: 0.3s; }
+        .desktop-nav a.active { color: var(--accent-cyan); text-shadow: 0 0 10px rgba(0,242,255,0.4); }
         html.theme-vip .desktop-nav a:hover, html.theme-vip .desktop-nav a.active { color: #FFD700; text-shadow: 0 0 10px rgba(255,215,0,0.6); }
+        
+        .header-actions { display: flex; align-items: center; gap: 12px; flex-shrink: 0;}
+        .header-profile-img { width: 32px; height: 32px; border-radius: 50%; border: 2px solid var(--accent-cyan); object-fit: cover; cursor: pointer; background:#000; transition: 0.3s; box-shadow: 0 0 10px rgba(0,242,255,0.4);}
+        html.theme-vip .header-profile-img { border-color: #FFD700; box-shadow: 0 0 10px rgba(255,215,0,0.6); }
+
         @media (min-width: 850px) { .desktop-nav { display: flex; } }
 
-        .header-right { display: flex; align-items: center; gap: 12px; flex-shrink: 0;}
-        .header-community-icon { color: var(--accent-cyan); font-size: 1.2rem; cursor: pointer; transition: 0.2s; margin-right: 5px; }
-        html.theme-vip .header-community-icon { color: #FFD700; }
-        .header-community-icon:active { transform: scale(0.9); }
-        .header-profile-img { width: 32px; height: 32px; border-radius: 50%; border: 2px solid var(--accent-cyan); object-fit: cover; cursor: pointer; transition: 0.2s; flex-shrink: 0;}
-        html.theme-vip .header-profile-img { border-color: #FFD700; }
+        .container { padding: 15px; margin-top: 0; }
 
-        /* --- WALLET SUMMARY --- */
-        .wallet-card { background: linear-gradient(135deg, rgba(20,10,35,0.8) 0%, rgba(10,5,20,0.9) 100%); backdrop-filter: blur(15px); border-radius: 24px; padding: 20px; border: 1px solid var(--card-border); margin: 15px 0 25px; box-shadow: 0 10px 40px rgba(0,0,0,0.5); position: relative; overflow: hidden; display: flex; align-items: center; justify-content: space-between; }
-        .wallet-card::after { content: ''; position: absolute; top: -50%; left: -50%; width: 200%; height: 200%; background: radial-gradient(circle at center, rgba(0,242,255,0.1) 0%, transparent 70%); pointer-events: none; }
-        html.theme-vip .wallet-card::after { background: radial-gradient(circle at center, rgba(255,215,0,0.1) 0%, transparent 70%); }
+        .wallet-card { background: linear-gradient(135deg, rgba(20,10,35,0.9) 0%, rgba(5,2,12,0.95) 100%); border: 1px solid var(--accent-cyan); border-radius: 20px; padding: 20px 15px; position: relative; overflow: hidden; box-shadow: 0 8px 30px rgba(0,0,0,0.6), inset 0 0 20px rgba(0,242,255,0.1); margin-bottom: 20px; animation: slideUpGlow 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) both; backdrop-filter: blur(15px);}
+        html.theme-vip .wallet-card { background: linear-gradient(135deg, rgba(30,25,5,0.9) 0%, rgba(10,8,0,0.95) 100%); border-color: #FFD700; box-shadow: 0 8px 30px rgba(0,0,0,0.6), inset 0 0 20px rgba(255,215,0,0.15);}
         
-        .w-left { display: flex; flex-direction: column; gap: 5px; z-index: 2; flex:1; min-width:0; }
-        .w-title { font-family: var(--font-head); font-size: 0.8rem; color: #a0a0b0; text-transform: uppercase; letter-spacing: 1px; display: flex; align-items: center; gap: 6px; }
-        .w-title i { color: var(--accent-cyan); }
-        html.theme-vip .w-title i { color: #FFD700; }
+        .wallet-card::before { content: ''; position: absolute; top: -50%; left: -50%; width: 200%; height: 200%; background: radial-gradient(circle, rgba(0,242,255,0.05) 0%, transparent 60%); transform: rotate(45deg); pointer-events: none; }
+        html.theme-vip .wallet-card::before { background: radial-gradient(circle, rgba(255,215,0,0.05) 0%, transparent 60%); }
+        .wallet-card::after { content: '||| | |||| | | |||| | |||'; position: absolute; right: -25px; top: 50%; transform: translateY(-50%) rotate(90deg); font-family: monospace; font-size: 2rem; color: rgba(255,255,255,0.03); pointer-events: none; letter-spacing: 2px;}
+
+        .vip-badge { position: absolute; top: 12px; right: 12px; background: linear-gradient(45deg, #FFD700, #ff9900); color: #000; padding: 4px 10px; border-radius: 50px; font-family: var(--font-head); font-size: 0.65rem; font-weight: 900; box-shadow: 0 0 10px rgba(255,215,0,0.5); display: flex; align-items: center; gap: 4px;}
+        .vip-bronze { background: linear-gradient(45deg, #cd7f32, #8b4513); color: white; box-shadow: 0 0 10px rgba(205,127,50,0.5); }
+        .vip-silver { background: linear-gradient(45deg, #c0c0c0, #a0a0a0); color: black; box-shadow: 0 0 10px rgba(192,192,192,0.5); }
         
-        .w-balance-wrapper { display: flex; align-items: baseline; gap: 8px; flex-wrap: wrap;}
-        .w-balance { font-family: var(--font-head); font-size: clamp(2rem, 8vw, 2.8rem); font-weight: 900; color: white; text-shadow: 0 0 15px rgba(255,255,255,0.3); line-height: 1; display:flex; align-items:center; gap:5px;}
-        .w-subtitle { font-size: 0.85rem; color: var(--accent-cyan); font-weight: bold; }
-        html.theme-vip .w-subtitle { color: #FFD700; }
+        .balance-label { font-size: 0.75rem; color: #ccc; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 5px; display: flex; align-items: center; gap:8px; font-weight: bold;}
+        .balance-amount { font-family: var(--font-head); font-size: clamp(1.5rem, 6vw, 2.2rem); line-height: 1.1; font-weight: 900; color: white; display: flex; align-items: center; gap: 5px; text-shadow: 0 0 15px rgba(255,255,255,0.3); margin-bottom: 15px;}
+        .blur-balance { filter: blur(10px); user-select: none; opacity: 0.8; transition: 0.3s; }
 
-        .w-right { display: flex; flex-direction: column; align-items: flex-end; gap: 8px; z-index: 2; flex-shrink: 0; }
-        .w-pts-box { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); padding: 8px 15px; border-radius: 50px; display: flex; align-items: center; gap: 8px; font-family: var(--font-head); font-size: 0.9rem; font-weight: bold; }
-        .w-pts-box i { color: var(--accent-purple); filter: drop-shadow(0 0 5px var(--accent-purple));}
-        html.theme-vip .w-pts-box i { color: #FF8C00; }
+        .pts-balance { display: flex; align-items: center; justify-content:space-between; gap: 8px; background: rgba(0,0,0,0.6); padding: 10px 15px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.05); width: 100%; transition: 0.3s; box-shadow: inset 0 0 10px rgba(0,0,0,0.8); }
+        .pts-balance span { font-family: var(--font-head); font-size: clamp(0.85rem, 4vw, 1rem); font-weight: 900; color: var(--accent-cyan); text-shadow: 0 0 10px rgba(0,242,255,0.4);}
+        html.theme-vip .pts-balance span { color: #FFD700; text-shadow: 0 0 10px rgba(255,215,0,0.4); }
+        
+        .vip-progress-bg { width: 100%; height: 6px; background: rgba(255,255,255,0.05); border-radius: 5px; margin-top: 15px; overflow:hidden; box-shadow: inset 0 0 5px rgba(0,0,0,0.8);}
+        .vip-progress-fill { height: 100%; width: 0%; background: linear-gradient(90deg, var(--accent-orange), #FFD700); box-shadow: 0 0 10px var(--accent-orange); transition: 1s cubic-bezier(0.175, 0.885, 0.32, 1.275);}
 
-        /* --- QUICK ACTIONS (OVERFLOW FIX) --- */
-        .quick-actions { display: flex; flex-direction: row; gap: 10px; margin-bottom: 25px; justify-content: space-between; align-items: stretch; width: 100%;}
-        .action-btn { flex: 1; min-width: 0; background: linear-gradient(180deg, rgba(20,10,35,0.8) 0%, rgba(10,5,20,0.9) 100%); backdrop-filter: blur(10px); border: 1px solid var(--card-border); border-radius: 16px; padding: 15px 5px; min-height: 85px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px; cursor: pointer; transition: 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); box-shadow: 0 5px 15px rgba(0,0,0,0.4); text-decoration: none; color: white; position: relative; overflow: hidden;}
+        .tkt-theme-FF { --glow-color: #ff9900; --glow-border: #ff4d4d; }
+        .tkt-theme-BGM { --glow-color: #00ff7f; --glow-border: #00b09b; }
+        .tkt-theme-UNI { --glow-color: #FFD700; --glow-border: #FFD700; background: linear-gradient(135deg, #0b0b0f, #1a1200) !important; border: 1px solid rgba(255, 215, 0, 0.45); box-shadow: 0 0 30px rgba(255, 215, 0, 0.25), inset 0 0 18px rgba(255, 215, 0, 0.12); position: relative; overflow: hidden; }
+        .tkt-theme-UNI::before { content: ""; position: absolute; inset: 0; background: radial-gradient(circle at top left, rgba(255,215,0,0.15), transparent 60%); pointer-events: none;}
+        .uni-title {font-weight: bold; letter-spacing: 2px; text-shadow: 0 0 10px rgba(255,215,0,0.6);}
+
+        .tournyx-ticket { background: linear-gradient(135deg, rgba(255,255,255,0.05), rgba(255,255,255,0.02)); border: 1px solid var(--glow-border, var(--accent-cyan)); border-radius: 20px; display: flex; align-items: center; padding: 12px 15px; margin-bottom: 12px; position: relative; box-shadow: 0 8px 24px rgba(0,0,0,0.45), 0 0 12px rgba(0,242,255,0.12); overflow: hidden; animation: fadeIn 0.5s ease; cursor: pointer; transition: 0.3s; backdrop-filter: blur(10px);}
+        .tournyx-ticket:hover { transform: translateY(-2px); box-shadow: 0 8px 25px rgba(0,0,0,0.6), 0 0 15px var(--glow-color, rgba(0,242,255,0.2)); }
+        .tournyx-ticket:active { transform: scale(0.97); }
+        .tournyx-ticket::before { content: ''; position: absolute; left: -10px; top: 50%; transform: translateY(-50%); width: 20px; height: 20px; background: var(--primary-bg); border-radius: 50%; border-right: 1px solid var(--glow-border, var(--accent-cyan)); z-index: 5; box-shadow: inset -4px 0 8px rgba(0,0,0,0.5);}
+        .tournyx-ticket::after { content: ''; position: absolute; right: -10px; top: 50%; transform: translateY(-50%); width: 20px; height: 20px; background: var(--primary-bg); border-radius: 50%; border-left: 1px solid var(--glow-border, var(--accent-cyan)); z-index: 5; box-shadow: inset 4px 0 8px rgba(0,0,0,0.5);}
+        
+        .tkt-logo { width: 52px; height: 52px; border-radius: 10px; object-fit: cover; border: 1px solid var(--glow-border, var(--accent-purple)); box-shadow: 0 0 15px var(--glow-color, rgba(189,0,255,0.4)); z-index: 2;}
+        .tkt-logo-fallback { width: 45px; height: 45px; border-radius: 10px; background: rgba(189,0,255,0.2); border: 1px solid var(--glow-border, var(--accent-purple)); box-shadow: 0 0 15px var(--glow-color, rgba(189,0,255,0.4)); z-index: 2; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; color: white; display: none; }
+        
+        .tkt-details { flex: 1; margin-left: 12px; z-index: 2;}
+        .tkt-game { font-family: var(--font-head); color: white; font-size: 0.95rem; text-transform: uppercase; letter-spacing: 1px; font-weight: 900; text-shadow: 0 0 5px rgba(255,255,255,0.2);}
+        .tkt-id { font-size: 0.65rem; color: rgba(255,255,255,0.5); font-family: monospace; font-weight: bold; margin-top: 2px;}
+        html.theme-vip .tkt-id { color: #FFD700; }
+        .tkt-count { font-family: var(--font-head); font-size: 1.5rem; color: var(--glow-color, var(--accent-green)); font-weight: 900; text-shadow: 0 0 10px var(--glow-color, rgba(0,255,127,0.4)); padding-left: 12px; border-left: 1px dashed rgba(255,255,255,0.1); z-index: 2;}
+        .tkt-tournyx-stamp { position: absolute; top: 6px; right: 20px; font-size: 0.55rem; color: rgba(255,255,255,0.1); text-transform: uppercase; letter-spacing: 2px; font-family: var(--font-head); font-weight:900; z-index: 1;}
+
+        /* --- QUICK ACTIONS FIXED FOR MOBILE --- */
+        .quick-actions { display: grid; grid-template-columns: repeat(auto-fit, minmax(90px, 1fr)); gap: 10px; margin-bottom: 25px; justify-content: center; align-items: center; }
+        .action-btn { background: linear-gradient(180deg, rgba(20,10,35,0.8) 0%, rgba(10,5,20,0.9) 100%); backdrop-filter: blur(10px); border: 1px solid var(--card-border); border-radius: 16px; padding: 12px 8px; min-height: 85px; width: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px; cursor: pointer; transition: 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); box-shadow: 0 5px 15px rgba(0,0,0,0.4); text-decoration: none; color: white; position: relative; overflow: hidden;}
         .action-btn::before { content:''; position: absolute; top:0; left:0; width:100%; height:100%; background: linear-gradient(135deg, rgba(255,255,255,0.05), transparent); pointer-events: none;}
         .action-btn:active { transform: scale(0.95); }
-        .action-btn i { font-size: 1.5rem; }
-        .action-btn span { font-family: var(--font-head); font-size: clamp(0.65rem, 2.5vw, 0.85rem); text-align: center; font-weight: 900; text-transform: uppercase; letter-spacing: 0.5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 100%;}
+        .action-btn i { font-size: 1.4rem; }
+        .action-btn span { font-family: var(--font-head); font-size: clamp(0.7rem, 2.5vw, 0.85rem); text-align: center; font-weight: 900; text-transform: uppercase; letter-spacing: 0.5px; line-height: 1.1;}
         
         .btn-add { border-color: rgba(189,0,255,0.3); } .btn-add i, .btn-add .tx-icon { color: var(--accent-purple); filter: drop-shadow(0 0 10px rgba(189,0,255,0.5)); } .btn-add:hover { background: rgba(189,0,255,0.1); border-color: var(--accent-purple); transform: translateY(-3px); box-shadow: 0 8px 20px rgba(189,0,255,0.2);}
         .btn-redeem { border-color: rgba(0,242,255,0.3); } .btn-redeem i { color: var(--accent-cyan); filter: drop-shadow(0 0 10px rgba(0,242,255,0.5)); } .btn-redeem:hover { background: rgba(0,242,255,0.1); border-color: var(--accent-cyan); transform: translateY(-3px); box-shadow: 0 8px 20px rgba(0,242,255,0.2);}
@@ -139,282 +159,442 @@
         html.theme-vip .btn-add { border-color: rgba(255,215,0,0.3); } html.theme-vip .btn-add i, html.theme-vip .btn-add .tx-icon { color: #FFD700; filter: drop-shadow(0 0 10px rgba(255,215,0,0.5)); } html.theme-vip .btn-add:hover { background: rgba(255,215,0,0.1); border-color: #FFD700; box-shadow: 0 8px 20px rgba(255,215,0,0.2);}
         html.theme-vip .btn-redeem { border-color: rgba(255,140,0,0.3); } html.theme-vip .btn-redeem i { color: #FF8C00; filter: drop-shadow(0 0 10px rgba(255,140,0,0.5)); } html.theme-vip .btn-redeem:hover { background: rgba(255,140,0,0.1); border-color: #FF8C00; box-shadow: 0 8px 20px rgba(255,140,0,0.2);}
 
-        /*--- TICKET INVENTORY ---*/
-        .inventory-grid { display: flex; flex-direction: column; gap: 12px; margin-bottom: 30px; }
-        .pass-card { background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.1); border-radius: 16px; padding: 15px; display: flex; align-items: center; justify-content: space-between; position: relative; overflow: hidden; }
-        .pass-card::before { content:''; position:absolute; left:0; top:0; height:100%; width:4px; }
-        .pass-universal::before { background: #FFD700; box-shadow: 0 0 10px #FFD700; }
-        .pass-specific::before { background: var(--accent-purple); box-shadow: 0 0 10px var(--accent-purple); }
-        
-        .pass-left { display: flex; align-items: center; gap: 15px; }
-        .pass-icon { width: 45px; height: 45px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; background: rgba(0,0,0,0.5); }
-        .pass-universal .pass-icon { color: #FFD700; border: 1px solid rgba(255,215,0,0.3); }
-        .pass-specific .pass-icon { color: var(--accent-purple); border: 1px solid rgba(189,0,255,0.3); }
-        
-        .pass-info h3 { font-family: var(--font-head); font-size: 1.1rem; margin-bottom: 2px; }
-        .pass-info p { font-size: 0.75rem; color: #888; }
-        .pass-universal .pass-info h3 { color: #FFD700; text-shadow: 0 0 5px rgba(255,215,0,0.4); }
-        .pass-specific .pass-info h3 { color: white; }
-        
-        .pass-count { font-family: var(--font-head); font-size: 1.6rem; font-weight: 900; background: rgba(0,0,0,0.5); padding: 5px 15px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.1); }
-        .pass-universal .pass-count { color: #FFD700; }
-        .pass-specific .pass-count { color: var(--accent-cyan); }
-
-        /*--- TRANSACTION HISTORY (MINIMAL & OVERFLOW SAFE) ---*/
+        /*--- TRANSACTION HISTORY (REDUCED SIZES FOR OVERFLOW FIX) ---*/
         .section-title { font-family: var(--font-head); font-size: 1.1rem; color: white; margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center; flex-wrap: nowrap; text-shadow: 0 0 5px rgba(255,255,255,0.2); font-weight: 900; text-transform: uppercase; letter-spacing: 0.5px;}
         .section-title > div { display: flex; align-items: center; gap: 10px; white-space: nowrap; }
         .section-title span { font-size: 0.75rem; color: var(--accent-cyan); cursor: pointer; padding: 4px 10px; border-radius: 6px; transition: 0.3s; border: 1px solid rgba(0,242,255,0.2); background: rgba(0,242,255,0.05); font-weight: bold; white-space: nowrap; }
         html.theme-vip .section-title span { color: #FFD700; border-color: rgba(255,215,0,0.2); background: rgba(255,215,0,0.05); }
         .section-title span:active { transform: scale(0.9); }
         
-        .txn-list { background: rgba(10,5,20,0.6); backdrop-filter: blur(10px); border: 1px solid var(--card-border); border-radius: 15px; padding: 12px; display: flex; flex-direction: column; gap: 10px; margin-bottom: 20px; box-shadow: 0 8px 25px rgba(0,0,0,0.4); }
+        .txn-list { background: rgba(10,5,20,0.6); backdrop-filter: blur(10px); border: 1px solid var(--card-border); border-radius: 15px; padding: 12px; display: flex; flex-direction: column; gap: 8px; margin-bottom: 20px; box-shadow: 0 8px 25px rgba(0,0,0,0.4); }
         .txn-item { display: flex; justify-content: space-between; align-items: center; padding: 10px 12px; background: rgba(255,255,255,0.03); border-radius: 12px; border: 1px solid rgba(255,255,255,0.05); cursor: pointer; transition: 0.3s; animation: slideInUp 0.3s ease both;}
         .txn-item:active { background: rgba(255,255,255,0.06); border-color: var(--accent-cyan); transform: scale(0.97); }
         html.theme-vip .txn-item:active { border-color: #FFD700; }
         
-        .txn-left { display: flex; align-items: center; gap: 10px; min-width: 0; flex: 1; padding-right: 5px; }
-        .txn-icon { width: 35px; height: 35px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.9rem; flex-shrink: 0; box-shadow: 0 4px 10px rgba(0,0,0,0.2);}
+        .txn-left { display: flex; align-items: center; gap: 10px; min-width: 0; flex: 1; padding-right: 8px; }
+        .txn-icon { width: 34px; height: 34px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.95rem; flex-shrink: 0; box-shadow: 0 4px 10px rgba(0,0,0,0.2);}
         .icon-credit { background: rgba(0,255,127,0.1); color: var(--accent-green); border: 1px solid rgba(0,255,127,0.3); text-shadow: 0 0 8px rgba(0,255,127,0.4);}
         .icon-debit { background: rgba(255,77,77,0.1); color: var(--accent-red); border: 1px solid rgba(255,77,77,0.3); text-shadow: 0 0 8px rgba(255,77,77,0.4);}
         
         .txn-info { display: flex; flex-direction: column; min-width: 0; width: 100%; }
-        .txn-info h4 { font-family: var(--font-head); font-size: 0.8rem; color: white; margin-bottom: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; width: 100%; display: block; }
-        .txn-info p { font-size: 0.6rem; color: #aaa; display:flex; flex-wrap: wrap; gap:4px; align-items:center; line-height: 1.2; font-weight: bold; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;}
-        .cat-tag { font-size: 0.55rem; padding: 2px 4px; border-radius: 4px; background:rgba(255,255,255,0.05); text-transform:uppercase; border: 1px solid rgba(255,255,255,0.1); color: white; flex-shrink: 0;}
+        .txn-info h4 { font-family: var(--font-head); font-size: 0.82rem; color: white; margin-bottom: 3px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; width: 100%; display: block; }
+        .txn-info p { font-size: 0.65rem; color: #aaa; display:flex; flex-wrap: wrap; gap:5px; align-items:center; line-height: 1.2; font-weight: bold;}
+        .cat-tag { font-size: 0.55rem; padding: 2px 4px; border-radius: 4px; background:rgba(255,255,255,0.05); text-transform:uppercase; border: 1px solid rgba(255,255,255,0.1); color: white;}
         
         .txn-right { text-align: right; flex-shrink: 0; display: flex; flex-direction: column; align-items: flex-end; min-width: 65px; }
-        .in-out-label { font-size: 0.55rem; text-transform: uppercase; font-family: var(--font-head); font-weight: 900; padding: 2px 4px; border-radius: 4px; margin-bottom: 3px; letter-spacing: 0.5px; white-space: nowrap;}
+        .in-out-label { font-size: 0.55rem; text-transform: uppercase; font-family: var(--font-head); font-weight: 900; padding: 2px 4px; border-radius: 4px; margin-bottom: 4px; letter-spacing: 0.5px; }
         .in-label { background: rgba(0,255,127,0.15); color: var(--accent-green); border: 1px solid rgba(0,255,127,0.3); }
         .out-label { background: rgba(255,77,77,0.15); color: var(--accent-red); border: 1px solid rgba(255,77,77,0.3); }
-        .txn-amt { font-family: var(--font-head); font-size: 0.9rem; font-weight: 900; white-space: nowrap; }
+        .txn-amt { font-family: var(--font-head); font-size: 0.95rem; font-weight: 900; white-space: nowrap; }
         .amt-credit { color: var(--accent-green); text-shadow: 0 0 10px rgba(0,255,127,0.3); }
         .amt-debit { color: var(--accent-red); text-shadow: 0 0 10px rgba(255,77,77,0.3); }
-        .txn-status { font-size: 0.55rem; color: #ccc; text-transform: uppercase; margin-top: 3px; background: rgba(0,0,0,0.5); padding: 2px 6px; border-radius: 4px; display: inline-block; font-weight:bold; border: 1px solid rgba(255,255,255,0.08);}
+        .txn-status { font-size: 0.6rem; color: #ccc; text-transform: uppercase; margin-top: 4px; background: rgba(0,0,0,0.5); padding: 2px 6px; border-radius: 6px; display: inline-block; font-weight:bold; border: 1px solid rgba(255,255,255,0.08);}
 
-        /* 10-POINT SECURITY GRID */
-        .security-grid { display:grid; grid-template-columns: 1fr 1fr; gap:8px; margin-top:15px; font-size:0.55rem; color:#888; text-transform:uppercase; font-family:var(--font-head); text-align:left; background: rgba(0,0,0,0.4); padding: 12px; border-radius: 12px; border: 1px dashed rgba(255,255,255,0.1);}
-        .security-grid div { display: flex; align-items: center; gap: 5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;}
-        .security-grid i { font-size: 0.8rem; flex-shrink: 0; }
+        .txn-summary-card{ display:grid; grid-template-columns:repeat(2,1fr); gap:12px; margin-bottom:18px; }
+        .summary-box{background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.08); border-radius:16px; padding:15px; text-align:center; backdrop-filter:blur(8px); transition:0.3s; }
+        .summary-box:hover{ transform:translateY(-2px); border-color:rgba(0,242,255,0.3); }
+        .summary-label{ font-size:0.7rem; color:#888; text-transform:uppercase; letter-spacing:1px; margin-bottom:6px; font-weight:bold; }
+        .summary-value{ font-size:1.2rem; font-weight:900; color:white; font-family:var(--font-head); }
+        html.theme-vip .summary-box{ border-color:rgba(255,215,0,0.15); }
 
-        @keyframes slideInUp { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-
-        /* --- MODALS --- */
-        .bottom-sheet-overlay { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0,0,0,0.7); z-index: 6000; display: none; align-items: flex-end; justify-content: center; opacity: 0; transition: opacity 0.3s ease; backdrop-filter: blur(8px); }
+        .bottom-sheet-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); z-index: 5000; display: none; align-items: flex-end; justify-content: center; backdrop-filter: blur(8px); opacity: 0; transition: 0.3s; }
         .bottom-sheet-overlay.active { display: flex; opacity: 1; }
-        .bottom-sheet { width: 100%; background: rgba(10, 5, 20, 0.98); border-radius: 25px 25px 0 0; border-top: 1px solid var(--card-border); padding: 25px 20px; transform: translateY(100%); transition: transform 0.3s cubic-bezier(0.1, 0.8, 0.2, 1); max-height: 85vh; overflow-y: auto; box-shadow: 0 -10px 40px rgba(0,0,0,0.8); }
+        .bottom-sheet { width: 100%; max-width: 450px; background: rgba(10,5,20,0.95); border-radius: 25px 25px 0 0; border-top: 1px solid var(--card-border); border-left: 1px solid rgba(255,255,255,0.05); border-right: 1px solid rgba(255,255,255,0.05); padding: 25px 20px calc(20px + env(safe-area-inset-bottom)); transform: translateY(100%); transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); max-height: 90vh; overflow-y: auto; box-shadow: 0 -10px 40px rgba(0,0,0,0.8); backdrop-filter: blur(20px);}
         .bottom-sheet-overlay.active .bottom-sheet { transform: translateY(0); }
         
-        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); z-index: 8000; display: none; align-items: center; justify-content: center; backdrop-filter: blur(8px);}
-        .modal-overlay.active { display: flex; }
-        .modal-box { background: rgba(10, 5, 20, 0.98); width: 90%; max-width: 400px; border-radius: 25px; border: 1px solid var(--card-border); padding: 25px; text-align: center; position: relative; transform: scale(0.95); opacity: 0; transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); box-shadow: 0 15px 50px rgba(0,0,0,0.8);}
-        .modal-overlay.active .modal-box { transform: scale(1); opacity: 1; }
-        .modal-close { position: absolute; top: 15px; right: 15px; color: #888; font-size: 1.3rem; cursor: pointer; transition: 0.2s; padding:5px;}
-        .modal-close:hover { color: #ff4d4d; transform: scale(1.1); }
+        @media (min-width: 850px) {
+            .bottom-sheet-overlay { align-items: center; justify-content: center; }
+            .bottom-sheet { border-radius: 20px; transform: scale(0.95); opacity: 0; transition: all 0.3s ease; max-height:85vh;}
+            .bottom-sheet-overlay.active .bottom-sheet { transform: scale(1); opacity: 1; }
+        }
 
-        .sheet-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
-        .sheet-title { font-family: var(--font-head); font-size: 1.1rem; color: white; display: flex; align-items: center; gap: 8px; font-weight: bold;}
-        .close-sheet { color: #888; font-size: 1.5rem; cursor: pointer; padding: 5px; transition: 0.2s; }
+        .sheet-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; border-bottom: 1px dashed rgba(255,255,255,0.1); padding-bottom: 12px;}
+        .sheet-title { font-family: var(--font-head); font-size: 1.2rem; color: white; display: flex; align-items: center; gap: 8px; font-weight: 900; text-transform: uppercase;}
+        .close-sheet { color: #888; font-size: 1.5rem; cursor: pointer; padding: 5px; transition: 0.3s; }
+        .close-sheet:hover { color: white; transform: rotate(90deg) scale(1.1); }
         
-        /* Razorpay Inputs */
-        .amt-input-wrapper { display: flex; align-items: center; background: rgba(0,0,0,0.5); border-radius: 16px; padding: 5px; border: 1px solid rgba(255,255,255,0.1); margin-bottom: 15px; transition: 0.3s; }
-        .amt-input-wrapper:focus-within { border-color: var(--accent-cyan); box-shadow: 0 0 15px rgba(0,242,255,0.2); }
-        html.theme-vip .amt-input-wrapper:focus-within { border-color: #FFD700; box-shadow: 0 0 15px rgba(255,215,0,0.2); }
-        .amt-currency { font-family: var(--font-head); font-size: 1.5rem; color: var(--accent-cyan); padding: 0 15px; font-weight: bold;}
-        .amt-input { flex: 1; background: transparent; border: none; color: white; font-family: var(--font-head); font-size: 1.8rem; font-weight: 900; outline: none; padding: 10px 0; width: 100%;}
-        .amt-input::placeholder { color: rgba(255,255,255,0.2); }
+        .game-selector { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 20px; }
+        .game-card { background: rgba(0,0,0,0.5); border: 2px solid rgba(255,255,255,0.05); border-radius: 12px; padding: 12px 8px; text-align: center; cursor: pointer; transition: 0.3s; position: relative; box-shadow: inset 0 0 10px rgba(0,0,0,0.6);}
+        .game-card.active { border-color: var(--accent-purple); background: rgba(189,0,255,0.15); box-shadow: 0 5px 15px rgba(189,0,255,0.2), inset 0 0 10px rgba(189,0,255,0.1); transform: scale(1.02); }
+        html.theme-vip .game-card.active { border-color: #FFD700; background: rgba(255,215,0,0.15); box-shadow: 0 5px 15px rgba(255,215,0,0.2), inset 0 0 10px rgba(255,215,0,0.1); }
+        .game-card img { width: 45px; height: 45px; border-radius: 10px; margin-bottom: 8px; border: 1px solid rgba(255,255,255,0.1); box-shadow: 0 3px 8px rgba(0,0,0,0.4);}
+        .game-card span { display: block; font-family: var(--font-head); font-size: 0.85rem; color: white; font-weight: 900; text-transform: uppercase; letter-spacing: 0.5px;}
+
+        .amt-input-wrapper { position: relative; margin-bottom: 15px; }
+        .amt-currency { position: absolute; left: 20px; top: 50%; transform: translateY(-50%); font-family: var(--font-head); font-size: 1.2rem; color: white; font-weight: bold; }
+        .amt-input { width: 100%; background: rgba(0,0,0,0.6); border: 2px solid rgba(255,255,255,0.1); padding: 18px 15px 18px 60px; border-radius: 15px; color: white; font-family: var(--font-head); font-size: 1.6rem; font-weight: 900; outline: none; transition: 0.3s; box-shadow: inset 0 0 10px rgba(0,0,0,0.6); }
+        .amt-input:focus { border-color: var(--accent-cyan); box-shadow: 0 0 15px rgba(0,242,255,0.3), inset 0 0 10px rgba(0,0,0,0.6); background: rgba(0,0,0,0.8);}
+        html.theme-vip .amt-input:focus { border-color: #FFD700; box-shadow: 0 0 15px rgba(255,215,0,0.3), inset 0 0 10px rgba(0,0,0,0.6); }
+        @keyframes shake { 0%,100%{transform:translateX(0);} 20%,60%{transform:translateX(-8px);} 40%,80%{transform:translateX(8px);} }
+        .input-error { border-color: var(--accent-red) !important; animation: shake 0.4s both; box-shadow: 0 0 10px rgba(255,77,77,0.4) !important;}
         
-        .quick-amt-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-bottom: 20px; }
-        .quick-amt-btn { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); padding: 10px 0; text-align: center; border-radius: 12px; font-family: var(--font-head); font-size: 0.9rem; font-weight: bold; cursor: pointer; transition: 0.2s; color: #ccc;}
-        .quick-amt-btn:active { background: rgba(0,242,255,0.2); border-color: var(--accent-cyan); color: white; transform: scale(0.95); }
-        html.theme-vip .quick-amt-btn:active { background: rgba(255,215,0,0.2); border-color: #FFD700; }
+        .quick-amt-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-bottom: 25px; }
+        .quick-amt-btn { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.08); color: white; padding: 12px 0; text-align: center; border-radius: 10px; font-family: var(--font-head); font-weight: 900; cursor: pointer; transition: 0.3s; font-size: 0.85rem; box-shadow: 0 3px 8px rgba(0,0,0,0.2);}
+        .quick-amt-btn:active { background: var(--accent-gradient); border-color: transparent; color: white; transform:scale(0.94); box-shadow: 0 4px 12px rgba(0,242,255,0.3);}
+        html.theme-vip .quick-amt-btn:active { background: var(--gold-gradient); color: black; box-shadow: 0 4px 12px rgba(255,215,0,0.3);}
 
-        .pay-btn { width: 100%; background: var(--accent-gradient); color: white; border: none; padding: 16px; border-radius: 50px; font-family: var(--font-head); font-size: 1.1rem; font-weight: 900; letter-spacing: 1px; cursor: pointer; box-shadow: 0 8px 25px rgba(189,0,255,0.4); text-transform: uppercase; transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); display: flex; align-items: center; justify-content: center; gap: 8px; position: relative; overflow: hidden;}
-        .pay-btn::after { content: ''; position: absolute; top: 0; left: -100%; width: 50%; height: 100%; background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent); animation: btnShineCore 2.5s infinite 1.5s; z-index: 1; }
-        @keyframes btnShineCore { 0% { left: -100%; } 20% { left: 200%; } 100% { left: 200%; } }
-        .pay-btn:active { transform: scale(0.96); box-shadow: 0 4px 15px rgba(189,0,255,0.5); }
+        .pay-btn { width: 100%; padding: 16px 20px; background: var(--accent-gradient); border: none; border-radius: 50px; color: white; font-family: var(--font-head); font-size: 1.05rem; font-weight: 900; text-transform: uppercase; cursor: pointer; box-shadow: 0 6px 20px rgba(189,0,255,0.4); display: flex; justify-content: center; align-items: center; gap: 10px; margin-bottom: 12px; letter-spacing: 1px; transition: 0.3s;}
+        html.theme-vip .pay-btn { background: linear-gradient(90deg, #FFD700, #FF8C00); color: black; box-shadow: 0 6px 20px rgba(255,215,0,0.4); }
+        .pay-btn:active { transform: scale(0.96); box-shadow: 0 3px 10px rgba(189,0,255,0.4);}
+        html.theme-vip .pay-btn:active { box-shadow: 0 3px 10px rgba(255,215,0,0.4); }
+        
+        .rzp-secure-badge { display: flex; align-items: center; justify-content: center; gap: 6px; color: #888; font-size: 0.75rem; margin-top: 12px; font-family: var(--font-body); font-weight: bold;}
+        .rzp-secure-badge i { color: #3395ff; font-size: 1rem; }
+        
+        /* 10 Advanced Security Features Grid */
+        .security-features-list { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; font-size: 0.65rem; color: #aaa; margin-top: 20px; text-align: left; background: rgba(0,0,0,0.4); padding: 12px; border-radius: 12px; border: 1px dashed rgba(255,255,255,0.1); }
+        .security-features-list div { display: flex; align-items: center; gap: 5px; }
+        .security-features-list i { color: var(--accent-cyan); width: 14px; text-align: center; }
 
-        .form-input { width: 100%; background: rgba(0,0,0,0.5); border: 1px solid rgba(255,255,255,0.1); color: white; padding: 15px; border-radius: 12px; font-family: var(--font-body); font-size: 1rem; margin-bottom: 20px; outline: none; transition: 0.3s; }
-        .form-input:focus { border-color: var(--accent-cyan); box-shadow: 0 0 15px rgba(0,242,255,0.2); }
-        html.theme-vip .form-input:focus { border-color: #FFD700; box-shadow: 0 0 15px rgba(255,215,0,0.2); }
+        .ledger-modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--primary-bg); z-index: 4000; transform: translateX(100%); transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); display: flex; flex-direction: column; overflow: hidden; }
+        .ledger-modal.active { transform: translateX(0); }
+        .lm-header { padding: calc(12px + env(safe-area-inset-top)) 15px 12px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--card-border); background: rgba(7,3,17,0.95); backdrop-filter: blur(15px); z-index: 10; box-shadow: 0 4px 15px rgba(0,0,0,0.4);}
+        .lm-title { font-family: var(--font-head); font-size: 1.1rem; color: white; font-weight: 900; flex: 1; text-align: center; text-transform: uppercase; letter-spacing: 1px;}
+        .lm-scroll-area { flex: 1; overflow-y: auto; padding: 12px; }
 
-        /* Receipt Modal */
-        .receipt-card { background: var(--primary-bg); border-radius: 16px; padding: 20px; text-align: left; border: 1px solid rgba(255,255,255,0.1); margin-bottom: 20px; position: relative; overflow: hidden;}
-        .receipt-card::before { content:''; position:absolute; top:0; left:0; width:100%; height:5px; background: var(--accent-gradient); }
-        html.theme-vip .receipt-card::before { background: linear-gradient(90deg, #FFD700, #FF8C00); }
-        .rc-row { display: flex; justify-content: space-between; margin-bottom: 12px; font-size: 0.85rem; border-bottom: 1px dashed rgba(255,255,255,0.05); padding-bottom: 8px;}
-        .rc-row:last-child { border: none; margin: 0; padding: 0; }
-        .rc-lbl { color: #888; font-family: var(--font-head); text-transform: uppercase; }
-        .rc-val { color: white; font-weight: bold; font-family: monospace; text-align: right; max-width: 60%; word-wrap: break-word;}
-        .rc-amt { font-family: var(--font-head); font-size: 1.8rem; font-weight: 900; color: var(--accent-cyan); text-align: center; margin: 15px 0; text-shadow: 0 0 10px rgba(0,242,255,0.3);}
-        html.theme-vip .rc-amt { color: #FFD700; text-shadow: 0 0 10px rgba(255,215,0,0.3);}
+        #receiptContent { background: rgba(0,0,0,0.5); border: 1px solid rgba(255,255,255,0.06); border-radius: 16px; padding: 20px; margin-bottom: 15px; box-shadow: inset 0 0 15px rgba(0,0,0,0.4);}
+        .rcpt-icon { width: 65px; height: 65px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 2.2rem; margin: 0 auto 15px; box-shadow: 0 6px 15px rgba(0,0,0,0.4); }
+        .rcpt-amt { text-align: center; font-family: var(--font-head); font-size: clamp(1.5rem, 6vw, 2.2rem); font-weight: 900; margin-bottom: 5px; word-break: break-word; text-shadow: 0 0 10px currentColor;}
+        .rcpt-title { text-align: center; color: #aaa; font-size: 0.95rem; margin-bottom: 25px; font-weight: bold; letter-spacing: 0.5px; text-transform: uppercase;}
+        .rcpt-row { display: flex; justify-content: space-between; padding: 14px 0; border-bottom: 1px dashed rgba(255,255,255,0.1); font-size: 0.9rem; font-weight: bold;}
 
-        .btn-primary { width: 100%; background: var(--accent-gradient); color: white; border: none; padding: 14px; border-radius: 50px; font-family: var(--font-head); font-weight: bold; font-size: 0.95rem; cursor: pointer; transition: 0.2s; margin-bottom: 10px; display: flex; justify-content: center; align-items: center; gap: 8px;}
-        .btn-primary:active { transform: scale(0.96); }
-        html.theme-vip .btn-primary { background: linear-gradient(90deg, #FFD700, #FF8C00); color: black;}
-        .btn-secondary { width: 100%; background: transparent; border: 1px solid rgba(255,255,255,0.2); color: white; padding: 14px; border-radius: 50px; font-family: var(--font-head); font-weight: bold; font-size: 0.95rem; cursor: pointer; transition: 0.2s; display: flex; justify-content: center; align-items: center; gap: 8px;}
-        .btn-secondary:active { background: rgba(255,255,255,0.05); transform: scale(0.96); }
+        .txn-fail-icon { font-size: 4rem; color: var(--accent-red); margin-bottom: 15px; text-shadow: 0 0 20px rgba(255,77,77,0.6); animation: shake 0.4s ease; }
+        .txn-success-icon { font-size: 4rem; color: var(--accent-green); margin-bottom: 15px; text-shadow: 0 0 20px rgba(0,255,127,0.6); }
 
-        #customToast { visibility: hidden; min-width: 250px; background-color: var(--accent-cyan); color: #000; text-align: center; border-radius: 50px; padding: 14px 20px; position: fixed; z-index: 9999; left: 50%; bottom: -50px; transform: translateX(-50%); font-family: var(--font-head); font-weight: bold; box-shadow: 0 10px 30px rgba(0,242,255,0.5); opacity: 0; transition: opacity 0.3s, bottom 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); font-size: 0.9rem;}
-        html.theme-vip #customToast { background-color: #FFD700; box-shadow: 0 10px 30px rgba(255,215,0,0.5); }
-        #customToast.show { visibility: visible; opacity: 1; bottom: 100px; }
+        .cyber-scanner-overlay { position: fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.95); z-index:9999; display:flex; flex-direction:column; align-items:center; justify-content:center; opacity:0; pointer-events:none; transition:0.3s; backdrop-filter:blur(10px);}
+        .cyber-scanner-overlay.active { opacity:1; pointer-events:all; }
+        
+        .cyber-loader-container { position: relative; width: 120px; height: 120px; display: flex; justify-content: center; align-items: center; margin-bottom: 25px;}
+        .cyber-ring-outer { position: absolute; width: 100%; height: 100%; border: 3px dashed var(--accent-cyan); border-radius: 50%; animation: spinRight 3s linear infinite; opacity: 0.6; }
+        .cyber-ring-inner { position: absolute; width: 70%; height: 70%; border: 3px solid transparent; border-top-color: var(--accent-purple); border-bottom-color: var(--accent-purple); border-radius: 50%; animation: spinLeft 1.5s ease-in-out infinite; }
+        .cyber-core { position: absolute; width: 40%; height: 40%; background: var(--accent-cyan); border-radius: 50%; box-shadow: 0 0 25px var(--accent-cyan); animation: pulseCore 1s infinite alternate; }
+        
+        html.theme-vip .cyber-ring-outer { border-color: #FFD700; }
+        html.theme-vip .cyber-ring-inner { border-top-color: #ff9900; border-bottom-color: #ff9900; }
+        html.theme-vip .cyber-core { background: #FFD700; box-shadow: 0 0 25px #FFD700; }
 
-        .loader-shimmer { background: linear-gradient(90deg, rgba(255,255,255,0.03) 25%, rgba(255,255,255,0.08) 50%, rgba(255,255,255,0.03) 75%); background-size: 200% 100%; animation: shimmer 1.5s infinite linear; border-radius: 12px; height: 60px; margin-bottom: 10px;}
-        @keyframes shimmer { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
+        .cyber-text { font-family: var(--font-head); color: white; font-size: 1.2rem; font-weight: 900; letter-spacing: 2px; text-transform: uppercase; text-shadow: 0 0 10px rgba(255,255,255,0.4); text-align: center; padding: 0 20px;}
+        .cyber-desc { color:var(--accent-cyan); font-size:0.8rem; margin-top:8px; text-align: center; padding: 0 20px; font-weight: bold; text-transform: uppercase; letter-spacing: 0.5px;}
+        html.theme-vip .cyber-desc { color: #FFD700; }
+        
+        @keyframes spinRight { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        @keyframes spinLeft { 0% { transform: rotate(0deg); } 100% { transform: rotate(-360deg); } }
+        @keyframes pulseCore { 0%{transform:scale(0.8); opacity:0.6;} 100%{transform:scale(1.2); opacity:1;} }
 
-        /* Scanner Cyber CSS */
-        .cyber-scanner-overlay { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(4, 1, 10, 0.95); z-index: 99999; display: none; align-items: center; justify-content: center; flex-direction: column; opacity: 0; transition: opacity 0.3s ease;}
-        .cyber-scanner-overlay.active { display: flex; opacity: 1; }
-        .scan-ring { width: 120px; height: 120px; border-radius: 50%; border: 2px dashed var(--accent-cyan); position: relative; animation: spinRing 4s linear infinite; display: flex; align-items: center; justify-content: center; box-shadow: 0 0 30px rgba(0,242,255,0.2);}
-        html.theme-vip .scan-ring { border-color: #FFD700; box-shadow: 0 0 30px rgba(255,215,0,0.2); }
-        .scan-ring::after { content:''; position: absolute; width: 80%; height: 80%; border-radius: 50%; border: 4px solid transparent; border-top-color: var(--accent-purple); border-bottom-color: var(--accent-purple); animation: spinRingReverse 2s linear infinite;}
-        html.theme-vip .scan-ring::after { border-top-color: #FF8C00; border-bottom-color: #FF8C00; }
-        .scan-core { font-size: 2.5rem; color: white; text-shadow: 0 0 10px rgba(255,255,255,0.5); animation: pulseCore 1s infinite alternate; position: absolute;}
-        @keyframes spinRing { 100% { transform: rotate(360deg); } }
-        @keyframes spinRingReverse { 100% { transform: rotate(-360deg); } }
-        @keyframes pulseCore { 0% { transform: scale(0.9); opacity: 0.8;} 100% { transform: scale(1.1); opacity: 1;} }
+        #customToast { visibility: hidden; min-width: 240px; background-color: var(--accent-cyan); color: #000; text-align: center; border-radius: 50px; padding: 14px 20px; position: fixed; z-index: 9999; left: 50%; bottom: -50px; transform: translateX(-50%); font-family: var(--font-head); font-weight: 900; box-shadow: 0 8px 20px rgba(0,242,255,0.5); opacity: 0; transition: opacity 0.4s, bottom 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); font-size: 0.85rem; text-transform: uppercase; letter-spacing: 1px;}
+        html.theme-vip #customToast { background-color: #FFD700; box-shadow: 0 8px 20px rgba(255,215,0,0.5); }
+        #customToast.show { visibility: visible; opacity: 1; bottom: 90px; }
 
-        /* Bottom Nav */
-        .bottom-nav { position: fixed; bottom: 0; left: 0; width: 100%; height: calc(65px + env(safe-area-inset-bottom, 0px)); background: rgba(5, 2, 12, 0.9); backdrop-filter: blur(10px); display: flex; justify-content: space-between; align-items: flex-start; padding: 10px 2px env(safe-area-inset-bottom, 0px); border-top: 1px solid rgba(255,255,255,0.05); z-index: 1000; transform: translateZ(0);}
-        .nav-item { display: flex; flex-direction: column; align-items: center; justify-content: flex-start; color: #666; text-decoration: none; font-size: 0.6rem; font-family: var(--font-head); font-weight: bold; flex: 1; transition: 0.2s; position: relative; padding: 0 2px; text-align: center;}
-        .nav-item span { margin-top: 4px; transition: 0.2s; letter-spacing: -0.3px;}
-        .nav-item i, .nav-item .tx-icon, .nav-item .tx-ticket-composite { font-size: 1.2rem; transition: 0.2s; color: #666; background: none; -webkit-text-fill-color: #666; filter: none; font-style: normal; }
+        .app-footer { text-align: center; padding: 20px 20px 100px 20px; color: #555; font-size: 0.75rem; font-family: var(--font-body); letter-spacing: 1px; border-top: 1px solid rgba(255,255,255,0.05); margin-top: 15px;}
+        
+        .bottom-nav { position: fixed; bottom: 0; left: 0; width: 100%; height: calc(65px + env(safe-area-inset-bottom, 0px)); background: rgba(5, 2, 12, 0.85); backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px); display: flex; justify-content: space-between; align-items: flex-start; padding: 10px 2px env(safe-area-inset-bottom, 0px); border-top: 1px solid rgba(255,255,255,0.05); z-index: 1000; box-shadow: 0 -10px 30px rgba(0,0,0,0.5); transform: translateZ(0);}
+        .nav-item { display: flex; flex-direction: column; align-items: center; justify-content: flex-start; color: #666; text-decoration: none; font-size: 0.6rem; font-family: var(--font-head); font-weight: bold; flex: 1; transition: 0.3s; position: relative; padding: 0 2px; text-align: center;}
+        .nav-item span { margin-top: 4px; transition: 0.3s; letter-spacing: -0.3px;}
+        
+        .nav-item > i, .nav-item > .tx-icon, .nav-item > .tx-ticket-composite { 
+            font-size: 1.2rem; transition: 0.3s; color: #666; background: none; -webkit-text-fill-color: #666; filter: none; font-style: normal; 
+            height: 24px; width: 24px; display: flex; align-items: center; justify-content: center;
+        }
+        .tx-ticket-composite i { display: block; line-height: 1; font-size: 1.2rem; color: inherit; -webkit-text-fill-color: inherit; transition: 0.3s; background: inherit; filter: inherit; -webkit-background-clip: inherit; }
+        
         .nav-item.active { color: var(--accent-cyan); }
-        html.theme-vip .nav-item.active { color: #d4af37; }
-        .nav-item.active .tx-ticket-composite { transform: translateY(-4px); }
-        .nav-item.active i, .nav-item.active .tx-icon, .nav-item.active .tx-ticket-composite i { transform: translateY(-4px); background: linear-gradient(135deg, var(--accent-purple), var(--accent-cyan)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; filter: drop-shadow(0 0 10px var(--accent-cyan)); font-style: normal;}
-        html.theme-vip .nav-item.active i, html.theme-vip .nav-item.active .tx-icon, html.theme-vip .nav-item.active .tx-ticket-composite i { filter: drop-shadow(0 0 10px rgba(212,175,55,0.8)); background: linear-gradient(135deg, #FFE87C, #FF8C00); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        html.theme-vip .nav-item.active { color: #FFD700; }
+        
+        .nav-item.active > .tx-ticket-composite { transform: translateY(-4px); }
+        .nav-item.active > i, .nav-item.active > .tx-icon, .nav-item.active > .tx-ticket-composite i { transform: translateY(-4px); background: linear-gradient(135deg, var(--accent-purple), var(--accent-cyan)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; filter: drop-shadow(0 0 10px var(--accent-cyan)); font-style: normal;}
+        html.theme-vip .nav-item.active > i, html.theme-vip .nav-item.active > .tx-icon, html.theme-vip .nav-item.active > .tx-ticket-composite i { background: linear-gradient(135deg, #FFE87C, #FF8C00); -webkit-background-clip: text; -webkit-text-fill-color: transparent; filter: drop-shadow(0 0 10px rgba(212,175,55,0.8)); }
         .nav-item.active .tx-ticket-composite i { transform: translateY(0); }
+        
         .nav-item.active span { transform: translateY(2px); color: white; text-shadow: 0 0 5px rgba(255,255,255,0.5);}
         .fab-slot { flex: 1.2; display: flex; justify-content: center; position: relative; height: 100%; align-items: center; }
-        .floating-plus { position: absolute; top: -25px; left: 50%; transform: translateX(-50%); width: 54px; height: 54px; background: linear-gradient(135deg, var(--accent-cyan), var(--accent-purple)); border-radius: 50%; display: flex; align-items: center; justify-content: center; border: 4px solid var(--primary-bg); box-shadow: 0 10px 25px rgba(189,0,255,0.4); color: #fff; font-size: 1.6rem; cursor: pointer; transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); z-index: 10; }
-        html.theme-vip .floating-plus { background: linear-gradient(135deg, #FFE87C, #D4AF37); box-shadow: 0 10px 25px rgba(212,175,55,0.4); border-color: #000; color: #000; }
-        .floating-plus:hover { transform: translateX(-50%) scale(1.1) rotate(90deg); }
+        .floating-plus { position: absolute; top: -25px; left: 50%; transform: translateX(-50%); width: 52px; height: 52px; background: linear-gradient(135deg, var(--accent-cyan), var(--accent-purple)); border-radius: 50%; display: flex; align-items: center; justify-content: center; border: 3px solid var(--primary-bg); box-shadow: 0 8px 20px rgba(189,0,255,0.4); color: #fff; font-size: 1.5rem; cursor: pointer; transition: 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); z-index: 10; }
+        html.theme-vip .floating-plus { background: linear-gradient(135deg, #FFE87C, #D4AF37); box-shadow: 0 8px 20px rgba(212,175,55,0.4); border-color: #000; color: #000; }
+        .floating-plus:hover { transform: translateX(-50%) scale(1.1) rotate(90deg); box-shadow: 0 12px 25px rgba(0,242,255,0.5); }
 
-        @media (min-width: 850px) {
-            .bottom-nav { display: none !important; }
-            .container { padding-bottom: 20px; }
-            .bottom-sheet-overlay { align-items: center; justify-content: center; }
-            .bottom-sheet { border-radius: 20px !important; max-width: 450px; width: 90%; transform: scale(0.95); opacity: 0; transition: all 0.3s ease; position: relative; top: auto; left: auto; bottom: auto; margin: 0; }
-            .bottom-sheet-overlay.active .bottom-sheet { transform: scale(1) !important; opacity: 1; }
-        }
-        .median-active .top-header { display: none !important; }
-        .median-active { padding-top: 15px !important; }
+        @media (min-width: 850px) { .bottom-nav { display: none !important; } }
     </style>
 </head>
 <body>
+    <div class="bg-gradient"></div>
     <canvas id="particles-canvas"></canvas>
 
-    <div class="cyber-scanner-overlay" id="cyberScanner">
-        <div class="scan-ring"><i class="fa-solid fa-shield-halved scan-core"></i></div>
-        <h2 style="font-family:var(--font-head); color:var(--accent-cyan); margin-top:25px; letter-spacing:2px; font-size:1.2rem;" id="scannerText">PROCESSING...</h2>
-        <p style="color:#aaa; font-size:0.8rem; text-transform:uppercase; letter-spacing:1px; margin-top:10px;" id="scannerDesc">Connecting to secure node</p>
+    <div id="pdfWrapper" style="position: fixed; left: 0; top: 0; width: 100%; opacity: 0; display: flex; background:#070311; z-index: -9999; opacity: 0; pointer-events: none; justify-content:center; ">
+        <div id="pdfTemplate" style="background:#070311; color:#ffffff; padding:40px; font-family:'Helvetica Neue', Arial, sans-serif; width:760px; box-sizing:border-box;">
+            <div style="text-align:center; border-bottom:2px solid #1a0a3a; padding-bottom:30px; margin-bottom:30px;">
+                <div style="background: linear-gradient(90deg, #bd00ff, #00f2ff); padding: 15px; border-radius: 8px; margin-bottom: 10px; display: inline-block; width: 100%;">
+                    <h1 style="margin:0; font-size: 26px; font-weight: 900; color: #ffffff; text-transform:uppercase; letter-spacing: 2px;">Tournyx Esports</h1>
+                </div>
+                <p style="color:#a0a0b0; margin:8px 0 0 0; font-size:13px; letter-spacing: 1px; text-transform: uppercase;">Official Transaction Ledger</p>
+            </div>
+            
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:30px; background:linear-gradient(135deg, #110822, #1a0a3a); padding:20px; border-radius:12px; border: 1px solid #00f2ff;">
+                <div style="display:flex; align-items:center; gap: 15px;">
+                    <img id="pdfUserAvatar" src="https://tournyx.in/favicon.png" style="width:55px; height:55px; border-radius:50%; border:2px solid #00f2ff; object-fit: cover;" crossorigin="anonymous">
+                    <div>
+                        <p style="margin:0 0 4px 0; color:#00f2ff; font-size:11px; text-transform:uppercase; font-weight: bold;">Player Profile</p>
+                        <h3 style="margin:0; color:#ffffff; font-size:20px;" id="pdfUserName">Name</h3>
+                        <p style="margin:4px 0 0 0; color:#aaa; font-size:13px;" id="pdfUserEmail">email</p>
+                    </div>
+                </div>
+                <div style="text-align:right;">
+                    <p style="margin:0 0 4px 0; color:#00f2ff; font-size:11px; text-transform:uppercase; font-weight: bold;">Current Balance</p>
+                    <h3 style="margin:0; color:#ffffff; font-size:22px;" id="pdfUserBal">0</h3>
+                </div>
+            </div>
+            
+            <div id="pdfDynamicContentArea"></div>
+            
+            <div style="margin-top: 30px; text-align: center; border-top: 1px dashed #333; padding-top: 15px; color: #666; font-size: 11px;">
+                Generated securely by Tournyx 256-bit Digital Ticketing System.<br>
+                © 2026 Tournyx Esports. Powered by Quva.
+            </div>
+        </div>
+    </div>
+
+    <div id="skeletonLoader">
+        <div class="skel-wrapper">
+            <div class="skeleton-box skel-card"></div>
+            <div class="skel-grid">
+                <div class="skeleton-box skel-btn" style="height: 95px;"></div>
+                <div class="skeleton-box skel-btn" style="height: 95px;"></div>
+            </div>
+            <div class="skel-list">
+                <div class="skeleton-box skel-item"></div>
+                <div class="skeleton-box skel-item"></div>
+                <div class="skeleton-box skel-item"></div>
+            </div>
+        </div>
     </div>
 
     <header class="top-header">
         <div class="header-wrapper">
             <div class="header-left">
-                <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEg_20wCR-WBMpQmw3vxcYUf-vxIO1PYDJoQN_Sid3UDjA9tf0cuX0eH40jbzHoJad4cxbnjhPjqfCw1Z5V1LhgN9zFuIQC0fJjecTy3D9PFu5WjR2H1wHwTD1bUGnXY_NiApWn5gMs6velcQngSzKoP1yHzX0cVsFSUFM8zIefcbiPayY7680Kz0V0ZAAE/s1264/1000093706.png" class="app-logo" alt="Logo">
-                <div class="app-title">TICKETS</div>
+                <a href="index.html" style="color:white;"><i class="fa-solid fa-arrow-left back-btn"></i></a>
+                <div>
+                    <div class="header-greeting" id="dynamicGreeting">Welcome,</div>
+                    <div class="app-title">MY TICKETS</div>
+                </div>
             </div>
-            <nav class="desktop-nav">
-                <a href="index.html"><i class="fa-solid fa-house"></i> Home</a>
-                <a href="explore.html"><i class="fa-solid fa-compass"></i> Explore</a>
-                <a href="matches.html"><i class="fa-solid fa-trophy"></i> Matches</a>
-                <a href="clans.html"><i class="fa-solid fa-shield-halved"></i> Clan</a>
-                <a href="tournament.html" style="color:var(--accent-cyan); font-size: 1.4rem;"><i class="fa-solid fa-plus"></i></a>
-            </nav>
-            <div class="header-right">
-                <i class="fa-solid fa-users header-community-icon" onclick="window.location.href='community.html'"></i>
-                <img src="https://via.placeholder.com/40" class="header-profile-img" id="headerProfilePic" onclick="window.location.href='profile.html'">
+            <div class="desktop-nav">
+                <a href="index.html">Home</a>
+                <a href="explore.html">Explore</a>
+                <a href="matches.html">Matches</a>
+                <a href="clans.html">Clan</a>
+                <a href="tickets.html" class="active">Tickets</a>
+                <a href="profile.html">Profile</a>
+            </div>
+            <div class="header-actions">
+                <img src="https://tournyx.in/favicon.png" class="header-profile-img" id="headerProfilePic" onclick="handleProfileClick()">
             </div>
         </div>
     </header>
 
     <div class="container">
-        <div class="wallet-card" id="walletBalanceCard">
-            <div class="w-left">
-                <div class="w-title"><i class="fa-solid fa-wallet"></i> <span id="walletTitleText">TICKET WALLET</span></div>
-                <div class="w-balance-wrapper">
-                    <div class="w-balance" id="mainBalDisplay">...</div>
-                    <div class="w-subtitle" id="subBalDisplay">Passes</div>
-                </div>
+        
+        <div class="wallet-card animate-section delay-1">
+            <div class="vip-badge" id="vipBadge"><span class="tx-icon" style="font-size: 0.9em; filter:none; color:black; -webkit-text-fill-color:black;">TX</span> STANDARD</div>
+            <div class="balance-label">
+                <span id="balanceLabelText">Total Available Pass <i class="fa-solid fa-eye" id="eyeIcon" onclick="if(isGuest) return showLoginModal(); togglePrivacy(); triggerHaptic();" style="margin-left:8px; cursor: pointer; color:#888; font-size:1.1rem; transition:0.3s;"></i></span>
             </div>
-            <div class="w-right">
-                <div class="w-pts-box"><i class="fa-solid fa-coins"></i> <span id="ptsBalDisplay">...</span> PTS</div>
+            <div class="balance-amount" id="balanceWrapper">
+                <span class="tx-icon" id="mainBalanceTxIcon" style="font-size: 1.1em; margin-right: 6px;">TX</span> <span id="displayTickets">0</span>
             </div>
+            
+            <div class="pts-balance" id="ptsWrapper">
+                <div style="display:flex; align-items:center; gap:8px;"><i class="fa-solid fa-coins" style="color:var(--accent-cyan); font-size:1.1rem;"></i> <span id="displayPoints">0</span> PTS</div>
+                <div style="font-size:0.7rem; color:#aaa; text-transform:uppercase; font-weight:bold; letter-spacing:0.5px;">Reward Points</div>
+            </div>
+            
+            <div class="vip-progress-bg">
+                <div class="vip-progress-fill" id="vipProgress"></div>
+            </div>
+            <div style="font-size:0.65rem; color:#aaa; margin-top:8px; text-align:right; font-family:var(--font-head); font-weight:bold; text-transform:uppercase;">Next Tier: <span id="nextTierText" style="color:white;">Pro Gamer</span></div>
         </div>
 
-        <div class="quick-actions">
-            <div class="action-btn btn-add" onclick="if(currentUser.role === 'organizer') openCreditsModal(); else openDepositModal(); triggerHaptic();">
-                <i class="fa-solid fa-plus-circle"></i>
-                <span id="quickAddTxt">Add Funds</span>
+        <div class="section-title animate-section delay-2" style="font-size:1.05rem;">My Inventory</div>
+        <div id="ticketInventoryList" class="animate-section delay-2">
             </div>
-            <div class="action-btn btn-redeem" onclick="openRedeemModal(); triggerHaptic();">
-                <i class="fa-solid fa-gift"></i>
+
+        <div class="quick-actions animate-section delay-2">
+            <div id="primaryActionBtn" class="action-btn btn-add" onclick="if(isGuest) return showLoginModal(); openAddMoney(); triggerHaptic();">
+                <span class="tx-icon" style="font-size: 1.8rem; filter:drop-shadow(0 0 10px var(--accent-purple));">TX</span>
+                <span id="primaryActionText">Buy Pass</span>
+            </div>
+            <a href="redeem.html" class="action-btn btn-redeem" onclick="return handleProtectedAction(event, 'redeem.html')">
+                <i class="fa-solid fa-qrcode" style="font-size: 1.8rem; filter:drop-shadow(0 0 10px var(--accent-cyan));"></i>
                 <span>Redeem</span>
-            </div>
-            <div class="action-btn" style="border-color: rgba(255,255,255,0.2);" onclick="window.location.href='index.html'; triggerHaptic();">
-                <i class="fa-solid fa-gamepad" style="color:#aaa;"></i>
-                <span style="color:#aaa;">Matches</span>
+            </a>
+            <div id="creditActionBtn" class="action-btn btn-add" style="display:none;" onclick="openCreditsModal(); triggerHaptic();">
+                <i class="fa-solid fa-coins" style="font-size:1.8rem;"> </i>
+                <span>Add Credits</span>
             </div>
         </div>
 
-        <div class="section-title">
-            <div><i class="fa-solid fa-ticket-simple" style="color:var(--accent-cyan);"></i> Ticket Inventory</div>
-        </div>
-        <div class="inventory-grid" id="ticketInventoryList">
-            <div class="loader-shimmer"></div>
-            <div class="loader-shimmer"></div>
-        </div>
+        <div class="txn-summary-card animate-section delay-3">
 
-        <div class="section-title" style="margin-top: 10px;">
-            <div><i class="fa-solid fa-list-ul" style="color:var(--accent-purple);"></i> Ledger</div>
-            <span onclick="syncLiveTransactions()"><i class="fa-solid fa-rotate" id="refreshTxnIcon"></i> SYNC</span>
-        </div>
-        <div class="txn-list" id="transactionLedger">
-            <div class="loader-shimmer"></div>
-            <div class="loader-shimmer"></div>
-            <div class="loader-shimmer"></div>
+            <div class="summary-box">
+                <div class="summary-label">Money In</div>
+                <div class="summary-value" id="moneyInTotal">0</div>
+            </div>
+
+            <div class="summary-box">
+                <div class="summary-label">Money Out</div>
+                <div class="summary-value" id="moneyOutTotal">0</div>
+            </div>
+
+            <div class="summary-box">
+                <div class="summary-label">This Week</div>
+                <div class="summary-value" id="weeklyTotal">0</div>
+            </div>
+
+            <div class="summary-box">
+                <div class="summary-label">This Month</div>
+                <div class="summary-value" id="monthlyTotal">0</div>
+            </div>
+
         </div>
         
-        <div style="text-align: center; color: #555; font-size: 0.75rem; margin-bottom: 30px; font-family: var(--font-head); letter-spacing: 1px;">END OF RECORDS</div>
+        <div class="section-title animate-section delay-4">
+            Transaction Ledger 
+            <div>
+                <i class="fa-solid fa-download header-action-icon" onclick="if(isGuest) return showLoginModal(); downloadAllTxnsPDF(); triggerHaptic();" style="color:var(--accent-cyan); margin-right:12px; font-size:1.1rem; cursor:pointer; transition:0.3s;"></i>
+                <span 
+                    onclick="if(isGuest) return showLoginModal(); openAllTxns(); triggerHaptic();"
+                    style="white-space: nowrap;"
+                >
+                    View All <i class="fa-solid fa-chevron-right" style="font-size:0.65rem; margin-left:3px;"></i>
+                </span>
+            </div>
+        </div>
+        
+        <div class="txn-list animate-section delay-4" id="txnListContainer">
+            <div style="text-align:center; padding: 30px 20px; color: #888; font-size: 0.9rem; font-weight:bold; letter-spacing:0.5px;">
+                <i class="fa-solid fa-circle-notch fa-spin" style="color:var(--accent-cyan); font-size:1.8rem; margin-bottom:12px; display:block;"></i> Syncing live ledger...
+            </div>
+        </div>
+
+        <div style="text-align:center; color:#666; font-size:0.75rem; margin-top:15px; margin-bottom: 15px; display:flex; align-items:center; justify-content:center; gap:6px; font-family:var(--font-head); font-weight:bold; letter-spacing:0.5px;">
+            <i class="fa-solid fa-lock"></i> Secured by Razorpay & 256-bit Encryption
+        </div>
+    </div>
+
+    <div class="bottom-sheet-overlay" id="loginPromptModal">
+        <div class="bottom-sheet" style="max-height: auto; text-align: center; padding-bottom: 35px; transform: scale(0.95);">
+            <div class="sheet-header" style="justify-content: flex-end; margin-bottom: 8px;">
+                <i class="fa-solid fa-xmark close-sheet" onclick="document.getElementById('loginPromptModal').classList.remove('active')"></i>
+            </div>
+            <i class="fa-solid fa-user-astronaut login-prompt-icon" style="font-size: 3.5rem; color: var(--accent-purple); filter: drop-shadow(0 0 15px rgba(189,0,255,0.5)); margin-bottom: 15px;"></i>
+            <h2 style="font-family: var(--font-head); font-size: 1.6rem; margin-bottom: 12px; color: white; font-weight:900; text-transform:uppercase;">Join the Elite!</h2>
+            <p style="color: #aaa; font-size: 0.9rem; margin-bottom: 25px; line-height: 1.5; font-weight:bold;">Please log in or sign up to access your tickets, make secure purchases, and view your entry history.</p>
+            <button class="pay-btn" style="background: linear-gradient(90deg, #ff4d4d, #ff9900); box-shadow: 0 6px 20px rgba(255, 77, 77, 0.4); margin-bottom: 12px;" onclick="window.location.href='login.html'">LOGIN / SIGN UP</button>
+        </div>
     </div>
 
     <div class="bottom-sheet-overlay" id="addMoneyOverlay">
         <div class="bottom-sheet">
             <div class="sheet-header">
-                <div class="sheet-title"><i class="fa-solid fa-ticket"></i> BUY TX PASSES</div>
-                <i class="fa-solid fa-xmark close-sheet" onclick="closeDepositModal()"></i>
+                <div class="sheet-title"><span class="tx-icon" style="color:var(--accent-cyan); font-size:1.4rem; filter:drop-shadow(0 0 8px var(--accent-cyan));">TX</span> BUY PASS</div>
+                <i class="fa-solid fa-xmark close-sheet" onclick="closeAddMoney()"></i>
             </div>
-            <div style="font-size: 0.8rem; color: #aaa; margin-bottom:15px; font-weight:bold; letter-spacing:0.5px; text-align:center;">1 Pass = ₹10.00 INR</div>
+            
+            <div style="margin-bottom: 18px;">
+                <div style="font-size: 0.8rem; color: #aaa; text-transform: uppercase; margin-bottom:8px; font-weight:bold; letter-spacing:0.5px; font-family:var(--font-head);">Select Game Category</div>
+                <div class="game-selector" id="gameSelector">
+                    <div class="game-card active" onclick="selectGame('Free Fire', this)">
+                        <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEiJvPTY_y_XU-0Lwbnjwm7961lCDkSlQh2MtCWHunFVX6WS7WCprCtkPyB334BU_-4vGsP0NseDQf4NPBEOIxqjk7VZQqZUHpnLb4Bw-c1UeXQy2M9DzNrNdYt_aL0GEb1AlTPupC5zEjJiP3Ci0Oxk-wdg5TF5cs8_UNSe3uTT1BE884je3iXr8QlMjx8/s240/1000094210.jpg" onerror="this.src='https://tournyx.in/favicon.png'" alt="FF">
+                        <span>Free Fire</span>
+                    </div>
+                    <div class="game-card" onclick="selectGame('BGMI', this)">
+                        <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEj3MKUI87mMK4_3DltS3LQgqfrK1sESUIMMqlENdi0dPRtOFkeDbvPsTbSaCRaJOb17QZ5s9OO5dR6kFCYiCkgUCF2zBWwvGFSb3T-9Nz51XuIzMvIiOuqwcLzyzeFmn1orKbiETP4LrlaG-RidnWAAzBwUA3aL5_z62HP4_F7R02lAK_WSYdH0U_Gn7Es/s250/1000094211.jpg" onerror="this.src='https://tournyx.in/favicon.png'" alt="BGMI">
+                        <span>BGMI</span>
+                    </div>
+                </div>
+            </div>
+
             <div class="amt-input-wrapper">
-                <div class="amt-currency">₹</div>
-                <input type="number" id="depositAmtInput" class="amt-input" placeholder="Amount (Multiple of 10)" oninput="updateRazorpayAmount()">
-            </div>
-            <div style="text-align:center; font-family:var(--font-head); font-weight:bold; color:var(--accent-cyan); font-size:1.1rem; margin-bottom: 20px;" id="depositPassPreview">You will get: 0 Passes</div>
-            
-            <div class="quick-amt-grid">
-                <div class="quick-amt-btn" onclick="setDepositAmt(10); triggerHaptic();">+1 Pass</div>
-                <div class="quick-amt-btn" onclick="setDepositAmt(50); triggerHaptic();">+5 Passes</div>
-                <div class="quick-amt-btn" onclick="setDepositAmt(100); triggerHaptic();">+10 Passes</div>
-                <div class="quick-amt-btn" onclick="setDepositAmt(500); triggerHaptic();">+50 Passes</div>
+                <div class="amt-currency"><span class="tx-icon">TX</span></div>
+                <input type="number" id="addAmtInput" class="amt-input" placeholder="Number of Passes" oninput="updateRazorpayAmount()">
             </div>
             
-            <button class="pay-btn" onclick="triggerPlayerRazorpay(); triggerHaptic();">
+            <div style="font-size:0.95rem; color:var(--accent-cyan); text-align:center; margin-top:-5px; margin-bottom:15px; font-weight:900; font-family:var(--font-head); letter-spacing:0.5px;">
+                TOTAL AMOUNT: ₹<span id="displayTotalRs">0</span>
+            </div>
+
+            <div class="quick-amt-grid" id="quickAmtGrid"></div>
+            
+            <button class="pay-btn" onclick="triggerRazorpay(); triggerHaptic();" id="rzpSubmitBtn">
                 SECURE CHECKOUT <i class="fa-solid fa-lock"></i>
             </button>
+            <div class="rzp-secure-badge"><i class="fa-solid fa-shield-check"></i> 100% Secure Payments by Razorpay</div>
+            
+            <div class="security-features-list">
+                <div><i class="fa-solid fa-shield"></i> 256-bit SSL Encryption</div>
+                <div><i class="fa-solid fa-check-double"></i> PCI DSS Compliant</div>
+                <div><i class="fa-solid fa-eye"></i> Fraud Detection Active</div>
+                <div><i class="fa-solid fa-clock-rotate-left"></i> Real-time Monitoring</div>
+                <div><i class="fa-solid fa-key"></i> Secure Tokenization</div>
+                <div><i class="fa-solid fa-user-shield"></i> Anti-Phishing Tech</div>
+                <div><i class="fa-solid fa-fingerprint"></i> Device Fingerprinting</div>
+                <div><i class="fa-solid fa-robot"></i> Advanced Bot Protection</div>
+                <div><i class="fa-solid fa-calculator"></i> Dynamic Fee Calculation</div>
+                <div><i class="fa-solid fa-money-bill-transfer"></i> Instant Refund Guarantee</div>
+            </div>
+        </div>
+    </div>
 
-            <div class="security-grid">
-                <div><i class="fa-solid fa-shield-halved" style="color:var(--accent-green)"></i> 256-Bit SSL Encrypted</div>
-                <div><i class="fa-solid fa-check-double" style="color:var(--accent-cyan)"></i> PCI-DSS Compliant</div>
-                <div><i class="fa-solid fa-user-shield" style="color:var(--accent-purple)"></i> AI Fraud Detection</div>
-                <div><i class="fa-solid fa-bolt" style="color:var(--accent-orange)"></i> Instant Settlement</div>
-                <div><i class="fa-solid fa-eye-slash" style="color:var(--accent-green)"></i> Zero Hidden Fees</div>
-                <div><i class="fa-solid fa-fingerprint" style="color:var(--accent-cyan)"></i> Encrypted Tokenization</div>
-                <div><i class="fa-solid fa-network-wired" style="color:var(--accent-purple)"></i> P2P Node Security</div>
-                <div><i class="fa-solid fa-receipt" style="color:var(--accent-orange)"></i> Live Smart Auditing</div>
-                <div><i class="fa-solid fa-money-bill-transfer" style="color:var(--accent-green)"></i> Auto-Refund Guard</div>
-                <div><i class="fa-solid fa-building-columns" style="color:var(--accent-cyan)"></i> Razorpay Verified</div>
+    <div class="bottom-sheet-overlay" id="txnFailedOverlay">
+        <div class="bottom-sheet" style="text-align:center;">
+            <div class="sheet-header" style="justify-content:flex-end;">
+                <i class="fa-solid fa-xmark close-sheet" onclick="document.getElementById('txnFailedOverlay').classList.remove('active')"></i>
+            </div>
+            <i class="fa-solid fa-circle-xmark txn-fail-icon"></i>
+            <h2 style="font-family: var(--font-head); font-size: 1.6rem; margin-bottom: 12px; color: white; font-weight:900; text-transform:uppercase;">Payment Failed</h2>
+            <p id="txnFailReason" style="color: #aaa; font-size: 0.95rem; margin-bottom: 25px; line-height: 1.4; font-weight:bold;">The transaction was canceled or declined. No money was deducted from your account.</p>
+            <button class="pay-btn" style="background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); box-shadow: none;" onclick="document.getElementById('txnFailedOverlay').classList.remove('active'); openAddMoney();">TRY AGAIN</button>
+        </div>
+    </div>
+
+    <div class="bottom-sheet-overlay" id="txnSuccessOverlay">
+        <div class="bottom-sheet" style="text-align:center;">
+            <div class="sheet-header" style="justify-content:flex-end;">
+                <i class="fa-solid fa-xmark close-sheet" onclick="closeSuccessModal()"></i>
+            </div>
+            <i class="fa-solid fa-circle-check txn-success-icon fa-beat-fade"></i>
+            <h2 style="font-family: var(--font-head); font-size: 1.6rem; margin-bottom: 12px; color: white; font-weight:900; text-transform:uppercase;">Payment Successful!</h2>
+            <p style="color: #aaa; font-size: 0.95rem; margin-bottom: 25px; line-height: 1.4; font-weight:bold;">Your payment was verified. Your Tournyx Passes have been instantly added to your wallet inventory.</p>
+            <button class="pay-btn" onclick="closeSuccessModal()">VIEW INVENTORY</button>
+        </div>
+    </div>
+
+    <div class="ledger-modal" id="ledgerModal">
+        <div class="lm-header">
+            <i class="fa-solid fa-arrow-left back-btn" onclick="closeAllTxns(); triggerHaptic();"></i>
+            <div class="lm-title">PASS LEDGER</div>
+            <i class="fa-solid fa-download header-action-icon" onclick="downloadAllTxnsPDF(); triggerHaptic();" style="color:var(--accent-cyan); font-size:1.2rem; cursor:pointer; padding:5px; transition:0.3s;"></i>
+        </div>
+        <div class="lm-scroll-area">
+            <div class="txn-list" id="fullTxnListContainer" style="border:none; padding:0; background:transparent; box-shadow:none; margin-top:5px;"></div>
+        </div>
+    </div>
+
+    <div class="bottom-sheet-overlay" id="receiptOverlay">
+        <div class="bottom-sheet">
+            <div class="sheet-header">
+                <div class="sheet-title" style="text-transform:uppercase; letter-spacing:0.5px;">Pass Receipt</div>
+                <i class="fa-solid fa-xmark close-sheet" onclick="closeReceipt()"></i>
+            </div>
+            <div id="receiptContent">
+                <div class="rcpt-icon" id="rcptIcon"></div>
+                <div class="rcpt-amt" id="rcptAmt">0 Pass</div>
+                <div class="rcpt-title" id="rcptTitle">Digital Purchase</div>
+                <div class="rcpt-row"><span class="rcpt-lbl" style="color:#888;">Status</span><span class="rcpt-val" id="rcptStatusVal"></span></div>
+                <div class="rcpt-row"><span class="rcpt-lbl" style="color:#888;">Category</span><span class="rcpt-val" id="rcptCat"><span class="tx-icon" style="font-size:0.8rem;">TX</span> Pass Purchase</span></div>
+                <div class="rcpt-row"><span class="rcpt-lbl" style="color:#888;">Date & Time</span><span class="rcpt-val" id="receiptDate">Jan 1, 12:00 PM</span></div>
+                <div class="rcpt-row" style="border-bottom:none;"><span class="rcpt-lbl" style="color:#888;">Pass ID</span><span class="rcpt-val"><span id="receiptId" style="font-size:0.8rem; color:#ccc;">TKT...</span> <i class="fa-regular fa-copy" style="color:var(--accent-cyan); cursor:pointer; padding:5px;" onclick="copyTxnId(); triggerHaptic();"></i></span></div>
+            </div>
+            <div style="display:flex; gap:10px; margin-top:12px;">
+                <button class="pay-btn" style="flex:1; background:rgba(0,242,255,0.05); border:1px solid var(--accent-cyan); color:var(--accent-cyan); box-shadow:none; font-size:0.95rem; padding: 12px;" onclick="downloadReceiptPDF()"><i class="fa-solid fa-download"></i> PDF</button>
+                <button class="pay-btn" style="flex:1; background:rgba(37,211,102,0.05); border:1px solid #25D366; color:#25D366; box-shadow:none; font-size:0.95rem; padding: 12px;" onclick="contactWhatsAppSupport()"><i class="fa-brands fa-whatsapp"></i> Support</button>
             </div>
         </div>
     </div>
@@ -422,107 +602,106 @@
     <div class="bottom-sheet-overlay" id="creditsOverlay">
         <div class="bottom-sheet">
             <div class="sheet-header">
-                <div class="sheet-title"><i class="fa-solid fa-coins" style="color:#FFD700; text-shadow: 0 0 10px rgba(255,215,0,0.5);"></i> ADD WALLET CREDITS</div>
+                <div class="sheet-title">Credits Wallet</div>
                 <i class="fa-solid fa-xmark close-sheet" onclick="closeCreditsModal()"></i>
             </div>
-            <div style="font-size: 0.8rem; color: #aaa; margin-bottom:15px; font-weight:bold; letter-spacing:0.5px; text-align:center;">1 Credit = ₹1.00 INR (Daily Limit: 20,000)</div>
+
+            <div style="text-align:center; padding:10px 30px;">
+                <div style="font-size:2rem; font-weight:bold; color:var(--accent-cyan);">
+                    <span id="creditsCount">0</span>
+                </div>
+                <div style="font-size:0.85rem; color:#aaa; margin-bottom: 20px;">
+                    Available Organizer Credits
+                </div>
+            </div>
+
             <div class="amt-input-wrapper">
-                <div class="amt-currency" style="color:#FFD700;">₹</div>
-                <input type="number" id="creditsAmtInput" class="amt-input" placeholder="Enter Amount" oninput="updateCreditsRazorpayAmount()" style="border-color:#FFD700;">
+                <div class="amt-currency">₹</div>
+                <input type="number" id="addCreditInput" class="amt-input" placeholder="Amount (Max 20,000)">
             </div>
-            <div style="display:flex; justify-content:space-between; align-items:center; margin-top:-5px; margin-bottom:15px; font-weight:900; font-family:var(--font-head); letter-spacing:0.5px; font-size:0.85rem;">
-                <span style="color:#888;">REMAINING DAILY LIMIT:</span>
-                <span style="color:var(--accent-cyan);">₹<span id="dailyLimitRemainingDisplay">20000</span></span>
-            </div>
-            <div class="quick-amt-grid">
-                <div class="quick-amt-btn" onclick="setCreditAmt(500); triggerHaptic();" style="border-color:#FFD700;">+500</div>
-                <div class="quick-amt-btn" onclick="setCreditAmt(1000); triggerHaptic();" style="border-color:#FFD700;">+1000</div>
-                <div class="quick-amt-btn" onclick="setCreditAmt(5000); triggerHaptic();" style="border-color:#FFD700;">+5000</div>
-                <div class="quick-amt-btn" onclick="setCreditAmt(10000); triggerHaptic();" style="border-color:#FFD700;">+10000</div>
-            </div>
-            <button class="pay-btn" onclick="triggerCreditsRazorpay(); triggerHaptic();" style="background: linear-gradient(90deg, #FFD700, #FF8C00); color: black; box-shadow: 0 6px 20px rgba(255,215,0,0.4);">
+            
+            <button class="pay-btn" onclick="triggerCreditRazorpay(); triggerHaptic();">
                 SECURE CHECKOUT <i class="fa-solid fa-lock"></i>
             </button>
-            <div class="security-grid">
-                <div><i class="fa-solid fa-shield-halved" style="color:var(--accent-green)"></i> 256-Bit SSL Encrypted</div>
-                <div><i class="fa-solid fa-check-double" style="color:var(--accent-cyan)"></i> PCI-DSS Compliant</div>
-                <div><i class="fa-solid fa-user-shield" style="color:var(--accent-purple)"></i> AI Fraud Detection</div>
-                <div><i class="fa-solid fa-bolt" style="color:var(--accent-orange)"></i> Instant Settlement</div>
-                <div><i class="fa-solid fa-eye-slash" style="color:var(--accent-green)"></i> Zero Hidden Fees</div>
-                <div><i class="fa-solid fa-fingerprint" style="color:var(--accent-cyan)"></i> Encrypted Tokenization</div>
-                <div><i class="fa-solid fa-network-wired" style="color:var(--accent-purple)"></i> P2P Node Security</div>
-                <div><i class="fa-solid fa-receipt" style="color:var(--accent-orange)"></i> Live Smart Auditing</div>
-                <div><i class="fa-solid fa-money-bill-transfer" style="color:var(--accent-green)"></i> Auto-Refund Guard</div>
-                <div><i class="fa-solid fa-building-columns" style="color:var(--accent-cyan)"></i> Razorpay Verified</div>
+            
+            <div class="security-features-list">
+                <div><i class="fa-solid fa-shield"></i> 256-bit SSL Encryption</div>
+                <div><i class="fa-solid fa-check-double"></i> PCI DSS Compliant</div>
+                <div><i class="fa-solid fa-eye"></i> Fraud Detection Active</div>
+                <div><i class="fa-solid fa-clock-rotate-left"></i> Real-time Monitoring</div>
+                <div><i class="fa-solid fa-key"></i> Secure Tokenization</div>
+                <div><i class="fa-solid fa-user-shield"></i> Anti-Phishing Tech</div>
+                <div><i class="fa-solid fa-fingerprint"></i> Device Fingerprinting</div>
+                <div><i class="fa-solid fa-robot"></i> Advanced Bot Protection</div>
+                <div><i class="fa-solid fa-calculator"></i> Dynamic Fee Calculation</div>
+                <div><i class="fa-solid fa-money-bill-transfer"></i> Instant Refund Guarantee</div>
             </div>
         </div>
     </div>
 
-    <div class="bottom-sheet-overlay" id="redeemOverlay">
-        <div class="bottom-sheet">
-            <div class="sheet-header">
-                <div class="sheet-title"><i class="fa-solid fa-gift"></i> REDEEM CODE</div>
-                <i class="fa-solid fa-xmark close-sheet" onclick="closeRedeemModal()"></i>
-            </div>
-            <input type="text" id="redeemInput" class="form-input" placeholder="Enter Gift Code..." style="text-transform: uppercase;">
-            <button class="btn-primary" id="redeemSubmitBtn" onclick="processRedeem()">REDEEM NOW <i class="fa-solid fa-arrow-right"></i></button>
-            <div style="font-size: 0.75rem; color: #888; text-align: center; margin-top: 15px;"><i class="fa-solid fa-circle-info"></i> Codes are case-sensitive.</div>
+    <div class="cyber-scanner-overlay" id="cyberScanner">
+        <div class="cyber-loader-container">
+            <div class="cyber-ring-outer"></div>
+            <div class="cyber-ring-inner"></div>
+            <div class="cyber-core"></div>
         </div>
-    </div>
-
-    <div class="modal-overlay" id="receiptModal">
-        <div class="modal-box" style="padding:0; overflow:hidden;">
-            <i class="fa-solid fa-xmark modal-close" onclick="closeReceipt()" style="z-index: 10;"></i>
-            <div id="receiptContent" style="padding: 25px; background: var(--primary-bg);">
-                <div style="text-align:center; margin-bottom: 20px;">
-                    <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEg_20wCR-WBMpQmw3vxcYUf-vxIO1PYDJoQN_Sid3UDjA9tf0cuX0eH40jbzHoJad4cxbnjhPjqfCw1Z5V1LhgN9zFuIQC0fJjecTy3D9PFu5WjR2H1wHwTD1bUGnXY_NiApWn5gMs6velcQngSzKoP1yHzX0cVsFSUFM8zIefcbiPayY7680Kz0V0ZAAE/s1264/1000093706.png" style="width:40px; margin-bottom:5px;">
-                    <h3 style="font-family:var(--font-head); color:white; margin:0; letter-spacing:1px;">TOURNYX</h3>
-                    <div style="font-size:0.7rem; color:#888;">Transaction Receipt</div>
-                </div>
-                <div class="receipt-card">
-                    <div class="rc-row"><span class="rc-lbl">Type</span><span class="rc-val" id="rType">--</span></div>
-                    <div class="rc-row"><span class="rc-lbl">Details</span><span class="rc-val" id="rTitle">--</span></div>
-                    <div class="rc-row"><span class="rc-lbl">Date</span><span class="rc-val" id="rDate">--</span></div>
-                    <div class="rc-row"><span class="rc-lbl">Status</span><span class="rc-val" id="rStatus" style="color:var(--accent-green);">--</span></div>
-                    <div class="rc-row"><span class="rc-lbl">Txn ID</span><span class="rc-val" id="rId" style="font-size:0.7rem; word-break: break-all;">--</span></div>
-                    <div class="rc-amt" id="rAmt">--</div>
-                </div>
-            </div>
-            <div style="padding: 15px; background: rgba(0,0,0,0.5); border-top: 1px solid rgba(255,255,255,0.05);">
-                <button class="btn-primary" id="downloadReceiptBtn" onclick="downloadReceipt()"><i class="fa-solid fa-download"></i> DOWNLOAD PDF</button>
-            </div>
-        </div>
-    </div>
-
-    <div class="modal-overlay" id="txnSuccessOverlay">
-        <div class="modal-box">
-            <i class="fa-solid fa-circle-check" style="font-size: 4rem; color: var(--accent-green); margin-bottom: 15px; filter: drop-shadow(0 0 20px rgba(0,255,127,0.5));"></i>
-            <h3 style="font-family: var(--font-head); font-size: 1.5rem; margin-bottom: 10px; color: white;">TRANSACTION SUCCESSFUL</h3>
-            <p style="color: #ccc; font-size: 0.9rem; margin-bottom: 25px;">Your wallet has been updated. The ledger will reflect the changes immediately.</p>
-            <button class="btn-primary" onclick="document.getElementById('txnSuccessOverlay').classList.remove('active');">AWESOME!</button>
-        </div>
+        <div class="cyber-text" id="scannerText">VERIFYING SECURE CONNECTION...</div>
+        <div class="cyber-desc" id="scannerDesc">Connecting to Razorpay Banking Servers</div>
     </div>
 
     <div id="customToast">Notification</div>
+
+    <div class="app-footer">
+        © 2026 TOURNYX. All rights reserved. Powered by Quva<br>
+        <div class="footer-made-with" style="margin-top: 5px; font-style: italic; color: #777; font-size: 0.8rem;">made with 🔥 for gamers worldwide</div>
+    </div>
 
     <nav class="bottom-nav">
         <a class="nav-item" href="index.html"><i class="fa-solid fa-house"></i><span>Home</span></a>
         <a class="nav-item" href="explore.html"><i class="fa-solid fa-compass"></i><span>Explore</span></a>
         <a class="nav-item" href="matches.html"><i class="fa-solid fa-trophy"></i><span>Matches</span></a>
-        <div class="fab-slot"><div class="floating-plus" onclick="window.location.href='tournament.html'"><i class="fa-solid fa-plus"></i></div></div>
+        <div class="fab-slot"><div class="floating-plus" onclick="if(handleProtectedAction(event)){window.location.href='tournament.html'}"><i class="fa-solid fa-plus"></i></div></div>
         <a class="nav-item" href="clans.html"><i class="fa-solid fa-shield-halved"></i><span>Clan</span></a>
-        <a class="nav-item active" href="tickets.html"><div class="tx-ticket-composite"><i class="fa-solid fa-ticket"></i><b class="tx-text">TX</b></div><span>Tickets</span></a>
+        <a class="nav-item active" href="tickets.html">
+            <div class="tx-ticket-composite">
+                <i class="fa-solid fa-ticket"></i>
+                <b class="tx-text">TX</b>
+            </div>
+            <span>Tickets</span>
+        </a>
         <a class="nav-item" href="profile.html"><i class="fa-solid fa-user"></i><span>Profile</span></a>
     </nav>
 
     <script>
+        const inputs = document.querySelectorAll('input, select, textarea');
+        const bNav = document.querySelector('.bottom-nav');
+        inputs.forEach(inp => {
+            inp.addEventListener('focus', () => { if(bNav) bNav.style.bottom = '-100px'; });
+            inp.addEventListener('blur', () => { if(bNav) setTimeout(() => bNav.style.bottom = '0', 100); });
+        });
+
+        // ==========================================
+        // 🔑 YOUR RAZORPAY KEY (PASTE IT HERE!)
+        // ==========================================
+          const RAZORPAY_KEY = "paste the key";
+        // ==========================================
+
         const API_URL = 'https://script.google.com/macros/s/AKfycbyqqTpgaflxKJ9xH0jq7mJ_jLzcoNhas3gNo0h5gvoa_6r5Ae9NFxJAJp7ZoYNnMRKl/exec';
-        const RAZORPAY_KEY = 'rzp_live_xxxxxxxxxxxxxxxx'; // Update with real key
+        
+        let isGuest = true;
+        let currentUser = { username: "Guest Player", rupees: "0", points: "0", email: "guest@tournyx.com", avatar: "https://tournyx.in/favicon.png", role: "player", is_premium: false };
+        
+        let transactionsData = []; 
+        let activeReceiptId = "";
+        let activeReceiptData = null;
+        
+        let lastTxnHtml = "";
+        let lastLedgerHtml = "";
+        let lastInvHtml = "";
+        
         const TICKET_PRICE = 10;
-        let currentUser = null;
-        let transactionHistory = [];
-        let isGuestMode = false;
-        let selectedGameName = "Universal Pass"; 
+        const TICKET_OFFERS = [1, 5, 10, 20]; 
+        let selectedGameName = "Free Fire"; 
 
         async function secureFetch(payload) {
             try {
@@ -532,110 +711,151 @@
                     body: JSON.stringify(payload)
                 });
                 return await response.json();
-            } catch (error) { throw error; }
+            } catch (error) {
+                console.error("Fetch Error:", error);
+                throw error;
+            }
         }
 
-        function triggerHaptic() { if(navigator.vibrate) navigator.vibrate(40); }
-        function showToast(msg, isError = false) {
-            var x = document.getElementById("customToast");
-            x.innerText = msg;
-            x.style.backgroundColor = isError ? "#ff4d4d" : (document.documentElement.classList.contains('theme-vip') ? "#FFD700" : "var(--accent-cyan)");
-            x.style.color = isError ? "white" : "#000";
-            x.className = "show";
-            triggerHaptic();
-            setTimeout(function(){ x.className = x.className.replace("show", ""); }, 3500);
-        }
-
-        function getISTDateTime() {
-            let d = new Date();
+        function getISTDateTime(dateInput) {
+            let d = (dateInput && String(dateInput).trim() !== "") ? new Date(dateInput) : new Date();
+            if (isNaN(d.getTime())) d = new Date(); 
             let options = { timeZone: 'Asia/Kolkata', month: 'short', day: '2-digit', year: 'numeric', hour: 'numeric', minute: '2-digit', hour12: true };
             return d.toLocaleString('en-IN', options).toUpperCase();
         }
 
-        function triggerError(elementId) {
-            let el = document.getElementById(elementId);
-            if(el) {
-                el.style.border = "1px solid #ff4d4d";
-                el.classList.add('fa-shake');
-                setTimeout(() => { el.classList.remove('fa-shake'); el.style.border = "1px solid rgba(255,255,255,0.1)"; }, 800);
-            }
-        }
-
-        // Failsafe normalizer (UPGRADED TO CATCH REFERRAL BONUS PERFECTLY)
         function normalizeTxn(t) {
             let norm = { ...t };
             
-            let rawType = String(t.type || t.amount || "").toLowerCase();
-            let rawTitle = String(t.title || t.type || "").toLowerCase();
-            let rawCurrency = String(t.currency || "").toLowerCase();
-
-            // 1. Force Amount to be a clean number
             let rawAmt = String(t.amount || t.type || "0").replace(/[^0-9.-]+/g, "");
             norm.amount = parseFloat(rawAmt) || 0;
             
-            // 2. SMART REFERRAL BONUS INTERCEPTOR
-            if (rawType.includes("referral") || rawTitle.includes("referral")) {
+            let rawType = String(t.type || "").toLowerCase();
+            let rawTitle = String(t.title || "").toLowerCase();
+            let rawAmountStr = String(t.amount || "").toLowerCase();
+            let rawStatus = String(t.status || "").toLowerCase();
+            let rawCat = String(t.category || "").toLowerCase();
+            
+            if (rawType.includes("credit") || rawTitle.includes("credit") || rawAmountStr.includes("credit") || rawStatus.includes("credit")) {
                 norm.type = "Credit";
-                norm.title = "Referral Bonus";
-                norm.category = "Reward";
-                norm.currency = "Points"; 
-            } 
-            // Standard Credit Detection
-            else if (rawType.includes("credit") || rawTitle.includes("credit") || String(t.status).toLowerCase().includes("credit")) {
-                norm.type = "Credit";
-                if(rawTitle === "credit" || rawTitle === "") norm.title = "Wallet Deposit";
-            } 
-            // Standard Debit Detection
-            else {
+            } else {
                 norm.type = "Debit";
-                if(rawTitle === "debit" || rawTitle === "") norm.title = "Wallet Withdrawal";
+            }
+            
+            // SMART REFERRAL BONUS IDENTIFICATION
+            if (rawTitle.includes("referral") || rawCat.includes("referral")) {
+                norm.title = "Referral Bonus";
+                norm.category = "Reward Points";
+                norm.currency = "POINTS";
             }
 
-            // 3. Exact Currency Mapping
-            if(rawCurrency.includes("point")) norm.currency = "Points";
-            else if (rawCurrency.includes("inr") || rawCurrency.includes("rs") || rawCurrency.includes("rupee")) norm.currency = "INR";
-            else if (!norm.currency) norm.currency = "TX";
+            if (rawTitle === "credit" || rawTitle === "debit") {
+                norm.title = "Wallet Deposit"; 
+            }
+            
+            if (rawStatus === "pending" || rawType === "pending" || rawTitle.includes("pending")) {
+                norm.status = "Pending";
+            } else if (rawStatus === "failed" || rawType === "failed") {
+                norm.status = "Failed";
+            } else {
+                norm.status = "Success"; 
+            }
 
-            // 4. Status Mapping
-            let rawStatus = String(t.status || "").toLowerCase();
-            if (rawStatus === "pending" || rawType === "pending" || rawTitle.includes("pending")) norm.status = "Pending";
-            else if (rawStatus === "failed" || rawType === "failed" || rawStatus === "cancelled") norm.status = "Failed";
-            else norm.status = "Success"; 
-
-            // 5. Date Mapping
             if (!norm.date || norm.date === "") {
-                norm.date = (t.date_time || t.status && String(t.status).includes("202")) ? (t.date_time || t.status) : new Date().toISOString();
+                norm.date = t.status && String(t.status).includes("202") ? t.status : new Date().toISOString();
             }
 
             return norm;
         }
 
-        document.addEventListener("DOMContentLoaded", () => {
-            currentUser = JSON.parse(localStorage.getItem('tournyx_user'));
-            if (!currentUser || !currentUser.email) {
-                window.location.href = "login.html";
-                return;
+        function showLoginModal() { document.getElementById('loginPromptModal').classList.add('active'); triggerHaptic(); return false; }
+        function handleProtectedAction(event, url) { if(isGuest) { if(event) event.preventDefault(); return showLoginModal(); } if(url) window.location.href = url; return true; }
+        function handleProfileClick() { if(isGuest) return showLoginModal(); window.location.href='profile.html'; }
+        function triggerHaptic() { if(navigator.vibrate) navigator.vibrate(40); }
+        function triggerError(id) { let el = document.getElementById(id); el.classList.add('input-error'); triggerHaptic(); setTimeout(()=>el.classList.remove('input-error'),500); }
+        function showToast(msg, isError=false) { let t = document.getElementById("customToast"); t.innerText = msg; t.style.backgroundColor = isError ? "#ff4d4d" : (document.documentElement.classList.contains('theme-vip') ? "#FFD700" : "var(--accent-cyan)"); t.style.color = "black"; t.className = "show"; triggerHaptic(); setTimeout(()=>t.className="", 3500); }
+        function formatNum(num) { return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ","); }
+
+        document.addEventListener("DOMContentLoaded", function() {
+            let storedUser = localStorage.getItem('tournyx_user');
+            if (storedUser && storedUser !== "undefined") {
+                try {
+                    let parsedUser = JSON.parse(storedUser);
+                    if (parsedUser && parsedUser.email) {
+                        currentUser = parsedUser;
+                        isGuest = false;
+                        if (String(currentUser.is_premium).toLowerCase() === 'true') {
+                            document.documentElement.classList.add('theme-vip');
+                        }
+                    }
+                } catch(e) {}
             }
 
-            if (currentUser.avatar) {
-                let pPic = document.getElementById('headerProfilePic');
-                if(pPic) {
-                    let strUrl = String(currentUser.avatar).trim();
-                    if (strUrl.includes('drive.google.com/file/d/')) { 
-                        let id = strUrl.split('/d/')[1].split('/')[0]; 
-                        pPic.src = `https://drive.google.com/uc?export=view&id=${id}`; 
-                    } else { pPic.src = strUrl; }
-                }
-            }
+            initializeAppData();
+            renderQuickAmts();
 
-            updateWalletDisplay();
-            loadCachedTransactions();
-            syncLiveTransactions();
+            if (!isGuest) {
+                syncLiveTransactions().finally(() => { 
+                    let loader = document.getElementById('skeletonLoader');
+                    loader.style.opacity = '0';
+                    setTimeout(() => loader.classList.add('hidden'), 300);
+                });
+                setInterval(() => syncLiveTransactions(), 4000); 
+            } else {
+                updateWalletDisplay(); 
+                let loader = document.getElementById('skeletonLoader');
+                loader.style.opacity = '0';
+                setTimeout(() => loader.classList.add('hidden'), 300);
+            }
         });
 
+        function initializeAppData() {
+            if(currentUser.avatar && !isGuest) document.getElementById('headerProfilePic').src = currentUser.avatar;
+            setDynamicGreeting();
+        }
+
+        function selectGame(name, element) {
+            selectedGameName = name;
+            document.querySelectorAll('.game-card').forEach(c => c.classList.remove('active'));
+            element.classList.add('active');
+            triggerHaptic();
+        }
+
+        function animateValue(obj, start, end, duration) {
+            if(start === end) { obj.innerHTML = formatNum(end); return; }
+            let startTimestamp = null;
+            const step = (timestamp) => {
+                if (!startTimestamp) startTimestamp = timestamp;
+                const progress = Math.min((timestamp - startTimestamp) / duration, 1);
+                obj.innerHTML = formatNum(Math.floor(progress * (end - start) + start));
+                if (progress < 1) { window.requestAnimationFrame(step); } else { obj.innerHTML = formatNum(end); }
+            };
+            window.requestAnimationFrame(step);
+        }
+
+        function setDynamicGreeting() {
+            const hr = new Date().getHours(); let greet = "Welcome,";
+            if (hr < 12) greet = "Good Morning,"; else if (hr < 18) greet = "Good Afternoon,"; else greet = "Good Evening,";
+            let name = currentUser.username ? currentUser.username.split(" ")[0] : "Player";
+            let tagHTML = isGuest ? '<span style="background:rgba(255,255,255,0.1); color:#ccc; padding:3px 8px; border-radius:6px; font-size:0.6rem; margin-left:8px; font-family:var(--font-head); font-weight:bold;">GUEST</span>' : (currentUser.role === 'organizer' ? '<span style="background:var(--accent-orange); color:black; padding:3px 8px; border-radius:6px; font-size:0.6rem; margin-left:8px; font-family:var(--font-head); font-weight:bold;">ORGANIZER</span>' : '<span style="background:var(--accent-purple); color:white; padding:3px 8px; border-radius:6px; font-size:0.6rem; margin-left:8px; font-family:var(--font-head); font-weight:bold;">PLAYER</span>');
+            document.getElementById('dynamicGreeting').innerHTML = `${greet} ${name} ${tagHTML}`;
+            if(currentUser.avatar) document.getElementById('pdfUserAvatar').src = currentUser.avatar;
+        }
+
+        let isPrivacyOn = false;
+        function togglePrivacy() {
+            isPrivacyOn = !isPrivacyOn;
+            document.getElementById('balanceWrapper').classList.toggle('blur-balance');
+            document.getElementById('ptsWrapper').classList.toggle('blur-balance');
+            let eye = document.getElementById('eyeIcon');
+            if(isPrivacyOn) eye.classList.replace('fa-eye', 'fa-eye-slash'); else eye.classList.replace('fa-eye-slash', 'fa-eye');
+        }
+
         function updateWalletDisplay() {
-            let rawEarnings = String(currentUser.earnings || currentUser.rupees || "0");
-            let baseRupees = 0; let goldenRupees = 0;
+            let rawEarnings = String(currentUser.earnings || currentUser.rupees || "0"); 
+            let baseRupees = 0;
+            let goldenRupees = 0;
+            
             if (rawEarnings.includes('+')) {
                 let parts = rawEarnings.split('+');
                 baseRupees = parseFloat(parts[0]) || 0;
@@ -645,178 +865,513 @@
             }
 
             let totalRupees = baseRupees + goldenRupees;
-            let currentPoints = parseInt(currentUser.points) || 0;
+            let totalTickets = Math.floor(totalRupees / TICKET_PRICE);
+            let goldenTickets = Math.floor(goldenRupees / TICKET_PRICE);
+            let baseTickets = totalTickets - goldenTickets;
 
-            if (currentUser.role === 'organizer') {
-                document.getElementById('walletTitleText').innerText = "AVAILABLE FUNDS";
-                document.getElementById('mainBalDisplay').innerHTML = `₹${totalRupees}`;
-                document.getElementById('subBalDisplay').innerText = "INR";
-                document.getElementById('quickAddTxt').innerText = "Add Credits";
-                document.querySelector('.btn-add').classList.add('btn-add-org');
+            let pts = parseInt(currentUser.points) || 0;
+            
+            let isOrg = currentUser.role === 'organizer';
+            let isVip = document.documentElement.classList.contains('theme-vip');
+
+            const primaryActionText = document.getElementById('primaryActionText');
+            
+            if (isOrg) {
+                document.getElementById('displayTickets').innerText = "₹" + formatNum(totalRupees);
+                document.getElementById('mainBalanceTxIcon').style.display = 'none';
+                document.getElementById('balanceLabelText').innerHTML = 'Total Wallet Earnings <i class="fa-solid fa-eye" id="eyeIcon" onclick="if(isGuest) return showLoginModal(); togglePrivacy(); triggerHaptic();" style="margin-left:8px; cursor: pointer; color:#888; font-size:1.05rem; transition:0.3s;"></i>';
+                document.getElementById('pdfUserBal').innerText = "₹" + formatNum(totalRupees);
+                document.getElementById('creditActionBtn').style.display = 'flex';
+                if (primaryActionText) primaryActionText.innerText = "Buy Pass";
+
             } else {
-                let totalTickets = Math.floor(totalRupees / TICKET_PRICE);
-                document.getElementById('mainBalDisplay').innerHTML = totalTickets;
-                document.getElementById('subBalDisplay').innerText = "Passes";
-                document.getElementById('quickAddTxt').innerText = "Buy Passes";
+                let quickActions = document.querySelector('.quick-actions');
+                if (quickActions) quickActions.style.display = 'grid';
+
+                animateValue(document.getElementById('displayTickets'), 0, totalTickets, 1000);
+                document.getElementById('mainBalanceTxIcon').style.display = 'inline-flex';
+                document.getElementById('balanceLabelText').innerHTML = 'Total Available Pass <i class="fa-solid fa-eye" id="eyeIcon" onclick="if(isGuest) return showLoginModal(); togglePrivacy(); triggerHaptic();" style="margin-left:8px; cursor: pointer; color:#888; font-size:1.05rem; transition:0.3s;"></i>';
+                document.getElementById('pdfUserBal').innerText = totalTickets + " Passes";
+                document.getElementById('creditActionBtn').style.display = 'none';
+                if (primaryActionText) primaryActionText.innerText = "Buy Pass";
             }
             
-            document.getElementById('ptsBalDisplay').innerText = currentPoints;
-            renderInventory(Math.floor(baseRupees/TICKET_PRICE), Math.floor(goldenRupees/TICKET_PRICE));
+            animateValue(document.getElementById('displayPoints'), 0, pts, 1000);
+            
+            let badge = document.getElementById('vipBadge'); let prog = document.getElementById('vipProgress'); let nTier = document.getElementById('nextTierText');
+            
+            if (isVip) {
+                badge.innerHTML = '<i class="fa-solid fa-crown"></i> VIP MEMBER';
+                badge.className = 'vip-badge'; 
+                prog.style.width = '100%'; 
+                nTier.innerText = "Max Level";
+            } else {
+                if (totalTickets >= 500) { badge.innerHTML = '<i class="fa-solid fa-crown"></i> ELITE TIER'; badge.className = 'vip-badge'; prog.style.width = '100%'; nTier.innerText = "Max Level"; }
+                else if (totalTickets >= 100) { badge.innerHTML = '<i class="fa-solid fa-star"></i> PRO GAMER'; badge.className = 'vip-badge vip-silver'; prog.style.width = ((totalTickets/500)*100)+'%'; nTier.innerText = "Elite Tier"; }
+                else { badge.innerHTML = '<span class="tx-icon" style="font-size: 0.9em; filter:none; color:white; -webkit-text-fill-color:white;">TX</span> STANDARD'; badge.className = 'vip-badge vip-bronze'; prog.style.width = ((totalTickets/100)*100)+'%'; nTier.innerText = "Pro Gamer"; }
+            }
+
+            renderInventory(baseTickets, goldenTickets);
+        }
+
+        function showTicketDetails(game, count, tid) {
+            activeReceiptId = tid;
+            document.getElementById('rcptIcon').innerHTML = `<i class="fa-solid fa-ticket-simple"></i>`;
+            document.getElementById('rcptIcon').className = `rcpt-icon icon-credit`;
+            document.getElementById('rcptAmt').innerHTML = `${count} Pass`;
+            document.getElementById('rcptAmt').className = `rcpt-amt amt-credit`;
+            document.getElementById('rcptTitle').innerText = `${game} Entry Pass`;
+            document.getElementById('receiptDate').innerText = "Active";
+            document.getElementById('receiptId').innerText = tid;
+            
+            let sEl = document.getElementById('rcptStatusVal');
+            sEl.innerHTML = `<i class="fa-solid fa-check"></i> Available`;
+            sEl.style.color = "var(--accent-green)";
+
+            document.getElementById('rcptCat').innerHTML = `<span class="tx-icon" style="font-size:0.9rem;">TX</span> Inventory`;
+
+            document.getElementById('pdfDynamicContentArea').innerHTML = `
+                <table style="width:100%; border-collapse:collapse; text-align:left; font-size:14px; margin-top: 15px;">
+                    <tr style="border-bottom:1px solid #1a0a3a;">
+                        <td style="padding:15px 0; color:#888;">Pass ID</td>
+                        <td style="padding:15px 0; text-align:right; font-weight:bold; color:#ffffff;">${tid}</td>
+                    </tr>
+                    <tr style="border-bottom:1px solid #1a0a3a;">
+                        <td style="padding:15px 0; color:#888;">Game Category</td>
+                        <td style="padding:15px 0; text-align:right; font-weight:bold; color:#00f2ff;">${game}</td>
+                    </tr>
+                    <tr style="border-bottom:1px solid #1a0a3a;">
+                        <td style="padding:15px 0; color:#888;">Status</td>
+                        <td style="padding:15px 0; text-align:right; font-weight:bold; color:#00ff7f; text-transform: uppercase;">Available</td>
+                    </tr>
+                    <tr>
+                        <td style="padding:25px 0; color:#ffffff; font-size:20px; font-weight:bold;">Total Passes</td>
+                        <td style="padding:25px 0; text-align:right; font-size:26px; font-weight:bold; color:#00ff7f;">${count} Pass</td>
+                    </tr>
+                </table>
+            `;
+
+            document.getElementById('receiptOverlay').classList.add('active');
         }
 
         function renderInventory(baseTickets, goldenTickets) {
-            let html = "";
-            let txns = JSON.parse(localStorage.getItem('tournyx_txns')) || [];
-            
+
+            // Organizer inventory has been unhidden intentionally for seamless pass tracking
+            const inv = document.getElementById('ticketInventoryList');
+            let totalTickets = baseTickets + goldenTickets;
+
+            if(totalTickets <= 0) {
+                let emptyHtml = `<div style="text-align:center; padding: 30px; color:#888; font-size:0.95rem; font-weight:bold; background:rgba(0,0,0,0.4); border-radius:15px; border:1px dashed rgba(255,255,255,0.1);">0 Pass Available.<br><span style="color:var(--accent-cyan); font-size:0.8rem; font-weight:normal; margin-top:5px; display:block;">Buy pass to enter tournaments!</span></div>`;
+                if(lastInvHtml !== emptyHtml) { inv.innerHTML = emptyHtml; lastInvHtml = emptyHtml; }
+                return;
+            }
+
+            let txns = transactionsData || [];
             let ffCount = 0; let bgmiCount = 0;
+            
             txns.forEach(rawT => {
                 let t = normalizeTxn(rawT);
-                let cat = String(t.category || "").toLowerCase();
-                let title = String(t.title || "").toLowerCase();
-                if(t.type === "Credit" && (cat.includes("purchase") || title.includes("bought") || title.includes("pass")) && (t.status === "Success" || t.status === "Pending")) {
+                if(t.type === "Credit" && t.category === "Pass Purchase" && (t.status === "Success" || t.status === "Pending")) {
                     let count = Math.floor(t.amount / TICKET_PRICE);
-                    if(title.includes("free fire") || title.includes("ff")) ffCount += count;
-                    else if(title.includes("bgmi")) bgmiCount += count;
+                    if(t.title.includes("Free Fire")) ffCount += count;
+                    else if(t.title.includes("BGMI")) bgmiCount += count;
                 }
             });
 
             let identified = ffCount + bgmiCount;
-            let displayBase = baseTickets;
-            let ffDisplay = 0; let bgmiDisplay = 0;
-
-            if (identified > 0) {
+            let ffDisplay = 0, bgmiDisplay = 0, uniDisplay = goldenTickets;
+            
+            if (identified === 0) { 
+                uniDisplay += baseTickets; 
+            } else {
                 ffDisplay = Math.round((ffCount / identified) * baseTickets);
-                bgmiDisplay = baseTickets - ffDisplay;
-                displayBase = 0;
+                bgmiDisplay = baseTickets - ffDisplay; 
             }
 
-            if (goldenTickets > 0) {
-                html += `<div class="pass-card pass-universal">
-                            <div class="pass-left">
-                                <div class="pass-icon"><i class="fa-solid fa-star"></i></div>
-                                <div class="pass-info"><h3>Universal Pass</h3><p>Valid for any game</p></div>
-                            </div>
-                            <div class="pass-count">${goldenTickets}</div>
-                         </div>`;
-            }
+            let html = '';
+            
+            const genId = (str) => {
+                let h = 0; 
+                for(let i=0; i<str.length; i++) h = Math.imul(31, h) + str.charCodeAt(i) | 0;
+                return Math.abs(h).toString().substring(0, 4).padEnd(4, '0');
+            };
 
-            if (displayBase > 0) {
-                html += `<div class="pass-card pass-specific">
-                            <div class="pass-left">
-                                <div class="pass-icon"><i class="fa-solid fa-ticket"></i></div>
-                                <div class="pass-info"><h3>Standard Pass</h3><p>Valid for standard entry</p></div>
-                            </div>
-                            <div class="pass-count">${displayBase}</div>
-                         </div>`;
-            }
+            const buildTicketHTML = (game, count, imgUrl, prefix) => {
+                if(count <= 0) return '';
+                let safeName = currentUser.email || currentUser.username || "guest";
+                let tid = `TKT-${prefix}-${genId(safeName + game + "_W1")}`;
+                
+                let logoHtml = `<img src="${imgUrl}" class="tkt-logo" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                                <div class="tkt-logo-fallback"><i class="fa-solid fa-gamepad"></i></div>`;
+                let stampColor = "rgba(255,255,255,0.15)";
+                let gameColor = "white";
+                
+                if (prefix === 'UNI') {
+                    logoHtml = `
+                        <img
+                            src="https://tournyx.in/favicon.png"
+                            class="tkt-logo"
+                            style="background:linear-gradient(135deg,#FFD700,#FF8C00); border:2px solid #FFD700; box-shadow:0 0 20px rgba(255,215,0,0.8); padding:4px;"
+                        >
+                    `;
+                    stampColor = "rgba(255, 215, 0, 0.5)";
+                    gameColor = "#FFD700";
+                }
 
-            if (ffDisplay > 0) {
-                html += `<div class="pass-card pass-specific" style="border-color: rgba(255,153,0,0.3);">
-                            <div class="pass-left">
-                                <div class="pass-icon" style="color:var(--accent-orange); border-color:rgba(255,153,0,0.5);"><i class="fa-solid fa-fire"></i></div>
-                                <div class="pass-info"><h3 style="color:var(--accent-orange);">Free Fire Pass</h3><p>Valid for FF Tournaments</p></div>
-                            </div>
-                            <div class="pass-count" style="color:var(--accent-orange);">${ffDisplay}</div>
-                         </div>`;
-            }
+                return `
+                    <div class="tournyx-ticket tkt-theme-${prefix}" onclick="showTicketDetails('${game}', ${count}, '${tid}')">
+                        <div class="tkt-tournyx-stamp" style="color:${stampColor};">${prefix === 'UNI' ? 'TX VIP SECURE' : 'TOURNYX SECURE'}</div>
+                        ${logoHtml}
+                        <div class="tkt-details">
+                            <div class="tkt-game ${prefix === 'UNI' ? 'uni-title' : ''}" style="color:${gameColor}">${game} PASS</div>
+                            <div class="tkt-id">ID: ${tid}</div>
+                        </div>
+                        <div class="tkt-count">x${count}</div>
+                    </div>
+                `;
+            };
 
-            if (bgmiDisplay > 0) {
-                html += `<div class="pass-card pass-specific" style="border-color: rgba(0,255,127,0.3);">
-                            <div class="pass-left">
-                                <div class="pass-icon" style="color:var(--accent-green); border-color:rgba(0,255,127,0.5);"><i class="fa-solid fa-crosshairs"></i></div>
-                                <div class="pass-info"><h3 style="color:var(--accent-green);">BGMI Pass</h3><p>Valid for BGMI Tournaments</p></div>
-                            </div>
-                            <div class="pass-count" style="color:var(--accent-green);">${bgmiDisplay}</div>
-                         </div>`;
+            if(uniDisplay > 0) html += buildTicketHTML("Universal", uniDisplay, "https://tournyx.in/favicon.png", "UNI");
+            if(ffDisplay > 0) html += buildTicketHTML("Free Fire", ffDisplay, "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEiJvPTY_y_XU-0Lwbnjwm7961lCDkSlQh2MtCWHunFVX6WS7WCprCtkPyB334BU_-4vGsP0NseDQf4NPBEOIxqjk7VZQqZUHpnLb4Bw-c1UeXQy2M9DzNrNdYt_aL0GEb1AlTPupC5zEjJiP3Ci0Oxk-wdg5TF5cs8_UNSe3uTT1BE884je3iXr8QlMjx8/s240/1000094210.jpg", "FF");
+            if(bgmiDisplay > 0) html += buildTicketHTML("BGMI", bgmiDisplay, "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEj3MKUI87mMK4_3DltS3LQgqfrK1sESUIMMqlENdi0dPRtOFkeDbvPsTbSaCRaJOb17QZ5s9OO5dR6kFCYiCkgUCF2zBWwvGFSb3T-9Nz51XuIzMvIiOuqwcLzyzeFmn1orKbiETP4LrlaG-RidnWAAzBwUA3aL5_z62HP4_F7R02lAK_WSYdH0U_Gn7Es/s250/1000094211.jpg", "BGM");
+            
+            if (lastInvHtml !== html) {
+                inv.innerHTML = html;
+                lastInvHtml = html;
             }
-
-            if (html === "") {
-                html = `<div style="text-align:center; padding: 30px; background: rgba(255,255,255,0.02); border-radius: 16px; border: 1px dashed rgba(255,255,255,0.1); color: #888;">
-                            <i class="fa-solid fa-ticket fa-rotate-by" style="font-size:2rem; margin-bottom:10px; opacity:0.5; --fa-rotate-angle: 45deg;"></i><br>
-                            Your inventory is empty.<br>Buy passes to enter tournaments.
-                        </div>`;
-            }
-            document.getElementById('ticketInventoryList').innerHTML = html;
         }
 
-        function loadCachedTransactions() {
-            let cached = localStorage.getItem('tournyx_txns');
-            if (cached) {
-                transactionHistory = JSON.parse(cached);
-                renderLedger();
+        function renderQuickAmts() {
+            const grid = document.getElementById('quickAmtGrid');
+            grid.innerHTML = "";
+            TICKET_OFFERS.forEach(amt => { grid.innerHTML += `<div class="quick-amt-btn" onclick="setAmt(${amt}); triggerHaptic();">+${amt} Pass</div>`; });
+        }
+
+        function openAddMoney() { document.getElementById('addMoneyOverlay').classList.add('active'); }
+        function closeAddMoney() { document.getElementById('addMoneyOverlay').classList.remove('active'); document.getElementById('addAmtInput').value = ""; updateRazorpayAmount(); }
+        function closeSuccessModal() { document.getElementById('txnSuccessOverlay').classList.remove('active'); }
+
+        function setAmt(val) { document.getElementById('addAmtInput').value = val; updateRazorpayAmount(); }
+        
+        function updateRazorpayAmount() {
+            let ticketCount = parseInt(document.getElementById('addAmtInput').value);
+            if(isNaN(ticketCount) || ticketCount < 1) { 
+                document.getElementById('displayTotalRs').innerText = "0";
+                return; 
+            }
+            let baseAmt = ticketCount * TICKET_PRICE;
+            document.getElementById('displayTotalRs').innerText = baseAmt; 
+        }
+
+        function triggerRazorpay() {
+            let ticketCount = parseInt(document.getElementById('addAmtInput').value);
+            if(isNaN(ticketCount) || ticketCount < 1) { 
+                triggerError('addAmtInput'); showToast("Please enter at least 1 Pass to buy.", true); return; 
+            }
+            
+            let baseAmt = ticketCount * TICKET_PRICE;
+            let platformFee = 0;
+            if (baseAmt === 10) platformFee = 1.56;
+            else if (baseAmt <= 200) platformFee = 1.20 + (ticketCount * 0.50);
+            else if (baseAmt <= 500) platformFee = 2.36 + (ticketCount * 0.50);
+            else if (baseAmt <= 1000) platformFee = 3.79 + (ticketCount * 0.50);
+            else platformFee = 5.85 + (ticketCount * 0.50);
+
+            platformFee = Math.min(platformFee, 50);
+            let totalAmtToPay = baseAmt + platformFee;
+            
+            let isMedianApp = (typeof median !== 'undefined') || (navigator.userAgent.toLowerCase().indexOf('median') > -1);
+            let isSecureEnv = window.isSecureContext || isMedianApp || window.location.hostname === 'localhost';
+            
+            closeAddMoney();
+
+            var options = {
+                "key": RAZORPAY_KEY,
+                "amount": Math.round(totalAmtToPay * 100),
+                "currency": "INR",
+                "name": "Tournyx Esports",
+                "description": ticketCount + " " + selectedGameName + " Pass(es)",
+                "image": "https://tournyx.in/favicon.png",
+                "handler": function (response) {
+                    processSuccessfulPayment(response.razorpay_payment_id, ticketCount, baseAmt);
+                },
+                "prefill": { "name": currentUser.username, "email": currentUser.email },
+                "theme": { "color": document.documentElement.classList.contains('theme-vip') ? "#FFD700" : "#bd00ff" },
+                "modal": { "ondismiss": function(){ showTransactionFailed("You cancelled the payment process."); } }
+            };
+            
+            try {
+                if (!isSecureEnv) showToast("Unsecure browser detected. Payment might fail.", true);
+                var rzp1 = new Razorpay(options);
+                rzp1.on('payment.failed', function (response){ showTransactionFailed(response.error.description); });
+                rzp1.open();
+            } catch(e) {
+                processSuccessfulPayment("sim_txn_" + Math.floor(Math.random()*100000), ticketCount, baseAmt);
             }
         }
+
+        // --- ORGANIZER CREDIT ADD WITH 24HR LIMIT ---
+        function checkCreditLimit(amount) {
+            let today = new Date().toDateString();
+            let usageStr = localStorage.getItem('tx_credit_usage');
+            let usage = usageStr ? JSON.parse(usageStr) : { date: today, amount: 0 };
+            
+            if (usage.date !== today) { usage = { date: today, amount: 0 }; }
+            
+            if (usage.amount + amount > 20000) {
+                showToast(`Daily limit exceeded! You can add up to ₹${20000 - usage.amount} more today.`, true);
+                return false;
+            }
+            return { valid: true, usage: usage };
+        }
+
+        function triggerCreditRazorpay() {
+            let amount = parseInt(document.getElementById('addCreditInput').value);
+            if(isNaN(amount) || amount < 1) { 
+                triggerError('addCreditInput'); showToast("Please enter a valid amount to add.", true); return; 
+            }
+
+            let check = checkCreditLimit(amount);
+            if (!check.valid) return;
+
+            let totalAmtToPay = amount; 
+            closeCreditsModal();
+
+            var options = {
+                "key": RAZORPAY_KEY,
+                "amount": Math.round(totalAmtToPay * 100),
+                "currency": "INR",
+                "name": "Tournyx Organizer",
+                "description": "Add " + amount + " Credits",
+                "image": "https://tournyx.in/favicon.png",
+                "handler": function (response) {
+                    check.usage.amount += amount;
+                    localStorage.setItem('tx_credit_usage', JSON.stringify(check.usage));
+                    processSuccessfulPayment(response.razorpay_payment_id, amount, amount, true);
+                },
+                "prefill": { "name": currentUser.username, "email": currentUser.email },
+                "theme": { "color": "#00f2ff" },
+                "modal": { "ondismiss": function(){ showTransactionFailed("You cancelled the payment process."); } }
+            };
+            
+            try {
+                var rzpCredit = new Razorpay(options);
+                rzpCredit.on('payment.failed', function (response){ showTransactionFailed(response.error.description); });
+                rzpCredit.open();
+            } catch(e) {
+                check.usage.amount += amount;
+                localStorage.setItem('tx_credit_usage', JSON.stringify(check.usage));
+                processSuccessfulPayment("sim_cred_" + Math.floor(Math.random()*100000), amount, amount, true);
+            }
+        }
+
+        function showTransactionFailed(reason) {
+            let rText = reason || "The transaction was canceled or declined. No money was deducted from your account.";
+            document.getElementById('txnFailReason').innerText = rText;
+            document.getElementById('txnFailedOverlay').classList.add('active');
+            triggerHaptic();
+        }
+
+        function processSuccessfulPayment(paymentId, count, baseAmount, isCreditAdd = false) {
+            let scanner = document.getElementById('cyberScanner'); 
+            let sText = document.getElementById('scannerText'); 
+            let sDesc = document.getElementById('scannerDesc'); 
+            
+            scanner.classList.add('active'); 
+            sText.innerText = "VERIFYING PAYMENT SECURELY..."; 
+            sDesc.innerText = "Encrypting transaction block with Razorpay..."; 
+            
+            let payload = { 
+                action: "razorpay_success", 
+                email: currentUser.email, 
+                amount: baseAmount, 
+                payment_id: paymentId, 
+                gameName: isCreditAdd ? "Credits" : selectedGameName 
+            };
+
+            secureFetch(payload)
+            .then(data => {
+                scanner.classList.remove('active');
+                if(data.status === "success") {
+                    document.getElementById('txnSuccessOverlay').classList.add('active');
+                    syncLiveTransactions(); 
+                } else {
+                    showTransactionFailed("Server Error: " + data.data);
+                }
+            })
+            .catch(err => {
+                scanner.classList.remove('active');
+                showTransactionFailed("Network Error. If money was deducted, it will be refunded or credited shortly.");
+            });
+        }
+
 
         async function syncLiveTransactions() {
-            document.getElementById('refreshTxnIcon').classList.add('fa-spin');
             try {
-                const res = await secureFetch({ action: 'get_transactions', email: currentUser.email });
-                if (res.status === 'success') {
-                    transactionHistory = res.data;
-                    localStorage.setItem('tournyx_txns', JSON.stringify(transactionHistory));
-                    renderLedger();
+                let [userDataObj, txnDataObj] = await Promise.all([
+                    secureFetch({ action: 'sync_user', email: currentUser.email }),
+                    secureFetch({ action: 'get_transactions', email: currentUser.email })
+                ]);
+                
+                if(userDataObj.status === 'success' && userDataObj.data) {
+                    currentUser.earnings = String(userDataObj.data.rupees || userDataObj.data.earnings || "0"); 
+                    currentUser.points = String(userDataObj.data.points || "0");
+                    currentUser.role = userDataObj.data.role || currentUser.role;
+                    currentUser.is_premium = userDataObj.data.is_premium;
+                    
+                    isGuest = false; 
+                    
+                    if (String(currentUser.is_premium).toLowerCase() === 'true') {
+                        document.documentElement.classList.add('theme-vip');
+                    } else {
+                        document.documentElement.classList.remove('theme-vip');
+                    }
+                    
+                    localStorage.setItem('tournyx_user', JSON.stringify(currentUser));
+                    
+                    initializeAppData(); 
+                    updateWalletDisplay(); 
                 }
-            } catch (e) {}
-            document.getElementById('refreshTxnIcon').classList.remove('fa-spin');
+
+                if(txnDataObj.status === 'success' && txnDataObj.data && Array.isArray(txnDataObj.data)) {
+                    transactionsData = txnDataObj.data.filter(t => {const title = String(t.title || "").toLowerCase();
+                    return (!title.includes("withdraw") && !title.includes("withdrawl"));});
+                
+                    updateTransactionSummary();
+                    renderTransactions();
+                    if(document.getElementById('ledgerModal').classList.contains('active')) {
+                        renderLedger();
+                    }
+                }
+            } catch(e) {}
         }
+
+        function renderTransactions() {
+            const container = document.getElementById('txnListContainer');
+            if(isGuest) { container.innerHTML = `<div style="text-align:center; padding:30px; color:#666; font-size:0.9rem;"><i class="fa-solid fa-lock" style="display:block; font-size:2.5rem; margin-bottom:15px; color:#444;"></i> Log in to view your secure transaction ledger.</div>`; return; }
+            
+            let txns = transactionsData || [];
+            let newHtml = "";
+            
+            if (txns.length === 0) { 
+                newHtml = `<div style="text-align:center; padding:30px; color:#666;">No recent transactions.</div>`; 
+            } else {
+                txns.slice(0, 5).forEach((t, i) => { newHtml += buildTxnHtml(t, i, i); });
+            }
+            
+            if (lastTxnHtml !== newHtml) {
+                container.innerHTML = newHtml;
+                lastTxnHtml = newHtml;
+            }
+        }
+
+        function updateTransactionSummary() {
+            if (!Array.isArray(transactionsData)) return;
+
+            let moneyIn = 0; let moneyOut = 0; let weekly = 0; let monthly = 0;
+            let now = new Date();
+
+            transactionsData.forEach(rawT => {
+                let t = normalizeTxn(rawT);
+                if (String(t.status).toLowerCase() === "failed") return;
+
+                let amount = Number(t.amount) || 0;
+                let txnDate = new Date(t.date);
+                let diffDays =  (now - txnDate) / (1000 * 60 * 60 * 24);
+                let value = currentUser.role === 'organizer' ? amount : Math.floor(amount / TICKET_PRICE);
+
+                if (String(t.type).toLowerCase() === "credit") moneyIn += value;
+                else moneyOut += value;
+
+                if (diffDays <= 7) weekly += value;
+
+                if (txnDate.getMonth() === now.getMonth() && txnDate.getFullYear() === now.getFullYear()) {
+                    monthly += value;
+                }
+            });
+
+            if (currentUser.role === 'organizer') {
+                document.getElementById('moneyInTotal').innerText = `₹${formatNum(moneyIn)}`;
+                document.getElementById('moneyOutTotal').innerText = `₹${formatNum(moneyOut)}`;
+                document.getElementById('weeklyTotal').innerText = `₹${formatNum(weekly)}`;
+                document.getElementById('monthlyTotal').innerText = `₹${formatNum(monthly)}`;
+            } else {
+                document.getElementById('moneyInTotal').innerText = `${moneyIn} Pass`;
+                document.getElementById('moneyOutTotal').innerText = `${moneyOut} Pass`;
+                document.getElementById('weeklyTotal').innerText = `${weekly} Pass`;
+                document.getElementById('monthlyTotal').innerText = `${monthly} Pass`;
+            }
+        }
+
+        function openCreditsModal() {
+            let raw = String(currentUser.earnings || currentUser.rupees || "0");
+            let credits = 0;
+            if (raw.includes('+')) {
+                let parts = raw.split('+');
+                credits = (parseFloat(parts[0]) || 0) + (parseFloat(parts[1]) || 0);
+            } else {
+                credits = parseFloat(raw) || 0;
+            }
+            document.getElementById('creditsCount').innerText = credits;
+            document.getElementById('creditsOverlay').classList.add('active');
+        }
+
+        function closeCreditsModal() { document.getElementById('creditsOverlay').classList.remove('active'); document.getElementById('addCreditInput').value = ""; }
+        function openAllTxns() { document.getElementById('ledgerModal').classList.add('active'); renderLedger(); }
+        function closeAllTxns() { document.getElementById('ledgerModal').classList.remove('active'); }
 
         function renderLedger() {
-            const container = document.getElementById('transactionLedger');
-            if (!transactionHistory || transactionHistory.length === 0) {
-                container.innerHTML = `<div style="text-align:center; padding: 20px; color: #888;">No transactions found.</div>`;
-                return;
+            let txns = transactionsData || [];
+            const container = document.getElementById('fullTxnListContainer');
+            let newHtml = "";
+            txns.forEach((t, i) => { newHtml += buildTxnHtml(t, i, i); });
+            if (lastLedgerHtml !== newHtml) {
+                container.innerHTML = newHtml;
+                lastLedgerHtml = newHtml;
             }
-
-            let html = "";
-            transactionHistory.forEach((rawT, index) => {
-                let t = normalizeTxn(rawT);
-                html += buildTxnHtml(t, index, index);
-            });
-            container.innerHTML = html;
         }
 
-        function buildTxnHtml(t, delay, index) {
-            let isCredit = t.type === "Credit";
-            let iconClass = isCredit ? "icon-credit" : "icon-debit";
-            let amtClass = isCredit ? "amt-credit" : "amt-debit";
+        function buildTxnHtml(rawT, delay, index) {
+            let t = normalizeTxn(rawT);
+            let typeStr = String(t.type || "").toLowerCase(); let isCredit = typeStr === "credit"; 
+            let stat = String(t.status || "").toLowerCase(); let isPending = stat === "pending"; let isFailed = stat === "failed"; let isSuccess = stat === "success";
             
-            let mainIcon = isCredit ? "fa-arrow-down" : "fa-arrow-up";
-            let catIcon = "fa-tag";
-            let cat = String(t.category || "Transfer");
+            let cat = t.category || "General"; 
+            let catIcon = "fa-ticket-simple"; let iconClass = isCredit ? "icon-credit" : "icon-debit"; let mainIcon = isCredit ? "fa-arrow-down" : "fa-arrow-up";
+            
+            if(cat === "Tournament Entry") { catIcon = "fa-gamepad"; iconClass = "icon-debit"; mainIcon = "fa-gamepad"; }
+            else if(cat === "Pass Purchase") { catIcon = "fa-ticket-simple"; iconClass = "icon-credit"; mainIcon = "fa-ticket-simple"; }
+            else if(cat === "Prize Won") { catIcon = "fa-trophy"; iconClass = "icon-credit"; mainIcon = "fa-trophy"; }
+            else if(cat === "Refund") { catIcon = "fa-rotate-left"; iconClass = "icon-credit"; mainIcon = "fa-rotate-left"; }
+            else if(cat === "Donation") { catIcon = "fa-heart"; iconClass = "icon-debit"; mainIcon = "fa-heart"; }
+            else if(cat === "Reward Points") { catIcon = "fa-coins"; iconClass = "icon-credit"; mainIcon = "fa-star"; } // Specific to Referral/Points
+            
+            if(isPending) { iconClass = "icon-debit"; mainIcon = "fa-clock"; }
+            if(isFailed) { mainIcon = "fa-xmark"; iconClass = "icon-debit"; }
 
-            if (cat.toLowerCase().includes("tournament") || cat.toLowerCase().includes("entry")) { mainIcon = "fa-gamepad"; catIcon = "fa-trophy"; }
-            if (cat.toLowerCase().includes("purchase") || cat.toLowerCase().includes("deposit")) { mainIcon = "fa-wallet"; catIcon = "fa-credit-card"; }
-            if (cat.toLowerCase().includes("reward") || cat.toLowerCase().includes("redeem")) { mainIcon = "fa-gift"; catIcon = "fa-star"; }
+            let amtClass = isCredit ? "amt-credit" : "amt-debit";
+            let statusColor = isSuccess ? "var(--accent-green)" : (isFailed ? "var(--accent-red)" : "#ff9900");
+            let inOutLabel = isCredit ? `<div class="in-out-label in-label">PASSES IN</div>` : `<div class="in-out-label out-label">PASSES OUT</div>`;
+            
+            let displayDate = getISTDateTime(t.date);
+            let ticketVal = Math.floor(t.amount / TICKET_PRICE) || 0;
+            if(ticketVal === 0 && t.amount > 0 && (String(t.title).includes("Pass") || String(t.title).includes("Ticket"))) ticketVal = t.amount;
 
-            let displayDate = "";
-            try {
-                let d = new Date(t.date);
-                displayDate = d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', hour: '2-digit', minute:'2-digit' });
-            } catch(e) { displayDate = t.date; }
-
-            let statusColor = t.status === "Success" ? "var(--accent-green)" : (t.status === "Pending" ? "var(--accent-orange)" : "var(--accent-red)");
-
-            // ADVANCED CURRENCY DISPLAY LOGIC (Fixing Points vs TX vs INR)
-            let amtHTML = `---`;
-            let inOutLabel = "";
-            let isPoints = String(t.currency).toLowerCase() === "points";
-            let isINR = String(t.currency).toLowerCase() === "inr";
-
+            // SMART REFERRAL/POINTS OVERRIDE
+            let isPoints = String(t.currency || "").toUpperCase() === "POINTS" || cat === "Reward Points";
+            
+            let amtHTML = t.amount > 0 ? `${isCredit?'+':'-'} ${ticketVal} <span class="tx-icon" style="font-size:0.7rem; margin-left:2px; vertical-align:baseline; filter:none; -webkit-text-fill-color:currentColor;">TX</span>` : `---`;
+            
             if (isPoints) {
+                inOutLabel = isCredit ? `<div class="in-out-label in-label">POINTS IN</div>` : `<div class="in-out-label out-label">POINTS OUT</div>`;
                 amtHTML = t.amount > 0 ? `${isCredit?'+':'-'} ${t.amount} PTS` : `---`;
-                inOutLabel = isCredit ? `<div class="in-out-label in-label">REWARDS IN</div>` : `<div class="in-out-label out-label">REWARDS OUT</div>`;
-            } else if (currentUser.role === 'organizer' || isINR) {
-                amtHTML = t.amount > 0 ? `${isCredit?'+':'-'} ₹${t.amount}` : `---`;
+            } else if (currentUser.role === 'organizer') {
                 inOutLabel = isCredit ? `<div class="in-out-label in-label">EARNINGS IN</div>` : `<div class="in-out-label out-label">WITHDRAWAL</div>`;
-            } else {
-                let ticketVal = Math.floor(t.amount / TICKET_PRICE) || 0;
-                if(ticketVal === 0 && t.amount > 0 && (String(t.title).includes("Pass") || String(t.title).includes("Ticket"))) ticketVal = t.amount;
-                amtHTML = t.amount > 0 ? `${isCredit?'+':'-'} ${ticketVal} <span class="tx-icon" style="font-size:0.6rem; margin-left:2px; vertical-align:baseline; filter:none; -webkit-text-fill-color:currentColor;">TX</span>` : `---`;
-                inOutLabel = isCredit ? `<div class="in-out-label in-label">PASSES IN</div>` : `<div class="in-out-label out-label">PASSES OUT</div>`;
+                amtHTML = t.amount > 0 ? `${isCredit?'+':'-'} ₹${t.amount}` : `---`;
             }
 
             return `
-                <div class="txn-item" style="animation-delay:${delay*0.05}s" onclick="openReceipt(${index})">
+                <div class="txn-item glow-hover" style="animation-delay:${delay*0.1}s" onclick="openReceipt(${index})">
                     <div class="txn-left">
                         <div class="txn-icon ${iconClass}"><i class="fa-solid ${mainIcon}"></i></div>
                         <div class="txn-info">
@@ -833,375 +1388,232 @@
         }
 
         function openReceipt(index) {
-            triggerHaptic();
-            let rawT = transactionHistory[index];
-            if(!rawT) return;
+            let txns = transactionsData || [];
+            let rawT = txns[index]; if(!rawT) return;
             let t = normalizeTxn(rawT);
-
-            let isCredit = t.type === "Credit";
-            let statusColor = t.status === "Success" ? "var(--accent-green)" : (t.status === "Pending" ? "var(--accent-orange)" : "var(--accent-red)");
             
-            document.getElementById('rType').innerText = t.type;
-            document.getElementById('rTitle').innerText = t.title;
-            try {
-                document.getElementById('rDate').innerText = new Date(t.date).toLocaleString('en-US');
-            } catch(e) { document.getElementById('rDate').innerText = t.date; }
+            activeReceiptId = t.id && String(t.id).trim() !== "" ? t.id : "TKT_SYS_" + Math.floor(100000 + Math.random() * 900000); 
+            activeReceiptData = t;
             
-            document.getElementById('rStatus').innerText = t.status;
-            document.getElementById('rStatus').style.color = statusColor;
+            let typeStr = String(t.type || "").toLowerCase(); let isCredit = typeStr === "credit"; 
+            let stat = String(t.status || "").toLowerCase(); let isPending = stat === "pending"; let isFailed = stat === "failed"; let isSuccess = stat === "success";
             
-            document.getElementById('rId').innerText = t.id || t.txn_id || ("TXN-" + Math.floor(Math.random() * 1000000));
+            let ticketVal = Math.floor(t.amount / TICKET_PRICE) || 0;
+            if(ticketVal === 0 && t.amount > 0 && (String(t.title).includes("Pass") || String(t.title).includes("Ticket"))) ticketVal = t.amount;
             
-            let isPoints = String(t.currency).toLowerCase() === "points";
-            let isINR = String(t.currency).toLowerCase() === "inr";
+            let mainIcon = isFailed ? "fa-xmark" : (isPending ? "fa-clock" : (isCredit ? "fa-check" : "fa-arrow-up"));
+            let iconEl = document.getElementById('rcptIcon');
+            iconEl.innerHTML = `<i class="fa-solid ${mainIcon}"></i>`;
+            iconEl.className = `rcpt-icon ${isPending ? 'icon-debit' : (isCredit ? 'icon-credit' : 'icon-debit')}`;
             
-            if(isPoints) {
-                document.getElementById('rAmt').innerText = `${isCredit?'+':'-'} ${t.amount} PTS`;
-                document.getElementById('rAmt').style.color = isCredit ? "var(--accent-purple)" : "var(--accent-red)";
-            } else if (currentUser.role === 'organizer' || isINR) {
-                document.getElementById('rAmt').innerText = `${isCredit?'+':'-'} ₹${t.amount}`;
-                document.getElementById('rAmt').style.color = isCredit ? "var(--accent-green)" : "var(--accent-red)";
-            } else {
-                let ticketVal = Math.floor(t.amount / TICKET_PRICE) || 0;
-                if(ticketVal === 0 && t.amount > 0) ticketVal = t.amount;
-                document.getElementById('rAmt').innerHTML = `${isCredit?'+':'-'} ${ticketVal} TX`;
-                document.getElementById('rAmt').style.color = isCredit ? (document.documentElement.classList.contains('theme-vip') ? "#FFD700" : "var(--accent-cyan)") : "var(--accent-red)";
+            let isPoints = String(t.currency || "").toUpperCase() === "POINTS" || String(t.category || "") === "Reward Points";
+            
+            let amtDisplay = t.amount > 0 ? `${isCredit?'+':'-'} ${ticketVal} Pass` : `Review Pending`;
+            if (isPoints) {
+                amtDisplay = t.amount > 0 ? `${isCredit?'+':'-'} ${t.amount} PTS` : `Review Pending`;
+            } else if (currentUser.role === 'organizer') {
+                amtDisplay = t.amount > 0 ? `${isCredit?'+':'-'} ₹${t.amount}` : `Review Pending`;
             }
 
-            document.getElementById('receiptModal').classList.add('active');
+            document.getElementById('rcptAmt').innerHTML = amtDisplay;
+            document.getElementById('rcptAmt').className = `rcpt-amt ${isCredit ? 'amt-credit' : 'amt-debit'}`;
+            document.getElementById('rcptTitle').innerText = t.title;
+            
+            let displayDate = getISTDateTime(t.date);
+            document.getElementById('receiptDate').innerText = displayDate;
+            document.getElementById('receiptId').innerText = activeReceiptId;
+            
+            let statusColor = isSuccess ? "var(--accent-green)" : (isFailed ? "var(--accent-red)" : "#ff9900");
+            let sEl = document.getElementById('rcptStatusVal');
+            sEl.innerHTML = `<i class="fa-solid ${mainIcon}"></i> ${t.status}`;
+            sEl.style.color = statusColor;
+
+            let cat = t.category || "General";
+            document.getElementById('rcptCat').innerHTML = `<span class="tx-icon" style="font-size:0.9rem;">TX</span> ${cat}`;
+
+            document.getElementById('pdfUserName').innerText = currentUser.username || "User";
+            document.getElementById('pdfUserEmail').innerText = currentUser.email || "";
+            document.getElementById('pdfDynamicContentArea').innerHTML = `
+                <table style="width:100%; border-collapse:collapse; text-align:left; font-size:14px; margin-top: 15px;">
+                    <tr style="border-bottom:1px solid #1a0a3a;">
+                        <td style="padding:15px 0; color:#888;">Transaction ID</td>
+                        <td style="padding:15px 0; text-align:right; font-weight:bold; color:#ffffff;">${activeReceiptId}</td>
+                    </tr>
+                    <tr style="border-bottom:1px solid #1a0a3a;">
+                        <td style="padding:15px 0; color:#888;">Type / Category</td>
+                        <td style="padding:15px 0; text-align:right; font-weight:bold; color:#00f2ff;">${cat}</td>
+                    </tr>
+                    <tr style="border-bottom:1px solid #1a0a3a;">
+                        <td style="padding:15px 0; color:#888;">Status</td>
+                        <td style="padding:15px 0; text-align:right; font-weight:bold; color:${statusColor}; text-transform: uppercase;">${t.status}</td>
+                    </tr>
+                    <tr>
+                        <td style="padding:25px 0; color:#ffffff; font-size:20px; font-weight:bold;">Total Amount</td>
+                        <td style="padding:25px 0; text-align:right; font-size:26px; font-weight:bold; color:${isCredit ? "#00ff7f" : "#ff4d4d"};">${amtDisplay}</td>
+                    </tr>
+                </table>
+            `;
+
+            document.getElementById('receiptOverlay').classList.add('active');
+        }
+        
+        function closeReceipt() { document.getElementById('receiptOverlay').classList.remove('active'); }
+        function copyTxnId() { navigator.clipboard.writeText(activeReceiptId); showToast("Transaction ID Copied!"); }
+
+        function contactWhatsAppSupport() {
+            let id = activeReceiptId;
+            let title = document.getElementById('rcptTitle').innerText;
+            let amt = document.getElementById('rcptAmt').innerText;
+            let status = document.getElementById('rcptStatusVal').innerText.replace(/[^a-zA-Z]/g, '').trim();
+            
+            let msg = `Hello Tournyx Support,\nI need help with my transaction.\n\n*Transaction ID:* ${id}\n*Details:* ${title}\n*Amount:* ${amt}\n*Status:* ${status}\n\nPlease check this.`;
+            window.open(`https://wa.me/918608159825?text=${encodeURIComponent(msg)}`, '_blank');
+        }
+        
+        // --- PERFECTED PDF GENERATOR FIX (NO OVERFLOW) ---
+        function downloadReceiptPDF() {
+            triggerHaptic();
+            showToast("Downloading Secure Pass PDF...");
+            let wrapper = document.getElementById('pdfWrapper');
+            wrapper.style.left = '0';
+            wrapper.style.zIndex = '-9999';
+            
+            setTimeout(() => {
+                document.getElementById('pdfTemplate').scrollLeft = 0;
+                window.scrollTo(0, 0);
+
+                html2pdf().set({ 
+                    margin: [0.3, 0.3, 0.3, 0.3], 
+                    filename: `Tournyx_Receipt_${activeReceiptId}.pdf`, 
+                    image: { type: 'jpeg', quality: 0.98 }, 
+                    html2canvas: { scale: 2, useCORS: true, allowTaint: true, backgroundColor: '#070311', windowWidth: 800 }, 
+                    jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' },
+                    pagebreak: { mode: ['css', 'legacy'] } 
+                }).from(document.getElementById('pdfTemplate')).save().then(() => {
+                    wrapper.style.left = '-9999px';
+                });
+            }, 300);
         }
 
-        function closeReceipt() { triggerHaptic(); document.getElementById('receiptModal').classList.remove('active'); }
-
-        // PDF GENERATOR FIX
-        function downloadReceipt() {
+        function downloadAllTxnsPDF() {
             triggerHaptic();
-            const element = document.getElementById('receiptContent');
+            showToast("Generating Encrypted Tickets Ledger PDF...");
+            let txns = transactionsData || [];
             
-            const originalWidth = element.style.width;
-            const originalPadding = element.style.padding;
-            const originalMargin = element.style.margin;
+            let tableHTML = `
+                <table style="width:100%; border-collapse:collapse; text-align:left; font-size:12px;">
+                    <thead>
+                        <tr style="background:linear-gradient(90deg, #110822, #1a0a3a); color:#00f2ff; border-bottom: 2px solid #bd00ff;">
+                            <th style="padding:15px 12px; text-transform:uppercase;">Date & Time</th>
+                            <th style="padding:15px 12px; text-transform:uppercase;">Ticket / Txn ID</th>
+                            <th style="padding:15px 12px; text-transform:uppercase;">Description</th>
+                            <th style="padding:15px 12px; text-transform:uppercase;">Status</th>
+                            <th style="padding:15px 12px; text-align:right; text-transform:uppercase;">Amount</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+            `;
             
-            element.style.width = '450px'; 
-            element.style.padding = '25px';
-            element.style.margin = '0 auto';
+            txns.forEach(rawT => {
+                let t = normalizeTxn(rawT);
+                let isCredit = String(t.type).toLowerCase() === "credit";
+                let isFailed = String(t.status).toLowerCase() === "failed";
+                let isSuccess = String(t.status).toLowerCase() === "success";
+                let statusCol = isSuccess ? "#00ff7f" : (isFailed ? "#ff4d4d" : "#ff9900");
+                let amtCol = isCredit ? "#00ff7f" : "#ff4d4d";
+                
+                let ticketVal = Math.floor(t.amount / TICKET_PRICE) || 0;
+                if(ticketVal === 0 && t.amount > 0 && (String(t.title).includes("Pass") || String(t.title).includes("Ticket"))) ticketVal = t.amount;
+                
+                let isPoints = String(t.currency || "").toUpperCase() === "POINTS" || String(t.category || "") === "Reward Points";
+                
+                let amtDisplay = t.amount > 0 ? `${isCredit?'+':'-'} ${ticketVal} Pass` : `0`;
+                if (isPoints) {
+                    amtDisplay = t.amount > 0 ? `${isCredit?'+':'-'} ${t.amount} PTS` : `0`;
+                } else if (currentUser.role === 'organizer') {
+                    amtDisplay = t.amount > 0 ? `${isCredit?'+':'-'} ₹${t.amount}` : `0`;
+                }
+
+                // Added page-break-inside: avoid; to prevent clipping across pages
+                tableHTML += `
+                    <tr style="border-bottom:1px solid rgba(255,255,255,0.05); background: rgba(0,0,0,0.2); page-break-inside: avoid;">
+                        <td style="padding:15px 12px; color:#aaa;">${getISTDateTime(t.date)}</td>
+                        <td style="padding:15px 12px; font-family:monospace; color:#00f2ff;">${t.id || "SYS_TXN"}</td>
+                        <td style="padding:15px 12px; color:#fff; font-weight: bold;">${t.title}</td>
+                        <td style="padding:15px 12px; font-weight:bold; color:${statusCol}; text-transform:uppercase;">${t.status}</td>
+                        <td style="padding:15px 12px; text-align:right; font-weight:bold; font-size: 14px; color:${amtCol};">${amtDisplay}</td>
+                    </tr>
+                `;
+            });
+            
+            tableHTML += `</tbody></table>`;
+            
+            document.getElementById('pdfUserName').innerText = currentUser.username || "User";
+            document.getElementById('pdfUserEmail').innerText = currentUser.email || "";
+            document.getElementById('pdfDynamicContentArea').innerHTML = tableHTML;
             
             const opt = {
-                margin:       [10, 10, 10, 10],
-                filename:     'Tournyx_Receipt_' + Date.now() + '.pdf',
-                image:        { type: 'jpeg', quality: 0.98 },
-                html2canvas:  { scale: 2, useCORS: true, letterRendering: true },
-                jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
+                margin: [0.3, 0.3, 0.3, 0.3],
+                filename: `Tournyx_Tickets_Ledger_${currentUser.username.replace(/\s+/g, '_')}.pdf`,
+                image: { type: 'jpeg', quality: 0.98 },
+                html2canvas: { scale: 2, useCORS: true, allowTaint: true, backgroundColor: '#070311', windowWidth: 800 },
+                jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' },
+                pagebreak: { mode: ['css', 'legacy'] }
             };
             
-            let dlBtn = document.getElementById('downloadReceiptBtn');
-            let oldText = dlBtn.innerHTML;
-            dlBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> GENERATING...';
+            let wrapper = document.getElementById('pdfWrapper');
+            wrapper.style.left = '0';
+            wrapper.style.zIndex = '-9999';
             
-            html2pdf().set(opt).from(element).save().then(() => {
-                dlBtn.innerHTML = oldText;
-                element.style.width = originalWidth;
-                element.style.padding = originalPadding;
-                element.style.margin = originalMargin;
-                showToast("Receipt Downloaded Successfully!");
-            }).catch(err => {
-                dlBtn.innerHTML = oldText;
-                element.style.width = originalWidth;
-                element.style.padding = originalPadding;
-                element.style.margin = originalMargin;
-                showToast("PDF Generation Failed.", true);
-            });
-        }
+            setTimeout(() => {
+                document.getElementById('pdfTemplate').scrollLeft = 0;
+                window.scrollTo(0, 0);
 
-        // --- PLAYER ADD MONEY MODAL ---
-        function openDepositModal() {
-            document.getElementById('addMoneyOverlay').classList.add('active');
-            selectedGameName = "Universal Pass";
-            document.getElementById('depositAmtInput').value = "";
-            document.getElementById('depositPassPreview').innerText = "You will get: 0 Passes";
-        }
-        function closeDepositModal() { document.getElementById('addMoneyOverlay').classList.remove('active'); }
-        function setDepositAmt(val) {
-            document.getElementById('depositAmtInput').value = val * TICKET_PRICE;
-            updateRazorpayAmount();
-        }
-        function updateRazorpayAmount() {
-            let amt = parseInt(document.getElementById('depositAmtInput').value);
-            if(isNaN(amt) || amt < 0) {
-                document.getElementById('depositPassPreview').innerText = "You will get: 0 Passes";
-                return;
-            }
-            let passes = Math.floor(amt / TICKET_PRICE);
-            document.getElementById('depositPassPreview').innerText = `You will get: ${passes} Pass${passes !== 1 ? 'es' : ''}`;
-        }
-
-        function triggerPlayerRazorpay() {
-            let amt = parseInt(document.getElementById('depositAmtInput').value);
-            if(isNaN(amt) || amt < 10) { triggerError('depositAmtInput'); showToast("Minimum amount is ₹10.", true); return; }
-
-            let isMedianApp = (typeof median !== 'undefined') || (navigator.userAgent.toLowerCase().indexOf('median') > -1);
-            let isSecureEnv = window.isSecureContext || isMedianApp || window.location.hostname === 'localhost';
-            
-            closeDepositModal();
-
-            var options = {
-                "key": RAZORPAY_KEY,
-                "amount": Math.round(amt * 100), 
-                "currency": "INR",
-                "name": "Tournyx Esports",
-                "description": "Wallet Deposit: " + Math.floor(amt/TICKET_PRICE) + " Passes",
-                "image": "https://tournyx.in/favicon.png",
-                "handler": function (response) {
-                    processSuccessfulPayment(response.razorpay_payment_id, Math.floor(amt/TICKET_PRICE), amt, "Universal Pass");
-                },
-                "prefill": { "name": currentUser.username, "email": currentUser.email },
-                "theme": { "color": document.documentElement.classList.contains('theme-vip') ? "#FFD700" : "#00e5ff" },
-                "modal": { "ondismiss": function(){ showTransactionFailed("You cancelled the payment."); } }
-            };
-            
-            try {
-                if (!isSecureEnv) showToast("Unsecure browser detected. Payment might fail.", true);
-                var rzp1 = new Razorpay(options);
-                rzp1.on('payment.failed', function (response){ showTransactionFailed(response.error.description); });
-                rzp1.open();
-            } catch(e) {
-                // Failsafe Bypass for testing / Dev
-                processSuccessfulPayment("sim_txn_" + Math.floor(Math.random()*100000), Math.floor(amt/TICKET_PRICE), amt, "Universal Pass");
-            }
-        }
-
-        // ==========================================
-        // 💰 ORGANIZER ADD CREDITS ENGINE (24hr Limit)
-        // ==========================================
-        function getCreditsAddedToday() {
-            let today = new Date().toLocaleDateString();
-            let savedDate = localStorage.getItem('tournyx_credits_date');
-            if (savedDate !== today) {
-                localStorage.setItem('tournyx_credits_date', today);
-                localStorage.setItem('tournyx_credits_amt', "0");
-                return 0;
-            }
-            return parseInt(localStorage.getItem('tournyx_credits_amt')) || 0;
-        }
-
-        function openCreditsModal() {
-            document.getElementById('creditsOverlay').classList.add('active');
-            let availableLimit = 20000 - getCreditsAddedToday();
-            document.getElementById('dailyLimitRemainingDisplay').innerText = availableLimit;
-            document.getElementById('creditsAmtInput').value = "";
-        }
-
-        function closeCreditsModal() {
-            document.getElementById('creditsOverlay').classList.remove('active');
-        }
-
-        function setCreditAmt(val) {
-            document.getElementById('creditsAmtInput').value = val;
-            triggerHaptic();
-            updateCreditsRazorpayAmount();
-        }
-
-        function updateCreditsRazorpayAmount() {
-            let amt = parseInt(document.getElementById('creditsAmtInput').value);
-            if(isNaN(amt) || amt < 1) return;
-            
-            let addedToday = getCreditsAddedToday();
-            let availableLimit = 20000 - addedToday;
-            
-            if (amt > availableLimit) {
-                amt = availableLimit;
-                document.getElementById('creditsAmtInput').value = amt;
-                showToast(`Daily limit reached! You can only add ₹${availableLimit} more today.`, true);
-            }
-        }
-
-        function triggerCreditsRazorpay() {
-            let amt = parseInt(document.getElementById('creditsAmtInput').value);
-            if(isNaN(amt) || amt < 1) { 
-                triggerError('creditsAmtInput'); 
-                showToast("Please enter a valid amount.", true); 
-                return; 
-            }
-
-            let addedToday = getCreditsAddedToday();
-            let availableLimit = 20000 - addedToday;
-            if (amt > availableLimit) {
-                showToast(`Limit exceeded. Max available today: ₹${availableLimit}`, true);
-                return;
-            }
-
-            let isMedianApp = (typeof median !== 'undefined') || (navigator.userAgent.toLowerCase().indexOf('median') > -1);
-            let isSecureEnv = window.isSecureContext || isMedianApp || window.location.hostname === 'localhost';
-            
-            closeCreditsModal();
-
-            var options = {
-                "key": RAZORPAY_KEY,
-                "amount": Math.round(amt * 100), 
-                "currency": "INR",
-                "name": "Tournyx Organizer",
-                "description": "Wallet Deposit: ₹" + amt,
-                "image": "https://tournyx.in/favicon.png",
-                "handler": function (response) {
-                    localStorage.setItem('tournyx_credits_amt', (addedToday + amt).toString());
-                    processSuccessfulPayment(response.razorpay_payment_id, 0, amt, "Credits Deposit");
-                },
-                "prefill": { "name": currentUser.username, "email": currentUser.email },
-                "theme": { "color": "#FFD700" },
-                "modal": { "ondismiss": function(){ showTransactionFailed("You cancelled the deposit."); } }
-            };
-            
-            try {
-                if (!isSecureEnv) showToast("Unsecure browser detected. Payment might fail.", true);
-                var rzp1 = new Razorpay(options);
-                rzp1.on('payment.failed', function (response){ showTransactionFailed(response.error.description); });
-                rzp1.open();
-            } catch(e) {
-                localStorage.setItem('tournyx_credits_amt', (addedToday + amt).toString());
-                processSuccessfulPayment("sim_txn_" + Math.floor(Math.random()*100000), 0, amt, "Credits Deposit");
-            }
-        }
-
-        function processSuccessfulPayment(paymentId, count, baseAmount, customTitle = null) {
-            let scanner = document.getElementById('cyberScanner'); 
-            let sText = document.getElementById('scannerText'); 
-            let sDesc = document.getElementById('scannerDesc'); 
-            
-            scanner.classList.add('active'); 
-            sText.innerText = "VERIFYING PAYMENT SECURELY..."; 
-            sDesc.innerText = "Encrypting transaction block with Razorpay..."; 
-            
-            let finalTitle = customTitle || selectedGameName;
-
-            let payload = { 
-                action: "razorpay_success", 
-                email: currentUser.email, 
-                amount: baseAmount, 
-                payment_id: paymentId, 
-                gameName: finalTitle 
-            };
-
-            secureFetch(payload)
-            .then(data => {
-                scanner.classList.remove('active');
-                if(data.status === "success") {
-                    
-                    let rawEarnings = String(currentUser.earnings || currentUser.rupees || "0");
-                    let baseRupees = 0; let goldenRupees = 0;
-                    if (rawEarnings.includes('+')) {
-                        let parts = rawEarnings.split('+');
-                        baseRupees = parseFloat(parts[0]) || 0;
-                        goldenRupees = parseFloat(parts[1]) || 0;
-                    } else {
-                        baseRupees = parseFloat(rawEarnings) || 0;
-                    }
-                    
-                    if (finalTitle === "Universal Pass") { goldenRupees += baseAmount; } 
-                    else { baseRupees += baseAmount; }
-                    
-                    let newRupeesString = goldenRupees > 0 ? `${baseRupees}+${goldenRupees}` : `${baseRupees}`;
-                    currentUser.rupees = newRupeesString;
-                    currentUser.earnings = newRupeesString;
-                    localStorage.setItem('tournyx_user', JSON.stringify(currentUser));
-                    
-                    updateWalletDisplay();
-                    document.getElementById('txnSuccessOverlay').classList.add('active');
-                    syncLiveTransactions(); 
-                } else {
-                    showTransactionFailed("Server Error: " + data.data);
-                }
-            })
-            .catch(err => {
-                scanner.classList.remove('active');
-                showTransactionFailed("Network Error. If money was deducted, it will be refunded or credited shortly.");
-            });
-        }
-
-        function showTransactionFailed(msg) {
-            showToast(msg, true);
-        }
-
-        // REDEEM LOGIC
-        function openRedeemModal() { document.getElementById('redeemOverlay').classList.add('active'); document.getElementById('redeemInput').value = ""; }
-        function closeRedeemModal() { document.getElementById('redeemOverlay').classList.remove('active'); }
-        
-        function processRedeem() {
-            triggerHaptic();
-            let code = document.getElementById('redeemInput').value.trim();
-            if(code === "") { triggerError('redeemInput'); return; }
-            
-            let btn = document.getElementById('redeemSubmitBtn');
-            let oldHTML = btn.innerHTML;
-            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> REDEEMING...';
-            btn.disabled = true;
-
-            secureFetch({ action: "redeem_code", email: currentUser.email, code: code })
-            .then(data => {
-                btn.innerHTML = oldHTML;
-                btn.disabled = false;
-                if(data.status === "success") {
-                    closeRedeemModal();
-                    document.getElementById('txnSuccessOverlay').classList.add('active');
-                    
-                    // Simple local assumption sync
-                    let rawEarnings = String(currentUser.earnings || currentUser.rupees || "0");
-                    let baseRupees = parseFloat(rawEarnings.split('+')[0]) || 0;
-                    baseRupees += 10; 
-                    currentUser.rupees = baseRupees.toString();
-                    currentUser.earnings = baseRupees.toString();
-                    localStorage.setItem('tournyx_user', JSON.stringify(currentUser));
-                    
-                    updateWalletDisplay();
-                    syncLiveTransactions();
-                } else {
-                    triggerError('redeemInput');
-                    showToast(data.message, true);
-                }
-            })
-            .catch(err => {
-                btn.innerHTML = oldHTML;
-                btn.disabled = false;
-                showToast("Network Error.", true);
-            });
-        }
-    </script>
-    
-    <script src="https://cdn.onesignal.com/sdks/web/v16/OneSignalSDK.page.js" defer></script>
-    <script>
-        window.OneSignalDeferred = window.OneSignalDeferred || [];
-        OneSignalDeferred.push(async function(OneSignal) {
-            const repoScope = window.location.pathname.substring(0, window.location.pathname.lastIndexOf('/') + 1);
-            await OneSignal.init({
-                appId: "15a8e2b2-248c-4547-929e-797d7170e988", 
-                allowLocalhostAsSecureOrigin: true,
-                serviceWorkerPath: repoScope + "OneSignalSDKWorker.js",
-                serviceWorkerParam: { scope: repoScope }
-            });
-
-            let user = JSON.parse(localStorage.getItem('tournyx_user'));
-            if (user && user.email) {
-                let cleanEmail = String(user.email).toLowerCase().trim();
-                await OneSignal.login(cleanEmail);
-                OneSignal.User.addTags({
-                    "user_email": cleanEmail,
-                    "user_status": "active",
-                    "platform": "pwa"
+                html2pdf().set(opt).from(document.getElementById('pdfTemplate')).save().then(() => {
+                    wrapper.style.left = '-9999px';
                 });
-            }
-        });
-
-        async function triggerNotificationPrompt() {
-            window.OneSignalDeferred = window.OneSignalDeferred || [];
-            OneSignalDeferred.push(async function(OneSignal) {
-                if (OneSignal.Notifications.permission !== "granted") {
-                    try {
-                        await OneSignal.Notifications.requestPermission();
-                    } catch (err) {
-                        console.error("Notification prompt generation failed:", err);
-                    }
-                }
-            });
+            }, 300);
         }
     </script>
+
+    <style>
+        @keyframes slideDownAppPrompt { 
+            from { opacity: 0; transform: translate(-50%, -50px); } 
+            to { opacity: 1; transform: translate(-50%, 0); } 
+        }
+    </style>
+    
+    <script>
+function tournyxOneSignalSetup() {
+    let user = JSON.parse(localStorage.getItem('tournyx_user'));
+    
+    if (user && user.email && typeof median !== 'undefined' && median.onesignal) {
+        let cleanEmail = user.email.toLowerCase().trim();
+
+        if (median.onesignal.login) {
+            median.onesignal.login({ externalId: cleanEmail });
+            if (median.onesignal.user && median.onesignal.user.addEmail) {
+                median.onesignal.user.addEmail({ email: cleanEmail });
+            }
+        } else if (median.onesignal.setExternalUserId) {
+            median.onesignal.setExternalUserId({ externalId: cleanEmail });
+            if (median.onesignal.setEmail) {
+                median.onesignal.setEmail({ email: cleanEmail });
+            }
+        }
+
+        let tagData = { "user_email": cleanEmail, "user_status": "active" };
+        
+        if (median.onesignal.tags && median.onesignal.tags.set) {
+            median.onesignal.tags.set(tagData);
+        } else if (median.onesignal.sendTags) {
+            median.onesignal.sendTags(tagData);
+        }
+    }
+}
+
+document.addEventListener("median_library_ready", tournyxOneSignalSetup);
+document.addEventListener("DOMContentLoaded", tournyxOneSignalSetup);
+</script>
 </body>
 </html>
