@@ -159,7 +159,7 @@
         .tkt-tournyx-stamp { position: absolute; top: 6px; right: 20px; font-size: 0.55rem; color: rgba(255,255,255,0.1); text-transform: uppercase; letter-spacing: 2px; font-family: var(--font-head); font-weight:900; z-index: 1;}
 
         /* --- QUICK ACTIONS --- */
-        .quick-actions { display: grid; grid-template-columns: repeat(2, 140px); gap: 18px; margin-bottom: 25px; justify-content: center; }
+        .quick-actions { display: grid ; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 18px; margin-bottom: 25px; justify-content: center; align-items: center; }
         .action-btn { background: linear-gradient(180deg, rgba(20,10,35,0.8) 0%, rgba(10,5,20,0.9) 100%); backdrop-filter: blur(10px); border: 1px solid var(--card-border); border-radius: 20px; padding: 18px 15px; min-height: 95px; width: 100%; max-width: 380px; display: flex; flex-direction: row; align-items: center; justify-content: center; gap: 12px; cursor: pointer; transition: 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); box-shadow: 0 5px 15px rgba(0,0,0,0.4); text-decoration: none; color: white; position: relative; overflow: hidden;}
         .action-btn::before { content:''; position: absolute; top:0; left:0; width:100%; height:100%; background: linear-gradient(135deg, rgba(255,255,255,0.05), transparent); pointer-events: none;}
         .action-btn:active { transform: scale(0.95); }
@@ -440,6 +440,10 @@
                 <i class="fa-solid fa-qrcode" style="font-size: 1.8rem; filter:drop-shadow(0 0 10px var(--accent-cyan));"></i>
                 <span>Redeem</span>
             </a>
+            <div id="creditActionBtn" class="action-btn btn-add" style="display:none;" onclick="openCreditsModal(); triggerHaptic();">
+                <i class="fa-solid fa-coins" style="font-size:1.8rem;"> </i>
+                <span>Add Credits</span>
+            </div>
         </div>
 
         <div class="txn-summary-card animate-section delay-3">
@@ -598,6 +602,27 @@
         </div>
     </div>
 
+     <!-- Credits Wallet Modal -->
+    <div class="bottom-sheet-overlay" id="creditsOverlay">
+        <div class="bottom-sheet">
+            <div class="sheet-header">
+                <div class="sheet-title">
+                    Credits Wallet
+                </div>
+                <i class="fa-solid fa-xmark close-sheet" onclick="closeCreditsModal()"></i>
+            </div>
+
+            <div style="text-align:center; padding:30px;">
+                <div style=" font-size:2rem; font-weight:bold; color:var(--accent-cyan);">
+                    <span id="creditsCount">0</span>
+                </div>
+                <div>
+                    Available Credits
+                </div>
+            </div>
+        </div>
+    </div>
+
     <div class="cyber-scanner-overlay" id="cyberScanner">
         <div class="cyber-loader-container">
             <div class="cyber-ring-outer"></div>
@@ -642,7 +667,7 @@
         // ==========================================
         // 🔑 YOUR RAZORPAY KEY (PASTE IT HERE!)
         // ==========================================
-        const RAZORPAY_KEY = "rzp_live_SZepeOt5YOqG07"; 
+
         // ==========================================
 
         const API_URL = 'https://script.google.com/macros/s/AKfycbyqqTpgaflxKJ9xH0jq7mJ_jLzcoNhas3gNo0h5gvoa_6r5Ae9NFxJAJp7ZoYNnMRKl/exec';
@@ -842,9 +867,10 @@
                 document.getElementById('mainBalanceTxIcon').style.display = 'none';
                 document.getElementById('balanceLabelText').innerHTML = 'Total Wallet Earnings <i class="fa-solid fa-eye" id="eyeIcon" onclick="if(isGuest) return showLoginModal(); togglePrivacy(); triggerHaptic();" style="margin-left:8px; cursor: pointer; color:#888; font-size:1.05rem; transition:0.3s;"></i>';
                 document.getElementById('pdfUserBal').innerText = "₹" + formatNum(totalRupees);
+                document.getElementById('creditActionBtn').style.display = 'flex';
 
                 if (primaryActionText) {
-                    primaryActionText.innerText = "Get Credits";
+                    primaryActionText.innerText = "Buy Pass";
                 }
 
             } else {
@@ -859,6 +885,7 @@
                 document.getElementById('mainBalanceTxIcon').style.display = 'inline-flex';
                 document.getElementById('balanceLabelText').innerHTML = 'Total Available Pass <i class="fa-solid fa-eye" id="eyeIcon" onclick="if(isGuest) return showLoginModal(); togglePrivacy(); triggerHaptic();" style="margin-left:8px; cursor: pointer; color:#888; font-size:1.05rem; transition:0.3s;"></i>';
                 document.getElementById('pdfUserBal').innerText = totalTickets + " Passes";
+                document.getElementById('creditActionBtn').style.display = 'none';
 
                 if (primaryActionText) {
                     primaryActionText.innerText = "Buy Pass";
@@ -1316,6 +1343,26 @@
             }
         }
 
+        function openCreditsModal() {
+            let raw = String(currentUser.earnings || currentUser.rupees || "0");
+            let credits = 0;
+            if (raw.includes('+')) {
+                let parts = raw.split('+');
+                let baseCredits = parseFloat(parts[0]) || 0;
+                let bonusCredits = parseFloat(parts[1]) || 0;
+                credits = baseCredits + bonusCredits;
+            } else {
+                credits = parseFloat(raw) || 0;
+            }
+
+            document.getElementById('creditsCount').innerText = credits;
+            document.getElementById('creditsOverlay').classList.add('active');
+        }
+
+        function closeCreditsModal() {
+            document.getElementById('creditsOverlay').classList.remove('active');
+        }
+
         function openAllTxns() {
             document.getElementById('ledgerModal').classList.add('active');
             renderLedger();
@@ -1363,7 +1410,12 @@
             let amtHTML = t.amount > 0 ? `${isCredit?'+':'-'} ${ticketVal} <span class="tx-icon" style="font-size:0.8rem; margin-left:3px; vertical-align:baseline; filter:none; -webkit-text-fill-color:currentColor;">TX</span>` : `---`;
             if (currentUser.role === 'organizer') {
                 inOutLabel = isCredit ? `<div class="in-out-label in-label">EARNINGS IN</div>` : `<div class="in-out-label out-label">WITHDRAWAL</div>`;
-                amtHTML = t.amount > 0 ? `${isCredit?'+':'-'} ₹${t.amount}` : `---`;
+                let currencyType = String(t.currency || "").toUpperCase();
+                if (currencyType === "POINTS") {
+                    amtHTML = t.amount > 0 ? `${isCredit?'+':'-'} ${t.amount} Points` : `---`;
+                } else {
+                    amtHTML = t.amount > 0 ? `${isCredit?'+':'-'} ₹${t.amount}` : `---`;
+                }
             }
 
             return `
