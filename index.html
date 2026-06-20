@@ -5,6 +5,7 @@
     <meta name="google-adsense-account" content="ca-pub-2610280925070403">
     <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2610280925070403" crossorigin="anonymous"></script>
     <link rel="manifest" href="/manifest.json">
+    <script src="https://cdn.onesignal.com/sdks/web/v16/OneSignalSDK.page.js" defer></script>
     <script>
       if ("serviceWorker" in navigator) {
         window.addEventListener("load", () => {
@@ -86,9 +87,13 @@
                         document.documentElement.style.setProperty('--accent-purple', THEMES[tIndex].purple);
                         document.documentElement.style.setProperty('--accent-gradient', `linear-gradient(135deg, ${THEMES[tIndex].purple}, ${THEMES[tIndex].cyan})`);
                     }
-                    let user = JSON.parse(localStorage.getItem('tournyx_user'));
-                    if (user && String(user.is_premium).toLowerCase() === 'true') {
-                        document.documentElement.classList.add('theme-vip');
+                    
+                    let userStr = localStorage.getItem('tournyx_user');
+                    if (userStr && userStr !== "undefined") {
+                        let user = JSON.parse(userStr);
+                        if (user && String(user.is_premium).toLowerCase() === 'true') {
+                            document.documentElement.classList.add('theme-vip');
+                        }
                     }
                 } catch(e) { console.log("Theme setting bypassed."); }
             })();
@@ -612,83 +617,23 @@
         .delay-1 { transition-delay: 0.1s; } .hidden { display: none; }
         .median-active { padding-top: calc(85px + env(safe-area-inset-top)) !important; }
         .median-active .top-header { display: flex !important; visibility: visible !important; }
-
-        /* ==========================================
-           ULTIMATE RETENTION BOOSTER UPGRADES
-           ========================================== */
-        .stories-strip { display: flex; gap: 15px; overflow-x: auto; padding: 15px; background: rgba(255, 255, 255, 0.01); border-bottom: 1px solid rgba(255, 255, 255, 0.03); max-width: 1000px; margin: 0 auto; margin-top: 5px;}
-        .story-ring { display: flex; flex-direction: column; align-items: center; min-width: 65px; cursor: pointer; transition: 0.3s; }
-        .story-img-wrapper { width: 56px; height: 56px; border-radius: 50%; padding: 2px; background: linear-gradient(45deg, #bd00ff, #00f2ff); box-shadow: 0 0 10px rgba(0, 242, 255, 0.2); }
-        .story-ring img { width: 100%; height: 100%; border-radius: 50%; object-fit: cover; border: 2px solid #05020c; }
-        .story-label { font-size: 0.7rem; font-family: var(--font-head); color: var(--text-muted); text-align: center; margin-top: 6px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; width: 100%; }
         
-        .pwa-prompt-banner { max-width: 970px; margin: 15px auto; padding: 12px 20px; background: rgba(0, 242, 255, 0.08); border: 1px solid rgba(0, 242, 255, 0.2); border-radius: 12px; display: flex; justify-content: space-between; align-items: center; display: none; }
-        .pwa-prompt-text { font-size: 0.85rem; color: #fff; font-family: var(--font-body); }
-        .pwa-prompt-text i { color: var(--accent-cyan); margin-right: 8px; }
-        .pwa-prompt-btn { background: var(--accent-cyan); color: #000; border: none; padding: 6px 12px; border-radius: 8px; font-family: var(--font-head); font-size: 0.75rem; font-weight: bold; cursor: pointer; text-transform: uppercase; }
+        /* --- FUNCTIONAL DAILY QUESTS --- */
+        .quests-wrapper { display: flex; flex-direction: column; gap: 15px; position:relative;}
+        .quest-card { padding: 18px 20px; display: flex; justify-content: space-between; align-items: center; transition: 0.3s;}
+        .quest-card:active { border-color: var(--accent-cyan); transform: translateX(8px); box-shadow: 0 0 25px rgba(0,242,255,0.2); }
+        html.theme-vip .quest-card:active { border-color: #FFD700; box-shadow: 0 0 25px rgba(255,215,0,0.2); }
+        .quest-info-title { color: white; font-family: var(--font-head); font-size: 1.05rem; margin-bottom: 5px; font-weight:bold; text-shadow: 0 0 5px rgba(255,255,255,0.2); }
+        .quest-info-sub { color: var(--accent-orange); font-size: 0.85rem; font-family: var(--font-head); font-weight: bold; letter-spacing: 0.5px; }
+        .quest-btn { background: rgba(0,242,255,0.1); border: 1px solid var(--accent-cyan); color: var(--accent-cyan); padding: 10px 20px; border-radius: 10px; font-family: var(--font-head); font-size: 0.85rem; font-weight: bold; cursor: pointer; transition: 0.3s; flex-shrink: 0; text-transform: uppercase; box-shadow: 0 0 10px rgba(0,242,255,0.1); backdrop-filter: blur(4px);}
+        html.theme-vip .quest-btn { background: rgba(255,215,0,0.1); border-color: #FFD700; color: #FFD700; box-shadow: 0 0 10px rgba(255,215,0,0.1); }
+        .quest-btn:active { background: var(--accent-cyan); color: #000; box-shadow: 0 0 20px rgba(0,242,255,0.5); transform: scale(0.95); }
+        html.theme-vip .quest-btn:active { background: #FFD700; box-shadow: 0 0 20px rgba(255,215,0,0.5); color: black;}
+        .quest-btn.claimed { background: rgba(255,255,255,0.05); border-color: rgba(255,255,255,0.1); color: var(--accent-green); box-shadow: none; cursor: default; pointer-events:none;}
 
-        .retention-grid-panel { display: grid; grid-template-columns: 1fr; gap: 20px; max-width: 1000px; margin: 15px auto; padding: 0 15px; }
-        @media(min-width: 768px) { .retention-grid-panel { grid-template-columns: 1fr 1fr; } }
-        
-        .retention-card { padding: 20px; border-radius: 16px; position: relative; overflow: hidden; }
-        .retention-title { font-family: var(--font-head); font-size: 1.1rem; font-weight: bold; color: #fff; margin-bottom: 15px; display: flex; align-items: center; gap: 10px; text-transform: uppercase; letter-spacing: 0.5px; }
-        .retention-title i { color: var(--accent-cyan); }
-        
-        .streak-calendar { display: grid; grid-template-columns: repeat(7, 1fr); gap: 6px; }
-        .streak-day { padding: 10px 4px; border-radius: 8px; background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.05); text-align: center; font-size: 0.7rem; font-family: var(--font-head); cursor: pointer; transition: 0.3s; }
-        .streak-day.completed { background: rgba(189, 0, 255, 0.15); border-color: var(--accent-purple); color: #fff; text-shadow: 0 0 5px var(--accent-purple); }
-        .streak-day.active-day { background: rgba(0, 242, 255, 0.15); border-color: var(--accent-cyan); color: #fff; animation: blink 1.5s infinite alternate; }
-        .streak-reward { font-size: 0.75rem; display: block; margin-top: 4px; color: var(--accent-orange); }
-
-        .wheel-container { display: flex; flex-direction: column; align-items: center; justify-content: center; position: relative; padding: 10px 0; }
-        .wheel-graphic { width: 140px; height: 140px; border-radius: 50%; border: 4px dashed var(--accent-cyan); position: relative; transition: transform 3s cubic-bezier(0.1, 0.8, 0.3, 1); background: radial-gradient(circle, #100525 0%, #05020c 100%); box-shadow: 0 0 20px rgba(0, 242, 255, 0.15); display: flex; align-items: center; justify-content: center; }
-        .wheel-graphic::before { content: ''; position: absolute; width: 0; height: 0; border-left: 10px solid transparent; border-right: 10px solid transparent; border-bottom: 15px solid var(--accent-orange); top: -12px; z-index: 5; }
-        .wheel-inner-text { font-family: var(--font-head); font-weight: bold; font-size: 0.75rem; color: #fff; text-align: center; }
-        .wheel-spin-btn { width: 100%; margin-top: 15px; padding: 10px; background: var(--accent-gradient); border: none; border-radius: 10px; color: #fff; font-family: var(--font-head); font-weight: bold; font-size: 0.85rem; cursor: pointer; text-transform: uppercase; letter-spacing: 0.5px; box-shadow: 0 4px 15px rgba(189, 0, 255, 0.3); }
-
-        .prediction-wrapper { display: flex; flex-direction: column; gap: 10px; }
-        .prediction-row { padding: 12px; border-radius: 12px; background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.04); display: flex; justify-content: space-between; align-items: center; }
-        .predict-teams { font-family: var(--font-head); font-size: 0.85rem; color: #fff; display: flex; align-items: center; gap: 8px; }
-        .predict-vs { font-size: 0.7rem; color: var(--accent-purple); font-weight: bold; }
-        .predict-actions { display: flex; gap: 6px; }
-        .predict-vote-btn { padding: 6px 12px; border-radius: 6px; border: 1px solid rgba(0, 242, 255, 0.3); background: rgba(0, 242, 255, 0.05); color: var(--accent-cyan); font-family: var(--font-head); font-size: 0.7rem; font-weight: bold; cursor: pointer; transition: 0.3s; }
-        .predict-vote-btn:hover { background: var(--accent-cyan); color: #000; }
-
-        .progression-banner { max-width: 970px; margin: 0 auto 15px; padding: 15px 20px; display: flex; align-items: center; gap: 20px; }
-        .progression-rank-icon { width: 50px; height: 50px; border-radius: 12px; background: rgba(189,0,255,0.1); border: 1px solid var(--accent-purple); display: flex; align-items: center; justify-content: center; font-size: 1.5rem; color: var(--accent-purple); box-shadow: 0 0 10px rgba(189,0,255,0.2); }
-        .progression-info { flex: 1; }
-        .progression-meta { display: flex; justify-content: space-between; font-family: var(--font-head); font-size: 0.85rem; font-weight: bold; margin-bottom: 6px; }
-        .progression-track { height: 8px; border-radius: 4px; background: rgba(255,255,255,0.05); overflow: hidden; position: relative; }
-        .progression-fill { height: 100%; width: 35%; background: linear-gradient(90deg, var(--accent-purple), var(--accent-cyan)); box-shadow: 0 0 8px var(--accent-cyan); border-radius: 4px; transition: width 0.5s ease; }
-
-        .recruiter-board { display: flex; flex-direction: column; gap: 10px; max-width: 1000px; margin: 0 auto 25px; padding: 0 15px; }
-        .recruiter-card-inner { padding: 15px; display: flex; justify-content: space-between; align-items: center; transition: 0.3s; }
-        .recruiter-player-info { display: flex; align-items: center; gap: 12px; }
-        .recruiter-avatar-mini { width: 40px; height: 40px; border-radius: 8px; border: 1px solid var(--accent-cyan); object-fit: cover; }
-        .recruiter-text h4 { font-family: var(--font-head); font-size: 0.95rem; color: #fff; margin-bottom: 2px; }
-        .recruiter-text p { font-size: 0.8rem; color: var(--text-muted); font-weight: bold; }
-        .recruiter-connect-btn { padding: 8px 14px; border-radius: 8px; background: rgba(0, 255, 127, 0.1); border: 1px solid var(--accent-green); color: var(--accent-green); font-family: var(--font-head); font-size: 0.75rem; font-weight: bold; cursor: pointer; text-transform: uppercase; transition: 0.3s; }
-        .recruiter-connect-btn:hover { background: var(--accent-green); color: #000; box-shadow: 0 0 15px var(--accent-green); }
-
-        .live-chat-drawer { position: fixed; bottom: 80px; right: -300px; width: 280px; height: 380px; background: rgba(10, 5, 20, 0.9); border: 1px solid rgba(255,255,255,0.08); backdrop-filter: blur(20px); border-radius: 16px 0 0 16px; z-index: 4000; transition: transform 0.3s ease; display: flex; flex-direction: column; box-shadow: var(--glass-shadow); transform: translate3d(0,0,0); }
-        .live-chat-drawer.active { transform: translate3d(-300px, 0, 0); }
-        .chat-toggle-handle { position: absolute; left: -40px; top: 50%; transform: translateY(-50%); width: 40px; height: 50px; background: rgba(10, 5, 20, 0.9); border: 1px solid rgba(255,255,255,0.08); border-right: none; border-radius: 10px 0 0 10px; display: flex; align-items: center; justify-content: center; color: var(--accent-cyan); cursor: pointer; box-shadow: -5px 0 15px rgba(0,0,0,0.5); }
-        .chat-header { padding: 12px; border-bottom: 1px solid rgba(255,255,255,0.05); font-family: var(--font-head); font-size: 0.85rem; font-weight: bold; color: #fff; text-transform: uppercase; letter-spacing: 0.5px; display: flex; align-items: center; gap: 6px; }
-        .chat-messages { flex: 1; padding: 10px; overflow-y: auto; display: flex; flex-direction: column; gap: 8px; font-size: 0.8rem; }
-        .chat-msg-row { background: rgba(255,255,255,0.02); padding: 6px 10px; border-radius: 8px; line-height: 1.3; }
-        .chat-msg-user { color: var(--accent-purple); font-weight: bold; font-family: var(--font-head); margin-right: 4px; }
-        .chat-input-area { padding: 8px; border-top: 1px solid rgba(255,255,255,0.05); display: flex; gap: 6px; }
-        .chat-input-field { flex: 1; background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.08); border-radius: 8px; padding: 6px 10px; color: #fff; font-family: var(--font-body); font-size: 0.85rem; outline: none; }
-        .chat-send-btn { background: var(--accent-cyan); color: #000; border: none; width: 32px; height: 32px; border-radius: 8px; display: flex; align-items: center; justify-content: center; cursor: pointer; }
+        .confetti-piece { position: absolute; width: 10px; height: 20px; opacity: 0; border-radius: 2px; z-index: 9999;}
+        @keyframes popConfetti { 0% { transform: translate3d(0, 0, 0) scale(1) rotate(0deg); opacity: 1; } 100% { transform: translate3d(0, -150px, 0) scale(0.5) rotate(720deg); opacity: 0; } }
     </style>
-    
-    <script>
-        document.addEventListener("DOMContentLoaded", function() {
-            if (navigator.userAgent.indexOf('gonative') > -1 || navigator.userAgent.indexOf('median') > -1) {
-                document.body.classList.add('median-active');
-            }
-        });
-    </script>
 </head>
 <body>
     <div class="beta-overlay" id="betaOverlay">
@@ -763,16 +708,15 @@
 
     <div class="notification-bar fade-up visible">
         <div class="noti-track">
-            <div class="noti-item"><i class="fa-solid fa-bell" style="color:var(--accent-orange)"></i> Free Fire Showdown Live! Prize Pool ₹5,000[span_0](start_span)[span_0](end_span)[span_1](start_span)[span_1](end_span)</div>
-            <div class="noti-item"><i class="fa-solid fa-gift" style="color:var(--accent-purple)"></i> Claim 500 Bonus PTS in the Offer Wall today[span_2](start_span)[span_2](end_span)[span_3](start_span)[span_3](end_span)!</div>
-            <div class="noti-item"><i class="fa-solid fa-trophy" style="color:var(--accent-green)"></i> Team K9 Esports just won ₹8,840[span_4](start_span)[span_4](end_span)[span_5](start_span)[span_5](end_span)</div>
-            <div class="noti-item"><i class="fa-solid fa-bell" style="color:var(--accent-orange)"></i> BGMI Masters Series Open for Registration[span_6](start_span)[span_6](end_span)[span_7](start_span)[span_7](end_span)</div>
-            <div class="noti-item"><i class="fa-solid fa-gift" style="color:var(--accent-purple)"></i> Claim 500 Bonus PTS in the Offer Wall today[span_8](start_span)[span_8](end_span)[span_9](start_span)[span_9](end_span)!</div>
-            <div class="noti-item"><i class="fa-solid fa-trophy" style="color:var(--accent-green)"></i> Team K9 Esports just won ₹8,840[span_10](start_span)[span_10](end_span)[span_11](start_span)[span_11](end_span)</div>
+            <div class="noti-item"><i class="fa-solid fa-bell" style="color:var(--accent-orange)"></i> Free Fire Showdown Live! Prize Pool ₹5,000</div>
+            <div class="noti-item"><i class="fa-solid fa-gift" style="color:var(--accent-purple)"></i> Claim 500 Bonus PTS in the Offer Wall today!</div>
+            <div class="noti-item"><i class="fa-solid fa-trophy" style="color:var(--accent-green)"></i> Team K9 Esports just won ₹8,840</div>
+            <div class="noti-item"><i class="fa-solid fa-bell" style="color:var(--accent-orange)"></i> BGMI Masters Series Open for Registration</div>
+            <div class="noti-item"><i class="fa-solid fa-gift" style="color:var(--accent-purple)"></i> Claim 500 Bonus PTS in the Offer Wall today!</div>
+            <div class="noti-item"><i class="fa-solid fa-trophy" style="color:var(--accent-green)"></i> Team K9 Esports just won ₹8,840</div>
         </div>
     </div>
 
-    <!-- --- FEATURE UPGRADE 1: NATIVE APPLICATION STORIES --- -->
     <div class="stories-strip fade-up visible">
         <div class="story-ring" onclick="showToast('Loading Free Fire Tamil Nadu Cup Highlights...')">
             <div class="story-img-wrapper"><img src="https://via.placeholder.com/100/ff0055/ffffff?text=FF"></div>
@@ -796,7 +740,6 @@
         </div>
     </div>
 
-    <!-- --- FEATURE UPGRADE 2: SMART CONTEXTUAL PWA INSTALL BANNER --- -->
     <div class="pwa-prompt-banner max-width glass-panel" id="pwaPromptBanner">
         <div class="pwa-prompt-text"><i class="fa-solid fa-circle-down"></i> Experience Tournyx with optimized high-performance native frame speed!</div>
         <button class="pwa-prompt-btn" id="pwaInstallBtn">Install App</button>
@@ -808,40 +751,39 @@
             <div class="menu-user-info" id="menuUserInfo">
                 <img src="https://via.placeholder.com/60" class="menu-user-img" id="menuUserImg">
                 <div class="menu-user-details">
-                    <div class="menu-user-name" id="menuUserName">Player[span_12](start_span)[span_12](end_span)[span_13](start_span)[span_13](end_span)</div>
-                    <div class="menu-user-sub">See your profile[span_14](start_span)[span_14](end_span)[span_15](start_span)[span_15](end_span)</div>
+                    <div class="menu-user-name" id="menuUserName">Player</div>
+                    <div class="menu-user-sub">See your profile</div>
                 </div>
             </div>
         </a>
 
         <div class="menu-links">
-            <a href="premium.html"><i class="fa-solid fa-crown"></i> Premium Plans[span_16](start_span)[span_16](end_span)[span_17](start_span)[span_17](end_span)</a>
-            <a href="settings.html" onclick="return checkAuth(event)"><i class="fa-solid fa-id-card-clip"></i> Game Profiles[span_18](start_span)[span_18](end_span)[span_19](start_span)[span_19](end_span)</a>
-            <a href="clans.html" onclick="return checkAuth(event)"><i class="fa-solid fa-globe"></i> Community[span_20](start_span)[span_20](end_span)[span_21](start_span)[span_21](end_span)</a>
-            <a href="leaderboard.html" onclick="return checkAuth(event)"><i class="fa-solid fa-trophy"></i> Leaderboard[span_22](start_span)[span_22](end_span)[span_23](start_span)[span_23](end_span)</a>
-            <a href="giveaway.html"><i class="fa-solid fa-gift"></i> Giveaways[span_24](start_span)[span_24](end_span)[span_25](start_span)[span_25](end_span)</a>
-            <a href="offer.html" onclick="return checkAuth(event)"><i class="fa-solid fa-bullhorn"></i> Offers Wall[span_26](start_span)[span_26](end_span)[span_27](start_span)[span_27](end_span)</a>
-            <a href="explore.html"><i class="fa-solid fa-magnifying-glass-location"></i> All Tournaments[span_28](start_span)[span_28](end_span)[span_29](start_span)[span_29](end_span)</a>
-            <a href="refer.html" onclick="return checkAuth(event)"><i class="fa-solid fa-handshake-angle"></i> Refer & Earn[span_30](start_span)[span_30](end_span)[span_31](start_span)[span_31](end_span)</a>
-            <a href="support.html"><i class="fa-solid fa-headset"></i> Help & Support[span_32](start_span)[span_32](end_span)[span_33](start_span)[span_33](end_span)</a>
-            <a href="settings.html" onclick="return checkAuth(event)"><i class="fa-solid fa-sliders"></i> Settings[span_34](start_span)[span_34](end_span)[span_35](start_span)[span_35](end_span)</a>
-            <a href="#" onclick="logoutUser()" class="logout-link"><i class="fa-solid fa-power-off"></i> Logout[span_36](start_span)[span_36](end_span)[span_37](start_span)[span_37](end_span)</a>
+            <a href="premium.html"><i class="fa-solid fa-crown"></i> Premium Plans</a>
+            <a href="settings.html" onclick="return checkAuth(event)"><i class="fa-solid fa-id-card-clip"></i> Game Profiles</a>
+            <a href="clans.html" onclick="return checkAuth(event)"><i class="fa-solid fa-globe"></i> Community</a>
+            <a href="leaderboard.html" onclick="return checkAuth(event)"><i class="fa-solid fa-trophy"></i> Leaderboard</a>
+            <a href="giveaway.html"><i class="fa-solid fa-gift"></i> Giveaways</a>
+            <a href="offer.html" onclick="return checkAuth(event)"><i class="fa-solid fa-bullhorn"></i> Offers Wall</a>
+            <a href="explore.html"><i class="fa-solid fa-magnifying-glass-location"></i> All Tournaments</a>
+            <a href="refer.html" onclick="return checkAuth(event)"><i class="fa-solid fa-handshake-angle"></i> Refer & Earn</a>
+            <a href="support.html"><i class="fa-solid fa-headset"></i> Help & Support</a>
+            <a href="settings.html" onclick="return checkAuth(event)"><i class="fa-solid fa-sliders"></i> Settings</a>
+            <a href="#" onclick="logoutUser()" class="logout-link"><i class="fa-solid fa-power-off"></i> Logout</a>
             
             <div style="margin-top: 25px; text-align: center; color: #555; font-size: 0.75rem; font-family: var(--font-head); letter-spacing: 2px;">
-                APP VERSION 3.0.0<br>[span_38](start_span)[span_38](end_span)[span_39](start_span)[span_39](end_span)
-                <span style="margin-top:5px; display:inline-block;">Powered by <span style="font-weight: 900; background: var(--accent-gradient); -webkit-background-clip: text; -webkit-text-fill-color: transparent; letter-spacing: 1px;">QUVA</span></span>[span_40](start_span)[span_40](end_span)[span_41](start_span)[span_41](end_span)
+                APP VERSION 3.0.0<br>
+                <span style="margin-top:5px; display:inline-block;">Powered by <span style="font-weight: 900; background: var(--accent-gradient); -webkit-background-clip: text; -webkit-text-fill-color: transparent; letter-spacing: 1px;">QUVA</span></span>
             </div>
         </div>
     </div>
 
     <div class="next-match-card glass-panel fade-up visible" id="nextMatchWidget" style="cursor:pointer;" onclick="window.location.href='matches.html'; triggerHaptic();">
-        <div class="nm-label"><i class="fa-solid fa-bolt"></i> Your Next Match[span_42](start_span)[span_42](end_span)[span_43](start_span)[span_43](end_span)</div>
-        <div class="nm-title" id="nmTitle">Loading...[span_44](start_span)[span_44](end_span)[span_45](start_span)[span_45](end_span)</div>
-        <div class="nm-time" id="nmDate">--[span_46](start_span)[span_46](end_span)[span_47](start_span)[span_47](end_span)</div>
-        <button class="nm-btn" id="nmBtn">VIEW DETAILS</button>[span_48](start_span)[span_48](end_span)[span_49](start_span)[span_49](end_span)
+        <div class="nm-label"><i class="fa-solid fa-bolt"></i> Your Next Match</div>
+        <div class="nm-title" id="nmTitle">Loading...</div>
+        <div class="nm-time" id="nmDate">--</div>
+        <button class="nm-btn" id="nmBtn">VIEW DETAILS</button>
     </div>
 
-    <!-- --- FEATURE UPGRADE 3: IMMERSIVE XP PROGRESSION HEADER PANEL --- -->
     <div class="progression-banner max-width glass-panel fade-up visible">
         <div class="progression-rank-icon"><i class="fa-solid fa-shield-halved"></i></div>
         <div class="progression-info">
@@ -854,13 +796,11 @@
     </div>
 
     <section class="hero fade-up delay-1">
-        <h1 id="heroTitle">Own the Arena<br><span class="gradient-text">Power Your Play 🏆</span></h1>[span_50](start_span)[span_50](end_span)[span_51](start_span)[span_51](end_span)
-        <div class="typing-container"><span class="typing-text" id="typingText"></span></div>[span_52](start_span)[span_52](end_span)[span_53](start_span)[span_53](end_span)
+        <h1 id="heroTitle">Own the Arena<br><span class="gradient-text">Power Your Play 🏆</span></h1>
+        <div class="typing-container"><span class="typing-text" id="typingText"></span></div>
     </section>
 
-    <!-- --- FEATURE UPGRADE 4: GAMIFICATION ENGINE SPLIT SUITE --- -->
     <div class="retention-grid-panel fade-up visible">
-        <!-- SYSTEM SECTOR 1: 7-DAY LOGIN STREAK REWARDS -->
         <div class="retention-card glass-panel">
             <div class="retention-title"><i class="fa-solid fa-calendar-check"></i> Daily Check-In Streak</div>
             <div class="streak-calendar" id="streakCalendarBox">
@@ -873,7 +813,6 @@
                 <div class="streak-day">Day 7<span class="streak-reward">🎁</span></div>
             </div>
         </div>
-        <!-- SYSTEM SECTOR 2: INTERACTIVE REWARD SPIN WHEEL -->
         <div class="retention-card glass-panel" style="text-align: center;">
             <div class="retention-title" style="text-align: left;"><i class="fa-solid fa-circle-dot"></i> Daily Fortune Spin</div>
             <div class="wheel-container">
@@ -887,24 +826,23 @@
 
     <section class="role-cards fade-up delay-1">
         <div class="role-card-v2 player" onclick="window.location.href='explore.html'">
-            <div class="role-v2-icon"><i class="fa-solid fa-layer-group"></i></div>[span_54](start_span)[span_54](end_span)[span_55](start_span)[span_55](end_span)
+            <div class="role-v2-icon"><i class="fa-solid fa-layer-group"></i></div>
             <div class="role-v2-content">
-                <h3>For Players</h3>[span_56](start_span)[span_56](end_span)[span_57](start_span)[span_57](end_span)
-                <p>Compete globally, climb ranks, and win real rewards securely.</p>[span_58](start_span)[span_58](end_span)[span_59](start_span)[span_59](end_span)
-                <span class="role-v2-link">Enter Arena <i class="fa-solid fa-arrow-right"></i></span>[span_60](start_span)[span_60](end_span)[span_61](start_span)[span_61](end_span)
+                <h3>For Players</h3>
+                <p>Compete globally, climb ranks, and win real rewards securely.</p>
+                <span class="role-v2-link">Enter Arena <i class="fa-solid fa-arrow-right"></i></span>
             </div>
         </div>
         <div class="role-card-v2 organizer" onclick="if(checkAuth(event)){window.location.href='tournament.html'}">
-            <div class="role-v2-icon"><i class="fa-solid fa-crown"></i></div>[span_62](start_span)[span_62](end_span)[span_63](start_span)[span_63](end_span)
+            <div class="role-v2-icon"><i class="fa-solid fa-crown"></i></div>
             <div class="role-v2-content">
-                <h3>For Organizers</h3>[span_64](start_span)[span_64](end_span)[span_65](start_span)[span_65](end_span)
-                <p>Host tournaments, manage teams, and monetize premium events.</p>[span_66](start_span)[span_66](end_span)[span_67](start_span)[span_67](end_span)
-                <span class="role-v2-link">Create Event <i class="fa-solid fa-arrow-right"></i></span>[span_68](start_span)[span_68](end_span)[span_69](start_span)[span_69](end_span)
+                <h3>For Organizers</h3>
+                <p>Host tournaments, manage teams, and monetize premium events.</p>
+                <span class="role-v2-link">Create Event <i class="fa-solid fa-arrow-right"></i></span>
             </div>
         </div>
     </section>
 
-    <!-- --- FEATURE UPGRADE 5: REAL-TIME MATCH MATCH PREDICTIONS --- -->
     <section class="section-pad fade-up visible">
         <div class="slider-header">
             <h2 class="section-title" style="margin:0; text-align:left; font-size:1.3rem;">Predict & <span style="color:var(--accent-orange)">Earn Tokens</span></h2>
@@ -922,82 +860,81 @@
 
     <section class="section-pad fade-up" id="flashDropsSection">
         <div class="slider-header">
-            <h2 class="section-title" style="margin:0; text-align:left; font-size:1.3rem;">Flash <span style="color:#00f2ff; text-shadow:0 0 10px rgba(0,242,255,0.5);">Drops</span></h2>[span_70](start_span)[span_70](end_span)[span_71](start_span)[span_71](end_span)
-            <a href="giveaway.html" class="view-all">View All</a>[span_72](start_span)[span_72](end_span)[span_73](start_span)[span_73](end_span)
+            <h2 class="section-title" style="margin:0; text-align:left; font-size:1.3rem;">Flash <span style="color:#00f2ff; text-shadow:0 0 10px rgba(0,242,255,0.5);">Drops</span></h2>
+            <a href="giveaway.html" class="view-all">View All</a>
         </div>
         <div class="tourney-slider" id="flashDropsContainer">
-            <div class="drop-card skeleton" style="height:100px;"></div>[span_74](start_span)[span_74](end_span)[span_75](start_span)[span_75](end_span)
-            <div class="drop-card skeleton" style="height:100px;"></div>[span_76](start_span)[span_76](end_span)[span_77](start_span)[span_77](end_span)
+            <div class="drop-card skeleton" style="height:100px;"></div>
+            <div class="drop-card skeleton" style="height:100px;"></div>
         </div>
     </section>
 
     <section class="section-pad fade-up visible" id="liveSectionContainer" style="display:none; padding-bottom: 15px;">
         <div class="slider-header" style="margin-bottom:10px;">
-            <h2 class="section-title" style="margin:0; text-align:left; font-size:1.2rem; color:var(--accent-green); text-shadow:0 0 10px rgba(0,255,127,0.4);"><i class="fa-solid fa-satellite-dish fa-fade"></i> Live Now</h2>[span_78](start_span)[span_78](end_span)[span_79](start_span)[span_79](end_span)
-            <a href="explore.html" class="view-all" style="color:var(--accent-green); border-color:var(--accent-green);">View All</a>[span_80](start_span)[span_80](end_span)[span_81](start_span)[span_81](end_span)
+            <h2 class="section-title" style="margin:0; text-align:left; font-size:1.2rem; color:var(--accent-green); text-shadow:0 0 10px rgba(0,255,127,0.4);"><i class="fa-solid fa-satellite-dish fa-fade"></i> Live Now</h2>
+            <a href="explore.html" class="view-all" style="color:var(--accent-green); border-color:var(--accent-green);">View All</a>
         </div>
         <div class="live-tourney-slider" id="liveTourneySlider">
-            </div>[span_82](start_span)[span_82](end_span)[span_83](start_span)[span_83](end_span)
+            </div>
     </section>
 
     <section class="section-pad glow-section fade-up delay-1">
         <div class="slider-header" style="justify-content: center;">
-            <h2 class="section-title" style="margin:0; font-size:1.4rem;">Daily <span style="color:var(--accent-orange); text-shadow:0 0 10px rgba(255,153,0,0.5);">Quests</span></h2>[span_84](start_span)[span_84](end_span)[span_85](start_span)[span_85](end_span)
+            <h2 class="section-title" style="margin:0; font-size:1.4rem;">Daily <span style="color:var(--accent-orange); text-shadow:0 0 10px rgba(255,153,0,0.5);">Quests</span></h2>
         </div>
-        <div style="text-align:center; font-size:0.8rem; color:#888; margin-bottom:20px; font-weight:bold;">Live Server Sync via Tournyx Cloud!</div>[span_86](start_span)[span_86](end_span)[span_87](start_span)[span_87](end_span)
+        <div style="text-align:center; font-size:0.8rem; color:#888; margin-bottom:20px; font-weight:bold;">Live Server Sync via Tournyx Cloud!</div>
         <div class="quests-wrapper" id="dynamicQuestsWrapper">
-            <div class="quest-card skeleton" style="height: 65px;"></div>[span_88](start_span)[span_88](end_span)[span_89](start_span)[span_89](end_span)
-            <div class="quest-card skeleton" style="height: 65px;"></div>[span_90](start_span)[span_90](end_span)[span_91](start_span)[span_91](end_span)
+            <div class="quest-card skeleton" style="height: 65px;"></div>
+            <div class="quest-card skeleton" style="height: 65px;"></div>
         </div>
     </section>
 
     <section class="section-pad fade-up">
         <div class="section-title">
-            Pro Esports <span>Live</span>[span_92](start_span)[span_92](end_span)[span_93](start_span)[span_93](end_span)
+            Pro Esports <span>Live</span>
         </div>
         <div class="tourney-slider" id="proMatchesContainer">
-            <div class="score-card skeleton" style="height: 120px;"></div>[span_94](start_span)[span_94](end_span)[span_95](start_span)[span_95](end_span)
-            <div class="score-card skeleton" style="height: 120px;"></div>[span_96](start_span)[span_96](end_span)[span_97](start_span)[span_97](end_span)
+            <div class="score-card skeleton" style="height: 120px;"></div>
+            <div class="score-card skeleton" style="height: 120px;"></div>
         </div>
     </section>
 
     <section class="section-pad fade-up">
         <div class="section-title">
-            Trending <span>Clips</span>[span_98](start_span)[span_98](end_span)[span_99](start_span)[span_99](end_span)
+            Trending <span>Clips</span>
         </div>
         <div class="tourney-slider" id="trendingClipsContainer">
-            <div class="video-card skeleton" style="height: 200px;"></div>[span_100](start_span)[span_100](end_span)[span_101](start_span)[span_101](end_span)
-            <div class="video-card skeleton" style="height: 200px;"></div>[span_102](start_span)[span_102](end_span)[span_103](start_span)[span_103](end_span)
+            <div class="video-card skeleton" style="height: 200px;"></div>
+            <div class="video-card skeleton" style="height: 200px;"></div>
         </div>
     </section>
 
     <section class="stats-area glow-section fade-up">
         <div class="stats-grid">
-            <div class="stat-box glass-panel"><span class="stat-val count-up" data-target="56">0</span>K+<br><span class="stat-label">Players</span></div>[span_104](start_span)[span_104](end_span)[span_105](start_span)[span_105](end_span)
-            <div class="stat-box glass-panel"><span class="stat-val" style="color:var(--accent-green)">₹<span class="count-up" data-target="93">0</span>K+</span><br><span class="stat-label">Prizes</span></div>[span_106](start_span)[span_106](end_span)[span_107](start_span)[span_107](end_span)
-            <div class="stat-box glass-panel"><span class="stat-val count-up" style="color:var(--accent-orange)" data-target="150">0</span>+<br><span class="stat-label">Events</span></div>[span_108](start_span)[span_108](end_span)[span_109](start_span)[span_109](end_span)
-            <div class="stat-box glass-panel"><span class="stat-val count-up" style="color:var(--accent-cyan)" data-target="4">0</span>+<br><span class="stat-label">States</span></div>[span_110](start_span)[span_110](end_span)[span_111](start_span)[span_111](end_span)
+            <div class="stat-box glass-panel"><span class="stat-val count-up" data-target="56">0</span>K+<br><span class="stat-label">Players</span></div>
+            <div class="stat-box glass-panel"><span class="stat-val" style="color:var(--accent-green)">₹<span class="count-up" data-target="93">0</span>K+</span><br><span class="stat-label">Prizes</span></div>
+            <div class="stat-box glass-panel"><span class="stat-val count-up" style="color:var(--accent-orange)" data-target="150">0</span>+<br><span class="stat-label">Events</span></div>
+            <div class="stat-box glass-panel"><span class="stat-val count-up" style="color:var(--accent-cyan)" data-target="4">0</span>+<br><span class="stat-label">States</span></div>
         </div>
 
-        <p style="text-align:center; margin-bottom:15px; font-family:var(--font-head); font-size:0.9rem; color:var(--accent-purple); letter-spacing:1px; text-shadow:0 0 10px rgba(189,0,255,0.5); font-weight:bold;">SUPPORTED TITLES</p>[span_112](start_span)[span_112](end_span)[span_113](start_span)[span_113](end_span)
+        <p style="text-align:center; margin-bottom:15px; font-family:var(--font-head); font-size:0.9rem; color:var(--accent-purple); letter-spacing:1px; text-shadow:0 0 10px rgba(189,0,255,0.5); font-weight:bold;">SUPPORTED TITLES</p>
         <div class="marquee-container">
             <div class="marquee-track">
-                <div class="game-pill glass-panel"><i class="fa-solid fa-fire" style="color:orange"></i> FREE FIRE MAX</div>[span_114](start_span)[span_114](end_span)[span_115](start_span)[span_115](end_span)
-                <div class="game-pill glass-panel"><i class="fa-solid fa-crosshairs" style="color:yellow"></i> BGMI</div>[span_116](start_span)[span_116](end_span)[span_117](start_span)[span_117](end_span)
-                <div class="game-pill glass-panel"><i class="fa-solid fa-v" style="color:red"></i> Valorant Mobile</div>[span_118](start_span)[span_118](end_span)[span_119](start_span)[span_119](end_span)
-                <div class="game-pill glass-panel"><i class="fa-solid fa-skull" style="color:green"></i> COD: MOBILE</div>[span_120](start_span)[span_120](end_span)[span_121](start_span)[span_121](end_span)
-                <div class="game-pill glass-panel"><i class="fa-solid fa-gamepad" style="color:cyan"></i> PUBG NEW STATE</div>[span_122](start_span)[span_122](end_span)[span_123](start_span)[span_123](end_span)
+                <div class="game-pill glass-panel"><i class="fa-solid fa-fire" style="color:orange"></i> FREE FIRE MAX</div>
+                <div class="game-pill glass-panel"><i class="fa-solid fa-crosshairs" style="color:yellow"></i> BGMI</div>
+                <div class="game-pill glass-panel"><i class="fa-solid fa-v" style="color:red"></i> Valorant Mobile</div>
+                <div class="game-pill glass-panel"><i class="fa-solid fa-skull" style="color:green"></i> COD: MOBILE</div>
+                <div class="game-pill glass-panel"><i class="fa-solid fa-gamepad" style="color:cyan"></i> PUBG NEW STATE</div>
                 
-                <div class="game-pill glass-panel"><i class="fa-solid fa-fire" style="color:orange"></i> FREE FIRE MAX</div>[span_124](start_span)[span_124](end_span)[span_125](start_span)[span_125](end_span)
-                <div class="game-pill glass-panel"><i class="fa-solid fa-crosshairs" style="color:yellow"></i> BGMI</div>[span_126](start_span)[span_126](end_span)[span_127](start_span)[span_127](end_span)
-                <div class="game-pill glass-panel"><i class="fa-solid fa-v" style="color:red"></i> Valorant Mobile</div>[span_128](start_span)[span_128](end_span)[span_129](start_span)[span_129](end_span)
-                <div class="game-pill glass-panel"><i class="fa-solid fa-skull" style="color:green"></i> COD: MOBILE</div>[span_130](start_span)[span_130](end_span)[span_131](start_span)[span_131](end_span)
-                <div class="game-pill glass-panel"><i class="fa-solid fa-gamepad" style="color:cyan"></i> PUBG NEW STATE</div>[span_132](start_span)[span_132](end_span)[span_133](start_span)[span_133](end_span)
+                <div class="game-pill glass-panel"><i class="fa-solid fa-fire" style="color:orange"></i> FREE FIRE MAX</div>
+                <div class="game-pill glass-panel"><i class="fa-solid fa-crosshairs" style="color:yellow"></i> BGMI</div>
+                <div class="game-pill glass-panel"><i class="fa-solid fa-v" style="color:red"></i> Valorant Mobile</div>
+                <div class="game-pill glass-panel"><i class="fa-solid fa-skull" style="color:green"></i> COD: MOBILE</div>
+                <div class="game-pill glass-panel"><i class="fa-solid fa-gamepad" style="color:cyan"></i> PUBG NEW STATE</div>
             </div>
         </div>
     </section>
 
-    <!-- --- FEATURE UPGRADE 6: LFG TEAM RECRUITER NOTICEBOARD --- -->
     <section class="section-pad fade-up visible">
         <div class="slider-header">
             <h2 class="section-title" style="margin:0; text-align:left; font-size:1.4rem;">LFG <span>Radar Noticeboard</span></h2>
@@ -1017,187 +954,186 @@
     </section>
 
     <section class="section-pad fade-up">
-        <h2 class="section-title">Premium <span style="color:var(--accent-cyan); text-shadow:0 0 15px rgba(0,242,255,0.5);">Ecosystem</span></h2>[span_134](start_span)[span_134](end_span)[span_135](start_span)[span_135](end_span)
+        <h2 class="section-title">Premium <span style="color:var(--accent-cyan); text-shadow:0 0 15px rgba(0,242,255,0.5);">Ecosystem</span></h2>
         
-        <div class="feature-category-title">🎮 Tournament Core</div>[span_136](start_span)[span_136](end_span)[span_137](start_span)[span_137](end_span)
+        <div class="feature-category-title">🎮 Tournament Core</div>
         <div class="features-grid">
-            <div class="f-card glass-panel"><i class="fa-solid fa-sitemap f-icon"></i><div class="f-title">Auto Brackets</div></div>[span_138](start_span)[span_138](end_span)[span_139](start_span)[span_139](end_span)
-            <div class="f-card glass-panel"><i class="fa-solid fa-users f-icon"></i><div class="f-title">1-Click Squads</div></div>[span_140](start_span)[span_140](end_span)[span_141](start_span)[span_141](end_span)
-            <div class="f-card glass-panel"><i class="fa-solid fa-shield-halved f-icon"></i><div class="f-title">Anti-Cheat</div></div>[span_142](start_span)[span_142](end_span)[span_143](start_span)[span_143](end_span)
-            <div class="f-card glass-panel"><i class="fa-solid fa-key f-icon"></i><div class="f-title">Auto Room IDs</div></div>[span_144](start_span)[span_144](end_span)[span_145](start_span)[span_145](end_span)
-            <div class="f-card glass-panel"><i class="fa-solid fa-layer-group f-icon"></i><div class="f-title">Pro Leagues</div></div>[span_146](start_span)[span_146](end_span)[span_147](start_span)[span_147](end_span)
-            <div class="f-card glass-panel"><i class="fa-solid fa-robot f-icon"></i><div class="f-title">AI Disputes</div></div>[span_148](start_span)[span_148](end_span)[span_149](start_span)[span_149](end_span)
-            <div class="f-card glass-panel"><i class="fa-solid fa-chart-pie f-icon"></i><div class="f-title">Dynamic Prizes</div></div>[span_150](start_span)[span_150](end_span)[span_151](start_span)[span_151](end_span)
+            <div class="f-card glass-panel"><i class="fa-solid fa-sitemap f-icon"></i><div class="f-title">Auto Brackets</div></div>
+            <div class="f-card glass-panel"><i class="fa-solid fa-users f-icon"></i><div class="f-title">1-Click Squads</div></div>
+            <div class="f-card glass-panel"><i class="fa-solid fa-shield-halved f-icon"></i><div class="f-title">Anti-Cheat</div></div>
+            <div class="f-card glass-panel"><i class="fa-solid fa-key f-icon"></i><div class="f-title">Auto Room IDs</div></div>
+            <div class="f-card glass-panel"><i class="fa-solid fa-layer-group f-icon"></i><div class="f-title">Pro Leagues</div></div>
+            <div class="f-card glass-panel"><i class="fa-solid fa-robot f-icon"></i><div class="f-title">AI Disputes</div></div>
+            <div class="f-card glass-panel"><i class="fa-solid fa-chart-pie f-icon"></i><div class="f-title">Dynamic Prizes</div></div>
         </div>
 
-        <div class="feature-category-title">🤝 Social & Networking</div>[span_152](start_span)[span_152](end_span)[span_153](start_span)[span_153](end_span)
+        <div class="feature-category-title">🤝 Social & Networking</div>
         <div class="features-grid" style="margin-top: 15px;">
-            <div class="f-card glass-panel"><i class="fa-solid fa-file-contract f-icon"></i><div class="f-title">Player Resumes</div></div>[span_154](start_span)[span_154](end_span)[span_155](start_span)[span_155](end_span)
-            <div class="f-card glass-panel"><i class="fa-solid fa-satellite-dish f-icon"></i><div class="f-title">LFG Radar</div></div>[span_156](start_span)[span_156](end_span)[span_157](start_span)[span_157](end_span)
-            <div class="f-card glass-panel"><i class="fa-solid fa-comments f-icon"></i><div class="f-title">Direct Comms</div></div>[span_158](start_span)[span_158](end_span)[span_159](start_span)[span_159](end_span)
-            <div class="f-card glass-panel"><i class="fa-solid fa-shield-cat f-icon"></i><div class="f-title">Guild Pages</div></div>[span_160](start_span)[span_160](end_span)[span_161](start_span)[span_161](end_span)
-            <div class="f-card glass-panel"><i class="fa-solid fa-video f-icon"></i><div class="f-title">Creator Hub</div></div>[span_162](start_span)[span_162](end_span)[span_163](start_span)[span_163](end_span)
-            <div class="f-card glass-panel"><i class="fa-solid fa-fire-flame-curved f-icon"></i><div class="f-title">Trending Feed</div></div>[span_164](start_span)[span_164](end_span)[span_165](start_span)[span_165](end_span)
+            <div class="f-card glass-panel"><i class="fa-solid fa-file-contract f-icon"></i><div class="f-title">Player Resumes</div></div>
+            <div class="f-card glass-panel"><i class="fa-solid fa-satellite-dish f-icon"></i><div class="f-title">LFG Radar</div></div>
+            <div class="f-card glass-panel"><i class="fa-solid fa-comments f-icon"></i><div class="f-title">Direct Comms</div></div>
+            <div class="f-card glass-panel"><i class="fa-solid fa-shield-cat f-icon"></i><div class="f-title">Guild Pages</div></div>
+            <div class="f-card glass-panel"><i class="fa-solid fa-video f-icon"></i><div class="f-title">Creator Hub</div></div>
+            <div class="f-card glass-panel"><i class="fa-solid fa-fire-flame-curved f-icon"></i><div class="f-title">Trending Feed</div></div>
         </div>
 
-        <div class="feature-category-title">📈 Career & Support</div>[span_166](start_span)[span_166](end_span)[span_167](start_span)[span_167](end_span)
+        <div class="feature-category-title">📈 Career & Support</div>
         <div class="features-grid" style="margin-top: 15px;">
-            <div class="f-card glass-panel"><i class="fa-solid fa-magnifying-glass-chart f-icon"></i><div class="f-title">Scouting DB</div></div>[span_168](start_span)[span_168](end_span)[span_169](start_span)[span_169](end_span)
-            <div class="f-card glass-panel"><i class="fa-solid fa-map-location-dot f-icon"></i><div class="f-title">Stat Heatmaps</div></div>[span_170](start_span)[span_170](end_span)[span_171](start_span)[span_171](end_span)
-            <div class="f-card glass-panel"><i class="fa-solid fa-crown f-icon"></i><div class="f-title">T.O. Portals</div></div>[span_172](start_span)[span_172](end_span)[span_173](start_span)[span_173](end_span)
-            <div class="f-card glass-panel"><i class="fa-solid fa-chalkboard-user f-icon"></i><div class="f-title">VOD Coaching</div></div>[span_174](start_span)[span_174](end_span)[span_175](start_span)[span_175](end_span)
-            <div class="f-card glass-panel"><i class="fa-solid fa-newspaper f-icon"></i><div class="f-title">Esports News</div></div>[span_176](start_span)[span_176](end_span)[span_177](start_span)[span_177](end_span)
-            <div class="f-card glass-panel"><i class="fa-solid fa-handshake f-icon"></i><div class="f-title">Sponsors</div></div>[span_178](start_span)[span_178](end_span)[span_179](start_span)[span_179](end_span)
+            <div class="f-card glass-panel"><i class="fa-solid fa-magnifying-glass-chart f-icon"></i><div class="f-title">Scouting DB</div></div>
+            <div class="f-card glass-panel"><i class="fa-solid fa-map-location-dot f-icon"></i><div class="f-title">Stat Heatmaps</div></div>
+            <div class="f-card glass-panel"><i class="fa-solid fa-crown f-icon"></i><div class="f-title">T.O. Portals</div></div>
+            <div class="f-card glass-panel"><i class="fa-solid fa-chalkboard-user f-icon"></i><div class="f-title">VOD Coaching</div></div>
+            <div class="f-card glass-panel"><i class="fa-solid fa-newspaper f-icon"></i><div class="f-title">Esports News</div></div>
+            <div class="f-card glass-panel"><i class="fa-solid fa-handshake f-icon"></i><div class="f-title">Sponsors</div></div>
         </div>
     </section>
 
     <section class="section-pad fade-up">
         <div class="slider-header" style="margin-bottom: 10px;">
-            <h2 class="section-title" style="margin:0; text-align:left; font-size:1.4rem;">Esports <span>Scouting</span></h2>[span_180](start_span)[span_180](end_span)[span_181](start_span)[span_181](end_span)
+            <h2 class="section-title" style="margin:0; text-align:left; font-size:1.4rem;">Esports <span>Scouting</span></h2>
         </div>
         <div id="scoutingContainer">
-            <div class="scout-card skeleton" style="height: 100px;"></div>[span_182](start_span)[span_182](end_span)[span_183](start_span)[span_183](end_span)
-            <div class="scout-card skeleton" style="height: 100px;"></div>[span_184](start_span)[span_184](end_span)[span_185](start_span)[span_185](end_span)
+            <div class="scout-card skeleton" style="height: 100px;"></div>
+            <div class="scout-card skeleton" style="height: 100px;"></div>
         </div>
     </section>
 
     <section class="section-pad fade-up">
         <div class="slider-header">
-            <h2 class="section-title" style="margin:0; text-align:left; font-size:1.4rem;">Featured <span>Campaigns</span></h2>[span_186](start_span)[span_186](end_span)[span_187](start_span)[span_187](end_span)
-            <a href="explore.html" class="view-all">View All</a>[span_188](start_span)[span_188](end_span)[span_189](start_span)[span_189](end_span)
+            <h2 class="section-title" style="margin:0; text-align:left; font-size:1.4rem;">Featured <span>Campaigns</span></h2>
+            <a href="explore.html" class="view-all">View All</a>
         </div>
         <div class="tourney-slider" id="featuredSlider">
-            <div class="tourney-card skeleton" style="height:320px;"></div>[span_190](start_span)[span_190](end_span)[span_191](start_span)[span_191](end_span)
-            <div class="tourney-card skeleton" style="height:320px;"></div>[span_192](start_span)[span_192](end_span)[span_193](start_span)[span_193](end_span)
-            <div class="tourney-card skeleton" style="height:320px;"></div>[span_194](start_span)[span_194](end_span)[span_195](start_span)[span_195](end_span)
+            <div class="tourney-card skeleton" style="height:320px;"></div>
+            <div class="tourney-card skeleton" style="height:320px;"></div>
+            <div class="tourney-card skeleton" style="height:320px;"></div>
         </div>
     </section>
   
     <section class="section-pad fade-up">
-        <h2 class="section-title">Community <span>Leaderboard</span></h2>[span_196](start_span)[span_196](end_span)[span_197](start_span)[span_197](end_span)
+        <h2 class="section-title">Community <span>Leaderboard</span></h2>
         <div class="lb-tabs glass-panel">
-            <div class="lb-tab active" onclick="switchTab('organizers', this)">Organizers</div>[span_198](start_span)[span_198](end_span)[span_199](start_span)[span_199](end_span)
-            <div class="lb-tab" onclick="switchTab('teams', this)">Teams</div>[span_200](start_span)[span_200](end_span)[span_201](start_span)[span_201](end_span)
-            <div class="lb-tab" onclick="switchTab('contributors', this)">Contributors</div>[span_202](start_span)[span_202](end_span)[span_203](start_span)[span_203](end_span)
+            <div class="lb-tab active" onclick="switchTab('organizers', this)">Organizers</div>
+            <div class="lb-tab" onclick="switchTab('teams', this)">Teams</div>
+            <div class="lb-tab" onclick="switchTab('contributors', this)">Contributors</div>
         </div>
 
         <div id="organizers" class="lb-content people-list active">
-            <div class="person-row skeleton" style="height: 75px;"></div>[span_204](start_span)[span_204](end_span)[span_205](start_span)[span_205](end_span)
-            <div class="person-row skeleton" style="height: 75px;"></div>[span_206](start_span)[span_206](end_span)[span_207](start_span)[span_207](end_span)
-            <div class="person-row skeleton" style="height: 75px;"></div>[span_208](start_span)[span_208](end_span)[span_209](start_span)[span_209](end_span)
+            <div class="person-row skeleton" style="height: 75px;"></div>
+            <div class="person-row skeleton" style="height: 75px;"></div>
+            <div class="person-row skeleton" style="height: 75px;"></div>
         </div>
         <div id="teams" class="lb-content people-list">
-            <div class="person-row skeleton" style="height: 75px;"></div>[span_210](start_span)[span_210](end_span)[span_211](start_span)[span_211](end_span)
-            <div class="person-row skeleton" style="height: 75px;"></div>[span_212](start_span)[span_212](end_span)[span_213](start_span)[span_213](end_span)
+            <div class="person-row skeleton" style="height: 75px;"></div>
+            <div class="person-row skeleton" style="height: 75px;"></div>
         </div>
         <div id="contributors" class="lb-content people-list">
-            <div class="person-row skeleton" style="height: 75px;"></div>[span_214](start_span)[span_214](end_span)[span_215](start_span)[span_215](end_span)
-            <div class="person-row skeleton" style="height: 75px;"></div>[span_216](start_span)[span_216](end_span)[span_217](start_span)[span_217](end_span)
+            <div class="person-row skeleton" style="height: 75px;"></div>
+            <div class="person-row skeleton" style="height: 75px;"></div>
         </div>
     </section>
 
     <section class="section-pad fade-up" id="workflowSection">
         <div class="toggle-container glass-panel theme-purple" id="workflowToggle">
-            <div class="toggle-bg"></div>[span_218](start_span)[span_218](end_span)[span_219](start_span)[span_219](end_span)
-            <div class="toggle-option active" onclick="switchWorkflow('player'); if(navigator.vibrate) navigator.vibrate(50);">Player</div>[span_220](start_span)[span_220](end_span)[span_221](start_span)[span_221](end_span)
-            <div class="toggle-option" onclick="switchWorkflow('organizer'); if(navigator.vibrate) navigator.vibrate(50);">Organizer</div>[span_222](start_span)[span_222](end_span)[span_223](start_span)[span_223](end_span)
+            <div class="toggle-bg"></div>
+            <div class="toggle-option active" onclick="switchWorkflow('player'); if(navigator.vibrate) navigator.vibrate(50);">Player</div>
+            <div class="toggle-option" onclick="switchWorkflow('organizer'); if(navigator.vibrate) navigator.vibrate(50);">Organizer</div>
         </div>
         <div class="steps-wrapper" id="playerSteps">
              <a href="explore.html" class="step-card glass-panel">
-                <div class="step-badge">1</div>[span_224](start_span)[span_224](end_span)[span_225](start_span)[span_225](end_span)
-                <div class="step-info"><h3>Find Events</h3><p>Explore by game, region, or prize.</p></div>[span_226](start_span)[span_226](end_span)[span_227](start_span)[span_227](end_span)
-                <i class="fa-solid fa-chevron-right" style="color:#666; margin-left:auto;"></i>[span_228](start_span)[span_228](end_span)[span_229](start_span)[span_229](end_span)
+                <div class="step-badge">1</div>
+                <div class="step-info"><h3>Find Events</h3><p>Explore by game, region, or prize.</p></div>
+                <i class="fa-solid fa-chevron-right" style="color:#666; margin-left:auto;"></i>
             </a>
-            <div class="step-card glass-panel"><div class="step-badge">2</div><div class="step-info"><h3>Register</h3><p>Sign up seamlessly with your squad.</p></div></div>[span_230](start_span)[span_230](end_span)[span_231](start_span)[span_231](end_span)
-            <div class="step-card glass-panel"><div class="step-badge">3</div><div class="step-info"><h3>Play & Win</h3><p>Compete and claim your real rewards.</p></div></div>[span_232](start_span)[span_232](end_span)[span_233](start_span)[span_233](end_span)
+            <div class="step-card glass-panel"><div class="step-badge">2</div><div class="step-info"><h3>Register</h3><p>Sign up seamlessly with your squad.</p></div></div>
+            <div class="step-card glass-panel"><div class="step-badge">3</div><div class="step-info"><h3>Play & Win</h3><p>Compete and claim your real rewards.</p></div></div>
         </div>
         <div class="steps-wrapper hidden" id="organizerSteps">
              <a href="tournament.html" class="step-card glass-panel" onclick="return checkAuth(event)">
-                <div class="step-badge">1</div>[span_234](start_span)[span_234](end_span)[span_235](start_span)[span_235](end_span)
-                <div class="step-info"><h3>Create Setup</h3><p>Set brackets, rules, and prizes.</p></div>[span_236](start_span)[span_236](end_span)[span_237](start_span)[span_237](end_span)
-                <i class="fa-solid fa-chevron-right" style="color:#666; margin-left:auto;"></i>[span_238](start_span)[span_238](end_span)[span_239](start_span)[span_239](end_span)
+                <div class="step-badge">1</div>
+                <div class="step-info"><h3>Create Setup</h3><p>Set brackets, rules, and prizes.</p></div>
+                <i class="fa-solid fa-chevron-right" style="color:#666; margin-left:auto;"></i>
             </a>
-            <div class="step-card glass-panel"><div class="step-badge">2</div><div class="step-info"><h3>Manage</h3><p>Handle registrations and seeding.</p></div></div>[span_240](start_span)[span_240](end_span)[span_241](start_span)[span_241](end_span)
-            <div class="step-card glass-panel"><div class="step-badge">3</div><div class="step-info"><h3>Monetize</h3><p>Collect fees and grow your brand.</p></div></div>[span_242](start_span)[span_242](end_span)[span_243](start_span)[span_243](end_span)
+            <div class="step-card glass-panel"><div class="step-badge">2</div><div class="step-info"><h3>Manage</h3><p>Handle registrations and seeding.</p></div></div>
+            <div class="step-card glass-panel"><div class="step-badge">3</div><div class="step-info"><h3>Monetize</h3><p>Collect fees and grow your brand.</p></div></div>
         </div>
     </section>
 
     <section class="pay-section fade-up delay-1">
-        <h2 class="section-title">Secure & <span style="color:#ff9900">Reliable</span></h2>[span_244](start_span)[span_244](end_span)[span_245](start_span)[span_245](end_span)
-        <p style="color:#888; font-size:0.95rem; margin-bottom:30px;">Powered by trusted payment solutions.</p>[span_246](start_span)[span_246](end_span)[span_247](start_span)[span_247](end_span)
+        <h2 class="section-title">Secure & <span style="color:#ff9900">Reliable</span></h2>
+        <p style="color:#888; font-size:0.95rem; margin-bottom:30px;">Powered by trusted payment solutions.</p>
         <div class="pay-card glass-panel">
-            <div class="pay-icon"><i class="fa-solid fa-shield-halved"></i></div>[span_248](start_span)[span_248](end_span)[span_249](start_span)[span_249](end_span)
-            <div><div class="pay-head">Secure Vault</div><div class="pay-desc">End-to-end encrypted transactions.</div></div>[span_250](start_span)[span_250](end_span)[span_251](start_span)[span_251](end_span)
+            <div class="pay-icon"><i class="fa-solid fa-shield-halved"></i></div>
+            <div><div class="pay-head">Secure Vault</div><div class="pay-desc">End-to-end encrypted transactions.</div></div>
         </div>
         <div class="pay-card glass-panel">
-            <div class="pay-icon"><i class="fa-solid fa-wallet"></i></div>[span_252](start_span)[span_252](end_span)[span_253](start_span)[span_253](end_span)
-            <div><div class="pay-head">Multi-Wallet</div><div class="pay-desc">Connect with your preferred wallet.</div></div>[span_254](start_span)[span_254](end_span)[span_255](start_span)[span_255](end_span)
+            <div class="pay-icon"><i class="fa-solid fa-wallet"></i></div>
+            <div><div class="pay-head">Multi-Wallet</div><div class="pay-desc">Connect with your preferred wallet.</div></div>
         </div>
         <div class="pay-card glass-panel">
-            <div class="pay-icon"><i class="fa-solid fa-bolt"></i></div>[span_256](start_span)[span_256](end_span)[span_257](start_span)[span_257](end_span)
-            <div><div class="pay-head">Instant Payouts</div><div class="pay-desc">Winners receive rewards immediately.</div></div>[span_258](start_span)[span_258](end_span)[span_259](start_span)[span_259](end_span)
+            <div class="pay-icon"><i class="fa-solid fa-bolt"></i></div>
+            <div><div class="pay-head">Instant Payouts</div><div class="pay-desc">Winners receive rewards immediately.</div></div>
         </div>
     </section>
 
     <footer class="app-footer fade-up">
         
         <div class="footer-about-box glass-panel" onclick="window.location.href='about.html'">
-            <h3 class="about-title">About <span>Us</span> <i class="fa-solid fa-arrow-right" style="color:#666; font-size:1rem;"></i></h3>[span_260](start_span)[span_260](end_span)[span_261](start_span)[span_261](end_span)
-            <p>Tournyx is forged by gamers, for gamers. We are dedicated to eliminating the chaos of unorganized esports. By combining state-of-the-art automated brackets, instant secure payouts, and a blazing-fast native engine, we provide the ultimate battleground for players to turn their skills into real-world glory and revenue.</p>[span_262](start_span)[span_262](end_span)[span_263](start_span)[span_263](end_span)
+            <h3 class="about-title">About <span>Us</span> <i class="fa-solid fa-arrow-right" style="color:#666; font-size:1rem;"></i></h3>
+            <p>Tournyx is forged by gamers, for gamers. We are dedicated to eliminating the chaos of unorganized esports. By combining state-of-the-art automated brackets, instant secure payouts, and a blazing-fast native engine, we provide the ultimate battleground for players to turn their skills into real-world glory and revenue.</p>
         </div>
 
         <div class="footer-logo-area">
-            <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEg_20wCR-WBMpQmw3vxcYUf-vxIO1PYDJoQN_Sid3UDjA9tf0cuX0eH40jbzHoJad4cxbnjhPjqfCw1Z5V1LhgN9zFuIQC0fJjecTy3D9PFu5WjR2H1wHwTD1bUGnXY_NiApWn5gMs6velcQngSzKoP1yHzX0cVsFSUFM8zIefcbiPayY7680Kz0V0ZAAE/s1264/1000093706.png" alt="Tournyx Icon">[span_264](start_span)[span_264](end_span)[span_265](start_span)[span_265](end_span)
-            <h2>TOURNYX</h2>[span_266](start_span)[span_266](end_span)[span_267](start_span)[span_267](end_span)
+            <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEg_20wCR-WBMpQmw3vxcYUf-vxIO1PYDJoQN_Sid3UDjA9tf0cuX0eH40jbzHoJad4cxbnjhPjqfCw1Z5V1LhgN9zFuIQC0fJjecTy3D9PFu5WjR2H1wHwTD1bUGnXY_NiApWn5gMs6velcQngSzKoP1yHzX0cVsFSUFM8zIefcbiPayY7680Kz0V0ZAAE/s1264/1000093706.png" alt="Tournyx Icon">
+            <h2>TOURNYX</h2>
         </div>
         
         <p class="footer-desc">
-            Tournyx is building the ultimate monetization infrastructure for the Indian Esports industry at an intersection of tournaments, streaming & gamified social media. Unlocking opportunities for competitive players globally.[span_268](start_span)[span_268](end_span)[span_269](start_span)[span_269](end_span)
+            Tournyx is building the ultimate monetization infrastructure for the Indian Esports industry at an intersection of tournaments, streaming & gamified social media. Unlocking opportunities for competitive players globally.
         </p>
 
         <div class="footer-socials">
-            <a href="youtube.html" class="footer-social-btn"><i class="fa-brands fa-youtube"></i></a>[span_270](start_span)[span_270](end_span)[span_271](start_span)[span_271](end_span)
-            <a href="instagram.html" class="footer-social-btn"><i class="fa-brands fa-instagram"></i></a>[span_272](start_span)[span_272](end_span)[span_273](start_span)[span_273](end_span)
-            <a href="discord.html" class="footer-social-btn"><i class="fa-brands fa-discord"></i></a>[span_274](start_span)[span_274](end_span)[span_275](start_span)[span_275](end_span)
+            <a href="youtube.html" class="footer-social-btn"><i class="fa-brands fa-youtube"></i></a>
+            <a href="instagram.html" class="footer-social-btn"><i class="fa-brands fa-instagram"></i></a>
+            <a href="discord.html" class="footer-social-btn"><i class="fa-brands fa-discord"></i></a>
         </div>
 
         <div class="footer-grid">
             <div class="footer-col">
-                <h4>PLATFORM</h4>[span_276](start_span)[span_276](end_span)[span_277](start_span)[span_277](end_span)
-                <a href="https://quva-globe.github.io/quva/">Organizations</a>[span_278](start_span)[span_278](end_span)[span_279](start_span)[span_279](end_span)
-                <a href="clans.html">Clans</a>[span_280](start_span)[span_280](end_span)[span_281](start_span)[span_281](end_span)
+                <h4>PLATFORM</h4>
+                <a href="https://quva-globe.github.io/quva/">Organizations</a>
+                <a href="clans.html">Clans</a>
             </div>
             <div class="footer-col">
-                <h4>COMMUNITY</h4>[span_282](start_span)[span_282](end_span)[span_283](start_span)[span_283](end_span)
-                <a href="discord.html">Discord</a>[span_284](start_span)[span_284](end_span)[span_285](start_span)[span_285](end_span)
-                <a href="instagram.html">Instagram</a>[span_286](start_span)[span_286](end_span)[span_287](start_span)[span_287](end_span)
-                <a href="blogs.html">Blogs</a>[span_288](start_span)[span_288](end_span)[span_289](start_span)[span_289](end_span)
+                <h4>COMMUNITY</h4>
+                <a href="discord.html">Discord</a>
+                <a href="instagram.html">Instagram</a>
+                <a href="blogs.html">Blogs</a>
             </div>
             <div class="footer-col">
-                <h4>SUPPORT</h4>[span_290](start_span)[span_290](end_span)[span_291](start_span)[span_291](end_span)
-                <a href="contact.html">Contact</a>[span_292](start_span)[span_292](end_span)[span_293](start_span)[span_293](end_span)
-                <a href="feedback.html">Feedback</a>[span_294](start_span)[span_294](end_span)[span_295](start_span)[span_295](end_span)
+                <h4>SUPPORT</h4>
+                <a href="contact.html">Contact</a>
+                <a href="feedback.html">Feedback</a>
             </div>
             <div class="footer-col">
-                <h4>LEGAL</h4>[span_296](start_span)[span_296](end_span)[span_297](start_span)[span_297](end_span)
-                <a href="privacy.html">Privacy Policy</a>[span_298](start_span)[span_298](end_span)[span_299](start_span)[span_299](end_span)
-                <a href="terms.html">Terms of Service</a>[span_300](start_span)[span_300](end_span)[span_301](start_span)[span_301](end_span)
-                <a href="refund.html">Refund & Cancellation Policy</a>[span_302](start_span)[span_302](end_span)[span_303](start_span)[span_303](end_span)
+                <h4>LEGAL</h4>
+                <a href="privacy.html">Privacy Policy</a>
+                <a href="terms.html">Terms of Service</a>
+                <a href="refund.html">Refund & Cancellation Policy</a>
             </div>
         </div>
 
         <div class="footer-bottom">
-            © 2026 TOURNYX. All rights reserved.<br>[span_304](start_span)[span_304](end_span)[span_305](start_span)[span_305](end_span)
-            <div class="footer-made-with">Made with 🔥 for gamers worldwide</div>[span_306](start_span)[span_306](end_span)[span_307](start_span)[span_307](end_span)
+            © 2026 TOURNYX. All rights reserved.<br>
+            <div class="footer-made-with">Made with 🔥 for gamers worldwide</div>
             <div style="margin-top: 15px; font-size: 0.85rem; color: #888; font-family: var(--font-head); letter-spacing: 1px;">
-                Powered by <span style="font-weight: 900; background: var(--accent-gradient); -webkit-background-clip: text; -webkit-text-fill-color: transparent; letter-spacing: 1px;">QUVA</span>[span_308](start_span)[span_308](end_span)[span_309](start_span)[span_309](end_span)
+                Powered by <span style="font-weight: 900; background: var(--accent-gradient); -webkit-background-clip: text; -webkit-text-fill-color: transparent; letter-spacing: 1px;">QUVA</span>
             </div>
         </div>
     </footer>
 
-    <div id="customToast">Notification</div>[span_310](start_span)[span_310](end_span)[span_311](start_span)[span_311](end_span)
+    <div id="customToast">Notification</div>
 
-    <!-- --- FEATURE UPGRADE 7: REAL-TIME APPSCHAT SYSTEM COMPONENT --- -->
     <div class="live-chat-drawer" id="globalLiveChatDrawer">
         <div class="chat-toggle-handle" onclick="document.getElementById('globalLiveChatDrawer').classList.toggle('active')">
             <i class="fa-solid fa-comments fa-lg"></i>
@@ -1215,59 +1151,68 @@
     <nav class="bottom-nav">
         <a class="nav-item active" href="index.html" onclick="triggerHaptic()">
             <i class="fa-solid fa-house"></i>
-            <span>Home</span>[span_312](start_span)[span_312](end_span)[span_313](start_span)[span_313](end_span)
+            <span>Home</span>
         </a>
         <a class="nav-item" href="explore.html" onclick="triggerHaptic()">
             <i class="fa-solid fa-compass"></i>
-            <span>Explore</span>[span_314](start_span)[span_314](end_span)[span_315](start_span)[span_315](end_span)
+            <span>Explore</span>
         </a>
         <a class="nav-item" href="matches.html" onclick="return checkAuth(event)">
             <i class="fa-solid fa-trophy"></i>
-            <span>Matches</span>[span_316](start_span)[span_316](end_span)[span_317](start_span)[span_317](end_span)
+            <span>Matches</span>
         </a>
         
         <div class="fab-slot">
             <div class="floating-plus" onclick="if(checkAuth(event)){window.location.href='tournament.html'; triggerHaptic();}">
-                <i class="fa-solid fa-plus"></i>[span_318](start_span)[span_318](end_span)[span_319](start_span)[span_319](end_span)
+                <i class="fa-solid fa-plus"></i>
             </div>
         </div>
         
         <a class="nav-item" href="clans.html" onclick="return checkAuth(event)">
             <i class="fa-solid fa-shield-halved"></i>
-            <span>Clan</span>[span_320](start_span)[span_320](end_span)[span_321](start_span)[span_321](end_span)
+            <span>Clan</span>
         </a>
         <a class="nav-item" href="tickets.html" onclick="return checkAuth(event)">
             <div class="tx-ticket-composite">
-                <i class="fa-solid fa-ticket"></i>[span_322](start_span)[span_322](end_span)[span_323](start_span)[span_323](end_span)
-                <b class="tx-text">TX</b>[span_324](start_span)[span_324](end_span)[span_325](start_span)[span_325](end_span)
+                <i class="fa-solid fa-ticket"></i>
+                <b class="tx-text">TX</b>
             </div>
-            <span>Tickets</span>[span_326](start_span)[span_326](end_span)[span_327](start_span)[span_327](end_span)
+            <span>Tickets</span>
         </a>
         <a class="nav-item" href="profile.html" onclick="return checkAuth(event)">
             <i class="fa-solid fa-user"></i>
-            <span>Profile</span>[span_328](start_span)[span_328](end_span)[span_329](start_span)[span_329](end_span)
+            <span>Profile</span>
         </a>
     </nav>
 
     <script>
         // --- 1. CONFIGURATION & STATE ---
-        const API_URL = "https://script.google.com/macros/s/AKfycbyqqTpgaflxKJ9xH0jq7mJ_jLzcoNhas3gNo0h5gvoa_6r5Ae9NFxJAJp7ZoYNnMRKl/exec";[span_330](start_span)[span_330](end_span)[span_331](start_span)[span_331](end_span)
-        let animPaused = localStorage.getItem('tournyx_psm') === 'true';[span_332](start_span)[span_332](end_span)[span_333](start_span)[span_333](end_span)
+        const API_URL = "https://script.google.com/macros/s/AKfycbyqqTpgaflxKJ9xH0jq7mJ_jLzcoNhas3gNo0h5gvoa_6r5Ae9NFxJAJp7ZoYNnMRKl/exec";
+        let animPaused = localStorage.getItem('tournyx_psm') === 'true';
         let deferredPrompt;
 
         // PWA Native Installer Engine Tracker Logic
         window.addEventListener('beforeinstallprompt', (e) => {
             e.preventDefault(); deferredPrompt = e;
-            document.getElementById('pwaPromptBanner').style.display = 'flex';
+            const banner = document.getElementById('pwaPromptBanner');
+            if(banner) banner.style.display = 'flex';
         });
-        document.getElementById('pwaInstallBtn').addEventListener('click', async () => {
-            if (deferredPrompt) {
-                deferredPrompt.prompt();
-                const { outcome } = await deferredPrompt.userChoice;
-                if (outcome === 'accepted') { document.getElementById('pwaPromptBanner').style.display = 'none'; }
-                deferredPrompt = null;
-            }
-        });
+        
+        const installBtn = document.getElementById('pwaInstallBtn');
+        if(installBtn) {
+            installBtn.addEventListener('click', async () => {
+                if (deferredPrompt) {
+                    deferredPrompt.prompt();
+                    const { outcome } = await deferredPrompt.userChoice;
+                    if (outcome === 'accepted') { document.getElementById('pwaPromptBanner').style.display = 'none'; }
+                    deferredPrompt = null;
+                }
+            });
+        }
+
+        function triggerHaptic() {
+            try { if (navigator.vibrate) navigator.vibrate(50); } catch(e) {}
+        }
 
         // Pull-to-Refresh Simulator Action Functionality
         let touchStartPos = 0;
@@ -1281,90 +1226,130 @@
         });
 
         // --- SECURE POST FETCHER LOGIC ---
-        async function secureFetch(payload) {[span_334](start_span)[span_334](end_span)[span_335](start_span)[span_335](end_span)
+        async function secureFetch(payload) {
             try {
-                const response = await fetch(API_URL, {[span_336](start_span)[span_336](end_span)[span_337](start_span)[span_337](end_span)
-                    method: 'POST',[span_338](start_span)[span_338](end_span)[span_339](start_span)[span_339](end_span)
-                    headers: { 'Content-Type': 'text/plain' },[span_340](start_span)[span_340](end_span)[span_341](start_span)[span_341](end_span)
-                    body: JSON.stringify(payload)[span_342](start_span)[span_342](end_span)[span_343](start_span)[span_343](end_span)
+                const response = await fetch(API_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'text/plain' },
+                    body: JSON.stringify(payload)
                 });
-                return await response.json();[span_344](start_span)[span_344](end_span)[span_345](start_span)[span_345](end_span)
+                return await response.json();
             } catch (error) {
-                console.error("Fetch Error:", error);[span_346](start_span)[span_346](end_span)[span_347](start_span)[span_347](end_span)
-                throw error;[span_348](start_span)[span_348](end_span)[span_349](start_span)[span_349](end_span)
+                console.error("Fetch Error:", error);
+                throw error;
             }
         }
 
         // --- AUTH CHECKER FOR GUESTS ---
-        function checkAuth(e) {[span_350](start_span)[span_350](end_span)[span_351](start_span)[span_351](end_span)
-            let user = JSON.parse(localStorage.getItem('tournyx_user'));[span_352](start_span)[span_352](end_span)[span_353](start_span)[span_353](end_span)
-            if (!user) {[span_354](start_span)[span_354](end_span)[span_355](start_span)[span_355](end_span)
-                if(e) e.preventDefault();[span_356](start_span)[span_356](end_span)[span_357](start_span)[span_357](end_span)
-                document.getElementById('authPopup').classList.add('active');[span_358](start_span)[span_358](end_span)[span_359](start_span)[span_359](end_span)
-                return false;[span_360](start_span)[span_360](end_span)[span_361](start_span)[span_361](end_span)
+        function checkAuth(e) {
+            let userStr = localStorage.getItem('tournyx_user');
+            if (!userStr || userStr === "undefined") {
+                if(e) e.preventDefault();
+                document.getElementById('authPopup').classList.add('active');
+                return false;
             }
-            return true;[span_362](start_span)[span_362](end_span)[span_363](start_span)[span_363](end_span)
+            try {
+                let user = JSON.parse(userStr);
+                if(!user || !user.email) throw new Error("No Email");
+                return true;
+            } catch(e) {
+                if(e) e.preventDefault();
+                document.getElementById('authPopup').classList.add('active');
+                return false;
+            }
         }
-        function closeAuthPopup() { document.getElementById('authPopup').classList.remove('active'); }[span_364](start_span)[span_364](end_span)[span_365](start_span)[span_365](end_span)
+        function closeAuthPopup() { document.getElementById('authPopup').classList.remove('active'); }
 
         // --- LAUNCH CELEBRATION (BETA BANNER) ---
-        function closeBetaBanner() {[span_366](start_span)[span_366](end_span)[span_367](start_span)[span_367](end_span)
-            document.getElementById('betaOverlay').classList.remove('active');[span_368](start_span)[span_368](end_span)[span_369](start_span)[span_369](end_span)
-            localStorage.setItem('tournyx_beta_seen', 'true');[span_370](start_span)[span_370](end_span)[span_371](start_span)[span_371](end_span)
+        function closeBetaBanner() {
+            document.getElementById('betaOverlay').classList.remove('active');
+            localStorage.setItem('tournyx_beta_seen', 'true');
         }
-        function createLaunchCelebration() {[span_372](start_span)[span_372](end_span)[span_373](start_span)[span_373](end_span)
-            if(localStorage.getItem('tournyx_beta_seen') === 'true') return;[span_374](start_span)[span_374](end_span)[span_375](start_span)[span_375](end_span)
-            document.getElementById('betaOverlay').classList.add('active');[span_376](start_span)[span_376](end_span)[span_377](start_span)[span_377](end_span)
-            if(!animPaused) {[span_378](start_span)[span_378](end_span)[span_379](start_span)[span_379](end_span)
-                const container = document.getElementById('launch-celebration');[span_380](start_span)[span_380](end_span)[span_381](start_span)[span_381](end_span)
-                for(let i=0; i<40; i++) {[span_382](start_span)[span_382](end_span)[span_383](start_span)[span_383](end_span)
-                    let spark = document.createElement('div');[span_384](start_span)[span_384](end_span)[span_385](start_span)[span_385](end_span)
-                    spark.classList.add('spark');[span_386](start_span)[span_386](end_span)[span_387](start_span)[span_387](end_span)
-                    spark.style.left = Math.random() * 100 + 'vw';[span_388](start_span)[span_388](end_span)[span_389](start_span)[span_389](end_span)
-                    spark.style.animationDelay = Math.random() * 2 + 's';[span_390](start_span)[span_390](end_span)[span_391](start_span)[span_391](end_span)
-                    spark.style.animationDuration = (Math.random() * 1.5 + 2) + 's';[span_392](start_span)[span_392](end_span)[span_393](start_span)[span_393](end_span)
-                    if(Math.random() > 0.5) spark.style.background = 'var(--accent-purple)';[span_394](start_span)[span_394](end_span)[span_395](start_span)[span_395](end_span)
-                    container.appendChild(spark);[span_396](start_span)[span_396](end_span)[span_397](start_span)[span_397](end_span)
+        
+        function createLaunchCelebration() {
+            if(localStorage.getItem('tournyx_beta_seen') === 'true') return;
+            const overlay = document.getElementById('betaOverlay');
+            if(overlay) overlay.classList.add('active');
+            if(!animPaused) {
+                const container = document.getElementById('launch-celebration');
+                if(!container) return;
+                for(let i=0; i<40; i++) {
+                    let spark = document.createElement('div');
+                    spark.classList.add('spark');
+                    spark.style.left = Math.random() * 100 + 'vw';
+                    spark.style.animationDelay = Math.random() * 2 + 's';
+                    spark.style.animationDuration = (Math.random() * 1.5 + 2) + 's';
+                    if(Math.random() > 0.5) spark.style.background = 'var(--accent-purple)';
+                    container.appendChild(spark);
                 }
-                setTimeout(() => { container.style.display = 'none'; }, 6000);[span_398](start_span)[span_398](end_span)[span_399](start_span)[span_399](end_span)
+                setTimeout(() => { container.style.display = 'none'; }, 6000);
             }
         }
 
-        // --- 2. STARTUP & LOADER ---
-        document.addEventListener('DOMContentLoaded', () => {[span_400](start_span)[span_400](end_span)[span_401](start_span)[span_401](end_span)
-            let user = JSON.parse(localStorage.getItem('tournyx_user'));[span_402](start_span)[span_402](end_span)[span_403](start_span)[span_403](end_span)
-            let isGuestMode = !user || !user.email;[span_404](start_span)[span_404](end_span)[span_405](start_span)[span_405](end_span)
-            createLaunchCelebration();[span_406](start_span)[span_406](end_span)[span_407](start_span)[span_407](end_span)
+        // --- 2. MASTER INITIALIZATION (FIX FOR WEBVIEW CRASH) ---
+        function initializeTournyxApp() {
+            let user = null;
+            let userStr = localStorage.getItem('tournyx_user');
             
-            if (user && !isGuestMode) {[span_408](start_span)[span_408](end_span)[span_409](start_span)[span_409](end_span)
-                let vipBadge = user.is_premium === true || String(user.is_premium).toLowerCase() === 'true' ? ' <i class="fa-solid fa-crown" style="color:#FFD700; font-size:0.9rem; margin-left:5px; filter:drop-shadow(0 0 5px #FFD700);"></i>' : '';[span_410](start_span)[span_410](end_span)[span_411](start_span)[span_411](end_span)
-                document.getElementById('welcomeText').innerText = (user.username || user.ign || "Player");[span_412](start_span)[span_412](end_span)[span_413](start_span)[span_413](end_span)
-                document.getElementById('menuUserName').innerHTML = (user.username || "Player") + vipBadge;[span_414](start_span)[span_414](end_span)[span_415](start_span)[span_415](end_span)
-                document.getElementById('menuUserImg').src = user.avatar || "https://via.placeholder.com/60";[span_416](start_span)[span_416](end_span)[span_417](start_span)[span_417](end_span)
-                fetchNextMatch(user);[span_418](start_span)[span_418](end_span)[span_419](start_span)[span_419](end_span)
-                syncLiveWalletPoints(user);[span_420](start_span)[span_420](end_span)[span_421](start_span)[span_421](end_span)
-                updateUIProgressionState(user);
+            // Safely parse JSON to avoid fatal SyntaxErrors aborting script execution
+            if (userStr && userStr !== "undefined") {
+                try {
+                    user = JSON.parse(userStr);
+                } catch(e) {
+                    console.error("Local storage error - cleared corrupted session data");
+                    localStorage.removeItem('tournyx_user');
+                }
+            }
+            
+            let isGuestMode = !user || !user.email;
+            
+            try { createLaunchCelebration(); } catch(e) {}
+            
+            if (user && !isGuestMode) {
+                let vipBadge = user.is_premium === true || String(user.is_premium).toLowerCase() === 'true' ? ' <i class="fa-solid fa-crown" style="color:#FFD700; font-size:0.9rem; margin-left:5px; filter:drop-shadow(0 0 5px #FFD700);"></i>' : '';
+                const wlcmTxt = document.getElementById('welcomeText');
+                if(wlcmTxt) wlcmTxt.innerText = (user.username || user.ign || "Player");
+                const mnuNm = document.getElementById('menuUserName');
+                if(mnuNm) mnuNm.innerHTML = (user.username || "Player") + vipBadge;
+                const mnuImg = document.getElementById('menuUserImg');
+                if(mnuImg) mnuImg.src = user.avatar || "https://via.placeholder.com/60";
+                
+                try { fetchNextMatch(user); } catch(e) {}
+                try { syncLiveWalletPoints(user); } catch(e) {}
+                try { updateUIProgressionState(user); } catch(e) {}
             } else {
-                document.getElementById('welcomeText').innerText = "Guest";[span_422](start_span)[span_422](end_span)[span_423](start_span)[span_423](end_span)
-                document.getElementById('menuUserName').innerText = "Guest Player";[span_424](start_span)[span_424](end_span)[span_425](start_span)[span_425](end_span)
-                document.getElementById('homeWalletBalance').innerText = "0";[span_426](start_span)[span_426](end_span)[span_427](start_span)[span_427](end_span)
-                document.getElementById('homePassBalance').innerText = "0";[span_428](start_span)[span_428](end_span)[span_429](start_span)[span_429](end_span)
+                const wlcmTxt = document.getElementById('welcomeText');
+                if(wlcmTxt) wlcmTxt.innerText = "Guest";
+                const mnuNm = document.getElementById('menuUserName');
+                if(mnuNm) mnuNm.innerText = "Guest Player";
+                const hwBal = document.getElementById('homeWalletBalance');
+                if(hwBal) hwBal.innerText = "0";
+                const hpBal = document.getElementById('homePassBalance');
+                if(hpBal) hpBal.innerText = "0";
             }
 
-            // TRIGGER ALL LIVE BACKEND CALLS
-            loadLiveBackendData();[span_430](start_span)[span_430](end_span)[span_431](start_span)[span_431](end_span)
-            
-            initScrollAnimations();[span_432](start_span)[span_432](end_span)[span_433](start_span)[span_433](end_span)
-            if(!animPaused) typeWriterEffect();[span_434](start_span)[span_434](end_span)[span_435](start_span)[span_435](end_span)
+            try { loadLiveBackendData(); } catch(e) {}
+            try { initScrollAnimations(); } catch(e) {}
+            if(!animPaused) { try { typeWriterEffect(); } catch(e) {} }
 
-            setTimeout(() => {[span_436](start_span)[span_436](end_span)[span_437](start_span)[span_437](end_span)
-                const loader = document.getElementById('tournyx-loader');[span_438](start_span)[span_438](end_span)[span_439](start_span)[span_439](end_span)
-                if (loader) { loader.style.opacity = '0'; setTimeout(() => { loader.style.display = 'none'; }, 300); }[span_440](start_span)[span_440](end_span)[span_441](start_span)[span_441](end_span)
-            }, 1500);[span_442](start_span)[span_442](end_span)[span_443](start_span)[span_443](end_span)
+            // GUARANTEED LOADER REMOVAL
+            setTimeout(() => {
+                const loader = document.getElementById('tournyx-loader');
+                if (loader) { 
+                    loader.style.opacity = '0'; 
+                    setTimeout(() => { loader.style.display = 'none'; }, 300); 
+                }
+            }, 1500); 
 
-            // Start background streaming logic cycles
             setInterval(streamLiveLobbyMessagesPool, 4000);
-        });
+        }
+
+        // Resolves the bug where `DOMContentLoaded` event is missed in some Native wrappers
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', initializeTournyxApp);
+        } else {
+            initializeTournyxApp();
+        }
 
         function updateUIProgressionState(user) {
             let totalMatches = parseInt(user.matches) || 0;
@@ -1372,183 +1357,204 @@
             let currentLevel = Math.floor(currentXp / 120) + 1;
             let remainingXp = currentXp % 120;
             let barPct = (remainingXp / 120) * 100;
-            document.getElementById('userTierLevel').innerText = "Level " + currentLevel;
-            document.getElementById('userXpText').innerText = remainingXp + " / 120 XP";
-            document.getElementById('userXpBar').style.width = barPct + "%";
+            const lvlEl = document.getElementById('userTierLevel');
+            if(lvlEl) lvlEl.innerText = "Level " + currentLevel;
+            const xpEl = document.getElementById('userXpText');
+            if(xpEl) xpEl.innerText = remainingXp + " / 120 XP";
+            const barEl = document.getElementById('userXpBar');
+            if(barEl) barEl.style.width = barPct + "%";
         }
 
         // --- MASTER BACKEND FETCH COORDINATOR (CLOUD SYNCED) ---
-        function loadLiveBackendData() {[span_444](start_span)[span_444](end_span)[span_445](start_span)[span_445](end_span)
+        function loadLiveBackendData() {
             // 1. Tournaments (Campaigns)
-            secureFetch({ action: 'get_tournaments' })[span_446](start_span)[span_446](end_span)[span_447](start_span)[span_447](end_span)
-            .then(data => {[span_448](start_span)[span_448](end_span)[span_449](start_span)[span_449](end_span)
-                if (data.status === "success") {[span_450](start_span)[span_450](end_span)[span_451](start_span)[span_451](end_span)
-                    renderFeaturedTournaments(data.data);[span_452](start_span)[span_452](end_span)[span_453](start_span)[span_453](end_span)
-                    loadLiveTournamentsSlider(data.data);[span_454](start_span)[span_454](end_span)[span_455](start_span)[span_455](end_span)
+            secureFetch({ action: 'get_tournaments' })
+            .then(data => {
+                if (data.status === "success" && data.data) {
+                    renderFeaturedTournaments(data.data);
+                    loadLiveTournamentsSlider(data.data);
                 }
-            }).catch(err => console.log("Failed to load tournaments"));[span_456](start_span)[span_456](end_span)[span_457](start_span)[span_457](end_span)
+            }).catch(err => console.log("Failed to load tournaments"));
 
             // 2. Flash Drops
-            fetch(API_URL + "?action=get_drops")[span_458](start_span)[span_458](end_span)[span_459](start_span)[span_459](end_span)
-            .then(res => res.json())[span_460](start_span)[span_460](end_span)[span_461](start_span)[span_461](end_span)
-            .then(data => {[span_462](start_span)[span_462](end_span)[span_463](start_span)[span_463](end_span)
-                if (data.status === "success" && data.data) { renderFlashDrops(data.data); }[span_464](start_span)[span_464](end_span)[span_465](start_span)[span_465](end_span)
-            }).catch(err => console.log("Failed to load drops"));[span_466](start_span)[span_466](end_span)[span_467](start_span)[span_467](end_span)
+            fetch(API_URL + "?action=get_drops")
+            .then(res => res.json())
+            .then(data => {
+                if (data.status === "success" && data.data) { renderFlashDrops(data.data); }
+            }).catch(err => console.log("Failed to load drops"));
 
             // 3. Trending Clips
-            fetch(API_URL + "?action=get_clips")[span_468](start_span)[span_468](end_span)[span_469](start_span)[span_469](end_span)
-            .then(res => res.json())[span_470](start_span)[span_470](end_span)[span_471](start_span)[span_471](end_span)
-            .then(data => {[span_472](start_span)[span_472](end_span)[span_473](start_span)[span_473](end_span)
-                if (data.status === "success" && data.data) { renderTrendingClips(data.data); }[span_474](start_span)[span_474](end_span)[span_475](start_span)[span_475](end_span)
-            }).catch(err => console.log("Failed to load clips"));[span_476](start_span)[span_476](end_span)[span_477](start_span)[span_477](end_span)
+            fetch(API_URL + "?action=get_clips")
+            .then(res => res.json())
+            .then(data => {
+                if (data.status === "success" && data.data) { renderTrendingClips(data.data); }
+            }).catch(err => console.log("Failed to load clips"));
 
             // 4. Pro Matches
-            fetch(API_URL + "?action=get_pro_matches")[span_478](start_span)[span_478](end_span)[span_479](start_span)[span_479](end_span)
-            .then(res => res.json())[span_480](start_span)[span_480](end_span)[span_481](start_span)[span_481](end_span)
-            .then(data => {[span_482](start_span)[span_482](end_span)[span_483](start_span)[span_483](end_span)
-                if (data.status === "success" && data.data) { renderProMatches(data.data); }[span_484](start_span)[span_484](end_span)[span_485](start_span)[span_485](end_span)
-            }).catch(err => console.log("Failed to load pro matches"));[span_486](start_span)[span_486](end_span)[span_487](start_span)[span_487](end_span)
+            fetch(API_URL + "?action=get_pro_matches")
+            .then(res => res.json())
+            .then(data => {
+                if (data.status === "success" && data.data) { renderProMatches(data.data); }
+            }).catch(err => console.log("Failed to load pro matches"));
 
             // 5. Scouting Data
-            fetch(API_URL + "?action=get_scouting")[span_488](start_span)[span_488](end_span)[span_489](start_span)[span_489](end_span)
-            .then(res => res.json())[span_490](start_span)[span_490](end_span)[span_491](start_span)[span_491](end_span)
-            .then(data => {[span_492](start_span)[span_492](end_span)[span_493](start_span)[span_493](end_span)
-                if (data.status === "success" && data.data) { renderScouting(data.data); }[span_494](start_span)[span_494](end_span)[span_495](start_span)[span_495](end_span)
-            }).catch(err => console.log("Failed to load scouting"));[span_496](start_span)[span_496](end_span)[span_497](start_span)[span_497](end_span)
+            fetch(API_URL + "?action=get_scouting")
+            .then(res => res.json())
+            .then(data => {
+                if (data.status === "success" && data.data) { renderScouting(data.data); }
+            }).catch(err => console.log("Failed to load scouting"));
 
             // 6. Quests & Leaderboard
-            loadQuestsFromSheets();[span_498](start_span)[span_498](end_span)[span_499](start_span)[span_499](end_span)
-            loadLeaderboard();[span_500](start_span)[span_500](end_span)[span_501](start_span)[span_501](end_span)
+            loadQuestsFromSheets(); 
+            loadLeaderboard(); 
         }
 
-        function showToast(msg, isError = false) {[span_502](start_span)[span_502](end_span)[span_503](start_span)[span_503](end_span)
-            var x = document.getElementById("customToast");[span_504](start_span)[span_504](end_span)[span_505](start_span)[span_505](end_span)
-            x.innerText = msg;[span_506](start_span)[span_506](end_span)[span_507](start_span)[span_507](end_span)
-            x.style.backgroundColor = isError ? "#ff4d4d" : "rgba(0,242,255,0.9)";[span_508](start_span)[span_508](end_span)[span_509](start_span)[span_509](end_span)
-            x.style.color = isError ? "white" : "#000";[span_510](start_span)[span_510](end_span)[span_511](start_span)[span_511](end_span)
-            x.className = "show";[span_512](start_span)[span_512](end_span)[span_513](start_span)[span_513](end_span)
-            setTimeout(function(){ x.className = x.className.replace("show", ""); }, 3000);[span_514](start_span)[span_514](end_span)[span_515](start_span)[span_515](end_span)
+        function showToast(msg, isError = false) {
+            var x = document.getElementById("customToast");
+            if(!x) return;
+            x.innerText = msg;
+            x.style.backgroundColor = isError ? "#ff4d4d" : "rgba(0,242,255,0.9)";
+            x.style.color = isError ? "white" : "#000";
+            x.className = "show";
+            setTimeout(function(){ x.className = x.className.replace("show", ""); }, 3000);
         }
 
         // --- 3. ANIMATIONS & EFFECTS ---
-        const words = ["Compete globally.", "Organize seamlessly.", "Earn real rewards securely.", "Join the revolution."];[span_516](start_span)[span_516](end_span)[span_517](start_span)[span_517](end_span)
-        let i = 0; let timer;[span_518](start_span)[span_518](end_span)[span_519](start_span)[span_519](end_span)
-        function typeWriterEffect() {[span_520](start_span)[span_520](end_span)[span_521](start_span)[span_521](end_span)
-            let el = document.getElementById("typingText");[span_522](start_span)[span_522](end_span)[span_523](start_span)[span_523](end_span)
-            let word = words[i].split("");[span_524](start_span)[span_524](end_span)[span_525](start_span)[span_525](end_span)
-            var loopTyping = function() {[span_526](start_span)[span_526](end_span)[span_527](start_span)[span_527](end_span)
-                if (word.length > 0) { el.innerHTML += word.shift(); }[span_528](start_span)[span_528](end_span)[span_529](start_span)[span_529](end_span)
-                else { setTimeout(() => { el.innerHTML = ""; i = (i + 1) % words.length; typeWriterEffect(); }, 2000); return; }[span_530](start_span)[span_530](end_span)[span_531](start_span)[span_531](end_span)
-                timer = setTimeout(loopTyping, 50);[span_532](start_span)[span_532](end_span)[span_533](start_span)[span_533](end_span)
-            };[span_534](start_span)[span_534](end_span)[span_535](start_span)[span_535](end_span)
-            loopTyping();[span_536](start_span)[span_536](end_span)[span_537](start_span)[span_537](end_span)
+        const words = ["Compete globally.", "Organize seamlessly.", "Earn real rewards securely.", "Join the revolution."];
+        let i = 0; let timer;
+        function typeWriterEffect() {
+            let el = document.getElementById("typingText");
+            if(!el) return;
+            let word = words[i].split("");
+            var loopTyping = function() {
+                if (word.length > 0) { el.innerHTML += word.shift(); } 
+                else { setTimeout(() => { el.innerHTML = ""; i = (i + 1) % words.length; typeWriterEffect(); }, 2000); return; }
+                timer = setTimeout(loopTyping, 50);
+            };
+            loopTyping();
         }
 
-        function triggerConfetti(btnEl) {[span_538](start_span)[span_538](end_span)[span_539](start_span)[span_539](end_span)
-            if(animPaused) return;[span_540](start_span)[span_540](end_span)[span_541](start_span)[span_541](end_span)
-            for(let i=0; i<30; i++) {[span_542](start_span)[span_542](end_span)[span_543](start_span)[span_543](end_span)
-                let conf = document.createElement('div');[span_544](start_span)[span_544](end_span)[span_545](start_span)[span_545](end_span)
-                conf.classList.add('confetti-piece');[span_546](start_span)[span_546](end_span)[span_547](start_span)[span_547](end_span)
-                conf.style.left = (btnEl.getBoundingClientRect().left + Math.random()*100) + 'px';[span_548](start_span)[span_548](end_span)[span_549](start_span)[span_549](end_span)
-                conf.style.top = btnEl.getBoundingClientRect().top + 'px';[span_550](start_span)[span_550](end_span)[span_551](start_span)[span_551](end_span)
-                conf.style.backgroundColor = Math.random() > 0.5 ? 'var(--accent-cyan)' : 'var(--accent-purple)';[span_552](start_span)[span_552](end_span)[span_553](start_span)[span_553](end_span)
-                conf.style.animation = `popConfetti ${Math.random()*0.5 + 0.5}s ease-out forwards`;[span_554](start_span)[span_554](end_span)[span_555](start_span)[span_555](end_span)
-                document.body.appendChild(conf);[span_556](start_span)[span_556](end_span)[span_557](start_span)[span_557](end_span)
-                setTimeout(()=>conf.remove(), 1000);[span_558](start_span)[span_558](end_span)[span_559](start_span)[span_559](end_span)
+        function triggerConfetti(btnEl) {
+            if(animPaused) return;
+            for(let i=0; i<30; i++) {
+                let conf = document.createElement('div');
+                conf.classList.add('confetti-piece');
+                conf.style.left = (btnEl.getBoundingClientRect().left + Math.random()*100) + 'px';
+                conf.style.top = btnEl.getBoundingClientRect().top + 'px';
+                conf.style.backgroundColor = Math.random() > 0.5 ? 'var(--accent-cyan)' : 'var(--accent-purple)';
+                conf.style.animation = `popConfetti ${Math.random()*0.5 + 0.5}s ease-out forwards`;
+                document.body.appendChild(conf);
+                setTimeout(()=>conf.remove(), 1000);
             }
         }
 
-        function initScrollAnimations() {[span_560](start_span)[span_560](end_span)[span_561](start_span)[span_561](end_span)
-            const observer = new IntersectionObserver((entries) => {[span_562](start_span)[span_562](end_span)[span_563](start_span)[span_563](end_span)
-                entries.forEach(entry => {[span_564](start_span)[span_564](end_span)[span_565](start_span)[span_565](end_span)
-                    if (entry.isIntersecting) {[span_566](start_span)[span_566](end_span)[span_567](start_span)[span_567](end_span)
-                        entry.target.classList.add('visible');[span_568](start_span)[span_568](end_span)[span_569](start_span)[span_569](end_span)
-                        if(entry.target.classList.contains('stats-area')) {[span_570](start_span)[span_570](end_span)[span_571](start_span)[span_571](end_span)
-                            document.querySelectorAll('.count-up').forEach(counter => {[span_572](start_span)[span_572](end_span)[span_573](start_span)[span_573](end_span)
-                                let target = +counter.getAttribute('data-target');[span_574](start_span)[span_574](end_span)[span_575](start_span)[span_575](end_span)
-                                if (animPaused) { counter.innerText = target; } else {[span_576](start_span)[span_576](end_span)[span_577](start_span)[span_577](end_span)
-                                    let count = 0; let speed = target / 30;[span_578](start_span)[span_578](end_span)[span_579](start_span)[span_579](end_span)
-                                    let int = setInterval(() => {[span_580](start_span)[span_580](end_span)[span_581](start_span)[span_581](end_span)
-                                        count += speed;[span_582](start_span)[span_582](end_span)[span_583](start_span)[span_583](end_span)
-                                        if(count >= target) { counter.innerText = target; clearInterval(int); }[span_584](start_span)[span_584](end_span)[span_585](start_span)[span_585](end_span)
-                                        else { counter.innerText = Math.floor(count); }[span_586](start_span)[span_586](end_span)[span_587](start_span)[span_587](end_span)
-                                    }, 30);[span_588](start_span)[span_588](end_span)[span_589](start_span)[span_589](end_span)
-                                }[span_590](start_span)[span_590](end_span)[span_591](start_span)[span_591](end_span)
-                                counter.classList.remove('count-up');[span_592](start_span)[span_592](end_span)[span_593](start_span)[span_593](end_span)
-                            });[span_594](start_span)[span_594](end_span)[span_595](start_span)[span_595](end_span)
-                        }[span_596](start_span)[span_596](end_span)[span_597](start_span)[span_597](end_span)
-                    }[span_598](start_span)[span_598](end_span)[span_599](start_span)[span_599](end_span)
-                });[span_600](start_span)[span_600](end_span)[span_601](start_span)[span_601](end_span)
-            }, { threshold: 0.1 });[span_602](start_span)[span_602](end_span)[span_603](start_span)[span_603](end_span)
-            document.querySelectorAll('.fade-up').forEach((el) => { observer.observe(el); });[span_604](start_span)[span_604](end_span)[span_605](start_span)[span_605](end_span)
+        function initScrollAnimations() {
+            if(!window.IntersectionObserver) {
+                document.querySelectorAll('.fade-up').forEach(el => el.classList.add('visible'));
+                return;
+            }
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('visible');
+                        if(entry.target.classList.contains('stats-area')) {
+                            document.querySelectorAll('.count-up').forEach(counter => {
+                                let target = +counter.getAttribute('data-target');
+                                if (animPaused) { counter.innerText = target; } else {
+                                    let count = 0; let speed = target / 30;
+                                    let int = setInterval(() => {
+                                        count += speed;
+                                        if(count >= target) { counter.innerText = target; clearInterval(int); }
+                                        else { counter.innerText = Math.floor(count); }
+                                    }, 30);
+                                }
+                                counter.classList.remove('count-up'); 
+                            });
+                        }
+                    }
+                });
+            }, { threshold: 0.1 });
+            document.querySelectorAll('.fade-up').forEach((el) => { observer.observe(el); });
         }
 
         // --- 4. DATA FORMATTERS ---
-        function formatDateTime(dateStr) {[span_606](start_span)[span_606](end_span)[span_607](start_span)[span_607](end_span)
-            if (!dateStr || dateStr === "TBD") return "TBA";[span_608](start_span)[span_608](end_span)[span_609](start_span)[span_609](end_span)
+        function formatDateTime(dateStr) {
+            if (!dateStr || dateStr === "TBD") return "TBA";
             try {
-                const d = new Date(dateStr);[span_610](start_span)[span_610](end_span)[span_611](start_span)[span_611](end_span)
-                if (isNaN(d.getTime())) return dateStr;[span_612](start_span)[span_612](end_span)[span_613](start_span)[span_613](end_span)
-                return d.toLocaleString('en-US', { month: 'short', day: '2-digit', year: 'numeric', hour: 'numeric', minute: '2-digit', hour12: true });[span_614](start_span)[span_614](end_span)[span_615](start_span)[span_615](end_span)
-            } catch(e) { return dateStr; }[span_616](start_span)[span_616](end_span)[span_617](start_span)[span_617](end_span)
+                const d = new Date(dateStr);
+                if (isNaN(d.getTime())) return dateStr; 
+                return d.toLocaleString('en-US', { month: 'short', day: '2-digit', year: 'numeric', hour: 'numeric', minute: '2-digit', hour12: true });
+            } catch(e) { return dateStr; }
         }
 
-        function formatImageUrl(url) {[span_618](start_span)[span_618](end_span)[span_619](start_span)[span_619](end_span)
-            if (!url) return 'https://via.placeholder.com/600x300/15062e/00f2ff?text=Tournament+Banner';[span_620](start_span)[span_620](end_span)[span_621](start_span)[span_621](end_span)
-            if (url.startsWith('data:image')) return url;[span_622](start_span)[span_622](end_span)[span_623](start_span)[span_623](end_span)
-            if (url.includes('drive.google.com/file/d/')) {[span_624](start_span)[span_624](end_span)[span_625](start_span)[span_625](end_span)
-                let id = url.split('/d/')[1].split('/')[0];[span_626](start_span)[span_626](end_span)[span_627](start_span)[span_627](end_span)
-                return `https://drive.google.com/uc?export=view&id=${id}`;[span_628](start_span)[span_628](end_span)[span_629](start_span)[span_629](end_span)
+        function formatImageUrl(url) {
+            if (!url) return 'https://via.placeholder.com/600x300/15062e/00f2ff?text=Tournament+Banner';
+            if (url.startsWith('data:image')) return url;
+            if (url.includes('drive.google.com/file/d/')) {
+                let parts = url.split('/d/');
+                if(parts.length > 1) {
+                    let id = parts[1].split('/')[0];
+                    return `https://drive.google.com/uc?export=view&id=${id}`;
+                }
             }
-            return url;[span_630](start_span)[span_630](end_span)[span_631](start_span)[span_631](end_span)
+            return url;
         }
 
-        function calculateTimeRemaining(dateStr) {[span_632](start_span)[span_632](end_span)[span_633](start_span)[span_633](end_span)
-            if (!dateStr || dateStr === "TBD") return { text: "TBD", isClosed: false };[span_634](start_span)[span_634](end_span)[span_635](start_span)[span_635](end_span)
-            let d = new Date(dateStr);[span_636](start_span)[span_636](end_span)[span_637](start_span)[span_637](end_span)
-            if (isNaN(d.getTime())) return { text: dateStr, isClosed: false };[span_638](start_span)[span_638](end_span)[span_639](start_span)[span_639](end_span)
-            let diff = d - new Date();[span_640](start_span)[span_640](end_span)[span_641](start_span)[span_641](end_span)
-            if (diff < 0) return { text: "Closed", isClosed: true };[span_642](start_span)[span_642](end_span)[span_643](start_span)[span_643](end_span)
-            let hours = Math.floor(diff / (1000 * 60 * 60));[span_644](start_span)[span_644](end_span)[span_645](start_span)[span_645](end_span)
-            if (hours < 24) return { text: `Ends in ${hours}h`, isClosed: false };[span_646](start_span)[span_646](end_span)[span_647](start_span)[span_647](end_span)
-            let days = Math.floor(hours / 24);[span_648](start_span)[span_648](end_span)[span_649](start_span)[span_649](end_span)
-            return { text: `Ends in ${days}d`, isClosed: false };[span_650](start_span)[span_650](end_span)[span_651](start_span)[span_651](end_span)
+        function calculateTimeRemaining(dateStr) {
+            if (!dateStr || dateStr === "TBD") return { text: "TBD", isClosed: false };
+            let d = new Date(dateStr);
+            if (isNaN(d.getTime())) return { text: dateStr, isClosed: false };
+            let diff = d - new Date();
+            if (diff < 0) return { text: "Closed", isClosed: true };
+            let hours = Math.floor(diff / (1000 * 60 * 60));
+            if (hours < 24) return { text: `Ends in ${hours}h`, isClosed: false };
+            let days = Math.floor(hours / 24);
+            return { text: `Ends in ${days}d`, isClosed: false };
         }
 
-        async function fetchNextMatch(user) {[span_652](start_span)[span_652](end_span)[span_653](start_span)[span_653](end_span)
+        async function fetchNextMatch(user) {
             try {
-                const [tRes, mRes] = await Promise.all([[span_654](start_span)[span_654](end_span)[span_655](start_span)[span_655](end_span)
-                    secureFetch({ action: 'get_tournaments' }),[span_656](start_span)[span_656](end_span)[span_657](start_span)[span_657](end_span)
-                    secureFetch({ action: 'get_matches', email: user.email })[span_658](start_span)[span_658](end_span)[span_659](start_span)[span_659](end_span)
+                const [tRes, mRes] = await Promise.all([
+                    secureFetch({ action: 'get_tournaments' }),
+                    secureFetch({ action: 'get_matches', email: user.email })
                 ]);
-                let allTourneys = tRes.data || [];[span_660](start_span)[span_660](end_span)[span_661](start_span)[span_661](end_span)
-                let myMatches = mRes.data || [];[span_662](start_span)[span_662](end_span)[span_663](start_span)[span_663](end_span)
-                let activeMatches = [];[span_664](start_span)[span_664](end_span)[span_665](start_span)[span_665](end_span)
-                myMatches.forEach(entry => {[span_666](start_span)[span_666](end_span)[span_667](start_span)[span_667](end_span)
-                    let t = allTourneys.find(x => x.id === entry.match_id || x.title === entry.tournament_title);[span_668](start_span)[span_668](end_span)[span_669](start_span)[span_669](end_span)
-                    if(t && t.status && !t.status.toLowerCase().includes('completed')) { activeMatches.push(t); }[span_670](start_span)[span_670](end_span)[span_671](start_span)[span_671](end_span)
+                let allTourneys = tRes.data || [];
+                let myMatches = mRes.data || [];
+                let activeMatches = [];
+                
+                myMatches.forEach(entry => {
+                    let t = allTourneys.find(x => x.id === entry.match_id || x.title === entry.tournament_title);
+                    if(t && t.status && !t.status.toLowerCase().includes('completed')) { activeMatches.push(t); }
                 });
 
-                const widget = document.getElementById('nextMatchWidget');[span_672](start_span)[span_672](end_span)[span_673](start_span)[span_673](end_span)
-                if(activeMatches.length > 0) {[span_674](start_span)[span_674](end_span)[span_675](start_span)[span_675](end_span)
-                    let next = activeMatches[0];[span_676](start_span)[span_676](end_span)[span_677](start_span)[span_677](end_span)
-                    document.getElementById('nmTitle').innerText = next.title;[span_678](start_span)[span_678](end_span)[span_679](start_span)[span_679](end_span)
-                    let sColor = next.status.toLowerCase().includes('live') ? 'var(--accent-green)' : 'var(--accent-cyan)';[span_680](start_span)[span_680](end_span)[span_681](start_span)[span_681](end_span)
-                    let rawDate = next.match_period || next.date;[span_682](start_span)[span_682](end_span)[span_683](start_span)[span_683](end_span)
-                    let displayDate = rawDate;[span_684](start_span)[span_684](end_span)[span_685](start_span)[span_685](end_span)
-                    if (rawDate) { let fDate = formatDateTime(rawDate); if (fDate !== "TBA" && fDate !== "TBD" && fDate !== rawDate) { displayDate = fDate; } }[span_686](start_span)[span_686](end_span)[span_687](start_span)[span_687](end_span)
-                    document.getElementById('nmDate').innerHTML = `<span style="color:${sColor}; font-weight:bold; font-family:var(--font-head);"><i class="fa-solid fa-satellite-dish fa-fade"></i> ${next.status.toUpperCase()}</span> • ${displayDate}`;[span_688](start_span)[span_688](end_span)[span_689](start_span)[span_689](end_span)
-                    widget.style.display = 'block';[span_690](start_span)[span_690](end_span)[span_691](start_span)[span_691](end_span)
-                } else { widget.style.display = 'none'; }[span_692](start_span)[span_692](end_span)[span_693](start_span)[span_693](end_span)
-            } catch(e) {}
+                const widget = document.getElementById('nextMatchWidget');
+                if(!widget) return;
+                
+                if(activeMatches.length > 0) {
+                    let next = activeMatches[0]; 
+                    document.getElementById('nmTitle').innerText = next.title;
+                    let sColor = next.status?.toLowerCase().includes('live') ? 'var(--accent-green)' : 'var(--accent-cyan)';
+                    let rawDate = next.match_period || next.date;
+                    let displayDate = rawDate;
+                    if (rawDate) { let fDate = formatDateTime(rawDate); if (fDate !== "TBA" && fDate !== "TBD" && fDate !== rawDate) { displayDate = fDate; } }
+                    document.getElementById('nmDate').innerHTML = `<span style="color:${sColor}; font-weight:bold; font-family:var(--font-head);"><i class="fa-solid fa-satellite-dish fa-fade"></i> ${next.status?.toUpperCase() || 'UPCOMING'}</span> • ${displayDate}`;
+                    widget.style.display = 'block';
+                } else { 
+                    widget.style.display = 'none'; 
+                }
+            } catch(e) {
+                console.log("Fetch next match aborted.");
+            }
         }
 
         // --- 5. LIVE RENDERERS ---
-        function renderFeaturedTournaments(featuredArray) {[span_694](start_span)[span_694](end_span)[span_695](start_span)[span_695](end_span)
-            const slider = document.getElementById('featuredSlider');[span_696](start_span)[span_696](end_span)[span_697](start_span)[span_697](end_span)
-            slider.innerHTML = "";[span_698](start_span)[span_698](end_span)[span_699](start_span)[span_699](end_span)
+        function renderFeaturedTournaments(featuredArray) {
+            const slider = document.getElementById('featuredSlider');
+            if(!slider) return;
+            slider.innerHTML = "";
             
-            if(!featuredArray || featuredArray.length === 0) {[span_700](start_span)[span_700](end_span)[span_701](start_span)[span_701](end_span)
+            let safeArray = featuredArray.filter(t => t);
+            if(!safeArray || safeArray.length === 0) {
                 slider.innerHTML = `
                     <div class="tourney-card glass-panel">
                         <div class="t-img-box" onclick="window.location.href='explore.html'" style="cursor:pointer;">
@@ -1562,22 +1568,22 @@
                             <button class="t-btn" onclick="window.location.href='explore.html'">View Details</button>
                         </div>
                     </div>
-                `;[span_702](start_span)[span_702](end_span)[span_703](start_span)[span_703](end_span)
-                return;[span_704](start_span)[span_704](end_span)[span_705](start_span)[span_705](end_span)
+                `;
+                return;
             }
 
-            featuredArray.slice(0, 6).forEach(t => {[span_706](start_span)[span_706](end_span)[span_707](start_span)[span_707](end_span)
-                const bg = formatImageUrl(t.banner);[span_708](start_span)[span_708](end_span)[span_709](start_span)[span_709](end_span)
-                const prize = (!t.prize || t.prize == 0) ? "Glory" : "₹" + t.prize;[span_710](start_span)[span_710](end_span)[span_711](start_span)[span_711](end_span)
-                let rFee = parseInt(t.fee) || 0;[span_712](start_span)[span_712](end_span)[span_713](start_span)[span_713](end_span)
-                let passCount = Math.ceil(rFee / 10);[span_714](start_span)[span_714](end_span)[span_715](start_span)[span_715](end_span)
-                const feeText = passCount > 0 ? `${passCount} <span class="tx-icon" style="font-size:0.9em;">TX</span>` : "Free Entry";[span_716](start_span)[span_716](end_span)[span_717](start_span)[span_717](end_span)
-                const totalSlots = parseInt(t.slots) || 48;[span_718](start_span)[span_718](end_span)[span_719](start_span)[span_719](end_span)
-                const slotsFilled = parseInt(t.filled_slots) || 0;[span_720](start_span)[span_720](end_span)[span_721](start_span)[span_721](end_span)
-                let fillPct = (slotsFilled / totalSlots) * 100;[span_722](start_span)[span_722](end_span)[span_723](start_span)[span_723](end_span)
-                let timeData = calculateTimeRemaining(t.date);[span_724](start_span)[span_724](end_span)[span_725](start_span)[span_725](end_span)
-                let formatDT = formatDateTime(t.date);[span_726](start_span)[span_726](end_span)[span_727](start_span)[span_727](end_span)
-                let btnState = `onclick="window.location.href='explore.html?tournament=${t.id || t.title}'"`;[span_728](start_span)[span_728](end_span)[span_729](start_span)[span_729](end_span)
+            safeArray.slice(0, 6).forEach(t => {
+                const bg = formatImageUrl(t.banner);
+                const prize = (!t.prize || t.prize == 0) ? "Glory" : "₹" + t.prize;
+                let rFee = parseInt(t.fee) || 0;
+                let passCount = Math.ceil(rFee / 10);
+                const feeText = passCount > 0 ? `${passCount} <span class="tx-icon" style="font-size:0.9em;">TX</span>` : "Free Entry";
+                const totalSlots = parseInt(t.slots) || 48;
+                const slotsFilled = parseInt(t.filled_slots) || 0; 
+                let fillPct = (slotsFilled / totalSlots) * 100;
+                let timeData = calculateTimeRemaining(t.date);
+                let formatDT = formatDateTime(t.date);
+                let btnState = `onclick="window.location.href='explore.html?tournament=${t.id || t.title}'"`;
                 
                 slider.innerHTML += `
                     <div class="tourney-card glass-panel">
@@ -1600,19 +1606,21 @@
                             <button class="t-btn" ${btnState}>View Details</button>
                         </div>
                     </div>
-                `;[span_730](start_span)[span_730](end_span)[span_731](start_span)[span_731](end_span)
+                `;
             });
         }
 
-        function loadLiveTournamentsSlider(allData) {[span_732](start_span)[span_732](end_span)[span_733](start_span)[span_733](end_span)
-            let liveData = allData.filter(t => t.status && t.status.toLowerCase().includes('live'));[span_734](start_span)[span_734](end_span)[span_735](start_span)[span_735](end_span)
-            const container = document.getElementById('liveSectionContainer');[span_736](start_span)[span_736](end_span)[span_737](start_span)[span_737](end_span)
-            const slider = document.getElementById('liveTourneySlider');[span_738](start_span)[span_738](end_span)[span_739](start_span)[span_739](end_span)
-            if(liveData.length > 0) {[span_740](start_span)[span_740](end_span)[span_741](start_span)[span_741](end_span)
-                slider.innerHTML = "";[span_742](start_span)[span_742](end_span)[span_743](start_span)[span_743](end_span)
-                liveData.slice(0, 5).forEach(t => {[span_744](start_span)[span_744](end_span)[span_745](start_span)[span_745](end_span)
-                    let bg = formatImageUrl(t.banner);[span_746](start_span)[span_746](end_span)[span_747](start_span)[span_747](end_span)
-                    let prize = (!t.prize || t.prize == 0) ? "Glory" : "₹" + t.prize;[span_748](start_span)[span_748](end_span)[span_749](start_span)[span_749](end_span)
+        function loadLiveTournamentsSlider(allData) {
+            let liveData = allData.filter(t => t && t.status && t.status.toLowerCase().includes('live'));
+            const container = document.getElementById('liveSectionContainer');
+            const slider = document.getElementById('liveTourneySlider');
+            if(!container || !slider) return;
+
+            if(liveData.length > 0) {
+                slider.innerHTML = "";
+                liveData.slice(0, 5).forEach(t => {
+                    let bg = formatImageUrl(t.banner);
+                    let prize = (!t.prize || t.prize == 0) ? "Glory" : "₹" + t.prize;
                     slider.innerHTML += `
                         <a href="explore.html?tournament=${t.id || t.title}" class="live-card glass-panel">
                             <img src="${bg}" class="live-img">
@@ -1623,17 +1631,18 @@
                             </div>
                             <i class="fa-solid fa-chevron-right" style="color:var(--accent-green); opacity:0.7;"></i>
                         </a>
-                    `;[span_750](start_span)[span_750](end_span)[span_751](start_span)[span_751](end_span)
+                    `;
                 });
-                container.style.display = 'block';[span_752](start_span)[span_752](end_span)[span_753](start_span)[span_753](end_span)
-            } else { container.style.display = 'none'; }[span_754](start_span)[span_754](end_span)[span_755](start_span)[span_755](end_span)
+                container.style.display = 'block';
+            } else { container.style.display = 'none'; }
         }
 
-        function renderTrendingClips(data) {[span_756](start_span)[span_756](end_span)[span_757](start_span)[span_757](end_span)
-            const container = document.getElementById('trendingClipsContainer');[span_758](start_span)[span_758](end_span)[span_759](start_span)[span_759](end_span)
-            container.innerHTML = "";[span_760](start_span)[span_760](end_span)[span_761](start_span)[span_761](end_span)
-            data.forEach(clip => {[span_762](start_span)[span_762](end_span)[span_763](start_span)[span_763](end_span)
-                let iconClass = clip.type.toLowerCase() === 'instagram' ? 'fa-brands fa-instagram instagram' : 'fa-brands fa-youtube';[span_764](start_span)[span_764](end_span)[span_765](start_span)[span_765](end_span)
+        function renderTrendingClips(data) {
+            const container = document.getElementById('trendingClipsContainer');
+            if(!container) return;
+            container.innerHTML = "";
+            data.filter(c => c).forEach(clip => {
+                let iconClass = clip.type?.toLowerCase() === 'instagram' ? 'fa-brands fa-instagram instagram' : 'fa-brands fa-youtube';
                 container.innerHTML += `
                     <a href="${clip.url}" target="_blank" class="video-card">
                         <div class="vid-thumb">
@@ -1649,16 +1658,17 @@
                             </div>
                         </div>
                     </a>
-                `;[span_766](start_span)[span_766](end_span)[span_767](start_span)[span_767](end_span)
+                `;
             });
         }
 
-        function renderProMatches(data) {[span_768](start_span)[span_768](end_span)[span_769](start_span)[span_769](end_span)
-            const container = document.getElementById('proMatchesContainer');[span_770](start_span)[span_770](end_span)[span_771](start_span)[span_771](end_span)
-            container.innerHTML = "";[span_772](start_span)[span_772](end_span)[span_773](start_span)[span_773](end_span)
-            data.forEach(match => {[span_774](start_span)[span_774](end_span)[span_775](start_span)[span_775](end_span)
-                let isLive = match.status.toLowerCase() === 'live';[span_776](start_span)[span_776](end_span)[span_777](start_span)[span_777](end_span)
-                let statusBadge = isLive ? `<span class="live-badge">LIVE</span>` : `<span style="color:var(--accent-orange);">${match.status}</span>`;[span_778](start_span)[span_778](end_span)[span_779](start_span)[span_779](end_span)
+        function renderProMatches(data) {
+            const container = document.getElementById('proMatchesContainer');
+            if(!container) return;
+            container.innerHTML = "";
+            data.filter(m => m).forEach(match => {
+                let isLive = match.status?.toLowerCase() === 'live';
+                let statusBadge = isLive ? `<span class="live-badge">LIVE</span>` : `<span style="color:var(--accent-orange);">${match.status}</span>`;
                 container.innerHTML += `
                     <div class="score-card">
                         <div class="score-vs-bg">VS</div>
@@ -1678,15 +1688,16 @@
                             </div>
                         </div>
                     </div>
-                `;[span_780](start_span)[span_780](end_span)[span_781](start_span)[span_781](end_span)
+                `;
             });
         }
 
-        function renderScouting(data) {[span_782](start_span)[span_782](end_span)[span_783](start_span)[span_783](end_span)
-            const container = document.getElementById('scoutingContainer');[span_784](start_span)[span_784](end_span)[span_785](start_span)[span_785](end_span)
-            container.innerHTML = "";[span_786](start_span)[span_786](end_span)[span_787](start_span)[span_787](end_span)
-            data.forEach(player => {[span_788](start_span)[span_788](end_span)[span_789](start_span)[span_789](end_span)
-                let verifiedIcon = player.verified ? `<i class="fa-solid fa-circle-check" style="color:var(--accent-cyan); font-size:0.8rem;"></i>` : ``;[span_790](start_span)[span_790](end_span)[span_791](start_span)[span_791](end_span)
+        function renderScouting(data) {
+            const container = document.getElementById('scoutingContainer');
+            if(!container) return;
+            container.innerHTML = "";
+            data.filter(p => p).forEach(player => {
+                let verifiedIcon = player.verified ? `<i class="fa-solid fa-circle-check" style="color:var(--accent-cyan); font-size:0.8rem;"></i>` : ``;
                 container.innerHTML += `
                     <div class="scout-card">
                         <img src="${player.avatar}" class="scout-avatar">
@@ -1695,22 +1706,24 @@
                             <div class="scout-stats"><span>K/D: ${player.kd}</span> <span>Wins: ${player.wins}</span> <span>${player.role}</span></div>
                         </div>
                     </div>
-                `;[span_792](start_span)[span_792](end_span)[span_793](start_span)[span_793](end_span)
+                `;
             });
         }
 
-        function renderFlashDrops(data) {[span_794](start_span)[span_794](end_span)[span_795](start_span)[span_795](end_span)
-            const container = document.getElementById('flashDropsContainer');[span_796](start_span)[span_796](end_span)[span_797](start_span)[span_797](end_span)
-            const section = document.getElementById('flashDropsSection');[span_798](start_span)[span_798](end_span)[span_799](start_span)[span_799](end_span)
+        function renderFlashDrops(data) {
+            const container = document.getElementById('flashDropsContainer');
+            const section = document.getElementById('flashDropsSection');
+            if(!container || !section) return;
             
-            if (!data || data.length === 0) {[span_800](start_span)[span_800](end_span)[span_801](start_span)[span_801](end_span)
-                section.style.display = 'none';[span_802](start_span)[span_802](end_span)[span_803](start_span)[span_803](end_span)
-                return;[span_804](start_span)[span_804](end_span)[span_805](start_span)[span_805](end_span)
+            let safeData = data.filter(d => d);
+            if (!safeData || safeData.length === 0) {
+                section.style.display = 'none';
+                return;
             }
             
-            container.innerHTML = "";[span_806](start_span)[span_806](end_span)[span_807](start_span)[span_807](end_span)
-            data.forEach(drop => {[span_808](start_span)[span_808](end_span)[span_809](start_span)[span_809](end_span)
-                let statusBadge = drop.status.toLowerCase().includes('live') ? `<span class="drop-timer" style="color:var(--accent-green); border-color:var(--accent-green); background:rgba(0,255,127,0.1); box-shadow:0 0 10px rgba(0,255,127,0.2);"><i class="fa-solid fa-bolt fa-fade"></i> Live Now</span>` : `<span class="drop-timer"><i class="fa-regular fa-clock"></i> ${drop.status}</span>`;[span_810](start_span)[span_810](end_span)[span_811](start_span)[span_811](end_span)
+            container.innerHTML = "";
+            safeData.forEach(drop => {
+                let statusBadge = drop.status?.toLowerCase().includes('live') ? `<span class="drop-timer" style="color:var(--accent-green); border-color:var(--accent-green); background:rgba(0,255,127,0.1); box-shadow:0 0 10px rgba(0,255,127,0.2);"><i class="fa-solid fa-bolt fa-fade"></i> Live Now</span>` : `<span class="drop-timer"><i class="fa-regular fa-clock"></i> ${drop.status}</span>`;
                 
                 container.innerHTML += `
                     <div class="drop-card">
@@ -1722,118 +1735,125 @@
                         </div>
                         <button class="drop-btn" onclick="window.location.href='giveaway.html'">Enter</button>
                     </div>
-                `;[span_812](start_span)[span_812](end_span)[span_813](start_span)[span_813](end_span)
+                `;
             });
         }
 
         // --- 6. USER, WALLET & LOGOUT ---
-        function syncLiveWalletPoints(user) {[span_814](start_span)[span_814](end_span)[span_815](start_span)[span_815](end_span)
-            const balanceDisplay = document.getElementById('homeWalletBalance');[span_816](start_span)[span_816](end_span)[span_817](start_span)[span_817](end_span)
-            const passDisplay = document.getElementById('homePassBalance');[span_818](start_span)[span_818](end_span)[span_819](start_span)[span_819](end_span)
-            let displayPasses = user.passes !== undefined ? user.passes : Math.floor((parseInt(user.rupees)||0) / 10);[span_820](start_span)[span_820](end_span)[span_821](start_span)[span_821](end_span)
-            if (user.points !== undefined) { balanceDisplay.innerText = user.points; }[span_822](start_span)[span_822](end_span)[span_823](start_span)[span_823](end_span)
-            passDisplay.innerText = displayPasses;[span_824](start_span)[span_824](end_span)[span_825](start_span)[span_825](end_span)
-            if (user.email) {[span_826](start_span)[span_826](end_span)[span_827](start_span)[span_827](end_span)
-                secureFetch({ action: 'sync_user', email: user.email })[span_828](start_span)[span_828](end_span)[span_829](start_span)[span_829](end_span)
-                .then(data => {[span_830](start_span)[span_830](end_span)[span_831](start_span)[span_831](end_span)
-                    if (data.status === 'success') {[span_832](start_span)[span_832](end_span)[span_833](start_span)[span_833](end_span)
-                        user.points = data.data.points !== undefined ? data.data.points : user.points;[span_834](start_span)[span_834](end_span)[span_835](start_span)[span_835](end_span)
-                        user.rupees = data.data.rupees !== undefined ? data.data.rupees : user.rupees;[span_836](start_span)[span_836](end_span)[span_837](start_span)[span_837](end_span)
-                        user.passes = data.data.passes !== undefined ? data.data.passes : user.passes;[span_838](start_span)[span_838](end_span)[span_839](start_span)[span_839](end_span)
-                        localStorage.setItem('tournyx_user', JSON.stringify(user));[span_840](start_span)[span_840](end_span)[span_841](start_span)[span_841](end_span)
-                        let livePasses = user.passes !== undefined ? user.passes : Math.floor((parseInt(user.rupees)||0) / 10);[span_842](start_span)[span_842](end_span)[span_843](start_span)[span_843](end_span)
-                        balanceDisplay.innerText = user.points || 0;[span_844](start_span)[span_844](end_span)[span_845](start_span)[span_845](end_span)
-                        passDisplay.innerText = livePasses || 0;[span_846](start_span)[span_846](end_span)[span_847](start_span)[span_847](end_span)
+        function syncLiveWalletPoints(user) {
+            const balanceDisplay = document.getElementById('homeWalletBalance');
+            const passDisplay = document.getElementById('homePassBalance');
+            if(!balanceDisplay || !passDisplay) return;
+            
+            let displayPasses = user.passes !== undefined ? user.passes : Math.floor((parseInt(user.rupees)||0) / 10);
+            if (user.points !== undefined) { balanceDisplay.innerText = user.points; }
+            passDisplay.innerText = displayPasses;
+            
+            if (user.email) {
+                secureFetch({ action: 'sync_user', email: user.email })
+                .then(data => {
+                    if (data.status === 'success') {
+                        user.points = data.data.points !== undefined ? data.data.points : user.points; 
+                        user.rupees = data.data.rupees !== undefined ? data.data.rupees : user.rupees;
+                        user.passes = data.data.passes !== undefined ? data.data.passes : user.passes;
+                        localStorage.setItem('tournyx_user', JSON.stringify(user));
+                        let livePasses = user.passes !== undefined ? user.passes : Math.floor((parseInt(user.rupees)||0) / 10);
+                        balanceDisplay.innerText = user.points || 0;
+                        passDisplay.innerText = livePasses || 0;
                     }
-                }).catch(err => console.log("Sync skipped."));[span_848](start_span)[span_848](end_span)[span_849](start_span)[span_849](end_span)
+                }).catch(err => console.log("Sync skipped."));
             }
         }
         
-        function logoutUser() {[span_850](start_span)[span_850](end_span)[span_851](start_span)[span_851](end_span)
-            if(confirm("Are you sure you want to logout?")) {[span_852](start_span)[span_852](end_span)[span_853](start_span)[span_853](end_span)
-                localStorage.removeItem('tournyx_user');[span_854](start_span)[span_854](end_span)[span_855](start_span)[span_855](end_span)
-                localStorage.removeItem('tournyx_my_clans_cache');[span_856](start_span)[span_856](end_span)[span_857](start_span)[span_857](end_span)
-                window.location.href = "login.html";[span_858](start_span)[span_858](end_span)[span_859](start_span)[span_859](end_span)
+        function logoutUser() {
+            if(confirm("Are you sure you want to logout?")) {
+                localStorage.removeItem('tournyx_user');
+                localStorage.removeItem('tournyx_my_clans_cache');
+                window.location.href = "login.html";
             }
         }
 
-        function toggleMenu() {[span_860](start_span)[span_860](end_span)[span_861](start_span)[span_861](end_span)
-            document.getElementById('overlayMenu').classList.toggle('active');[span_862](start_span)[span_862](end_span)[span_863](start_span)[span_863](end_span)
-            document.getElementById('menuBackdrop').classList.toggle('active');[span_864](start_span)[span_864](end_span)[span_865](start_span)[span_865](end_span)
+        function toggleMenu() { 
+            const menu = document.getElementById('overlayMenu');
+            const back = document.getElementById('menuBackdrop');
+            if(menu) menu.classList.toggle('active'); 
+            if(back) back.classList.toggle('active');
         }
 
         // --- 7. CLOUD-SYNCED DAILY QUESTS (FIXED MAPPING) ---
-        let currentDynamicQuests = [];[span_866](start_span)[span_866](end_span)[span_867](start_span)[span_867](end_span)
-        function loadQuestsFromSheets() {[span_868](start_span)[span_868](end_span)[span_869](start_span)[span_869](end_span)
-            secureFetch({ action: 'get_quests' })[span_870](start_span)[span_870](end_span)[span_871](start_span)[span_871](end_span)
-            .then(result => {[span_872](start_span)[span_872](end_span)[span_873](start_span)[span_873](end_span)
-                let data = result.data || result.message || result.result || result;[span_874](start_span)[span_874](end_span)[span_875](start_span)[span_875](end_span)
-                if (result.status === "success" && data && data.length > 0) {[span_876](start_span)[span_876](end_span)[span_877](start_span)[span_877](end_span)
-                    currentDynamicQuests = data;[span_878](start_span)[span_878](end_span)[span_879](start_span)[span_879](end_span)
-                    renderQuests();[span_880](start_span)[span_880](end_span)[span_881](start_span)[span_881](end_span)
+        let currentDynamicQuests = [];
+        function loadQuestsFromSheets() {
+            secureFetch({ action: 'get_quests' })
+            .then(result => {
+                let data = result.data || result.message || result.result || result;
+                if (result.status === "success" && data && data.length > 0) {
+                    currentDynamicQuests = data; 
+                    renderQuests(); 
                 } else {
-                    document.getElementById('dynamicQuestsWrapper').innerHTML = '<div style="text-align:center; color:#888;">No daily quests active right now. Check back later!</div>';[span_882](start_span)[span_882](end_span)[span_883](start_span)[span_883](end_span)
+                    document.getElementById('dynamicQuestsWrapper').innerHTML = '<div style="text-align:center; color:#888;">No daily quests active right now. Check back later!</div>';
                 }
             }).catch(e => {
-                console.log("Failed loading quests", e);[span_884](start_span)[span_884](end_span)[span_885](start_span)[span_885](end_span)
-                document.getElementById('dynamicQuestsWrapper').innerHTML = '<div style="text-align:center; color:#888;">Unable to fetch quests.</div>';[span_886](start_span)[span_886](end_span)[span_887](start_span)[span_887](end_span)
+                console.log("Failed loading quests", e);
+                document.getElementById('dynamicQuestsWrapper').innerHTML = '<div style="text-align:center; color:#888;">Unable to fetch quests.</div>';
             });
         }
 
-        function renderQuests() {[span_888](start_span)[span_888](end_span)[span_889](start_span)[span_889](end_span)
-            const wrapper = document.getElementById('dynamicQuestsWrapper');[span_890](start_span)[span_890](end_span)[span_891](start_span)[span_891](end_span)
-            if(currentDynamicQuests.length === 0) return;[span_892](start_span)[span_892](end_span)[span_893](start_span)[span_893](end_span)
+        function renderQuests() {
+            const wrapper = document.getElementById('dynamicQuestsWrapper');
+            if(!wrapper || currentDynamicQuests.length === 0) return;
 
-            wrapper.innerHTML = "";[span_894](start_span)[span_894](end_span)[span_895](start_span)[span_895](end_span)
-            currentDynamicQuests.forEach(q => {[span_896](start_span)[span_896](end_span)[span_897](start_span)[span_897](end_span)
-                let btnState = `<button class="quest-btn" onclick="claimQuestCloud('${q.id}', ${q.reward}, '${q.reqType}', '${q.reqVal}', '${q.redirect}')">CLAIM</button>`;[span_898](start_span)[span_898](end_span)[span_899](start_span)[span_899](end_span)
+            wrapper.innerHTML = ""; 
+            currentDynamicQuests.filter(q=>q).forEach(q => {
+                let btnState = `<button class="quest-btn" onclick="claimQuestCloud('${q.id}', ${q.reward}, '${q.reqType}', '${q.reqVal}', '${q.redirect}')">CLAIM</button>`;
                 wrapper.innerHTML += `
                     <div class="quest-card glass-panel" id="${q.id}">
                         <div><div class="quest-info-title">${q.title}</div><div class="quest-info-sub"><i class="fa-solid fa-coins"></i> Reward: ${q.reward} PTS</div></div>
                         ${btnState}
                     </div>
-                `;[span_900](start_span)[span_900](end_span)[span_901](start_span)[span_901](end_span)
+                `;
             });
         }
 
-        function claimQuestCloud(questId, rewardPts, reqType, reqVal, redirectUrl) {[span_902](start_span)[span_902](end_span)[span_903](start_span)[span_903](end_span)
-            let user = JSON.parse(localStorage.getItem('tournyx_user'));[span_904](start_span)[span_904](end_span)[span_905](start_span)[span_905](end_span)
-            if(!user) { document.getElementById('authPopup').classList.add('active'); return; }[span_906](start_span)[span_906](end_span)[span_907](start_span)[span_907](end_span)
+        function claimQuestCloud(questId, rewardPts, reqType, reqVal, redirectUrl) {
+            let userStr = localStorage.getItem('tournyx_user');
+            if(!userStr || userStr === "undefined") { document.getElementById('authPopup').classList.add('active'); return; }
+            let user = JSON.parse(userStr);
 
-            if(reqType === 'open') {[span_908](start_span)[span_908](end_span)[span_909](start_span)[span_909](end_span)
-                window.open(redirectUrl, '_blank');[span_910](start_span)[span_910](end_span)[span_911](start_span)[span_911](end_span)
-                let btn = document.querySelector(`#${questId} .quest-btn`);[span_912](start_span)[span_912](end_span)[span_913](start_span)[span_913](end_span)
-                if(btn) { btn.innerText = "VERIFY"; btn.style.borderColor = "var(--accent-orange)"; btn.style.color = "var(--accent-orange)"; btn.onclick = function() { verifyQuest(questId, rewardPts, user); }; }[span_914](start_span)[span_914](end_span)[span_915](start_span)[span_915](end_span)
-                return;[span_916](start_span)[span_916](end_span)[span_917](start_span)[span_917](end_span)
+            if(reqType === 'open') {
+                window.open(redirectUrl, '_blank');
+                let btn = document.querySelector(`#${questId} .quest-btn`);
+                if(btn) { btn.innerText = "VERIFY"; btn.style.borderColor = "var(--accent-orange)"; btn.style.color = "var(--accent-orange)"; btn.onclick = function() { verifyQuest(questId, rewardPts, user); }; }
+                return;
             } else {
-                let currentVal = 0; let requiredValue = parseInt(reqVal) || 0;[span_918](start_span)[span_918](end_span)[span_919](start_span)[span_919](end_span)
-                if(reqType === 'matches') currentVal = parseInt(user.matches) || 0;[span_920](start_span)[span_920](end_span)[span_921](start_span)[span_921](end_span)
-                if(reqType === 'hosted') currentVal = parseInt(user.hosted) || 0;[span_922](start_span)[span_922](end_span)[span_923](start_span)[span_923](end_span)
-                if(reqType === 'share') { if(navigator.share) { navigator.share({ title: 'Join Tournyx', url: window.location.href }); } currentVal = 1; }[span_924](start_span)[span_924](end_span)[span_925](start_span)[span_925](end_span)
-                if (currentVal < requiredValue && requiredValue > 0) { showToast(`Task Incomplete!`, true); setTimeout(() => { window.location.href = redirectUrl; }, 1500); return; }[span_926](start_span)[span_926](end_span)[span_927](start_span)[span_927](end_span)
-                verifyQuest(questId, rewardPts, user);[span_928](start_span)[span_928](end_span)[span_929](start_span)[span_929](end_span)
+                let currentVal = 0; let requiredValue = parseInt(reqVal) || 0; 
+                if(reqType === 'matches') currentVal = parseInt(user.matches) || 0;
+                if(reqType === 'hosted') currentVal = parseInt(user.hosted) || 0;
+                if(reqType === 'share') { if(navigator.share) { navigator.share({ title: 'Join Tournyx', url: window.location.href }); } currentVal = 1; }
+                if (currentVal < requiredValue && requiredValue > 0) { showToast(`Task Incomplete!`, true); setTimeout(() => { window.location.href = redirectUrl; }, 1500); return; }
+                verifyQuest(questId, rewardPts, user);
             }
         }
 
-        function verifyQuest(questId, rewardPts, user) {[span_930](start_span)[span_930](end_span)[span_931](start_span)[span_931](end_span)
-            user.points = (parseInt(user.points) || 0) + parseInt(rewardPts);[span_932](start_span)[span_932](end_span)[span_933](start_span)[span_933](end_span)
-            localStorage.setItem('tournyx_user', JSON.stringify(user));[span_934](start_span)[span_934](end_span)[span_935](start_span)[span_935](end_span)
-            document.getElementById('homeWalletBalance').innerText = user.points;[span_936](start_span)[span_936](end_span)[span_937](start_span)[span_937](end_span)
-            showToast(`+${rewardPts} PTS verified & added to Wallet!`);[span_938](start_span)[span_938](end_span)[span_939](start_span)[span_939](end_span)
+        function verifyQuest(questId, rewardPts, user) {
+            user.points = (parseInt(user.points) || 0) + parseInt(rewardPts);
+            localStorage.setItem('tournyx_user', JSON.stringify(user));
+            document.getElementById('homeWalletBalance').innerText = user.points;
+            showToast(`+${rewardPts} PTS verified & added to Wallet!`);
 
-            let btn = document.querySelector(`#${questId} .quest-btn`);[span_940](start_span)[span_940](end_span)[span_941](start_span)[span_941](end_span)
-            if(btn) { btn.innerText = "CLAIMED"; btn.style.borderColor = "rgba(255,255,255,0.1)"; btn.style.color = "var(--accent-green)"; btn.classList.add("claimed"); btn.onclick = null; triggerConfetti(btn); }[span_942](start_span)[span_942](end_span)[span_943](start_span)[span_943](end_span)
+            let btn = document.querySelector(`#${questId} .quest-btn`);
+            if(btn) { btn.innerText = "CLAIMED"; btn.style.borderColor = "rgba(255,255,255,0.1)"; btn.style.color = "var(--accent-green)"; btn.classList.add("claimed"); btn.onclick = null; triggerConfetti(btn); }
 
-            secureFetch({ action: "claim_quest_cloud", email: user.email, quest_id: questId, points: rewardPts }).catch(()=>{});[span_944](start_span)[span_944](end_span)[span_945](start_span)[span_945](end_span)
-            secureFetch({ action: "update_wallet", email: user.email, points: user.points }).catch(()=>{});[span_946](start_span)[span_946](end_span)[span_947](start_span)[span_947](end_span)
+            secureFetch({ action: "claim_quest_cloud", email: user.email, quest_id: questId, points: rewardPts }).catch(()=>{});
+            secureFetch({ action: "update_wallet", email: user.email, points: user.points }).catch(()=>{});
         }
 
         /* ==========================================
            ADVANCED LIVE ENGINE ENGAGEMENT HANDLERS
            ========================================== */
         function claimStreakBonusCloud(dayEl, dayIndex) {
-            let user = JSON.parse(localStorage.getItem('tournyx_user'));
-            if(!user) { document.getElementById('authPopup').classList.add('active'); return; }
+            let userStr = localStorage.getItem('tournyx_user');
+            if(!userStr || userStr === "undefined") { document.getElementById('authPopup').classList.add('active'); return; }
+            let user = JSON.parse(userStr);
             if(dayEl.classList.contains('completed')) { showToast('Bonus reward already collected for today!'); return; }
             
             let pointsAwarded = dayIndex * 10;
@@ -1850,13 +1870,14 @@
         }
 
         function spinBonusWheelCloud(btnEl) {
-            let user = JSON.parse(localStorage.getItem('tournyx_user'));
-            if(!user) { document.getElementById('authPopup').classList.add('active'); return; }
+            let userStr = localStorage.getItem('tournyx_user');
+            if(!userStr || userStr === "undefined") { document.getElementById('authPopup').classList.add('active'); return; }
+            let user = JSON.parse(userStr);
             if(btnEl.disabled) return;
 
             btnEl.disabled = true;
             let wheel = document.getElementById('luckyBonusWheel');
-            let randomDeg = Math.floor(Math.random() * 360) + 1440; // Spining baseline turn
+            let randomDeg = Math.floor(Math.random() * 360) + 1440; 
             wheel.style.transform = `rotate(${randomDeg}deg)`;
 
             setTimeout(() => {
@@ -1876,8 +1897,9 @@
         }
 
         function submitPlatformPredictionCloud(matchId, selectedTeam, btnEl) {
-            let user = JSON.parse(localStorage.getItem('tournyx_user'));
-            if(!user) { document.getElementById('authPopup').classList.add('active'); return; }
+            let userStr = localStorage.getItem('tournyx_user');
+            if(!userStr || userStr === "undefined") { document.getElementById('authPopup').classList.add('active'); return; }
+            let user = JSON.parse(userStr);
             
             let wrapper = btnEl.parentElement;
             wrapper.innerHTML = `<span style="color:var(--accent-green); font-family:var(--font-head); font-size:0.75rem;"><i class="fa-solid fa-square-check"></i> Voted ${selectedTeam}</span>`;
@@ -1887,8 +1909,9 @@
         }
 
         function sendGlobalLobbyMessage() {
-            let user = JSON.parse(localStorage.getItem('tournyx_user'));
-            if(!user) { document.getElementById('authPopup').classList.add('active'); return; }
+            let userStr = localStorage.getItem('tournyx_user');
+            if(!userStr || userStr === "undefined") { document.getElementById('authPopup').classList.add('active'); return; }
+            let user = JSON.parse(userStr);
             
             let input = document.getElementById('chatInputField');
             let msgText = input.value.trim();
@@ -1907,7 +1930,7 @@
             fetch(API_URL + "?action=get_lobby_msgs")
             .then(res => res.json())
             .then(data => {
-                if(data.status === "success" && data.data.length > 0) {
+                if(data.status === "success" && data.data && data.data.length > 0) {
                     let viewport = document.getElementById('chatMessageViewport');
                     viewport.innerHTML = `<div class="chat-msg-row"><span class="chat-msg-user">System:</span>Welcome to Tournyx Global Hub Comm-link!</div>`;
                     data.data.forEach(m => {
@@ -1917,76 +1940,76 @@
             }).catch(()=>{});
         }
 
-        function switchWorkflow(role) {[span_948](start_span)[span_948](end_span)[span_949](start_span)[span_949](end_span)
-            const container = document.getElementById('workflowToggle');[span_950](start_span)[span_950](end_span)[span_951](start_span)[span_951](end_span)
-            const pSteps = document.getElementById('playerSteps');[span_952](start_span)[span_952](end_span)[span_953](start_span)[span_953](end_span)
-            const oSteps = document.getElementById('organizerSteps');[span_954](start_span)[span_954](end_span)[span_955](start_span)[span_955](end_span)
-            const opts = document.querySelectorAll('.toggle-option');[span_956](start_span)[span_956](end_span)[span_957](start_span)[span_957](end_span)
-            if (role === 'player') {[span_958](start_span)[span_958](end_span)[span_959](start_span)[span_959](end_span)
-                container.classList.remove('theme-cyan'); container.classList.add('theme-purple');[span_960](start_span)[span_960](end_span)[span_961](start_span)[span_961](end_span)
-                pSteps.classList.remove('hidden'); oSteps.classList.add('hidden');[span_962](start_span)[span_962](end_span)[span_963](start_span)[span_963](end_span)
-                opts[0].classList.add('active'); opts[1].classList.remove('active');[span_964](start_span)[span_964](end_span)[span_965](start_span)[span_965](end_span)
+        function switchWorkflow(role) {
+            const container = document.getElementById('workflowToggle');
+            const pSteps = document.getElementById('playerSteps');
+            const oSteps = document.getElementById('organizerSteps');
+            const opts = document.querySelectorAll('.toggle-option');
+            if (role === 'player') {
+                container.classList.remove('theme-cyan'); container.classList.add('theme-purple');
+                pSteps.classList.remove('hidden'); oSteps.classList.add('hidden');
+                opts[0].classList.add('active'); opts[1].classList.remove('active');
             } else {
-                container.classList.remove('theme-purple'); container.classList.add('theme-cyan');[span_966](start_span)[span_966](end_span)[span_967](start_span)[span_967](end_span)
-                pSteps.classList.add('hidden'); oSteps.classList.remove('hidden');[span_968](start_span)[span_968](end_span)[span_969](start_span)[span_969](end_span)
-                opts[0].classList.remove('active'); opts[1].classList.add('active');[span_970](start_span)[span_970](end_span)[span_971](start_span)[span_971](end_span)
+                container.classList.remove('theme-purple'); container.classList.add('theme-cyan');
+                pSteps.classList.add('hidden'); oSteps.classList.remove('hidden');
+                opts[0].classList.remove('active'); opts[1].classList.add('active');
             }
         }
 
-        function switchTab(tabId, tabElement) {[span_972](start_span)[span_972](end_span)[span_973](start_span)[span_973](end_span)
-            document.querySelectorAll('.lb-content').forEach(el => el.classList.remove('active'));[span_974](start_span)[span_974](end_span)[span_975](start_span)[span_975](end_span)
-            document.querySelectorAll('.lb-tab').forEach(el => el.classList.remove('active'));[span_976](start_span)[span_976](end_span)[span_977](start_span)[span_977](end_span)
-            document.getElementById(tabId).classList.add('active');[span_978](start_span)[span_978](end_span)[span_979](start_span)[span_979](end_span)
-            tabElement.classList.add('active');[span_980](start_span)[span_980](end_span)[span_981](start_span)[span_981](end_span)
+        function switchTab(tabId, tabElement) {
+            document.querySelectorAll('.lb-content').forEach(el => el.classList.remove('active'));
+            document.querySelectorAll('.lb-tab').forEach(el => el.classList.remove('active'));
+            document.getElementById(tabId).classList.add('active');
+            tabElement.classList.add('active');
         }
 
         // --- 8. LEADERBOARD FETCH LOGIC (FIXED & LIVE CLOUD SYNCED) ---
-        async function loadLeaderboard() {[span_982](start_span)[span_982](end_span)[span_983](start_span)[span_983](end_span)
+        async function loadLeaderboard() {
             try {
-                const apiRes = await secureFetch({ action: 'get_community_leaderboard', t: new Date().getTime() });[span_984](start_span)[span_984](end_span)[span_985](start_span)[span_985](end_span)
-                const data = apiRes.data || apiRes.message || apiRes.result || apiRes;[span_986](start_span)[span_986](end_span)[span_987](start_span)[span_987](end_span)
+                const apiRes = await secureFetch({ action: 'get_community_leaderboard', t: new Date().getTime() });
+                const data = apiRes.data || apiRes.message || apiRes.result || apiRes;
 
-                if (data && (data.organizers || data.teams || data.contributors)) {[span_988](start_span)[span_988](end_span)[span_989](start_span)[span_989](end_span)
-                    renderLeaderboardList('organizers', data.organizers || [], 'Tournaments Hosted', '', 'var(--accent-cyan)');[span_990](start_span)[span_990](end_span)[span_991](start_span)[span_991](end_span)
-                    renderLeaderboardList('teams', data.teams || [], 'Won', '₹ ', 'var(--accent-purple)');[span_992](start_span)[span_992](end_span)[span_993](start_span)[span_993](end_span)
-                    renderLeaderboardList('contributors', data.contributors || [], 'Contributions', '', '#ffd700');[span_994](start_span)[span_994](end_span)[span_995](start_span)[span_995](end_span)
+                if (data && (data.organizers || data.teams || data.contributors)) {
+                    renderLeaderboardList('organizers', data.organizers || [], 'Tournaments Hosted', '', 'var(--accent-cyan)');
+                    renderLeaderboardList('teams', data.teams || [], 'Won', '₹ ', 'var(--accent-purple)');
+                    renderLeaderboardList('contributors', data.contributors || [], 'Contributions', '', '#ffd700');
                 } else {
-                    throw new Error("Leaderboard data format mismatch or empty.");[span_996](start_span)[span_996](end_span)[span_997](start_span)[span_997](end_span)
+                    throw new Error("Leaderboard data format mismatch or empty.");
                 }
             } catch (e) {
-                console.log("Leaderboard Sync Failed:", e);[span_998](start_span)[span_998](end_span)[span_999](start_span)[span_999](end_span)
-                renderLeaderboardList('organizers', [], '', '', '');[span_1000](start_span)[span_1000](end_span)[span_1001](start_span)[span_1001](end_span)
-                renderLeaderboardList('teams', [], '', '', '');[span_1002](start_span)[span_1002](end_span)[span_1003](start_span)[span_1003](end_span)
-                renderLeaderboardList('contributors', [], '', '', '');[span_1004](start_span)[span_1004](end_span)[span_1005](start_span)[span_1005](end_span)
+                console.log("Leaderboard Sync Failed:", e);
+                renderLeaderboardList('organizers', [], '', '', '');
+                renderLeaderboardList('teams', [], '', '', '');
+                renderLeaderboardList('contributors', [], '', '', '');
             }
         }
 
-        function renderLeaderboardList(containerId, list, roleText, prefix, colorStr) {[span_1006](start_span)[span_1006](end_span)[span_1007](start_span)[span_1007](end_span)
-            const container = document.getElementById(containerId);[span_1008](start_span)[span_1008](end_span)[span_1009](start_span)[span_1009](end_span)
+        function renderLeaderboardList(containerId, list, roleText, prefix, colorStr) {
+            const container = document.getElementById(containerId);
+            if(!container) return;
             
-            if (!list || list.length === 0) {[span_1010](start_span)[span_1010](end_span)[span_1011](start_span)[span_1011](end_span)
+            if (!list || list.length === 0) {
                 container.innerHTML = `
                     <div style="text-align:center; padding: 40px 20px; background: rgba(255,255,255,0.02); border-radius: 15px; border: 1px dashed rgba(255,255,255,0.1); width: 100%;">
                         <i class="fa-solid fa-ghost" style="font-size:3rem; color:#444; margin-bottom:15px; filter: drop-shadow(0 0 10px rgba(0,0,0,0.5));"></i>
                         <h3 style="font-family:var(--font-head); color:#888;">No Legends Yet</h3>
                         <p style="color:#666; font-size:0.9rem;">Data will sync automatically when available.</p>
-                    </div>`;[span_1012](start_span)[span_1012](end_span)[span_1013](start_span)[span_1013](end_span)
-                return;[span_1014](start_span)[span_1014](end_span)[span_1015](start_span)[span_1015](end_span)
+                    </div>`;
+                return;
             }
 
-            let html = '';[span_1016](start_span)[span_1016](end_span)[span_1017](start_span)[span_1017](end_span)
-            
-            list.slice(0, 15).forEach((item, i) => {[span_1018](start_span)[span_1018](end_span)[span_1019](start_span)[span_1019](end_span)
-                let rankClass = ''; let medal = ''; let borderClass = '';[span_1020](start_span)[span_1020](end_span)[span_1021](start_span)[span_1021](end_span)
+            let html = '';
+            list.filter(item=>item).slice(0, 15).forEach((item, i) => {
+                let rankClass = ''; let medal = ''; let borderClass = '';
                 
-                if (i === 0) { rankClass = 'rank-1'; medal = '<div class="rank-medal rank-1"><i class="fa-solid fa-medal"></i></div>'; borderClass = 'rank-1-border'; }[span_1022](start_span)[span_1022](end_span)[span_1023](start_span)[span_1023](end_span)
-                else if (i === 1) { rankClass = 'rank-2'; medal = '<div class="rank-medal rank-2"><i class="fa-solid fa-medal"></i></div>'; borderClass = 'rank-2-border'; }[span_1024](start_span)[span_1024](end_span)[span_1025](start_span)[span_1025](end_span)
-                else if (i === 2) { rankClass = 'rank-3'; medal = '<div class="rank-medal rank-3"><i class="fa-solid fa-medal"></i></div>'; borderClass = 'rank-3-border'; }[span_1026](start_span)[span_1026](end_span)[span_1027](start_span)[span_1027](end_span)
-                else { medal = '<div class="rank-medal" style="font-size:1.5rem; color:#666; font-family:var(--font-head); font-weight:bold;">#' + (i+1) + '</div>'; }[span_1028](start_span)[span_1028](end_span)[span_1029](start_span)[span_1029](end_span)
+                if (i === 0) { rankClass = 'rank-1'; medal = '<div class="rank-medal rank-1"><i class="fa-solid fa-medal"></i></div>'; borderClass = 'rank-1-border'; }
+                else if (i === 1) { rankClass = 'rank-2'; medal = '<div class="rank-medal rank-2"><i class="fa-solid fa-medal"></i></div>'; borderClass = 'rank-2-border'; }
+                else if (i === 2) { rankClass = 'rank-3'; medal = '<div class="rank-medal rank-3"><i class="fa-solid fa-medal"></i></div>'; borderClass = 'rank-3-border'; }
+                else { medal = '<div class="rank-medal" style="font-size:1.5rem; color:#666; font-family:var(--font-head); font-weight:bold;">#' + (i+1) + '</div>'; }
                 
-                let imgUrl = (item.image && item.image.length > 5 && item.image !== "undefined") ? item.image : 'https://via.placeholder.com/100';[span_1030](start_span)[span_1030](end_span)[span_1031](start_span)[span_1031](end_span)
-                let displayValue = item.value !== undefined ? item.value : 0;[span_1032](start_span)[span_1032](end_span)[span_1033](start_span)[span_1033](end_span)
-                let displayName = item.name && item.name !== "undefined" ? item.name : 'Unknown Player';[span_1034](start_span)[span_1034](end_span)[span_1035](start_span)[span_1035](end_span)
+                let imgUrl = (item.image && item.image.length > 5 && item.image !== "undefined") ? item.image : 'https://via.placeholder.com/100';
+                let displayValue = item.value !== undefined ? item.value : 0;
+                let displayName = item.name && item.name !== "undefined" ? item.name : 'Unknown Player';
 
                 html += `
                 <div class="person-row ${borderClass} glass-panel">
@@ -1996,10 +2019,10 @@
                         <div class="person-name">${displayName}</div>
                         <div class="person-role" style="color:${colorStr}">${prefix}${displayValue} ${roleText}</div>
                     </div>
-                </div>`;[span_1036](start_span)[span_1036](end_span)[span_1037](start_span)[span_1037](end_span)
-            });[span_1038](start_span)[span_1038](end_span)[span_1039](start_span)[span_1039](end_span)
+                </div>`;
+            });
             
-            container.innerHTML = html;[span_1040](start_span)[span_1040](end_span)[span_1041](start_span)[span_1041](end_span)
+            container.innerHTML = html;
         }
     </script>
     
@@ -2007,37 +2030,39 @@
         // =========================================================================
         // TOURNYX OFFICIAL ONESIGNAL PWA INTEGRATION (v16) WITH TRACKING METADATA
         // =========================================================================
-        window.OneSignalDeferred = window.OneSignalDeferred || [];[span_1042](start_span)[span_1042](end_span)[span_1043](start_span)[span_1043](end_span)
+        window.OneSignalDeferred = window.OneSignalDeferred || [];
 
-        OneSignalDeferred.push(async function(OneSignal) {[span_1044](start_span)[span_1044](end_span)[span_1045](start_span)[span_1045](end_span)
-            await OneSignal.init({[span_1046](start_span)[span_1046](end_span)[span_1047](start_span)[span_1047](end_span)
-                appId: "15a8e2b2-248c-4547-929e-797d7170e988",[span_1048](start_span)[span_1048](end_span)[span_1049](start_span)[span_1049](end_span)
-                notifyButton: {[span_1050](start_span)[span_1050](end_span)[span_1051](start_span)[span_1051](end_span)
-                    enable: false,[span_1052](start_span)[span_1052](end_span)[span_1053](start_span)[span_1053](end_span)
-                },[span_1054](start_span)[span_1054](end_span)[span_1055](start_span)[span_1055](end_span)
-                allowLocalhostAsSecureOrigin: true[span_1056](start_span)[span_1056](end_span)[span_1057](start_span)[span_1057](end_span)
-            });[span_1058](start_span)[span_1058](end_span)[span_1059](start_span)[span_1059](end_span)
+        OneSignalDeferred.push(async function(OneSignal) {
+            await OneSignal.init({
+                appId: "15a8e2b2-248c-4547-929e-797d7170e988",
+                notifyButton: {
+                    enable: false,
+                },
+                allowLocalhostAsSecureOrigin: true
+            });
 
-            let user = JSON.parse(localStorage.getItem('tournyx_user'));[span_1060](start_span)[span_1060](end_span)[span_1061](start_span)[span_1061](end_span)
-            
-            if (user && user.email) {[span_1062](start_span)[span_1062](end_span)[span_1063](start_span)[span_1063](end_span)
-                let cleanEmail = user.email.toLowerCase().trim();[span_1064](start_span)[span_1064](end_span)[span_1065](start_span)[span_1065](end_span)
+            let userStr = localStorage.getItem('tournyx_user');
+            if (userStr && userStr !== "undefined") {
+                try {
+                    let user = JSON.parse(userStr);
+                    if (user && user.email) {
+                        let cleanEmail = user.email.toLowerCase().trim();
 
-                // TARGETING LOCK: Assign External ID (Email) matching tag targeting engine schema
-                await OneSignal.login(cleanEmail);[span_1066](start_span)[span_1066](end_span)[span_1067](start_span)[span_1067](end_span)
+                        await OneSignal.login(cleanEmail);
 
-                // Set organizational retention tracking metadata fields
-                OneSignal.User.addTags({[span_1068](start_span)[span_1068](end_span)[span_1069](start_span)[span_1069](end_span)
-                    "user_email": cleanEmail,[span_1070](start_span)[span_1070](end_span)[span_1071](start_span)[span_1071](end_span)
-                    "user_status": "active",[span_1072](start_span)[span_1072](end_span)[span_1073](start_span)[span_1073](end_span)
-                    "platform": "pwa[span_1074](start_span)[span_1075](start_span)"[span_1074](end_span)[span_1075](end_span)
-                });[span_1076](start_span)[span_1076](end_span)[span_1077](start_span)[span_1077](end_span)
-                
-                if (OneSignal.Notifications.permission !== "granted") {[span_1078](start_span)[span_1078](end_span)[span_1079](start_span)[span_1079](end_span)
-                    setTimeout(() => {[span_1080](start_span)[span_1080](end_span)[span_1081](start_span)[span_1081](end_span)
-                        OneSignal.Notifications.requestPermission();[span_1082](start_span)[span_1082](end_span)[span_1083](start_span)[span_1083](end_span)
-                    }, 3000);[span_1084](start_span)[span_1084](end_span)[span_1085](start_span)[span_1085](end_span)
-                }
+                        OneSignal.User.addTags({
+                            "user_email": cleanEmail,
+                            "user_status": "active",
+                            "platform": "pwa"
+                        });
+                        
+                        if (OneSignal.Notifications.permission !== "granted") {
+                            setTimeout(() => {
+                                OneSignal.Notifications.requestPermission();
+                            }, 3000);
+                        }
+                    }
+                } catch(e) {}
             }
         });
     </script>
