@@ -1950,7 +1950,7 @@
                             ? `<button class="join-btn-card" style="background: rgba(0,255,127,0.1); border-color: var(--accent-green); color: var(--accent-green);"><i class="fa-solid fa-check"></i> JOINED</button>`
                             : `<button class="join-btn-card">REGISTER</button>`;
 
-                        card.innerHTML = `
+                       card.innerHTML = `
                             <div class="t-banner-wrapper">
                                 <img src="${bg}" class="t-banner-img img-loading" onload="this.classList.remove('img-loading'); this.classList.add('img-loaded');" onerror="this.src='https://via.placeholder.com/600x300'; this.classList.remove('img-loading');">
                                 ${getStatusBadgeHtml(t.status, isFull, isRegClosed, isCancelled)} 
@@ -1959,20 +1959,30 @@
                                 <div class="t-plat-badge"><i class="fa-solid ${plat==='PC' ? 'fa-desktop' : 'fa-mobile-screen'}"></i> ${plat}</div>
                             </div>
                             <div class="t-info-box">
-                                <div class="t-title">${tTitleSafe} ${isVerifiedPremium}</div>
+                                <div class="t-title" style="margin-bottom: 8px;">${tTitleSafe} ${isVerifiedPremium}</div>
                                 
-                                <div class="t-details-grid">
-                                    <div class="t-detail-item"><i class="fa-solid fa-gamepad"></i> <span>${t.game || "Esports"} (${t.format || "Any"})</span></div>
-                                    <div class="t-detail-item"><i class="fa-solid fa-ticket"></i> <span style="display:flex; align-items:center; gap:5px;">${entryTxt}</span></div>
-                                    <div class="t-detail-item" style="grid-column: 1 / -1;"><i class="fa-solid fa-calendar-day"></i> <span>Reg Ends: ${formatTournamentDateStrict(t.date)}</span></div>
-                                    <div class="t-detail-item" style="grid-column: 1 / -1;"><i class="fa-solid fa-clock"></i> <span style="color:var(--accent-cyan);">Match Period: ${formatMatchPeriod(t.match_period || t.date)}</span></div>
+                                <div class="t-details-grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; background: rgba(0,0,0,0.4); padding: 10px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.05); margin-bottom: 12px;">
+                                    <div style="display: flex; align-items: center; gap: 6px; font-size: 0.75rem; color: #ccc;"><i class="fa-solid fa-gamepad" style="color: var(--accent-cyan);"></i> <span>${t.game || "Esports"}</span></div>
+                                    <div style="display: flex; align-items: center; gap: 6px; font-size: 0.75rem; color: #ccc;"><i class="fa-solid fa-users-viewfinder" style="color: var(--accent-cyan);"></i> <span>${t.format || "Any"}</span></div>
                                     
-                                    <div class="t-detail-item slot-tracker" style="grid-column: 1 / -1; flex-direction:column; align-items:flex-start; gap:4px; margin-top: 5px;">
-                                        <div style="display:flex; justify-content:space-between; width:100%; align-items:center;">
-                                            <span class="slot-text"><i class="fa-solid fa-users"></i> ${slotsFilled}/${totalSlots} Slots</span>
-                                            <span style="font-size:0.75rem; color:var(--accent-cyan); font-weight:bold;">${Math.round(fillPct)}%</span>
+                                    <div style="grid-column: 1 / -1; display: flex; align-items: center; gap: 6px; font-size: 0.75rem; background: rgba(0, 242, 255, 0.08); padding: 6px 8px; border-radius: 4px; border-left: 2px solid var(--accent-cyan);">
+                                        <i class="fa-solid fa-calendar-check" style="color: var(--accent-cyan);"></i> 
+                                        <span style="color: white;">Match: <b style="color: var(--accent-cyan); letter-spacing: 0.5px;">${formatMatchPeriod(t.match_period || t.date)}</b></span>
+                                    </div>
+                                    
+                                    <div style="grid-column: 1 / -1; display: flex; align-items: center; justify-content: space-between; font-size: 0.75rem; margin-top: 2px;">
+                                        <div style="display: flex; align-items: center; gap: 6px; color: #aaa;"><i class="fa-solid fa-hourglass-end"></i> Reg Ends: <span style="color:white; font-weight:bold;">${formatTournamentDateStrict(t.date)}</span></div>
+                                        <div style="display:flex; align-items:center; gap:5px; background: rgba(255,255,255,0.05); padding: 2px 6px; border-radius: 4px;">${entryTxt}</div>
+                                    </div>
+                                    
+                                    <div class="slot-tracker" style="grid-column: 1 / -1; margin-top: 4px;">
+                                        <div style="display:flex; justify-content:space-between; width:100%; align-items:center; margin-bottom:5px;">
+                                            <span class="slot-text" style="font-size:0.7rem; color:#aaa; text-transform: uppercase; letter-spacing: 0.5px;"><i class="fa-solid fa-users"></i> ${slotsFilled}/${totalSlots} Slots</span>
+                                            <span style="font-size:0.7rem; color:var(--accent-cyan); font-weight:bold;">${Math.round(fillPct)}%</span>
                                         </div>
-                                        <div class="progress-container"><div class="progress-bar ${progColorClass}" style="width:${fillPct}%"></div></div>
+                                        <div class="progress-container" style="height:4px; background:rgba(255,255,255,0.1); border-radius:2px; overflow:hidden;">
+                                            <div class="progress-bar ${progColorClass}" style="width:${fillPct}%; height:100%; background:var(--accent-cyan); transition:0.3s;"></div>
+                                        </div>
                                     </div>
                                 </div>
 
@@ -2105,7 +2115,7 @@
                         ? `<button class="join-btn-card" style="background: rgba(0,255,127,0.1); border-color: var(--accent-green); color: var(--accent-green);"><i class="fa-solid fa-check"></i> JOINED</button>`
                         : `<button class="join-btn-card">REGISTER</button>`;
 
-                    card.innerHTML = `
+                   card.innerHTML = `
                         <div class="t-banner-wrapper">
                             <img src="${bg}" class="t-banner-img img-loading" onload="this.classList.remove('img-loading'); this.classList.add('img-loaded');">
                             ${getStatusBadgeHtml(t.status, isFull, isRegClosed, isCancelled)} 
@@ -2114,21 +2124,33 @@
                             <div class="t-plat-badge"><i class="fa-solid ${plat==='PC' ? 'fa-desktop' : 'fa-mobile-screen'}"></i> ${plat}</div>
                         </div>
                         <div class="t-info-box">
-                            <div class="t-title">${t.title || "Tournament"} ${isVerifiedPremium}</div>
-                            <div class="t-details-grid">
-                                <div class="t-detail-item"><i class="fa-solid fa-gamepad"></i> <span>${t.game || "Esports"} (${t.format || "Any"})</span></div>
-                                <div class="t-detail-item"><i class="fa-solid fa-ticket"></i> <span style="display:flex; align-items:center; gap:5px;">${entryTxt}</span></div>
-                                <div class="t-detail-item" style="grid-column: 1 / -1;"><i class="fa-solid fa-calendar-day"></i> <span>Reg Ends: ${formatTournamentDateStrict(t.date)}</span></div>
-                                <div class="t-detail-item" style="grid-column: 1 / -1;"><i class="fa-solid fa-clock"></i> <span style="color:var(--accent-cyan);">Match Period: ${formatMatchPeriod(t.match_period || t.date)}</span></div>
+                            <div class="t-title" style="margin-bottom: 8px;">${t.title || "Tournament"} ${isVerifiedPremium}</div>
+                            
+                            <div class="t-details-grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; background: rgba(0,0,0,0.4); padding: 10px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.05); margin-bottom: 12px;">
+                                <div style="display: flex; align-items: center; gap: 6px; font-size: 0.75rem; color: #ccc;"><i class="fa-solid fa-gamepad" style="color: var(--accent-cyan);"></i> <span>${t.game || "Esports"}</span></div>
+                                <div style="display: flex; align-items: center; gap: 6px; font-size: 0.75rem; color: #ccc;"><i class="fa-solid fa-users-viewfinder" style="color: var(--accent-cyan);"></i> <span>${t.format || "Any"}</span></div>
                                 
-                                <div class="t-detail-item slot-tracker" style="grid-column: 1 / -1; flex-direction:column; align-items:flex-start; gap:4px; margin-top: 5px;">
-                                    <div style="display:flex; justify-content:space-between; width:100%; align-items:center;">
-                                        <span class="slot-text"><i class="fa-solid fa-users"></i> ${slotsFilled}/${totalSlots} Slots</span>
-                                        <span style="font-size:0.75rem; color:var(--accent-cyan); font-weight:bold;">${Math.round(fillPct)}%</span>
+                                <div style="grid-column: 1 / -1; display: flex; align-items: center; gap: 6px; font-size: 0.75rem; background: rgba(0, 242, 255, 0.08); padding: 6px 8px; border-radius: 4px; border-left: 2px solid var(--accent-cyan);">
+                                    <i class="fa-solid fa-calendar-check" style="color: var(--accent-cyan);"></i> 
+                                    <span style="color: white;">Match: <b style="color: var(--accent-cyan); letter-spacing: 0.5px;">${formatMatchPeriod(t.match_period || t.date)}</b></span>
+                                </div>
+                                
+                                <div style="grid-column: 1 / -1; display: flex; align-items: center; justify-content: space-between; font-size: 0.75rem; margin-top: 2px;">
+                                    <div style="display: flex; align-items: center; gap: 6px; color: #aaa;"><i class="fa-solid fa-hourglass-end"></i> Reg Ends: <span style="color:white; font-weight:bold;">${formatTournamentDateStrict(t.date)}</span></div>
+                                    <div style="display:flex; align-items:center; gap:5px; background: rgba(255,255,255,0.05); padding: 2px 6px; border-radius: 4px;">${entryTxt}</div>
+                                </div>
+                                
+                                <div class="slot-tracker" style="grid-column: 1 / -1; margin-top: 4px;">
+                                    <div style="display:flex; justify-content:space-between; width:100%; align-items:center; margin-bottom:5px;">
+                                        <span class="slot-text" style="font-size:0.7rem; color:#aaa; text-transform: uppercase; letter-spacing: 0.5px;"><i class="fa-solid fa-users"></i> ${slotsFilled}/${totalSlots} Slots</span>
+                                        <span style="font-size:0.7rem; color:var(--accent-cyan); font-weight:bold;">${Math.round(fillPct)}%</span>
                                     </div>
-                                    <div class="progress-container"><div class="progress-bar ${progColorClass}" style="width:${fillPct}%"></div></div>
+                                    <div class="progress-container" style="height:4px; background:rgba(255,255,255,0.1); border-radius:2px; overflow:hidden;">
+                                        <div class="progress-bar ${progColorClass}" style="width:${fillPct}%; height:100%; background:var(--accent-cyan); transition:0.3s;"></div>
+                                    </div>
                                 </div>
                             </div>
+
                             <div class="t-action-row">
                                 <div class="t-prize-area"><div class="t-prize-label">Prize Pool</div><div class="t-prize-val">${getPrizeText(t.prize, t.prize_pts)}</div></div>
                                 ${actionBtnHTML}
@@ -2518,7 +2540,8 @@
                     else if(roleText.includes('PLAYER')) roleColor = '#aaa'; 
                     else roleColor = glowColor; 
 
-                    let pAvatarUrl = p.avatar || p.logo || `https://api.dicebear.com/7.x/bottts/svg?seed=${encodeURIComponent(pName)}&colors=cyan,purple,gold`;
+                    // 🔥 PERFECT AVATAR FETCHER: Searches all possible json keys
+                    let pAvatarUrl = p.avatar || p.Avatar || p.logo || p.Logo || p.image || p.profile_pic || p.pic || `https://api.dicebear.com/7.x/bottts/svg?seed=${encodeURIComponent(pName)}&colors=cyan,purple,gold`;
 
                     html += `
                         <div style="display:flex; align-items:center; gap:12px; background:rgba(255,255,255,0.02); padding:10px 14px; border-radius:12px; border:1px solid rgba(255,255,255,0.04); opacity:0; animation:slideUpRoster 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards ${delay}s;">
@@ -2540,13 +2563,16 @@
             document.getElementById('rosterPopupModal').classList.add('active');
         }
         
-        function closeRosterPopup() {
+        function closeRosterPopup(e) {
+            if(e) e.stopPropagation();
             triggerHaptic();
             let modal = document.getElementById('rosterPopupModal');
             if(modal && modal.classList.contains('active')) {
-                modal.classList.remove('active');
+                // 🔥 THE FIX: Let the PopState listener handle removing the active class safely
                 if (window.history.state && window.history.state.modal === 'rosterPopup') {
                     window.history.back();
+                } else {
+                    modal.classList.remove('active');
                 }
             }
         }
