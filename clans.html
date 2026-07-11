@@ -61,7 +61,7 @@
         .tx-ticket-composite i { font-size: inherit; transition: inherit; }
         .tx-ticket-composite .tx-text { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -46%); font-family: var(--font-head); font-size: 0.38em; font-weight: 900; color: var(--primary-bg) !important; -webkit-text-fill-color: var(--primary-bg) !important; letter-spacing: -0.5px; pointer-events: none; z-index: 2; transition: 0.3s; font-style: normal !important; }
 
-        .top-header { position: fixed; top: 0; left: 0; width: 100%; padding: calc(10px + env(safe-area-inset-top)) 10px 10px; background: rgba(7, 3, 17, 0.8); backdrop-filter: var(--glass-blur); -webkit-backdrop-filter: var(--glass-blur); border-bottom: 1px solid var(--card-border); z-index: 2000; box-shadow: 0 4px 20px rgba(0,0,0,0.5); transform: translateZ(0); }
+        .top-header { position: fixed; top: 0; left: 0; width: 100%; padding: calc(10px + env(safe-area-inset-top)) 10px 10px; background: rgba(7, 3, 17, 0.85); backdrop-filter: var(--glass-blur); -webkit-backdrop-filter: var(--glass-blur); border-bottom: 1px solid var(--card-border); z-index: 2000; box-shadow: 0 4px 20px rgba(0,0,0,0.6); transform: translateZ(0); }
         .header-wrapper { display: flex; align-items: center; justify-content: space-between; gap: 5px; }
         .header-left { display: flex; align-items: center; gap: 8px; flex: 1; min-width: 0; }
         
@@ -92,8 +92,8 @@
         .tab { flex: 1; text-align: center; padding: 10px 5px; color: #888; font-family: var(--font-head); cursor: pointer; position: relative; transition: 0.3s; font-weight: bold; font-size: 0.8rem; display:flex; align-items:center; justify-content:center; gap:5px; white-space: nowrap; }
         .tab.active { color: var(--accent-cyan); text-shadow: 0 0 8px rgba(0,242,255,0.4); }
         html.theme-vip .tab.active { color: #FFD700; text-shadow: 0 0 8px rgba(255,215,0,0.6); }
-        .tab.active::after { content: ''; position: absolute; bottom: -1px; left: 10%; width: 80%; height: 3px; background: var(--accent-cyan); border-radius: 3px 3px 0 0; }
-        html.theme-vip .tab.active::after { background: #FFD700; }
+        .tab.active::after { content: ''; position: absolute; bottom: -1px; left: 10%; width: 80%; height: 3px; background: var(--accent-cyan); border-radius: 3px 3px 0 0; box-shadow: 0 -2px 10px var(--accent-cyan); }
+        html.theme-vip .tab.active::after { background: #FFD700; box-shadow: 0 -2px 10px #FFD700;}
         .badge { background: var(--accent-orange); color: #000; padding: 2px 6px; border-radius: 10px; font-size: 0.55rem; font-weight: bold; transition: 0.3s; }
 
         .filter-scroll-wrapper { display: none; gap: 8px; overflow-x: auto; padding: 0 15px 12px; scrollbar-width: none; margin-bottom: 5px; animation: slideInUp 0.3s ease-out; }
@@ -174,7 +174,6 @@
         .recruit-badge.closed { background: rgba(255,77,77,0.1); color: #ff4d4d; border: 1px solid #ff4d4d; }
         .recruit-badge { padding: 3px 8px; border-radius: 15px; font-size: 0.65rem; font-family: var(--font-head); font-weight: bold; text-transform: uppercase; cursor: pointer; flex-shrink: 0;}
 
-        /* REDUCED CMD GRID: Just Payouts */
         .esports-cmd-grid { display: grid; grid-template-columns: 1fr; gap: 10px; margin-bottom: 15px; }
         .cmd-btn { background: rgba(255,255,255,0.05); backdrop-filter: var(--glass-blur); border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; padding: 10px; display: flex; flex-direction: row; justify-content: center; align-items: center; gap: 10px; cursor: pointer; transition: 0.3s; position: relative; overflow: hidden; transform: translateZ(0);}
         .cmd-btn:hover { background: rgba(0,242,255,0.1); border-color: var(--accent-cyan); transform: translateY(-2px); }
@@ -298,7 +297,6 @@
         html.theme-vip #customToast { background-color: #FFD700; box-shadow: 0 4px 15px rgba(255,215,0,0.4); }
         #customToast.show { visibility: visible; bottom: 90px; }
 
-        /* 🔥 UPGRADE: CELEBRATION OVERLAY */
         #celebrationOverlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: rgba(0,0,0,0.9); z-index: 9999; display: none;
@@ -314,7 +312,6 @@
         @keyframes popScaleText { 0% { transform: scale(0.5); opacity: 0;} 100% { transform: scale(1); opacity: 1;} }
         @keyframes slideUpSub { 0% { transform: translateY(20px); opacity: 0;} 100% { transform: translateY(0); opacity: 1;} }
 
-        /* 🔥 UPGRADE: INSTAGRAM CHAT FEEL */
         .chat-bubble { position: relative; background: rgba(255,255,255,0.05); padding: 10px 14px; border-radius: 12px; max-width: 85%; font-size: 0.9rem; word-wrap: break-word; box-shadow: 0 2px 4px rgba(0,0,0,0.3); line-height: 1.4; -webkit-user-select: none; user-select: none; }
         .chat-bubble.me { background: var(--accent-purple); color: white; border-radius: 12px 12px 0 12px; }
         .chat-bubble.them { color: #ddd; border-radius: 12px 12px 12px 0; }
@@ -357,6 +354,8 @@
     </style>
 </head>
 <body>
+    <input type="file" id="liveAvatarInp" accept="image/*" style="display:none;" onchange="processAvatarUpload(event)">
+    
     <canvas id="particles-canvas"></canvas>
     
     <div id="celebrationOverlay">
@@ -411,7 +410,7 @@
         <div class="filter-pill" onclick="filterClansByGame('Valorant', this)"><i class="fa-solid fa-v" style="color:red;"></i> Valorant Mobile</div>
     </div>
 
-    <div id="skeletonLoader" class="skeleton-wrapper active">
+    <div id="skeletonLoader" class="skeleton-wrapper">
         <div class="skeleton" style="height: 140px;"></div>
         <div class="skeleton" style="height: 140px;"></div>
     </div>
@@ -822,9 +821,8 @@
         let chatSyncInterval = null;
         let globalFindSyncInterval = null;
         let chatSyncBlockedUntil = 0; 
-        let currentReactionMsgId = null; // Track message for emoji picker
+        let currentReactionMsgId = null; 
 
-        // --- SECURE POST FETCHER LOGIC ---
         async function secureFetch(payload) {
             try {
                 const response = await fetch(API_URL, {
@@ -846,7 +844,6 @@
             setTimeout(() => t.className = "", 3000);
         }
 
-        // 🔥 UPGRADE: CELEBRATION ANIMATION
         function triggerCelebration(msg, subMsg) {
             triggerHaptic();
             let el = document.getElementById('celebrationOverlay');
@@ -899,6 +896,7 @@
             if(id === 'myClanTab') { if(activeClan) renderDashboard(activeClan); else renderHub(); }
         }
 
+        // 🔥 CACHE FIRST SKELETON LOADER
         document.addEventListener("DOMContentLoaded", () => {
             if(!isGuestMode && user.avatar) {
                 document.getElementById('headerProfilePic').src = user.avatar;
@@ -907,9 +905,20 @@
             fetchAllClansSilent();
 
             if (!isGuestMode) { 
-                fetchLiveClanData(false); 
+                let cachedClans = localStorage.getItem('tournyx_my_clans_cache');
+                if (cachedClans) {
+                    userLiveClans = JSON.parse(cachedClans);
+                    document.getElementById('skeletonLoader').classList.remove('active');
+                    document.getElementById('skeletonLoader').style.display = 'none';
+                    document.getElementById('mainContent').style.display = 'block';
+                    if (userLiveClans.length > 0) renderHub(); else showNoClan();
+                    fetchLiveClanData(true); // Silent Sync
+                } else {
+                    fetchLiveClanData(false); // Force Loader
+                }
             } else {
                 document.getElementById('skeletonLoader').classList.remove('active');
+                document.getElementById('skeletonLoader').style.display = 'none';
                 document.getElementById('mainContent').style.display = 'block';
                 showNoClan();
             }
@@ -926,7 +935,6 @@
                 }, 500);
             }
 
-            // Hide emoji picker if clicked outside
             document.addEventListener('click', (e) => {
                 const picker = document.getElementById('emojiPicker');
                 if (picker.style.display === 'flex') {
@@ -964,7 +972,6 @@
             } catch(e){}
         }
 
-        // 🔥 UPGRADE: PURE URL SHARE LINK
         function openInviteModal() {
             triggerHaptic();
             if(!activeClan) return;
@@ -1013,7 +1020,6 @@
             }
         }
 
-        // 🔥 UPGRADE: Skeleton Loader for Find Tab
         async function fetchAllClans() {
             const container = document.getElementById('globalClansList');
             container.innerHTML = `
@@ -1069,9 +1075,14 @@
             } catch(e){}
         }
 
+        // 🔥 AUTO-HEALING SYNC ENGINE
         async function fetchLiveClanData(isSilent = false) {
             if(isGuestMode) return;
-            if(!isSilent) { document.getElementById('mainContent').style.display = 'none'; document.getElementById('skeletonLoader').classList.add('active'); } 
+            if(!isSilent) { 
+                document.getElementById('mainContent').style.display = 'none'; 
+                document.getElementById('skeletonLoader').style.display = 'flex';
+                document.getElementById('skeletonLoader').classList.add('active'); 
+            } 
             else { triggerSyncIndicator(); }
 
             try {
@@ -1098,13 +1109,18 @@
                                     clanObj.isPremiumClan = true;
                                 }
 
+                                // AUTO-HEAL PLAYER PROFILE
                                 let currentRosterMe = clanObj.roster[myRosterIndex];
-                                let pPhone = user.phone || ""; let pIgn = user.gameName || user.ign || user.username || ""; let pUid = user.uid || user.gameUid || "";
+                                let pPhone = user.phone || ""; 
+                                let pIgn = user.gameName || user.ign || user.username || ""; 
+                                let pUid = user.uid || user.gameUid || "";
+                                let pAvatar = user.avatar || "";
                                 
-                                if (currentRosterMe.phone !== pPhone || currentRosterMe.gameName !== pIgn || currentRosterMe.uid !== pUid) {
+                                if (currentRosterMe.phone !== pPhone || currentRosterMe.gameName !== pIgn || currentRosterMe.uid !== pUid || currentRosterMe.avatar !== pAvatar) {
                                     clanObj.roster[myRosterIndex].phone = pPhone;
                                     clanObj.roster[myRosterIndex].gameName = pIgn;
                                     clanObj.roster[myRosterIndex].uid = pUid;
+                                    clanObj.roster[myRosterIndex].avatar = pAvatar;
                                     needsLiveSyncUpdate = true;
                                 }
                                 parsedClans.push(clanObj);
@@ -1113,6 +1129,7 @@
                     });
 
                     userLiveClans = parsedClans;
+                    localStorage.setItem('tournyx_my_clans_cache', JSON.stringify(parsedClans));
                     
                     if(activeClan) {
                         let updatedClan = userLiveClans.find(c => c.clanId === activeClan.clanId);
@@ -1126,8 +1143,8 @@
                 }
             } catch (err) { if(!isSilent) showNoClan(); } 
             finally {
-                // INSTANT HIDE LOADER
-                document.getElementById('skeletonLoader').classList.remove('active'); 
+                document.getElementById('skeletonLoader').classList.remove('active');
+                document.getElementById('skeletonLoader').style.display = 'none'; 
                 document.getElementById('mainContent').style.display = 'block';
             }
         }
@@ -1202,25 +1219,23 @@
             if(chatSyncInterval) clearInterval(chatSyncInterval);
         }
 
-        // 🔥 UPGRADE: INSTAGRAM CHAT FUNCTIONS 
         function toggleLike(timestamp) {
             triggerHaptic();
             let msg = activeClan.messages.find(m => m.timestamp == timestamp);
             if(msg) {
                 msg.isLiked = !msg.isLiked;
-                chatSyncBlockedUntil = Date.now() + 2500; // Pause sync temporarily
+                chatSyncBlockedUntil = Date.now() + 2500; 
                 pushUpdateToLive('FULL_UPDATE', activeClan);
                 renderChat(true);
             }
         }
 
         function showEmojiPicker(e, timestamp) {
-            e.preventDefault(); // Prevent default browser context menu
+            e.preventDefault();
             triggerHaptic();
             currentReactionMsgId = timestamp;
             const picker = document.getElementById('emojiPicker');
             
-            // Calculate safe position
             let x = e.clientX; let y = e.clientY;
             if(x > window.innerWidth - 180) x = window.innerWidth - 180;
             if(y > window.innerHeight - 80) y = window.innerHeight - 80;
@@ -1235,7 +1250,7 @@
             if(currentReactionMsgId) {
                 let msg = activeClan.messages.find(m => m.timestamp == currentReactionMsgId);
                 if(msg) {
-                    msg.reaction = (msg.reaction === emoji) ? null : emoji; // Toggle off if same
+                    msg.reaction = (msg.reaction === emoji) ? null : emoji;
                     chatSyncBlockedUntil = Date.now() + 2500; 
                     pushUpdateToLive('FULL_UPDATE', activeClan);
                     renderChat(true);
@@ -1328,7 +1343,6 @@
 
                 let timeStr = formatMessageTime(m.timestamp);
                 
-                // 🔥 UPGRADE: Bulletproof ID-based deletion
                 let deleteIcon = (isMe || isAdmin) ? `<i class="solid fa-trash" style="font-size:0.7rem; color:#ff4d4d; cursor:pointer; margin-left:10px; opacity:0.8;" onclick="deleteMessage(${m.timestamp})" title="Delete Message"></i>` : '';
                 
                 let likeHtml = m.isLiked ? `<div class="chat-like"><i class="fa-solid fa-heart"></i></div>` : '';
@@ -1448,11 +1462,66 @@
             document.getElementById('editSocialsModal').classList.add('active');
         }
 
+        // 🔥 UPLOAD INDIVIDUAL AVATAR FUNCTION
+        function processAvatarUpload(e) {
+            const file = e.target.files[0]; if(!file) return;
+            showToast("Uploading Profile Avatar...", false);
+            const reader = new FileReader();
+            reader.onload = (ev) => { 
+                const img = new Image();
+                img.onload = () => {
+                    const canvas = document.createElement('canvas');
+                    let scaleSize = 250 / img.width;
+                    if(scaleSize > 1) scaleSize = 1; 
+                    canvas.width = img.width * scaleSize;
+                    canvas.height = img.height * scaleSize;
+                    const ctx = canvas.getContext('2d');
+                    ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+                    
+                    const compressedBase64 = canvas.toDataURL('image/jpeg', 0.6); 
+                    const base64Data = compressedBase64.split(',')[1];
+                    const formData = new FormData();
+                    formData.append("image", base64Data);
+                    
+                    fetch("https://api.imgbb.com/1/upload?key=727c66ecfe2882d63fee08fee7495850", {
+                        method: "POST", body: formData
+                    })
+                    .then(res => res.json())
+                    .then(result => {
+                        if(result.success) {
+                            let imgbbUrl = result.data.url;
+                            
+                            // Save to Local User
+                            user.avatar = imgbbUrl;
+                            localStorage.setItem('tournyx_user', JSON.stringify(user));
+                            document.getElementById('headerProfilePic').src = imgbbUrl;
+                            document.getElementById('cardAvatarImg').src = imgbbUrl;
+                            
+                            // Save to Backend Profile
+                            secureFetch({action: "update_profile", email: user.email, field: "avatar", value: imgbbUrl}).catch(()=>{});
+
+                            // Save to Clan Roster
+                            let myRosterIndex = activeClan.roster.findIndex(r => String(r.name).toLowerCase() === String(user.username).toLowerCase());
+                            if(myRosterIndex !== -1) {
+                                activeClan.roster[myRosterIndex].avatar = imgbbUrl;
+                                pushUpdateToLive('FULL_UPDATE', activeClan);
+                                renderDashboard(activeClan);
+                            }
+
+                            showToast("Avatar Updated Perfectly!"); 
+                        } else {
+                            showToast("Image upload failed. Try again.", true);
+                        }
+                    }).catch(() => showToast("Upload error.", true));
+                };
+                img.src = ev.target.result;
+            };
+            reader.readAsDataURL(file);
+        }
+
         function renderDashboard(clan) {
             if(!clan || !clan.name) { returnToHub(); return; }
             
-            secureFetch({ action: "sync_clan_roster", clan_id: clan.clanId }).catch(()=>{});
-
             document.getElementById('hubState').style.display = 'none'; document.getElementById('hasClanState').style.display = 'block';
             document.getElementById('dashName').innerText = clan.name; document.getElementById('dashTag').innerText = (clan.tag || "TNYX").toUpperCase();
             document.getElementById('dashId').innerText = clan.clanId || "N/A";
@@ -1564,9 +1633,12 @@
                 let posTag = member.pos ? `<span class="r-pos-tag">${roleIcon} ${member.pos}</span>` : "";
                 let pStateTag = member.state && member.state !== "N/A" ? `<span class="state-badge"><i class="fa-solid fa-location-dot" style="font-size:0.5rem;"></i> ${member.state}</span>` : "";
 
+                // 🔥 AVATAR FETCH LOGIC FOR ROSTER LIST
+                let pAvatarUrl = member.avatar || member.Avatar || member.logo || member.pic || member.profile_pic || `https://ui-avatars.com/api/?name=${encodeURIComponent(member.name)}&background=110822&color=00f2ff`;
+
                 rl.innerHTML += `
                     <div class="roster-item" onclick="openMemberCard('${encodedData}', ${isAdmin}, ${isOwner}, '${member.name.replace(/'/g, "\\'")}')">
-                        <img src="https://ui-avatars.com/api/?name=${encodeURIComponent(member.name)}&background=110822&color=00f2ff" class="r-avatar" id="avatar-${member.name.replace(/\s+/g,'')}">
+                        <img src="${pAvatarUrl}" class="r-avatar" id="avatar-${member.name.replace(/\s+/g,'')}">
                         <div class="online-dot" style="display:${isOnline}; width:10px; height:10px; background:#00ff7f; border-radius:50%; margin-left:-16px; margin-top:25px; z-index:3; border:2px solid var(--primary-bg); box-shadow: 0 0 5px #00ff7f;"></div>
                         <div class="r-info">
                             <div class="r-name" title="${member.name}">${member.name}</div>
@@ -1579,24 +1651,27 @@
                         <i class="fa-solid fa-chevron-right" style="color:#666; font-size:0.75rem; margin-left:auto;"></i>
                     </div>`;
 
-                secureFetch({ action: "get_avatar", username: member.name })
-                .then(d => {
-                    if(d.status === 'success' && (d.data || d.avatar)) {
-                        let el = document.getElementById(`avatar-${member.name.replace(/\s+/g,'')}`);
-                        if(el) el.src = (d.data || d.avatar);
-                    }
-                }).catch(e=>{});
+                if(!member.avatar && !member.logo) {
+                    secureFetch({ action: "get_avatar", username: member.name })
+                    .then(d => {
+                        if(d.status === 'success' && (d.data || d.avatar)) {
+                            let el = document.getElementById(`avatar-${member.name.replace(/\s+/g,'')}`);
+                            if(el) el.src = (d.data || d.avatar);
+                        }
+                    }).catch(e=>{});
+                }
             });
         }
 
-        // 🔥 UPGRADE: Bulletproof UX Overflow for Player Modal
         function openMemberCard(encodedStr, isAdminViewing, isOwnerViewing, memberName) {
             triggerHaptic();
             let m = JSON.parse(decodeURIComponent(encodedStr));
             let rColor = m.role==='Owner' ? 'var(--accent-orange)' : (m.role==='Admin'?'var(--accent-cyan)':'#ccc');
             
+            let isMe = (m.name === user.username);
             let adminActionsHtml = "";
-            if(isAdminViewing && m.name !== user.username) {
+            
+            if(isAdminViewing && !isMe) {
                 adminActionsHtml += `<div style="margin-top:20px; border-top:1px dashed rgba(255,255,255,0.2); padding-top:15px;">`;
                 adminActionsHtml += `<div style="font-family:var(--font-head); font-size:0.75rem; color:var(--accent-cyan); margin-bottom:10px; text-transform:uppercase;">Admin Controls</div>`;
                 adminActionsHtml += `<div style="display:flex; gap:10px; flex-wrap:wrap;">`;
@@ -1612,15 +1687,21 @@
                 
                 adminActionsHtml += `<button class="btn-danger" style="flex:1; margin:0; padding:10px; font-size:0.8rem;" onclick="kickMember(event, '${m.name.replace(/'/g, "\\'")}')"><i class="fa-solid fa-ban"></i> Kick</button>`;
                 adminActionsHtml += `</div></div>`;
-            } else if (isAdminViewing && m.name === user.username) {
+            } else if (isAdminViewing && isMe) {
                 adminActionsHtml += `<div style="margin-top:20px; border-top:1px dashed rgba(255,255,255,0.2); padding-top:15px;">`;
                 adminActionsHtml += `<button class="btn-secondary" style="width:100%; margin:0; padding:10px; font-size:0.8rem;" onclick="openRoleDropdown(event, '${m.name.replace(/'/g, "\\'")}')"><i class="fa-solid fa-crosshairs"></i> Set My Game Role</button>`;
                 adminActionsHtml += `</div>`;
             }
 
+            let pAvatarUrl = m.avatar || m.Avatar || m.logo || m.pic || m.profile_pic || `https://ui-avatars.com/api/?name=${encodeURIComponent(m.name)}&background=110822&color=00f2ff`;
+            let uploadBtnHtml = isMe ? `<div onclick="document.getElementById('liveAvatarInp').click()" style="position:absolute; bottom:5px; right:-5px; background:var(--accent-cyan); width:26px; height:26px; border-radius:50%; display:flex; align-items:center; justify-content:center; cursor:pointer; box-shadow:0 0 10px rgba(0,242,255,0.8); border:2px solid var(--primary-bg); z-index:10;"><i class="fa-solid fa-camera" style="color:black; font-size:0.8rem;"></i></div>` : '';
+
             let html = `
-                <div style="text-align:center; margin-bottom:15px; display:flex; flex-direction:column; align-items:center;">
-                    <img id="cardAvatarImg" src="https://ui-avatars.com/api/?name=${encodeURIComponent(m.name)}&background=110822&color=00f2ff" style="width:70px; height:70px; background:var(--accent-purple); border:2px solid var(--accent-cyan); border-radius:50%; font-size:2.5rem; color:white; font-family:var(--font-head); display:flex; align-items:center; justify-content:center; margin:0 auto 10px; box-shadow:0 0 15px rgba(0,242,255,0.3); object-fit: cover; flex-shrink:0;">
+                <div style="text-align:center; margin-bottom:15px; display:flex; flex-direction:column; align-items:center; position:relative;">
+                    <div style="position:relative; margin-bottom:10px;">
+                        <img id="cardAvatarImg" src="${pAvatarUrl}" style="width:70px; height:70px; background:var(--accent-purple); border:2px solid var(--accent-cyan); border-radius:50%; font-size:2.5rem; color:white; font-family:var(--font-head); display:flex; align-items:center; justify-content:center; box-shadow:0 0 15px rgba(0,242,255,0.3); object-fit: cover; flex-shrink:0;">
+                        ${uploadBtnHtml}
+                    </div>
                     <div style="font-family:var(--font-head); font-size:clamp(1.1rem, 5vw, 1.4rem); font-weight:900; letter-spacing:1px; margin-bottom:5px; word-break:break-all; max-width:100%; line-height: 1.2;">${m.name}</div>
                     <div style="color:${rColor}; font-size:0.85rem; font-weight:bold; letter-spacing:1px; text-transform:uppercase; text-align:center; flex-wrap:wrap; display:flex; justify-content:center; gap:5px;"><span>${m.role}</span> ${m.pos ? `<span style="color:#888;">|</span> <span>${m.pos}</span>` : ''}</div>
                 </div>
@@ -1634,12 +1715,334 @@
             document.getElementById('memberDetailContent').innerHTML = html;
             document.getElementById('memberDetailModal').classList.add('active');
 
-            secureFetch({ action: "get_avatar", username: m.name })
-            .then(d => {
-                if(d.status === 'success' && (d.data || d.avatar)) {
-                    document.getElementById('cardAvatarImg').src = (d.data || d.avatar);
+            if(!m.avatar && !m.logo) {
+                secureFetch({ action: "get_avatar", username: m.name })
+                .then(d => {
+                    if(d.status === 'success' && (d.data || d.avatar)) {
+                        document.getElementById('cardAvatarImg').src = (d.data || d.avatar);
+                    }
+                }).catch(e=>{});
+            }
+        }
+
+        // 🔥 UPGRADE: Bulletproof Live Win Tracker Calculation
+        async function calculateLiveClanStats(clan) {
+            if(!clan) return;
+            try {
+                const mData = await secureFetch({ action: "get_matches", email: user.email });
+                let played = 0; let won = 0; let earn = 0;
+                
+                if(mData.status === 'success' && mData.data && mData.data.length > 0) {
+                    mData.data.forEach(m => {
+                        if(String(m.clan).toLowerCase() === String(clan.name).toLowerCase() || String(m.team).toLowerCase() === String(clan.name).toLowerCase()) {
+                            let s = String(m.status || m.match_status || m.db_status || "").toLowerCase();
+                            if(s.includes('completed') || s.includes('past') || s.includes('resolved') || s.includes('won') || s.includes('finished')) {
+                                played++;
+                                let prizeNum = parseInt(m.prize || m.winnings || "0");
+                                let pos = String(m.position || m.rank || m.standing || m.placement || "").toLowerCase().trim();
+                                
+                                // Precise Win Identification Logic
+                                let isTop3 = ["1", "2", "3", "1st", "2nd", "3rd"].includes(pos);
+                                if (isTop3 || s.includes('won') || (!isNaN(prizeNum) && prizeNum > 0)) { 
+                                    won++; 
+                                    earn += isNaN(prizeNum) ? 0 : prizeNum; 
+                                }
+                            }
+                        }
+                    });
+                } 
+                
+                let wr = played > 0 ? Math.round((won / played) * 100) : 0;
+                let generatedXp = (played * 50) + (won * 150);
+                
+                document.getElementById('dashPlayed').innerText = played; document.getElementById('dashTrophy').innerText = won;
+                let wrEl = document.getElementById('dashWR'); wrEl.innerText = wr + "%";
+                if(wr > 50) wrEl.style.color = 'var(--accent-green)'; else if (wr > 0) wrEl.style.color = 'var(--accent-red)';
+
+                let levelData = getClanLevelInfo(generatedXp);
+                
+                document.getElementById('dashLvl').innerText = levelData.level; 
+                document.getElementById('dashXp').innerText = levelData.currentXp;
+                document.getElementById('dashNextXp').innerText = levelData.nextXp;
+                document.getElementById('dashXpFill').style.width = levelData.progress + "%";
+
+                if (clan.stats_played !== played || clan.stats_won !== won) {
+                    clan.stats_played = played;
+                    clan.stats_won = won;
+                    clan.clan_xp = generatedXp;
+                    let cleanClan = JSON.parse(JSON.stringify(clan)); delete cleanClan.logo; delete cleanClan.banner;
+                    secureFetch({ action: "update_clan", clan_id: clan.clanId, field: "FULL_UPDATE", value: JSON.stringify(cleanClan) }).catch(()=>{});
                 }
-            }).catch(e=>{});
+
+            } catch(e) {}
+        }
+
+        function pushUpdateToLive(field, value) {
+            triggerSyncIndicator();
+            if (field !== 'FULL_UPDATE') { activeClan[field] = value; } 
+            else { activeClan = value; }
+
+            let index = userLiveClans.findIndex(c => c.clanId === activeClan.clanId);
+            if(index !== -1) userLiveClans[index] = activeClan;
+            
+            renderDashboard(activeClan); 
+
+            let payloadValue = value;
+            let cleanClan = JSON.parse(JSON.stringify(activeClan));
+            delete cleanClan.logo;
+            delete cleanClan.banner;
+            payloadValue = JSON.stringify(cleanClan);
+
+            let payload = { action: "update_clan", clan_id: activeClan.clanId, field: "FULL_UPDATE", value: payloadValue };
+            secureFetch(payload).catch(()=>{});
+        }
+
+        function broadcastMessage() {
+            triggerHaptic();
+            let msg = prompt("Enter notice to broadcast to clan members:");
+            if(msg && msg.trim() !== "") {
+                if(!activeClan.notifications) activeClan.notifications = [];
+                activeClan.notifications.push({ msg: `<b style='color:var(--accent-orange)'>${user.username}</b>: ${msg}`, timestamp: Date.now() });
+                pushUpdateToLive('FULL_UPDATE', activeClan);
+                showToast("Notice posted!");
+            }
+        }
+
+        function editField(field) {
+            triggerHaptic();
+            let val = prompt(`Update ${field}:`, activeClan[field] || "");
+            if(val && val.trim() !== "") { 
+                activeClan[field] = val;
+                pushUpdateToLive('FULL_UPDATE', activeClan); 
+                showToast("Updated successfully."); 
+            }
+        }
+
+        function toggleRecruitment() {
+            triggerHaptic();
+            activeClan.status = activeClan.status === 'OPEN' ? 'CLOSED' : 'OPEN';
+            pushUpdateToLive('FULL_UPDATE', activeClan); 
+            showToast("Recruitment set to " + activeClan.status);
+        }
+        
+        function toggleAutoAccept() {
+            triggerHaptic();
+            activeClan.autoAccept = document.getElementById('dashAutoAccept').checked;
+            pushUpdateToLive('FULL_UPDATE', activeClan); 
+            showToast(activeClan.autoAccept ? "Auto-Accept Enabled" : "Manual Review Enabled");
+        }
+
+        function triggerUpload(type) { triggerHaptic(); document.getElementById(type === 'banner' ? 'liveBannerInp' : 'liveLogoInp').click(); }
+        
+        function processImageUpload(e, field) {
+            const file = e.target.files[0]; if(!file) return;
+            showToast("Compressing and uploading image...", false);
+            const reader = new FileReader();
+            reader.onload = (ev) => { 
+                const img = new Image();
+                img.onload = () => {
+                    const canvas = document.createElement('canvas');
+                    let MAX_WIDTH = field === 'logo' ? 250 : 800; 
+                    let scaleSize = MAX_WIDTH / img.width;
+                    if(scaleSize > 1) scaleSize = 1; 
+                    canvas.width = img.width * scaleSize;
+                    canvas.height = img.height * scaleSize;
+                    const ctx = canvas.getContext('2d');
+                    ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+                    
+                    const compressedBase64 = canvas.toDataURL('image/jpeg', 0.6); 
+                    const base64Data = compressedBase64.split(',')[1];
+                    const formData = new FormData();
+                    formData.append("image", base64Data);
+                    
+                    let apiFieldTarget = field === 'logo' ? 'logo' : 'banner';
+
+                    fetch("https://api.imgbb.com/1/upload?key=727c66ecfe2882d63fee08fee7495850", {
+                        method: "POST", body: formData
+                    })
+                    .then(res => res.json())
+                    .then(result => {
+                        if(result.success) {
+                            let imgbbUrl = result.data.url;
+                            activeClan[apiFieldTarget] = imgbbUrl;
+                            let payload = { action: "update_clan", clan_id: activeClan.clanId, field: apiFieldTarget, value: imgbbUrl };
+                            secureFetch(payload).catch(()=>{});
+                            triggerSyncIndicator();
+                            
+                            let index = userLiveClans.findIndex(c => c.clanId === activeClan.clanId);
+                            if(index !== -1) userLiveClans[index] = activeClan;
+                            renderDashboard(activeClan);
+                            showToast("Image Saved Perfectly!"); 
+                        } else {
+                            showToast("Image upload failed. Try again.", true);
+                        }
+                    }).catch(() => showToast("Upload error.", true));
+                };
+                img.src = ev.target.result;
+            };
+            reader.readAsDataURL(file);
+        }
+
+        function editSocial(platform) {
+            triggerHaptic();
+            let link = prompt(`Enter your ${platform} link:`, activeClan[`${platform}Link`] || "");
+            if(link) { 
+                activeClan[`${platform}Link`] = link;
+                pushUpdateToLive('FULL_UPDATE', activeClan); 
+                showToast(`Linked ${platform}!`); 
+                document.getElementById('editSocialsModal').classList.remove('active');
+            }
+        }
+        
+        function nativeShare() {
+            triggerHaptic();
+            let baseOrigin = window.location.hostname.includes("tournyx.in") ? window.location.origin : "https://tournyx.in";
+            let pureUrl = baseOrigin + "/clans.html?invite=" + activeClan.clanId;
+            
+            const msg = `Join my ${activeClan.game} Clan [${activeClan.name}] on Tournyx!\n\nClick to join: ${pureUrl}`;
+            
+            if (typeof median !== 'undefined' && median.share) { 
+                median.share.sharePage({title: 'Tournyx Clan Invite', text: `Join my ${activeClan.game} Clan [${activeClan.name}] on Tournyx!`, url: pureUrl}); 
+            } else if (navigator.share) { 
+                navigator.share({ title: 'Tournyx Clan Invite', text: msg }).catch(e=>console.log(e)); 
+            } else { 
+                navigator.clipboard.writeText(msg).then(()=>showToast("Invite link copied!")); 
+            }
+        }
+        
+        function copyClanId() { triggerHaptic(); navigator.clipboard.writeText(activeClan.clanId).then(()=>showToast("Clan ID Copied!")); }
+
+        function openTransferOwnershipModal() {
+            triggerHaptic();
+            let select = document.getElementById('transferDropdownSelect');
+            select.innerHTML = '<option value="" disabled selected>Select a member...</option>';
+            
+            let eligibleMembers = activeClan.roster.filter(r => r.name !== user.username);
+            if(eligibleMembers.length === 0) {
+                showToast("You are the only member. Just disband the clan.", true);
+                return;
+            }
+
+            eligibleMembers.forEach(m => {
+                select.innerHTML += `<option value="${m.name}">${m.name} (${m.role})</option>`;
+            });
+
+            document.getElementById('transferOwnershipModal').classList.add('active');
+        }
+
+        function confirmOwnershipTransfer() {
+            let targetName = document.getElementById('transferDropdownSelect').value;
+            if(!targetName) { showToast("Please select a member.", true); return; }
+
+            if(confirm(`Are you sure you want to make ${targetName} the new Owner? You will be demoted to Admin.`)) {
+                triggerHaptic();
+                
+                let me = activeClan.roster.find(r => r.name === user.username);
+                let newOwner = activeClan.roster.find(r => r.name === targetName);
+                
+                if(me && newOwner) {
+                    me.role = 'Admin';
+                    newOwner.role = 'Owner';
+                    
+                    if(!activeClan.notifications) activeClan.notifications = [];
+                    activeClan.notifications.push({ msg: `<b style='color:var(--accent-orange)'>${targetName}</b> was promoted to Clan Owner!`, timestamp: Date.now() });
+                    
+                    pushUpdateToLive('FULL_UPDATE', activeClan);
+                    showToast("Ownership transferred successfully!");
+                    document.getElementById('transferOwnershipModal').classList.remove('active');
+                }
+            }
+        }
+
+        function deleteClan() {
+            triggerHaptic();
+            if(confirm("DANGER: Disband the clan entirely? This cannot be undone.")) {
+                triggerSyncIndicator();
+                secureFetch({ action: "delete_clan", clan_id: activeClan.clanId }).catch(()=>{});
+                
+                showToast("Clan disbanded permanently.", true); 
+                userLiveClans = userLiveClans.filter(c => c.clanId !== activeClan.clanId);
+                renderHub();
+                setTimeout(() => { fetchLiveClanData(true); }, 5000);
+            }
+        }
+
+        function submitClanCreation(e) {
+            e.preventDefault();
+            triggerHaptic();
+            const name = document.getElementById('inpCName').value; const tag = document.getElementById('inpCTag').value; const game = document.getElementById('inpCGame').value;
+            
+            const phone = user.phone || "Not Set"; 
+            const ign = user.gameName || user.ign || user.username || "Not Set"; 
+            const uid = user.uid || user.gameUid || "Not Set";
+            const userState = user.state || "N/A"; const userCity = user.city || "N/A";
+            const uAvatar = user.avatar || "";
+            
+            if(userLiveClans.filter(c => c.game === game).length >= 3) { showToast(`Max 3 clans allowed for ${game}!`, true); return; }
+            if(globalClans.some(c => String(c.name).toLowerCase() === name.toLowerCase())) { showToast(`Clan name "${name}" is already taken globally!`, true); return; }
+
+            const id = "TX-" + Math.random().toString(36).substr(2, 6).toUpperCase();
+            document.getElementById('btnCreateClan').innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Creating...`;
+
+            let newObj = {
+                clanId: id, name: name, tag: tag, game: game, bio: "Welcome to our new clan!", status: "OPEN", region: "🌍", motto: "We play to win", minRank: "None", autoAccept: false,
+                state: userState, city: userCity,
+                captain: user.username, 
+                roster: [{name: user.username, role: 'Owner', phone: phone, gameName: ign, uid: uid, state: userState, city: userCity, avatar: uAvatar}], 
+                requests: [], notifications: [{msg: `Clan founded by ${user.username}!`, timestamp: Date.now()}]
+            };
+
+            userLiveClans.push(newObj);
+            document.getElementById('createClanForm').reset();
+            document.getElementById('btnCreateClan').innerText = "Create Clan";
+            
+            returnToHub(); renderHub(); showToast("Clan Created Successfully!"); 
+
+            secureFetch({ action: "create_clan", username: user.username, data: JSON.stringify(newObj), email: user.email, gameName: game }).catch(()=>{});
+            setTimeout(() => { fetchLiveClanData(true); }, 5000);
+        }
+
+        function filterClansByGame(game, el) {
+            triggerHaptic();
+            document.querySelectorAll('.filter-pill').forEach(p => p.classList.remove('active'));
+            if(el) el.classList.add('active');
+            activeFilterGame = game;
+            searchGlobalClans();
+        }
+
+        function searchGlobalClans(silentRender = false) {
+            let q = document.getElementById('searchClanInput').value;
+            
+            let availableClans = globalClans.filter(gClan => 
+                !userLiveClans.some(myClan => myClan.clanId === gClan.clanId) && 
+                (!gClan.roster || gClan.roster.length < 6)
+            );
+            
+            if(activeFilterGame !== 'All') {
+                availableClans = availableClans.filter(c => {
+                    let cGame = c.game || "";
+                    return cGame.toLowerCase().includes(activeFilterGame.toLowerCase());
+                });
+            }
+
+            if(q) {
+                availableClans = availableClans.filter(c => {
+                    if(!c.name) return false; 
+                    let cGame = c.game || ""; let cTag = c.tag || "";
+                    return c.name.toLowerCase().includes(q.toLowerCase()) || cTag.toLowerCase().includes(q.toLowerCase()) || cGame.toLowerCase().includes(q.toLowerCase());
+                });
+            }
+
+            availableClans.sort((a,b) => {
+                return (b.isPremiumClan === true ? 1 : 0) - (a.isPremiumClan === true ? 1 : 0);
+            });
+
+            renderClans(availableClans, silentRender);
+        }
+
+        function closePublicModal() {
+            document.getElementById('publicClanModal').classList.remove('active');
+            activeModalClanId = null;
         }
 
         function openRoleDropdown(e, name) {
@@ -1747,547 +2150,6 @@
             }
         }
 
-        // 🔥 UPGRADE: BULLETPROOF MATCH & WIN TRACKING 
-        async function calculateLiveClanStats(clan) {
-            if(!clan) return;
-            try {
-                // Fetch matches from the backend arrays
-                const mData = await secureFetch({ action: "get_matches", email: user.email });
-                let played = 0; let won = 0; let earn = 0;
-                
-                // Fallbacks to User Sheet K-Column equivalents directly if they exist
-                let fallbackPlayed = parseInt(user.matches_played || 0);
-                let fallbackWon = parseInt(user.matches_won || 0);
-
-                if(mData.status === 'success' && mData.data && mData.data.length > 0) {
-                    mData.data.forEach(m => {
-                        if(m.clan === clan.name || m.team === clan.name) {
-                            let s = String(m.status || "").toLowerCase();
-                            if(s.includes('completed') || s.includes('past') || s.includes('resolved') || s.includes('won') || s.includes('finished')) {
-                                played++;
-                                let prizeNum = parseInt(m.prize || m.winnings || "0");
-                                let pos = String(m.position || m.rank || m.standing || m.placement || "").toLowerCase().trim();
-                                
-                                // Perfect logic mapping 1st, 2nd, and 3rd place as Wins!
-                                let isTop3 = ["1", "2", "3", "1st", "2nd", "3rd"].includes(pos);
-                                
-                                if (isTop3 || s.includes('won') || (!isNaN(prizeNum) && prizeNum > 0)) { 
-                                    won++; 
-                                    earn += isNaN(prizeNum) ? 0 : prizeNum; 
-                                }
-                            }
-                        }
-                    });
-                } else {
-                    played = fallbackPlayed;
-                    won = fallbackWon;
-                }
-                
-                let wr = played > 0 ? Math.round((won / played) * 100) : 0;
-                let generatedXp = (played * 50) + (won * 150);
-                
-                document.getElementById('dashPlayed').innerText = played; document.getElementById('dashTrophy').innerText = won;
-                let wrEl = document.getElementById('dashWR'); wrEl.innerText = wr + "%";
-                if(wr > 50) wrEl.style.color = 'var(--accent-green)'; else if (wr > 0) wrEl.style.color = 'var(--accent-red)';
-
-                let levelData = getClanLevelInfo(generatedXp);
-                
-                document.getElementById('dashLvl').innerText = levelData.level; 
-                document.getElementById('dashXp').innerText = levelData.currentXp;
-                document.getElementById('dashNextXp').innerText = levelData.nextXp;
-                
-                // Instant update without delay
-                document.getElementById('dashXpFill').style.width = levelData.progress + "%";
-
-                if (clan.stats_played !== played || clan.stats_won !== won) {
-                    clan.stats_played = played;
-                    clan.stats_won = won;
-                    clan.clan_xp = generatedXp;
-                    let cleanClan = JSON.parse(JSON.stringify(clan)); delete cleanClan.logo; delete cleanClan.banner;
-                    secureFetch({ action: "update_clan", clan_id: clan.clanId, field: "FULL_UPDATE", value: JSON.stringify(cleanClan) }).catch(()=>{});
-                }
-
-            } catch(e) {}
-        }
-
-        function pushUpdateToLive(field, value) {
-            triggerSyncIndicator();
-            if (field !== 'FULL_UPDATE') { activeClan[field] = value; } 
-            else { activeClan = value; }
-
-            let index = userLiveClans.findIndex(c => c.clanId === activeClan.clanId);
-            if(index !== -1) userLiveClans[index] = activeClan;
-            
-            renderDashboard(activeClan); 
-
-            let payloadValue = value;
-            let cleanClan = JSON.parse(JSON.stringify(activeClan));
-            delete cleanClan.logo;
-            delete cleanClan.banner;
-            payloadValue = JSON.stringify(cleanClan);
-
-            let payload = { action: "update_clan", clan_id: activeClan.clanId, field: "FULL_UPDATE", value: payloadValue };
-            secureFetch(payload).catch(()=>{});
-        }
-
-        function broadcastMessage() {
-            triggerHaptic();
-            let msg = prompt("Enter notice to broadcast to clan members:");
-            if(msg && msg.trim() !== "") {
-                if(!activeClan.notifications) activeClan.notifications = [];
-                activeClan.notifications.push({ msg: `<b style='color:var(--accent-orange)'>${user.username}</b>: ${msg}`, timestamp: Date.now() });
-                pushUpdateToLive('FULL_UPDATE', activeClan);
-                showToast("Notice posted!");
-            }
-        }
-
-        function editField(field) {
-            triggerHaptic();
-            let val = prompt(`Update ${field}:`, activeClan[field] || "");
-            if(val && val.trim() !== "") { 
-                activeClan[field] = val;
-                pushUpdateToLive('FULL_UPDATE', activeClan); 
-                showToast("Updated successfully."); 
-            }
-        }
-
-        function toggleRecruitment() {
-            triggerHaptic();
-            activeClan.status = activeClan.status === 'OPEN' ? 'CLOSED' : 'OPEN';
-            pushUpdateToLive('FULL_UPDATE', activeClan); 
-            showToast("Recruitment set to " + activeClan.status);
-        }
-        function toggleAutoAccept() {
-            triggerHaptic();
-            activeClan.autoAccept = document.getElementById('dashAutoAccept').checked;
-            pushUpdateToLive('FULL_UPDATE', activeClan); 
-            showToast(activeClan.autoAccept ? "Auto-Accept Enabled" : "Manual Review Enabled");
-        }
-
-        function triggerUpload(type) { triggerHaptic(); document.getElementById(type === 'banner' ? 'liveBannerInp' : 'liveLogoInp').click(); }
-        
-        function processImageUpload(e, field) {
-            const file = e.target.files[0]; if(!file) return;
-            showToast("Compressing and uploading image...", false);
-            const reader = new FileReader();
-            reader.onload = (ev) => { 
-                const img = new Image();
-                img.onload = () => {
-                    const canvas = document.createElement('canvas');
-                    let MAX_WIDTH = field === 'logo' ? 250 : 800; 
-                    let scaleSize = MAX_WIDTH / img.width;
-                    if(scaleSize > 1) scaleSize = 1; 
-                    canvas.width = img.width * scaleSize;
-                    canvas.height = img.height * scaleSize;
-                    const ctx = canvas.getContext('2d');
-                    ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-                    
-                    const compressedBase64 = canvas.toDataURL('image/jpeg', 0.6); 
-                    const base64Data = compressedBase64.split(',')[1];
-                    const formData = new FormData();
-                    formData.append("image", base64Data);
-                    
-                    let apiFieldTarget = field === 'logo' ? 'logo' : 'banner';
-
-                    fetch("https://api.imgbb.com/1/upload?key=727c66ecfe2882d63fee08fee7495850", {
-                        method: "POST", body: formData
-                    })
-                    .then(res => res.json())
-                    .then(result => {
-                        if(result.success) {
-                            let imgbbUrl = result.data.url;
-                            activeClan[apiFieldTarget] = imgbbUrl;
-                            let payload = { action: "update_clan", clan_id: activeClan.clanId, field: apiFieldTarget, value: imgbbUrl };
-                            secureFetch(payload).catch(()=>{});
-                            triggerSyncIndicator();
-                            
-                            let index = userLiveClans.findIndex(c => c.clanId === activeClan.clanId);
-                            if(index !== -1) userLiveClans[index] = activeClan;
-                            renderDashboard(activeClan);
-                            showToast("Image Saved Perfectly!"); 
-                        } else {
-                            showToast("Image upload failed. Try again.", true);
-                        }
-                    }).catch(() => showToast("Upload error.", true));
-                };
-                img.src = ev.target.result;
-            };
-            reader.readAsDataURL(file);
-        }
-
-        function editSocial(platform) {
-            triggerHaptic();
-            let link = prompt(`Enter your ${platform} link:`, activeClan[`${platform}Link`] || "");
-            if(link) { 
-                activeClan[`${platform}Link`] = link;
-                pushUpdateToLive('FULL_UPDATE', activeClan); 
-                showToast(`Linked ${platform}!`); 
-                document.getElementById('editSocialsModal').classList.remove('active');
-            }
-        }
-        
-        // 🔥 UPGRADE: PURE URL SHARE (NO INTENT URL)
-        function nativeShare() {
-            triggerHaptic();
-            let baseOrigin = window.location.hostname.includes("tournyx.in") ? window.location.origin : "https://tournyx.in";
-            let pureUrl = baseOrigin + "/clans.html?invite=" + activeClan.clanId;
-            
-            const msg = `Join my ${activeClan.game} Clan [${activeClan.name}] on Tournyx!\n\nClick to join: ${pureUrl}`;
-            
-            if (typeof median !== 'undefined' && median.share) { 
-                median.share.sharePage({title: 'Tournyx Clan Invite', text: `Join my ${activeClan.game} Clan [${activeClan.name}] on Tournyx!`, url: pureUrl}); 
-            } else if (navigator.share) { 
-                navigator.share({ title: 'Tournyx Clan Invite', text: msg }).catch(e=>console.log(e)); 
-            } else { 
-                navigator.clipboard.writeText(msg).then(()=>showToast("Invite link copied!")); 
-            }
-        }
-        
-        function copyClanId() { triggerHaptic(); navigator.clipboard.writeText(activeClan.clanId).then(()=>showToast("Clan ID Copied!")); }
-
-        function openTransferOwnershipModal() {
-            triggerHaptic();
-            let select = document.getElementById('transferDropdownSelect');
-            select.innerHTML = '<option value="" disabled selected>Select a member...</option>';
-            
-            let eligibleMembers = activeClan.roster.filter(r => r.name !== user.username);
-            if(eligibleMembers.length === 0) {
-                showToast("You are the only member. Just disband the clan.", true);
-                return;
-            }
-
-            eligibleMembers.forEach(m => {
-                select.innerHTML += `<option value="${m.name}">${m.name} (${m.role})</option>`;
-            });
-
-            document.getElementById('transferOwnershipModal').classList.add('active');
-        }
-
-        function confirmOwnershipTransfer() {
-            let targetName = document.getElementById('transferDropdownSelect').value;
-            if(!targetName) { showToast("Please select a member.", true); return; }
-
-            if(confirm(`Are you sure you want to make ${targetName} the new Owner? You will be demoted to Admin.`)) {
-                triggerHaptic();
-                
-                let me = activeClan.roster.find(r => r.name === user.username);
-                let newOwner = activeClan.roster.find(r => r.name === targetName);
-                
-                if(me && newOwner) {
-                    me.role = 'Admin';
-                    newOwner.role = 'Owner';
-                    
-                    if(!activeClan.notifications) activeClan.notifications = [];
-                    activeClan.notifications.push({ msg: `<b style='color:var(--accent-orange)'>${targetName}</b> was promoted to Clan Owner!`, timestamp: Date.now() });
-                    
-                    pushUpdateToLive('FULL_UPDATE', activeClan);
-                    showToast("Ownership transferred successfully!");
-                    document.getElementById('transferOwnershipModal').classList.remove('active');
-                }
-            }
-        }
-
-        function deleteClan() {
-            triggerHaptic();
-            if(confirm("DANGER: Disband the clan entirely? This cannot be undone.")) {
-                triggerSyncIndicator();
-                secureFetch({ action: "delete_clan", clan_id: activeClan.clanId }).catch(()=>{});
-                
-                showToast("Clan disbanded permanently.", true); 
-                userLiveClans = userLiveClans.filter(c => c.clanId !== activeClan.clanId);
-                renderHub();
-                setTimeout(() => { fetchLiveClanData(true); }, 5000);
-            }
-        }
-
-        function submitClanCreation(e) {
-            e.preventDefault();
-            triggerHaptic();
-            const name = document.getElementById('inpCName').value; const tag = document.getElementById('inpCTag').value; const game = document.getElementById('inpCGame').value;
-            
-            const phone = user.phone || "Not Set"; 
-            const ign = user.gameName || user.ign || user.username || "Not Set"; 
-            const uid = user.uid || user.gameUid || "Not Set";
-            const userState = user.state || "N/A"; const userCity = user.city || "N/A";
-            
-            if(userLiveClans.filter(c => c.game === game).length >= 3) { showToast(`Max 3 clans allowed for ${game}!`, true); return; }
-            if(globalClans.some(c => String(c.name).toLowerCase() === name.toLowerCase())) { showToast(`Clan name "${name}" is already taken globally!`, true); return; }
-
-            const id = "TX-" + Math.random().toString(36).substr(2, 6).toUpperCase();
-            document.getElementById('btnCreateClan').innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Creating...`;
-
-            let newObj = {
-                clanId: id, name: name, tag: tag, game: game, bio: "Welcome to our new clan!", status: "OPEN", region: "🌍", motto: "We play to win", minRank: "None", autoAccept: false,
-                state: userState, city: userCity,
-                captain: user.username, 
-                roster: [{name: user.username, role: 'Owner', phone: phone, gameName: ign, uid: uid, state: userState, city: userCity}], 
-                requests: [], notifications: [{msg: `Clan founded by ${user.username}!`, timestamp: Date.now()}]
-            };
-
-            userLiveClans.push(newObj);
-            document.getElementById('createClanForm').reset();
-            document.getElementById('btnCreateClan').innerText = "Create Clan";
-            
-            returnToHub(); renderHub(); showToast("Clan Created Successfully!"); 
-
-            secureFetch({ action: "create_clan", username: user.username, data: JSON.stringify(newObj), email: user.email, gameName: game }).catch(()=>{});
-            setTimeout(() => { fetchLiveClanData(true); }, 5000);
-        }
-
-        function filterClansByGame(game, el) {
-            triggerHaptic();
-            document.querySelectorAll('.filter-pill').forEach(p => p.classList.remove('active'));
-            if(el) el.classList.add('active');
-            activeFilterGame = game;
-            searchGlobalClans();
-        }
-
-        function searchGlobalClans(silentRender = false) {
-            let q = document.getElementById('searchClanInput').value;
-            
-            let availableClans = globalClans.filter(gClan => 
-                !userLiveClans.some(myClan => myClan.clanId === gClan.clanId) && 
-                (!gClan.roster || gClan.roster.length < 6)
-            );
-            
-            if(activeFilterGame !== 'All') {
-                availableClans = availableClans.filter(c => {
-                    let cGame = c.game || "";
-                    return cGame.toLowerCase().includes(activeFilterGame.toLowerCase());
-                });
-            }
-
-            if(q) {
-                availableClans = availableClans.filter(c => {
-                    if(!c.name) return false; 
-                    let cGame = c.game || ""; let cTag = c.tag || "";
-                    return c.name.toLowerCase().includes(q.toLowerCase()) || cTag.toLowerCase().includes(q.toLowerCase()) || cGame.toLowerCase().includes(q.toLowerCase());
-                });
-            }
-
-            availableClans.sort((a,b) => {
-                return (b.isPremiumClan === true ? 1 : 0) - (a.isPremiumClan === true ? 1 : 0);
-            });
-
-            renderClans(availableClans, silentRender);
-        }
-
-        function closePublicModal() {
-            document.getElementById('publicClanModal').classList.remove('active');
-            activeModalClanId = null;
-        }
-
-        function openPublicClanModal(cId, isSilent = false) {
-            if(!isSilent) triggerHaptic();
-            let c = globalClans.find(clan => clan.clanId === cId);
-            if(!c) return;
-
-            activeModalClanId = cId;
-            let scrollArea = document.getElementById('pubModalScrollArea');
-            let savedScroll = scrollArea.scrollTop;
-
-            let gameFallbackBanner = "https://via.placeholder.com/600x200/110822/bd00ff?text=Clan+Banner";
-            let cGameLower = (c.game || "").toLowerCase();
-            if(cGameLower.includes("free fire")) gameFallbackBanner = "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEiJvPTY_y_XU-0Lwbnjwm7961lCDkSlQh2MtCWHunFVX6WS7WCprCtkPyB334BU_-4vGsP0NseDQf4NPBEOIxqjk7VZQqZUHpnLb4Bw-c1UeXQy2M9DzNrNdYt_aL0GEb1AlTPupC5zEjJiP3Ci0Oxk-wdg5TF5cs8_UNSe3uTT1BE884je3iXr8QlMjx8/s600/1000094210.jpg";
-            else if(cGameLower.includes("bgmi")) gameFallbackBanner = "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEj3MKUI87mMK4_3DltS3LQgqfrK1sESUIMMqlENdi0dPRtOFkeDbvPsTbSaCRaJOb17QZ5s9OO5dR6kFCYiCkgUCF2zBWwvGFSb3T-9Nz51XuIzMvIiOuqwcLzyzeFmn1orKbiETP4LrlaG-RidnWAAzBwUA3aL5_z62HP4_F7R02lAK_WSYdH0U_Gn7Es/s600/1000094211.jpg";
-
-            let safeLogo = c.logo || c.externalLogo || "";
-            let safeBanner = c.banner || c.externalBanner || gameFallbackBanner;
-            let finalLogo = safeLogo.length > 20 ? safeLogo : `https://ui-avatars.com/api/?name=${encodeURIComponent(c.name)}&background=110822&color=bd00ff`;
-            let cTag = c.tag || "TNYX";
-
-            document.getElementById('pubClanBanner').src = safeBanner;
-            document.getElementById('pubClanLogo').src = finalLogo;
-            
-            let vipBadgeEl = document.getElementById('pubModalVipBadge');
-            let logoWrapEl = document.getElementById('pubModalLogoWrap');
-            if(c.isPremiumClan) {
-                vipBadgeEl.style.display = 'block';
-                logoWrapEl.style.boxShadow = '0 0 30px rgba(255,215,0,0.6)';
-                logoWrapEl.style.borderColor = '#FFD700';
-            } else {
-                vipBadgeEl.style.display = 'none';
-                logoWrapEl.style.boxShadow = 'none';
-                logoWrapEl.style.borderColor = 'var(--primary-bg)';
-            }
-
-            document.getElementById('pubClanName').innerHTML = c.name + (c.isPremiumClan ? ' <i class="fa-solid fa-crown" style="color:#FFD700; font-size:1rem; filter:drop-shadow(0 0 5px #FFD700);"></i>' : '');
-            document.getElementById('pubClanTag').innerText = "#" + cTag.toUpperCase();
-            
-            let demoXp = Math.floor(Math.random() * 12000);
-            let lvlData = getClanLevelInfo(c.clan_xp || demoXp);
-            document.getElementById('pubClanLevel').innerHTML = `<i class="fa-solid fa-fire"></i> Lvl ${lvlData.level}`;
-            document.getElementById('pubClanMotto').innerText = `"${c.motto || 'Ready for Battle'}"`;
-            
-            let rCount = c.roster ? c.roster.length : 1;
-            document.getElementById('pubClanMembers').innerText = `${rCount}/6`;
-            document.getElementById('pubClanGame').innerText = c.game || "Esports";
-
-            let isMember = c.roster && c.roster.some(r => r.name === user.username);
-            let socialsArea = document.getElementById('pubSocialLinksArea');
-            if(isMember && (c.discordLink || c.whatsappLink || c.instagramLink || c.youtubeLink)) {
-                socialsArea.style.display = 'block';
-                let socHtml = '';
-                if(c.discordLink) socHtml += `<a href="${c.discordLink}" target="_blank" class="social-btn discord-btn"><i class="fa-brands fa-discord"></i></a>`;
-                if(c.whatsappLink) socHtml += `<a href="${c.whatsappLink}" target="_blank" class="social-btn wa-btn"><i class="fa-brands fa-whatsapp"></i></a>`;
-                if(c.instagramLink) socHtml += `<a href="${c.instagramLink}" target="_blank" class="social-btn insta-btn"><i class="fa-brands fa-instagram"></i></a>`;
-                if(c.youtubeLink) socHtml += `<a href="${c.youtubeLink}" target="_blank" class="social-btn yt-btn"><i class="fa-brands fa-youtube"></i></a>`;
-                document.getElementById('pubSocialGrid').innerHTML = socHtml;
-            } else {
-                socialsArea.style.display = 'none';
-            }
-
-            let rosterHtml = "";
-            if(c.roster && c.roster.length > 0) {
-                c.roster.forEach(r => {
-                    let rColor = r.role === 'Owner' ? 'var(--accent-orange)' : (r.role === 'Admin' ? 'var(--accent-cyan)' : '#ccc');
-                    rosterHtml += `
-                    <div style="display:flex; align-items:center; gap:10px; background:rgba(255,255,255,0.03); padding:10px; border-radius:10px;">
-                        <img src="https://ui-avatars.com/api/?name=${encodeURIComponent(r.name)}&background=110822&color=00f2ff" id="pubAvatar-${r.name.replace(/\s+/g,'')}" style="width:40px; height:40px; border-radius:10px; object-fit:cover; flex-shrink:0;">
-                        <div style="flex:1; min-width:0; overflow:hidden;">
-                            <div style="font-family:var(--font-head); color:white; font-size:0.9rem; font-weight:bold; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${r.name} <span style="font-size:0.65rem; color:${rColor}; margin-left:5px; text-transform:uppercase;">(${r.role})</span></div>
-                            <div style="font-size:0.7rem; color:#aaa; margin-top:2px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">IGN: <span style="color:var(--accent-cyan); font-weight:bold;">${r.gameName || 'N/A'}</span> | UID: <span style="color:white; font-family:monospace;">${r.uid || 'N/A'}</span></div>
-                        </div>
-                    </div>`;
-                    
-                    secureFetch({ action: "get_avatar", username: r.name })
-                    .then(d => {
-                        if(d.status === 'success' && (d.data || d.avatar)) {
-                            let imgEl = document.getElementById(`pubAvatar-${r.name.replace(/\s+/g,'')}`);
-                            if(imgEl) imgEl.src = (d.data || d.avatar);
-                        }
-                    }).catch(e=>{});
-                });
-            } else {
-                rosterHtml = "<div style='color:#888; font-size:0.85rem;'>Roster is empty.</div>";
-            }
-            document.getElementById('pubClanRosterList').innerHTML = rosterHtml;
-
-            let isRejected = false;
-            if(c.rejectedList && c.rejectedList.some(x => x.name === user.username)) isRejected = true;
-            if(c.rejected && c.rejected.includes(user.username)) isRejected = true;
-
-            let isRequested = (c.requests && c.requests.some(r => r.name === user.username)) || localRequestedClans.has(c.clanId);
-            
-            let btnActionHtml = "";
-            if(isMember) {
-                btnActionHtml = `<button class="btn-primary" style="width:100%; margin:0; background:rgba(255,255,255,0.1); color:white; box-shadow:none;" onclick="closePublicModal()">ALREADY A MEMBER</button>`;
-            } else if (isRejected) {
-                btnActionHtml = `<button class="btn-primary" style="width:100%; border-color:var(--accent-cyan); background:transparent; color:var(--accent-cyan); margin:0;" onclick="triggerJoinFlow('${c.clanId}', '${c.name.replace(/'/g, "\\'")}', '${c.game || "Esports"}', ${c.autoAccept}, this); closePublicModal();">RE-APPLY TO SQUAD</button>`;
-            } else if (isRequested) {
-                btnActionHtml = `<button class="btn-secondary" style="width:100%; border-color:var(--accent-orange); color:var(--accent-orange); margin:0;" onclick="cancelJoinRequest('${c.clanId}', null, event); closePublicModal();">CANCEL REQUEST</button>`;
-            } else {
-                btnActionHtml = `<button class="btn-primary" style="width:100%; margin:0;" onclick="triggerJoinFlow('${c.clanId}', '${c.name.replace(/'/g, "\\'")}', '${c.game || "Esports"}', ${c.autoAccept}, this); closePublicModal();">JOIN SQUAD</button>`;
-            }
-
-            document.getElementById('pubClanActionBtn').innerHTML = btnActionHtml;
-            
-            if(!isSilent) document.getElementById('publicClanModal').classList.add('active');
-            setTimeout(() => { scrollArea.scrollTop = savedScroll; }, 0);
-        }
-
-        function renderClans(list, isSilent = false) {
-            let html = "";
-
-            list.forEach((c, index) => {
-                if(!c.name) return;
-                
-                let safeLogo = c.logo || c.externalLogo || "";
-                let gameFallbackBanner = "https://via.placeholder.com/600x200/110822/bd00ff?text=Clan+Banner";
-                let cGameLower = (c.game || "").toLowerCase();
-                if(cGameLower.includes("free fire")) gameFallbackBanner = "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEiJvPTY_y_XU-0Lwbnjwm7961lCDkSlQh2MtCWHunFVX6WS7WCprCtkPyB334BU_-4vGsP0NseDQf4NPBEOIxqjk7VZQqZUHpnLb4Bw-c1UeXQy2M9DzNrNdYt_aL0GEb1AlTPupC5zEjJiP3Ci0Oxk-wdg5TF5cs8_UNSe3uTT1BE884je3iXr8QlMjx8/s600/1000094210.jpg";
-                else if(cGameLower.includes("bgmi")) gameFallbackBanner = "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEj3MKUI87mMK4_3DltS3LQgqfrK1sESUIMMqlENdi0dPRtOFkeDbvPsTbSaCRaJOb17QZ5s9OO5dR6kFCYiCkgUCF2zBWwvGFSb3T-9Nz51XuIzMvIiOuqwcLzyzeFmn1orKbiETP4LrlaG-RidnWAAzBwUA3aL5_z62HP4_F7R02lAK_WSYdH0U_Gn7Es/s600/1000094211.jpg";
-
-                let safeBanner = c.banner || c.externalBanner || gameFallbackBanner;
-                let finalLogo = safeLogo.length > 20 ? safeLogo : `https://ui-avatars.com/api/?name=${encodeURIComponent(c.name)}&background=110822&color=bd00ff`;
-                let rCount = c.roster ? c.roster.length : 1; let cGame = c.game || "Esports"; let cTag = c.tag || "TNYX";
-                
-                let st = c.state && c.state !== "N/A" ? c.state : "";
-                let ct = c.city && c.city !== "N/A" ? c.city : "";
-                if (!st && !ct && c.roster && c.roster.length > 0) {
-                    let owner = c.roster.find(r => r.role === 'Owner') || c.roster[0];
-                    st = owner.state && owner.state !== "N/A" ? owner.state : "";
-                    ct = owner.city && owner.city !== "N/A" ? owner.city : "";
-                }
-                let cLoc = (ct && st) ? `${ct}, ${st}` : (st || ct || c.region || "Global");
-
-                let demoXp = Math.floor(Math.random() * 12000);
-                let lvlData = getClanLevelInfo(c.clan_xp || demoXp);
-                
-                let cardGlowCSS = ""; let lvlColor = "var(--accent-purple)"; let vipClass = "";
-                let vipRibbon = "";
-                if (c.isPremiumClan) {
-                    vipClass = "theme-vip-card";
-                    lvlColor = "#FFD700";
-                    vipRibbon = `<div class="vip-ribbon"><i class="fa-solid fa-crown"></i> ELITE SQUAD</div>`;
-                } else if (lvlData.level >= 5) { 
-                    cardGlowCSS = "border-color: rgba(255,215,0,0.5); box-shadow: 0 0 15px rgba(255,215,0,0.1);"; lvlColor = "#FFD700"; 
-                } else if (lvlData.level >= 3) { 
-                    cardGlowCSS = "border-color: rgba(0,242,255,0.4);"; lvlColor = "var(--accent-cyan)"; 
-                }
-                
-                let isRejected = false;
-                if (c.rejectedList && c.rejectedList.some(r => r.name === user.username)) isRejected = true;
-                if (c.rejected && c.rejected.includes(user.username)) isRejected = true;
-
-                let isRequested = (c.requests && c.requests.some(r => r.name === user.username)) || localRequestedClans.has(c.clanId);
-                
-                let btnHtml = "";
-                if (isRejected) {
-                    btnHtml = `<button class="s-btn acc" onclick="event.stopPropagation(); triggerJoinFlow('${c.clanId}', '${c.name.replace(/'/g, "\\'")}', '${cGame}', ${c.autoAccept}, this)">RE-APPLY</button>`;
-                } else if (isRequested) {
-                    btnHtml = `<button class="s-btn req" onclick="cancelJoinRequest('${c.clanId}', this, event)">REQUESTED</button>`;
-                } else {
-                    btnHtml = `<button class="s-btn acc" onclick="event.stopPropagation(); triggerJoinFlow('${c.clanId}', '${c.name.replace(/'/g, "\\'")}', '${cGame}', ${c.autoAccept}, this)">JOIN SQUAD</button>`;
-                }
-                
-                let hasIGL = c.roster && c.roster.some(r => r.pos && r.pos.includes('IGL'));
-                let hasSupp = c.roster && c.roster.some(r => r.pos && r.pos.includes('Support'));
-                let missingRoles = [];
-                if(!hasIGL) missingRoles.push("IGL");
-                if(!hasSupp) missingRoles.push("Support");
-                
-                let missingHtml = "";
-                if(rCount < 6) {
-                    if (missingRoles.length === 0 || missingRoles.length >= 2) {
-                        missingHtml = `<div class="wanted-role-badge"><i class="fa-solid fa-crosshairs"></i> WANTED: All Roles</div>`;
-                    } else {
-                        missingHtml = `<div class="wanted-role-badge"><i class="fa-solid fa-crosshairs"></i> WANTED: ${missingRoles.join(', ')}</div>`;
-                    }
-                }
-
-                let animDelay = isSilent ? "0s" : ((index * 0.1) + "s");
-
-                html += `
-                <div class="search-card ${vipClass}" style="animation-delay: ${animDelay}; ${cardGlowCSS}" onclick="openPublicClanModal('${c.clanId}')">
-                    <div class="sc-banner-wrap">
-                        <img src="${safeBanner}" class="sc-banner">
-                        ${vipRibbon}
-                    </div>
-                    <div class="sc-body">
-                        <div class="sc-header-row">
-                            <img src="${finalLogo}" class="sc-img">
-                            <div class="sc-title-area">
-                                <span class="sc-name">${c.name}</span>
-                                <span class="sc-tag-badge">#${cTag.toUpperCase()}</span>
-                            </div>
-                        </div>
-                        <div class="sc-motto">"${c.motto || 'Ready for Battle'}"</div>
-                        
-                        <div class="sc-stats-grid">
-                            <div class="sc-stat"><i class="fa-solid fa-users" style="color:var(--accent-cyan);"></i> ${rCount}/6</div>
-                            <div class="sc-stat" style="color:${lvlColor};"><i class="fa-solid fa-fire"></i> Lvl ${lvlData.level}</div>
-                            <div class="sc-stat loc"><i class="fa-solid fa-location-dot"></i> ${cLoc}</div>
-                        </div>
-                        
-                        ${missingHtml}
-                        ${btnHtml}
-                    </div>
-                </div>`;
-            });
-            document.getElementById('globalClansList').innerHTML = html || "<div style='text-align:center; color:#666; padding:40px;'><i class='fa-solid fa-ghost' style='font-size:3rem; margin-bottom:15px; color:var(--card-border);'></i><br>No matching clans found.<br>Try creating your own!</div>";
-        }
-
         function triggerJoinFlow(cId, cName, cGame, autoAccept, btnEl) {
             triggerHaptic();
             if(isGuestMode) { document.getElementById('guestLoginModal').classList.add('active'); return; }
@@ -2303,14 +2165,14 @@
 
         function closeJoinModal() { triggerHaptic(); document.getElementById('joinDataModal').classList.remove('active'); pendingJoinData = {}; }
 
-        // 🔥 UPGRADE: Bulletproof Payloads for Joining
         function processJoinRequest(e) {
             triggerHaptic();
             
             let phone = user.phone || user.mobile || "Not Set"; 
             let ign = user.gameName || user.ign || user.inGameName || user.username || "Not Set"; 
             let uid = user.uid || user.gameUid || user.playerId || "Not Set";
-            let playerObj = { name: user.username, role: "Player", phone: phone, gameName: ign, uid: uid, state: user.state || "N/A", city: user.city || "N/A" };
+            let uAvatar = user.avatar || "";
+            let playerObj = { name: user.username, role: "Player", phone: phone, gameName: ign, uid: uid, state: user.state || "N/A", city: user.city || "N/A", avatar: uAvatar };
             
             let btnSubmit = document.getElementById('btnFinalJoin');
             btnSubmit.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Processing...`; 
@@ -2526,7 +2388,8 @@
             if(existingClansForGame.length >= 3) { showToast(`Max 3 clans allowed for ${cGame}!`, true); return; }
 
             let phone = user.phone || ""; let ign = user.gameName || user.username || ""; let uid = user.uid || "";
-            let playerObj = { name: user.username, role: "Player", phone: phone, gameName: ign, uid: uid, state: user.state || "N/A", city: user.city || "N/A" };
+            let uAvatar = user.avatar || "";
+            let playerObj = { name: user.username, role: "Player", phone: phone, gameName: ign, uid: uid, state: user.state || "N/A", city: user.city || "N/A", avatar: uAvatar };
             
             let payload = { 
                 action: "handle_join_request", clan_id: cId, player_data: playerObj, 
@@ -2594,6 +2457,7 @@
                 if (!reqData.uid) reqData.uid = reqData.playerId || "Not Set";
                 if (!reqData.phone) reqData.phone = "Not Set";
                 if (!reqData.role) reqData.role = "Player";
+                if (!reqData.avatar) reqData.avatar = "";
 
                 let payload = { 
                     action: "handle_join_request", clan_id: cId, player_data: reqData, 
@@ -2609,7 +2473,7 @@
                     });
 
                     if(isAccept) {
-                        targetClan.roster.push({ name: reqData.name, role: reqData.role, phone: reqData.phone, gameName: reqData.gameName, uid: reqData.uid, state: reqData.state || "N/A", city: reqData.city || "N/A" });
+                        targetClan.roster.push({ name: reqData.name, role: reqData.role, phone: reqData.phone, gameName: reqData.gameName, uid: reqData.uid, state: reqData.state || "N/A", city: reqData.city || "N/A", avatar: reqData.avatar });
                         if(!targetClan.notifications) targetClan.notifications = [];
                         targetClan.notifications.push({ msg: `<b style='color:var(--accent-green)'>${reqData.name}</b> joined the clan!`, timestamp: Date.now() });
                     } else {
@@ -2628,85 +2492,6 @@
                 console.error("Error processing request", e);
             }
         }
-    </script>
-
-    <div id="nativeAppPrompt" style="display: none; position: fixed; top: calc(15px + env(safe-area-inset-top)); left: 50%; transform: translateX(-50%); width: 95%; max-width: 500px; background: rgba(10, 5, 20, 0.95); border: 1px solid var(--accent-cyan); border-radius: 16px; padding: 10px 15px; z-index: 9999; backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px); box-shadow: 0 15px 35px rgba(0,0,0,0.8), 0 0 20px rgba(0, 242, 255, 0.2); align-items: center; justify-content: space-between; animation: slideDownAppPrompt 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);">
-        <div style="display: flex; align-items: center; gap: 12px; flex: 1; min-width: 0;">
-            <i class="fa-solid fa-xmark" style="color: #888; font-size: 1.2rem; cursor: pointer; padding: 5px 10px 5px 0; transition: 0.3s;" onclick="document.getElementById('nativeAppPrompt').style.display='none'" onmouseover="this.style.color='white'"></i>
-            
-            <div style="display: flex; align-items: center; gap: 10px; flex: 1; min-width: 0; cursor: pointer;" onclick="window.location.href='download.html'">
-                <img src="https://tournyx.in/favicon.png" style="width: 40px; height: 40px; border-radius: 10px; border: 1px solid var(--accent-purple); box-shadow: 0 0 10px rgba(189,0,255,0.4);">
-                <div style="flex: 1; min-width: 0;">
-                    <div style="font-family: var(--font-head); font-size: 0.9rem; color: white; font-weight: 900; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">Tournyx Esports</div>
-                    <div style="font-family: var(--font-body); font-size: 0.75rem; color: #aaa; line-height: 1.2; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">Zero lag. Native experience.</div>
-                </div>
-            </div>
-        </div>
-        
-        <button onclick="window.location.href='download.html'" style="background: var(--accent-gradient); border: none; color: black; font-family: var(--font-head); font-weight: 900; font-size: 0.8rem; padding: 8px 16px; border-radius: 20px; cursor: pointer; white-space: nowrap; box-shadow: 0 5px 15px rgba(0,242,255,0.4); text-transform: uppercase; margin-left: 10px;">OPEN</button>
-    </div>
-
-    <style>
-        @keyframes slideDownAppPrompt { 
-            from { opacity: 0; transform: translate(-50%, -50px); } 
-            to { opacity: 1; transform: translate(-50%, 0); } 
-        }
-    </style>
-
-    <script>
-        document.addEventListener("DOMContentLoaded", function() {
-            const isMobileBrowser = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) || window.innerWidth <= 850;
-            const isMedianApp = (typeof median !== 'undefined') || 
-                                (typeof gonative !== 'undefined') || 
-                                (navigator.userAgent.toLowerCase().indexOf('median') > -1) || 
-                                (navigator.userAgent.toLowerCase().indexOf('gonative') > -1) ||
-                                (window.matchMedia('(display-mode: standalone)').matches) ||
-                                (navigator.standalone === true);
-            
-            if (isMobileBrowser && !isMedianApp) {
-                setTimeout(() => {
-                    const appPrompt = document.getElementById('nativeAppPrompt');
-                    if(appPrompt) {
-                        appPrompt.style.display = 'flex';
-                        try { if(navigator.vibrate) navigator.vibrate(30); } catch(e){}
-                    }
-                }, 1500); 
-            }
-        });
-
-        function tournyxOneSignalSetup() {
-            let user = JSON.parse(localStorage.getItem('tournyx_user'));
-            
-            if (user && user.email && typeof median !== 'undefined' && median.onesignal) {
-                let cleanEmail = user.email.toLowerCase().trim();
-
-                if (median.onesignal.login) {
-                    median.onesignal.login({ externalId: cleanEmail });
-                    if (median.onesignal.user && median.onesignal.user.addEmail) {
-                        median.onesignal.user.addEmail({ email: cleanEmail });
-                    }
-                } else if (median.onesignal.setExternalUserId) {
-                    median.onesignal.setExternalUserId({ externalId: cleanEmail });
-                    if (median.onesignal.setEmail) {
-                        median.onesignal.setEmail({ email: cleanEmail });
-                    }
-                }
-
-                let tagData = { 
-                    "user_email": cleanEmail, 
-                    "user_status": "active" 
-                };
-                
-                if (median.onesignal.tags && median.onesignal.tags.set) {
-                    median.onesignal.tags.set(tagData);
-                } else if (median.onesignal.sendTags) {
-                    median.onesignal.sendTags(tagData);
-                }
-            }
-        }
-
-        document.addEventListener("median_library_ready", tournyxOneSignalSetup);
-        document.addEventListener("DOMContentLoaded", tournyxOneSignalSetup);
     </script>
 </body>
 </html>
