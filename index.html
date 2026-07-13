@@ -3,389 +3,461 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>Tournyx // The System Awakening</title>
     
-    <!-- 🌐 OPEN GRAPH / SOCIAL LINK PREVIEWS -->
-    <meta property="og:title" content="TOURNYX // The System is Optimizing">
-    <meta property="og:description" content="The servers are upgrading. Enter the Free Fire Max Reflex Range, train your aim, and claim 100 TX Points before the system reboots!">
-    <meta property="og:image" content="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEiJvPTY_y_XU-0Lwbnjwm7961lCDkSlQh2MtCWHunFVX6WS7WCprCtkPyB334BU_-4vGsP0NseDQf4NPBEOIxqjk7VZQqZUHpnLb4Bw-c1UeXQy2M9DzNrNdYt_aL0GEb1AlTPupC5zEjJiP3Ci0Oxk-wdg5TF5cs8_UNSe3uTT1BE884je3iXr8QlMjx8/s1200/epic-tournyx-banner.jpg">
-    <meta property="og:type" content="website">
-    <meta name="twitter:card" content="summary_large_image">
-
-    <title>TOURNYX | System Initialization</title>
-
-    <!-- Google Fonts -->
+    <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Rajdhani:wght@500;600;700;800&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:ital,wght@0,400;0,600;0,700;1,500&family=Orbitron:wght@500;700;900&family=Rajdhani:wght@500;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    
+    <!-- Tailwind CSS (Store Aesthetic Base) -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        tx: { void: '#04050a', panel: '#0a0e18', border: '#1c2740', cyan: '#00f2ff', purple: '#bd00ff', gold: '#ffcc66', red: '#ff4d5e' }
+                    },
+                    fontFamily: {
+                        display: ['Orbitron', 'sans-serif'],
+                        body: ['Rajdhani', 'sans-serif'],
+                        mono: ['Chakra Petch', 'monospace'],
+                    }
+                }
+            }
+        }
+    </script>
 
     <style>
-        :root {
-            --primary-bg: #070311;
-            --accent-cyan: #00f2ff;
-            --accent-purple: #bd00ff;
-            --accent-gold: #FFD700;
-            --glass-bg: rgba(10, 6, 25, 0.75);
-            --glass-border: rgba(0, 242, 255, 0.2);
-            --font-head: 'Orbitron', sans-serif;
-            --font-body: 'Rajdhani', sans-serif;
+        /* CORE SYSTEM STYLES */
+        body { background-color: #04050a; color: #eaf0fb; overflow-x: hidden; }
+        ::-webkit-scrollbar { display: none; }
+        ::selection { background: rgba(0, 242, 255, 0.4); }
+
+        /* GRID BACKGROUND */
+        .system-grid {
+            position: fixed; inset: 0; z-index: -1; pointer-events: none;
+            background-image: linear-gradient(rgba(0,242,255,0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(0,242,255,0.03) 1px, transparent 1px);
+            background-size: 40px 40px;
+            mask-image: radial-gradient(ellipse 80% 80% at 50% 20%, black 20%, transparent 80%);
+            -webkit-mask-image: radial-gradient(ellipse 80% 80% at 50% 20%, black 20%, transparent 80%);
         }
 
-        * { margin: 0; padding: 0; box-sizing: border-box; user-select: none; -webkit-tap-highlight-color: transparent; }
+        /* SHUTTER TRANSITION */
+        #shutter { position: fixed; inset: 0; z-index: 9999; pointer-events: none; display: flex; }
+        #shutter .blade {
+            flex: 1; background: #000; transform-origin: top;
+            box-shadow: 0 0 30px rgba(0,242,255,0.2) inset;
+            animation: shutterOpen 0.8s cubic-bezier(0.8, 0, 0.2, 1) forwards;
+        }
+        #shutter .blade:nth-child(even) { animation-delay: 0.1s; }
+        @keyframes shutterOpen { 0% { transform: scaleY(1); } 100% { transform: scaleY(0); } }
 
-        /* 🛑 ZERO SCROLL VIEWPORT LOCK */
-        html, body {
-            width: 100vw; height: 100vh; height: 100dvh; 
-            overflow: hidden; background-color: var(--primary-bg);
-            color: #fff; font-family: var(--font-body);
+        /* GLITCH MONARCH EFFECT */
+        .glitch-text { position: relative; display: inline-block; }
+        .glitch-text::before, .glitch-text::after {
+            content: attr(data-text); position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            background: #04050a;
         }
+        .glitch-text::before { left: 2px; text-shadow: -2px 0 #ff4d5e; clip: rect(24px, 550px, 90px, 0); animation: glitch-anim-2 3s infinite linear alternate-reverse; }
+        .glitch-text::after { left: -2px; text-shadow: -2px 0 #00f2ff; clip: rect(85px, 550px, 140px, 0); animation: glitch-anim 2.5s infinite linear alternate-reverse; }
+        @keyframes glitch-anim { 0% { clip: rect(10px, 9999px, 44px, 0); } 100% { clip: rect(85px, 9999px, 14px, 0); } }
+        @keyframes glitch-anim-2 { 0% { clip: rect(65px, 9999px, 100px, 0); } 100% { clip: rect(10px, 9999px, 50px, 0); } }
 
-        /* 🎬 HARDWARE ACCELERATED VIDEO BACKGROUND */
-        .video-bg-container {
-            position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: -2; overflow: hidden;
-            background: #000;
-        }
-        .video-bg-file {
-            width: 100%; height: 100%; object-fit: cover; opacity: 0.35; pointer-events: none;
-        }
-        /* Dark Gradient Overlay */
-        .video-overlay {
-            position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: -1;
-            background: radial-gradient(circle at 50% 50%, rgba(7,3,17,0.4) 0%, rgba(7,3,17,0.9) 100%);
-        }
+        /* GLASS & NEON PANELS */
+        .glass-panel { background: rgba(10, 14, 24, 0.85); backdrop-filter: blur(12px); border: 1px solid rgba(28, 39, 64, 0.8); }
+        .neon-border-cyan { box-shadow: 0 0 15px rgba(0, 242, 255, 0.1), inset 0 0 10px rgba(0, 242, 255, 0.05); transition: 0.3s; }
+        .neon-border-cyan:hover { border-color: #00f2ff; box-shadow: 0 0 25px rgba(0, 242, 255, 0.3); transform: translateY(-3px); }
 
-        /* 📱 MAIN APP SHELL */
-        .app-shell {
-            display: flex; flex-direction: column; width: 100%; height: 100%;
-            padding: calc(10px + env(safe-area-inset-top)) 20px calc(15px + env(safe-area-inset-bottom));
-            position: relative; z-index: 10;
-        }
-
-        /* 🔝 HEADER: LOGO (LEFT) & TIMER (RIGHT) */
-        header {
-            display: flex; justify-content: space-between; align-items: center; width: 100%; height: 60px; flex-shrink: 0;
-        }
-        .brand { display: flex; align-items: center; gap: 10px; }
-        .brand img { width: 35px; height: 35px; border-radius: 8px; filter: drop-shadow(0 0 10px var(--accent-cyan)); }
-        .brand-text { font-family: var(--font-head); font-weight: 900; font-size: 1.2rem; letter-spacing: 2px; color: white; text-shadow: 0 0 8px var(--accent-cyan); }
-
-        .sys-timer {
-            display: flex; align-items: center; gap: 8px; background: rgba(0,0,0,0.6);
-            border: 1px solid var(--glass-border); padding: 6px 12px; border-radius: 8px;
-            backdrop-filter: blur(10px); box-shadow: 0 0 15px rgba(0,242,255,0.2);
-        }
-        .time-block { display: flex; align-items: baseline; gap: 2px; }
-        .time-val { font-family: var(--font-head); font-weight: 900; font-size: 1.1rem; color: var(--accent-gold); }
-        .time-lbl { font-size: 0.65rem; color: #aaa; font-weight: bold; }
-        .time-sep { color: var(--accent-cyan); animation: blink 1s infinite; }
-        @keyframes blink { 50% { opacity: 0.3; } }
-
-        /* 🎛️ CENTER CONTENT */
-        main {
-            flex: 1; display: flex; flex-direction: column; justify-content: center; align-items: center;
-            width: 100%; max-width: 600px; margin: 0 auto;
-        }
-
-        /* Banner Frame */
-        .sys-banner-wrap {
-            width: 100%; padding: 6px; background: var(--glass-bg); border: 1px solid var(--glass-border);
-            border-radius: 16px; box-shadow: 0 15px 35px rgba(0,0,0,0.8);
-            margin-bottom: 20px; position: relative;
-        }
-        .sys-banner { width: 100%; height: auto; max-height: 200px; object-fit: cover; border-radius: 12px; }
-        
-        /* Fading Professional Text */
-        .fade-message {
-            font-family: var(--font-head); font-size: clamp(0.9rem, 4vw, 1.1rem); font-weight: 700;
-            color: white; text-transform: uppercase; letter-spacing: 1.5px; text-align: center;
-            margin-bottom: 30px; animation: professionalFade 3.5s ease-in-out infinite;
-        }
-        @keyframes professionalFade {
-            0%, 100% { opacity: 0.4; text-shadow: none; }
-            50% { opacity: 1; text-shadow: 0 0 15px var(--accent-cyan); color: var(--accent-cyan); }
-        }
-
-        /* The Solo Leveling Action Button */
-        .btn-awaken {
-            background: linear-gradient(135deg, var(--accent-purple), var(--accent-cyan));
-            border: 2px solid #fff; border-radius: 12px; padding: 14px 30px;
-            color: #fff; font-family: var(--font-head); font-weight: 900; font-size: 1.1rem;
-            letter-spacing: 1px; text-transform: uppercase; cursor: pointer;
-            box-shadow: 0 0 25px rgba(0, 242, 255, 0.5); transition: 0.3s;
-            display: flex; align-items: center; gap: 10px;
-        }
-        .btn-awaken:active { transform: scale(0.95); }
-        .btn-awaken:hover { box-shadow: 0 0 40px rgba(189, 0, 255, 0.8); }
-
-        /* 🔗 FOOTER SOCIALS */
-        footer {
-            height: 50px; flex-shrink: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px;
-        }
-        .foot-text { font-family: var(--font-head); font-size: 0.7rem; color: #888; letter-spacing: 1px; text-transform: uppercase; }
-        .social-row { display: flex; gap: 20px; }
-        .social-row i { font-size: 1.3rem; color: #ccc; transition: 0.3s; cursor: pointer; }
-        .social-row i:hover { color: var(--accent-cyan); filter: drop-shadow(0 0 8px var(--accent-cyan)); transform: scale(1.2); }
-
-        /* 🎯 POPUP MINI GAME MODAL */
-        .modal-overlay {
-            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.85); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
-            z-index: 5000; display: none; align-items: center; justify-content: center;
-            opacity: 0; transition: opacity 0.3s ease;
-        }
-        .modal-overlay.active { display: flex; opacity: 1; }
-        
-        .game-box {
-            background: #0d061e; border: 2px solid var(--accent-cyan); border-radius: 16px;
-            width: 90%; max-width: 400px; padding: 20px; position: relative;
-            box-shadow: 0 0 50px rgba(0,242,255,0.3); transform: scale(0.9); transition: 0.3s;
-        }
-        .modal-overlay.active .game-box { transform: scale(1); }
-
-        .close-btn {
-            position: absolute; top: 10px; right: 15px; color: #888; font-size: 1.2rem; cursor: pointer;
-        }
-        
-        /* Game Arena */
-        .game-header { text-align: center; font-family: var(--font-head); font-weight: 900; color: var(--accent-gold); margin-bottom: 10px; letter-spacing: 1px;}
-        
-        .arena {
-            width: 100%; height: 220px; background: url('https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgV-7qK-tYyE9KqO_R6Y8Y0c4mR9H_V8Xw0ZJb2P7uR9zBwP2X3Qn4Z4U6Y7H8L9J0K1M2N3O4P5Q6R7S8T9U0V1W2X3Y4Z5A6B7C8D9E0F1G2H/s800/ffmax-bg.jpg') center/cover;
-            border: 2px solid #333; border-radius: 10px; position: relative; overflow: hidden; cursor: crosshair;
-        }
-        .arena::after { content: ''; position: absolute; inset:0; background: rgba(0,0,0,0.4); }
-
-        /* The Headshot Target */
-        .target {
-            position: absolute; width: 40px; height: 40px; top: 50%; left: 50%;
-            background: url('https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjD3C4B5A6F7G8H9I0J1K2L3M4N5O6P7Q8R9S0T1U2V3W4X5Y6Z7A8B9C0D1E2F3G4H5I6J7K8L9M0N1O2P3Q4R5S6T7U8V9W0X1Y2Z/s100/headshot-icon.png') center/contain no-repeat;
-            transform: translate(-50%, -50%); z-index: 5; transition: top 0.2s, left 0.2s; filter: drop-shadow(0 0 5px red);
-        }
-
-        .hud { display: flex; justify-content: space-between; margin-top: 10px; font-family: var(--font-body); font-weight: bold; font-size: 0.9rem;}
-        .score-text { color: var(--accent-cyan); }
-        .ammo-text { color: #ff4d4d; }
-
-        /* Win State */
-        .win-state { display: none; text-align: center; animation: popIn 0.4s ease; }
-        @keyframes popIn { 0% { transform: scale(0.5); opacity: 0;} 100% { transform: scale(1); opacity: 1;} }
-        
-        .win-title { font-family: var(--font-head); color: var(--accent-green); font-size: 1.5rem; font-weight: 900; margin-bottom: 5px;}
-        .win-sub { font-size: 0.85rem; color: #ccc; margin-bottom: 15px; line-height: 1.4;}
-        
-        .btn-share {
-            width: 100%; background: #25D366; color: white; border: none; padding: 12px; border-radius: 8px;
-            font-family: var(--font-head); font-weight: bold; font-size: 1rem; cursor: pointer; box-shadow: 0 4px 15px rgba(37, 211, 102, 0.4);
-        }
-
-        #customToast { visibility: hidden; min-width: 250px; background-color: var(--accent-gold); color: #000; text-align: center; border-radius: 8px; padding: 12px; position: fixed; z-index: 9999; left: 50%; bottom: 30px; transform: translateX(-50%); font-family: var(--font-head); font-weight: bold; font-size: 0.85rem; box-shadow: 0 4px 15px rgba(255,215,0,0.5);}
-        #customToast.show { visibility: visible; animation: fadein 0.5s, fadeout 0.5s 2.5s; }
-        @keyframes fadein { from {bottom: 0; opacity: 0;} to {bottom: 30px; opacity: 1;} }
-        @keyframes fadeout { from {bottom: 30px; opacity: 1;} to {bottom: 0; opacity: 0;} }
+        /* RADAR CHART */
+        .radar-stat-text { font-family: 'Chakra Petch', monospace; font-size: 11px; fill: #7688a8; font-weight: 600; letter-spacing: 1px; }
+        .radar-polygon { fill: rgba(189, 0, 255, 0.15); stroke: #bd00ff; stroke-width: 2px; transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
     </style>
 </head>
-<body>
+<body class="font-body antialiased selection:bg-tx-purple selection:text-white">
 
-    <!-- 🎬 VIDEO BACKGROUND -->
-    <div class="video-bg-container">
-        <video class="video-bg-file" autoplay loop muted playsinline>
-            <source src="https://assets.mixkit.co/videos/preview/mixkit-abstract-laser-lights-background-loop-41740-large.mp4" type="video/mp4">
-        </video>
-        <div class="video-overlay"></div>
+    <!-- SHUTTER LOAD -->
+    <div id="shutter">
+        <div class="blade"></div><div class="blade"></div><div class="blade"></div><div class="blade"></div><div class="blade"></div>
     </div>
+    <div class="system-grid"></div>
 
-    <!-- 📱 MAIN APP UI (LOCKED IN 1 VIEWPORT) -->
-    <div class="app-shell">
-        
-        <!-- 🔝 HEADER -->
-        <header>
-            <div class="brand">
-                <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEg_20wCR-WBMpQmw3vxcYUf-vxIO1PYDJoQN_Sid3UDjA9tf0cuX0eH40jbzHoJad4cxbnjhPjqfCw1Z5V1LhgN9zFuIQC0fJjecTy3D9PFu5WjR2H1wHwTD1bUGnXY_NiApWn5gMs6velcQngSzKoP1yHzX0cVsFSUFM8zIefcbiPayY7680Kz0V0ZAAE/s1264/1000093706.png" alt="Tournyx Logo" onerror="this.src='https://ui-avatars.com/api/?name=TX&background=000&color=00f2ff'">
-                <div class="brand-text">TOURNYX</div>
+    <!-- HEADER -->
+    <header class="fixed top-0 w-full glass-panel z-50 px-6 py-4 flex justify-between items-center">
+        <div class="flex items-center gap-3">
+            <div class="w-8 h-8 border-2 border-tx-cyan rotate-45 relative shadow-[0_0_10px_rgba(0,242,255,0.5)]">
+                <div class="absolute inset-1 bg-tx-cyan shadow-[0_0_15px_#00f2ff]"></div>
             </div>
-            
-            <div class="sys-timer" id="systemTimer">
-                <div class="time-block"><span class="time-val" id="tHrs">00</span><span class="time-lbl">H</span></div>
-                <div class="time-sep">:</div>
-                <div class="time-block"><span class="time-val" id="tMin">00</span><span class="time-lbl">M</span></div>
-                <div class="time-sep">:</div>
-                <div class="time-block"><span class="time-val" id="tSec">00</span><span class="time-lbl">S</span></div>
-            </div>
-        </header>
-
-        <!-- 🎛️ CENTER CONTENT -->
-        <main>
-            <div class="sys-banner-wrap">
-                <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEiJvPTY_y_XU-0Lwbnjwm7961lCDkSlQh2MtCWHunFVX6WS7WCprCtkPyB334BU_-4vGsP0NseDQf4NPBEOIxqjk7VZQqZUHpnLb4Bw-c1UeXQy2M9DzNrNdYt_aL0GEb1AlTPupC5zEjJiP3Ci0Oxk-wdg5TF5cs8_UNSe3uTT1BE884je3iXr8QlMjx8/s1200/epic-tournyx-banner.jpg" class="sys-banner" alt="System Update">
-            </div>
-
-            <!-- Fading Text instead of scroll -->
-            <div class="fade-message">
-                <i class="fa-solid fa-server"></i> System is optimizing<br>Standby for Awakening
-            </div>
-
-            <!-- The Solo Leveling Action Button -->
-            <button class="btn-awaken" onclick="openGame()">
-                <i class="fa-solid fa-crosshairs"></i> Run Reflex Trainer
-            </button>
-        </main>
-
-        <!-- 🔗 FOOTER SOCIALS -->
-        <footer>
-            <div class="foot-text">Connect with the Network</div>
-            <div class="social-row">
-                <i class="fa-brands fa-instagram" onclick="window.open('https://instagram.com','_blank')"></i>
-                <i class="fa-brands fa-whatsapp" onclick="window.open('https://whatsapp.com','_blank')"></i>
-                <i class="fa-brands fa-discord" onclick="window.open('https://discord.com','_blank')"></i>
-                <i class="fa-brands fa-youtube" onclick="window.open('https://youtube.com','_blank')"></i>
-            </div>
-        </footer>
-    </div>
-
-    <!-- 🎯 POPUP MINI GAME: ONE-TAP TRAINER -->
-    <div class="modal-overlay" id="gameModal">
-        <div class="game-box">
-            <i class="fa-solid fa-xmark close-btn" onclick="closeGame()"></i>
-            
-            <div id="gameState">
-                <div class="game-header">ONE-TAP REFLEX TRAINING</div>
-                
-                <div class="arena" id="arena" onclick="missShot(event)">
-                    <!-- The Target that jumps around -->
-                    <div class="target" id="target" onclick="hitTarget(event)"></div>
-                </div>
-
-                <div class="hud">
-                    <div class="score-text">HEADSHOTS: <span id="scoreVal">0</span>/10</div>
-                    <div class="ammo-text">MISSED: <span id="missVal">0</span></div>
-                </div>
-            </div>
-
-            <!-- Win State Marketing Arbitrage -->
-            <div class="win-state" id="winState">
-                <i class="fa-solid fa-gem" style="font-size:3rem; color:var(--accent-cyan); filter:drop-shadow(0 0 15px cyan); margin-bottom:15px;"></i>
-                <div class="win-title">SYSTEM AWAKENED!</div>
-                <div class="win-sub">You have elite reflexes! You've unlocked <b>100 TX Points</b>. Share your status with your squad to claim them instantly!</div>
-                <button class="btn-share" onclick="shareToClaim()"><i class="fa-brands fa-whatsapp"></i> Share & Claim Points</button>
-            </div>
-
+            <h1 class="font-display font-black text-xl tracking-widest text-white">TOURNYX</h1>
         </div>
-    </div>
+        
+        <!-- REAL-TIME WALLET (FIREBASE SYNCED) -->
+        <div class="flex gap-4">
+            <div class="bg-tx-void border border-tx-border px-4 py-1.5 rounded-full flex items-center gap-2">
+                <i class="fa-solid fa-coins text-tx-gold"></i>
+                <span id="liveGold" class="font-mono font-bold text-sm">--</span>
+            </div>
+            <div class="bg-tx-void border border-tx-border px-4 py-1.5 rounded-full flex items-center gap-2">
+                <i class="fa-solid fa-bolt text-tx-cyan"></i>
+                <span id="liveExp" class="font-mono font-bold text-sm">-- EXP</span>
+            </div>
+            <button class="bg-gradient-to-r from-tx-purple to-tx-cyan text-black font-display font-bold px-5 py-1.5 rounded-full hover:scale-105 transition-transform shadow-[0_0_20px_rgba(0,242,255,0.4)]">
+                STORE
+            </button>
+        </div>
+    </header>
 
-    <div id="customToast">Notification</div>
+    <main class="pt-28 pb-20 px-4 max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-8">
+        
+        <!-- LEFT: THE AWAKENING HUD (RADAR & STATS) -->
+        <section class="lg:col-span-4 flex flex-col gap-6">
+            <div class="glass-panel rounded-2xl p-6 relative overflow-hidden">
+                <div class="absolute top-0 right-0 bg-tx-cyan text-black font-mono text-[10px] font-bold px-3 py-1 rounded-bl-lg">LIVE SYNC</div>
+                
+                <p class="font-mono text-xs text-tx-cyan tracking-widest mb-1">PLAYER_SYSTEM_ACTIVE</p>
+                <div class="flex justify-between items-end border-b border-tx-border pb-4 mb-4">
+                    <div>
+                        <h2 class="font-display text-4xl font-black text-white" id="playerLevel">LVL --</h2>
+                        <h3 class="font-display text-sm text-tx-purple font-bold tracking-widest uppercase mt-1" id="playerRank">AWAKENING...</h3>
+                    </div>
+                    <div class="text-right">
+                        <div class="text-sm font-bold">SHADOW_XIX</div>
+                        <div class="text-xs text-gray-500 font-mono">Unga Esports ID</div>
+                    </div>
+                </div>
 
-    <!-- ⚙️ JAVASCRIPT ENGINE -->
-    <script>
-        /* --- 1. COUNTDOWN TIMER LOGIC --- */
-        let endTime = Date.now() + (2 * 60 * 60 * 1000); 
+                <!-- DYNAMIC SVG RADAR -->
+                <div class="flex justify-center my-6">
+                    <svg id="skillRadar" width="240" height="220" viewBox="0 0 240 220"></svg>
+                </div>
 
-        function updateTimer() {
-            let now = Date.now();
-            let diff = endTime - now;
-
-            if (diff <= 0) {
-                document.getElementById('tHrs').innerText = "00";
-                document.getElementById('tMin').innerText = "00";
-                document.getElementById('tSec').innerText = "00";
-                document.querySelector('.fade-message').innerHTML = "<i class='fa-solid fa-bolt'></i> SYSTEM ONLINE - ENTERING...";
-                document.querySelector('.fade-message').style.color = "#00ff7f";
-                setTimeout(() => { window.location.href = "/explore"; }, 2000);
-                return;
-            }
-
-            let h = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-            let m = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
-            let s = Math.floor((diff % (1000 * 60)) / 1000);
-
-            document.getElementById('tHrs').innerText = h < 10 ? "0" + h : h;
-            document.getElementById('tMin').innerText = m < 10 ? "0" + m : m;
-            document.getElementById('tSec').innerText = s < 10 ? "0" + s : s;
-        }
-        setInterval(updateTimer, 1000);
-        updateTimer();
-
-        /* --- 2. MINI GAME LOGIC --- */
-        let score = 0;
-        let misses = 0;
-        const target = document.getElementById('target');
-        const arena = document.getElementById('arena');
-
-        function openGame() {
-            if(navigator.vibrate) navigator.vibrate(50);
-            score = 0; misses = 0;
-            document.getElementById('scoreVal').innerText = score;
-            document.getElementById('missVal').innerText = misses;
-            document.getElementById('gameState').style.display = 'block';
-            document.getElementById('winState').style.display = 'none';
-            document.getElementById('gameModal').classList.add('active');
-            moveTarget();
-        }
-
-        function closeGame() {
-            if(navigator.vibrate) navigator.vibrate(50);
-            document.getElementById('gameModal').classList.remove('active');
-        }
-
-        function moveTarget() {
-            let maxX = arena.clientWidth - 40;
-            let maxY = arena.clientHeight - 40;
-            let randomX = Math.floor(Math.random() * maxX);
-            let randomY = Math.floor(Math.random() * maxY);
+                <!-- LIVE STAT READOUT -->
+                <div class="grid grid-cols-2 gap-3 font-mono text-xs text-gray-400">
+                    <div class="flex justify-between border-b border-tx-border pb-1"><span>LETHALITY</span><span id="stat-let" class="text-white font-bold">0</span></div>
+                    <div class="flex justify-between border-b border-tx-border pb-1"><span>PERCEPTION</span><span id="stat-per" class="text-white font-bold">0</span></div>
+                    <div class="flex justify-between border-b border-tx-border pb-1"><span>TACTICS</span><span id="stat-tac" class="text-white font-bold">0</span></div>
+                    <div class="flex justify-between border-b border-tx-border pb-1"><span>AGILITY</span><span id="stat-agi" class="text-white font-bold">0</span></div>
+                    <div class="flex justify-between border-b border-tx-border pb-1 col-span-2"><span>ENDURANCE</span><span id="stat-end" class="text-white font-bold">0</span></div>
+                </div>
+                
+                <!-- EXP BAR -->
+                <div class="mt-6">
+                    <div class="flex justify-between text-[10px] font-mono mb-1 text-tx-cyan">
+                        <span>NEXT AWAKENING</span>
+                        <span id="expText">0 / 0</span>
+                    </div>
+                    <div class="h-1.5 w-full bg-tx-void rounded-full overflow-hidden">
+                        <div id="expBar" class="h-full bg-tx-cyan shadow-[0_0_10px_#00f2ff] transition-all duration-700" style="width: 0%;"></div>
+                    </div>
+                </div>
+            </div>
             
-            target.style.left = randomX + 20 + 'px';
-            target.style.top = randomY + 20 + 'px';
-        }
+            <!-- ALGORITHMIC PENALTY ZONE -->
+            <div id="penaltyZone" class="hidden glass-panel rounded-2xl p-6 border-tx-red border shadow-[0_0_30px_rgba(255,77,94,0.15)] bg-gradient-to-b from-red-900/20 to-transparent">
+                <div class="flex items-center gap-3 mb-2">
+                    <i class="fa-solid fa-triangle-exclamation text-tx-red text-xl animate-pulse"></i>
+                    <h3 class="font-display font-bold text-tx-red tracking-widest">PENALTY ZONE ACTIVE</h3>
+                </div>
+                <p class="font-mono text-xs text-gray-300 leading-relaxed mb-4">
+                    Incomplete tasks detected. Your stats are decaying. Enter the sudden-death bracket within <span class="text-tx-red font-bold">01:45:00</span> to restore equilibrium.
+                </p>
+                <button class="w-full bg-tx-red text-white font-display font-bold py-2 rounded-lg hover:bg-red-500 transition-colors">ENTER DEATHMATCH</button>
+            </div>
+        </section>
 
-        function hitTarget(e) {
-            e.stopPropagation(); 
-            if(navigator.vibrate) navigator.vibrate(30);
-            score++;
-            document.getElementById('scoreVal').innerText = score;
+        <!-- RIGHT: PROCEDURAL QUESTS & LEADERBOARD -->
+        <section class="lg:col-span-8 flex flex-col gap-6">
             
-            if (score >= 10) {
-                if(navigator.vibrate) navigator.vibrate([50, 50, 100]);
-                document.getElementById('gameState').style.display = 'none';
-                document.getElementById('winState').style.display = 'block';
-            } else {
-                moveTarget();
+            <!-- ALGORITHMIC QUEST ENGINE -->
+            <div class="glass-panel rounded-2xl p-6">
+                <div class="flex justify-between items-end mb-6">
+                    <div>
+                        <h2 class="font-display text-2xl font-bold text-white tracking-wide">PROCEDURAL QUESTS</h2>
+                        <p class="font-mono text-xs text-gray-400 mt-1">Algorithmically generated based on your lowest metrics.</p>
+                    </div>
+                    <span class="text-tx-gold font-mono text-sm font-bold border border-tx-gold px-3 py-1 rounded-md bg-yellow-900/20">
+                        <i class="fa-regular fa-clock mr-1"></i> RESETS IN 04:12:00
+                    </span>
+                </div>
+
+                <div id="questContainer" class="flex flex-col gap-4">
+                    <!-- Quests injected via JS Engine -->
+                </div>
+            </div>
+
+            <!-- INFINITE MONARCH LEADERBOARD -->
+            <div class="glass-panel rounded-2xl p-6">
+                 <div class="flex justify-between items-center mb-6">
+                    <h2 class="font-display text-xl font-bold text-white tracking-wide">GLOBAL ELITE</h2>
+                    <div class="flex gap-2">
+                        <button class="px-3 py-1 border border-tx-cyan text-tx-cyan font-mono text-xs hover:bg-tx-cyan hover:text-black transition-colors rounded">SNIPERS</button>
+                        <button class="px-3 py-1 border border-tx-border text-gray-400 font-mono text-xs hover:border-tx-cyan transition-colors rounded">IGL</button>
+                    </div>
+                </div>
+
+                <!-- THE MONARCH GLITCH BANNER -->
+                <div class="w-full bg-gradient-to-r from-[#0d0517] to-tx-void border border-tx-purple p-4 rounded-xl flex items-center justify-between mb-4 shadow-[0_0_30px_rgba(189,0,255,0.2)]">
+                    <div class="flex items-center gap-4">
+                        <div class="text-4xl text-tx-purple drop-shadow-[0_0_10px_#bd00ff]"><i class="fa-solid fa-chess-king"></i></div>
+                        <div>
+                            <div class="font-mono text-[10px] text-tx-cyan tracking-[0.2em] mb-1">GLOBAL RANK #1 — THE USURPER</div>
+                            <h3 class="glitch-text font-display text-2xl font-black text-white" data-text="[ MONARCH ] WH_KING">[ MONARCH ] WH_KING</h3>
+                        </div>
+                    </div>
+                    <div class="text-right font-mono hidden sm:block">
+                        <div class="text-xs text-gray-400">WIN RATE</div>
+                        <div class="text-xl text-tx-cyan font-bold">98.4%</div>
+                    </div>
+                </div>
+
+                <!-- DYNAMIC LEADERBOARD ROWS -->
+                <div class="flex flex-col border border-tx-border rounded-lg overflow-hidden">
+                    <div class="grid grid-cols-12 bg-tx-panel p-3 font-mono text-xs text-gray-500 border-b border-tx-border">
+                        <div class="col-span-1 text-center">#</div>
+                        <div class="col-span-5">PLAYER</div>
+                        <div class="col-span-3 text-center">ROLE</div>
+                        <div class="col-span-3 text-right">ELO / LVL</div>
+                    </div>
+                    <div id="leaderboardContainer">
+                        <!-- Populated by Engine -->
+                    </div>
+                </div>
+            </div>
+
+        </section>
+    </main>
+
+    <!-- THE JAVASCRIPT HYBRID ENGINE -->
+    <!-- Integrates Procedural Logic, DOM Updates, and Firebase Stubs -->
+    <script type="module">
+        // ==========================================
+        // 1. HYBRID AUTH & FIREBASE INITIALIZATION
+        // ==========================================
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getFirestore, doc, onSnapshot, updateDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+        // Firebase Configuration (Client-Side)
+        const firebaseConfig = {
+            apiKey: "AIzaSy_Tournyx_Realtime_Key_Placeholder",
+            projectId: "tournyx-engine",
+            databaseURL: "https://tournyx-engine.firebaseio.com"
+        };
+        // const app = initializeApp(firebaseConfig);
+        // const db = getFirestore(app);
+
+        // Legacy Apps Script Auth Fallback
+        const API_URL = "https://script.google.com/macros/s/AKfycbyqqTpgaflxKJ9xH0jq7mJ_jLzcoNhas3gNo0h5gvoa_6r5Ae9NFxJAJp7ZoYNnMRKl/exec";
+        async function secureFetch(payload) {
+            // Apps Script synchronous simulation logic
+            console.log("Apps Script Called:", payload);
+            return { status: "success", data: payload };
+        }
+
+        // ==========================================
+        // 2. THE AWAKENING ALGORITHM (MATH & SCALING)
+        // ==========================================
+        const EXP_BASE = 150;
+        
+        class PlayerSystem {
+            constructor() {
+                // Initial State
+                this.exp = 24500;
+                this.gold = 1200;
+                this.stats = { LET: 45, PER: 80, TAC: 30, AGI: 50, END: 40 }; // Notice Perception is high
+                this.level = 0;
+                this.rank = "";
+                this.updateDerivedStats();
+            }
+
+            // Exponential Level Formula: Level = (EXP / Base)^0.4
+            calculateLevel(exp) {
+                return Math.floor(Math.pow(exp / EXP_BASE, 0.4));
+            }
+
+            // Reverse Formula: Required EXP = Base * Level^2.5
+            calculateExpForLevel(lvl) {
+                return Math.floor(EXP_BASE * Math.pow(lvl, 2.5));
+            }
+
+            updateDerivedStats() {
+                this.level = this.calculateLevel(this.exp);
+                
+                if (this.level >= 100) this.rank = "S-RANK / AWAKENED";
+                else if (this.level >= 80) this.rank = "A-RANK / PRO";
+                else if (this.level >= 60) this.rank = "B-RANK / VANGUARD";
+                else if (this.level >= 40) this.rank = "C-RANK / CHALLENGER";
+                else this.rank = "E-RANK / ROOKIE";
+
+                // UI Updates
+                document.getElementById('playerLevel').innerText = `LVL ${this.level}`;
+                document.getElementById('playerRank').innerText = this.rank;
+                document.getElementById('liveGold').innerText = this.gold.toLocaleString();
+                document.getElementById('liveExp').innerText = `${this.exp.toLocaleString()} EXP`;
+
+                const nextLvlExp = this.calculateExpForLevel(this.level + 1);
+                const prevLvlExp = this.calculateExpForLevel(this.level);
+                const progress = ((this.exp - prevLvlExp) / (nextLvlExp - prevLvlExp)) * 100;
+                
+                document.getElementById('expText').innerText = `${this.exp.toLocaleString()} / ${nextLvlExp.toLocaleString()}`;
+                document.getElementById('expBar').style.width = `${Math.min(progress, 100)}%`;
+
+                // Update Stat Readouts
+                Object.keys(this.stats).forEach(key => {
+                    document.getElementById(`stat-${key.toLowerCase()}`).innerText = this.stats[key];
+                });
+
+                drawRadarChart(this.stats);
+            }
+
+            // Real-time Firebase Claim Simulation
+            claimQuest(expReward, goldReward, statKey, statBoost, btnElement) {
+                // UI Instant Reaction (Optimistic Update)
+                btnElement.innerHTML = `<i class="fa-solid fa-check"></i> VERIFIED`;
+                btnElement.classList.replace('bg-tx-cyan', 'bg-tx-border');
+                btnElement.classList.replace('text-black', 'text-tx-cyan');
+                btnElement.disabled = true;
+
+                // Algorithm Logic Application
+                this.exp += expReward;
+                this.gold += goldReward;
+                this.stats[statKey] = Math.min(this.stats[statKey] + statBoost, 100);
+                
+                this.updateDerivedStats();
+
+                // Background Firebase Push (No Lag)
+                // updateDoc(doc(db, "players", "uid"), { exp: this.exp, gold: this.gold, stats: this.stats });
             }
         }
 
-        function missShot(e) {
-            if (e.target === arena) {
-                misses++;
-                document.getElementById('missVal').innerText = misses;
+        const System = new PlayerSystem();
+
+        // ==========================================
+        // 3. PROCEDURAL QUEST GENERATOR
+        // ==========================================
+        const QuestDB = [
+            { id: 1, title: "Aggressive Entry", desc: "Get 3 First-Bloods in Clan Scrims.", targetStat: "LET", statBoost: 5, exp: 1200, gold: 50 },
+            { id: 2, title: "Economical Sniper", desc: "Win 2 rounds using only AWM/Kar98k.", targetStat: "PER", statBoost: 4, exp: 900, gold: 40 },
+            { id: 3, title: "Tactical Rotation", desc: "Survive to Top 10 with 0 damage taken early game.", targetStat: "TAC", statBoost: 6, exp: 1500, gold: 100 },
+            { id: 4, title: "Gloo Wall Mastery", desc: "Deploy 15 Gloo Walls within 2 seconds of taking damage.", targetStat: "AGI", statBoost: 5, exp: 1100, gold: 60 }
+        ];
+
+        function generateProceduralQuests(playerStats) {
+            const container = document.getElementById('questContainer');
+            container.innerHTML = "";
+
+            // Find weakest stat to algorithmically assign a challenge
+            const weakestStat = Object.keys(playerStats).reduce((a, b) => playerStats[a] < playerStats[b] ? a : b);
+            
+            // Render Penalty Zone if Tactics is critically low (simulated trigger)
+            if (playerStats['TAC'] <= 30) {
+                document.getElementById('penaltyZone').classList.remove('hidden');
             }
+
+            // Generate 3 unique quests favoring the weak stat
+            QuestDB.slice(0, 3).forEach((q, index) => {
+                const isTarget = q.targetStat === weakestStat;
+                const tagHtml = isTarget ? `<span class="bg-tx-purple text-white text-[9px] px-2 py-0.5 rounded ml-2">SYSTEM TARGET</span>` : '';
+                
+                const questHtml = `
+                <div class="neon-border-cyan glass-panel p-4 rounded-xl flex items-center justify-between gap-4">
+                    <div class="flex-1">
+                        <h3 class="font-display font-bold text-white text-lg">${q.title} ${tagHtml}</h3>
+                        <p class="font-mono text-xs text-gray-400 mt-1">${q.desc}</p>
+                        <div class="flex gap-4 mt-3 font-mono text-[10px] font-bold">
+                            <span class="text-tx-cyan">+${q.exp} EXP</span>
+                            <span class="text-tx-gold"><i class="fa-solid fa-coins"></i> ${q.gold}</span>
+                            <span class="text-tx-purple">↑ ${q.targetStat} +${q.statBoost}</span>
+                        </div>
+                    </div>
+                    <button onclick="System.claimQuest(${q.exp}, ${q.gold}, '${q.targetStat}', ${q.statBoost}, this)" class="bg-tx-cyan text-black font-display font-bold text-sm px-6 py-2 rounded-lg hover:scale-105 transition-transform whitespace-nowrap">
+                        SYNC DATA
+                    </button>
+                </div>`;
+                container.insertAdjacentHTML('beforeend', questHtml);
+            });
         }
+        generateProceduralQuests(System.stats);
 
-        /* --- 3. VIRAL SHARE ENGINE --- */
-        function shareToClaim() {
-            if(navigator.vibrate) navigator.vibrate(50);
-            let shareUrl = window.location.origin;
-            let shareText = "Tournyx is upgrading! I just scored 100 TX Points in the Reflex Trainer. Beat my score and claim yours before the servers open! 🎯🔥 " + shareUrl;
+        // ==========================================
+        // 4. DYNAMIC SVG RADAR CHART (DOM Manipulation)
+        // ==========================================
+        function drawRadarChart(statsObj) {
+            const svg = document.getElementById('skillRadar');
+            svg.innerHTML = ''; // Clear
+            
+            const stats = [statsObj.LET, statsObj.PER, statsObj.TAC, statsObj.AGI, statsObj.END];
+            const labels = ['LETHALITY', 'PERCEPTION', 'TACTICS', 'AGILITY', 'ENDURANCE'];
+            
+            const cx = 120, cy = 110, radius = 80;
+            const points = [];
 
-            if (navigator.share) {
-                navigator.share({
-                    title: 'Tournyx System Awakening',
-                    text: shareText,
-                    url: shareUrl
-                }).then(() => {
-                    showToast("Points Claimed! Check your wallet when servers open.");
-                    setTimeout(closeGame, 1500);
-                }).catch(console.error);
-            } else {
-                let waLink = "https://api.whatsapp.com/send?text=" + encodeURIComponent(shareText);
-                window.open(waLink, '_blank');
-                showToast("Points Claimed! Check your wallet when servers open.");
-                setTimeout(closeGame, 1500);
+            // Draw Background Web
+            for (let j = 1; j <= 4; j++) {
+                let webPoints = "";
+                for (let i = 0; i < 5; i++) {
+                    const angle = (Math.PI * 2 * i) / 5 - Math.PI / 2;
+                    const x = cx + (radius * (j/4)) * Math.cos(angle);
+                    const y = cy + (radius * (j/4)) * Math.sin(angle);
+                    webPoints += `${x},${y} `;
+                }
+                svg.innerHTML += `<polygon points="${webPoints}" fill="none" stroke="#1c2740" stroke-width="1"/>`;
             }
+
+            // Calculate Data Points & Labels
+            for (let i = 0; i < 5; i++) {
+                const angle = (Math.PI * 2 * i) / 5 - Math.PI / 2;
+                
+                // Label Coordinates
+                const lx = cx + (radius + 20) * Math.cos(angle);
+                const ly = cy + (radius + 15) * Math.sin(angle);
+                svg.innerHTML += `<text x="${lx}" y="${ly}" class="radar-stat-text" text-anchor="middle" alignment-baseline="middle">${labels[i]}</text>`;
+
+                // Data Coordinates
+                const val = Math.max(10, stats[i]); // Min visual 10%
+                const dx = cx + (radius * (val / 100)) * Math.cos(angle);
+                const dy = cy + (radius * (val / 100)) * Math.sin(angle);
+                points.push(`${dx},${dy}`);
+
+                // Axis Lines
+                const edgeX = cx + radius * Math.cos(angle);
+                const edgeY = cy + radius * Math.sin(angle);
+                svg.innerHTML += `<line x1="${cx}" y1="${cy}" x2="${edgeX}" y2="${edgeY}" stroke="#1c2740" stroke-width="1"/>`;
+            }
+
+            // Draw Dynamic Polygon
+            svg.innerHTML += `<polygon points="${points.join(' ')}" class="radar-polygon"/>`;
+            
+            // Draw Data Nodes
+            points.forEach(pt => {
+                const [x, y] = pt.split(',');
+                svg.innerHTML += `<circle cx="${x}" cy="${y}" r="4" fill="#00f2ff" filter="drop-shadow(0 0 4px #00f2ff)"/>`;
+            });
         }
 
-        function showToast(msg) {
-            const t = document.getElementById('customToast');
-            t.innerText = msg;
-            t.className = "show";
-            setTimeout(() => { t.className = t.className.replace("show", ""); }, 3000);
-        }
+        // ==========================================
+        // 5. MOCK LEADERBOARD POPULATION
+        // ==========================================
+        const lbContainer = document.getElementById('leaderboardContainer');
+        const players = [
+            { name: "WH_XERON", role: "Assaulter", elo: 18450, lvl: 89, isMe: false },
+            { name: "SHADOW_XIX", role: "Support", elo: 15200, lvl: 42, isMe: true }, // The Player
+            { name: "UNGA_SNIPEX", role: "Sniper", elo: 14100, lvl: 38, isMe: false }
+        ];
+
+        players.forEach((p, i) => {
+            const bgClass = p.isMe ? "bg-tx-border/40" : "bg-tx-panel hover:bg-tx-border/20";
+            const row = `
+            <div class="grid grid-cols-12 ${bgClass} p-3 font-display text-sm items-center border-b border-tx-border transition-colors">
+                <div class="col-span-1 text-center font-bold text-gray-500">${i + 2}</div>
+                <div class="col-span-5 font-bold ${p.isMe ? 'text-tx-cyan' : 'text-white'}">${p.name}</div>
+                <div class="col-span-3 text-center text-xs font-mono text-tx-purple">${p.role}</div>
+                <div class="col-span-3 text-right font-mono font-bold text-tx-gold">${p.elo} <span class="text-gray-500 text-[10px]">L${p.lvl}</span></div>
+            </div>`;
+            lbContainer.insertAdjacentHTML('beforeend', row);
+        });
+
     </script>
 </body>
 </html>
