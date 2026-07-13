@@ -1,421 +1,653 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>Tournyx // The System Awakening</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Tournyx Engine // The System Awakening</title>
+
+<!-- External Libraries -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@400;500;600;700&family=Orbitron:wght@500;700;900&family=Rajdhani:wght@500;600;700&display=swap" rel="stylesheet">
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+<script src="https://cdn.tailwindcss.com"></script>
+
+<style>
+  /* --- 1. ROOT VARIABLES (Store Aesthetic) --- */
+  :root {
+    --bg: #05020c;
+    --panel: #0a0e18;
+    --panel-2: #151d2e;
+    --border: #1c2740;
+    --cyan: #00f2ff;
+    --cyan-dark: #0891b2;
+    --gold: #ffcc66;
+    --purple: #bd00ff;
+    --text: #eaf0fb;
+    --text-dim: #8b97ad;
+    --danger: #ff4d5e;
+    --success: #00ff7f;
     
-    <!-- Fonts -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:ital,wght@0,400;0,600;0,700;1,500&family=Orbitron:wght@500;700;900&family=Rajdhani:wght@500;600;700&display=swap" rel="stylesheet">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
-    
-    <!-- Tailwind CSS (Store Aesthetic Base) -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    colors: {
-                        tx: { void: '#04050a', panel: '#0a0e18', border: '#1c2740', cyan: '#00f2ff', purple: '#bd00ff', gold: '#ffcc66', red: '#ff4d5e' }
-                    },
-                    fontFamily: {
-                        display: ['Orbitron', 'sans-serif'],
-                        body: ['Rajdhani', 'sans-serif'],
-                        mono: ['Chakra Petch', 'monospace'],
-                    }
-                }
-            }
-        }
-    </script>
+    --f-disp: 'Orbitron', sans-serif;
+    --f-body: 'Rajdhani', sans-serif;
+    --f-mono: 'Chakra Petch', monospace;
+  }
 
-    <style>
-        /* CORE SYSTEM STYLES */
-        body { background-color: #04050a; color: #eaf0fb; overflow-x: hidden; }
-        ::-webkit-scrollbar { display: none; }
-        ::selection { background: rgba(0, 242, 255, 0.4); }
+  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+  
+  body {
+    font-family: var(--f-body); background: var(--bg); color: var(--text);
+    min-height: 100vh; overflow-x: hidden;
+  }
+  
+  ::selection { background: rgba(0,242,255,0.4); color: #fff; }
 
-        /* GRID BACKGROUND */
-        .system-grid {
-            position: fixed; inset: 0; z-index: -1; pointer-events: none;
-            background-image: linear-gradient(rgba(0,242,255,0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(0,242,255,0.03) 1px, transparent 1px);
-            background-size: 40px 40px;
-            mask-image: radial-gradient(ellipse 80% 80% at 50% 20%, black 20%, transparent 80%);
-            -webkit-mask-image: radial-gradient(ellipse 80% 80% at 50% 20%, black 20%, transparent 80%);
-        }
+  /* BACKGROUND GRID */
+  body::before {
+    content: ""; position: fixed; inset: 0; z-index: -1; pointer-events: none;
+    background-image: linear-gradient(rgba(0,242,255,0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(0,242,255,0.03) 1px, transparent 1px);
+    background-size: 40px 40px;
+    mask-image: radial-gradient(ellipse 80% 80% at 50% 20%, black 20%, transparent 80%);
+    -webkit-mask-image: radial-gradient(ellipse 80% 80% at 50% 20%, black 20%, transparent 80%);
+  }
 
-        /* SHUTTER TRANSITION */
-        #shutter { position: fixed; inset: 0; z-index: 9999; pointer-events: none; display: flex; }
-        #shutter .blade {
-            flex: 1; background: #000; transform-origin: top;
-            box-shadow: 0 0 30px rgba(0,242,255,0.2) inset;
-            animation: shutterOpen 0.8s cubic-bezier(0.8, 0, 0.2, 1) forwards;
-        }
-        #shutter .blade:nth-child(even) { animation-delay: 0.1s; }
-        @keyframes shutterOpen { 0% { transform: scaleY(1); } 100% { transform: scaleY(0); } }
+  /* --- 2. LAYOUT ENGINE --- */
+  .app { display: grid; grid-template-columns: 260px 1fr; min-height: 100vh; }
 
-        /* GLITCH MONARCH EFFECT */
-        .glitch-text { position: relative; display: inline-block; }
-        .glitch-text::before, .glitch-text::after {
-            content: attr(data-text); position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-            background: #04050a;
-        }
-        .glitch-text::before { left: 2px; text-shadow: -2px 0 #ff4d5e; clip: rect(24px, 550px, 90px, 0); animation: glitch-anim-2 3s infinite linear alternate-reverse; }
-        .glitch-text::after { left: -2px; text-shadow: -2px 0 #00f2ff; clip: rect(85px, 550px, 140px, 0); animation: glitch-anim 2.5s infinite linear alternate-reverse; }
-        @keyframes glitch-anim { 0% { clip: rect(10px, 9999px, 44px, 0); } 100% { clip: rect(85px, 9999px, 14px, 0); } }
-        @keyframes glitch-anim-2 { 0% { clip: rect(65px, 9999px, 100px, 0); } 100% { clip: rect(10px, 9999px, 50px, 0); } }
+  /* SIDEBAR */
+  .sidebar {
+    background: var(--panel); border-right: 1px solid var(--border);
+    padding: 22px 16px; display: flex; flex-direction: column; gap: 22px;
+    position: sticky; top: 0; height: 100vh; overflow-y: auto;
+  }
+  .sidebar::-webkit-scrollbar { display: none; }
+  
+  .brand { display: flex; align-items: center; gap: 10px; padding: 0 6px 18px; border-bottom: 1px solid var(--border); }
+  .brand-mark { font-family: var(--f-disp); font-weight: 900; font-size: 22px; letter-spacing: 1px; }
+  .brand-mark span { color: var(--cyan); text-shadow: 0 0 10px rgba(0,242,255,0.5); }
+  .brand-sub { font-family: var(--f-mono); font-size: 9px; letter-spacing: 4px; color: var(--text-dim); margin-top: -2px; }
 
-        /* GLASS & NEON PANELS */
-        .glass-panel { background: rgba(10, 14, 24, 0.85); backdrop-filter: blur(12px); border: 1px solid rgba(28, 39, 64, 0.8); }
-        .neon-border-cyan { box-shadow: 0 0 15px rgba(0, 242, 255, 0.1), inset 0 0 10px rgba(0, 242, 255, 0.05); transition: 0.3s; }
-        .neon-border-cyan:hover { border-color: #00f2ff; box-shadow: 0 0 25px rgba(0, 242, 255, 0.3); transform: translateY(-3px); }
+  .nav { display: flex; flex-direction: column; gap: 4px; }
+  .nav-item {
+    display: flex; align-items: center; gap: 12px; padding: 12px 14px;
+    border-radius: 10px; font-size: 14.5px; font-weight: 600; color: var(--text-dim);
+    letter-spacing: 0.5px; cursor: pointer; transition: 0.2s ease; position: relative;
+  }
+  .nav-item i { width: 20px; text-align: center; font-size: 16px; }
+  .nav-item:hover { background: var(--panel-2); color: var(--text); transform: translateX(4px); }
+  .nav-item.active { background: linear-gradient(90deg, rgba(0,242,255,0.15), transparent); color: var(--cyan); }
+  .nav-item.active::before {
+    content: ""; position: absolute; left: -16px; top: 8px; bottom: 8px; width: 4px;
+    background: var(--cyan); border-radius: 0 4px 4px 0; box-shadow: 0 0 12px var(--cyan);
+  }
 
-        /* RADAR CHART */
-        .radar-stat-text { font-family: 'Chakra Petch', monospace; font-size: 11px; fill: #7688a8; font-weight: 600; letter-spacing: 1px; }
-        .radar-polygon { fill: rgba(189, 0, 255, 0.15); stroke: #bd00ff; stroke-width: 2px; transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
-    </style>
+  /* SIDEBAR PROMO */
+  .promo-card {
+    margin-top: auto; background: linear-gradient(160deg, rgba(189,0,255,0.2), rgba(10,14,24,0.9));
+    border: 1px solid rgba(189,0,255,0.4); border-radius: 16px; padding: 18px; position: relative; overflow: hidden;
+  }
+  .promo-card::after {
+    content: ""; position: absolute; right: -30px; bottom: -30px; width: 120px; height: 120px;
+    border-radius: 50%; background: radial-gradient(circle, rgba(0,242,255,0.2), transparent 70%);
+  }
+  .promo-card h4 { font-family: var(--f-disp); font-size: 13px; font-weight: 700; letter-spacing: 0.5px; margin-bottom: 6px; }
+  .promo-card p { font-family: var(--f-mono); font-size: 11px; color: var(--text-dim); line-height: 1.5; }
+  .promo-card .bonus { color: var(--gold); font-weight: 800; }
+  .promo-btn {
+    width: 100%; background: #04050a; border: 1px solid var(--cyan); color: var(--cyan);
+    padding: 10px; border-radius: 10px; font-family: var(--f-disp); font-weight: 700; font-size: 12px;
+    cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; transition: 0.2s;
+    margin-top: 15px; position: relative; z-index: 2;
+  }
+  .promo-btn:hover { background: var(--cyan); color: #000; box-shadow: 0 0 15px rgba(0,242,255,0.4); }
+
+  /* MAIN CONTENT AREA */
+  .main { padding: 22px 30px 40px; max-width: 1600px; width: 100%; }
+
+  /* TOPBAR */
+  .topbar { display: flex; align-items: center; gap: 18px; margin-bottom: 30px; }
+  .search { flex: 1; position: relative; max-width: 520px; }
+  .search input {
+    width: 100%; padding: 12px 44px 12px 18px; border-radius: 12px; border: 1px solid var(--border);
+    background: rgba(10,14,24,0.8); backdrop-filter: blur(10px); color: var(--text);
+    font-family: var(--f-mono); font-size: 13px; outline: none; transition: 0.2s;
+  }
+  .search input:focus { border-color: var(--cyan); box-shadow: 0 0 15px rgba(0,242,255,0.15); }
+  .search i { position: absolute; right: 16px; top: 50%; transform: translateY(-50%); color: var(--text-dim); pointer-events: none; }
+
+  .stat-pill {
+    display: flex; align-items: center; gap: 8px; background: rgba(10,14,24,0.8); backdrop-filter: blur(10px);
+    border: 1px solid var(--border); padding: 8px 16px; border-radius: 30px;
+    font-family: var(--f-mono); font-weight: 700; font-size: 13px; white-space: nowrap; transition: 0.2s; cursor: pointer;
+  }
+  .stat-pill:hover { border-color: rgba(255,255,255,0.2); transform: translateY(-2px); }
+  .stat-pill.exp { color: var(--cyan); border-color: rgba(0,242,255,0.3); }
+  .stat-pill.gold { color: var(--gold); border-color: rgba(255,204,102,0.3); }
+
+  .icon-btn {
+    width: 42px; height: 42px; border-radius: 12px; background: var(--panel); border: 1px solid var(--border);
+    display: flex; align-items: center; justify-content: center; cursor: pointer; position: relative; transition: 0.2s; flex-shrink: 0;
+  }
+  .icon-btn:hover { border-color: var(--purple); color: var(--purple); box-shadow: 0 0 15px rgba(189,0,255,0.2); }
+  .icon-btn .badge {
+    position: absolute; top: -5px; right: -5px; background: var(--danger); color: #fff;
+    font-family: var(--f-mono); font-size: 10px; font-weight: 800; width: 18px; height: 18px;
+    border-radius: 50%; display: flex; align-items: center; justify-content: center; animation: pulse 2s infinite;
+  }
+
+  .profile {
+    display: flex; align-items: center; gap: 12px; background: var(--panel); border: 1px solid var(--border);
+    padding: 6px 16px 6px 6px; border-radius: 30px; cursor: pointer; flex-shrink: 0; transition: 0.2s;
+  }
+  .profile:hover { border-color: var(--cyan); }
+  .avatar {
+    width: 34px; height: 34px; border-radius: 50%; background: conic-gradient(from 180deg, var(--gold), #ffdf8c, var(--gold));
+    padding: 2px; box-shadow: 0 0 10px rgba(255,204,102,0.3);
+  }
+  .avatar img { width: 100%; height: 100%; border-radius: 50%; object-fit: cover; }
+  .profile .name { font-family: var(--f-disp); font-size: 13px; font-weight: 700; line-height: 1.2; }
+  .profile .lvl { font-family: var(--f-mono); font-size: 11px; color: var(--cyan); }
+
+  /* --- 3. UI COMPONENTS & GLASSMORPHISM --- */
+  .glass-card {
+    background: rgba(17, 24, 38, 0.7); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
+    border: 1px solid rgba(255,255,255,0.05); border-radius: 16px; overflow: hidden;
+  }
+  .neon-hover:hover { border-color: var(--cyan); box-shadow: 0 10px 30px rgba(0,242,255,0.15); transform: translateY(-3px); transition: all 0.3s ease; }
+
+  .section-title { font-family: var(--f-disp); font-size: 20px; font-weight: 900; letter-spacing: 1px; text-transform: uppercase; margin-bottom: 20px; display: flex; align-items: center; gap: 10px; }
+  .section-title::before { content: ""; display: block; width: 4px; height: 20px; background: var(--cyan); border-radius: 2px; box-shadow: 0 0 10px var(--cyan); }
+
+  /* --- 4. THE SYSTEM HUD (RADAR & STATS) --- */
+  .hud-grid { display: grid; grid-template-columns: 1fr 1.5fr; gap: 24px; margin-bottom: 30px; }
+  
+  .radar-container { display: flex; flex-direction: column; align-items: center; padding: 30px 20px; position: relative; }
+  .radar-bg { position: absolute; inset: 0; background: radial-gradient(circle at center, rgba(189,0,255,0.1) 0%, transparent 70%); pointer-events: none; }
+  .stat-text { font-family: var(--f-mono); font-size: 11px; fill: var(--text-dim); font-weight: 600; letter-spacing: 1px; transition: 0.3s; }
+  .radar-poly { fill: rgba(0,242,255,0.15); stroke: var(--cyan); stroke-width: 2px; filter: drop-shadow(0 0 8px rgba(0,242,255,0.5)); transition: all 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+  
+  .player-card { padding: 30px; display: flex; flex-direction: column; justify-content: center; position: relative; }
+  .player-card::after { content: "AWAKENED"; position: absolute; right: -20px; top: 50%; transform: translateY(-50%) rotate(90deg); font-family: var(--f-disp); font-size: 60px; font-weight: 900; color: rgba(255,255,255,0.02); pointer-events: none; }
+  .rank-badge { display: inline-block; padding: 6px 12px; background: rgba(189,0,255,0.15); border: 1px solid var(--purple); color: #e9d5ff; font-family: var(--f-mono); font-size: 12px; font-weight: 700; border-radius: 8px; letter-spacing: 2px; margin-bottom: 15px; box-shadow: 0 0 15px rgba(189,0,255,0.3); }
+  .level-text { font-family: var(--f-disp); font-size: 54px; font-weight: 900; line-height: 1; color: #fff; text-shadow: 0 0 20px rgba(255,255,255,0.3); margin-bottom: 5px; }
+  
+  .exp-container { margin-top: 25px; }
+  .exp-header { display: flex; justify-content: space-between; font-family: var(--f-mono); font-size: 12px; color: var(--cyan); margin-bottom: 8px; font-weight: 700; }
+  .exp-track { width: 100%; height: 8px; background: #000; border-radius: 4px; border: 1px solid var(--border); overflow: hidden; position: relative; }
+  .exp-fill { height: 100%; background: linear-gradient(90deg, var(--purple), var(--cyan)); box-shadow: 0 0 10px var(--cyan); width: 0%; transition: width 1s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+
+  /* --- 5. PROCEDURAL QUESTS --- */
+  .quest-grid { display: grid; grid-template-columns: 2fr 1fr; gap: 24px; margin-bottom: 40px; }
+  
+  .quest-list { display: flex; flex-direction: column; gap: 12px; }
+  .quest-item {
+    background: rgba(17,24,38,0.5); border: 1px solid var(--border); border-radius: 12px;
+    padding: 16px 20px; display: flex; align-items: center; justify-content: space-between; transition: 0.3s;
+  }
+  .quest-item:hover { border-color: var(--cyan); background: rgba(17,24,38,0.9); transform: translateX(5px); }
+  .q-info h4 { font-family: var(--f-disp); font-size: 15px; font-weight: 700; color: #fff; margin-bottom: 4px; }
+  .q-info p { font-family: var(--f-mono); font-size: 12px; color: var(--text-dim); }
+  .q-rewards { display: flex; gap: 12px; margin-top: 8px; font-family: var(--f-mono); font-size: 11px; font-weight: 700; }
+  .q-rewards .r-exp { color: var(--cyan); }
+  .q-rewards .r-gold { color: var(--gold); }
+  .q-rewards .r-stat { color: var(--purple); background: rgba(189,0,255,0.1); padding: 2px 6px; border-radius: 4px; }
+  
+  .btn-sync {
+    background: transparent; border: 1px solid var(--cyan); color: var(--cyan); font-family: var(--f-disp); font-weight: 700;
+    font-size: 12px; padding: 8px 16px; border-radius: 8px; cursor: pointer; transition: 0.2s; white-space: nowrap;
+  }
+  .btn-sync:hover { background: var(--cyan); color: #000; box-shadow: 0 0 15px rgba(0,242,255,0.4); }
+  .btn-sync.claimed { background: rgba(255,255,255,0.05); border-color: var(--border); color: var(--success); pointer-events: none; box-shadow: none; }
+
+  /* PENALTY ZONE */
+  .penalty-box {
+    background: linear-gradient(180deg, rgba(239,68,68,0.15), rgba(10,14,24,0.9));
+    border: 1px solid var(--danger); border-radius: 16px; padding: 24px; text-align: center;
+    box-shadow: 0 0 30px rgba(239,68,68,0.1); display: flex; flex-direction: column; justify-content: center;
+  }
+  .penalty-box h3 { font-family: var(--f-disp); font-size: 18px; font-weight: 900; color: var(--danger); letter-spacing: 1px; margin-bottom: 10px; animation: blink 2s infinite; }
+  @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
+  .penalty-box p { font-family: var(--f-mono); font-size: 12px; color: #ffb3b3; line-height: 1.6; margin-bottom: 20px; }
+  .btn-danger { background: var(--danger); color: #fff; font-family: var(--f-disp); font-weight: 800; font-size: 14px; padding: 12px; border-radius: 8px; border: none; cursor: pointer; box-shadow: 0 5px 15px rgba(239,68,68,0.4); transition: 0.2s; }
+  .btn-danger:hover { background: #dc2626; transform: scale(1.02); }
+
+  /* --- 6. MONARCH LEADERBOARD --- */
+  .glitch-wrapper { position: relative; background: #000; border: 1px solid var(--purple); border-radius: 12px; padding: 20px; display: flex; align-items: center; gap: 20px; overflow: hidden; margin-bottom: 20px; box-shadow: inset 0 0 20px rgba(189,0,255,0.2); }
+  .glitch-wrapper::before { content: ""; position: absolute; top: 0; left: -100%; width: 50%; height: 100%; background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent); animation: scanline 3s infinite linear; }
+  @keyframes scanline { 100% { left: 200%; } }
+  .crown-icon { font-size: 40px; color: var(--gold); filter: drop-shadow(0 0 10px var(--gold)); }
+  .glitch-text { font-family: var(--f-disp); font-size: 24px; font-weight: 900; color: #fff; position: relative; display: inline-block; }
+  .glitch-text::before, .glitch-text::after { content: attr(data-text); position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: #000; }
+  .glitch-text::before { left: 2px; text-shadow: -2px 0 var(--cyan); clip: rect(24px, 550px, 90px, 0); animation: glitch-anim 3s infinite linear alternate-reverse; }
+  .glitch-text::after { left: -2px; text-shadow: -2px 0 var(--danger); clip: rect(85px, 550px, 140px, 0); animation: glitch-anim-2 2.5s infinite linear alternate-reverse; }
+  @keyframes glitch-anim { 0% { clip: rect(10px, 9999px, 44px, 0); } 100% { clip: rect(85px, 9999px, 14px, 0); } }
+  @keyframes glitch-anim-2 { 0% { clip: rect(65px, 9999px, 100px, 0); } 100% { clip: rect(10px, 9999px, 50px, 0); } }
+
+  .lb-table { width: 100%; border-collapse: collapse; font-family: var(--f-body); }
+  .lb-table th { font-family: var(--f-mono); font-size: 11px; color: var(--text-dim); text-align: left; padding: 12px 16px; border-bottom: 1px solid var(--border); background: var(--panel-2); }
+  .lb-table td { padding: 14px 16px; border-bottom: 1px solid rgba(255,255,255,0.05); font-size: 15px; font-weight: 600; }
+  .lb-table tr:hover td { background: rgba(0,242,255,0.05); }
+  .lb-table tr.me td { background: rgba(189,0,255,0.1); border-left: 3px solid var(--purple); }
+  .role-tag { font-family: var(--f-mono); font-size: 10px; padding: 3px 8px; border-radius: 4px; border: 1px solid; }
+  .role-tag.Sniper { color: var(--cyan); border-color: var(--cyan); background: rgba(0,242,255,0.1); }
+  .role-tag.IGL { color: var(--gold); border-color: var(--gold); background: rgba(255,204,102,0.1); }
+  .role-tag.Assaulter { color: var(--danger); border-color: var(--danger); background: rgba(255,77,94,0.1); }
+
+  /* --- 7. ULTIMATE 50 FEATURES ECOSYSTEM GRID --- */
+  .features-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 16px; margin-bottom: 40px; }
+  .feature-item { background: var(--panel); border: 1px solid var(--border); border-radius: 12px; padding: 16px; display: flex; gap: 14px; transition: 0.2s; }
+  .feature-item:hover { border-color: var(--cyan); transform: translateY(-2px); box-shadow: 0 5px 15px rgba(0,242,255,0.1); }
+  .f-icon { width: 40px; height: 40px; border-radius: 10px; background: rgba(255,255,255,0.05); display: flex; align-items: center; justify-content: center; font-size: 18px; color: var(--cyan); flex-shrink: 0; }
+  .f-icon.gold { color: var(--gold); }
+  .f-icon.purple { color: var(--purple); }
+  .f-content h5 { font-family: var(--f-disp); font-size: 13px; font-weight: 700; margin-bottom: 4px; color: #fff; }
+  .f-content p { font-family: var(--f-mono); font-size: 11px; color: var(--text-dim); line-height: 1.4; }
+
+  /* --- 8. SHUTTER LOADER --- */
+  #loader-overlay { position: fixed; inset: 0; background: #000; z-index: 99999; display: flex; flex-direction: column; align-items: center; justify-content: center; transition: opacity 0.5s ease; }
+  .loader-text { font-family: var(--f-mono); font-size: 14px; color: var(--cyan); letter-spacing: 3px; margin-top: 20px; animation: blink 1s infinite; }
+  .shutter-grid { display: flex; width: 100vw; height: 100vh; position: absolute; top:0; left:0; }
+  .shutter-bar { flex: 1; background: #04050a; border-right: 1px solid #111; transform-origin: bottom; transition: transform 0.8s cubic-bezier(0.77, 0, 0.175, 1); }
+
+  /* AUTH MODAL (Legacy AppScript Stub) */
+  #authModal { position: fixed; inset: 0; background: rgba(0,0,0,0.8); backdrop-filter: blur(5px); z-index: 50000; display: none; align-items: center; justify-content: center; }
+  .auth-box { background: var(--panel); border: 1px solid var(--cyan); border-radius: 16px; padding: 30px; width: 100%; max-width: 400px; text-align: center; box-shadow: 0 0 40px rgba(0,242,255,0.2); }
+  .auth-input { width: 100%; background: #000; border: 1px solid var(--border); color: #fff; padding: 12px; border-radius: 8px; margin-bottom: 15px; font-family: var(--f-mono); }
+
+  /* MOBILE RESPONSIVE */
+  .mobile-toggle { display: none; font-size: 24px; cursor: pointer; color: var(--cyan); }
+  @media (max-width: 1024px) {
+    .app { grid-template-columns: 1fr; }
+    .sidebar { position: fixed; left: -260px; z-index: 1000; transition: 0.3s ease; box-shadow: 5px 0 25px rgba(0,0,0,0.8); }
+    .sidebar.active { left: 0; }
+    .mobile-toggle { display: block; }
+    .hud-grid, .quest-grid { grid-template-columns: 1fr; }
+    .main { padding: 80px 15px 30px; }
+    header { padding: 12px 15px; }
+  }
+</style>
 </head>
-<body class="font-body antialiased selection:bg-tx-purple selection:text-white">
+<body>
 
-    <!-- SHUTTER LOAD -->
-    <div id="shutter">
-        <div class="blade"></div><div class="blade"></div><div class="blade"></div><div class="blade"></div><div class="blade"></div>
+<!-- SHUTTER LOADER -->
+<div id="loader-overlay">
+    <div class="shutter-grid" id="shutterGrid">
+        <div class="shutter-bar"></div><div class="shutter-bar"></div><div class="shutter-bar"></div><div class="shutter-bar"></div><div class="shutter-bar"></div>
     </div>
-    <div class="system-grid"></div>
+    <div style="z-index: 2; text-align: center;">
+        <i class="fa-solid fa-circle-notch fa-spin text-tx-cyan text-4xl"></i>
+        <div class="loader-text">INITIALIZING ENGINE...</div>
+    </div>
+</div>
 
-    <!-- HEADER -->
-    <header class="fixed top-0 w-full glass-panel z-50 px-6 py-4 flex justify-between items-center">
-        <div class="flex items-center gap-3">
-            <div class="w-8 h-8 border-2 border-tx-cyan rotate-45 relative shadow-[0_0_10px_rgba(0,242,255,0.5)]">
-                <div class="absolute inset-1 bg-tx-cyan shadow-[0_0_15px_#00f2ff]"></div>
-            </div>
-            <h1 class="font-display font-black text-xl tracking-widest text-white">TOURNYX</h1>
+<!-- AUTH MODAL (Legacy AppScript / Firebase Hybrid) -->
+<div id="authModal">
+    <div class="auth-box">
+        <h2 class="section-title justify-center mb-6">SECURE LOGIN</h2>
+        <input type="email" class="auth-input" placeholder="EMAIL ADDRESS" id="authEmail">
+        <input type="password" class="auth-input" placeholder="PASSWORD" id="authPass">
+        <button class="btn-danger w-full bg-tx-cyan text-black hover:bg-cyan-300" onclick="simulateLogin()">AUTHENTICATE</button>
+        <p class="font-mono text-[10px] text-gray-500 mt-4">Protected by Firebase Auth & Tournyx Protocol</p>
+    </div>
+</div>
+
+<div class="app">
+  <!-- SIDEBAR NAVIGATION -->
+  <aside class="sidebar" id="sidebar">
+    <div class="brand">
+      <div>
+        <div class="brand-mark">TOURNY<span>X</span></div>
+        <div class="brand-sub">T H E  S Y S T E M</div>
+      </div>
+      <i class="fa-solid fa-xmark mobile-toggle ml-auto lg:hidden" onclick="toggleSidebar()"></i>
+    </div>
+
+    <nav class="nav">
+      <div class="nav-item active"><i class="fa-solid fa-radar"></i> <span>AWAKENING HUD</span></div>
+      <div class="nav-item"><i class="fa-solid fa-list-check"></i> <span>PROCEDURAL QUESTS</span></div>
+      <div class="nav-item"><i class="fa-solid fa-chess-king"></i> <span>MONARCH RANKS</span></div>
+      <div class="nav-item"><i class="fa-solid fa-store"></i> <span>ARSENAL STORE</span></div>
+      <div class="nav-item"><i class="fa-solid fa-crosshairs"></i> <span>BOUNTY BOARD</span></div>
+      <div class="nav-item"><i class="fa-solid fa-users-rays"></i> <span>ESPORTS SCOUTING</span></div>
+      <div class="nav-item"><i class="fa-solid fa-chess-rook"></i> <span>GUILD TERRITORY</span></div>
+      <div class="nav-item"><i class="fa-solid fa-chalkboard-user"></i> <span>VOD COACHING</span></div>
+      <div class="nav-item"><i class="fa-solid fa-shield-halved"></i> <span>ANTI-CHEAT LEDGER</span></div>
+      <div class="nav-item"><i class="fa-solid fa-gear"></i> <span>ENGINE SETTINGS</span></div>
+    </nav>
+
+    <div class="promo-card">
+      <h4>TX BATTLE PASS</h4>
+      <p>Unlock Infinite Scaling & VOD Reviews.</p>
+      <div class="text-center my-3 text-tx-purple text-3xl drop-shadow-[0_0_10px_#bd00ff]"><i class="fa-solid fa-ticket"></i></div>
+      <button class="promo-btn"><i class="fa-solid fa-unlock"></i> UPGRADE NOW</button>
+    </div>
+  </aside>
+
+  <!-- MAIN CONTENT -->
+  <main class="main">
+    
+    <!-- TOPBAR -->
+    <div class="topbar fixed lg:static top-0 left-0 w-full lg:w-auto bg-tx-bg lg:bg-transparent z-40 p-4 lg:p-0 border-b border-tx-border lg:border-none flex justify-between lg:justify-start">
+      <i class="fa-solid fa-bars mobile-toggle lg:hidden" onclick="toggleSidebar()"></i>
+      
+      <div class="search hidden md:block">
+        <input type="text" placeholder="Search Players, Clans, or Bounties...">
+        <i class="fa-solid fa-magnifying-glass"></i>
+      </div>
+
+      <div class="flex gap-3 ml-auto">
+        <div class="stat-pill exp" title="Experience Points">
+          <i class="fa-solid fa-bolt"></i> <span id="topExp">0</span>
+        </div>
+        <div class="stat-pill gold" title="Tournyx Gold">
+          <i class="fa-solid fa-coins"></i> <span id="topGold">0</span>
+        </div>
+        <div class="stat-pill border-tx-purple text-tx-purple" title="TX Passes">
+          <i class="fa-solid fa-ticket"></i> <span>2</span>
         </div>
         
-        <!-- REAL-TIME WALLET (FIREBASE SYNCED) -->
-        <div class="flex gap-4">
-            <div class="bg-tx-void border border-tx-border px-4 py-1.5 rounded-full flex items-center gap-2">
-                <i class="fa-solid fa-coins text-tx-gold"></i>
-                <span id="liveGold" class="font-mono font-bold text-sm">--</span>
-            </div>
-            <div class="bg-tx-void border border-tx-border px-4 py-1.5 rounded-full flex items-center gap-2">
-                <i class="fa-solid fa-bolt text-tx-cyan"></i>
-                <span id="liveExp" class="font-mono font-bold text-sm">-- EXP</span>
-            </div>
-            <button class="bg-gradient-to-r from-tx-purple to-tx-cyan text-black font-display font-bold px-5 py-1.5 rounded-full hover:scale-105 transition-transform shadow-[0_0_20px_rgba(0,242,255,0.4)]">
-                STORE
-            </button>
+        <div class="icon-btn" title="OCR Match Upload" onclick="alert('AI OCR Match Parsing Initialized. Upload End-Screen Screenshot.')"><i class="fa-solid fa-camera-retro"></i></div>
+        <div class="icon-btn" title="Notifications"><i class="fa-solid fa-bell"></i><span class="badge">3</span></div>
+        
+        <div class="profile">
+          <div class="avatar"><img src="https://i.pravatar.cc/100?img=11" alt="Avatar"></div>
+          <div class="hidden sm:block">
+            <div class="name" id="profileName">GUEST</div>
+            <div class="lvl" id="profileRank">UNRANKED</div>
+          </div>
         </div>
-    </header>
+      </div>
+    </div>
 
-    <main class="pt-28 pb-20 px-4 max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-8">
+    <!-- HUD SECTION -->
+    <h2 class="section-title">SYSTEM AWAKENING HUD</h2>
+    <div class="hud-grid">
+      <!-- RADAR CARD -->
+      <div class="glass-card radar-container neon-hover">
+        <div class="radar-bg"></div>
+        <div class="absolute top-4 left-4 font-mono text-xs text-tx-cyan"><i class="fa-solid fa-satellite-dish fa-fade"></i> LIVE SYNC</div>
+        <svg id="radarChart" width="280" height="280" viewBox="0 0 280 280" class="z-10 mt-4"></svg>
+        <p class="font-mono text-[10px] text-gray-500 mt-4 text-center">DYNAMIC SKILL TREE ALGORITHM ACTIVE.<br>DATA MERGED FROM BGMI, FREE FIRE & CODM.</p>
+      </div>
+
+      <!-- PLAYER CARD -->
+      <div class="glass-card player-card neon-hover">
+        <div class="rank-badge" id="hudRankBadge">E-RANK // ROOKIE</div>
+        <div class="level-text" id="hudLevel">LVL 1</div>
+        <p class="font-mono text-sm text-gray-400 mb-6">Algorithm Assigned Class: <span id="hudClass" class="text-white font-bold">ANALYZING...</span></p>
         
-        <!-- LEFT: THE AWAKENING HUD (RADAR & STATS) -->
-        <section class="lg:col-span-4 flex flex-col gap-6">
-            <div class="glass-panel rounded-2xl p-6 relative overflow-hidden">
-                <div class="absolute top-0 right-0 bg-tx-cyan text-black font-mono text-[10px] font-bold px-3 py-1 rounded-bl-lg">LIVE SYNC</div>
-                
-                <p class="font-mono text-xs text-tx-cyan tracking-widest mb-1">PLAYER_SYSTEM_ACTIVE</p>
-                <div class="flex justify-between items-end border-b border-tx-border pb-4 mb-4">
-                    <div>
-                        <h2 class="font-display text-4xl font-black text-white" id="playerLevel">LVL --</h2>
-                        <h3 class="font-display text-sm text-tx-purple font-bold tracking-widest uppercase mt-1" id="playerRank">AWAKENING...</h3>
-                    </div>
-                    <div class="text-right">
-                        <div class="text-sm font-bold">SHADOW_XIX</div>
-                        <div class="text-xs text-gray-500 font-mono">Unga Esports ID</div>
-                    </div>
-                </div>
-
-                <!-- DYNAMIC SVG RADAR -->
-                <div class="flex justify-center my-6">
-                    <svg id="skillRadar" width="240" height="220" viewBox="0 0 240 220"></svg>
-                </div>
-
-                <!-- LIVE STAT READOUT -->
-                <div class="grid grid-cols-2 gap-3 font-mono text-xs text-gray-400">
-                    <div class="flex justify-between border-b border-tx-border pb-1"><span>LETHALITY</span><span id="stat-let" class="text-white font-bold">0</span></div>
-                    <div class="flex justify-between border-b border-tx-border pb-1"><span>PERCEPTION</span><span id="stat-per" class="text-white font-bold">0</span></div>
-                    <div class="flex justify-between border-b border-tx-border pb-1"><span>TACTICS</span><span id="stat-tac" class="text-white font-bold">0</span></div>
-                    <div class="flex justify-between border-b border-tx-border pb-1"><span>AGILITY</span><span id="stat-agi" class="text-white font-bold">0</span></div>
-                    <div class="flex justify-between border-b border-tx-border pb-1 col-span-2"><span>ENDURANCE</span><span id="stat-end" class="text-white font-bold">0</span></div>
-                </div>
-                
-                <!-- EXP BAR -->
-                <div class="mt-6">
-                    <div class="flex justify-between text-[10px] font-mono mb-1 text-tx-cyan">
-                        <span>NEXT AWAKENING</span>
-                        <span id="expText">0 / 0</span>
-                    </div>
-                    <div class="h-1.5 w-full bg-tx-void rounded-full overflow-hidden">
-                        <div id="expBar" class="h-full bg-tx-cyan shadow-[0_0_10px_#00f2ff] transition-all duration-700" style="width: 0%;"></div>
-                    </div>
-                </div>
+        <div class="grid grid-cols-2 gap-y-4 gap-x-8 font-mono text-sm mb-6">
+            <div class="flex justify-between border-b border-tx-border pb-1">
+                <span class="text-gray-500">LETHALITY</span><span id="valLET" class="text-white font-bold">10</span>
             </div>
-            
-            <!-- ALGORITHMIC PENALTY ZONE -->
-            <div id="penaltyZone" class="hidden glass-panel rounded-2xl p-6 border-tx-red border shadow-[0_0_30px_rgba(255,77,94,0.15)] bg-gradient-to-b from-red-900/20 to-transparent">
-                <div class="flex items-center gap-3 mb-2">
-                    <i class="fa-solid fa-triangle-exclamation text-tx-red text-xl animate-pulse"></i>
-                    <h3 class="font-display font-bold text-tx-red tracking-widest">PENALTY ZONE ACTIVE</h3>
-                </div>
-                <p class="font-mono text-xs text-gray-300 leading-relaxed mb-4">
-                    Incomplete tasks detected. Your stats are decaying. Enter the sudden-death bracket within <span class="text-tx-red font-bold">01:45:00</span> to restore equilibrium.
-                </p>
-                <button class="w-full bg-tx-red text-white font-display font-bold py-2 rounded-lg hover:bg-red-500 transition-colors">ENTER DEATHMATCH</button>
+            <div class="flex justify-between border-b border-tx-border pb-1">
+                <span class="text-gray-500">PERCEPTION</span><span id="valPER" class="text-white font-bold">10</span>
             </div>
-        </section>
-
-        <!-- RIGHT: PROCEDURAL QUESTS & LEADERBOARD -->
-        <section class="lg:col-span-8 flex flex-col gap-6">
-            
-            <!-- ALGORITHMIC QUEST ENGINE -->
-            <div class="glass-panel rounded-2xl p-6">
-                <div class="flex justify-between items-end mb-6">
-                    <div>
-                        <h2 class="font-display text-2xl font-bold text-white tracking-wide">PROCEDURAL QUESTS</h2>
-                        <p class="font-mono text-xs text-gray-400 mt-1">Algorithmically generated based on your lowest metrics.</p>
-                    </div>
-                    <span class="text-tx-gold font-mono text-sm font-bold border border-tx-gold px-3 py-1 rounded-md bg-yellow-900/20">
-                        <i class="fa-regular fa-clock mr-1"></i> RESETS IN 04:12:00
-                    </span>
-                </div>
-
-                <div id="questContainer" class="flex flex-col gap-4">
-                    <!-- Quests injected via JS Engine -->
-                </div>
+            <div class="flex justify-between border-b border-tx-border pb-1">
+                <span class="text-gray-500">TACTICS</span><span id="valTAC" class="text-white font-bold">10</span>
             </div>
-
-            <!-- INFINITE MONARCH LEADERBOARD -->
-            <div class="glass-panel rounded-2xl p-6">
-                 <div class="flex justify-between items-center mb-6">
-                    <h2 class="font-display text-xl font-bold text-white tracking-wide">GLOBAL ELITE</h2>
-                    <div class="flex gap-2">
-                        <button class="px-3 py-1 border border-tx-cyan text-tx-cyan font-mono text-xs hover:bg-tx-cyan hover:text-black transition-colors rounded">SNIPERS</button>
-                        <button class="px-3 py-1 border border-tx-border text-gray-400 font-mono text-xs hover:border-tx-cyan transition-colors rounded">IGL</button>
-                    </div>
-                </div>
-
-                <!-- THE MONARCH GLITCH BANNER -->
-                <div class="w-full bg-gradient-to-r from-[#0d0517] to-tx-void border border-tx-purple p-4 rounded-xl flex items-center justify-between mb-4 shadow-[0_0_30px_rgba(189,0,255,0.2)]">
-                    <div class="flex items-center gap-4">
-                        <div class="text-4xl text-tx-purple drop-shadow-[0_0_10px_#bd00ff]"><i class="fa-solid fa-chess-king"></i></div>
-                        <div>
-                            <div class="font-mono text-[10px] text-tx-cyan tracking-[0.2em] mb-1">GLOBAL RANK #1 — THE USURPER</div>
-                            <h3 class="glitch-text font-display text-2xl font-black text-white" data-text="[ MONARCH ] WH_KING">[ MONARCH ] WH_KING</h3>
-                        </div>
-                    </div>
-                    <div class="text-right font-mono hidden sm:block">
-                        <div class="text-xs text-gray-400">WIN RATE</div>
-                        <div class="text-xl text-tx-cyan font-bold">98.4%</div>
-                    </div>
-                </div>
-
-                <!-- DYNAMIC LEADERBOARD ROWS -->
-                <div class="flex flex-col border border-tx-border rounded-lg overflow-hidden">
-                    <div class="grid grid-cols-12 bg-tx-panel p-3 font-mono text-xs text-gray-500 border-b border-tx-border">
-                        <div class="col-span-1 text-center">#</div>
-                        <div class="col-span-5">PLAYER</div>
-                        <div class="col-span-3 text-center">ROLE</div>
-                        <div class="col-span-3 text-right">ELO / LVL</div>
-                    </div>
-                    <div id="leaderboardContainer">
-                        <!-- Populated by Engine -->
-                    </div>
-                </div>
+            <div class="flex justify-between border-b border-tx-border pb-1">
+                <span class="text-gray-500">AGILITY</span><span id="valAGI" class="text-white font-bold">10</span>
             </div>
+            <div class="flex justify-between border-b border-tx-border pb-1 col-span-2">
+                <span class="text-gray-500">ENDURANCE</span><span id="valEND" class="text-white font-bold">10</span>
+            </div>
+        </div>
 
-        </section>
-    </main>
+        <div class="exp-container">
+            <div class="exp-header">
+                <span><i class="fa-solid fa-arrow-trend-up"></i> NEXT AWAKENING</span>
+                <span id="hudExpText">0 / 150 EXP</span>
+            </div>
+            <div class="exp-track">
+                <div class="exp-fill" id="hudExpFill"></div>
+            </div>
+            <p class="font-mono text-[9px] text-gray-500 mt-2 text-right">EXPONENTIAL SCALING ACTIVE</p>
+        </div>
+      </div>
+    </div>
 
-    <!-- THE JAVASCRIPT HYBRID ENGINE -->
-    <!-- Integrates Procedural Logic, DOM Updates, and Firebase Stubs -->
-    <script type="module">
-        // ==========================================
-        // 1. HYBRID AUTH & FIREBASE INITIALIZATION
-        // ==========================================
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-        import { getFirestore, doc, onSnapshot, updateDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+    <!-- PROCEDURAL QUESTS & PENALTY -->
+    <h2 class="section-title">PROCEDURAL QUEST ENGINE</h2>
+    <div class="quest-grid">
+        <div class="glass-card p-6">
+            <div class="flex justify-between items-end mb-4 border-b border-tx-border pb-4">
+                <p class="font-mono text-xs text-gray-400">Targeting Weakest Metrics. Complete tasks to avoid stat decay.</p>
+                <span class="text-tx-gold font-mono text-xs font-bold px-2 py-1 rounded bg-yellow-900/20 border border-tx-gold">04:12:00 REMAINING</span>
+            </div>
+            <div class="quest-list" id="questList">
+                <!-- Quests injected by JS -->
+            </div>
+        </div>
 
-        // Firebase Configuration (Client-Side)
-        const firebaseConfig = {
-            apiKey: "AIzaSy_Tournyx_Realtime_Key_Placeholder",
-            projectId: "tournyx-engine",
-            databaseURL: "https://tournyx-engine.firebaseio.com"
-        };
-        // const app = initializeApp(firebaseConfig);
-        // const db = getFirestore(app);
+        <div class="penalty-box" id="penaltyZone">
+            <h3><i class="fa-solid fa-skull"></i> PENALTY ZONE</h3>
+            <p>Idle behavior detected. Your <strong>Tactics</strong> stat is critically low. Survive the sudden-death bracket to avoid Rank Decay.</p>
+            <button class="btn-danger" onclick="alert('Matchmaking into Secret 1v1 Lobby...')">ENTER MATCHMAKING</button>
+        </div>
+    </div>
 
-        // Legacy Apps Script Auth Fallback
-        const API_URL = "https://script.google.com/macros/s/AKfycbyqqTpgaflxKJ9xH0jq7mJ_jLzcoNhas3gNo0h5gvoa_6r5Ae9NFxJAJp7ZoYNnMRKl/exec";
-        async function secureFetch(payload) {
-            // Apps Script synchronous simulation logic
-            console.log("Apps Script Called:", payload);
-            return { status: "success", data: payload };
-        }
+    <!-- MONARCH LEADERBOARD -->
+    <h2 class="section-title">GLOBAL RANKINGS</h2>
+    <div class="glass-card p-6 mb-10">
+        <!-- Monarch Banner -->
+        <div class="glitch-wrapper">
+            <i class="fa-solid fa-crown crown-icon"></i>
+            <div>
+                <div class="font-mono text-[10px] text-tx-cyan tracking-[2px] mb-1 uppercase">Absolute Top Player — Global Bounty Target</div>
+                <div class="glitch-text" data-text="[ MONARCH ] VENOM_FF">[ MONARCH ] VENOM_FF</div>
+            </div>
+            <div class="ml-auto text-right font-mono hidden sm:block">
+                <div class="text-xs text-gray-400">GLOBAL ELO</div>
+                <div class="text-xl text-tx-cyan font-bold">28,450</div>
+            </div>
+        </div>
 
-        // ==========================================
-        // 2. THE AWAKENING ALGORITHM (MATH & SCALING)
-        // ==========================================
-        const EXP_BASE = 150;
-        
-        class PlayerSystem {
-            constructor() {
-                // Initial State
-                this.exp = 24500;
-                this.gold = 1200;
-                this.stats = { LET: 45, PER: 80, TAC: 30, AGI: 50, END: 40 }; // Notice Perception is high
-                this.level = 0;
-                this.rank = "";
-                this.updateDerivedStats();
-            }
+        <!-- Leaderboard Table -->
+        <div class="overflow-x-auto">
+            <table class="lb-table">
+                <thead>
+                    <tr>
+                        <th width="50">#</th>
+                        <th>PLAYER ID</th>
+                        <th>CLASS</th>
+                        <th>WIN RATE</th>
+                        <th>LEVEL</th>
+                        <th style="text-align: right;">TX GOLD BOUNTY</th>
+                    </tr>
+                </thead>
+                <tbody id="leaderboardBody">
+                    <!-- Injected by JS -->
+                </tbody>
+            </table>
+        </div>
+    </div>
 
-            // Exponential Level Formula: Level = (EXP / Base)^0.4
-            calculateLevel(exp) {
-                return Math.floor(Math.pow(exp / EXP_BASE, 0.4));
-            }
+    <!-- 50 ULTIMATE UPGRADES ECOSYSTEM GRID -->
+    <h2 class="section-title">TOURNYX ECOSYSTEM ARCHITECTURE</h2>
+    <div class="features-grid">
+        <!-- AI & Algorithm -->
+        <div class="feature-item"><div class="f-icon purple"><i class="fa-solid fa-fingerprint"></i></div><div class="f-content"><h5>Playstyle Fingerprinting</h5><p>AI matchmaking based on your radar stats.</p></div></div>
+        <div class="feature-item"><div class="f-icon cyan"><i class="fa-solid fa-microchip"></i></div><div class="f-content"><h5>Procedural Quests</h5><p>Tasks adapt to your lowest skill metrics.</p></div></div>
+        <div class="feature-item"><div class="f-icon gold"><i class="fa-solid fa-camera-retro"></i></div><div class="f-content"><h5>OCR Match Parsing</h5><p>Instant EXP from end-game screenshots.</p></div></div>
+        <div class="feature-item"><div class="f-icon purple"><i class="fa-solid fa-skull"></i></div><div class="f-content"><h5>Penalty Instances</h5><p>Secret 1v1 lobbies for failing daily quests.</p></div></div>
+        <div class="feature-item"><div class="f-icon cyan"><i class="fa-solid fa-crosshairs"></i></div><div class="f-content"><h5>Algorithmic Bounties</h5><p>System places hits on high win-streak players.</p></div></div>
+        <div class="feature-item"><div class="f-icon gold"><i class="fa-solid fa-ghost"></i></div><div class="f-content"><h5>Hidden S-Rank Quests</h5><p>Secret tasks triggered by in-game anomalies.</p></div></div>
 
-            // Reverse Formula: Required EXP = Base * Level^2.5
-            calculateExpForLevel(lvl) {
-                return Math.floor(EXP_BASE * Math.pow(lvl, 2.5));
-            }
+        <!-- Progression -->
+        <div class="feature-item"><div class="f-icon purple"><i class="fa-solid fa-infinity"></i></div><div class="f-content"><h5>Infinite Monarch Scaling</h5><p>Post-Lvl 100 progression tied to global ELO.</p></div></div>
+        <div class="feature-item"><div class="f-icon cyan"><i class="fa-solid fa-vr-cardboard"></i></div><div class="f-content"><h5>AR Profile Cards</h5><p>Shareable 3D holograms of your stats.</p></div></div>
+        <div class="feature-item"><div class="f-icon gold"><i class="fa-solid fa-mobile-screen"></i></div><div class="f-content"><h5>Haptic Feedback Sync</h5><p>Visceral device vibrations on Level Up.</p></div></div>
+        <div class="feature-item"><div class="f-icon purple"><i class="fa-solid fa-gamepad"></i></div><div class="f-content"><h5>Multi-Game ELO</h5><p>BGMI, FF & CODM data merged into one Rank.</p></div></div>
 
-            updateDerivedStats() {
-                this.level = this.calculateLevel(this.exp);
-                
-                if (this.level >= 100) this.rank = "S-RANK / AWAKENED";
-                else if (this.level >= 80) this.rank = "A-RANK / PRO";
-                else if (this.level >= 60) this.rank = "B-RANK / VANGUARD";
-                else if (this.level >= 40) this.rank = "C-RANK / CHALLENGER";
-                else this.rank = "E-RANK / ROOKIE";
+        <!-- Economy & Tech -->
+        <div class="feature-item"><div class="f-icon cyan"><i class="fa-solid fa-box-open"></i></div><div class="f-content"><h5>Mystery Loot Boxes</h5><p>Purchase hardware drops with TX Gold.</p></div></div>
+        <div class="feature-item"><div class="f-icon gold"><i class="fa-solid fa-vault"></i></div><div class="f-content"><h5>Staking Vault</h5><p>Lock your PTS for 30 days to earn interest.</p></div></div>
+        <div class="feature-item"><div class="f-icon purple"><i class="fa-brands fa-ethereum"></i></div><div class="f-content"><h5>Smart Contract Payouts</h5><p>Instant UPI/Crypto prize distribution.</p></div></div>
+        <div class="feature-item"><div class="f-icon cyan"><i class="fa-solid fa-sitemap"></i></div><div class="f-content"><h5>Auto-Bracket AI</h5><p>Zero-admin tournament seeding via ELO.</p></div></div>
+        <div class="feature-item"><div class="f-icon gold"><i class="fa-solid fa-language"></i></div><div class="f-content"><h5>Localized UI (Unga)</h5><p>Hyper-specific regional text adaptations.</p></div></div>
+        <div class="feature-item"><div class="f-icon purple"><i class="fa-solid fa-wifi"></i></div><div class="f-content"><h5>PWA Offline Mode</h5><p>Platform caches data if mobile net drops.</p></div></div>
+    </div>
 
-                // UI Updates
-                document.getElementById('playerLevel').innerText = `LVL ${this.level}`;
-                document.getElementById('playerRank').innerText = this.rank;
-                document.getElementById('liveGold').innerText = this.gold.toLocaleString();
-                document.getElementById('liveExp').innerText = `${this.exp.toLocaleString()} EXP`;
+  </main>
+</div>
 
-                const nextLvlExp = this.calculateExpForLevel(this.level + 1);
-                const prevLvlExp = this.calculateExpForLevel(this.level);
-                const progress = ((this.exp - prevLvlExp) / (nextLvlExp - prevLvlExp)) * 100;
-                
-                document.getElementById('expText').innerText = `${this.exp.toLocaleString()} / ${nextLvlExp.toLocaleString()}`;
-                document.getElementById('expBar').style.width = `${Math.min(progress, 100)}%`;
-
-                // Update Stat Readouts
-                Object.keys(this.stats).forEach(key => {
-                    document.getElementById(`stat-${key.toLowerCase()}`).innerText = this.stats[key];
-                });
-
-                drawRadarChart(this.stats);
-            }
-
-            // Real-time Firebase Claim Simulation
-            claimQuest(expReward, goldReward, statKey, statBoost, btnElement) {
-                // UI Instant Reaction (Optimistic Update)
-                btnElement.innerHTML = `<i class="fa-solid fa-check"></i> VERIFIED`;
-                btnElement.classList.replace('bg-tx-cyan', 'bg-tx-border');
-                btnElement.classList.replace('text-black', 'text-tx-cyan');
-                btnElement.disabled = true;
-
-                // Algorithm Logic Application
-                this.exp += expReward;
-                this.gold += goldReward;
-                this.stats[statKey] = Math.min(this.stats[statKey] + statBoost, 100);
-                
-                this.updateDerivedStats();
-
-                // Background Firebase Push (No Lag)
-                // updateDoc(doc(db, "players", "uid"), { exp: this.exp, gold: this.gold, stats: this.stats });
-            }
-        }
-
-        const System = new PlayerSystem();
-
-        // ==========================================
-        // 3. PROCEDURAL QUEST GENERATOR
-        // ==========================================
-        const QuestDB = [
-            { id: 1, title: "Aggressive Entry", desc: "Get 3 First-Bloods in Clan Scrims.", targetStat: "LET", statBoost: 5, exp: 1200, gold: 50 },
-            { id: 2, title: "Economical Sniper", desc: "Win 2 rounds using only AWM/Kar98k.", targetStat: "PER", statBoost: 4, exp: 900, gold: 40 },
-            { id: 3, title: "Tactical Rotation", desc: "Survive to Top 10 with 0 damage taken early game.", targetStat: "TAC", statBoost: 6, exp: 1500, gold: 100 },
-            { id: 4, title: "Gloo Wall Mastery", desc: "Deploy 15 Gloo Walls within 2 seconds of taking damage.", targetStat: "AGI", statBoost: 5, exp: 1100, gold: 60 }
-        ];
-
-        function generateProceduralQuests(playerStats) {
-            const container = document.getElementById('questContainer');
-            container.innerHTML = "";
-
-            // Find weakest stat to algorithmically assign a challenge
-            const weakestStat = Object.keys(playerStats).reduce((a, b) => playerStats[a] < playerStats[b] ? a : b);
-            
-            // Render Penalty Zone if Tactics is critically low (simulated trigger)
-            if (playerStats['TAC'] <= 30) {
-                document.getElementById('penaltyZone').classList.remove('hidden');
-            }
-
-            // Generate 3 unique quests favoring the weak stat
-            QuestDB.slice(0, 3).forEach((q, index) => {
-                const isTarget = q.targetStat === weakestStat;
-                const tagHtml = isTarget ? `<span class="bg-tx-purple text-white text-[9px] px-2 py-0.5 rounded ml-2">SYSTEM TARGET</span>` : '';
-                
-                const questHtml = `
-                <div class="neon-border-cyan glass-panel p-4 rounded-xl flex items-center justify-between gap-4">
-                    <div class="flex-1">
-                        <h3 class="font-display font-bold text-white text-lg">${q.title} ${tagHtml}</h3>
-                        <p class="font-mono text-xs text-gray-400 mt-1">${q.desc}</p>
-                        <div class="flex gap-4 mt-3 font-mono text-[10px] font-bold">
-                            <span class="text-tx-cyan">+${q.exp} EXP</span>
-                            <span class="text-tx-gold"><i class="fa-solid fa-coins"></i> ${q.gold}</span>
-                            <span class="text-tx-purple">↑ ${q.targetStat} +${q.statBoost}</span>
-                        </div>
-                    </div>
-                    <button onclick="System.claimQuest(${q.exp}, ${q.gold}, '${q.targetStat}', ${q.statBoost}, this)" class="bg-tx-cyan text-black font-display font-bold text-sm px-6 py-2 rounded-lg hover:scale-105 transition-transform whitespace-nowrap">
-                        SYNC DATA
-                    </button>
-                </div>`;
-                container.insertAdjacentHTML('beforeend', questHtml);
+<!-- ==========================================
+     JAVASCRIPT: THE SYSTEM ENGINE
+=========================================== -->
+<script>
+    // --- 1. SHUTTER LOADER & AUTH ---
+    window.addEventListener('load', () => {
+        setTimeout(() => {
+            const bars = document.querySelectorAll('.shutter-bar');
+            bars.forEach((bar, i) => {
+                setTimeout(() => { bar.style.transform = 'scaleY(0)'; }, i * 100);
             });
-        }
-        generateProceduralQuests(System.stats);
+            setTimeout(() => { 
+                document.getElementById('loader-overlay').style.display = 'none'; 
+                // Show Auth Modal (Simulating AppScript Legacy Check)
+                document.getElementById('authModal').style.display = 'flex';
+            }, 800);
+        }, 1000);
+    });
 
-        // ==========================================
-        // 4. DYNAMIC SVG RADAR CHART (DOM Manipulation)
-        // ==========================================
-        function drawRadarChart(statsObj) {
-            const svg = document.getElementById('skillRadar');
-            svg.innerHTML = ''; // Clear
+    function simulateLogin() {
+        const email = document.getElementById('authEmail').value;
+        if(email === "") { alert("Enter an email."); return; }
+        
+        // Simulating Firebase Auth replacing AppScript
+        document.getElementById('authModal').style.display = 'none';
+        document.getElementById('profileName').innerText = email.split('@')[0].toUpperCase();
+        SystemEngine.init();
+    }
+
+    function toggleSidebar() {
+        document.getElementById('sidebar').classList.toggle('active');
+    }
+
+    // --- 2. THE ALGORITHM & CORE SYSTEM ---
+    class SoloLevelingEngine {
+        constructor() {
+            this.baseExp = 150;
+            this.gold = 450;
+            // Base stats out of 100
+            this.stats = { LET: 35, PER: 12, TAC: 60, AGI: 45, END: 50 };
+            this.totalExp = 0;
+            this.level = 1;
+            this.rank = "E-RANK";
+            this.classStr = "UNKNOWN";
+        }
+
+        init() {
+            // Calculate initial total EXP based on stats to sync UI
+            let sum = 0;
+            for(let key in this.stats) sum += this.stats[key];
+            this.totalExp = Math.floor(sum * 25.5); // Arbitrary starting logic
+            this.updateSystem();
+            this.generateQuests();
+            this.populateLeaderboard();
+        }
+
+        // Exponential Level Formula
+        calculateLevel(exp) {
+            return Math.max(1, Math.floor(Math.pow(exp / this.baseExp, 0.4)));
+        }
+
+        calculateExpForLevel(lvl) {
+            return Math.floor(this.baseExp * Math.pow(lvl, 2.5));
+        }
+
+        determineClass() {
+            let highest = Object.keys(this.stats).reduce((a, b) => this.stats[a] > this.stats[b] ? a : b);
+            if (highest === 'LET') return "ASSASSIN / FRAGGER";
+            if (highest === 'PER') return "SNIPER / MARKSMAN";
+            if (highest === 'TAC') return "IGL / TACTICIAN";
+            if (highest === 'AGI') return "RUSHER / FLANKER";
+            return "SUPPORT / ANCHOR";
+        }
+
+        updateSystem() {
+            this.level = this.calculateLevel(this.totalExp);
             
-            const stats = [statsObj.LET, statsObj.PER, statsObj.TAC, statsObj.AGI, statsObj.END];
+            // Tier Logic
+            if (this.level >= 100) this.rank = "MONARCH / AWAKENED";
+            else if (this.level >= 80) this.rank = "S-RANK / NATIONAL ELITE";
+            else if (this.level >= 60) this.rank = "A-RANK / PRO";
+            else if (this.level >= 40) this.rank = "B-RANK / VANGUARD";
+            else if (this.level >= 20) this.rank = "C-RANK / CHALLENGER";
+            else if (this.level >= 10) this.rank = "D-RANK / CONTENDER";
+            else this.rank = "E-RANK / ROOKIE";
+
+            this.classStr = this.determineClass();
+
+            // Update DOM Elements
+            document.getElementById('topExp').innerText = this.totalExp.toLocaleString();
+            document.getElementById('topGold').innerText = this.gold.toLocaleString();
+            document.getElementById('hudLevel').innerText = `LVL ${this.level}`;
+            document.getElementById('hudRankBadge').innerText = this.rank;
+            document.getElementById('profileRank').innerText = `LVL ${this.level}`;
+            document.getElementById('hudClass').innerText = this.classStr;
+
+            // Stat values
+            document.getElementById('valLET').innerText = this.stats.LET;
+            document.getElementById('valPER').innerText = this.stats.PER;
+            document.getElementById('valTAC').innerText = this.stats.TAC;
+            document.getElementById('valAGI').innerText = this.stats.AGI;
+            document.getElementById('valEND').innerText = this.stats.END;
+
+            // EXP Bar Math
+            const currentLvlExp = this.calculateExpForLevel(this.level);
+            const nextLvlExp = this.calculateExpForLevel(this.level + 1);
+            const progress = ((this.totalExp - currentLvlExp) / (nextLvlExp - currentLvlExp)) * 100;
+
+            document.getElementById('hudExpText').innerText = `${this.totalExp.toLocaleString()} / ${nextLvlExp.toLocaleString()} EXP`;
+            document.getElementById('hudExpFill').style.width = `${Math.min(Math.max(progress, 2), 100)}%`; // Min 2% for visibility
+
+            this.drawRadar();
+            
+            // Penalty Zone Check
+            const weakestVal = Math.min(...Object.values(this.stats));
+            if(weakestVal < 20) {
+                document.getElementById('penaltyZone').style.display = "flex";
+            } else {
+                document.getElementById('penaltyZone').style.display = "none";
+            }
+        }
+
+        // Draws the SVG Radar Chart dynamically
+        drawRadar() {
+            const svg = document.getElementById('radarChart');
+            svg.innerHTML = ''; 
+            
+            const keys = ['LET', 'PER', 'TAC', 'AGI', 'END'];
             const labels = ['LETHALITY', 'PERCEPTION', 'TACTICS', 'AGILITY', 'ENDURANCE'];
             
-            const cx = 120, cy = 110, radius = 80;
+            const cx = 140, cy = 140, radius = 100;
             const points = [];
 
-            // Draw Background Web
+            // Draw Web
             for (let j = 1; j <= 4; j++) {
-                let webPoints = "";
+                let webPts = "";
                 for (let i = 0; i < 5; i++) {
                     const angle = (Math.PI * 2 * i) / 5 - Math.PI / 2;
                     const x = cx + (radius * (j/4)) * Math.cos(angle);
                     const y = cy + (radius * (j/4)) * Math.sin(angle);
-                    webPoints += `${x},${y} `;
+                    webPts += `${x},${y} `;
                 }
-                svg.innerHTML += `<polygon points="${webPoints}" fill="none" stroke="#1c2740" stroke-width="1"/>`;
+                svg.innerHTML += `<polygon points="${webPts}" fill="none" stroke="#1c2740" stroke-width="1"/>`;
             }
 
-            // Calculate Data Points & Labels
+            // Calculate Nodes
             for (let i = 0; i < 5; i++) {
                 const angle = (Math.PI * 2 * i) / 5 - Math.PI / 2;
                 
-                // Label Coordinates
-                const lx = cx + (radius + 20) * Math.cos(angle);
+                // Labels
+                const lx = cx + (radius + 25) * Math.cos(angle);
                 const ly = cy + (radius + 15) * Math.sin(angle);
-                svg.innerHTML += `<text x="${lx}" y="${ly}" class="radar-stat-text" text-anchor="middle" alignment-baseline="middle">${labels[i]}</text>`;
+                svg.innerHTML += `<text x="${lx}" y="${ly}" class="stat-text" text-anchor="middle" alignment-baseline="middle">${labels[i]}</text>`;
 
-                // Data Coordinates
-                const val = Math.max(10, stats[i]); // Min visual 10%
+                // Data Points
+                const val = Math.max(10, this.stats[keys[i]]); // Ensure visible shape
                 const dx = cx + (radius * (val / 100)) * Math.cos(angle);
                 const dy = cy + (radius * (val / 100)) * Math.sin(angle);
                 points.push(`${dx},${dy}`);
@@ -426,38 +658,101 @@
                 svg.innerHTML += `<line x1="${cx}" y1="${cy}" x2="${edgeX}" y2="${edgeY}" stroke="#1c2740" stroke-width="1"/>`;
             }
 
-            // Draw Dynamic Polygon
-            svg.innerHTML += `<polygon points="${points.join(' ')}" class="radar-polygon"/>`;
+            // Data Polygon
+            svg.innerHTML += `<polygon points="${points.join(' ')}" class="radar-poly"/>`;
             
-            // Draw Data Nodes
+            // Glowing Dots
             points.forEach(pt => {
                 const [x, y] = pt.split(',');
-                svg.innerHTML += `<circle cx="${x}" cy="${y}" r="4" fill="#00f2ff" filter="drop-shadow(0 0 4px #00f2ff)"/>`;
+                svg.innerHTML += `<circle cx="${x}" cy="${y}" r="4" fill="#00f2ff" filter="drop-shadow(0 0 5px #00f2ff)"/>`;
             });
         }
 
-        // ==========================================
-        // 5. MOCK LEADERBOARD POPULATION
-        // ==========================================
-        const lbContainer = document.getElementById('leaderboardContainer');
-        const players = [
-            { name: "WH_XERON", role: "Assaulter", elo: 18450, lvl: 89, isMe: false },
-            { name: "SHADOW_XIX", role: "Support", elo: 15200, lvl: 42, isMe: true }, // The Player
-            { name: "UNGA_SNIPEX", role: "Sniper", elo: 14100, lvl: 38, isMe: false }
-        ];
+        // Generates quests targeting the player's lowest stat
+        generateQuests() {
+            const weakestStat = Object.keys(this.stats).reduce((a, b) => this.stats[a] < this.stats[b] ? a : b);
+            const container = document.getElementById('questList');
+            container.innerHTML = "";
 
-        players.forEach((p, i) => {
-            const bgClass = p.isMe ? "bg-tx-border/40" : "bg-tx-panel hover:bg-tx-border/20";
-            const row = `
-            <div class="grid grid-cols-12 ${bgClass} p-3 font-display text-sm items-center border-b border-tx-border transition-colors">
-                <div class="col-span-1 text-center font-bold text-gray-500">${i + 2}</div>
-                <div class="col-span-5 font-bold ${p.isMe ? 'text-tx-cyan' : 'text-white'}">${p.name}</div>
-                <div class="col-span-3 text-center text-xs font-mono text-tx-purple">${p.role}</div>
-                <div class="col-span-3 text-right font-mono font-bold text-tx-gold">${p.elo} <span class="text-gray-500 text-[10px]">L${p.lvl}</span></div>
-            </div>`;
-            lbContainer.insertAdjacentHTML('beforeend', row);
-        });
+            const DB = [
+                { title: "Sniper Suppression", desc: "Land 5 headshots from >100m.", target: "PER", exp: 2500, gold: 150, boost: 5 },
+                { title: "Aggressive Entry", desc: "Get First Blood in 3 Clan Scrims.", target: "LET", exp: 3000, gold: 200, boost: 6 },
+                { title: "Zone Control", desc: "Survive to Top 5 without taking zone damage.", target: "TAC", exp: 1800, gold: 100, boost: 4 },
+                { title: "Movement Mechanics", desc: "Deploy 20 Gloo Walls under fire.", target: "AGI", exp: 2000, gold: 120, boost: 5 },
+                { title: "Iron Will", desc: "Heal 1500 HP in Ranked matches.", target: "END", exp: 1500, gold: 80, boost: 3 }
+            ];
 
-    </script>
+            // Pick 3 quests, heavily weighting the weakest stat
+            const quests = DB.filter(q => q.target === weakestStat).concat(DB.filter(q => q.target !== weakestStat)).slice(0,3);
+
+            quests.forEach((q, i) => {
+                const isTarget = q.target === weakestStat;
+                const html = `
+                <div class="quest-item neon-hover">
+                    <div class="q-info">
+                        <h4>${q.title} ${isTarget ? '<span class="bg-tx-danger text-white text-[9px] px-2 py-0.5 rounded ml-2">URGENT</span>' : ''}</h4>
+                        <p>${q.desc}</p>
+                        <div class="q-rewards">
+                            <span class="r-exp">+${q.exp} EXP</span>
+                            <span class="r-gold"><i class="fa-solid fa-coins"></i> ${q.gold}</span>
+                            <span class="r-stat">↑ ${q.target} +${q.boost}</span>
+                        </div>
+                    </div>
+                    <button onclick="SystemEngine.claimQuest(this, ${q.exp}, ${q.gold}, '${q.target}', ${q.boost})" class="btn-sync">SYNC DATA</button>
+                </div>`;
+                container.insertAdjacentHTML('beforeend', html);
+            });
+        }
+
+        claimQuest(btn, expReward, goldReward, statTarget, statBoost) {
+            // Optimistic UI Update
+            btn.innerHTML = `<i class="fa-solid fa-check"></i> CLAIMED`;
+            btn.classList.add('claimed');
+
+            // Logic Update
+            this.totalExp += expReward;
+            this.gold += goldReward;
+            this.stats[statTarget] = Math.min(this.stats[statTarget] + statBoost, 100);
+
+            // Trigger Firebase Sync (Stub)
+            console.log("Firebase: Pushing update ->", { exp: this.totalExp, gold: this.gold, stats: this.stats });
+
+            // Rerender HUD instantly
+            this.updateSystem();
+        }
+
+        populateLeaderboard() {
+            const tbody = document.getElementById('leaderboardBody');
+            const data = [
+                { name: "GHOST_REAPER", role: "IGL", win: "88.2%", lvl: 98, bounty: 15000 },
+                { name: "BLAZE_RUNNER", role: "Assaulter", win: "81.5%", lvl: 85, bounty: 12400 },
+                { name: "NULL_POINTER", role: "Sniper", win: "79.1%", lvl: 76, bounty: 8900 },
+                { name: "YOU (GUEST)", role: this.classStr.split('/')[0], win: "45.0%", lvl: this.level, bounty: this.gold, isMe: true },
+                { name: "TOXIC_VANTA", role: "Support", win: "65.4%", lvl: 60, bounty: 5000 }
+            ];
+
+            // Sort by level desc
+            data.sort((a,b) => b.lvl - a.lvl);
+
+            data.forEach((p, i) => {
+                const tr = document.createElement('tr');
+                if(p.isMe) tr.className = "me";
+                tr.innerHTML = `
+                    <td class="text-center text-gray-500">${i + 2}</td>
+                    <td class="${p.isMe ? 'text-tx-cyan' : 'text-white'}">${p.name}</td>
+                    <td class="text-center"><span class="role-tag ${p.role.trim()}">${p.role}</span></td>
+                    <td>${p.win}</td>
+                    <td class="text-tx-purple">LVL ${p.lvl}</td>
+                    <td class="text-right text-tx-gold"><i class="fa-solid fa-coins text-[10px]"></i> ${p.bounty.toLocaleString()}</td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+    }
+
+    const SystemEngine = new SoloLevelingEngine();
+
+</script>
+
 </body>
 </html>
