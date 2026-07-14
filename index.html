@@ -63,290 +63,289 @@
             display: flex;
         }
 
+        /* --- SKELETON LOADER --- */
+        .skeleton { background: linear-gradient(90deg, rgba(255,255,255,0.02) 25%, rgba(255,255,255,0.08) 50%, rgba(255,255,255,0.02) 75%); background-size: 200% 100%; animation: shimmer 1.5s infinite linear; border-radius: 12px; border: 1px solid rgba(255,255,255,0.05);}
+        @keyframes shimmer { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
+
+        /* --- BACKGROUND --- */
+        .optimized-bg { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; z-index: -2; background: #0b0e14; pointer-events: none;}
+        .grid-layer { position: absolute; width: 100%; height: 100%; top: 0; left: 0; background-image: linear-gradient(rgba(0,229,255,0.02) 1px, transparent 1px), linear-gradient(90deg, rgba(0,229,255,0.02) 1px, transparent 1px); background-size: 30px 30px; opacity: 0.6;}
+        .glow-orb { position: absolute; border-radius: 50%; opacity: 0.3; pointer-events: none;}
+        .g-purple { width: 50vw; height: 50vw; background: radial-gradient(circle, rgba(189,0,255,0.1) 0%, transparent 60%); top: -10vh; left: -10vw; }
+        .g-cyan { width: 40vw; height: 40vw; background: radial-gradient(circle, rgba(0,229,255,0.1) 0%, transparent 60%); bottom: -10vh; right: -10vw; }
+
+        /* --- LEGACY BULLET LOADER --- */
+        #tournyx-loader { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: var(--primary-bg); z-index: 99999; display: flex; flex-direction: column; align-items: center; justify-content: center; transition: opacity 0.4s ease-out; overflow: hidden; }
+        .loader-logo { font-family: var(--font-head); font-size: 4rem; font-weight: 900; color: transparent; -webkit-text-stroke: 2px rgba(255,255,255,0.3); position: relative; z-index: 10; }
+        .loader-logo::after { content: 'T'; position: absolute; top: 0; left: 0; color: #fff; text-shadow: 0 0 30px var(--accent-purple), 0 0 50px var(--accent-cyan); opacity: 0; animation: flashHit 1s infinite; }
+        .bullet { position: absolute; height: 3px; width: 80px; background: linear-gradient(90deg, transparent, var(--accent-cyan)); border-radius: 4px; box-shadow: 0 0 10px var(--accent-cyan); opacity: 0; }
+        .b1 { top: 40%; left: -150px; animation: shootRight 1s infinite; }
+        .b2 { top: 60%; right: -150px; background: linear-gradient(-90deg, transparent, var(--accent-purple)); box-shadow: 0 0 10px var(--accent-purple); animation: shootLeft 1s 0.5s infinite; }
+        .b3 { animation-delay: 1.3s; left: 80px; } 
+        @keyframes shootRight { 0% { left: -150px; opacity: 1; } 50% { left: 50%; opacity: 0; } 100% { left: 50%; opacity: 0; } }
+        @keyframes shootLeft { 0% { right: -150px; opacity: 1; } 50% { right: 50%; opacity: 0; } 100% { right: 50%; opacity: 0; } }
+        @keyframes flashHit { 0%, 48% { opacity: 0; } 50% { opacity: 1; text-shadow: 0 0 40px white; } 52%, 100% { opacity: 0; } }
+        .loader-text { margin-top: 30px; font-family: var(--font-body); font-size: 0.9rem; letter-spacing: 3px; color: var(--accent-purple); text-transform: uppercase; animation: blink 1s infinite alternate; text-shadow: 0 0 10px rgba(189,0,255,0.5); }
+        @keyframes blink { from { opacity: 0.5; } to { opacity: 1; } }
+
         /* --- LAYOUT ARCHITECTURE --- */
-        .sidebar {
-            width: var(--sidebar-width);
-            height: 100vh;
-            background: var(--sidebar-bg);
-            border-right: 1px solid var(--glass-border);
-            position: fixed;
-            top: 0; left: 0;
-            display: flex;
-            flex-direction: column;
-            z-index: 3000;
-            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-
-        .main-wrapper {
-            flex: 1;
-            margin-left: var(--sidebar-width);
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-            width: calc(100% - var(--sidebar-width));
-        }
-
+        .sidebar { width: var(--sidebar-width); height: 100vh; background: var(--sidebar-bg); border-right: 1px solid var(--glass-border); position: fixed; top: 0; left: 0; display: flex; flex-direction: column; z-index: 3000; }
+        .main-wrapper { flex: 1; margin-left: var(--sidebar-width); min-height: 100vh; display: flex; flex-direction: column; width: calc(100% - var(--sidebar-width)); }
+        .content-pad { display: flex; flex-direction: column; padding: 25px; max-width: 1200px; margin: 0 auto; width: 100%; gap: 30px;}
+        
         @media (max-width: 1024px) {
             .sidebar { display: none; }
-            .main-wrapper { margin-left: 0; width: 100%; padding-bottom: 90px; }
+            .main-wrapper { margin-left: 0; width: 100%; padding-bottom: 70px; }
+            .content-pad { padding: 15px; gap: 20px;}
+            /* VITAL: Player System First on Mobile */
+            .player-system-box { order: -1; } 
         }
 
         /* --- TOP HEADER BAR --- */
-        .top-bar {
-            height: 75px;
-            background: rgba(11, 14, 20, 0.9);
-            backdrop-filter: blur(10px);
-            border-bottom: 1px solid var(--glass-border);
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 0 25px;
-            position: sticky; top: 0; z-index: 2000;
-        }
-
-        .search-container {
-            position: relative;
-            flex: 1; max-width: 400px;
-            display: none;
-        }
+        .top-bar { height: 65px; background: rgba(11, 14, 20, 0.9); backdrop-filter: blur(10px); border-bottom: 1px solid var(--glass-border); display: flex; align-items: center; justify-content: space-between; padding: 0 20px; position: sticky; top: 0; z-index: 2000; }
+        .search-container { position: relative; flex: 1; max-width: 350px; display: none; }
         @media (min-width: 768px) { .search-container { display: block; } }
-        
-        .search-input {
-            width: 100%;
-            background: var(--secondary-bg);
-            border: 1px solid rgba(255,255,255,0.1);
-            padding: 10px 15px 10px 40px;
-            border-radius: 20px;
-            color: white; font-family: var(--font-body);
-            transition: 0.3s;
-        }
-        .search-input:focus { border-color: var(--accent-blue); outline: none; box-shadow: 0 0 15px rgba(41,121,255,0.2); }
-        .search-icon { position: absolute; left: 15px; top: 50%; transform: translateY(-50%); color: var(--text-muted); }
+        .search-input { width: 100%; background: var(--secondary-bg); border: 1px solid rgba(255,255,255,0.1); padding: 8px 15px 8px 35px; border-radius: 20px; color: white; font-family: var(--font-body); font-size: 0.85rem; transition: 0.3s; }
+        .search-input:focus { border-color: var(--accent-blue); outline: none; }
+        .search-icon { position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: var(--text-muted); font-size: 0.85rem;}
 
-        .header-actions { display: flex; align-items: center; gap: 15px; margin-left: auto; }
-        
-        .wallet-pill {
-            display: flex; align-items: center; gap: 8px;
-            background: var(--secondary-bg);
-            border: 1px solid rgba(255,255,255,0.1);
-            padding: 6px 12px; border-radius: 20px;
-            text-decoration: none; transition: 0.3s;
-            font-family: var(--font-head); font-weight: bold; font-size: 0.85rem;
-        }
-        .wallet-pill:hover { transform: translateY(-2px); }
+        .header-actions { display: flex; align-items: center; gap: 10px; margin-left: auto; }
+        .wallet-pill { display: flex; align-items: center; gap: 6px; background: var(--secondary-bg); border: 1px solid rgba(255,255,255,0.1); padding: 5px 10px; border-radius: 20px; text-decoration: none; font-family: var(--font-head); font-weight: bold; font-size: 0.75rem; }
         .wallet-diamonds { color: white; }
-        .wallet-diamonds i { color: var(--accent-cyan); filter: drop-shadow(0 0 5px var(--accent-cyan)); }
+        .wallet-diamonds i { color: var(--accent-cyan); }
         .wallet-coins { color: white; }
-        .wallet-coins i { color: var(--accent-gold); filter: drop-shadow(0 0 5px var(--accent-gold)); }
+        .wallet-coins i { color: var(--accent-gold); }
 
-        .header-icon-btn {
-            width: 40px; height: 40px; border-radius: 50%;
-            background: var(--secondary-bg); border: 1px solid rgba(255,255,255,0.1);
-            display: flex; align-items: center; justify-content: center;
-            color: var(--text-muted); text-decoration: none; transition: 0.3s; position: relative;
-        }
-        .header-icon-btn .badge { position: absolute; top: -2px; right: -2px; background: var(--accent-purple); color: white; font-size: 0.6rem; font-family: var(--font-head); padding: 2px 5px; border-radius: 10px; }
+        .header-icon-btn { width: 35px; height: 35px; border-radius: 50%; background: var(--secondary-bg); border: 1px solid rgba(255,255,255,0.1); display: flex; align-items: center; justify-content: center; color: var(--text-muted); text-decoration: none; position: relative; font-size: 0.9rem;}
+        .header-icon-btn .badge { position: absolute; top: -2px; right: -2px; background: var(--accent-purple); color: white; font-size: 0.55rem; font-family: var(--font-head); padding: 2px 4px; border-radius: 10px; }
 
-        /* --- MULTI-ACCOUNT PROFILE SWITCHER --- */
-        .profile-trigger { 
-            display: flex; align-items: center; gap: 10px; cursor: pointer; 
-            padding-left: 10px; border-left: 1px solid rgba(255,255,255,0.1); position: relative;
-        }
-        .profile-trigger img { width: 40px; height: 40px; border-radius: 50%; border: 2px solid var(--accent-gold); padding: 2px; object-fit: cover; }
+        /* Multi-Account Profile Switcher */
+        .profile-trigger { display: flex; align-items: center; gap: 8px; cursor: pointer; padding-left: 10px; border-left: 1px solid rgba(255,255,255,0.1); position: relative; }
+        .profile-trigger img { width: 32px; height: 32px; border-radius: 50%; border: 2px solid var(--accent-gold); padding: 2px; object-fit: cover; }
         .profile-info { display: none; flex-direction: column; }
         @media (min-width: 768px) { .profile-info { display: flex; } }
-        .profile-name { color: white; font-family: var(--font-head); font-weight: bold; font-size: 0.85rem; }
-        .profile-level { color: var(--text-muted); font-size: 0.75rem; font-weight: 600; }
+        .profile-name { color: white; font-family: var(--font-head); font-weight: bold; font-size: 0.8rem; }
+        .profile-level { color: var(--text-muted); font-size: 0.7rem; font-weight: 600; }
 
-        .account-dropdown {
-            position: absolute; top: 60px; right: 0; background: var(--secondary-bg);
-            border: 1px solid var(--glass-border); border-radius: 16px;
-            width: 220px; box-shadow: 0 10px 40px rgba(0,0,0,0.8);
-            opacity: 0; pointer-events: none; transform: translateY(-10px);
-            transition: 0.3s; z-index: 3000; overflow: hidden;
-        }
+        .account-dropdown { position: absolute; top: 55px; right: 0; background: var(--secondary-bg); border: 1px solid var(--glass-border); border-radius: 12px; width: 200px; box-shadow: 0 10px 40px rgba(0,0,0,0.8); opacity: 0; pointer-events: none; transform: translateY(-10px); transition: 0.3s; z-index: 3000; overflow: hidden; }
         .account-dropdown.active { opacity: 1; pointer-events: auto; transform: translateY(0); }
-        .acc-item { padding: 15px; border-bottom: 1px solid rgba(255,255,255,0.05); display: flex; align-items: center; gap: 10px; transition: 0.3s; color: white; font-family: var(--font-head); font-size: 0.85rem;}
-        .acc-item:hover { background: rgba(255,255,255,0.05); color: var(--accent-cyan); }
-        .acc-item img { width: 30px; height: 30px; border-radius: 50%; }
+        .acc-item { padding: 12px 15px; border-bottom: 1px solid rgba(255,255,255,0.05); display: flex; align-items: center; gap: 10px; transition: 0.3s; color: white; font-family: var(--font-head); font-size: 0.8rem;}
+        .acc-item:hover { background: rgba(255,255,255,0.05); color: var(--accent-cyan); cursor: pointer;}
+        .acc-item img { width: 25px; height: 25px; border-radius: 50%; }
 
-        .mobile-brand { display: none; font-family: var(--font-head); font-weight: 900; font-size: 1.2rem; align-items: center; gap: 8px;}
-        .mobile-brand img { width: 30px; }
-        @media (max-width: 1024px) { 
-            .profile-trigger { border: none; padding-left: 0; } 
-            .mobile-brand { display: flex; }
-        }
-
-        /* --- MAIN CONTENT AREA --- */
-        .content-pad { padding: 30px; max-width: 1200px; margin: 0 auto; width: 100%; }
-        @media (max-width: 768px) { .content-pad { padding: 15px; } }
+        .mobile-brand { display: none; font-family: var(--font-head); font-weight: 900; font-size: 1.1rem; align-items: center; gap: 6px;}
+        .mobile-brand img { width: 25px; }
+        @media (max-width: 1024px) { .profile-trigger { border: none; padding-left: 0; } .mobile-brand { display: flex; } }
 
         /* --- SKILL BASED GAMING BANNER --- */
-        .skill-banner {
-            background: linear-gradient(90deg, rgba(20, 30, 48, 0.8), rgba(36, 59, 85, 0.8));
-            border: 1px solid var(--accent-blue);
-            border-radius: 20px; padding: 40px;
-            display: flex; align-items: center; justify-content: space-between;
-            position: relative; overflow: hidden; margin-bottom: 40px;
-            box-shadow: 0 10px 40px rgba(0,0,0,0.5);
-        }
-        .skill-content { position: relative; z-index: 2; max-width: 600px; }
-        .skill-content h1 { font-family: var(--font-head); font-size: 2.5rem; margin-bottom: 10px; text-transform: uppercase; letter-spacing: 1px; text-shadow: 0 0 20px rgba(0, 229, 255, 0.5); }
+        .skill-banner { background: linear-gradient(90deg, rgba(20, 30, 48, 0.8), rgba(36, 59, 85, 0.8)); border: 1px solid var(--accent-blue); border-radius: 16px; padding: 30px; display: flex; align-items: center; justify-content: space-between; position: relative; overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+        .skill-content { position: relative; z-index: 2; max-width: 500px; }
+        .skill-content h1 { font-family: var(--font-head); font-size: 2rem; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 1px; text-shadow: 0 0 20px rgba(0, 229, 255, 0.5); }
         .skill-content h1 span { color: var(--accent-cyan); }
-        .skill-content p { font-size: 1.1rem; color: #b0bec5; margin-bottom: 25px; line-height: 1.5; font-weight: 500; }
-        .skill-badges { display: flex; gap: 15px; flex-wrap: wrap; margin-bottom: 25px;}
-        .s-badge { background: rgba(0,0,0,0.5); border: 1px solid rgba(255,255,255,0.1); padding: 8px 15px; border-radius: 8px; font-family: var(--font-head); font-size: 0.8rem; font-weight: bold; display: flex; align-items: center; gap: 8px; }
+        .skill-content p { font-size: 0.95rem; color: #b0bec5; margin-bottom: 20px; line-height: 1.4; font-weight: 500; }
+        .skill-badges { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 20px;}
+        .s-badge { background: rgba(0,0,0,0.5); border: 1px solid rgba(255,255,255,0.1); padding: 6px 12px; border-radius: 6px; font-family: var(--font-head); font-size: 0.75rem; font-weight: bold; display: flex; align-items: center; gap: 6px; }
         .s-badge i { color: var(--accent-gold); }
+        .main-cta { background: var(--accent-gradient); color: white; border: none; padding: 12px 25px; border-radius: 8px; font-family: var(--font-head); font-size: 0.95rem; font-weight: 900; cursor: pointer; text-transform: uppercase; box-shadow: 0 8px 20px rgba(41, 121, 255, 0.5); transition: 0.3s; }
         
-        .main-cta {
-            background: var(--accent-gradient); color: white; border: none; padding: 15px 35px; border-radius: 12px; font-family: var(--font-head); font-size: 1.1rem; font-weight: 900; cursor: pointer; text-transform: uppercase; letter-spacing: 1px; box-shadow: 0 10px 30px rgba(41, 121, 255, 0.5); transition: 0.3s;
-        }
-        
-        /* Mobile Specific Banner Fixes */
         @media(max-width: 768px) { 
-            .skill-banner { padding: 15px; flex-direction: column; text-align: center; border-radius: 16px; margin-bottom: 25px; } 
-            .skill-content h1 { font-size: 1.5rem; margin-bottom: 5px; } 
-            .skill-content p { font-size: 0.85rem; margin-bottom: 15px; }
-            .skill-badges { display: none; } /* Hide badges on mobile to make it look like a compact ad */
-            .main-cta { padding: 10px 20px; font-size: 0.9rem; }
+            .skill-banner { padding: 20px 15px; flex-direction: column; text-align: center; } 
+            .skill-content h1 { font-size: 1.4rem; } 
+            .skill-content p { font-size: 0.8rem; margin-bottom: 15px;}
+            .skill-badges { display: none; }
+            .main-cta { padding: 10px 20px; font-size: 0.85rem; width: 100%;}
         }
 
         /* --- PLAYER SYSTEM (SOLO LEVELING) --- */
-        .player-system-box {
-            background: linear-gradient(180deg, #1a0b2e, #0b0e14);
-            border: 2px solid var(--accent-purple); border-radius: 20px;
-            padding: 30px; text-align: center; position: relative; margin-bottom: 40px;
-            box-shadow: 0 0 30px rgba(189,0,255,0.2); overflow: hidden;
-        }
-        .player-system-box::before { content: 'SYSTEM NOTIFICATION'; position: absolute; top: 0; left: 0; width: 100%; background: var(--accent-purple); color: white; font-family: var(--font-head); font-weight: 900; font-size: 0.75rem; padding: 5px 0; letter-spacing: 2px; }
-        .sys-content { margin-top: 20px; }
-        .sys-content h2 { font-family: var(--font-head); font-size: 1.8rem; color: white; margin-bottom: 10px; text-shadow: 0 0 15px rgba(255,255,255,0.3);}
-        .sys-content p { color: var(--text-muted); margin-bottom: 20px; font-size: 1rem; }
-        .btn-improve { background: transparent; border: 2px solid var(--accent-cyan); color: var(--accent-cyan); padding: 12px 30px; border-radius: 10px; font-family: var(--font-head); font-weight: bold; font-size: 1.1rem; cursor: pointer; transition: 0.3s; box-shadow: 0 0 15px rgba(0,229,255,0.2); }
-        .btn-improve:hover { background: var(--accent-cyan); color: black; box-shadow: 0 0 30px rgba(0,229,255,0.6); transform: scale(1.05); }
+        .player-system-box { background: linear-gradient(180deg, #1a0b2e, #0b0e14); border: 2px solid var(--accent-purple); border-radius: 16px; padding: 25px; text-align: center; position: relative; box-shadow: 0 0 30px rgba(189,0,255,0.15); overflow: hidden; }
+        .player-system-box::before { content: 'SYSTEM NOTIFICATION'; position: absolute; top: 0; left: 0; width: 100%; background: var(--accent-purple); color: white; font-family: var(--font-head); font-weight: 900; font-size: 0.65rem; padding: 4px 0; letter-spacing: 2px; }
+        .sys-content { margin-top: 15px; }
+        .sys-content h2 { font-family: var(--font-head); font-size: 1.6rem; color: white; margin-bottom: 8px; text-shadow: 0 0 15px rgba(255,255,255,0.3);}
+        .sys-content p { color: var(--text-muted); margin-bottom: 15px; font-size: 0.85rem; }
+        
+        .task-list { display: flex; flex-direction: column; gap: 10px; text-align: left; margin-bottom: 15px; max-height: 250px; overflow-y: auto; padding-right: 5px;}
+        .task-list::-webkit-scrollbar { width: 4px !important; display: block !important;}
+        .task-list::-webkit-scrollbar-thumb { background: rgba(189,0,255,0.5); border-radius: 10px; }
+        
+        .sys-task-item { background: rgba(0,0,0,0.4); border: 1px solid rgba(255,255,255,0.05); border-left: 3px solid var(--accent-cyan); padding: 12px; border-radius: 8px; display: flex; justify-content: space-between; align-items: center; transition: 0.3s;}
+        .sys-task-item:hover { background: rgba(0,229,255,0.05); border-color: var(--accent-cyan); }
+        .task-meta h4 { font-family: var(--font-body); font-size: 0.95rem; color: white; margin-bottom: 4px; font-weight: bold;}
+        .task-meta span { font-family: var(--font-head); font-size: 0.75rem; color: var(--accent-gold); font-weight: bold;}
+        .btn-select-task { background: transparent; border: 1px solid var(--accent-cyan); color: var(--accent-cyan); padding: 6px 15px; border-radius: 6px; font-family: var(--font-head); font-weight: bold; font-size: 0.75rem; cursor: pointer; transition: 0.3s; }
+        .btn-select-task:hover { background: var(--accent-cyan); color: black; box-shadow: 0 0 15px rgba(0,229,255,0.4); }
 
         /* Task Upload Modal */
         .sys-modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 9999; display: none; align-items: center; justify-content: center; backdrop-filter: blur(8px); }
         .sys-modal.active { display: flex; animation: fadeIn 0.3s; }
-        .sys-card { background: #151a25; border: 1px solid var(--accent-cyan); width: 90%; max-width: 450px; border-radius: 16px; padding: 25px; position: relative; }
-        .sys-close { position: absolute; top: 15px; right: 15px; color: white; cursor: pointer; font-size: 1.2rem; }
-        .task-detail { background: rgba(0,229,255,0.1); border-left: 4px solid var(--accent-cyan); padding: 15px; margin: 20px 0; border-radius: 0 8px 8px 0; font-family: var(--font-body); font-weight: bold; color: white; }
+        .sys-card { background: #151a25; border: 1px solid var(--accent-cyan); width: 90%; max-width: 400px; border-radius: 12px; padding: 20px; position: relative; }
+        .sys-close { position: absolute; top: 12px; right: 12px; color: white; cursor: pointer; font-size: 1.1rem; }
+        .task-detail { background: rgba(0,229,255,0.1); border-left: 4px solid var(--accent-cyan); padding: 12px; margin: 15px 0; border-radius: 0 6px 6px 0; font-family: var(--font-body); font-weight: bold; color: white; font-size: 0.9rem;}
         
-        .ff-btn { width: 100%; background: #ff9900; color: black; border: none; padding: 12px; border-radius: 8px; font-family: var(--font-head); font-weight: 900; margin-bottom: 20px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px; }
+        .ff-btn { width: 100%; background: #ff9900; color: black; border: none; padding: 10px; border-radius: 6px; font-family: var(--font-head); font-weight: 900; font-size: 0.85rem; margin-bottom: 15px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; }
         
-        .upload-zone { border: 2px dashed rgba(255,255,255,0.2); border-radius: 12px; padding: 30px 20px; text-align: center; cursor: pointer; transition: 0.3s; position: relative; overflow: hidden;}
-        .upload-zone:hover { border-color: var(--accent-cyan); background: rgba(0,229,255,0.05); }
+        .upload-zone { border: 2px dashed rgba(255,255,255,0.2); border-radius: 8px; padding: 20px 15px; text-align: center; cursor: pointer; position: relative; overflow: hidden;}
         .upload-zone input { position: absolute; top: 0; left: 0; width: 100%; height: 100%; opacity: 0; cursor: pointer; }
-        .upload-zone i { font-size: 2rem; color: var(--accent-cyan); margin-bottom: 10px; }
+        .upload-zone i { font-size: 1.6rem; color: var(--accent-cyan); margin-bottom: 8px; }
+        .upload-zone div:nth-of-type(1) { font-family: var(--font-head); color: white; font-size: 0.85rem; margin-bottom: 4px;}
+        .upload-zone div:nth-of-type(2) { font-size: 0.7rem; color: #666; }
         
-        .sys-submit-btn { width: 100%; background: var(--accent-gradient); color: white; border: none; padding: 14px; border-radius: 8px; font-family: var(--font-head); font-weight: bold; margin-top: 20px; cursor: pointer; opacity: 0.5; pointer-events: none; transition: 0.3s; }
+        .sys-submit-btn { width: 100%; background: var(--accent-gradient); color: white; border: none; padding: 12px; border-radius: 6px; font-family: var(--font-head); font-weight: bold; font-size: 0.85rem; margin-top: 15px; cursor: pointer; opacity: 0.5; pointer-events: none; transition: 0.3s; }
         .sys-submit-btn.ready { opacity: 1; pointer-events: auto; }
 
-        /* --- SECTION HEADERS --- */
-        .section-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; border-left: 4px solid var(--accent-blue); padding-left: 15px; }
-        .section-header h2 { font-family: var(--font-head); font-size: 1.3rem; text-transform: uppercase; letter-spacing: 1px; }
-
-        /* --- CARDS & GRIDS --- */
-        .slider-grid { display: flex; gap: 20px; overflow-x: auto; padding-bottom: 20px; scroll-snap-type: x mandatory; }
-        .glass-card { background: var(--glass-bg); border: 1px solid var(--glass-border); border-radius: 16px; overflow: hidden; flex: 0 0 85%; scroll-snap-align: center; transition: 0.3s; position: relative; }
-        @media(min-width: 768px) { .glass-card { flex: 0 0 300px; } }
-        .c-img-wrapper { height: 160px; position: relative; }
+        /* --- CARDS & GRIDS (Reduced Size) --- */
+        .section-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; border-left: 3px solid var(--accent-blue); padding-left: 10px; }
+        .section-header h2 { font-family: var(--font-head); font-size: 1.1rem; text-transform: uppercase; letter-spacing: 0.5px; margin:0;}
+        .view-all-btn { color: var(--accent-cyan); font-family: var(--font-head); font-size: 0.75rem; font-weight: bold; text-decoration: none; text-transform: uppercase;}
+        
+        .slider-grid { display: flex; gap: 15px; overflow-x: auto; padding-bottom: 15px; scroll-snap-type: x mandatory; }
+        .glass-card { background: var(--glass-bg); border: 1px solid var(--glass-border); border-radius: 12px; overflow: hidden; flex: 0 0 85%; scroll-snap-align: center; transition: 0.3s; position: relative; }
+        @media(min-width: 768px) { .glass-card { flex: 0 0 280px; } }
+        .c-img-wrapper { height: 140px; position: relative; }
         .c-img-wrapper img { width: 100%; height: 100%; object-fit: cover; }
-        .c-badge { position: absolute; top: 10px; left: 10px; background: rgba(0,0,0,0.8); border: 1px solid var(--accent-gold); color: var(--accent-gold); font-family: var(--font-head); font-size: 0.7rem; font-weight: bold; padding: 4px 10px; border-radius: 6px; text-transform: uppercase; }
-        .c-content { padding: 20px; }
-        .c-title { font-family: var(--font-head); font-size: 1.1rem; margin-bottom: 10px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-weight: bold; }
+        .c-badge { position: absolute; top: 8px; left: 8px; background: rgba(0,0,0,0.8); border: 1px solid var(--accent-gold); color: var(--accent-gold); font-family: var(--font-head); font-size: 0.6rem; font-weight: bold; padding: 3px 8px; border-radius: 4px; text-transform: uppercase; }
+        .c-content { padding: 15px; }
+        .c-title { font-family: var(--font-head); font-size: 1rem; margin-bottom: 8px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-weight: bold; }
+        .c-price { font-size: 0.8rem; color: var(--text-muted); margin-bottom: 12px; }
+        .c-price span { color: var(--accent-cyan); font-family: var(--font-head); font-weight: bold; font-size: 0.95rem; }
+        .c-btn { width: 100%; background: var(--accent-blue); color: white; border: none; padding: 10px; border-radius: 6px; font-family: var(--font-head); font-weight: bold; font-size: 0.85rem; cursor: pointer; transition: 0.3s; }
         
-        /* --- SPIN WHEEL SECTION (Moved from FAB) --- */
-        .spin-section { display: flex; align-items: center; justify-content: space-between; background: linear-gradient(135deg, rgba(0,229,255,0.1), rgba(41,121,255,0.1)); border: 1px solid var(--accent-blue); border-radius: 20px; padding: 30px; margin-bottom: 40px; flex-wrap: wrap; gap: 20px;}
-        .spin-info h2 { font-family: var(--font-head); color: white; font-size: 1.8rem; margin-bottom: 10px; text-transform: uppercase;}
-        .spin-info p { color: var(--text-muted); font-size: 1rem; max-width: 400px; margin-bottom: 20px;}
-        .spin-action-area { flex: 1; display: flex; justify-content: flex-end; align-items: center;}
-        .spin-btn-lg { background: linear-gradient(135deg, #ffab00, #ffd700); color: black; font-family: var(--font-head); font-weight: 900; font-size: 1.2rem; border: none; padding: 15px 40px; border-radius: 30px; cursor: pointer; box-shadow: 0 10px 30px rgba(255,215,0,0.4); display: flex; align-items: center; gap: 10px; transition: 0.3s;}
-        .spin-btn-lg:hover { transform: scale(1.05); }
+        /* Smaller variations for Live & Pro */
+        .live-card { display: flex; align-items: center; gap: 12px; padding: 12px; text-decoration: none;}
+        .live-img { width: 60px; height: 60px; border-radius: 8px; object-fit: cover; border: 1px solid var(--accent-green); flex-shrink: 0;}
+        .live-info { flex: 1; overflow: hidden; }
+        .live-badge { display: inline-block; background: rgba(0,255,127,0.1); color: var(--accent-green); font-size: 0.55rem; font-family: var(--font-head); font-weight: bold; padding: 2px 6px; border-radius: 6px; margin-bottom: 4px; border: 1px solid rgba(0,255,127,0.3);}
+        .live-title { font-family: var(--font-head); font-size: 0.9rem; color: white; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;}
+        
+        .score-card { background: linear-gradient(180deg, #151a25, #0b0e14); border: 1px solid rgba(255,255,255,0.05); border-radius: 12px; padding: 15px; min-width: 280px; flex: 0 0 auto; scroll-snap-align: center; position: relative; overflow: hidden;}
+        .score-header { display: flex; justify-content: space-between; align-items: center; font-size: 0.75rem; color: #a0a0b0; font-family: var(--font-head); font-weight: bold; margin-bottom: 15px; border-bottom: 1px dashed rgba(255,255,255,0.1); padding-bottom: 8px; text-transform: uppercase;}
+        .score-teams { display: flex; justify-content: space-between; align-items: center; position: relative;}
+        .team-box { display: flex; flex-direction: column; align-items: center; gap: 6px; width: 40%; z-index: 2;}
+        .team-logo { width: 45px; height: 45px; border-radius: 10px; background: rgba(0,0,0,0.5); padding: 4px; object-fit: contain; border: 1px solid rgba(255,255,255,0.1); }
+        .team-name { font-size: 0.8rem; color: white; font-weight: bold; text-align: center; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; width: 100%;}
+        .match-score { font-family: var(--font-head); font-size: 1.5rem; font-weight: 900; color: white; z-index: 2;}
+        
+        .video-card { background: #000; border-radius: 12px; overflow: hidden; min-width: 220px; flex: 0 0 auto; border: 1px solid rgba(255,255,255,0.05); text-decoration: none; display: block;}
+        .vid-thumb { height: 120px; position: relative; }
+        .vid-thumb img { width: 100%; height: 100%; object-fit: cover; opacity: 0.85; }
+        .vid-play { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); color: rgba(255,255,255,0.8); font-size: 1.8rem;}
+        .vid-info { padding: 10px; display: flex; gap: 10px; align-items: center;}
+        .vid-icon-tag { font-size: 1.2rem; color: #ff0000; }
+        .vid-icon-tag.instagram { color: #e1306c; }
+        .vid-text h4 { font-size: 0.8rem; color: white; margin-bottom: 2px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;}
+        .vid-text p { font-size: 0.65rem; color: #888; margin: 0; font-weight:bold;}
 
-        .spin-modal { position: fixed; top:0; left:0; width:100%; height:100%; background: rgba(0,0,0,0.9); z-index: 9950; display: none; align-items: center; justify-content: center; backdrop-filter: blur(10px); }
+        /* --- ADVANCED SPIN WHEEL SECTION --- */
+        .spin-section { display: flex; align-items: center; justify-content: space-between; background: linear-gradient(135deg, rgba(0,229,255,0.05), rgba(41,121,255,0.05)); border: 1px solid rgba(41,121,255,0.3); border-radius: 16px; padding: 25px; flex-wrap: wrap; gap: 15px;}
+        .spin-info h2 { font-family: var(--font-head); color: white; font-size: 1.4rem; margin-bottom: 5px; text-transform: uppercase;}
+        .spin-info p { color: var(--text-muted); font-size: 0.85rem; max-width: 350px;}
+        .spin-action-area { flex: 1; display: flex; justify-content: flex-end;}
+        .spin-btn-lg { background: linear-gradient(135deg, #ffab00, #ffd700); color: black; font-family: var(--font-head); font-weight: 900; font-size: 1rem; border: none; padding: 12px 30px; border-radius: 25px; cursor: pointer; box-shadow: 0 5px 20px rgba(255,215,0,0.3); display: flex; align-items: center; gap: 8px;}
+
+        .spin-modal { position: fixed; top:0; left:0; width:100%; height:100%; background: rgba(0,0,0,0.9); z-index: 9950; display: none; align-items: center; justify-content: center; backdrop-filter: blur(8px); }
         .spin-modal.active { display: flex; animation: fadeIn 0.3s; }
-        .wheel-box { position: relative; width: 300px; height: 300px; margin: 0 auto 30px; border-radius: 50%; border: 5px solid var(--accent-blue); box-shadow: 0 0 50px rgba(41,121,255,0.4); overflow: hidden; }
-        .wheel { width: 100%; height: 100%; background: conic-gradient(#151a25 0 60deg, #0b0e14 60deg 120deg, #151a25 120deg 180deg, #0b0e14 180deg 240deg, #151a25 240deg 300deg, #0b0e14 300deg 360deg); border-radius: 50%; transition: transform 4s cubic-bezier(0.17, 0.67, 0.12, 0.99); position: relative; }
-        .wheel-pointer { position: absolute; top: -15px; left: 50%; transform: translateX(-50%); width: 30px; height: 40px; background: var(--accent-gold); clip-path: polygon(50% 100%, 0 0, 100% 0); z-index: 10; }
-
-        /* --- BOTTOM NAV (PREMIUM GLASSMORPHISM MOBILE) --- */
-        .bottom-nav { display: none; position: fixed; bottom: 0; left: 0; width: 100%; height: 80px; background: rgba(15, 19, 28, 0.85); backdrop-filter: blur(20px); border-top: 1px solid rgba(255,255,255,0.05); z-index: 2500; justify-content: space-around; align-items: center; padding-bottom: env(safe-area-inset-bottom); box-shadow: 0 -10px 40px rgba(0,0,0,0.5);}
-        @media (max-width: 1024px) { .bottom-nav { display: flex; } }
+        .wheel-box { position: relative; width: 280px; height: 280px; margin: 0 auto 25px; border-radius: 50%; border: 4px solid var(--accent-blue); box-shadow: 0 0 40px rgba(41,121,255,0.3); overflow: hidden; }
+        /* 8 Segments perfectly rendered via conic-gradient. 360/8 = 45deg each. */
+        .wheel { width: 100%; height: 100%; background: conic-gradient(
+            #151a25 0deg 45deg, 
+            #0b0e14 45deg 90deg, 
+            #151a25 90deg 135deg, 
+            #0b0e14 135deg 180deg, 
+            #151a25 180deg 225deg, 
+            #0b0e14 225deg 270deg, 
+            #151a25 270deg 315deg, 
+            #0b0e14 315deg 360deg
+        ); border-radius: 50%; transition: transform 4s cubic-bezier(0.17, 0.67, 0.12, 0.99); position: relative; }
         
-        .b-nav-item { display: flex; flex-direction: column; align-items: center; gap: 6px; color: var(--text-muted); text-decoration: none; font-family: var(--font-head); font-size: 0.7rem; font-weight: bold; transition: 0.3s; flex: 1; }
-        .b-nav-item i { font-size: 1.4rem; transition: 0.3s; }
+        /* Render visual text manually via absolute positioning inside .wheel if needed, simplified here */
+        .wheel::after { content:''; position:absolute; top:0; left:0; width:100%; height:100%; background: url('https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEg_20wCR-WBMpQmw3vxcYUf-vxIO1PYDJoQN_Sid3UDjA9tf0cuX0eH40jbzHoJad4cxbnjhPjqfCw1Z5V1LhgN9zFuIQC0fJjecTy3D9PFu5WjR2H1wHwTD1bUGnXY_NiApWn5gMs6velcQngSzKoP1yHzX0cVsFSUFM8zIefcbiPayY7680Kz0V0ZAAE/s1264/1000093706.png') center/cover; opacity: 0.1;}
+
+        .wheel-pointer { position: absolute; top: -10px; left: 50%; transform: translateX(-50%); width: 24px; height: 32px; background: var(--accent-gold); clip-path: polygon(50% 100%, 0 0, 100% 0); z-index: 10; }
+        .claim-btn { width: 100%; background: var(--accent-gradient); color: white; border: none; padding: 12px; border-radius: 8px; font-family: var(--font-head); font-weight: 900; font-size: 0.9rem; cursor: pointer; text-transform: uppercase; }
+
+        /* --- BOTTOM NAV (SLEEK GLASSMORPHISM MOBILE) --- */
+        .bottom-nav { display: none; position: fixed; bottom: 0; left: 0; width: 100%; height: 65px; background: rgba(15, 19, 28, 0.6); backdrop-filter: blur(25px); -webkit-backdrop-filter: blur(25px); border-top: 1px solid rgba(255,255,255,0.05); z-index: 2500; justify-content: space-around; align-items: center; padding-bottom: env(safe-area-inset-bottom); box-shadow: 0 -10px 40px rgba(0,0,0,0.5);}
+        @media (max-width: 1024px) { .bottom-nav { display: flex; } }
+        .b-nav-item { display: flex; flex-direction: column; align-items: center; gap: 4px; color: #666; text-decoration: none; font-family: var(--font-head); font-size: 0.6rem; font-weight: bold; transition: 0.3s; flex: 1; }
+        .b-nav-item i { font-size: 1.2rem; transition: 0.3s; }
         .b-nav-item.active { color: var(--accent-cyan); }
-        .b-nav-item.active i { transform: translateY(-3px); text-shadow: 0 0 15px var(--accent-cyan); }
+        .b-nav-item.active i { transform: translateY(-2px); text-shadow: 0 0 10px var(--accent-cyan); }
 
         /* --- MOBILE MORE MENU (SLIDE UP) --- */
         .mobile-more-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); backdrop-filter: blur(3px); z-index: 3000; opacity: 0; pointer-events: none; transition: 0.3s; }
         .mobile-more-overlay.active { opacity: 1; pointer-events: auto; }
-        
-        .mobile-more-sheet { position: fixed; bottom: 0; left: 0; width: 100%; background: #0f131c; border-top: 1px solid var(--glass-border); border-radius: 25px 25px 0 0; transform: translateY(100%); transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); z-index: 3001; padding: 20px 20px 40px; box-shadow: 0 -20px 50px rgba(0,0,0,0.8);}
+        .mobile-more-sheet { position: fixed; bottom: 0; left: 0; width: 100%; background: #0f131c; border-top: 1px solid var(--glass-border); border-radius: 20px 20px 0 0; transform: translateY(100%); transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); z-index: 3001; padding: 15px 20px 30px; box-shadow: 0 -20px 50px rgba(0,0,0,0.8);}
         .mobile-more-sheet.active { transform: translateY(0); }
+        .drag-handle { width: 40px; height: 4px; background: rgba(255,255,255,0.2); border-radius: 4px; margin: 0 auto 15px; }
+        .sheet-close { position: absolute; top: 15px; right: 15px; font-size: 1.2rem; color: #666; cursor: pointer; }
         
-        .drag-handle { width: 50px; height: 5px; background: rgba(255,255,255,0.2); border-radius: 5px; margin: 0 auto 20px; }
-        .sheet-close { position: absolute; top: 20px; right: 20px; font-size: 1.5rem; color: #666; cursor: pointer; }
-        
-        .more-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 15px; margin-top: 20px;}
-        .more-grid-item { display: flex; flex-direction: column; align-items: center; gap: 8px; color: white; text-decoration: none; font-family: var(--font-head); font-size: 0.75rem; text-align: center; }
-        .more-icon-box { width: 55px; height: 55px; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08); border-radius: 16px; display: flex; align-items: center; justify-content: center; font-size: 1.4rem; color: var(--accent-cyan); transition: 0.3s; }
+        .more-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-top: 15px;}
+        .more-grid-item { display: flex; flex-direction: column; align-items: center; gap: 6px; color: white; text-decoration: none; font-family: var(--font-head); font-size: 0.65rem; text-align: center; }
+        .more-icon-box { width: 45px; height: 45px; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08); border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 1.1rem; color: var(--accent-cyan); transition: 0.3s; }
         .more-grid-item:active .more-icon-box { background: rgba(0,229,255,0.1); border-color: var(--accent-cyan); transform: scale(0.95); }
 
         /* --- FORCE NOTIFICATION WIDGET --- */
         .force-noti-overlay { position: fixed; top:0; left:0; width:100%; height:100%; background: rgba(0,0,0,0.85); backdrop-filter: blur(8px); z-index: 9999; display: none; align-items: center; justify-content: center; }
         .force-noti-overlay.active { display: flex; animation: fadeIn 0.4s; }
-        .force-noti-card { background: linear-gradient(180deg, #151a25, #0b0e14); border: 1px solid var(--accent-cyan); width: 90%; max-width: 400px; border-radius: 20px; padding: 30px 20px; text-align: center; box-shadow: 0 15px 50px rgba(0,229,255,0.2); }
-        .force-noti-icon { width: 80px; height: 80px; background: rgba(0,229,255,0.1); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 2.5rem; color: var(--accent-cyan); margin: 0 auto 20px; border: 2px solid var(--accent-cyan); animation: pulse 2s infinite; }
-        .noti-allow-btn { width: 100%; background: var(--accent-gradient); color: white; border: none; padding: 15px; border-radius: 12px; font-family: var(--font-head); font-weight: bold; font-size: 1rem; cursor: pointer; text-transform: uppercase; margin-top: 15px;}
+        .force-noti-card { background: linear-gradient(180deg, #151a25, #0b0e14); border: 1px solid var(--accent-cyan); width: 90%; max-width: 350px; border-radius: 16px; padding: 25px 20px; text-align: center; box-shadow: 0 15px 50px rgba(0,229,255,0.2); }
+        .force-noti-icon { width: 60px; height: 60px; background: rgba(0,229,255,0.1); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 2rem; color: var(--accent-cyan); margin: 0 auto 15px; border: 2px solid var(--accent-cyan); animation: pulse 2s infinite; }
+        .noti-allow-btn { width: 100%; background: var(--accent-gradient); color: white; border: none; padding: 12px; border-radius: 8px; font-family: var(--font-head); font-weight: bold; font-size: 0.9rem; cursor: pointer; text-transform: uppercase; margin-top: 10px;}
 
         /* --- DAILY LOGIN CLAIM MODAL --- */
         .daily-modal-overlay { position: fixed; top:0; left:0; width:100%; height:100%; background: rgba(0,0,0,0.8); backdrop-filter: blur(5px); z-index: 9900; display: none; align-items: center; justify-content: center; }
         .daily-modal-overlay.active { display: flex; animation: fadeIn 0.3s; }
-        .daily-card { background: var(--sidebar-bg); border: 1px solid var(--glass-border); width: 90%; max-width: 350px; border-radius: 20px; padding: 30px 20px; text-align: center; position: relative; }
-        .daily-reward-box { margin: 25px auto; width: 100px; height: 100px; background: rgba(255,215,0,0.1); border: 2px dashed var(--accent-gold); border-radius: 15px; display: flex; flex-direction: column; align-items: center; justify-content: center; }
-        .claim-btn { width: 100%; background: linear-gradient(135deg, #ffab00, #ffd700); color: black; border: none; padding: 14px; border-radius: 10px; font-family: var(--font-head); font-weight: 900; font-size: 1rem; cursor: pointer; text-transform: uppercase; }
+        .daily-card { background: var(--sidebar-bg); border: 1px solid var(--glass-border); width: 90%; max-width: 300px; border-radius: 16px; padding: 25px 20px; text-align: center; position: relative; }
+        .daily-reward-box { margin: 20px auto; width: 80px; height: 80px; background: rgba(255,215,0,0.1); border: 2px dashed var(--accent-gold); border-radius: 12px; display: flex; flex-direction: column; align-items: center; justify-content: center; }
 
         @keyframes pulse { 0% { box-shadow: 0 0 0 0 rgba(0,229,255,0.4); } 70% { box-shadow: 0 0 0 15px rgba(0,229,255,0); } 100% { box-shadow: 0 0 0 0 rgba(0,229,255,0); } }
         @keyframes fadeIn { from{opacity:0;} to{opacity:1;} }
-        .skeleton { background: linear-gradient(90deg, rgba(255,255,255,0.02) 25%, rgba(255,255,255,0.08) 50%, rgba(255,255,255,0.02) 75%); background-size: 200% 100%; animation: shimmer 1.5s infinite linear;}
-        @keyframes shimmer { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
         
-        #customToast { visibility: hidden; min-width: 250px; background: rgba(0,229,255,0.9); color: #000; text-align: center; border-radius: 12px; padding: 16px; position: fixed; z-index: 9999; left: 50%; bottom: -50px; transform: translateX(-50%); font-family: var(--font-head); font-weight: bold; opacity: 0; transition: opacity 0.4s, bottom 0.4s; }
-        #customToast.show { visibility: visible; opacity: 1; bottom: 100px; }
+        #customToast { visibility: hidden; min-width: 200px; background: rgba(0,229,255,0.9); color: #000; text-align: center; border-radius: 8px; padding: 12px 16px; position: fixed; z-index: 9999; left: 50%; bottom: -50px; transform: translateX(-50%); font-family: var(--font-head); font-weight: bold; font-size: 0.85rem; opacity: 0; transition: opacity 0.4s, bottom 0.4s; }
+        #customToast.show { visibility: visible; opacity: 1; bottom: 85px; }
         
-        /* Utility */
-        .fade-up { opacity: 0; transform: translateY(30px); transition: opacity 0.5s ease-out; }
+        .fade-up { opacity: 0; transform: translateY(20px); transition: opacity 0.5s ease-out; }
         .fade-up.visible { opacity: 1; transform: translateY(0); }
+        .confetti-piece { position: absolute; width: 8px; height: 16px; opacity: 0; border-radius: 2px; z-index: 9999;}
+        @keyframes popConfetti { 0% { transform: translate3d(0, 0, 0) scale(1) rotate(0deg); opacity: 1; } 100% { transform: translate3d(0, -100px, 0) scale(0.5) rotate(720deg); opacity: 0; } }
     </style>
 </head>
 <body>
 
+    <div id="tournyx-loader">
+        <div class="loader-logo">T</div>
+        <div class="bullet b1"></div><div class="bullet b2"></div><div class="bullet b3"></div>
+        <div class="loader-text">INITIALIZING...</div>
+    </div>
+
+    <div class="optimized-bg">
+        <div class="grid-layer"></div>
+        <div class="glow-orb g-purple"></div>
+        <div class="glow-orb g-cyan"></div>
+    </div>
+
     <nav class="sidebar" id="sidebar">
-        <div style="padding: 30px 20px; display: flex; align-items: center; gap: 15px; border-bottom: 1px solid rgba(255,255,255,0.05);">
-            <img src="https://via.placeholder.com/60" id="desktopUserImg" style="width:50px; height:50px; border-radius:50%; border:2px solid var(--accent-gold);">
+        <div style="padding: 25px 20px; display: flex; align-items: center; gap: 12px; border-bottom: 1px solid rgba(255,255,255,0.05);">
+            <img src="https://via.placeholder.com/60" id="desktopUserImg" style="width:40px; height:40px; border-radius:50%; border:2px solid var(--accent-gold);">
             <div>
-                <div style="color:white; font-family:var(--font-head); font-size:1.1rem; font-weight:bold;" id="desktopUserName">Player</div>
-                <div style="color:var(--accent-gold); font-size:0.75rem;">See your profile</div>
+                <div style="color:white; font-family:var(--font-head); font-size:0.95rem; font-weight:bold;" id="desktopUserName">Player</div>
+                <div style="color:var(--accent-gold); font-size:0.7rem;">See your profile</div>
             </div>
         </div>
-        <div style="flex:1; overflow-y:auto; padding: 20px 10px; display:flex; flex-direction:column; gap:5px;">
-            <a href="premium.html" class="nav-link" style="color:var(--text-muted); text-decoration:none; padding:12px; font-family:var(--font-head); font-size:0.9rem; font-weight:bold; display:flex; align-items:center; gap:15px;"><i class="fa-solid fa-crown" style="color:var(--accent-gold); width:24px; text-align:center;"></i> Premium Plans</a>
-            <a href="profiles.html" class="nav-link" style="color:var(--text-muted); text-decoration:none; padding:12px; font-family:var(--font-head); font-size:0.9rem; font-weight:bold; display:flex; align-items:center; gap:15px;"><i class="fa-solid fa-id-badge" style="color:var(--accent-orange); width:24px; text-align:center;"></i> Game Profiles</a>
-            <a href="clans.html" class="nav-link" style="color:var(--text-muted); text-decoration:none; padding:12px; font-family:var(--font-head); font-size:0.9rem; font-weight:bold; display:flex; align-items:center; gap:15px;"><i class="fa-solid fa-globe" style="color:var(--accent-orange); width:24px; text-align:center;"></i> Community</a>
-            <a href="leaderboard.html" class="nav-link" style="color:var(--text-muted); text-decoration:none; padding:12px; font-family:var(--font-head); font-size:0.9rem; font-weight:bold; display:flex; align-items:center; gap:15px;"><i class="fa-solid fa-trophy" style="color:var(--accent-gold); width:24px; text-align:center;"></i> Leaderboard</a>
-            <a href="giveaway.html" class="nav-link" style="color:var(--text-muted); text-decoration:none; padding:12px; font-family:var(--font-head); font-size:0.9rem; font-weight:bold; display:flex; align-items:center; gap:15px;"><i class="fa-solid fa-gift" style="color:var(--accent-orange); width:24px; text-align:center;"></i> Giveaways</a>
-            <a href="offer.html" class="nav-link" style="color:var(--text-muted); text-decoration:none; padding:12px; font-family:var(--font-head); font-size:0.9rem; font-weight:bold; display:flex; align-items:center; gap:15px;"><i class="fa-solid fa-bullhorn" style="color:var(--accent-orange); width:24px; text-align:center;"></i> Offers Wall</a>
-            <a href="explore.html" class="nav-link" style="color:var(--text-muted); text-decoration:none; padding:12px; font-family:var(--font-head); font-size:0.9rem; font-weight:bold; display:flex; align-items:center; gap:15px;"><i class="fa-solid fa-search" style="color:var(--accent-orange); width:24px; text-align:center;"></i> All Tournaments</a>
-            <a href="refer.html" class="nav-link" style="color:var(--text-muted); text-decoration:none; padding:12px; font-family:var(--font-head); font-size:0.9rem; font-weight:bold; display:flex; align-items:center; gap:15px;"><i class="fa-solid fa-handshake" style="color:var(--accent-orange); width:24px; text-align:center;"></i> Refer & Earn</a>
-            <a href="support.html" class="nav-link" style="color:var(--text-muted); text-decoration:none; padding:12px; font-family:var(--font-head); font-size:0.9rem; font-weight:bold; display:flex; align-items:center; gap:15px;"><i class="fa-solid fa-headset" style="color:var(--accent-orange); width:24px; text-align:center;"></i> Help & Support</a>
-            <a href="settings.html" class="nav-link" style="color:var(--text-muted); text-decoration:none; padding:12px; font-family:var(--font-head); font-size:0.9rem; font-weight:bold; display:flex; align-items:center; gap:15px;"><i class="fa-solid fa-sliders" style="color:var(--accent-orange); width:24px; text-align:center;"></i> Settings</a>
-            <div style="margin-top: 20px; border-top: 1px solid rgba(255,255,255,0.05); padding-top: 10px;">
-                <a href="#" onclick="logoutUser()" class="nav-link" style="color:#ff3d00; text-decoration:none; padding:12px; font-family:var(--font-head); font-size:0.9rem; font-weight:bold; display:flex; align-items:center; gap:15px;"><i class="fa-solid fa-power-off" style="color:#ff3d00; width:24px; text-align:center;"></i> Logout</a>
+        <div style="flex:1; overflow-y:auto; padding: 15px 10px; display:flex; flex-direction:column; gap:4px;">
+            <a href="premium.html" class="nav-link" style="color:var(--text-muted); text-decoration:none; padding:10px; font-family:var(--font-head); font-size:0.85rem; font-weight:bold; display:flex; align-items:center; gap:12px;"><i class="fa-solid fa-crown" style="color:var(--accent-gold); width:20px; text-align:center;"></i> Premium Plans</a>
+            <a href="profiles.html" class="nav-link" style="color:var(--text-muted); text-decoration:none; padding:10px; font-family:var(--font-head); font-size:0.85rem; font-weight:bold; display:flex; align-items:center; gap:12px;"><i class="fa-solid fa-id-badge" style="color:var(--accent-orange); width:20px; text-align:center;"></i> Game Profiles</a>
+            <a href="clans.html" class="nav-link" style="color:var(--text-muted); text-decoration:none; padding:10px; font-family:var(--font-head); font-size:0.85rem; font-weight:bold; display:flex; align-items:center; gap:12px;"><i class="fa-solid fa-globe" style="color:var(--accent-orange); width:20px; text-align:center;"></i> Community</a>
+            <a href="leaderboard.html" class="nav-link" style="color:var(--text-muted); text-decoration:none; padding:10px; font-family:var(--font-head); font-size:0.85rem; font-weight:bold; display:flex; align-items:center; gap:12px;"><i class="fa-solid fa-trophy" style="color:var(--accent-gold); width:20px; text-align:center;"></i> Leaderboard</a>
+            <a href="giveaway.html" class="nav-link" style="color:var(--text-muted); text-decoration:none; padding:10px; font-family:var(--font-head); font-size:0.85rem; font-weight:bold; display:flex; align-items:center; gap:12px;"><i class="fa-solid fa-gift" style="color:var(--accent-orange); width:20px; text-align:center;"></i> Giveaways</a>
+            <a href="offer.html" class="nav-link" style="color:var(--text-muted); text-decoration:none; padding:10px; font-family:var(--font-head); font-size:0.85rem; font-weight:bold; display:flex; align-items:center; gap:12px;"><i class="fa-solid fa-bullhorn" style="color:var(--accent-orange); width:20px; text-align:center;"></i> Offers Wall</a>
+            <a href="explore.html" class="nav-link" style="color:var(--text-muted); text-decoration:none; padding:10px; font-family:var(--font-head); font-size:0.85rem; font-weight:bold; display:flex; align-items:center; gap:12px;"><i class="fa-solid fa-search" style="color:var(--accent-orange); width:20px; text-align:center;"></i> All Tournaments</a>
+            <a href="refer.html" class="nav-link" style="color:var(--text-muted); text-decoration:none; padding:10px; font-family:var(--font-head); font-size:0.85rem; font-weight:bold; display:flex; align-items:center; gap:12px;"><i class="fa-solid fa-handshake" style="color:var(--accent-orange); width:20px; text-align:center;"></i> Refer & Earn</a>
+            <a href="support.html" class="nav-link" style="color:var(--text-muted); text-decoration:none; padding:10px; font-family:var(--font-head); font-size:0.85rem; font-weight:bold; display:flex; align-items:center; gap:12px;"><i class="fa-solid fa-headset" style="color:var(--accent-orange); width:20px; text-align:center;"></i> Help & Support</a>
+            <a href="settings.html" class="nav-link" style="color:var(--text-muted); text-decoration:none; padding:10px; font-family:var(--font-head); font-size:0.85rem; font-weight:bold; display:flex; align-items:center; gap:12px;"><i class="fa-solid fa-sliders" style="color:var(--accent-orange); width:20px; text-align:center;"></i> Settings</a>
+            <div style="margin-top: 15px; border-top: 1px solid rgba(255,255,255,0.05); padding-top: 10px;">
+                <a href="#" onclick="logoutUser()" class="nav-link" style="color:#ff3d00; text-decoration:none; padding:10px; font-family:var(--font-head); font-size:0.85rem; font-weight:bold; display:flex; align-items:center; gap:12px;"><i class="fa-solid fa-power-off" style="color:#ff3d00; width:20px; text-align:center;"></i> Logout</a>
             </div>
             
-            <div style="margin-top: 25px; text-align: center; color: #555; font-size: 0.7rem; font-family: var(--font-head); letter-spacing: 2px;">
+            <div style="margin-top: 20px; text-align: center; color: #555; font-size: 0.65rem; font-family: var(--font-head); letter-spacing: 1px;">
                 APP VERSION 3.0.0<br>
                 Powered by QUVA
             </div>
@@ -354,7 +353,6 @@
     </nav>
 
     <div class="main-wrapper">
-        
         <header class="top-bar">
             <div class="mobile-brand">
                 <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEg_20wCR-WBMpQmw3vxcYUf-vxIO1PYDJoQN_Sid3UDjA9tf0cuX0eH40jbzHoJad4cxbnjhPjqfCw1Z5V1LhgN9zFuIQC0fJjecTy3D9PFu5WjR2H1wHwTD1bUGnXY_NiApWn5gMs6velcQngSzKoP1yHzX0cVsFSUFM8zIefcbiPayY7680Kz0V0ZAAE/s1264/1000093706.png">
@@ -363,7 +361,7 @@
             
             <div class="search-container">
                 <i class="fa-solid fa-magnifying-glass search-icon"></i>
-                <input type="text" class="search-input" placeholder="Search tournaments, players, clans...">
+                <input type="text" class="search-input" placeholder="Search tournaments...">
             </div>
 
             <div class="header-actions">
@@ -387,14 +385,13 @@
                     <img src="https://via.placeholder.com/60" id="topProfileImg" alt="Profile">
                     
                     <div class="account-dropdown" id="accountDropdown">
-                        <div style="padding: 10px 15px; font-size: 0.75rem; color: #888; font-family: var(--font-head); letter-spacing: 1px;">CURRENT</div>
+                        <div style="padding: 10px 15px; font-size: 0.65rem; color: #888; font-family: var(--font-head); letter-spacing: 1px;">CURRENT</div>
                         <div class="acc-item" style="border-left: 2px solid var(--accent-cyan); background: rgba(0,229,255,0.05);">
                             <img src="https://via.placeholder.com/30" id="currAccImg">
                             <span id="currAccName">Main Profile</span>
                         </div>
-                        <div style="padding: 10px 15px; font-size: 0.75rem; color: #888; font-family: var(--font-head); letter-spacing: 1px;">SAVED PROFILES</div>
-                        <div id="savedAccountsContainer">
-                            </div>
+                        <div style="padding: 10px 15px; font-size: 0.65rem; color: #888; font-family: var(--font-head); letter-spacing: 1px;">SAVED PROFILES</div>
+                        <div id="savedAccountsContainer"></div>
                         <div class="acc-item" onclick="window.location.href='login.html'" style="color: var(--accent-cyan);">
                             <i class="fa-solid fa-plus"></i> Add Account
                         </div>
@@ -415,7 +412,6 @@
                     <div class="skill-badges">
                         <div class="s-badge"><i class="fa-solid fa-shield-halved"></i> 100% Secure</div>
                         <div class="s-badge"><i class="fa-solid fa-bolt"></i> Instant Payouts</div>
-                        <div class="s-badge"><i class="fa-solid fa-user-ninja"></i> Anti-Cheat</div>
                     </div>
                     <button class="main-cta" onclick="window.location.href='explore.html'">Enter The Arena</button>
                 </div>
@@ -424,8 +420,13 @@
             <div class="player-system-box fade-up">
                 <div class="sys-content">
                     <h2>PLAYER SYSTEM</h2>
-                    <p>Your skills need sharpening. Complete the daily verification tasks to earn points and rank up on Tournyx.</p>
-                    <button class="btn-improve" onclick="openTaskModal()">IMPROVE SKILLS <i class="fa-solid fa-angle-right"></i></button>
+                    <p>Your skills need sharpening. Complete daily tasks to rank up on Tournyx.</p>
+                    
+                    <div class="task-list" id="playerTaskList">
+                        <div class="sys-task-item skeleton" style="height:50px;"></div>
+                        <div class="sys-task-item skeleton" style="height:50px;"></div>
+                    </div>
+                    
                 </div>
             </div>
 
@@ -434,18 +435,41 @@
                 <a href="explore.html" class="view-all-btn">View All <i class="fa-solid fa-angle-right"></i></a>
             </div>
             <div class="slider-grid fade-up" id="featuredSlider">
-                <div class="glass-card skeleton" style="height: 280px;"></div>
-                <div class="glass-card skeleton" style="height: 280px;"></div>
-                <div class="glass-card skeleton" style="height: 280px;"></div>
+                <div class="glass-card skeleton" style="height: 240px;"></div>
+                <div class="glass-card skeleton" style="height: 240px;"></div>
+            </div>
+
+            <div id="liveSectionContainer" style="display:none; margin-top: 15px;">
+                <div class="section-header fade-up">
+                    <h2 style="color: var(--accent-green);"><i class="fa-solid fa-satellite-dish fa-fade"></i> Live Now</h2>
+                    <a href="explore.html" class="view-all-btn" style="color: var(--accent-green);">Watch <i class="fa-solid fa-angle-right"></i></a>
+                </div>
+                <div class="slider-grid fade-up" id="liveTourneySlider"></div>
+            </div>
+
+            <div class="section-header fade-up" style="margin-top: 15px; border-left-color: var(--accent-purple);">
+                <h2>Pro Esports Live</h2>
+            </div>
+            <div class="slider-grid fade-up" id="proMatchesContainer">
+                <div class="score-card skeleton" style="height: 100px;"></div>
+                <div class="score-card skeleton" style="height: 100px;"></div>
+            </div>
+
+            <div class="section-header fade-up" style="margin-top: 15px; border-left-color: var(--accent-red);">
+                <h2>Trending Clips</h2>
+            </div>
+            <div class="slider-grid fade-up" id="trendingClipsContainer">
+                <div class="video-card skeleton" style="height: 160px;"></div>
+                <div class="video-card skeleton" style="height: 160px;"></div>
             </div>
 
             <div class="spin-section fade-up">
                 <div class="spin-info">
                     <h2>Daily Lucky Spin</h2>
-                    <p>Every 25 hours, test your luck to win Free Fire Diamonds, Bonus Coins, or Exclusive Profile Badges.</p>
+                    <p>Every 25 hours, test your luck to win Free Fire Diamonds, Bonus Coins, or Exclusive Cash.</p>
                 </div>
                 <div class="spin-action-area">
-                    <button class="spin-btn-lg" id="sectionSpinBtn" onclick="openSpinWheel()"><i class="fa-solid fa-dharmachakra"></i> SPIN NOW</button>
+                    <button class="spin-btn-lg" id="sectionSpinBtn" onclick="openSpinWheel(); triggerHaptic();"><i class="fa-solid fa-dharmachakra"></i> SPIN NOW</button>
                 </div>
             </div>
 
@@ -453,19 +477,19 @@
     </div>
 
     <nav class="bottom-nav">
-        <a class="b-nav-item active" href="index.html">
+        <a class="b-nav-item active" href="index.html" onclick="triggerHaptic()">
             <i class="fa-solid fa-house"></i> Home
         </a>
-        <a class="b-nav-item" href="explore.html">
+        <a class="b-nav-item" href="explore.html" onclick="triggerHaptic()">
             <i class="fa-solid fa-compass"></i> Explore
         </a>
-        <a class="b-nav-item" href="matches.html">
+        <a class="b-nav-item" href="matches.html" onclick="triggerHaptic()">
             <i class="fa-solid fa-trophy"></i> Matches
         </a>
-        <a class="b-nav-item" href="clans.html">
+        <a class="b-nav-item" href="clans.html" onclick="triggerHaptic()">
             <i class="fa-solid fa-shield-halved"></i> Clan
         </a>
-        <a class="b-nav-item" href="#" onclick="openMoreSheet(event)">
+        <a class="b-nav-item" href="#" onclick="openMoreSheet(event); triggerHaptic();">
             <i class="fa-solid fa-bars-staggered"></i> More
         </a>
     </nav>
@@ -475,7 +499,7 @@
         <div class="drag-handle"></div>
         <i class="fa-solid fa-xmark sheet-close" onclick="closeMoreSheet()"></i>
         
-        <div style="font-family: var(--font-head); font-size: 1.1rem; color: white; margin-bottom: 5px; font-weight: bold;">Menu</div>
+        <div style="font-family: var(--font-head); font-size: 1rem; color: white; margin-bottom: 5px; font-weight: bold;">Menu</div>
         
         <div class="more-grid">
             <a href="premium.html" class="more-grid-item">
@@ -516,22 +540,20 @@
     <div class="sys-modal" id="taskModal">
         <div class="sys-card">
             <i class="fa-solid fa-xmark sys-close" onclick="closeTaskModal()"></i>
-            <h2 style="font-family: var(--font-head); color: white; margin-bottom: 5px;">Daily Verification</h2>
-            <p style="color: var(--text-muted); font-size: 0.85rem;">Complete the task in-game and upload proof to claim coins.</p>
+            <h2 style="font-family: var(--font-head); color: white; margin-bottom: 5px; font-size:1.2rem;">Verify Task</h2>
+            <p style="color: var(--text-muted); font-size: 0.75rem;">Complete the task in-game and upload proof.</p>
             
-            <div class="task-detail" id="activeTaskText">
-                Loading task from server...
-            </div>
+            <div class="task-detail" id="activeTaskText">Loading task...</div>
             
-            <button class="ff-btn" onclick="launchGame()"><i class="fa-solid fa-fire"></i> Launch Free Fire MAX</button>
+            <button class="ff-btn" onclick="launchGame()"><i class="fa-solid fa-fire"></i> Free Fire MAX</button>
             
             <div class="upload-zone" id="uploadZone">
                 <i class="fa-solid fa-cloud-arrow-up"></i>
-                <div style="font-family: var(--font-head); color: white; margin-bottom: 5px;">Upload Proof (Image/Video)</div>
-                <div style="font-size: 0.75rem; color: #666;">Lightning fast auto-compression applied.</div>
-                <input type="file" id="taskFile" accept="image/*,video/*" onchange="handleFileSelect(event)">
+                <div>Upload Proof (Image)</div>
+                <div>Auto-compression applied.</div>
+                <input type="file" id="taskFile" accept="image/*" onchange="handleFileSelect(event)">
             </div>
-            <div id="fileNameDisplay" style="text-align:center; color:var(--accent-cyan); font-size:0.8rem; margin-top:10px; display:none;"></div>
+            <div id="fileNameDisplay" style="text-align:center; color:var(--accent-cyan); font-size:0.75rem; margin-top:8px; display:none;"></div>
             
             <button class="sys-submit-btn" id="submitProofBtn" onclick="submitTask()">Submit for Verification</button>
         </div>
@@ -539,45 +561,45 @@
 
     <div class="daily-modal-overlay" id="dailyLoginModal">
         <div class="daily-card">
-            <h2 style="font-family: var(--font-head); color: var(--accent-gold); text-shadow: 0 0 10px rgba(255,215,0,0.3);">DAILY LOGIN</h2>
-            <p style="color: var(--text-muted); font-size:0.9rem;">Claim your free daily rewards!</p>
+            <h2 style="font-family: var(--font-head); color: var(--accent-gold); font-size:1.4rem;">DAILY LOGIN</h2>
+            <p style="color: var(--text-muted); font-size:0.8rem;">Claim your free daily rewards!</p>
             <div class="daily-reward-box">
-                <i class="fa-solid fa-coins" style="font-size: 2.5rem; color: var(--accent-gold); margin-bottom: 5px;"></i>
+                <i class="fa-solid fa-coins" style="font-size: 2rem; color: var(--accent-gold); margin-bottom: 4px;"></i>
                 <span style="font-family: var(--font-head); font-weight: bold; color: white;">+50 Coins</span>
             </div>
-            <button class="claim-btn" onclick="claimDailyLogin()">Claim Now</button>
+            <button class="claim-btn" style="background: linear-gradient(135deg, #ffab00, #ffd700); color: black;" onclick="claimDailyLogin()">Claim Now</button>
         </div>
     </div>
 
     <div class="spin-modal" id="spinModal">
-        <div class="sys-card" style="text-align: center; max-width: 380px;">
+        <div class="sys-card" style="text-align: center; max-width: 320px; padding: 30px 20px;">
             <i class="fa-solid fa-xmark sys-close" onclick="closeSpinWheel()"></i>
-            <h2 style="font-family: var(--font-head); color: white; margin-bottom: 20px; text-transform:uppercase; text-shadow: 0 0 15px var(--accent-blue);">Lucky Spin</h2>
+            <h2 style="font-family: var(--font-head); color: white; margin-bottom: 20px; font-size:1.3rem; text-shadow: 0 0 10px var(--accent-blue);">Lucky Spin</h2>
             <div class="wheel-box">
                 <div class="wheel-pointer"></div>
-                <div class="wheel" id="rouletteWheel" style="background: repeating-conic-gradient(from 0deg, #151a25 0deg 45deg, #0b0e14 45deg 90deg);"></div>
-                <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 60px; height: 60px; background: var(--accent-blue); border-radius: 50%; border: 3px solid white; z-index: 5; display: flex; align-items: center; justify-content: center; color: white; font-family: var(--font-head); font-weight: bold; box-shadow: 0 0 15px rgba(0,0,0,0.5);">SPIN</div>
+                <div class="wheel" id="rouletteWheel"></div>
+                <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 50px; height: 50px; background: var(--accent-blue); border-radius: 50%; border: 3px solid white; z-index: 5; display: flex; align-items: center; justify-content: center; color: white; font-family: var(--font-head); font-weight: bold; font-size: 0.8rem; box-shadow: 0 0 15px rgba(0,0,0,0.5);">SPIN</div>
             </div>
-            <button class="claim-btn" id="spinActionBtn" style="background: var(--accent-gradient); color: white; margin-top: 15px;" onclick="triggerSpin()">Spin & Win</button>
-            <div id="spinTimerMsg" style="margin-top: 15px; color: var(--accent-gold); font-family: var(--font-head); font-size: 0.9rem; display: none;">Next spin in: <span id="spinCountdown">--:--:--</span></div>
+            <button class="claim-btn" id="spinActionBtn" onclick="triggerSpin()">Spin & Win</button>
+            <div id="spinTimerMsg" style="margin-top: 12px; color: var(--accent-gold); font-family: var(--font-head); font-size: 0.8rem; display: none;">Next spin in: <span id="spinCountdown">--:--:--</span></div>
         </div>
     </div>
 
     <div class="force-noti-overlay" id="forceNotiModal">
         <div class="force-noti-card">
             <div class="force-noti-icon"><i class="fa-solid fa-bell"></i></div>
-            <h2 style="font-family: var(--font-head); font-size: 1.5rem; margin-bottom: 10px; color: white;">Enable Notifications</h2>
-            <p style="font-size: 0.95rem; color: var(--text-muted); margin-bottom: 25px; line-height: 1.5;">Never miss a tournament registration, instant payout alert, or exclusive flash drop.</p>
+            <h2 style="font-family: var(--font-head); font-size: 1.3rem; margin-bottom: 8px; color: white;">Enable Notifications</h2>
+            <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 20px;">Never miss a tournament registration or flash drop.</p>
             <button class="noti-allow-btn" onclick="allowNotifications()">Enable Now</button>
-            <button style="background: none; border: none; color: #666; font-family: var(--font-head); font-size: 0.8rem; cursor: pointer; text-decoration: underline; margin-top:15px;" onclick="skipNotifications()">Maybe Later</button>
+            <button style="background: none; border: none; color: #666; font-family: var(--font-head); font-size: 0.75rem; cursor: pointer; text-decoration: underline; margin-top:12px;" onclick="skipNotifications()">Maybe Later</button>
         </div>
     </div>
 
     <div class="force-noti-overlay" id="authPopup" onclick="if(event.target === this) document.getElementById('authPopup').classList.remove('active');">
         <div class="force-noti-card" style="border-color: var(--accent-purple);">
             <div class="force-noti-icon" style="color:var(--accent-purple); border-color:var(--accent-purple); background:rgba(189,0,255,0.1);"><i class="fa-solid fa-user-shield"></i></div>
-            <h2 style="font-family: var(--font-head); font-size: 1.5rem; margin-bottom: 10px; color: white;">Authentication Required</h2>
-            <p style="font-size: 0.95rem; color: var(--text-muted); margin-bottom: 25px;">Please log in to access this feature.</p>
+            <h2 style="font-family: var(--font-head); font-size: 1.3rem; margin-bottom: 8px; color: white;">Auth Required</h2>
+            <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 20px;">Please log in to access this feature.</p>
             <button class="noti-allow-btn" style="background: linear-gradient(135deg, var(--accent-purple), var(--accent-blue));" onclick="window.location.href='login.html'">Log In / Sign Up</button>
         </div>
     </div>
@@ -585,9 +607,10 @@
     <div id="customToast">Notification</div>
 
     <script>
-        // --- 1. CONFIGURATION & CORE SETTINGS ---
         const API_URL = "https://script.google.com/macros/s/AKfycbyqqTpgaflxKJ9xH0jq7mJ_jLzcoNhas3gNo0h5gvoa_6r5Ae9NFxJAJp7ZoYNnMRKl/exec";
         
+        function triggerHaptic() { if (navigator.vibrate) navigator.vibrate(40); }
+
         async function secureFetch(payload) {
             try {
                 const response = await fetch(API_URL, {
@@ -621,7 +644,7 @@
             setTimeout(function(){ x.className = x.className.replace("show", ""); }, 3000);
         }
 
-        // --- 2. STARTUP LOGIC ---
+        // --- STARTUP LOGIC ---
         document.addEventListener('DOMContentLoaded', () => {
             let user = JSON.parse(localStorage.getItem('tournyx_user'));
             
@@ -629,13 +652,11 @@
                 let uName = user.username || user.ign || "Player";
                 let uImg = user.avatar || "https://via.placeholder.com/60";
                 
-                // Desktop Sidebar setup
                 if(document.getElementById('desktopUserName')) {
                     document.getElementById('desktopUserName').innerText = uName;
                     document.getElementById('desktopUserImg').src = uImg;
                 }
                 
-                // Top Header setup
                 document.getElementById('topProfileName').innerText = uName;
                 document.getElementById('topProfileImg').src = uImg;
                 document.getElementById('currAccName').innerText = uName;
@@ -645,18 +666,24 @@
                 populateSavedAccounts(user.email);
             }
 
+            loadLiveBackendData();
+            loadPlayerSystemTasks();
             initScrollAnimations();
             
-            setTimeout(checkForceNotification, 1500);
-            setTimeout(checkDailyLogin, 2500);
+            setTimeout(() => {
+                const loader = document.getElementById('tournyx-loader');
+                if (loader) { loader.style.opacity = '0'; setTimeout(() => { loader.style.display = 'none'; }, 400); }
+            }, 1200); 
+
+            setTimeout(checkForceNotification, 2000);
+            setTimeout(checkDailyLogin, 3000);
         });
 
-        // --- ACCOUNT SWITCHER LOGIC ---
+        // --- MULTI ACCOUNT SWITCHER ---
         function toggleAccountMenu(e) {
             if(!checkAuth(e)) return;
             document.getElementById('accountDropdown').classList.toggle('active');
         }
-        
         function populateSavedAccounts(currentEmail) {
             let saved = JSON.parse(localStorage.getItem('tournyx_saved_accounts') || '[]');
             let container = document.getElementById('savedAccountsContainer');
@@ -664,7 +691,7 @@
             
             let filtered = saved.filter(acc => acc.email !== currentEmail);
             if(filtered.length === 0) {
-                container.innerHTML = '<div style="padding: 10px 15px; font-size:0.8rem; color:#666;">No other accounts saved.</div>';
+                container.innerHTML = '<div style="padding: 10px 15px; font-size:0.75rem; color:#666;">No other accounts saved.</div>';
                 return;
             }
             
@@ -677,7 +704,6 @@
                 `;
             });
         }
-
         function switchAccount(targetEmail) {
             let saved = JSON.parse(localStorage.getItem('tournyx_saved_accounts') || '[]');
             let target = saved.find(acc => acc.email === targetEmail);
@@ -686,11 +712,9 @@
                 window.location.reload();
             }
         }
-
         function logoutUser() {
             let user = JSON.parse(localStorage.getItem('tournyx_user'));
             if(user) {
-                // Keep it in saved accounts
                 let saved = JSON.parse(localStorage.getItem('tournyx_saved_accounts') || '[]');
                 if(!saved.find(a => a.email === user.email)) {
                     saved.push(user);
@@ -701,19 +725,18 @@
             window.location.href = "login.html";
         }
 
-        // --- BOTTOM SHEET (MORE MENU) LOGIC ---
+        // --- BOTTOM SHEET (MORE MENU) ---
         function openMoreSheet(e) {
             e.preventDefault();
             document.getElementById('moreSheetOverlay').classList.add('active');
             document.getElementById('moreSheet').classList.add('active');
             
-            // Add swipe down listener
             let sheet = document.getElementById('moreSheet');
             let startY = 0;
             sheet.addEventListener('touchstart', (te) => { startY = te.touches[0].clientY; }, {passive: true});
             sheet.addEventListener('touchend', (te) => {
                 let endY = te.changedTouches[0].clientY;
-                if (endY - startY > 50) closeMoreSheet(); // Swiped down
+                if (endY - startY > 50) closeMoreSheet(); 
             }, {passive: true});
         }
         function closeMoreSheet() {
@@ -721,28 +744,59 @@
             document.getElementById('moreSheet').classList.remove('active');
         }
 
-        // --- PLAYER SYSTEM (TASK & UPLOAD) ---
-        let currentTaskData = null;
+        // --- PLAYER SYSTEM (MULTI-TASK LIVE) ---
+        let currentTasks = [];
+        let activeSelectedTask = null;
         let base64FileData = null;
+
+        function loadPlayerSystemTasks() {
+            secureFetch({ action: "get_player_tasks_array" }).then(res => {
+                let list = document.getElementById('playerTaskList');
+                if(res.status === 'success' && res.data && res.data.length > 0) {
+                    currentTasks = res.data.slice(0,5); // Show up to 5 tasks
+                    list.innerHTML = "";
+                    currentTasks.forEach((t, i) => {
+                        list.innerHTML += `
+                            <div class="sys-task-item">
+                                <div class="task-meta">
+                                    <h4>${t.desc}</h4>
+                                    <span>Reward: ${t.reward} Coins</span>
+                                </div>
+                                <button class="btn-select-task" onclick="selectTaskToVerify(${i}); triggerHaptic();">SELECT</button>
+                            </div>
+                        `;
+                    });
+                } else {
+                    // Fallback Mock Tasks
+                    list.innerHTML = `
+                        <div class="sys-task-item">
+                            <div class="task-meta"><h4>Play 1 CS Match & Get MVP</h4><span>Reward: 100 Coins</span></div>
+                            <button class="btn-select-task" onclick="selectTaskToVerify('mock1'); triggerHaptic();">SELECT</button>
+                        </div>
+                        <div class="sys-task-item">
+                            <div class="task-meta"><h4>Survive 15 mins in BR</h4><span>Reward: 150 Coins</span></div>
+                            <button class="btn-select-task" onclick="selectTaskToVerify('mock2'); triggerHaptic();">SELECT</button>
+                        </div>
+                    `;
+                    currentTasks = { mock1: {desc:"Play 1 CS Match & Get MVP", reward:100}, mock2: {desc:"Survive 15 mins in BR", reward:150} };
+                }
+            }).catch(e => { console.log(e); });
+        }
 
         function openTaskModal() {
             if(!checkAuth()) return;
-            document.getElementById('taskModal').classList.add('active');
-            
-            // Fetch dynamic task logic mapped to player
-            secureFetch({ action: "get_player_tasks" }).then(res => {
-                if(res.status === 'success' && res.data) {
-                    currentTaskData = res.data;
-                    document.getElementById('activeTaskText').innerHTML = `Task: ${currentTaskData.desc}<br><span style="color:var(--accent-gold); font-size:0.8rem; margin-top:5px; display:inline-block;">Reward: ${currentTaskData.reward} Coins</span>`;
-                } else {
-                    document.getElementById('activeTaskText').innerText = "Play 1 CS Match & Get MVP to earn +100 Coins.";
-                    currentTaskData = { desc: "Play 1 CS Match", reward: 100 }; // Fallback
-                }
-            }).catch(e => {
-                document.getElementById('activeTaskText').innerText = "Play 1 CS Match & Get MVP to earn +100 Coins.";
-                currentTaskData = { desc: "Play 1 CS Match", reward: 100 };
-            });
+            // If clicked from main button, just pick the first one or tell them to select from list
+            let keys = Object.keys(currentTasks);
+            if(keys.length > 0) { selectTaskToVerify(keys[0]); }
         }
+
+        function selectTaskToVerify(taskId) {
+            if(!checkAuth()) return;
+            activeSelectedTask = currentTasks[taskId];
+            document.getElementById('activeTaskText').innerHTML = `${activeSelectedTask.desc}<br><span style="color:var(--accent-gold); font-size:0.75rem; margin-top:4px; display:inline-block;">Reward: ${activeSelectedTask.reward} Coins</span>`;
+            document.getElementById('taskModal').classList.add('active');
+        }
+
         function closeTaskModal() {
             document.getElementById('taskModal').classList.remove('active');
             document.getElementById('fileNameDisplay').style.display = 'none';
@@ -752,12 +806,10 @@
         }
 
         function launchGame() {
-            // Android intent fallback for Free Fire MAX
             window.location.href = "intent://#Intent;package=com.dts.freefiremax;scheme=https;end;";
             setTimeout(() => { showToast("Opening game..."); }, 500);
         }
 
-        // Lightning Fast Client-Side Image Compression
         function handleFileSelect(event) {
             const file = event.target.files[0];
             if(!file) return;
@@ -774,51 +826,39 @@
                     img.onload = function() {
                         const canvas = document.createElement('canvas');
                         const ctx = canvas.getContext('2d');
-                        // Compress to max 800px width
                         const MAX_WIDTH = 800;
                         let width = img.width; let height = img.height;
                         if(width > MAX_WIDTH) { height *= MAX_WIDTH / width; width = MAX_WIDTH; }
                         canvas.width = width; canvas.height = height;
                         ctx.drawImage(img, 0, 0, width, height);
-                        base64FileData = canvas.toDataURL('image/jpeg', 0.6); // 60% quality
-                        
+                        base64FileData = canvas.toDataURL('image/jpeg', 0.6); 
                         document.getElementById('submitProofBtn').classList.add('ready');
                     }
                 };
             } else {
-                // If video, just read base64 directly (Note: true video compression needs heavy libs, sticking to base64 for GAS)
-                if(file.size > 5 * 1024 * 1024) { showToast("Video must be under 5MB for lightning upload.", true); return; }
-                const reader = new FileReader();
-                reader.readAsDataURL(file);
-                reader.onload = function(e) {
-                    base64FileData = e.target.result;
-                    document.getElementById('submitProofBtn').classList.add('ready');
-                };
+                showToast("Only images are accepted for lightning upload.", true); return;
             }
         }
 
         function submitTask() {
-            if(!base64FileData) return;
+            if(!base64FileData || !activeSelectedTask) return;
             let user = JSON.parse(localStorage.getItem('tournyx_user'));
             
             let btn = document.getElementById('submitProofBtn');
             btn.innerText = "UPLOADING...";
             btn.classList.remove('ready');
 
-            // Send to Apps Script
             secureFetch({
                 action: "upload_task_proof",
                 email: user.email,
                 username: user.username,
-                task_desc: currentTaskData.desc,
+                task_desc: activeSelectedTask.desc,
                 fileData: base64FileData.split(',')[1],
                 mimeType: base64FileData.split(';')[0].split(':')[1]
             }).then(res => {
                 closeTaskModal();
                 btn.innerText = "Submit for Verification";
-                
-                // Show Verification Toast/Modal
-                showToast("Proof Uploaded! Verification pending. Points distributed shortly.");
+                showToast("Proof Uploaded! Verification pending via Admin.");
             }).catch(e => {
                 showToast("Upload failed. Try again.", true);
                 btn.innerText = "Submit for Verification";
@@ -826,59 +866,125 @@
             });
         }
 
-        // --- FORCE NOTIFICATIONS (Every 3rd Reload) ---
-        function checkForceNotification() {
-            if(localStorage.getItem('tournyx_noti_forced')) return;
-            
-            let reloads = parseInt(localStorage.getItem('tx_reload_count') || '0') + 1;
-            localStorage.setItem('tx_reload_count', reloads);
-            
-            if(reloads % 3 === 0) {
-                document.getElementById('forceNotiModal').classList.add('active');
-            }
+        // --- BACKEND RENDERING (FIXED FETCH LOGIC) ---
+        function loadLiveBackendData() {
+            // Restore exact fetch logic used in prior version to avoid stuck loading
+            secureFetch({ action: 'get_tournaments' }).then(data => {
+                if (data.status === "success" && data.data) {
+                    renderFeaturedTournaments(data.data);
+                    loadLiveTournamentsSlider(data.data);
+                } else { throw new Error(); }
+            }).catch(()=>{
+                // Fallback rendering
+                document.getElementById('featuredSlider').innerHTML = `
+                    <div class="glass-card">
+                        <div class="c-img-wrapper" onclick="window.location.href='explore.html'" style="cursor:pointer;">
+                            <img src="https://via.placeholder.com/600x300/151a25/00e5ff?text=Tournament" loading="lazy">
+                            <div class="c-badge">Esports</div>
+                        </div>
+                        <div class="c-content">
+                            <div class="c-title">Standard Daily Match</div>
+                            <div class="c-price">Prize Pool: <span>Glory</span></div>
+                            <button class="c-btn" onclick="window.location.href='explore.html'">View Details</button>
+                        </div>
+                    </div>
+                `;
+            });
+
+            // Pro Matches
+            fetch(API_URL + "?action=get_pro_matches").then(res=>res.json()).then(data => {
+                if(data.status==="success" && data.data) renderProMatches(data.data);
+            }).catch(()=>{
+                document.getElementById('proMatchesContainer').innerHTML = `<div style="color:#888; font-size:0.8rem; padding:10px;">No pro matches live.</div>`;
+            });
+
+            // Trending Clips
+            fetch(API_URL + "?action=get_clips").then(res=>res.json()).then(data => {
+                if(data.status==="success" && data.data) renderTrendingClips(data.data);
+            }).catch(()=>{
+                document.getElementById('trendingClipsContainer').innerHTML = `<div style="color:#888; font-size:0.8rem; padding:10px;">No trending clips found.</div>`;
+            });
         }
-        function allowNotifications() {
-            if(window.OneSignal) {
-                OneSignal.promptForPushNotificationsWithUserResponse().then((accepted) => {
-                    localStorage.setItem('tournyx_noti_forced', 'true');
-                    document.getElementById('forceNotiModal').classList.remove('active');
-                    showToast("Notifications Enabled! 🎮");
+
+        function renderFeaturedTournaments(featuredArray) {
+            const slider = document.getElementById('featuredSlider');
+            slider.innerHTML = "";
+            featuredArray.slice(0, 5).forEach(t => {
+                const bg = t.banner && t.banner.length > 5 ? t.banner : 'https://via.placeholder.com/600x300/151a25/00e5ff?text=Tournament';
+                const prize = (!t.prize || t.prize == 0) ? "Glory" : "₹" + t.prize;
+                let rFee = parseInt(t.fee) || 0;
+                const feeText = rFee > 0 ? `${Math.ceil(rFee/10)} Tickets` : "Free Entry";
+                
+                slider.innerHTML += `
+                    <div class="glass-card">
+                        <div class="c-img-wrapper" onclick="window.location.href='explore.html?tournament=${t.id}'" style="cursor:pointer;">
+                            <img src="${bg}" loading="lazy">
+                            <div class="c-badge">${t.game || 'Esports'}</div>
+                        </div>
+                        <div class="c-content">
+                            <div class="c-title">${t.title}</div>
+                            <div class="c-price">Prize: <span>${prize}</span></div>
+                            <button class="c-btn" onclick="window.location.href='explore.html?tournament=${t.id}'">Join • ${feeText}</button>
+                        </div>
+                    </div>
+                `;
+            });
+        }
+
+        function loadLiveTournamentsSlider(allData) {
+            let liveData = allData.filter(t => t.status && t.status.toLowerCase().includes('live'));
+            const container = document.getElementById('liveSectionContainer');
+            const slider = document.getElementById('liveTourneySlider');
+            if(liveData.length > 0) {
+                slider.innerHTML = "";
+                liveData.slice(0, 4).forEach(t => {
+                    let bg = t.banner && t.banner.length > 5 ? t.banner : 'https://via.placeholder.com/600x300';
+                    slider.innerHTML += `
+                        <a href="explore.html?tournament=${t.id}" class="live-card glass-panel">
+                            <img src="${bg}" class="live-img">
+                            <div class="live-info">
+                                <span class="live-badge">LIVE NOW</span>
+                                <div class="live-title">${t.title}</div>
+                            </div>
+                        </a>
+                    `;
                 });
-            } else {
-                localStorage.setItem('tournyx_noti_forced', 'true');
-                document.getElementById('forceNotiModal').classList.remove('active');
+                container.style.display = 'block';
             }
         }
-        function skipNotifications() {
-            document.getElementById('forceNotiModal').classList.remove('active');
+
+        function renderProMatches(data) {
+            const container = document.getElementById('proMatchesContainer');
+            container.innerHTML = "";
+            data.forEach(match => {
+                container.innerHTML += `
+                    <div class="score-card">
+                        <div class="score-header"><span>${match.title}</span><span style="color:var(--accent-red)">LIVE</span></div>
+                        <div class="score-teams">
+                            <div class="team-box"><img src="${match.team1_logo}" class="team-logo"><div class="team-name">${match.team1}</div></div>
+                            <div class="match-score">${match.score}</div>
+                            <div class="team-box"><img src="${match.team2_logo}" class="team-logo"><div class="team-name">${match.team2}</div></div>
+                        </div>
+                    </div>
+                `;
+            });
         }
 
-        // --- DAILY LOGIN CLAIM ---
-        function checkDailyLogin() {
-            let lastClaim = localStorage.getItem('tournyx_daily_claim_time');
-            let now = new Date().getTime();
-            // 24 hours = 86400000 ms
-            if(!lastClaim || (now - parseInt(lastClaim) > 86400000)) {
-                if(checkAuth(null)) { document.getElementById('dailyLoginModal').classList.add('active'); }
-            }
-        }
-        function claimDailyLogin() {
-            let user = JSON.parse(localStorage.getItem('tournyx_user'));
-            if(!user) return;
-            
-            user.points = (parseInt(user.points) || 0) + 50;
-            localStorage.setItem('tournyx_user', JSON.stringify(user));
-            document.getElementById('homeWalletBalance').innerText = user.points;
-            
-            localStorage.setItem('tournyx_daily_claim_time', new Date().getTime().toString());
-            document.getElementById('dailyLoginModal').classList.remove('active');
-            
-            secureFetch({ action: "claim_daily_login", email: user.email, points: 50 }).catch(()=>{});
-            secureFetch({ action: "update_wallet", email: user.email, points: user.points }).catch(()=>{});
-            showToast("Daily Reward Claimed: +50 Coins!");
+        function renderTrendingClips(data) {
+            const container = document.getElementById('trendingClipsContainer');
+            container.innerHTML = "";
+            data.forEach(clip => {
+                let iconClass = clip.type.toLowerCase() === 'instagram' ? 'fa-brands fa-instagram instagram' : 'fa-brands fa-youtube';
+                container.innerHTML += `
+                    <a href="${clip.url}" target="_blank" class="video-card">
+                        <div class="vid-thumb"><img src="${clip.thumbnail}"><i class="fa-solid fa-circle-play vid-play"></i></div>
+                        <div class="vid-info"><i class="${iconClass} vid-icon-tag"></i><div class="vid-text"><h4>${clip.title}</h4><p>${clip.author}</p></div></div>
+                    </a>
+                `;
+            });
         }
 
-        // --- DEDICATED SPIN WHEEL (Replaced FAB) ---
+        // --- ADVANCED SPIN WHEEL LOGIC ---
         const SPIN_COOLDOWN_MS = 25 * 60 * 60 * 1000; // 25 hours
         let spinTimerInterval;
 
@@ -928,26 +1034,63 @@
             }, 1000);
         }
 
+        // Tough Random Math Logic for Wheel
+        function calculateSpinReward() {
+            let rand = Math.random();
+            // 8 Segments (45deg each): 10 Coins, 50 Coins, 100 Coins, 500 Coins, 1000 Coins, 2 TX Pass, 5 TX Pass, Rs10 Cash.
+            // First 1-2 months logic: mostly points.
+            
+            if(rand > 0.995) return { type: 'cash', val: 10, label: '₹10 Cash', deg: 315 }; // 0.5%
+            if(rand > 0.985) return { type: 'pass', val: 5, label: '5 TX Pass', deg: 270 }; // 1%
+            if(rand > 0.96) return { type: 'pass', val: 2, label: '2 TX Pass', deg: 225 }; // 2.5%
+            if(rand > 0.90) return { type: 'points', val: 1000, label: '1000 Coins', deg: 180 }; // 6%
+            if(rand > 0.75) return { type: 'points', val: 500, label: '500 Coins', deg: 135 }; // 15%
+            if(rand > 0.40) return { type: 'points', val: 100, label: '100 Coins', deg: 90 }; // 35%
+            if(rand > 0.15) return { type: 'points', val: 50, label: '50 Coins', deg: 45 }; // 25%
+            return { type: 'points', val: 10, label: '10 Coins', deg: 0 }; // 15%
+        }
+
         function triggerSpin() {
             let wheel = document.getElementById('rouletteWheel');
             let btn = document.getElementById('spinActionBtn');
-            
+            triggerHaptic();
             btn.style.opacity = '0.5'; btn.style.pointerEvents = 'none';
-            let randomDeg = Math.floor(Math.random() * 360) + (360 * 5);
-            wheel.style.transform = `rotate(${randomDeg}deg)`;
+            
+            let rewardObj = calculateSpinReward();
+            // Full rotations (5 spins) + target degree
+            let targetDeg = (360 * 5) + rewardObj.deg;
+            wheel.style.transform = `rotate(${targetDeg}deg)`;
             
             setTimeout(() => {
-                let rewardAmt = [10, 25, 50, 100][Math.floor(Math.random()*4)];
-                
                 let user = JSON.parse(localStorage.getItem('tournyx_user'));
-                user.points = (parseInt(user.points) || 0) + rewardAmt;
+                
+                if(rewardObj.type === 'points') {
+                    user.points = (parseInt(user.points) || 0) + rewardObj.val;
+                } else if(rewardObj.type === 'pass') {
+                    user.passes = (parseInt(user.passes) || 0) + rewardObj.val;
+                } else if(rewardObj.type === 'cash') {
+                    user.rupees = (parseInt(user.rupees) || 0) + rewardObj.val;
+                }
+
                 localStorage.setItem('tournyx_user', JSON.stringify(user));
                 localStorage.setItem('tournyx_last_spin', new Date().getTime().toString());
                 
-                document.getElementById('homeWalletBalance').innerText = user.points;
-                secureFetch({ action: "update_wallet", email: user.email, points: user.points }).catch(()=>{});
+                syncLiveWalletPoints(user); // Force visual update
                 
-                showToast(`Jackpot! You won ${rewardAmt} Coins! 🎰`);
+                showToast(`Jackpot! You won ${rewardObj.label}! 🎰`);
+                
+                // Blast confetti
+                for(let i=0; i<30; i++) {
+                    let conf = document.createElement('div');
+                    conf.classList.add('confetti-piece');
+                    conf.style.left = (window.innerWidth/2 - 20 + Math.random()*40) + 'px';
+                    conf.style.top = (window.innerHeight/2) + 'px';
+                    conf.style.backgroundColor = Math.random() > 0.5 ? 'var(--accent-gold)' : 'var(--accent-cyan)';
+                    conf.style.animation = `popConfetti ${Math.random()*0.5 + 0.5}s ease-out forwards`;
+                    document.body.appendChild(conf);
+                    setTimeout(()=>conf.remove(), 1000);
+                }
+
                 checkSpinEligibility(); 
             }, 4000); 
         }
@@ -956,14 +1099,12 @@
         function syncLiveWalletPoints(user) {
             const balanceDisplay = document.getElementById('homeWalletBalance');
             const passDisplay = document.getElementById('homePassBalance');
-            
             if (user.points !== undefined) balanceDisplay.innerText = user.points; 
             if (user.passes !== undefined) passDisplay.innerText = user.passes;
             else if (user.rupees !== undefined) passDisplay.innerText = Math.floor(parseInt(user.rupees)/10);
 
             if (user.email) {
-                secureFetch({ action: 'sync_user', email: user.email })
-                .then(data => {
+                secureFetch({ action: 'sync_user', email: user.email }).then(data => {
                     if (data.status === 'success') {
                         user.points = data.data.points !== undefined ? data.data.points : user.points; 
                         user.rupees = data.data.rupees !== undefined ? data.data.rupees : user.rupees;
@@ -976,11 +1117,50 @@
             }
         }
 
+        // --- NOTIFICATIONS & LOGIN CLAIM ---
+        function checkForceNotification() {
+            if(localStorage.getItem('tournyx_noti_forced')) return;
+            let reloads = parseInt(localStorage.getItem('tx_reload_count') || '0') + 1;
+            localStorage.setItem('tx_reload_count', reloads);
+            if(reloads % 3 === 0) { document.getElementById('forceNotiModal').classList.add('active'); triggerHaptic(); }
+        }
+        function allowNotifications() {
+            if(window.OneSignal) {
+                OneSignal.promptForPushNotificationsWithUserResponse().then(() => {
+                    localStorage.setItem('tournyx_noti_forced', 'true');
+                    document.getElementById('forceNotiModal').classList.remove('active');
+                    showToast("Notifications Enabled! 🎮");
+                });
+            } else {
+                localStorage.setItem('tournyx_noti_forced', 'true');
+                document.getElementById('forceNotiModal').classList.remove('active');
+            }
+        }
+        function skipNotifications() { document.getElementById('forceNotiModal').classList.remove('active'); }
+
+        function checkDailyLogin() {
+            let lastClaim = localStorage.getItem('tournyx_daily_claim_time');
+            let now = new Date().getTime();
+            if(!lastClaim || (now - parseInt(lastClaim) > 86400000)) {
+                if(checkAuth(null)) { document.getElementById('dailyLoginModal').classList.add('active'); triggerHaptic(); }
+            }
+        }
+        function claimDailyLogin() {
+            let user = JSON.parse(localStorage.getItem('tournyx_user'));
+            if(!user) return;
+            triggerHaptic();
+            user.points = (parseInt(user.points) || 0) + 50;
+            localStorage.setItem('tournyx_user', JSON.stringify(user));
+            document.getElementById('homeWalletBalance').innerText = user.points;
+            localStorage.setItem('tournyx_daily_claim_time', new Date().getTime().toString());
+            document.getElementById('dailyLoginModal').classList.remove('active');
+            secureFetch({ action: "update_wallet", email: user.email, points: user.points }).catch(()=>{});
+            showToast("Daily Reward Claimed: +50 Coins!");
+        }
+
         function initScrollAnimations() {
             const observer = new IntersectionObserver((entries) => {
-                entries.forEach(entry => {
-                    if (entry.isIntersecting) entry.target.classList.add('visible');
-                });
+                entries.forEach(entry => { if (entry.isIntersecting) entry.target.classList.add('visible'); });
             }, { threshold: 0.1 });
             document.querySelectorAll('.fade-up').forEach((el) => { observer.observe(el); });
         }
