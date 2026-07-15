@@ -646,6 +646,7 @@
         }
       });
     </script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 <body>
     <canvas id="particles-canvas"></canvas>
@@ -1179,7 +1180,14 @@
         </a>
     </nav>
         <script>
-        const API_URL = 'https://script.google.com/macros/s/AKfycbyqqTpgaflxKJ9xH0jq7mJ_jLzcoNhas3gNo0h5gvoa_6r5Ae9NFxJAJp7ZoYNnMRKl/exec';
+       // --- 1. CONFIGURATION & STATE ---
+        const SUPABASE_URL = 'https://zuatrwfrejnwfnldqqgy.supabase.co'; 
+        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inp1YXRyd2ZyZWpud2ZubGRxcWd5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODQwNDE5NjEsImV4cCI6MjA5OTYxNzk2MX0.zcJO4Es-DnuUKR-L_Eu44xIwmz4PxsFVCgs-t492t1g'; 
+        const CLOUDFLARE_WORKER_URL = 'https://tournyx-api.annaduraithilakjeevesh.workers.dev'; 
+
+        // 🔥 THE FIX: We use 'db' here so it never crashes!
+        const db = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+        
         let activeTournament = {}; 
         let pendingRegistrationData = null; 
         let userLiveMatches = []; 
@@ -1191,18 +1199,87 @@
         let roomTabInterval = null;
         let currentOpenTeamDropdown = null;
 
-        // --- SECURE POST FETCHER LOGIC ---
+        // --- UNIVERSAL PUSH ENGINE ---
+        async function sendTournyxPush(targetEmail, title, message) {
+            try {
+                await fetch(CLOUDFLARE_WORKER_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ action: 'send_push', email: targetEmail, title: title, message: message })
+                });
+            } catch (e) { console.error("Push Error:", e); }
+        }
+
+        // --- SECURE POST FETCHER LOGIC (SUPABASE WRAPPER) ---
         async function secureFetch(payload) {
             try {
-                const response = await fetch(API_URL, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'text/plain' },
-                    body: JSON.stringify(payload)
-                });
-                return await response.json();
+                // 1. SECURE WRITES -> Send to Cloudflare Worker
+                const secureActions = [
+                    'update_wallet', 'join', 'Join', 'like_tournament', 
+                    'auto_sync_slots', 'increment_view', 'add_donation', 
+                    'auto_delete_tournament'
+                ];
+                
+                if (secureActions.includes(payload.action)) {
+                    // Send to the Secure Cloudflare Worker
+                    const res = await fetch(CLOUDFLARE_WORKER_URL, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(payload)
+                    });
+                    return await res.json();
+                }
+
+                // 2. FAST READS -> Fetch from Supabase directly in milliseconds
+                
+                if (payload.action === 'get_tournaments') {
+                    const { data, error } = await db.from('Tournaments').select('*').neq('db_status', 'Deleted');
+                    if (error) throw error; 
+                    return { status: 'success', data: data };
+                }
+
+                if (payload.action === 'get_tournament_details') {
+                    // Because 'get_tournament_details' is just getting the matches for a specific tournament ID
+                    const { data, error } = await db.from('Matches').select('*').or(`match_id.eq.${payload.match_id},tournament_title.eq.${payload.match_id}`);
+                    if (error) throw error; 
+                    return { status: 'success', data: data };
+                }
+                
+                if (payload.action === 'get_matches') {
+                    const { data, error } = await db.from('Matches').select('*').eq('user_email', payload.email);
+                    if (error) throw error; 
+                    return { status: 'success', data: data };
+                }
+
+                if (payload.action === 'get_my_clans') {
+                    // Get all clans where the roster JSON contains this username
+                    const { data, error } = await db.from('Clans').select('*').contains('team_json', `{"username": "${payload.username}"}`);
+                    if (error) throw error; 
+                    return { status: 'success', data: data };
+                }
+
+                if (payload.action === 'get_clans') {
+                    const { data, error } = await db.from('Clans').select('*');
+                    if (error) throw error; 
+                    return { status: 'success', data: data };
+                }
+                
+                if (payload.action === 'sync_user') {
+                    const { data, error } = await db.from('Users').select('*').eq('email', payload.email.toLowerCase()).single();
+                    if (error) throw error; 
+                    return { status: 'success', data: data };
+                }
+
+                if (payload.action === 'get_transactions') {
+                    const { data, error } = await db.from('Transactions').select('*').eq('email', payload.email.toLowerCase()).order('created_at', { ascending: false });
+                    if (error) throw error; 
+                    return { status: 'success', data: data };
+                }
+
+                return { status: 'error', message: 'Action not mapped.' };
             } catch (error) {
                 console.error("Fetch Error:", error);
-                throw error;
+                return { status: 'error', message: error.message };
             }
         }
 
@@ -2727,13 +2804,12 @@
                             let currentTeamStr = String(team.clan).toLowerCase().trim();
                             let isMyClan = userClanNames.includes(currentTeamStr) || (team.username === user.username);
                             
-                            if (isMyClan) {
-                                myGroup = team.group || "Default Lobby";
-                            }
+                            if (isMyClan) { myGroup = team.group || "Default Lobby"; }
 
                             let displayClanName = team.clan;
                             let hasRoster = false;
                             let parsedClanObj = null;
+                            let needsExploreAutoHeal = false; // 🔥 AUTO HEAL FLAG
                             
                             if(displayClanName.startsWith("{")) {
                                 try { 
@@ -2741,10 +2817,29 @@
                                     displayClanName = parsedClanObj.username || parsedClanObj.name || "Unknown Clan"; 
                                     
                                     if(parsedClanObj.players && Array.isArray(parsedClanObj.players)) hasRoster = true;
-                                    else if(parsedClanObj.roster && Array.isArray(parsedClanObj.roster)) hasRoster = true;
+                                    else if(parsedClanObj.roster && Array.isArray(parsedClanObj.roster)) {
+                                        hasRoster = true;
+                                        
+                                        // 🔥 AUTO-HEAL: If it's my clan, check my profile details and update the object if needed!
+                                        if (isMyClan && !isGuestMode) {
+                                            let myIdx = parsedClanObj.roster.findIndex(r => String(r.name).toLowerCase() === String(user.username).toLowerCase());
+                                            if(myIdx !== -1) {
+                                                let pPhone = user.phone || ""; let pIgn = user.gameName || user.ign || user.username || ""; let pUid = user.uid || user.gameUid || ""; let pAvatar = user.avatar || "";
+                                                if(parsedClanObj.roster[myIdx].avatar !== pAvatar || parsedClanObj.roster[myIdx].gameName !== pIgn) {
+                                                    parsedClanObj.roster[myIdx].avatar = pAvatar;
+                                                    parsedClanObj.roster[myIdx].gameName = pIgn;
+                                                    needsExploreAutoHeal = true;
+                                                }
+                                            }
+                                        }
+                                    }
                                 } catch(e){}
                             }
 
+                            // If we healed the object, silently push the corrected JSON string to the Google Sheet (Column F)
+                            if (needsExploreAutoHeal) {
+                                secureFetch({ action: "auto_sync_slots", match_id: activeTournament.id || activeTournament.title, repair_json: JSON.stringify(parsedClanObj), target_clan: team.clan }).catch(()=>{});
+                            }
                             if (isSolo) {
                                 let playerName = team.username || displayClanName;
                                 let safePlayerName = encodeURIComponent(playerName);
