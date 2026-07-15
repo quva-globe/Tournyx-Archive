@@ -1102,11 +1102,12 @@
 
     <script>
       // --- 1. CONFIGURATION & STATE ---
-        const SUPABASE_URL = 'zuatrwfrejnwfnldqqgy'; // Paste your Supabase URL
-        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inp1YXRyd2ZyZWpud2ZubGRxcWd5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODQwNDE5NjEsImV4cCI6MjA5OTYxNzk2MX0.zcJO4Es-DnuUKR-L_Eu44xIwmz4PxsFVCgs-t492t1g'; // Paste your Supabase ANON key
-        const CLOUDFLARE_WORKER_URL = 'https://tournyx-api.annaduraithilakjeevesh.workers.dev'; // Paste your Worker URL
+        // FIX: Added the full https://...supabase.co URL!
+        const SUPABASE_URL = 'https://zuatrwfrejnwfnldqqgy.supabase.co'; 
+        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inp1YXRyd2ZyZWpud2ZubGRxcWd5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODQwNDE5NjEsImV4cCI6MjA5OTYxNzk2MX0.zcJO4Es-DnuUKR-L_Eu44xIwmz4PxsFVCgs-t492t1g'; 
+        const CLOUDFLARE_WORKER_URL = 'https://tournyx-api.annaduraithilakjeevesh.workers.dev'; 
         
-        const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+        const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
         let animPaused = localStorage.getItem('tournyx_psm') === 'true';
 
         // --- UNIVERSAL PUSH ENGINE ---
