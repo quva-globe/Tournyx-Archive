@@ -909,10 +909,10 @@
                     return await res.json();
                 }
 
-                // 2. FAST READS/WRITES -> Fetch from Supabase directly in milliseconds
-                
+                // 2. FAST READS/WRITES -> Fetch from Supabase directly
                 if (payload.action === 'get_my_clans') {
-                    const { data, error } = await db.from('Clans').select('*').contains('team_json', `{"username": "${payload.username}"}`);
+                    // FIX: Using .ilike prevents Supabase crashes if team_json is a TEXT column
+                    const { data, error } = await db.from('Clans').select('*').ilike('team_json', `%${payload.username}%`);
                     if (error) throw error; 
                     return { status: 'success', data: data };
                 }
@@ -938,7 +938,6 @@
                     } else if (payload.field === 'banner') {
                         updateData = { banner: payload.value };
                     }
-
                     const { error } = await db.from('Clans').update(updateData).eq('clan_id', payload.clan_id);
                     if (error) throw error;
                     return { status: 'success', message: 'Clan Updated' };
@@ -952,9 +951,21 @@
                         team_json: JSON.stringify(clanData) 
                     }]);
                     if (error) throw error;
-                    
-                    sendTournyxPush(payload.email, "🛡️ Clan Founded!", `${clanData.name} is now live.`);
                     return { status: 'success', message: 'Clan Created!' };
+                }
+
+                // FIX: Added missing avatar fetcher
+                if (payload.action === 'get_avatar') {
+                    const { data, error } = await db.from('Users').select('avatar').eq('username', payload.username).single();
+                    if (error || !data) return { status: 'error' };
+                    return { status: 'success', data: data.avatar };
+                }
+
+                // FIX: Added missing roster sync
+                if (payload.action === 'sync_clan_roster') {
+                    const { data, error } = await db.from('Clans').select('*').eq('clan_id', payload.clan_id).single();
+                    if (error) throw error;
+                    return { status: 'success', data: data };
                 }
 
                 return { status: 'error', message: 'Action not mapped.' };
