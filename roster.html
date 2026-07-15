@@ -153,6 +153,7 @@
             height: 0; 
         }
     </style>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 <body>
 
@@ -256,7 +257,12 @@
             setTimeout(() => { t.className = t.className.replace("show", ""); }, 3500);
         }
 
-        const API_URL = "https://script.google.com/macros/s/AKfycbyqqTpgaflxKJ9xH0jq7mJ_jLzcoNhas3gNo0h5gvoa_6r5Ae9NFxJAJp7ZoYNnMRKl/exec";
+       // --- 1. CORE CONFIGURATION & SECURE INIT ---
+        const SUPABASE_URL = 'https://zuatrwfrejnwfnldqqgy.supabase.co'; 
+        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inp1YXRyd2ZyZWpud2ZubGRxcWd5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODQwNDE5NjEsImV4cCI6MjA5OTYxNzk2MX0.zcJO4Es-DnuUKR-L_Eu44xIwmz4PxsFVCgs-t492t1g'; 
+        const CLOUDFLARE_WORKER_URL = 'https://tournyx-api.annaduraithilakjeevesh.workers.dev'; 
+
+        const db = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
         
         let selectedFormat = 'pdf';
         let currentRosterData = null; 
@@ -268,14 +274,37 @@
             selectedFormat = format;
         }
 
+        // --- SECURE POST FETCHER LOGIC (SUPABASE WRAPPER) ---
         async function secureFetch(payload) {
             try {
-                const response = await fetch(API_URL, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'text/plain' },
-                    body: JSON.stringify(payload)
-                });
-                return await response.json();
+                // 1. SECURE WRITES -> Send to Cloudflare Worker
+                const secureActions = ['save_roster_groups'];
+                if (secureActions.includes(payload.action)) {
+                    const response = await fetch(CLOUDFLARE_WORKER_URL, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(payload)
+                    });
+                    return await response.json();
+                }
+
+                // 2. FAST READS -> Fetch from Supabase directly in milliseconds
+                if (payload.action === 'get_tournaments') {
+                    const { data, error } = await db.from('Tournaments').select('*').neq('db_status', 'Deleted');
+                    if (error) throw error; 
+                    return { status: 'success', data: data };
+                }
+
+                if (payload.action === 'get_tournament_details') {
+                    // Fetch all registered teams for this specific tournament
+                    const { data, error } = await db.from('Matches')
+                        .select('*')
+                        .or(`match_id.eq.${payload.match_id},tournament_title.eq.${payload.match_id}`);
+                    if (error) throw error; 
+                    return { status: 'success', data: data };
+                }
+
+                return { status: 'error', message: 'Action not mapped.' };
             } catch (error) {
                 console.error("Fetch Error:", error);
                 throw error;
