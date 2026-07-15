@@ -1099,13 +1099,13 @@
     </nav>
 
     <script>
-      // --- 1. CONFIGURATION & STATE ---
-        // FIX: Added the full https://...supabase.co URL!
+     // --- 1. CONFIGURATION & STATE ---
         const SUPABASE_URL = 'https://zuatrwfrejnwfnldqqgy.supabase.co'; 
         const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inp1YXRyd2ZyZWpud2ZubGRxcWd5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODQwNDE5NjEsImV4cCI6MjA5OTYxNzk2MX0.zcJO4Es-DnuUKR-L_Eu44xIwmz4PxsFVCgs-t492t1g'; 
         const CLOUDFLARE_WORKER_URL = 'https://tournyx-api.annaduraithilakjeevesh.workers.dev'; 
         
-        const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+        // 🔥 THE FIX: Renamed the variable to 'db' so it doesn't crash JavaScript!
+        const db = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
         let animPaused = localStorage.getItem('tournyx_psm') === 'true';
 
         // --- UNIVERSAL PUSH ENGINE ---
@@ -1135,31 +1135,31 @@
 
                 // 2. FAST READS -> Fetch from Supabase directly in milliseconds
                 if (payload.action === 'get_tournaments') {
-                    const { data, error } = await supabase.from('Tournaments').select('*').neq('db_status', 'Deleted');
+                    const { data, error } = await db.from('Tournaments').select('*').neq('db_status', 'Deleted');
                     if (error) throw error; 
                     return { status: 'success', data: data };
                 }
                 
                 if (payload.action === 'get_matches') {
-                    const { data, error } = await supabase.from('Matches').select('*').eq('user_email', payload.email);
+                    const { data, error } = await db.from('Matches').select('*').eq('user_email', payload.email);
                     if (error) throw error; 
                     return { status: 'success', data: data };
                 }
                 
                 if (payload.action === 'sync_user') {
-                    const { data, error } = await supabase.from('Users').select('*').eq('email', payload.email.toLowerCase()).single();
+                    const { data, error } = await db.from('Users').select('*').eq('email', payload.email.toLowerCase()).single();
                     if (error) throw error; 
                     return { status: 'success', data: data };
                 }
 
                 if (payload.action === 'get_quests') {
-                    const { data, error } = await supabase.from('Quests').select('*');
+                    const { data, error } = await db.from('Quests').select('*');
                     if (error) throw error; 
                     return { status: 'success', data: data };
                 }
 
                 if (payload.action === 'get_community_leaderboard') {
-                    const { data, error } = await supabase.from('Community_Leaderboard').select('*').order('score', { ascending: false });
+                    const { data, error } = await db.from('Community_Leaderboard').select('*').order('score', { ascending: false });
                     if (error) throw error;
                     
                     // Format to match the old frontend UI perfectly
@@ -1259,23 +1259,25 @@
                 }
             }).catch(err => console.log("Failed to load tournaments"));
 
-            // 2. Flash Drops (Supabase Direct)
-            supabase.from('Drops').select('*').then(({data}) => {
+            // 🔥 FIX: Changed 'supabase' to 'db' for all these calls!
+            
+            // 2. Flash Drops
+            db.from('Drops').select('*').then(({data}) => {
                 if (data) renderFlashDrops(data);
             });
 
-            // 3. Trending Clips (Supabase Direct)
-            supabase.from('Clips').select('*').then(({data}) => {
+            // 3. Trending Clips
+            db.from('Clips').select('*').then(({data}) => {
                 if (data) renderTrendingClips(data);
             });
 
-            // 4. Pro Matches (Supabase Direct)
-            supabase.from('ProMatches').select('*').then(({data}) => {
+            // 4. Pro Matches
+            db.from('ProMatches').select('*').then(({data}) => {
                 if (data) renderProMatches(data);
             });
 
-            // 5. Scouting Data (Supabase Direct)
-            supabase.from('Scouting').select('*').then(({data}) => {
+            // 5. Scouting Data
+            db.from('Scouting').select('*').then(({data}) => {
                 if (data) renderScouting(data);
             });
 
