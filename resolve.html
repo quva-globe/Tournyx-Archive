@@ -10,8 +10,6 @@
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700;900&family=Rajdhani:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
-    
     <style>
         /* --- GLOBAL VARIABLES --- */
         :root {
@@ -129,7 +127,7 @@
             padding: 15px 12px 90px 12px; position: relative; overflow-y: auto; overflow-x: hidden;
             transform: scale(0.95) translateY(15px); opacity: 0; transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); 
         }
-        .modal-box.faq-box { padding-bottom: 15px; } 
+        .modal-box.faq-box { padding-bottom: 15px; } /* Override bottom padding for FAQ */
         .theme-vip .modal-box { border-color: #FFD700; box-shadow: 0 15px 40px rgba(0,0,0,0.9), inset 0 0 25px rgba(255,215,0,0.05); }
         .modal-overlay.active .modal-box { transform: scale(1) translateY(0); opacity: 1; }
         
@@ -217,7 +215,7 @@
         .submit-resolution-btn:active { transform: scale(0.96); box-shadow: 0 2px 8px rgba(0,242,255,0.2); }
         .submit-resolution-btn:disabled { background: rgba(255,255,255,0.05); color: #666; box-shadow: none; cursor: not-allowed; transform: none; border: 1px solid rgba(255,255,255,0.1);}
 
-        #customToast { visibility: hidden; min-width: 240px; background: rgba(0,242,255,0.95); backdrop-filter: blur(10px); color: #000; text-align: center; border-radius: 8px; padding: 12px; position: fixed; z-index: 15000; left: 50%; bottom: -50px; transform: translateX(-50%); font-family: var(--font-head); font-weight: bold; box-shadow: 0 6px 20px rgba(0,242,255,0.4); opacity: 0; transition: opacity 0.3s ease, bottom 0.3s ease; font-size: 0.85rem;}
+        #customToast { visibility: hidden; min-width: 240px; background: rgba(0,242,255,0.95); backdrop-filter: blur(10px); color: #000; text-align: center; border-radius: 8px; padding: 12px; position: fixed; z-index: 10005; left: 50%; bottom: -50px; transform: translateX(-50%); font-family: var(--font-head); font-weight: bold; box-shadow: 0 6px 20px rgba(0,242,255,0.4); opacity: 0; transition: opacity 0.3s ease, bottom 0.3s ease; font-size: 0.85rem;}
         .theme-vip #customToast { background: rgba(255,215,0,0.95); box-shadow: 0 6px 20px rgba(255,215,0,0.4); }
         #customToast.show { visibility: visible; opacity: 1; bottom: 100px; }
 
@@ -273,31 +271,13 @@
         @keyframes slideUpSub { 0% { transform: translateY(20px); opacity: 0;} 100% { transform: translateY(0); opacity: 1;} }
 
     </style>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 <body>
 
-    <div id="hiddenPdfTemplate" style="display:none; padding: 40px; color: black; background: white; font-family: sans-serif; width: 800px;">
-        <h1 style="text-align: center; color: #bd00ff; font-family: 'Orbitron', sans-serif;">TOURNYX RESOLUTION REPORT</h1>
-        <h3 id="pdfMatchTitle" style="text-align: center; margin-bottom: 5px;">Match Title Here</h3>
-        <p style="text-align: center; color: #555; margin-bottom: 20px;"><strong>Organizer:</strong> <span id="pdfOrgEmail"></span> | <strong>Date:</strong> <span id="pdfDate"></span></p>
-        <hr style="border: 1px solid #eee; margin-bottom: 20px;">
-        <h2>Prize Distribution Ledger</h2>
-        <table style="width: 100%; border-collapse: collapse; text-align: left; margin-top: 10px;" border="1">
-            <thead>
-                <tr style="background: #f0f0f0;">
-                    <th style="padding: 10px;">Rank</th>
-                    <th style="padding: 10px;">Team / Player</th>
-                    <th style="padding: 10px;">Reward Assigned</th>
-                </tr>
-            </thead>
-            <tbody id="pdfTableBody"></tbody>
-        </table>
-        <br>
-        <p style="text-align: center; font-size: 12px; color: #888; margin-top: 30px;">This encrypted report has been submitted to the Tournyx Agent Console for manual payout execution.</p>
-    </div>
-
     <canvas id="particles-canvas"></canvas>
 
+    <!-- LIVE TERMINAL OVERLAY -->
     <div id="payoutLoaderOverlay">
         <div class="terminal-box">
             <div class="term-header">
@@ -309,12 +289,14 @@
         </div>
     </div>
 
+    <!-- CELEBRATION OVERLAY -->
     <div id="celebrationOverlay">
-        <i class="fa-solid fa-file-pdf celeb-icon"></i>
-        <div class="celeb-text">REPORT GENERATED</div>
-        <div class="celeb-sub">AGENTS NOTIFIED</div>
+        <i class="fa-solid fa-trophy celeb-icon"></i>
+        <div class="celeb-text">MATCH RESOLVED</div>
+        <div class="celeb-sub">PAYOUTS DEPLOYED</div>
     </div>
 
+    <!-- MAIN HEADER -->
     <header class="top-header">
         <a href="profile.html" class="back-btn"><i class="fa-solid fa-arrow-left"></i></a>
         <h3 class="page-title">Match Resolution</h3>
@@ -342,6 +324,7 @@
             </div>
         </div>
 
+        <!-- RESOLUTION MODAL OVERLAY -->
         <div id="resolutionView" class="modal-overlay">
             <div class="modal-box">
                 <div class="close-modal-btn" onclick="closeResolutionView()"><i class="fa-solid fa-xmark"></i></div>
@@ -353,7 +336,7 @@
                 <div class="prize-legend" id="prizeLegendBox"></div>
 
                 <p style="font-size: 0.75rem; color: #a0a0b0; margin-bottom: 12px; line-height: 1.4; text-align: center;">
-                    Tap <b>Assign</b> to distribute podium prizes. Tap <b>Custom</b> to reward other participants manually. 
+                    Tap <b>Assign</b> to distribute podium prizes. Tap <b>Custom Payout</b> to reward other participants manually. 
                 </p>
 
                 <div id="teamsContainer">
@@ -362,23 +345,7 @@
             </div>
         </div>
         
-        <div class="modal-overlay" id="confirmReportModal">
-            <div class="modal-box">
-                <div class="close-modal-btn" onclick="document.getElementById('confirmReportModal').classList.remove('active')"><i class="fa-solid fa-xmark"></i></div>
-                <div class="section-title" style="color: var(--accent-orange); font-size: 1.1rem; border: none; margin-bottom: 5px;">
-                    <i class="fa-solid fa-file-invoice"></i> Confirm Match Report
-                </div>
-                <p style="font-size: 0.85rem; color: #ccc; margin-bottom: 15px; line-height: 1.4;">
-                    Review the final standings below. Once confirmed, a <b>PDF receipt</b> will be generated for your records, and the data will be sent to Tournyx Agents for <b>manual payout processing</b>.
-                </p>
-                
-                <div id="reportSummaryList" style="background: rgba(0,0,0,0.5); padding: 12px; border-radius: 8px; max-height: 250px; overflow-y: auto; margin-bottom: 15px; font-family: var(--font-body); font-size: 0.9rem; border: 1px solid rgba(255,255,255,0.1);">
-                    </div>
-                
-                <button class="submit-resolution-btn" style="background: var(--accent-orange); box-shadow: 0 4px 15px rgba(255,153,0,0.4); color: black;" onclick="executeFinalSubmit()">Generate PDF & Submit</button>
-            </div>
-        </div>
-
+        <!-- SMART DEFLECTION FAQ MODAL -->
         <div id="faqOverlay" class="modal-overlay">
             <div class="modal-box faq-box">
                 <div class="close-modal-btn" onclick="closeFAQ()"><i class="fa-solid fa-xmark"></i></div>
@@ -388,28 +355,44 @@
                 </div>
                 
                 <details class="faq-item" onmousedown="triggerHaptic()">
-                    <summary>1. How do payouts work now?</summary>
-                    <div class="faq-content">To ensure maximum security and perfect record keeping, payouts are no longer instantly routed via code. Instead, this system generates a verified Match Report PDF and sends it securely to our Agents who will manually process the drops to the players' accounts.</div>
+                    <summary>1. How long do payouts take?</summary>
+                    <div class="faq-content">Payouts are completely instant. As soon as you tap Finalize, the backend processes the routing and credits the winning team leaders' wallets immediately.</div>
                 </details>
                 <details class="faq-item" onmousedown="triggerHaptic()">
-                    <summary>2. Are my funds still deducted?</summary>
-                    <div class="faq-content">No. The system will verify that you have enough balance to cover the prize pool, but the actual deduction from your Wallet will be done by the Agent when they complete the manual processing.</div>
+                    <summary>2. How are funds deducted?</summary>
+                    <div class="faq-content">Any Rupee (Cash) prizes are deducted from your "My Earnings" balance. Any Point (PTS) prizes are deducted from your "My Points" balance. You must have enough funds before finalizing.</div>
                 </details>
                 <details class="faq-item" onmousedown="triggerHaptic()">
                     <summary>3. What is a "Custom Payout"?</summary>
                     <div class="faq-content">The Custom button allows you to manually reward teams outside of the standard 1st/2nd/3rd podium. You can also use it to add bonus cash or points on top of a podium prize.</div>
                 </details>
                 <details class="faq-item" onmousedown="triggerHaptic()">
-                    <summary>4. Can I edit payouts after finalizing?</summary>
-                    <div class="faq-content">No. Once the match is resolved, the report is securely encrypted and submitted. If you made an error, you must contact Support immediately.</div>
+                    <summary>4. Why is a specific match not showing here?</summary>
+                    <div class="faq-content">Matches disappear from this screen once they are successfully marked as "Completed", "Resolved", or "Cancelled" in the database.</div>
                 </details>
                 <details class="faq-item" onmousedown="triggerHaptic()">
-                    <summary>5. Do solo players receive clan payouts?</summary>
-                    <div class="faq-content">Yes. If a solo player enters without a clan, the system automatically detects them as the leader and routes the prize to their personal wallet during Agent processing.</div>
+                    <summary>5. Can I edit payouts after finalizing?</summary>
+                    <div class="faq-content">No. Once the match is resolved, funds are permanently moved to the players. Please double-check your assignments before confirming.</div>
                 </details>
                 <details class="faq-item" onmousedown="triggerHaptic()">
-                    <summary>6. Why is the Submit button red?</summary>
+                    <summary>6. Do solo players receive clan payouts?</summary>
+                    <div class="faq-content">Yes. If a solo player enters without a clan, the system automatically detects them as the leader and routes the prize to their personal wallet.</div>
+                </details>
+                <details class="faq-item" onmousedown="triggerHaptic()">
+                    <summary>7. Can I give both Points and Cash?</summary>
+                    <div class="faq-content">Absolutely! Tap "Custom" or "Edit" on a team to mix both Rupees and Points in the same payout.</div>
+                </details>
+                <details class="faq-item" onmousedown="triggerHaptic()">
+                    <summary>8. What happens if I make a typo in the amount?</summary>
+                    <div class="faq-content">Review the "Total Deduct" bar at the bottom before submitting. If the numbers look too high, untoggle the team and re-enter the correct custom values.</div>
+                </details>
+                <details class="faq-item" onmousedown="triggerHaptic()">
+                    <summary>9. Why is the Submit button red?</summary>
                     <div class="faq-content">The button locks itself if you have insufficient wallet funds or if you have forgotten to assign a mandatory podium position (like 1st Place).</div>
+                </details>
+                <details class="faq-item" onmousedown="triggerHaptic()">
+                    <summary>10. Who do I contact for database errors?</summary>
+                    <div class="faq-content">If a match freezes or fails to resolve, tap the WhatsApp Escalation button below to contact Admin Support instantly.</div>
                 </details>
                 
                 <a href="https://wa.me/+918608205254" target="_blank" class="wa-escalate-btn" onclick="triggerHaptic(true)">
@@ -419,19 +402,24 @@
         </div>
     </div>
 
+    <!-- TACTICAL FLOATING ACTION BAR -->
     <div class="bottom-summary-bar" id="submitBar">
         <div class="totals-text">
-            <span>Total Value:</span>
+            <span>Total Deduct:</span>
             <span><b id="totCash" style="color:var(--accent-cyan);">₹0</b> &nbsp;|&nbsp; <b id="totPts" style="color:var(--accent-orange);">0 PTS</b></span>
         </div>
-        <button class="submit-resolution-btn" id="btnFinalize" onclick="previewResolution()">Review & Finalize</button>
+        <button class="submit-resolution-btn" id="btnFinalize" onclick="submitResolution()">Finalize Payouts</button>
     </div>
 
     <div id="customToast">Notification</div>
 
     <script>
-        // --- API ENGINE ---
-        const API_URL = 'https://script.google.com/macros/s/AKfycbyqqTpgaflxKJ9xH0jq7mJ_jLzcoNhas3gNo0h5gvoa_6r5Ae9NFxJAJp7ZoYNnMRKl/exec'; 
+        // --- 1. CORE CONFIGURATION & SECURE INIT ---
+        const SUPABASE_URL = 'https://zuatrwfrejnwfnldqqgy.supabase.co'; 
+        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inp1YXRyd2ZyZWpud2ZubGRxcWd5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODQwNDE5NjEsImV4cCI6MjA5OTYxNzk2MX0.zcJO4Es-DnuUKR-L_Eu44xIwmz4PxsFVCgs-t492t1g'; 
+        const CLOUDFLARE_WORKER_URL = 'https://tournyx-api.annaduraithilakjeevesh.workers.dev'; 
+
+        const db = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
         let userData = JSON.parse(localStorage.getItem('tournyx_user')) || {};
         
         let activeMatchId = "";
@@ -443,18 +431,10 @@
         let customCashAssignments = {}; 
         let pointAssignments = {}; 
 
-        // Storage for Final Submission Arrays
-        let pendingCashWinners = [];
-        let pendingPointWinners = [];
-        let pendingAllParticipants = [];
-
         // 🔥 HARDWARE BACK-BUTTON & HISTORY STATE MANAGER
         window.addEventListener('popstate', (event) => {
             if (document.getElementById('faqOverlay').classList.contains('active')) {
                 closeFAQ(true);
-            }
-            if (document.getElementById('confirmReportModal').classList.contains('active')) {
-                document.getElementById('confirmReportModal').classList.remove('active');
             }
             if (document.getElementById('resolutionView').classList.contains('active')) {
                 closeResolutionView(true);
@@ -477,15 +457,34 @@
             return allPrizes.find(p => parseInt(p.rank) === parseInt(rank)) || {amount: 0, isPts: false};
         }
 
+        // --- SECURE POST FETCHER LOGIC (SUPABASE WRAPPER) ---
         async function secureFetch(payload) {
             try {
-                let finalPayload = { ...payload, _ts: Date.now() };
-                const response = await fetch(API_URL, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'text/plain' },
-                    body: JSON.stringify(finalPayload)
-                });
-                return await response.json();
+                // 1. SECURE WRITES -> Send to Cloudflare Worker
+                const secureActions = ['resolve_match_batch'];
+                if (secureActions.includes(payload.action)) {
+                    const res = await fetch(CLOUDFLARE_WORKER_URL, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(payload)
+                    });
+                    return await res.json();
+                }
+
+                // 2. FAST READS -> Fetch from Supabase directly in milliseconds
+                if (payload.action === 'get_tournaments') {
+                    const { data, error } = await db.from('Tournaments').select('*').neq('db_status', 'Deleted');
+                    if (error) throw error; 
+                    return { status: 'success', data: data };
+                }
+
+                if (payload.action === 'get_all_matches') {
+                    const { data, error } = await db.from('Matches').select('*');
+                    if (error) throw error; 
+                    return { status: 'success', data: data };
+                }
+
+                return { status: 'error', message: 'Action not mapped.' };
             } catch (error) {
                 console.error("Fetch Error:", error);
                 throw error;
@@ -544,6 +543,7 @@
                 if(data.status === "success" && data.data) {
                     let myEmailStr = String(userData.email).toLowerCase().trim();
                     let myEvents = data.data.filter(t => {
+                        // 🚀 AGGRESSIVE GARBAGE COLLECTOR FIX
                         let dbStatus = String(t.status || t.Status || t.db_status || t.match_status || "").toLowerCase();
                         
                         if (dbStatus.includes('completed') || 
@@ -581,6 +581,7 @@
                                         }
                                     }
                                 } else {
+                                    // Column I Fallback
                                     let fallbackVal = String(t.prize_pool || t.prize || t.prize1 || t.total_prize || "").toLowerCase();
                                     if(fallbackVal) {
                                         let isPts = fallbackVal.includes('pt');
@@ -1017,81 +1018,57 @@
                 subBtn.style.border = "1px solid var(--accent-danger)";
             } else {
                 subBtn.disabled = false;
-                subBtn.innerText = "Review & Finalize";
+                subBtn.innerText = "Finalize Payouts";
                 subBtn.style.background = ""; 
                 subBtn.style.color = "";
                 subBtn.style.border = "none";
             }
         }
 
-        // --- STEP 4: PREVIEW RESOLUTION & OPEN CONFIRMATION MODAL ---
-        function previewResolution() {
+        // --- STEP 4: SUBMIT BATCH WITH LIVE TERMINAL ANIMATION ---
+        function submitResolution() {
             let hasAnyCash = Object.keys(cashAssignments).length > 0 || Object.keys(customCashAssignments).length > 0;
             if (!hasAnyCash && Object.keys(pointAssignments).length === 0) {
                 showToast("No prizes or points assigned!", true); return;
             }
 
+            if (!confirm("⚠️ Confirm Final Payouts?\n\nThis will deduct funds, credit the Clan Owners (or Solo Players), and permanently resolve this match for everyone.")) return;
+
             triggerHaptic(true);
+            document.getElementById('submitBar').style.display = 'none';
 
-            // Clean Data Arrays
-            pendingCashWinners = []; 
-            pendingPointWinners = [];
-            pendingAllParticipants = [];
+            // 🔥 BULLETPROOF PAYLOAD ASSEMBLY
+            let cArr = []; 
+            let pArr = [];
+            let allParticipants = [];
             
-            let summaryHtml = "";
-
             document.querySelectorAll('.team-card').forEach(card => {
                 let rawName = decodeURIComponent(card.dataset.rawname);
                 let rawCaptain = decodeURIComponent(card.dataset.rawcaptain);
                 let isClanStatus = card.dataset.isclan === 'true';
                 
-                pendingAllParticipants.push({ name: rawName, isClan: isClanStatus, captain: rawCaptain });
+                allParticipants.push({ name: rawName, isClan: isClanStatus, captain: rawCaptain });
 
                 let assignedRank = parseInt(rankAssignments[rawName]) || 0;
                 let pInfo = assignedRank > 0 ? getAssignedPrize(assignedRank) : {amount: 0, isPts: false};
                 
-                // Process Cash
+                // Force Numbers
                 let podiumCash = !pInfo.isPts ? parseInt(pInfo.amount) : 0; 
                 let customCash = parseInt(customCashAssignments[rawName]) || 0;
                 let cashAmt = podiumCash + customCash;
                 
                 if(cashAmt > 0) {
-                    pendingCashWinners.push({ name: rawName, amount: cashAmt, winnings: cashAmt, rank: assignedRank, isClan: isClanStatus, captain: rawCaptain });
-                    let rankStr = assignedRank > 0 ? `[Rank ${assignedRank}]` : `[Custom]`;
-                    summaryHtml += `<div style="padding: 8px 0; border-bottom: 1px solid rgba(255,255,255,0.05); display: flex; justify-content: space-between;">
-                        <span><b style="color:var(--accent-orange);">${rankStr}</b> ${rawName}</span> 
-                        <span style="color:var(--accent-cyan); font-weight:bold;">₹${cashAmt}</span>
-                    </div>`;
+                    cArr.push({ name: rawName, amount: cashAmt, winnings: cashAmt, rank: assignedRank, isClan: isClanStatus, captain: rawCaptain });
                 }
                 
-                // Process Points
                 let podiumPts = pInfo.isPts ? parseInt(pInfo.amount) : 0; 
                 let customPts = parseInt(pointAssignments[rawName]) || 0;
                 let ptsAmt = podiumPts + customPts;
                 
                 if(ptsAmt > 0) {
-                    pendingPointWinners.push({ name: rawName, points: ptsAmt, rank: assignedRank, isClan: isClanStatus, captain: rawCaptain });
-                    let rankStr = assignedRank > 0 ? `[Rank ${assignedRank}]` : `[Custom]`;
-                    summaryHtml += `<div style="padding: 8px 0; border-bottom: 1px solid rgba(255,255,255,0.05); display: flex; justify-content: space-between;">
-                        <span><b style="color:var(--accent-orange);">${rankStr}</b> ${rawName}</span> 
-                        <span style="color:var(--accent-gold); font-weight:bold;">${ptsAmt} PTS</span>
-                    </div>`;
+                    pArr.push({ name: rawName, points: ptsAmt, rank: assignedRank, isClan: isClanStatus, captain: rawCaptain });
                 }
             });
-
-            if (summaryHtml === "") {
-                summaryHtml = "<div style='color:#888; text-align:center;'>No valid rewards assigned.</div>";
-            }
-
-            document.getElementById('reportSummaryList').innerHTML = summaryHtml;
-            document.getElementById('confirmReportModal').classList.add('active');
-        }
-
-        // --- STEP 5: FINAL EXECUTION WITH PDF GENERATION ---
-        function executeFinalSubmit() {
-            triggerHaptic(true);
-            document.getElementById('confirmReportModal').classList.remove('active');
-            document.getElementById('submitBar').style.display = 'none';
 
             // 🚀 INITIATE TERMINAL ANIMATION
             const termOverlay = document.getElementById('payoutLoaderOverlay');
@@ -1099,10 +1076,10 @@
             termOut.innerHTML = '';
             termOverlay.classList.add('active');
 
-            let termMessages = ["[SYS] Authenticating Organizer Token...", "[SYS] Compiling Secure Match Report..."];
-            pendingCashWinners.forEach(c => termMessages.push(`[REPORT] Queued ₹${c.amount} payout for [${c.name.substring(0,15)}]...`));
-            pendingPointWinners.forEach(p => termMessages.push(`[REPORT] Queued ${p.points} PTS for [${p.name.substring(0,15)}]...`));
-            termMessages.push("[SYS] Generating PDF Documentation...", "[SYS] Transmitting Ledger to Agent Console...", "[SYS] Awaiting Sync Confirmation...");
+            let termMessages = ["[SYS] Authenticating Organizer Token...", "[SYS] Compiling Secure Payout Block..."];
+            cArr.forEach(c => termMessages.push(`[TX] Routing ₹${c.amount} to [${c.name.substring(0,15)}]...`));
+            pArr.forEach(p => termMessages.push(`[TX] Routing ${p.points} PTS to [${p.name.substring(0,15)}]...`));
+            termMessages.push("[SYS] Transmitting Ledger to Tournyx Database...", "[SYS] Awaiting Sync Confirmation...");
 
             let msgIndex = 0;
             let termInterval = setInterval(() => {
@@ -1110,83 +1087,60 @@
                     let div = document.createElement('div');
                     div.className = 'term-line';
                     div.innerText = `> ${termMessages[msgIndex]}`;
-                    if(termMessages[msgIndex].startsWith("[REPORT]")) div.classList.add('highlight');
+                    if(termMessages[msgIndex].startsWith("[TX]")) div.classList.add('highlight');
                     termOut.appendChild(div);
                     termOut.scrollTop = termOut.scrollHeight;
                     msgIndex++;
                 }
-            }, 600); 
+            }, 500); // 500ms typing effect
 
-            // 📄 PREPARE PDF DATA IN BACKGROUND
-            document.getElementById('pdfMatchTitle').innerText = document.getElementById('resMatchTitle').innerText;
-            document.getElementById('pdfOrgEmail').innerText = userData.email;
-            document.getElementById('pdfDate').innerText = new Date().toLocaleString();
-            
-            let tbody = "";
-            pendingCashWinners.forEach(c => {
-                tbody += `<tr><td style="padding:8px; border:1px solid #ddd;">${c.rank > 0 ? c.rank : '-'}</td><td style="padding:8px; border:1px solid #ddd;">${c.name}</td><td style="padding:8px; border:1px solid #ddd; color: green; font-weight: bold;">₹${c.amount}</td></tr>`;
-            });
-            pendingPointWinners.forEach(p => {
-                tbody += `<tr><td style="padding:8px; border:1px solid #ddd;">${p.rank > 0 ? p.rank : '-'}</td><td style="padding:8px; border:1px solid #ddd;">${p.name}</td><td style="padding:8px; border:1px solid #ddd; color: orange; font-weight: bold;">${p.points} PTS</td></tr>`;
-            });
-            document.getElementById('pdfTableBody').innerHTML = tbody;
-
-            let element = document.getElementById('hiddenPdfTemplate');
-            element.style.display = 'block'; 
-            
-            let opt = {
-                margin: 0.5,
-                filename: `Tournyx_MatchReport_${activeMatchId}.pdf`,
-                image: { type: 'jpeg', quality: 0.98 },
-                html2canvas: { scale: 2 },
-                jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' }
+            // 🔥 FIRE BACKEND REQUEST CONCURRENTLY
+            let payload = {
+                action: 'resolve_match_batch',
+                match_id: activeMatchId,
+                org_email: userData.email,
+                cash_winners: cArr,
+                point_winners: pArr,
+                all_participants: allParticipants
             };
-            
-            // GENERATE PDF, TRIGGER DOWNLOAD, THEN PUSH TO GOOGLE SHEETS
-            html2pdf().set(opt).from(element).save().then(() => {
-                element.style.display = 'none'; // Re-hide template
-                
-                // 🔥 FIRE BACKEND REQUEST FOR AGENTS
-                let payload = {
-                    action: 'submit_manual_payout_report',
-                    match_id: activeMatchId,
-                    org_email: userData.email,
-                    cash_winners: pendingCashWinners,
-                    point_winners: pendingPointWinners,
-                    all_participants: pendingAllParticipants
-                };
 
-                secureFetch(payload)
-                .then(data => {
-                    clearInterval(termInterval);
-                    if (data.status === 'success') {
-                        
-                        // Success Terminal Logic
-                        let div = document.createElement('div');
-                        div.className = 'term-line highlight';
-                        div.innerText = `> [SUCCESS] 200 OK: Report Sent to Agents.`;
-                        termOut.appendChild(div);
-                        
-                        setTimeout(() => {
-                            termOverlay.classList.remove('active');
-                            document.getElementById('resolutionView').classList.remove('active');
-                            document.getElementById('celebrationOverlay').classList.add('active');
-                            triggerHaptic(true);
-                            setTimeout(() => { window.location.href = 'profile.html'; }, 2500);
-                        }, 1000);
-                        
-                    } else {
+            secureFetch(payload)
+            .then(data => {
+                clearInterval(termInterval);
+                if (data.status === 'success') {
+                    // Update Local Balances
+                    let totC = 0; cArr.forEach(x => totC += parseInt(x.amount));
+                    let totP = 0; pArr.forEach(x => totP += parseInt(x.points));
+                    userData.earnings = (parseInt(userData.earnings) || 0) - totC;
+                    userData.points = (parseInt(userData.points) || 0) - totP;
+                    localStorage.setItem('tournyx_user', JSON.stringify(userData));
+
+                    // Success Terminal Logic
+                    let div = document.createElement('div');
+                    div.className = 'term-line highlight';
+                    div.innerText = `> [SUCCESS] 200 OK: Match Resolved.`;
+                    termOut.appendChild(div);
+                    
+                    setTimeout(() => {
                         termOverlay.classList.remove('active');
-                        showToast(data.message || "Report transmission failed.", true);
-                        document.getElementById('submitBar').style.display = 'flex';
-                    }
-                })
-                .catch(err => {
-                    clearInterval(termInterval);
+                        // Close Modal WITHOUT triggering a back action to avoid loop
+                        document.getElementById('resolutionView').classList.remove('active');
+                        document.getElementById('celebrationOverlay').classList.add('active');
+                        triggerHaptic(true);
+                        setTimeout(() => { window.location.href = 'profile.html'; }, 2500);
+                    }, 800);
+                    
+                } else {
                     termOverlay.classList.remove('active');
-                    showToast("Network Error. Check dashboard.", true);
-                    setTimeout(() => { window.location.href = 'profile.html'; }, 2000);
-                });
+                    showToast(data.message || "Transaction failed.", true);
+                    document.getElementById('submitBar').style.display = 'flex';
+                }
+            })
+            .catch(err => {
+                clearInterval(termInterval);
+                termOverlay.classList.remove('active');
+                showToast("Network Error. Verify in dashboard.", true);
+                setTimeout(() => { window.location.href = 'profile.html'; }, 2000);
             });
         }
     </script>
