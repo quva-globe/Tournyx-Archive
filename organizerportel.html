@@ -205,6 +205,7 @@
         .shake-error { animation: shake 0.4s cubic-bezier(.36,.07,.19,.97) both; border-color: var(--accent-red) !important; box-shadow: 0 0 15px rgba(255,77,77,0.4) !important;}
         @keyframes shake { 10%, 90% { transform: translate3d(-2px, 0, 0); } 20%, 80% { transform: translate3d(4px, 0, 0); } 30%, 50%, 70% { transform: translate3d(-6px, 0, 0); } 40%, 60% { transform: translate3d(6px, 0, 0); } }
     </style>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 <body onload="initPreloader();">
 
@@ -491,8 +492,13 @@
             setTimeout(() => { t.className = t.className.replace("show", ""); }, 3500);
         }
 
-        // 👉 YOUR LIVE WEB APP URL
-        const API_URL = "https://script.google.com/macros/s/AKfycbyqqTpgaflxKJ9xH0jq7mJ_jLzcoNhas3gNo0h5gvoa_6r5Ae9NFxJAJp7ZoYNnMRKl/exec";
+      // --- 1. CORE CONFIGURATION & SECURE INIT ---
+        const SUPABASE_URL = 'https://zuatrwfrejnwfnldqqgy.supabase.co'; 
+        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inp1YXRyd2ZyZWpud2ZubGRxcWd5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODQwNDE5NjEsImV4cCI6MjA5OTYxNzk2MX0.zcJO4Es-DnuUKR-L_Eu44xIwmz4PxsFVCgs-t492t1g'; 
+        const CLOUDFLARE_WORKER_URL = 'https://tournyx-api.annaduraithilakjeevesh.workers.dev'; 
+
+        const db = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
 
         // --- LANDING SLIDER ---
         let currentLandingIndex = 0;
@@ -853,7 +859,7 @@
             }
         }
 
-        // --- SUBMIT FORM ---
+       // --- SUBMIT FORM (UPGRADED SUPABASE ENGINE) ---
         async function submitForm() {
             const termsChecked = document.getElementById('terms').checked;
             if (!termsChecked) {
@@ -866,62 +872,89 @@
             const loader = document.getElementById('mainLoader');
             const finalBtn = document.getElementById('nextBtn');
             const prevBtn = document.getElementById('prevBtn');
-
             const role = document.getElementById('mainRole').value;
             const collectedData = collectFormData();
-            
-            const submissionObject = {
-                action: 'submit_organizer_application',
-                role_type: role,
-                organizer_data: collectedData,
-                aadhaar_front_base64: aadharBase64Files[0] ? aadharBase64Files[0].base64 : '',
-                aadhaar_front_name: aadharBase64Files[0] ? aadharBase64Files[0].name : '',
-                aadhaar_back_base64: aadharBase64Files[1] ? aadharBase64Files[1].base64 : '',
-                aadhaar_back_name: aadharBase64Files[1] ? aadharBase64Files[1].name : ''
-            };
 
             finalBtn.disabled = true;
             prevBtn.disabled = true;
             loader.style.display = 'flex';
+            document.getElementById('loaderText').innerText = "ENCRYPTING & UPLOADING DOCS...";
 
             try {
-                const response = await fetch(API_URL, {
+                // 1. Upload Images to ImgBB to prevent Google Drive timeouts and file corruptions
+                const uploadToImgBB = async (base64Str) => {
+                    if (!base64Str) return "";
+                    let formData = new FormData();
+                    formData.append("image", base64Str);
+                    let res = await fetch("https://api.imgbb.com/1/upload?key=727c66ecfe2882d63fee08fee7495850", { method: "POST", body: formData });
+                    let json = await res.json();
+                    return json.success ? json.data.url : "";
+                };
+
+                let frontUrl = await uploadToImgBB(aadharBase64Files[0] ? aadharBase64Files[0].base64 : '');
+                let backUrl = await uploadToImgBB(aadharBase64Files[1] ? aadharBase64Files[1].base64 : '');
+
+                document.getElementById('loaderText').innerText = "SYNCING TO SECURE DATABASE...";
+
+                // 2. Explicit Column Mapping to fix the "saved in wrong columns" bug
+                const { error } = await db.from('Organizer_Applications').insert([{
+                    role_type: role,
+                    full_name: collectedData.fullName,
+                    standard_response: collectedData.standardResponse,
+                    professional_email: collectedData.professionalEmail,
+                    whatsapp_phone: collectedData.whatsappPhone,
+                    state: collectedData.userState,
+                    city: collectedData.userCity,
+                    gender: collectedData.userGender,
+                    youtube_link: collectedData.cc_youtube || collectedData.org_youtube || collectedData.new_youtube || "",
+                    instagram: collectedData.cc_insta || collectedData.org_insta || collectedData.new_insta || "",
+                    discord: collectedData.cc_discord || "",
+                    tournaments_hosted: parseInt(collectedData.org_hosted_count || collectedData.new_hosted_count || 0),
+                    host_type: collectedData.org_type || collectedData.new_type || "",
+                    aadhar_front_url: frontUrl,
+                    aadhar_back_url: backUrl,
+                    status: 'Pending'
+                }]);
+
+                if (error) throw error;
+
+                // 3. Trigger Welcome Email / Push via Cloudflare
+                await fetch(CLOUDFLARE_WORKER_URL, {
                     method: 'POST',
-                    headers: { 'Content-Type': 'text/plain' }, 
-                    body: JSON.stringify(submissionObject)
-                });
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ 
+                        action: 'send_push', 
+                        email: collectedData.professionalEmail, 
+                        title: "Application Received!", 
+                        message: "Welcome to Tournyx. Your Organizer Application is under review." 
+                    })
+                }).catch(() => {});
 
-                const result = await response.json();
+                // Success UI
+                document.getElementById('questions-slider-container').style.display = 'none';
+                document.getElementById('submission-confirmed').style.display = 'block';
+                
+                let icon = document.querySelector('.confirmed-icon');
+                icon.classList.add('fa-beat-fade');
+                
+                document.getElementById('mainContainer').scrollIntoView({ behavior: 'smooth' });
 
-                if (result.status === "success") {
-                    document.getElementById('questions-slider-container').style.display = 'none';
-                    document.getElementById('submission-confirmed').style.display = 'block';
-                    
-                    let icon = document.querySelector('.confirmed-icon');
-                    icon.classList.add('fa-beat-fade');
-                    
-                    document.getElementById('mainContainer').scrollIntoView({ behavior: 'smooth' });
-
-                    // 10 Second Redirect Timer Logic
-                    let secondsLeft = 10;
-                    let timerElement = document.getElementById('redirectTimer');
-                    
-                    let redirectInterval = setInterval(() => {
-                        secondsLeft--;
-                        timerElement.innerText = secondsLeft;
-                        if (secondsLeft <= 0) {
-                            clearInterval(redirectInterval);
-                            window.location.href = 'login.html?tab=organizer';
-                        }
-                    }, 1000);
-                    
-                } else {
-                    showToast('🛑 ' + result.data, true);
-                    finalBtn.disabled = false; prevBtn.disabled = false; loader.style.display = 'none';
-                }
-
+                // 10 Second Redirect Timer Logic
+                let secondsLeft = 10;
+                let timerElement = document.getElementById('redirectTimer');
+                
+                let redirectInterval = setInterval(() => {
+                    secondsLeft--;
+                    timerElement.innerText = secondsLeft;
+                    if (secondsLeft <= 0) {
+                        clearInterval(redirectInterval);
+                        window.location.href = 'login.html?tab=organizer';
+                    }
+                }, 1000);
+                
             } catch (error) {
-                showToast('❌ Server Connection Failed.', true);
+                console.error(error);
+                showToast('❌ Server Connection Failed or Database Error.', true);
                 finalBtn.disabled = false; prevBtn.disabled = false; loader.style.display = 'none';
             }
         }
