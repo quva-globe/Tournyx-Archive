@@ -861,117 +861,54 @@
 
     <script>
        // --- 1. CORE CONFIGURATION & SECURE INIT ---
+        // --- SECURE POST FETCHER LOGIC (HYBRID SUPABASE ENGINE) ---
         const SUPABASE_URL = 'https://zuatrwfrejnwfnldqqgy.supabase.co'; 
         const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inp1YXRyd2ZyZWpud2ZubGRxcWd5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODQwNDE5NjEsImV4cCI6MjA5OTYxNzk2MX0.zcJO4Es-DnuUKR-L_Eu44xIwmz4PxsFVCgs-t492t1g'; 
-        const CLOUDFLARE_WORKER_URL = 'https://tournyx-api.annaduraithilakjeevesh.workers.dev'; 
-
         const db = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-        
-        let user = JSON.parse(localStorage.getItem('tournyx_user')) || {};
-        let isGuestMode = !user || !user.username;
 
-        let userLiveClans = []; 
-        let activeClan = null;  
-        let globalClans = [];
-        let pendingJoinData = {};
-        let activeFilterGame = 'All';
-        let activeModalClanId = null; 
-        let localRequestedClans = new Set();
-        let hiddenMail = JSON.parse(localStorage.getItem('tournyx_hidden_mail') || "[]");
-        
-        let chatSyncInterval = null;
-        let globalFindSyncInterval = null;
-        let chatSyncBlockedUntil = 0; 
-        let currentReactionMsgId = null; // Track message for emoji picker
-
-        // --- UNIVERSAL PUSH ENGINE ---
-        async function sendTournyxPush(targetEmail, title, message) {
-            try {
-                await fetch(CLOUDFLARE_WORKER_URL, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ action: 'send_push', email: targetEmail, title: title, message: message })
-                });
-            } catch (e) { console.error("Push Error:", e); }
-        }
-
-        // --- SECURE POST FETCHER LOGIC (SUPABASE WRAPPER) ---
         async function secureFetch(payload) {
             try {
-                // 1. SECURE WRITES -> Send to Cloudflare Worker
-                const secureActions = ['leave_clan', 'handle_join_request', 'send_request', 'delete_clan'];
-                if (secureActions.includes(payload.action)) {
-                    const res = await fetch(CLOUDFLARE_WORKER_URL, {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify(payload)
-                    });
-                    return await res.json();
-                }
-
-                // 2. FAST READS/WRITES -> Fetch from Supabase directly
-                if (payload.action === 'get_my_clans') {
-                    // FIX: Using .ilike prevents Supabase crashes if team_json is a TEXT column
-                    const { data, error } = await db.from('Clans').select('*').ilike('team_json', `%${payload.username}%`);
-                    if (error) throw error; 
-                    return { status: 'success', data: data };
-                }
-
+                // ⚡ 1. FAST READS/WRITES -> Fetch from Supabase directly in milliseconds
                 if (payload.action === 'get_all_clans') {
                     const { data, error } = await db.from('Clans').select('*');
-                    if (error) throw error; 
-                    return { status: 'success', data: data };
+                    if (error) throw error; return { status: 'success', data: data };
                 }
-
+                if (payload.action === 'get_my_clans') {
+                    // FIX: Using .ilike prevents Supabase crashes for TEXT columns
+                    const { data, error } = await db.from('Clans').select('*').ilike('team_json', `%${payload.username}%`);
+                    if (error) throw error; return { status: 'success', data: data };
+                }
                 if (payload.action === 'get_matches') {
                     const { data, error } = await db.from('Matches').select('*').eq('user_email', payload.email);
-                    if (error) throw error; 
-                    return { status: 'success', data: data };
+                    if (error) throw error; return { status: 'success', data: data };
                 }
-
-                if (payload.action === 'update_clan') {
-                    let updateData = {};
-                    if (payload.field === 'FULL_UPDATE') {
-                        updateData = { team_json: payload.value };
-                    } else if (payload.field === 'logo') {
-                        updateData = { logo: payload.value };
-                    } else if (payload.field === 'banner') {
-                        updateData = { banner: payload.value };
-                    }
-                    const { error } = await db.from('Clans').update(updateData).eq('clan_id', payload.clan_id);
-                    if (error) throw error;
-                    return { status: 'success', message: 'Clan Updated' };
-                }
-
-                if (payload.action === 'create_clan') {
-                    let clanData = typeof payload.data === 'string' ? JSON.parse(payload.data) : payload.data;
-                    const { error } = await db.from('Clans').insert([{ 
-                        clan_id: clanData.clanId, 
-                        clan_name: clanData.name, 
-                        team_json: JSON.stringify(clanData) 
-                    }]);
-                    if (error) throw error;
-                    return { status: 'success', message: 'Clan Created!' };
-                }
-
-                // FIX: Added missing avatar fetcher
                 if (payload.action === 'get_avatar') {
                     const { data, error } = await db.from('Users').select('avatar').eq('username', payload.username).single();
-                    if (error || !data) return { status: 'error' };
-                    return { status: 'success', data: data.avatar };
+                    if (error || !data) return { status: 'error' }; return { status: 'success', data: data.avatar };
                 }
-
-                // FIX: Added missing roster sync
                 if (payload.action === 'sync_clan_roster') {
                     const { data, error } = await db.from('Clans').select('*').eq('clan_id', payload.clan_id).single();
-                    if (error) throw error;
-                    return { status: 'success', data: data };
+                    if (error) throw error; return { status: 'success', data: data };
+                }
+                if (payload.action === 'update_clan') {
+                    let updateData = {};
+                    if (payload.field === 'FULL_UPDATE') updateData = { team_json: payload.value };
+                    else if (payload.field === 'logo') updateData = { logo: payload.value };
+                    else if (payload.field === 'banner') updateData = { banner: payload.value };
+                    const { error } = await db.from('Clans').update(updateData).eq('clan_id', payload.clan_id);
+                    if (error) throw error; return { status: 'success', message: 'Clan Updated' };
                 }
 
-                return { status: 'error', message: 'Action not mapped.' };
+                // 🛡️ 2. FALLBACK -> Complex logic (create/delete/leave) routes safely to Apps Script
+                const response = await fetch(API_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'text/plain' },
+                    body: JSON.stringify(payload)
+                });
+                return await response.json();
             } catch (error) {
                 console.error("Fetch Error:", error);
-                return { status: 'error', message: error.message };
+                throw error;
             }
         }
         function showToast(msg, isError = false) {
