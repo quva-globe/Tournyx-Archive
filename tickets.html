@@ -313,6 +313,41 @@
 
         @media (min-width: 850px) { .bottom-nav { display: none !important; } }
     </style>
+    <!-- ==========================================
+         ONESIGNAL GLOBAL NOTIFICATION ENGINE
+         ========================================== -->
+    <script src="https://cdn.onesignal.com/sdks/web/v16/OneSignalSDK.page.js" defer></script>
+    <script>
+      window.OneSignalDeferred = window.OneSignalDeferred || [];
+      OneSignalDeferred.push(async function(OneSignal) {
+        window.OneSignal = OneSignal;
+        
+        // 1. Initialize the global OneSignal configuration
+        await OneSignal.init({
+          appId: "15a8e2b2-240c-4547-929e-797d7170e988",
+          notifyButton: {
+            enable: false, // Hides the default floating bell icon to keep your UI clean
+          },
+        });
+
+        // 2. SESSION ATTRIBUTE ROUTING
+        // Keeps player devices mapped to their accounts regardless of which page they browse
+        try {
+            let userSession = localStorage.getItem('tournyx_user');
+            if (userSession) {
+                let playerObj = JSON.parse(userSession);
+                if (playerObj && playerObj.email) {
+                    let playerEmail = String(playerObj.email).trim().toLowerCase();
+                    // Securely establish target alias link
+                    await OneSignal.login(playerEmail);
+                }
+            }
+        } catch(error) { 
+            console.warn("Notification session sync bypassed:", error.message); 
+        }
+      });
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 <body>
     <div class="bg-gradient"></div>
@@ -687,7 +722,23 @@
            const RAZORPAY_KEY = "rzp_live_SZepeOt5YOqG07";
         // ==========================================
 
-        const API_URL = 'https://script.google.com/macros/s/AKfycbyqqTpgaflxKJ9xH0jq7mJ_jLzcoNhas3gNo0h5gvoa_6r5Ae9NFxJAJp7ZoYNnMRKl/exec';
+        // --- 1. CORE CONFIGURATION & SECURE INIT ---
+        const SUPABASE_URL = 'https://zuatrwfrejnwfnldqqgy.supabase.co'; 
+        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inp1YXRyd2ZyZWpud2ZubGRxcWd5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODQwNDE5NjEsImV4cCI6MjA5OTYxNzk2MX0.zcJO4Es-DnuUKR-L_Eu44xIwmz4PxsFVCgs-t492t1g'; 
+        const CLOUDFLARE_WORKER_URL = 'https://tournyx-api.annaduraithilakjeevesh.workers.dev'; 
+
+        const db = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+        
+        // --- UNIVERSAL PUSH ENGINE ---
+        async function sendTournyxPush(targetEmail, title, message) {
+            try {
+                await fetch(CLOUDFLARE_WORKER_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ action: 'send_push', email: targetEmail, title: title, message: message })
+                });
+            } catch (e) { console.error("Push Error:", e); }
+        }
         
         let isGuest = true;
         let currentUser = { username: "Guest Player", rupees: "0", points: "0", email: "guest@tournyx.com", avatar: "https://tournyx.in/favicon.png", role: "player", is_premium: false };
@@ -759,20 +810,39 @@
         })();
         // ==========================================
 
+        // --- SECURE POST FETCHER LOGIC (SUPABASE WRAPPER) ---
         async function secureFetch(payload) {
             try {
-                const response = await fetch(API_URL, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'text/plain' },
-                    body: JSON.stringify(payload)
-                });
-                return await response.json();
+                // 1. SECURE WRITES -> Send to Cloudflare Worker
+                const secureActions = ['razorpay_success'];
+                if (secureActions.includes(payload.action)) {
+                    const res = await fetch(CLOUDFLARE_WORKER_URL, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(payload)
+                    });
+                    return await res.json();
+                }
+
+                // 2. FAST READS -> Fetch from Supabase directly in milliseconds
+                if (payload.action === 'sync_user') {
+                    const { data, error } = await db.from('Users').select('*').eq('email', payload.email.toLowerCase()).single();
+                    if (error) throw error; 
+                    return { status: 'success', data: data };
+                }
+
+                if (payload.action === 'get_transactions') {
+                    const { data, error } = await db.from('Transactions').select('*').eq('email', payload.email.toLowerCase()).order('created_at', { ascending: false });
+                    if (error) throw error; 
+                    return { status: 'success', data: data };
+                }
+
+                return { status: 'error', message: 'Action not mapped.' };
             } catch (error) {
                 console.error("Fetch Error:", error);
-                throw error;
+                throw error; 
             }
         }
-
         function getISTDateTime(dateInput) {
             let d = (dateInput && String(dateInput).trim() !== "") ? new Date(dateInput) : new Date();
             if (isNaN(d.getTime())) d = new Date(); 
