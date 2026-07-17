@@ -2714,7 +2714,7 @@
         }
 
         // ==========================================
-        function fetchLiveTeams() {
+       function fetchLiveTeams() {
             if(!activeTournament.title) return;
             const container = document.getElementById('liveTeamsList');
             container.innerHTML = `<div style="text-align:center; color:var(--accent-cyan); padding:40px;"><i class="fa-solid fa-spinner fa-spin"></i> Fetching roster...</div>`;
@@ -2751,6 +2751,21 @@
 
                 let isSolo = activeTournament.format && activeTournament.format.toLowerCase().includes('solo');
 
+                // 🔥 MAGIC FIX: Helper to safely extract names from JSONB Objects
+                const extractSafeName = (clanData) => {
+                    if (!clanData) return "Unknown";
+                    if (typeof clanData === 'object') return clanData.name || clanData.clan_name || clanData.username || "Unknown";
+                    let str = String(clanData).trim();
+                    if (str.startsWith("{")) {
+                        try {
+                            let parsed = JSON.parse(str);
+                            return parsed.name || parsed.username || parsed.clan_name || str;
+                        } catch(e) { return str; }
+                    }
+                    if (str === "[object Object]") return "Unknown";
+                    return str;
+                };
+
                 if(data.status === 'success' && data.data) {
                     let validTeams = data.data.filter(team => {
                         return !Object.values(team).some(v => String(v).toLowerCase().includes('leaved') || String(v).toLowerCase() === 'leave');
@@ -2758,7 +2773,7 @@
 
                     let uniqueTeamsMap = new Map();
                     validTeams.forEach(team => {
-                        let teamIdentifier = String(team.clan || team.username).toLowerCase().trim();
+                        let teamIdentifier = extractSafeName(team.clan || team.username).toLowerCase().trim();
                         uniqueTeamsMap.set(teamIdentifier, team); 
                     });
                     
@@ -2767,17 +2782,11 @@
                     let totalSlots = parseInt(activeTournament.slots) || 48;
                     document.getElementById('dtRegistrations').innerText = `${liveCount}/${totalSlots}`;
                     
-                    // 🔥 AUTO-HEAL ALGORITHM: Force Sync Database if Mismatched! 🔥
                     let dbSlots = parseInt(activeTournament.filled_slots) || 0;
                     if (liveCount !== dbSlots) {
-                        secureFetch({
-                            action: 'auto_sync_slots',
-                            match_id: activeTournament.id || activeTournament.title,
-                            real_count: liveCount
-                        }).catch(e => console.log("Silent sync failed"));
+                        secureFetch({ action: 'auto_sync_slots', match_id: activeTournament.id || activeTournament.title, real_count: liveCount }).catch(e => console.log("Silent sync failed"));
                         activeTournament.filled_slots = liveCount; 
                     }
-                    // 🔥 END AUTO-HEAL 🔥
 
                     let fillPct = Math.min((liveCount / totalSlots) * 100, 100);
                     let progBar = document.querySelector('.slot-tracker .progress-bar');
@@ -2812,45 +2821,25 @@
 
                     if(activeTeams.length > 0) {
                         activeTeams.forEach((team, i) => {
-                            let currentTeamStr = String(team.clan).toLowerCase().trim();
-                            let isMyClan = userClanNames.includes(currentTeamStr) || (team.username === user.username);
+                            let displayClanName = extractSafeName(team.clan);
+                            if(displayClanName === "Unknown" && team.username) displayClanName = team.username;
+                            let currentTeamStr = displayClanName.toLowerCase().trim();
                             
+                            let isMyClan = userClanNames.includes(currentTeamStr) || (team.username === user.username);
                             if (isMyClan) { myGroup = team.group || "Default Lobby"; }
 
-                            let displayClanName = team.clan;
                             let hasRoster = false;
-                            let parsedClanObj = null;
-                            let needsExploreAutoHeal = false; // 🔥 AUTO HEAL FLAG
                             
-                            if(displayClanName.startsWith("{")) {
-                                try { 
-                                    parsedClanObj = JSON.parse(displayClanName); 
-                                    displayClanName = parsedClanObj.username || parsedClanObj.name || "Unknown Clan"; 
-                                    
-                                    if(parsedClanObj.players && Array.isArray(parsedClanObj.players)) hasRoster = true;
-                                    else if(parsedClanObj.roster && Array.isArray(parsedClanObj.roster)) {
-                                        hasRoster = true;
-                                        
-                                        // 🔥 AUTO-HEAL: If it's my clan, check my profile details and update the object if needed!
-                                        if (isMyClan && !isGuestMode) {
-                                            let myIdx = parsedClanObj.roster.findIndex(r => String(r.name).toLowerCase() === String(user.username).toLowerCase());
-                                            if(myIdx !== -1) {
-                                                let pPhone = user.phone || ""; let pIgn = user.gameName || user.ign || user.username || ""; let pUid = user.uid || user.gameUid || ""; let pAvatar = user.avatar || "";
-                                                if(parsedClanObj.roster[myIdx].avatar !== pAvatar || parsedClanObj.roster[myIdx].gameName !== pIgn) {
-                                                    parsedClanObj.roster[myIdx].avatar = pAvatar;
-                                                    parsedClanObj.roster[myIdx].gameName = pIgn;
-                                                    needsExploreAutoHeal = true;
-                                                }
-                                            }
-                                        }
-                                    }
-                                } catch(e){}
+                            // 🔥 FIX: Check if team.clan is ALREADY an object from Supabase JSONB
+                            let parsedClanObj = (typeof team.clan === 'object' && team.clan !== null) ? team.clan : null;
+                            if (!parsedClanObj && typeof team.clan === 'string' && team.clan.startsWith("{")) {
+                                try { parsedClanObj = JSON.parse(team.clan); } catch(e){}
                             }
+                            if (!parsedClanObj) parsedClanObj = team;
+                            
+                            if(parsedClanObj.players && Array.isArray(parsedClanObj.players)) hasRoster = true;
+                            else if(parsedClanObj.roster && Array.isArray(parsedClanObj.roster)) hasRoster = true;
 
-                            // If we healed the object, silently push the corrected JSON string to the Google Sheet (Column F)
-                            if (needsExploreAutoHeal) {
-                                secureFetch({ action: "auto_sync_slots", match_id: activeTournament.id || activeTournament.title, repair_json: JSON.stringify(parsedClanObj), target_clan: team.clan }).catch(()=>{});
-                            }
                             if (isSolo) {
                                 let playerName = team.username || displayClanName;
                                 let safePlayerName = encodeURIComponent(playerName);
@@ -2902,11 +2891,7 @@
                                 let checkPremiumFlags = [
                                     team.is_premium, team.vip_badge, team.vip, team[23],
                                     parsedClanObj ? parsedClanObj.is_premium : null, 
-                                    parsedClanObj ? parsedClanObj.vip_badge : null,
-                                    fullClanObj ? fullClanObj.is_premium : null, 
-                                    fullClanObj ? fullClanObj.vip_badge : null, 
-                                    fullClanObj ? fullClanObj.vip : null, 
-                                    fullClanObj ? fullClanObj[23] : null
+                                    fullClanObj ? fullClanObj.is_premium : null
                                 ];
                                 
                                 let isClanPremium = (isMyClan && isUserPremium) || checkPremiumFlags.some(val => String(val).toLowerCase() === 'true' || val === true);
@@ -2920,11 +2905,7 @@
                                 let stateBadge = rawLocation ? `<span style="background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.1); padding:3px 8px; border-radius:6px; font-size:0.65rem; color:#ccc; display:inline-flex; align-items:center; gap:4px;"><i class="fa-solid fa-location-dot" style="color:var(--accent-cyan);"></i> ${rawLocation}</span>` : '';
 
                                 let safeTeamData = "";
-                                try {
-                                    safeTeamData = btoa(encodeURIComponent(JSON.stringify(fullClanObj)));
-                                } catch(e) {
-                                    safeTeamData = btoa(encodeURIComponent(JSON.stringify(team)));
-                                }
+                                try { safeTeamData = btoa(encodeURIComponent(JSON.stringify(fullClanObj))); } catch(e) { safeTeamData = btoa(encodeURIComponent(JSON.stringify(team))); }
 
                                 container.innerHTML += `
                                     <div class="clan-item ${highlightClass}" ${hasRoster ? `onclick="openRosterPopup(event, '${safeTeamData}', ${isClanPremium})"` : ''} style="padding: 15px;">
@@ -2951,7 +2932,6 @@
                     } else {
                         container.innerHTML = `<div style="text-align:center; color:#888; padding:40px;">No entries registered yet. Be the first!</div>`;
                     }
-                    
                     renderRoomTabDynamic(activeTournament, true, myGroup);
                 } else {
                     container.innerHTML = `<div style="text-align:center; color:#888; padding:40px;">No entries registered yet. Be the first!</div>`;
@@ -2960,7 +2940,7 @@
             }).catch(() => {
                 container.innerHTML = `<div style="text-align:center; color:#ff4d4d; padding:20px;">Failed to load teams.</div>`;
             });
-        }                        
+        }
                                 
         function openRegistrationFlow() {
             triggerHaptic();
