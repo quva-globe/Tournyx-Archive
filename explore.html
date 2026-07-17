@@ -1959,9 +1959,11 @@
                     if(autoOpenId && autoOpenId.trim() !== "") {
                         let targetMatch = validTournaments.find(t => {
                             let safeId = String(t.id || "").trim();
+                            let safeMatchId = String(t.match_id || "").trim(); // 🔥 FIX: Now checks match_id
                             let safeTitle = String(t.title || "").trim();
                             let safeTitleNoSpace = safeTitle.replace(/\s+/g, '');
-                            return safeId === autoOpenId || safeTitle === autoOpenId || safeTitleNoSpace === autoOpenId;
+                            
+                            return safeId === autoOpenId || safeMatchId === autoOpenId || safeTitle === autoOpenId || safeTitleNoSpace === autoOpenId;
                         });
                         
                         if(targetMatch) {
