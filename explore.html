@@ -1211,6 +1211,7 @@
         }
 
         // --- SECURE POST FETCHER LOGIC (SUPABASE BUG-FIX WRAPPER) ---
+       // --- SECURE POST FETCHER LOGIC (SUPABASE BUG-FIX WRAPPER) ---
         async function secureFetch(payload) {
             try {
                 // 1. SECURE WRITES
@@ -1229,7 +1230,8 @@
                     if (error) throw error; queryData = data;
                 }
                 else if (payload.action === 'get_tournament_details') {
-                    const { data, error } = await db.from('Matches').select('*').or(`match_id.eq.${payload.match_id},tournament_title.eq.${payload.match_id}`);
+                    // 🔥 THE FIX: Added double quotes around payload.match_id to prevent spaces/pipes from crashing the API, and fixed column to 'title'
+                    const { data, error } = await db.from('Matches').select('*').or(`match_id.eq."${payload.match_id}",title.eq."${payload.match_id}"`);
                     if (error) throw error; queryData = data;
                 }
                 else if (payload.action === 'get_matches') {
@@ -1254,7 +1256,7 @@
                 }
                 else { return { status: 'error', message: 'Action not mapped.' }; }
 
-                // 🔥 THE MAGIC BUG FIX: Convert JSONB objects back to strings for the legacy UI
+                // 🔥 THE MAGIC JSONB BUG FIX: Convert JSONB objects back to strings for the legacy UI
                 if (queryData && Array.isArray(queryData)) {
                     queryData = queryData.map(row => {
                         let newRow = { ...row };
