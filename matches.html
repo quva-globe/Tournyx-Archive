@@ -1093,8 +1093,11 @@
                     ? `<div class="m-detail-item"><i class="fa-solid fa-user-astronaut"></i> Solo: <span style="color:white; font-weight:900; letter-spacing:0.5px; margin-left:5px;">${displayClan}</span></div>`
                     : `<div class="m-detail-item"><i class="fa-solid fa-shield-halved"></i> Roster: <span style="color:white; font-weight:900; letter-spacing:0.5px; margin-left:5px;">${displayClan}</span></div>`;
 
+                // 🔥 PERFECT URL ROUTING FIX: Use the Tournament Name instead of the ID so explore.html opens it flawlessly
+                let safeRouteName = String(match.name).replace(/'/g, "\\'").replace(/\s+/g, '');
+
                 htmlContent += `
-                    <div class="match-card ${glowClass}" onclick="viewDetails('${match.match_id}')">
+                    <div class="match-card ${glowClass}" onclick="viewDetails('${safeRouteName}')">
                         <div class="m-banner-wrapper">
                             <img src="${match.img}" class="m-banner">
                             <span class="status-badge" style="background:${sColor}; color:${(sLower.includes('completed') || rStatus==='UNJOINED') ? 'white' : 'black'}">${rStatus}</span>
