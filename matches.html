@@ -526,11 +526,11 @@
         }
 
         // --- SECURE POST FETCHER LOGIC (SUPABASE WRAPPER) ---
+        // --- SECURE POST FETCHER LOGIC (SUPABASE BUG-FIX WRAPPER) ---
         async function secureFetch(payload) {
             try {
                 // 1. SECURE WRITES -> Send to Cloudflare Worker
-                // Notice we added 'unjoin' here so players can leave matches securely!
-                const secureActions = ['unjoin', 'update_wallet']; 
+                const secureActions = ['unjoin', 'update_wallet', 'join', 'Join', 'like_tournament', 'auto_sync_slots', 'increment_view', 'add_donation', 'auto_delete_tournament', 'cancel_registration']; 
                 if (secureActions.includes(payload.action)) {
                     const res = await fetch(CLOUDFLARE_WORKER_URL, {
                         method: 'POST',
@@ -541,26 +541,35 @@
                 }
 
                 // 2. FAST READS -> Fetch from Supabase directly in milliseconds
+                let queryData = null;
                 if (payload.action === 'get_tournaments') {
                     const { data, error } = await db.from('Tournaments').select('*').neq('db_status', 'Deleted');
-                    if (error) throw error; 
-                    return { status: 'success', data: data };
+                    if (error) throw error; queryData = data;
                 }
-                
-                if (payload.action === 'get_matches') {
+                else if (payload.action === 'get_matches') {
                     const { data, error } = await db.from('Matches').select('*').eq('user_email', payload.email);
-                    if (error) throw error; 
-                    return { status: 'success', data: data };
+                    if (error) throw error; queryData = data;
                 }
-
-                if (payload.action === 'get_my_clans') {
-                    // Match the logic we used in explore.html
+                else if (payload.action === 'get_my_clans') {
                     const { data, error } = await db.from('Clans').select('*').contains('team_json', `{"username": "${payload.username}"}`);
-                    if (error) throw error; 
-                    return { status: 'success', data: data };
+                    if (error) throw error; queryData = data;
                 }
+                else { return { status: 'error', message: 'Action not mapped.' }; }
 
-                return { status: 'error', message: 'Action not mapped.' };
+                // 🔥 THE MAGIC JSONB BUG FIX: Convert JSONB objects back to strings for the legacy UI
+                if (queryData && Array.isArray(queryData)) {
+                    queryData = queryData.map(row => {
+                        let newRow = { ...row };
+                        ['clan', 'team_json', 'fee_json', 'prize_json', 'bracket_json'].forEach(key => {
+                            if (newRow[key] && typeof newRow[key] === 'object') {
+                                newRow[key] = JSON.stringify(newRow[key]);
+                            }
+                        });
+                        return newRow;
+                    });
+                }
+                return { status: 'success', data: queryData };
+
             } catch (error) {
                 console.error("Fetch Error:", error);
                 return { status: 'error', message: error.message };
@@ -1058,22 +1067,31 @@
                     }
                 }
 
-                let displayTitle = highlightText(match.name, search);
-                let displayClan = highlightText(match.clan, search);
+               let displayTitle = highlightText(match.name, search);
                 
-                let clanObjName = displayClan;
-                if(displayClan.startsWith("{")) {
-                    try {
-                        let pd = JSON.parse(displayClan.replace(/<[^>]+>/g, ''));
-                        clanObjName = pd.username || pd.name || "Clan";
-                        if(search) clanObjName = highlightText(clanObjName, search);
-                    } catch(e){}
+                // 🔥 PERFECT JSON EXTRACTOR FIX 🔥
+                let extractedClanName = "Solo Player";
+                if (typeof match.clan === 'string') {
+                    if (match.clan.startsWith("{")) {
+                        try {
+                            let pd = JSON.parse(match.clan);
+                            // Pulls the exact "name" parameter from your Clan JSON!
+                            extractedClanName = pd.name || pd.clan_name || pd.username || "Clan";
+                        } catch(e) { extractedClanName = match.clan; }
+                    } else if (match.clan !== "[object Object]") {
+                        extractedClanName = match.clan;
+                    }
+                } else if (typeof match.clan === 'object' && match.clan !== null) {
+                    extractedClanName = match.clan.name || match.clan.clan_name || match.clan.username || "Clan";
                 }
+                
+                // Apply the search highlight cleanly AFTER extraction
+                let displayClan = highlightText(extractedClanName, search);
 
                 let isSolo = match.format.toLowerCase().includes('solo');
                 let rosterHtml = isSolo 
-                    ? `<div class="m-detail-item"><i class="fa-solid fa-user-astronaut"></i> Solo: <span style="color:white; font-weight:900; letter-spacing:0.5px; margin-left:5px;">${clanObjName}</span></div>`
-                    : `<div class="m-detail-item"><i class="fa-solid fa-shield-halved"></i> Roster: <span style="color:white; font-weight:900; letter-spacing:0.5px; margin-left:5px;">${clanObjName}</span></div>`;
+                    ? `<div class="m-detail-item"><i class="fa-solid fa-user-astronaut"></i> Solo: <span style="color:white; font-weight:900; letter-spacing:0.5px; margin-left:5px;">${displayClan}</span></div>`
+                    : `<div class="m-detail-item"><i class="fa-solid fa-shield-halved"></i> Roster: <span style="color:white; font-weight:900; letter-spacing:0.5px; margin-left:5px;">${displayClan}</span></div>`;
 
                 htmlContent += `
                     <div class="match-card ${glowClass}" onclick="viewDetails('${match.match_id}')">
