@@ -10,7 +10,27 @@
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
+    <!-- SUPABASE, ONESIGNAL & PEERJS (VOICE ENGINE) -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="https://unpkg.com/peerjs@1.5.1/dist/peerjs.min.js"></script>
+    <script src="https://cdn.onesignal.com/sdks/web/v16/OneSignalSDK.page.js" defer></script>
+    
     <script>
+        // AUTOMATIC BUG & ERROR FIXER (Self-Healing Code)
+        window.addEventListener('error', function(e) {
+            console.warn("Tournyx Self-Healing Triggered:", e.message);
+            if(e.message.includes("JSON") || e.message.includes("parse")) {
+                localStorage.removeItem('tournyx_my_clans_cache'); // Clear corrupted cache
+            }
+            let loader = document.getElementById('skeletonLoader');
+            if(loader && loader.classList.contains('active')) {
+                loader.classList.remove('active');
+                loader.style.display = 'none';
+                document.getElementById('mainContent').style.display = 'block';
+            }
+        }, true);
+
+        // THEME ENGINE
         (function() {
             try {
                 const THEMES = [
@@ -30,6 +50,22 @@
                 }
             } catch(e) { }
         })();
+
+        // ONESIGNAL INIT
+        window.OneSignalDeferred = window.OneSignalDeferred || [];
+        OneSignalDeferred.push(async function(OneSignal) {
+            window.OneSignal = OneSignal;
+            await OneSignal.init({ appId: "15a8e2b2-240c-4547-929e-797d7170e988", notifyButton: { enable: false } });
+            try {
+                let userSession = localStorage.getItem('tournyx_user');
+                if (userSession) {
+                    let playerObj = JSON.parse(userSession);
+                    if (playerObj && playerObj.email) {
+                        await OneSignal.login(String(playerObj.email).trim().toLowerCase());
+                    }
+                }
+            } catch(error) { console.warn("Notification sync bypassed:", error.message); }
+        });
     </script>
 
     <style>
@@ -373,58 +409,6 @@
         body.power-saving .mega-shine::after { display: none !important; animation: none !important; }
         body.power-saving .xp-bar-fill { animation: none !important; }
     </style>
-    <!-- ==========================================
-         ONESIGNAL GLOBAL NOTIFICATION ENGINE
-         ========================================== -->
-    <script src="https://cdn.onesignal.com/sdks/web/v16/OneSignalSDK.page.js" defer></script>
-    <script>
-      window.OneSignalDeferred = window.OneSignalDeferred || [];
-      OneSignalDeferred.push(async function(OneSignal) {
-        window.OneSignal = OneSignal;
-        
-        // 1. Initialize the global OneSignal configuration
-        await OneSignal.init({
-          appId: "15a8e2b2-240c-4547-929e-797d7170e988",
-          notifyButton: {
-            enable: false, // Hides the default floating bell icon to keep your UI clean
-          },
-        });
-
-        // 2. SESSION ATTRIBUTE ROUTING
-        // Keeps player devices mapped to their accounts regardless of which page they browse
-        try {
-            let userSession = localStorage.getItem('tournyx_user');
-            if (userSession) {
-                let playerObj = JSON.parse(userSession);
-                if (playerObj && playerObj.email) {
-                    let playerEmail = String(playerObj.email).trim().toLowerCase();
-                    // Securely establish target alias link
-                    await OneSignal.login(playerEmail);
-                }
-            }
-        } catch(error) { 
-            console.warn("Notification session sync bypassed:", error.message); 
-        }
-      });
-    </script>
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <!-- 🔥 UPGRADE: WEBRTC AUDIO ENGINE & AUTO BUG FIXER -->
-    <script src="https://unpkg.com/peerjs@1.5.1/dist/peerjs.min.js"></script>
-    <script>
-        // AUTOMATIC BUG & ERROR FIXER (Self-Healing Code)
-        window.addEventListener('error', function(e) {
-            console.warn("Tournyx Self-Healing Triggered:", e.message);
-            if(e.message.includes("JSON") || e.message.includes("parse")) {
-                localStorage.removeItem('tournyx_my_clans_cache'); // Clear corrupted cache
-            }
-            let loader = document.getElementById('skeletonLoader');
-            if(loader && loader.classList.contains('active')) {
-                loader.classList.remove('active');
-                loader.style.display = 'none';
-                document.getElementById('mainContent').style.display = 'block';
-            }
-        }, true);
-    </script>
 </head>
 <body>
     <input type="file" id="liveAvatarInp" accept="image/*" style="display:none;" onchange="processAvatarUpload(event)">
@@ -607,6 +591,7 @@
                     </div>
                 </div>
 
+                <!-- 🔥 VOICE & TEXT CHAT ROW -->
                 <div style="display: flex; gap: 10px; margin-bottom: 15px;">
                     <div onclick="openChat();" style="flex: 1; background: linear-gradient(135deg, rgba(0,255,127,0.05), rgba(0,0,0,0)); border: 1px solid rgba(0,255,127,0.2); border-radius: 12px; padding: 12px; display: flex; align-items: center; justify-content: space-between; cursor: pointer; transition: 0.3s; box-shadow: 0 4px 10px rgba(0,0,0,0.3);">
                         <div>
@@ -789,6 +774,33 @@
         </div>
     </div>
 
+    <!-- 🔥 DISCORD-STYLE WEBRTC VOICE MODAL -->
+    <div class="modal-overlay" id="voiceChatModal">
+        <div class="modal-box" style="text-align: center; border-color: var(--accent-purple);">
+            <div class="modal-header">
+                <div class="modal-title"><i class="fa-solid fa-satellite-dish" style="color:var(--accent-purple);"></i> Squad Voice</div>
+                <i class="fa-solid fa-xmark modal-close" onclick="leaveVoiceChat()"></i>
+            </div>
+            
+            <div style="position: relative; width: 100px; height: 100px; margin: 0 auto 20px;">
+                <div id="voiceRipples" style="position: absolute; width: 100%; height: 100%; border-radius: 50%; border: 2px solid var(--accent-purple); animation: livePulse 1.5s infinite; opacity: 0; transition: 0.3s;"></div>
+                <img src="" id="voiceMyAvatar" style="width: 100px; height: 100px; border-radius: 50%; object-fit: cover; border: 3px solid var(--accent-purple); box-shadow: 0 0 20px rgba(189,0,255,0.5); position: relative; z-index: 2;">
+            </div>
+            
+            <h3 style="font-family: var(--font-head); font-size: 1.2rem; color: white; margin-bottom: 5px;" id="voiceStatusText">Connecting to Server...</h3>
+            <p style="font-size: 0.8rem; color: #888; margin-bottom: 20px;">Live Audio WebRTC Protocol</p>
+            
+            <div id="connectedPeersList" style="display: flex; justify-content: center; gap: 10px; margin-bottom: 20px; flex-wrap: wrap;"></div>
+            
+            <div style="display: flex; gap: 10px; justify-content: center;">
+                <button class="btn-secondary" id="btnMuteMic" style="width: auto; padding: 12px 20px; border-color: #888; color: white;" onclick="toggleMute()"><i class="fa-solid fa-microphone"></i></button>
+                <button class="btn-danger" style="width: auto; padding: 12px 20px;" onclick="leaveVoiceChat()"><i class="fa-solid fa-phone-slash"></i> Disconnect</button>
+            </div>
+            
+            <div id="audioContainer" style="display: none;"></div>
+        </div>
+    </div>
+
     <div class="modal-overlay" id="chatModal">
         <div class="modal-box" style="padding: 0; display: flex; flex-direction: column; height: 80vh; max-height: 600px; width: 95%;">
             <div class="modal-header" style="padding: 12px 15px; background: rgba(0,0,0,0.5); border-bottom: 1px solid var(--card-border); margin:0; width: 100%;">
@@ -911,7 +923,29 @@
         let chatSyncInterval = null;
         let globalFindSyncInterval = null;
         let chatSyncBlockedUntil = 0; 
-        let currentReactionMsgId = null; // Track message for emoji picker
+        let currentReactionMsgId = null; 
+
+        // --- WEBRTC VOICE & BROADCAST VARIABLES ---
+        let localPeer = null; let localStream = null; let isMuted = false; let bgWakeLock = null;
+        
+        const voiceChannel = db.channel('voice-alerts');
+        voiceChannel.on('broadcast', { event: 'voice_started' }, payload => {
+            let isMyClan = userLiveClans.some(c => c.clanId === payload.payload.clanId);
+            if (isMyClan && payload.payload.user !== user.username) {
+                showToast(`🎙️ ${payload.payload.user} started Voice Chat in ${payload.payload.clanName}!`);
+                triggerHaptic();
+            }
+        }).subscribe();
+
+        // 🔥 INSTANT REAL-TIME DATABASE SYNC
+        db.channel('live-clans-channel').on('postgres_changes', { event: '*', schema: 'public', table: 'Clans' }, payload => {
+            if(!isGuestMode) fetchLiveClanData(true);
+            fetchAllClansSilent();
+        }).subscribe();
+        
+        db.channel('live-matches-channel').on('postgres_changes', { event: '*', schema: 'public', table: 'Matches' }, payload => {
+            if(activeClan) calculateLiveClanStats(activeClan);
+        }).subscribe();
 
         // --- UNIVERSAL PUSH ENGINE ---
         async function sendTournyxPush(targetEmail, title, message) {
@@ -923,15 +957,7 @@
                 });
             } catch (e) { console.error("Push Error:", e); }
         }
-// 🔥 INSTANT REAL-TIME DATABASE SYNC
-        db.channel('live-clans-channel').on('postgres_changes', { event: '*', schema: 'public', table: 'Clans' }, payload => {
-            if(!isGuestMode) fetchLiveClanData(true);
-            fetchAllClansSilent();
-        }).subscribe();
-        
-        db.channel('live-matches-channel').on('postgres_changes', { event: '*', schema: 'public', table: 'Matches' }, payload => {
-            if(activeClan) calculateLiveClanStats(activeClan);
-        }).subscribe();
+
         // --- SECURE POST FETCHER LOGIC (SUPABASE WRAPPER) ---
         async function secureFetch(payload) {
             try {
@@ -945,9 +971,7 @@
                 }
 
                 // 2. FAST READS/WRITES -> Fetch from Supabase directly in milliseconds
-                
-               if (payload.action === 'get_my_clans') {
-                    // 🔥 LIVE FIX: Programmatic deep-array mapping for Owners, Admins, and Players
+                if (payload.action === 'get_my_clans') {
                     const { data, error } = await db.from('Clans').select('*');
                     if (error) throw error; 
                     
@@ -956,13 +980,9 @@
                         try {
                             let clanObj = typeof item.team_json === 'string' ? JSON.parse(item.team_json) : item.team_json;
                             if (!clanObj) return false;
-                            
-                            // Safe fallbacks to check both 'roster' and legacy 'players' arrays
                             let currentRoster = clanObj.roster || clanObj.players || [];
                             return currentRoster.some(member => String(member.name || member.username).toLowerCase().trim() === myUsername);
-                        } catch(e) {
-                            return false;
-                        }
+                        } catch(e) { return false; }
                     });
                     return { status: 'success', data: myClans };
                 }
@@ -1013,7 +1033,6 @@
             setTimeout(() => t.className = "", 3000);
         }
 
-        // 🔥 UPGRADE: CELEBRATION ANIMATION
         function triggerCelebration(msg, subMsg) {
             triggerHaptic();
             let el = document.getElementById('celebrationOverlay');
@@ -1067,7 +1086,6 @@
         }
 
         document.addEventListener("DOMContentLoaded", () => {
-            // 🔋 Detect Power Saving Mode
             let isPowerSaving = localStorage.getItem('tournyx_power_saving') === 'true' || (user && String(user.power_saving) === 'true');
             if(isPowerSaving) document.body.classList.add('power-saving');
             
@@ -1081,18 +1099,14 @@
                 try { if(cachedClans) parsedCache = JSON.parse(cachedClans); } catch(e){}
 
                 if (parsedCache && parsedCache.length > 0) {
-                    // 🔥 INSTANT ZERO-DELAY LOAD: Kills the 1-second skeleton flash!
                     userLiveClans = parsedCache;
                     document.getElementById('skeletonLoader').classList.remove('active');
                     document.getElementById('skeletonLoader').style.display = 'none';
                     document.getElementById('mainContent').style.display = 'block';
                     
                     renderHub(); 
-                    
-                    // Fetch live data silently in background to ensure sync
                     fetchLiveClanData(true); 
                 } else {
-                    // First Visit Only: Force Loader
                     document.getElementById('mainContent').style.display = 'none';
                     document.getElementById('skeletonLoader').style.display = 'flex';
                     fetchLiveClanData(false); 
@@ -1116,7 +1130,6 @@
                 }, 500);
             }
 
-            // Hide emoji picker if clicked outside
             document.addEventListener('click', (e) => {
                 const picker = document.getElementById('emojiPicker');
                 if (picker && picker.style.display === 'flex') {
@@ -1154,75 +1167,18 @@
             } catch(e){}
         }
 
-        // 🔥 UPGRADE: PURE URL SHARE LINK
-        function openInviteModal() {
-            triggerHaptic();
-            if(!activeClan) return;
-            let baseOrigin = window.location.hostname.includes("tournyx.in") ? window.location.origin : "https://tournyx.in";
-            let pureUrl = baseOrigin + "/clans.html?invite=" + activeClan.clanId;
-            document.getElementById('inviteLinkInp').value = pureUrl;
-            document.getElementById('inviteLinkModal').classList.add('active');
-        }
-
-        function copyInviteLink() {
-            triggerHaptic();
-            let link = document.getElementById('inviteLinkInp').value;
-            if(navigator.clipboard && window.isSecureContext) {
-                navigator.clipboard.writeText(link).then(() => showToast("Invite Link Copied!"));
-            } else {
-                let el = document.getElementById('inviteLinkInp');
-                el.select(); document.execCommand("copy"); showToast("Invite Link Copied!");
-            }
-        }
-
-      async function cancelJoinRequest(cId, btnEl, event) {
-            if(event) event.stopPropagation();
-            triggerHaptic();
-            showToast("Cancelling request...");
-
-            let targetClan = globalClans.find(c => c.clanId === cId);
-            if (targetClan) {
-                if (targetClan.requests) {
-                    targetClan.requests = targetClan.requests.filter(r => {
-                        let nm = typeof r === 'string' ? r : r.name;
-                        return nm !== user.username;
-                    });
-                }
-                // 🔥 DIRECT DB INJECTION FIX
-                let cleanClan = JSON.parse(JSON.stringify(targetClan)); delete cleanClan.logo; delete cleanClan.banner;
-                await secureFetch({ action: "update_clan", clan_id: cId, field: "FULL_UPDATE", value: JSON.stringify(cleanClan) });
-            }
-            
-            localRequestedClans.delete(cId);
-
-            document.querySelectorAll(`button[onclick*="${cId}"]`).forEach(btn => {
-                if (btn.innerText.includes("REQUESTED")) {
-                    let card = btn.closest('.search-card');
-                    let cName = card ? card.querySelector('.sc-name').innerText.replace(/'/g, "\\'") : "";
-                    let cGame = card ? (card.querySelector('.fa-gamepad') ? card.querySelector('.fa-gamepad').nextSibling.textContent.trim() : "Esports") : "Esports";
-                    btn.outerHTML = `<button class="s-btn acc" onclick="event.stopPropagation(); triggerJoinFlow('${cId}', '${cName}', '${cGame}', false, this)">JOIN SQUAD</button>`;
-                }
-            });
-        }
-            
-            let gIndex = globalClans.findIndex(c => c.clanId === cId);
-            if(gIndex !== -1 && globalClans[gIndex].requests) {
-                globalClans[gIndex].requests = globalClans[gIndex].requests.filter(r => {
-                    let nm = typeof r === 'string' ? r : r.name;
-                    return nm !== user.username;
-                });
-            }
-        }
-
-        // 🔥 UPGRADE: Skeleton Loader for Find Tab
         async function fetchAllClans() {
             const container = document.getElementById('globalClansList');
-            container.innerHTML = `
-                <div class="skeleton-wrapper active" style="padding:0; gap:12px;">
-                    <div class="skeleton" style="height: 120px; width: 100%;"></div>
-                    <div class="skeleton" style="height: 120px; width: 100%;"></div>
-                    <div class="skeleton" style="height: 120px; width: 100%;"></div>
-                </div>`;
+            if (globalClans.length === 0) {
+                container.innerHTML = `
+                    <div class="skeleton-wrapper active" style="display: flex; flex-direction: column; padding:0; gap:15px; width: 100%;">
+                        <div class="skeleton" style="height: 130px; width: 100%; border-radius: 15px;"></div>
+                        <div class="skeleton" style="height: 130px; width: 100%; border-radius: 15px;"></div>
+                        <div class="skeleton" style="height: 130px; width: 100%; border-radius: 15px;"></div>
+                    </div>`;
+            } else {
+                searchGlobalClans(); 
+            }
             
             try {
                 let data = await secureFetch({ action: "get_all_clans" });
@@ -1240,12 +1196,16 @@
                         } catch(e){}
                     });
                     globalClans = allParsed;
-                    searchGlobalClans();
+                    searchGlobalClans(); 
                 } else {
-                    container.innerHTML = "<div style='text-align:center; color:var(--accent-red); padding:40px;'><i class='fa-solid fa-triangle-exclamation' style='font-size:2rem; margin-bottom:10px;'></i><br>Failed to load clans.</div>";
+                    if(globalClans.length === 0) {
+                        container.innerHTML = "<div style='text-align:center; color:var(--accent-red); padding:40px;'><i class='fa-solid fa-triangle-exclamation' style='font-size:2rem; margin-bottom:10px;'></i><br>Failed to load clans.</div>";
+                    }
                 }
             } catch(e) {
-                container.innerHTML = "<div style='text-align:center; color:var(--accent-red); padding:40px;'><i class='fa-solid fa-wifi' style='font-size:2rem; margin-bottom:10px;'></i><br>Network Connection Error.</div>";
+                if(globalClans.length === 0) {
+                    container.innerHTML = "<div style='text-align:center; color:var(--accent-red); padding:40px;'><i class='fa-solid fa-wifi' style='font-size:2rem; margin-bottom:10px;'></i><br>Network Connection Error.</div>";
+                }
             }
         }
         
@@ -1287,15 +1247,11 @@
 
                     data.data.forEach(item => {
                         try {
-                            // Extract base JSON object safely without array depth errors
                             let clanObj = typeof item.team_json === 'string' ? JSON.parse(item.team_json) : (item.team_json || item);
                             
-                            // Ensure external logo/banner and premium status map over
                             if(item.logo && item.logo.length > 10) clanObj.logo = item.logo;
                             if(item.banner && item.banner.length > 10) clanObj.banner = item.banner;
                             if(String(item.claimed_premium).toLowerCase() === 'true') clanObj.isPremiumClan = true;
-
-                            // Ensure clan ID maps over securely
                             if(item.clan_id) clanObj.clanId = item.clan_id;
 
                             parsedClans.push(clanObj);
@@ -1303,8 +1259,6 @@
                     });
 
                     userLiveClans = parsedClans;
-                    
-                    // 🔥 THE CORE FIX: Update cache IMMEDIATELY so the next load is 0ms instant!
                     localStorage.setItem('tournyx_my_clans_cache', JSON.stringify(parsedClans));
                     
                     if(activeClan) {
@@ -1319,13 +1273,12 @@
                     }
                 } else {
                     userLiveClans = []; 
-                    localStorage.setItem('tournyx_my_clans_cache', '[]'); // Clear empty cache
+                    localStorage.setItem('tournyx_my_clans_cache', '[]'); 
                     if(!activeClan) showNoClan();
                 }
             } catch (err) { 
                 if(!isSilent && !activeClan) showNoClan(); 
             } finally {
-                // INSTANT HIDE LOADER
                 let loader = document.getElementById('skeletonLoader');
                 if(loader) {
                     loader.classList.remove('active'); 
@@ -1405,25 +1358,23 @@
             if(chatSyncInterval) clearInterval(chatSyncInterval);
         }
 
-        // 🔥 UPGRADE: INSTAGRAM CHAT FUNCTIONS 
         function toggleLike(timestamp) {
             triggerHaptic();
             let msg = activeClan.messages.find(m => m.timestamp == timestamp);
             if(msg) {
                 msg.isLiked = !msg.isLiked;
-                chatSyncBlockedUntil = Date.now() + 2500; // Pause sync temporarily
+                chatSyncBlockedUntil = Date.now() + 2500; 
                 pushUpdateToLive('FULL_UPDATE', activeClan);
                 renderChat(true);
             }
         }
 
         function showEmojiPicker(e, timestamp) {
-            e.preventDefault(); // Prevent default browser context menu
+            e.preventDefault(); 
             triggerHaptic();
             currentReactionMsgId = timestamp;
             const picker = document.getElementById('emojiPicker');
             
-            // Calculate safe position
             let x = e.clientX; let y = e.clientY;
             if(x > window.innerWidth - 180) x = window.innerWidth - 180;
             if(y > window.innerHeight - 80) y = window.innerHeight - 80;
@@ -1438,7 +1389,7 @@
             if(currentReactionMsgId) {
                 let msg = activeClan.messages.find(m => m.timestamp == currentReactionMsgId);
                 if(msg) {
-                    msg.reaction = (msg.reaction === emoji) ? null : emoji; // Toggle off if same
+                    msg.reaction = (msg.reaction === emoji) ? null : emoji; 
                     chatSyncBlockedUntil = Date.now() + 2500; 
                     pushUpdateToLive('FULL_UPDATE', activeClan);
                     renderChat(true);
@@ -1530,10 +1481,7 @@
                 try { decText = decodeURIComponent(atob(m.text)); } catch(e) { decText = m.text; }
 
                 let timeStr = formatMessageTime(m.timestamp);
-                
-                // 🔥 UPGRADE: Bulletproof ID-based deletion
                 let deleteIcon = (isMe || isAdmin) ? `<i class="solid fa-trash" style="font-size:0.7rem; color:#ff4d4d; cursor:pointer; margin-left:10px; opacity:0.8;" onclick="deleteMessage(${m.timestamp})" title="Delete Message"></i>` : '';
-                
                 let likeHtml = m.isLiked ? `<div class="chat-like"><i class="fa-solid fa-heart"></i></div>` : '';
                 let reactHtml = m.reaction ? `<div class="chat-reaction">${m.reaction}</div>` : '';
 
@@ -1563,12 +1511,10 @@
             if(!activeClan.messages) activeClan.messages = [];
             
             let encText = btoa(encodeURIComponent(text)); 
-            
             activeClan.messages.push({ sender: user.username, text: encText, timestamp: Date.now() });
             if(activeClan.messages.length > 50) activeClan.messages.shift();
             
             chatSyncBlockedUntil = Date.now() + 2500; 
-            
             pushUpdateToLive('FULL_UPDATE', activeClan);
             inp.value = '';
             renderChat();
@@ -1635,7 +1581,6 @@
                 delete cleanClan.logo; delete cleanClan.banner;
                 
                 let payload = { action: "update_clan", clan_id: activeClan.clanId, field: "FULL_UPDATE", value: JSON.stringify(cleanClan), set_premium_badge: true };
-                
                 secureFetch(payload).catch(()=>{});
                 
                 let index = userLiveClans.findIndex(c => c.clanId === activeClan.clanId);
@@ -1654,8 +1599,6 @@
         function renderDashboard(clan) {
             if(!clan || !clan.name) { returnToHub(); return; }
             
-            secureFetch({ action: "sync_clan_roster", clan_id: clan.clanId }).catch(()=>{});
-
             document.getElementById('hubState').style.display = 'none'; document.getElementById('hasClanState').style.display = 'block';
             document.getElementById('dashName').innerText = clan.name; document.getElementById('dashTag').innerText = (clan.tag || "TNYX").toUpperCase();
             document.getElementById('dashId').innerText = clan.clanId || "N/A";
@@ -1755,8 +1698,6 @@
 
             sortedRoster.forEach(member => {
                 let rColor = member.role==='Owner' ? 'var(--accent-orange)' : (member.role==='Admin'?'var(--accent-cyan)':'#ccc');
-                
-                // 🔥 THE FIX: Perfectly escape all single quotes to %27 so HTML never breaks!
                 let encodedData = encodeURIComponent(JSON.stringify(member)).replace(/'/g, "%27");
                 let isOnline = Math.random() > 0.5 ? 'block' : 'none'; if(member.name === user.username) isOnline = 'block'; 
 
@@ -1771,7 +1712,6 @@
 
                 let pAvatarUrl = member.avatar || member.Avatar || member.logo || member.pic || member.profile_pic || `https://ui-avatars.com/api/?name=${encodeURIComponent(member.name)}&background=110822&color=00f2ff`;
 
-                // 🔥 THE FIX: Removed the buggy 4th argument, making the onclick flawlessly clean
                 rl.innerHTML += `
                     <div class="roster-item" onclick="openMemberCard('${encodedData}', ${isAdmin}, ${isOwner})">
                         <img src="${pAvatarUrl}" class="r-avatar" id="avatar-${member.name.replace(/\s+/g,'')}">
@@ -1797,8 +1737,6 @@
             });
         }
 
-        // 🔥 UPGRADE: Bulletproof UX Overflow for Player Modal
-        // 🔥 THE FIX: Updated Signature and Safe Name Escaping
         function openMemberCard(encodedStr, isAdminViewing, isOwnerViewing) {
             triggerHaptic();
             let m = JSON.parse(decodeURIComponent(encodedStr));
@@ -1806,15 +1744,12 @@
             
             let isMe = (m.name === user.username);
             let adminActionsHtml = "";
-            
-            // 🔥 THE FIX: Safely escape the name for the admin action buttons to prevent crashes
             let safeMName = m.name.replace(/'/g, "&apos;").replace(/"/g, "&quot;");
             
             if(isAdminViewing && !isMe) {
-                adminActionsHtml += `<div style="margin-top:20px; border-top:1px dashed var(--glass-border); padding-top:20px;">`;
+                adminActionsHtml += `<div style="margin-top:20px; border-top:1px dashed var(--card-border); padding-top:20px;">`;
                 adminActionsHtml += `<div style="font-family:var(--font-head); font-size:0.85rem; color:var(--accent-cyan); margin-bottom:12px; text-transform:uppercase; font-weight:bold;">Admin Controls</div>`;
                 adminActionsHtml += `<div style="display:flex; gap:10px; flex-wrap:wrap;">`;
-                
                 adminActionsHtml += `<button class="btn-secondary" style="flex:1; margin:0; padding:12px; font-size:0.85rem;" onclick="openRoleDropdown(event, '${safeMName}')"><i class="fa-solid fa-crosshairs"></i> Set Role</button>`;
                 
                 if(isOwnerViewing && m.role === 'Player') {
@@ -1823,11 +1758,10 @@
                 if(isOwnerViewing && m.role === 'Admin') {
                     adminActionsHtml += `<button class="btn-secondary" style="flex:1; margin:0; padding:12px; font-size:0.85rem; color:#aaa; border-color:#aaa;" onclick="modRole(event, '${safeMName}', 'Player')"><i class="fa-solid fa-arrow-down"></i> Demote</button>`;
                 }
-                
                 adminActionsHtml += `<button class="btn-danger" style="flex:1; margin:0; padding:12px; font-size:0.85rem;" onclick="kickMember(event, '${safeMName}')"><i class="fa-solid fa-ban"></i> Kick</button>`;
                 adminActionsHtml += `</div></div>`;
             } else if (isAdminViewing && isMe) {
-                adminActionsHtml += `<div style="margin-top:20px; border-top:1px dashed var(--glass-border); padding-top:20px;">`;
+                adminActionsHtml += `<div style="margin-top:20px; border-top:1px dashed var(--card-border); padding-top:20px;">`;
                 adminActionsHtml += `<button class="btn-secondary" style="width:100%; margin:0; padding:12px; font-size:0.85rem;" onclick="openRoleDropdown(event, '${safeMName}')"><i class="fa-solid fa-crosshairs"></i> Set My Game Role</button>`;
                 adminActionsHtml += `</div>`;
             }
@@ -1933,7 +1867,6 @@
             e.stopPropagation();
             if(confirm(`Are you absolutely sure you want to kick ${name}?`)) {
                 triggerSyncIndicator();
-                
                 let pLoad = { action: 'leave_clan', clan_id: activeClan.clanId, target_username: name, is_kick: true, admin_name: user.username };
                 secureFetch(pLoad).catch(()=>{});
                 
@@ -1952,7 +1885,6 @@
             triggerHaptic();
             if(confirm("Are you sure you want to leave this clan?")) {
                 triggerSyncIndicator();
-                
                 let pLoad = { action: 'leave_clan', clan_id: activeClan.clanId, target_username: user.username, is_kick: false };
                 secureFetch(pLoad).catch(()=>{});
                 
@@ -1960,7 +1892,8 @@
                 activeClan.notifications.push({ msg: `<b style='color:#ccc'>${user.username}</b> left the clan.`, timestamp: Date.now() });
                 activeClan.roster = activeClan.roster.filter(r => r.name !== user.username);
                 
-                secureFetch({ action: "update_clan", clan_id: activeClan.clanId, field: "FULL_UPDATE", value: JSON.stringify(activeClan) }).catch(()=>{});
+                let cleanClan = JSON.parse(JSON.stringify(activeClan)); delete cleanClan.logo; delete cleanClan.banner;
+                secureFetch({ action: "update_clan", clan_id: activeClan.clanId, field: "FULL_UPDATE", value: JSON.stringify(cleanClan) }).catch(()=>{});
 
                 userLiveClans = userLiveClans.filter(c => c.clanId !== activeClan.clanId);
                 
@@ -1979,14 +1912,20 @@
                 
                 if(mData.status === 'success' && mData.data && mData.data.length > 0) {
                     mData.data.forEach(m => {
-                        if(String(m.clan).toLowerCase() === String(clan.name).toLowerCase() || String(m.team).toLowerCase() === String(clan.name).toLowerCase()) {
+                        let extractedClanName = "Solo Player";
+                        if (typeof m.clan === 'string') {
+                            if (m.clan.startsWith("{")) {
+                                try { let pd = JSON.parse(m.clan); extractedClanName = pd.name || pd.clan_name || pd.username || "Clan"; } catch(e) {}
+                            } else if (m.clan !== "[object Object]") { extractedClanName = m.clan; }
+                        } else if (typeof m.clan === 'object' && m.clan !== null) { extractedClanName = m.clan.name || m.clan.clan_name || m.clan.username || "Clan"; }
+
+                        if(String(extractedClanName).toLowerCase() === String(clan.name).toLowerCase() || String(m.team).toLowerCase() === String(clan.name).toLowerCase()) {
                             let s = String(m.status || m.match_status || m.db_status || "").toLowerCase();
                             if(s.includes('completed') || s.includes('past') || s.includes('resolved') || s.includes('won') || s.includes('finished')) {
                                 played++;
                                 let prizeNum = parseInt(m.prize || m.winnings || "0");
                                 let pos = String(m.position || m.rank || m.standing || m.placement || "").toLowerCase().trim();
                                 
-                                // Precise Win Identification Logic
                                 let isTop3 = ["1", "2", "3", "1st", "2nd", "3rd"].includes(pos);
                                 if (isTop3 || s.includes('won') || (!isNaN(prizeNum) && prizeNum > 0)) { 
                                     won++; 
@@ -2069,6 +2008,7 @@
             pushUpdateToLive('FULL_UPDATE', activeClan); 
             showToast("Recruitment set to " + activeClan.status);
         }
+
         function toggleAutoAccept() {
             triggerHaptic();
             activeClan.autoAccept = document.getElementById('dashAutoAccept').checked;
@@ -2138,7 +2078,6 @@
             }
         }
         
-        // 🔥 UPGRADE: PURE URL SHARE (NO INTENT URL)
         function nativeShare() {
             triggerHaptic();
             let baseOrigin = window.location.hostname.includes("tournyx.in") ? window.location.origin : "https://tournyx.in";
@@ -2289,7 +2228,7 @@
             activeModalClanId = null;
         }
 
-       function openPublicClanModal(cId, isSilent = false) {
+        function openPublicClanModal(cId, isSilent = false) {
             if(!isSilent) triggerHaptic();
             let c = globalClans.find(clan => clan.clanId === cId);
             if(!c) return;
@@ -2350,7 +2289,6 @@
                 c.roster.forEach(r => {
                     let rColor = r.role === 'Owner' ? 'var(--accent-orange)' : (r.role === 'Admin' ? 'var(--accent-cyan)' : '#ccc');
                     
-                    // 🔥 FIND TAB AUTO-HEAL ALGORITHM
                     if (r.name === user.username) {
                         let pAvatar = user.avatar || "";
                         if (r.avatar !== pAvatar) {
@@ -2370,7 +2308,6 @@
                         </div>
                     </div>`;
                     
-                    // 🔥 LAG FIX: Delay fetching API avatars until animation completes
                     if(!r.avatar) {
                         setTimeout(() => {
                             secureFetch({ action: "get_avatar", username: r.name }).then(d => {
@@ -2383,7 +2320,6 @@
                     }
                 });
 
-                // Fire silent heal if we updated our own avatar in someone else's clan view
                 if (needsGlobalAutoHeal) {
                     let cleanClan = JSON.parse(JSON.stringify(c)); delete cleanClan.logo; delete cleanClan.banner;
                     secureFetch({ action: "update_clan", clan_id: c.clanId, field: "FULL_UPDATE", value: JSON.stringify(cleanClan) }).catch(()=>{});
@@ -2398,7 +2334,6 @@
 
             let isRequested = (c.requests && c.requests.some(r => r.name === user.username)) || localRequestedClans.has(c.clanId);
             
-            // 🔥 INSTANT LINK JOIN LOGIC
             let urlParams = new URLSearchParams(window.location.search);
             let isFromInviteLink = urlParams.get('invite') === c.clanId;
 
@@ -2406,7 +2341,6 @@
             if(isMember) {
                 btnActionHtml = `<button class="btn-primary" style="width:100%; margin:0; background:rgba(255,255,255,0.1); color:white; box-shadow:none;" onclick="closePublicModal()">ALREADY A MEMBER</button>`;
             } else if (isFromInviteLink) {
-                // If they came from the invite link, bypass the request queue
                 btnActionHtml = `<button class="btn-primary" style="width:100%; margin:0; background:var(--accent-green); color:black;" onclick="instantLinkJoin('${c.clanId}', '${c.name.replace(/'/g, "\\'")}', '${c.game}'); closePublicModal();"><i class="fa-solid fa-bolt"></i> ACCEPT INVITE & JOIN</button>`;
             } else if (isRejected) {
                 btnActionHtml = `<button class="btn-primary" style="width:100%; border-color:var(--accent-cyan); background:transparent; color:var(--accent-cyan); margin:0;" onclick="triggerJoinFlow('${c.clanId}', '${c.name.replace(/'/g, "\\'")}', '${c.game || "Esports"}', ${c.autoAccept}, this); closePublicModal();">RE-APPLY TO SQUAD</button>`;
@@ -2539,7 +2473,6 @@
 
         function closeJoinModal() { triggerHaptic(); document.getElementById('joinDataModal').classList.remove('active'); pendingJoinData = {}; }
 
-        // 🔥 UPGRADE: Bulletproof Payloads for Joining
         async function processJoinRequest(e) {
             triggerHaptic();
             
@@ -2547,7 +2480,6 @@
             let ign = user.gameName || user.ign || user.inGameName || user.username || "Not Set"; 
             let uid = user.uid || user.gameUid || user.playerId || "Not Set";
             let uAvatar = user.avatar || "";
-            // Added timestamp so the Inbox filter catches it perfectly
             let playerObj = { name: user.username, email: user.email, role: "Player", phone: phone, gameName: ign, uid: uid, state: user.state || "N/A", city: user.city || "N/A", avatar: uAvatar, timestamp: Date.now() };
             
             let btnSubmit = document.getElementById('btnFinalJoin');
@@ -2564,19 +2496,16 @@
                 if(!targetClan.notifications) targetClan.notifications = [];
                 targetClan.notifications.push({ msg: `<b style='color:var(--accent-green)'>${user.username}</b> joined the clan!`, timestamp: Date.now() });
                 
-                // 🔥 DIRECT DB INJECTION FIX
                 let cleanClan = JSON.parse(JSON.stringify(targetClan)); delete cleanClan.logo; delete cleanClan.banner;
                 await secureFetch({ action: "update_clan", clan_id: cId, field: "FULL_UPDATE", value: JSON.stringify(cleanClan) });
                 
                 triggerCelebration("SQUAD JOINED!", "POWER YOUR PLAY ⚡");
             } else {
                 if(!targetClan.requests) targetClan.requests = [];
-                // Prevent duplicate requests
                 targetClan.requests = targetClan.requests.filter(r => r.name !== user.username);
                 targetClan.requests.push(playerObj);
                 localRequestedClans.add(cId);
 
-                // 🔥 DIRECT DB INJECTION FIX
                 let cleanClan = JSON.parse(JSON.stringify(targetClan)); delete cleanClan.logo; delete cleanClan.banner;
                 await secureFetch({ action: "update_clan", clan_id: cId, field: "FULL_UPDATE", value: JSON.stringify(cleanClan) });
                 
@@ -2586,7 +2515,6 @@
                     }
                 });
                 
-                // Alert the owner via OneSignal
                 if (targetClan.roster && targetClan.roster[0] && targetClan.roster[0].email) {
                     sendTournyxPush(targetClan.roster[0].email, "📥 New Clan Request", `${user.username} wants to join ${targetClan.name}!`);
                 }
@@ -2794,7 +2722,6 @@
             let targetClan = globalClans.find(c => c.clanId === cId);
             if(targetClan && targetClan.directInvites) {
                 targetClan.directInvites = targetClan.directInvites.filter(i => i.name !== user.username);
-                // 🔥 DIRECT DB INJECTION FIX
                 let cleanClan = JSON.parse(JSON.stringify(targetClan)); delete cleanClan.logo; delete cleanClan.banner;
                 await secureFetch({ action: "update_clan", clan_id: cId, field: "FULL_UPDATE", value: JSON.stringify(cleanClan) });
             }
@@ -2807,6 +2734,7 @@
             }
             renderRequests();
         }
+        
         async function handleReq(encData, isAccept, cId, btnElement) {
             triggerHaptic();
             let reason = "";
@@ -2864,11 +2792,9 @@
                         if (reqData.email) sendTournyxPush(reqData.email, "❌ Clan Application Rejected", `${targetClan.name} rejected your application. Reason: ${reason}`);
                     }
                     
-                    // 🔥 DIRECT DB INJECTION FIX
                     let cleanClan = JSON.parse(JSON.stringify(targetClan)); delete cleanClan.logo; delete cleanClan.banner;
                     await secureFetch({ action: "update_clan", clan_id: cId, field: "FULL_UPDATE", value: JSON.stringify(cleanClan) });
                     
-                    // Keep UI arrays synced
                     let index = userLiveClans.findIndex(c => c.clanId === cId);
                     if(index !== -1) userLiveClans[index] = targetClan;
                     if(activeClan && activeClan.clanId === cId) activeClan = targetClan;
@@ -2883,168 +2809,7 @@
                 console.error("Error processing request", e);
             }
         }
-    function processAvatarUpload(e) {
-            const file = e.target.files[0]; if(!file) return;
-            showToast("Uploading Profile Avatar...", false);
-            const reader = new FileReader();
-            reader.onload = (ev) => { 
-                const img = new Image();
-                img.onload = () => {
-                    const canvas = document.createElement('canvas');
-                    let scaleSize = 250 / img.width;
-                    if(scaleSize > 1) scaleSize = 1; 
-                    canvas.width = img.width * scaleSize;
-                    canvas.height = img.height * scaleSize;
-                    const ctx = canvas.getContext('2d');
-                    ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-                    
-                    const compressedBase64 = canvas.toDataURL('image/jpeg', 0.6); 
-                    const base64Data = compressedBase64.split(',')[1];
-                    const formData = new FormData();
-                    formData.append("image", base64Data);
-                    
-                    fetch("https://api.imgbb.com/1/upload?key=727c66ecfe2882d63fee08fee7495850", { method: "POST", body: formData })
-                    .then(res => res.json())
-                    .then(result => {
-                        if(result.success) {
-                            let imgbbUrl = result.data.url;
-                            
-                            // Save to Local User
-                            user.avatar = imgbbUrl;
-                            localStorage.setItem('tournyx_user', JSON.stringify(user));
-                            document.getElementById('headerProfilePic').src = imgbbUrl;
-                            let cardAvatar = document.getElementById('cardAvatarImg');
-                            if(cardAvatar) cardAvatar.src = imgbbUrl;
-                            
-                            // Save to Backend Profile
-                            secureFetch({action: "update_profile", email: user.email, field: "avatar", value: imgbbUrl}).catch(()=>{});
-
-                            // Save to Clan Roster
-                            let myRosterIndex = activeClan.roster.findIndex(r => String(r.name).toLowerCase() === String(user.username).toLowerCase());
-                            if(myRosterIndex !== -1) {
-                                activeClan.roster[myRosterIndex].avatar = imgbbUrl;
-                                pushUpdateToLive('FULL_UPDATE', activeClan);
-                            }
-
-                            showToast("Avatar Updated Perfectly!"); 
-                        } else { showToast("Image upload failed. Try again.", true); }
-                    }).catch(() => showToast("Upload error.", true));
-                };
-                img.src = ev.target.result;
-            };
-            reader.readAsDataURL(file);
-        }
-        // 🔥 DIRECT LINK INSTANT JOIN PROCESSOR
-        async function instantLinkJoin(cId, cName, cGame) {
-            triggerHaptic();
-            if(isGuestMode) { document.getElementById('guestLoginModal').classList.add('active'); return; }
-
-            let existingClansForGame = userLiveClans.filter(c => c.game === cGame);
-            if(existingClansForGame.length >= 3) { showToast(`Max 3 clans allowed for ${cGame}!`, true); return; }
-
-            showToast("Authenticating Invite Link...");
-            
-            let phone = user.phone || user.mobile || "Not Set"; 
-            let ign = user.gameName || user.ign || user.inGameName || user.username || "Not Set"; 
-            let uid = user.uid || user.gameUid || user.playerId || "Not Set";
-            let uAvatar = user.avatar || "";
-            // Added timestamp
-            let playerObj = { name: user.username, email: user.email, role: "Player", phone: phone, gameName: ign, uid: uid, state: user.state || "N/A", city: user.city || "N/A", avatar: uAvatar, timestamp: Date.now() };
-            
-            let targetClan = globalClans.find(c => c.clanId === cId);
-            if (!targetClan) { showToast("Clan not found.", true); return; }
-
-            if(!targetClan.roster) targetClan.roster = [];
-            targetClan.roster.push(playerObj);
-            if(!targetClan.notifications) targetClan.notifications = [];
-            targetClan.notifications.push({ msg: `<b style='color:var(--accent-green)'>${user.username}</b> joined the clan via Invite Link!`, timestamp: Date.now() });
-
-            if(targetClan.directInvites) {
-                targetClan.directInvites = targetClan.directInvites.filter(i => i.name !== user.username);
-            }
-
-            // 🔥 DIRECT DB INJECTION FIX
-            let cleanClan = JSON.parse(JSON.stringify(targetClan)); delete cleanClan.logo; delete cleanClan.banner;
-            await secureFetch({ action: "update_clan", clan_id: cId, field: "FULL_UPDATE", value: JSON.stringify(cleanClan) });
-            
-            triggerCelebration("SQUAD JOINED!", "POWER YOUR PLAY ⚡");
-            
-            window.history.replaceState({}, document.title, window.location.pathname);
-            setTimeout(() => { fetchAllClansSilent(); fetchLiveClanData(true); }, 2000);
-        }
-</script>
-       <!-- 🔥 UPGRADE: DISCORD-STYLE WEBRTC VOICE MODAL -->
-    <div class="modal-overlay" id="voiceChatModal">
-        <div class="modal-box" style="text-align: center; border-color: var(--accent-purple);">
-            <div class="modal-header">
-                <div class="modal-title"><i class="fa-solid fa-satellite-dish" style="color:var(--accent-purple);"></i> Squad Voice</div>
-                <i class="fa-solid fa-xmark modal-close" onclick="leaveVoiceChat()"></i>
-            </div>
-            
-            <div style="position: relative; width: 100px; height: 100px; margin: 0 auto 20px;">
-                <div id="voiceRipples" style="position: absolute; width: 100%; height: 100%; border-radius: 50%; border: 2px solid var(--accent-purple); animation: livePulse 1.5s infinite; opacity: 0; transition: 0.3s;"></div>
-                <img src="" id="voiceMyAvatar" style="width: 100px; height: 100px; border-radius: 50%; object-fit: cover; border: 3px solid var(--accent-purple); box-shadow: 0 0 20px rgba(189,0,255,0.5); position: relative; z-index: 2;">
-            </div>
-            
-            <h3 style="font-family: var(--font-head); font-size: 1.2rem; color: white; margin-bottom: 5px;" id="voiceStatusText">Connecting to Server...</h3>
-            <p style="font-size: 0.8rem; color: #888; margin-bottom: 20px;">Live Audio WebRTC Protocol</p>
-            
-            <div id="connectedPeersList" style="display: flex; justify-content: center; gap: 10px; margin-bottom: 20px; flex-wrap: wrap;"></div>
-            
-            <div style="display: flex; gap: 10px; justify-content: center;">
-                <button class="btn-secondary" id="btnMuteMic" style="width: auto; padding: 12px 20px; border-color: #888; color: white;" onclick="toggleMute()"><i class="fa-solid fa-microphone"></i></button>
-                <button class="btn-danger" style="width: auto; padding: 12px 20px;" onclick="leaveVoiceChat()"><i class="fa-solid fa-phone-slash"></i> Disconnect</button>
-            </div>
-            
-            <!-- Hidden Audio Elements for Peers -->
-            <div id="audioContainer" style="display: none;"></div>
-        </div>
-    </div>
-
-   <!-- 🔥 DISCORD-STYLE WEBRTC VOICE ENGINE -->
-    <script src="https://unpkg.com/peerjs@1.5.1/dist/peerjs.min.js"></script>
-    
-    <div class="modal-overlay" id="voiceChatModal">
-        <div class="modal-box" style="text-align: center; border-color: var(--accent-purple);">
-            <div class="modal-header">
-                <div class="modal-title"><i class="fa-solid fa-satellite-dish" style="color:var(--accent-purple);"></i> Squad Voice</div>
-                <i class="fa-solid fa-xmark modal-close" onclick="leaveVoiceChat()"></i>
-            </div>
-            
-            <div style="position: relative; width: 100px; height: 100px; margin: 0 auto 20px;">
-                <div id="voiceRipples" style="position: absolute; width: 100%; height: 100%; border-radius: 50%; border: 2px solid var(--accent-purple); animation: livePulse 1.5s infinite; opacity: 0; transition: 0.3s;"></div>
-                <img src="" id="voiceMyAvatar" style="width: 100px; height: 100px; border-radius: 50%; object-fit: cover; border: 3px solid var(--accent-purple); box-shadow: 0 0 20px rgba(189,0,255,0.5); position: relative; z-index: 2;">
-            </div>
-            
-            <h3 style="font-family: var(--font-head); font-size: 1.2rem; color: white; margin-bottom: 5px;" id="voiceStatusText">Connecting to Server...</h3>
-            <p style="font-size: 0.8rem; color: #888; margin-bottom: 20px;">Live Audio WebRTC Protocol</p>
-            
-            <div id="connectedPeersList" style="display: flex; justify-content: center; gap: 10px; margin-bottom: 20px; flex-wrap: wrap;"></div>
-            
-            <div style="display: flex; gap: 10px; justify-content: center;">
-                <button class="btn-secondary" id="btnMuteMic" style="width: auto; padding: 12px 20px; border-color: #888; color: white;" onclick="toggleMute()"><i class="fa-solid fa-microphone"></i></button>
-                <button class="btn-danger" style="width: auto; padding: 12px 20px;" onclick="leaveVoiceChat()"><i class="fa-solid fa-phone-slash"></i> Disconnect</button>
-            </div>
-            
-            <div id="audioContainer" style="display: none;"></div>
-        </div>
-    </div>
-
-    <script>
-        let localPeer = null; let localStream = null; let isMuted = false; let bgWakeLock = null;
         
-        // Channel for realtime broadcasts
-        const voiceChannel = db.channel('voice-alerts');
-        voiceChannel.on('broadcast', { event: 'voice_started' }, payload => {
-            let isMyClan = userLiveClans.some(c => c.clanId === payload.payload.clanId);
-            if (isMyClan && payload.payload.user !== user.username) {
-                showToast(`🎙️ ${payload.payload.user} started Voice Chat in ${payload.payload.clanName}!`);
-                triggerHaptic();
-            }
-        }).subscribe();
-
-        function interceptNavForVoice(e) { if (localStream) { e.preventDefault(); showToast("Cannot navigate while in a Voice Chat! Disconnect first.", true); } }
-
         async function openVoiceChat() {
             triggerHaptic();
             if(isGuestMode) { document.getElementById('guestLoginModal').classList.add('active'); return; }
@@ -3073,7 +2838,9 @@
                     document.getElementById('voiceStatusText').innerText = "Connected! Minimize App to Play.";
                     document.getElementById('voiceStatusText').style.color = "var(--accent-green)";
                     
-                    voiceChannel.send({ type: 'broadcast', event: 'voice_started', payload: { clanId: activeClan.clanId, clanName: activeClan.name, user: user.username } });
+                    if(typeof voiceChannel !== 'undefined') {
+                        voiceChannel.send({ type: 'broadcast', event: 'voice_started', payload: { clanId: activeClan.clanId, clanName: activeClan.name, user: user.username } });
+                    }
 
                     try {
                         let rosterNames = activeClan.roster.map(r => r.name);
@@ -3095,12 +2862,15 @@
                 localPeer.on('error', err => { throw new Error("Voice Server Connection Failed."); });
                 
             } catch (err) {
+                console.error("Voice Error:", err);
                 document.getElementById('voiceStatusText').innerText = "Access Denied / Error";
                 document.getElementById('voiceStatusText').style.color = "#ff4d4d";
                 document.getElementById('voiceRipples').style.opacity = '0';
                 showToast(err.message || "Allow microphone permissions to talk.", true);
             }
         }
+
+        function interceptNavForVoice(e) { if (localStream) { e.preventDefault(); showToast("Cannot navigate while in a Voice Chat! Disconnect first.", true); } }
 
         function addRemoteAudio(peerId, stream) {
             if(!document.getElementById(`audio-${peerId}`)) {
