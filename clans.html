@@ -482,7 +482,9 @@
         <div class="filter-pill" onclick="filterClansByGame('Valorant', this)"><i class="fa-solid fa-v" style="color:red;"></i> Valorant Mobile</div>
     </div>
 
-    <div id="skeletonLoader" class="skeleton-wrapper active">
+    <!-- 🔥 UPGRADED: Hardcoded to show instantly at 0ms, preventing the black background flash -->
+    <div id="skeletonLoader" class="skeleton-wrapper active" style="display: flex;">
+        <div class="skeleton" style="height: 140px;"></div>
         <div class="skeleton" style="height: 140px;"></div>
         <div class="skeleton" style="height: 140px;"></div>
     </div>
@@ -930,7 +932,18 @@
         db.channel('live-matches-channel').on('postgres_changes', { event: '*', schema: 'public', table: 'Matches' }, payload => {
             if(activeClan) calculateLiveClanStats(activeClan);
         }).subscribe();
-
+        // 🔥 UPGRADE: INSTANT VOICE CHAT BROADCAST LISTENER
+        const voiceChannel = db.channel('voice-alerts');
+        voiceChannel.on('broadcast', { event: 'voice_started' }, payload => {
+            // If the broadcast is for my clan, and it wasn't me who sent it, trigger a notification!
+            if (activeClan && payload.payload.clanId === activeClan.clanId && payload.payload.user !== user.username) {
+                showToast(`🎙️ ${payload.payload.user} started a Voice Chat! Drop in!`);
+                triggerHaptic();
+                if ("Notification" in window && Notification.permission === "granted") {
+                    new Notification("Squad Voice Live!", { body: `${payload.payload.user} is waiting in the Clan Hub.`, icon: "https://tournyx.in/favicon.png" });
+                }
+            }
+        }).subscribe();
         // --- SECURE POST FETCHER LOGIC (SUPABASE WRAPPER) ---
         async function secureFetch(payload) {
             try {
@@ -2964,48 +2977,72 @@
     </div>
 
     <script>
-        // --- WEBRTC VOICE CHAT ENGINE ---
+       // --- WEBRTC VOICE CHAT & BACKGROUND GAMING ENGINE ---
         let localPeer = null;
         let localStream = null;
         let activeCalls = {};
         let isMuted = false;
+        let bgWakeLock = null; // Keeps OS from killing app while gaming
 
-        function openVoiceChat() {
+        // 🛡️ Prevent accidental call drops
+        function interceptNavForVoice(e) {
+            if (localStream) {
+                e.preventDefault();
+                showToast("Cannot navigate while in a Voice Chat! Disconnect first.", true);
+            }
+        }
+
+        async function openVoiceChat() {
             triggerHaptic();
             if(isGuestMode) { document.getElementById('guestLoginModal').classList.add('active'); return; }
+            
             document.getElementById('voiceChatModal').classList.add('active');
             document.getElementById('voiceMyAvatar').src = user.avatar || `https://ui-avatars.com/api/?name=${user.username}&background=110822&color=bd00ff`;
             document.getElementById('voiceStatusText').innerText = "Requesting Microphone...";
             
-            navigator.mediaDevices.getUserMedia({ audio: true, video: false })
-            .then(stream => {
-                localStream = stream;
+            try {
+                // 1. Get Mic & Setup Background Audio
+                localStream = await navigator.mediaDevices.getUserMedia({ audio: true, video: false });
                 document.getElementById('voiceRipples').style.opacity = '1';
                 document.getElementById('voiceStatusText').innerText = "Joining Voice Channel...";
                 
-                // Initialize PeerJS
+                // 2. Request Wake Lock so OS doesn't kill WebRTC while playing BGMI/FF
+                if ('wakeLock' in navigator) {
+                    try { bgWakeLock = await navigator.wakeLock.request('screen'); } catch (err) {}
+                }
+
+                // 3. Lock Navigation
+                document.querySelectorAll('.bottom-nav a, .desktop-nav a').forEach(el => {
+                    el.addEventListener('click', interceptNavForVoice);
+                });
+
+                // 4. Connect to WebRTC
                 const myPeerId = "TX-VOICE-" + user.username.replace(/[^a-zA-Z0-9]/g, '') + "-" + activeClan.clanId;
                 localPeer = new Peer(myPeerId);
                 
                 localPeer.on('open', id => {
-                    document.getElementById('voiceStatusText').innerText = "Connected to Squad!";
+                    document.getElementById('voiceStatusText').innerText = "Connected! Minimize App to Play.";
                     document.getElementById('voiceStatusText').style.color = "var(--accent-green)";
-                    // Ping clan members in database to call this peer (Simulated for serverless HTML)
-                    showToast("Waiting for squad members to join...", false);
+                    
+                    // 🔥 INSTANT BROADCAST TO CLAN MEMBERS 🔥
+                    voiceChannel.send({
+                        type: 'broadcast', event: 'voice_started',
+                        payload: { clanId: activeClan.clanId, user: user.username }
+                    });
                 });
 
                 localPeer.on('call', call => {
-                    call.answer(localStream); // Answer with our microphone
+                    call.answer(localStream); 
                     call.on('stream', remoteStream => {
                         addRemoteAudio(call.peer, remoteStream);
                     });
                 });
-            })
-            .catch(err => {
+                
+            } catch (err) {
                 document.getElementById('voiceStatusText').innerText = "Microphone Access Denied";
                 document.getElementById('voiceStatusText').style.color = "#ff4d4d";
-                showToast("Please allow microphone permissions to use Voice Chat.", true);
-            });
+                showToast("Allow microphone permissions to talk.", true);
+            }
         }
 
         function addRemoteAudio(peerId, stream) {
@@ -3014,14 +3051,17 @@
                 audioEl.id = `audio-${peerId}`;
                 audioEl.srcObject = stream;
                 audioEl.autoplay = true;
+                
+                // Required to keep audio alive in iOS background Safari/PWA
+                audioEl.playsInline = true; 
+                
                 document.getElementById('audioContainer').appendChild(audioEl);
                 
-                // Add tiny avatar to connected list
                 const cleanName = peerId.split('-')[2] || "Player";
                 document.getElementById('connectedPeersList').innerHTML += `
-                    <div id="ui-${peerId}" style="display:flex; flex-direction:column; align-items:center; gap:5px;">
-                        <div style="width:30px; height:30px; border-radius:50%; background:var(--accent-green); border:2px solid var(--primary-bg); display:flex; align-items:center; justify-content:center; color:black; font-size:0.8rem; font-family:var(--font-head);"><i class="fa-solid fa-volume-high"></i></div>
-                        <span style="font-size:0.6rem; color:#ccc;">${cleanName}</span>
+                    <div id="ui-${peerId}" style="display:flex; flex-direction:column; align-items:center; gap:5px; animation: popIn 0.3s;">
+                        <div style="width:30px; height:30px; border-radius:50%; background:var(--accent-green); border:2px solid var(--primary-bg); display:flex; align-items:center; justify-content:center; color:black; font-size:0.8rem; box-shadow: 0 0 10px var(--accent-green);"><i class="fa-solid fa-volume-high"></i></div>
+                        <span style="font-size:0.6rem; color:#ccc; font-family:var(--font-head); font-weight:bold;">${cleanName}</span>
                     </div>
                 `;
             }
@@ -3049,12 +3089,17 @@
             triggerHaptic();
             if(localStream) localStream.getTracks().forEach(track => track.stop());
             if(localPeer) localPeer.destroy();
+            if(bgWakeLock) bgWakeLock.release().then(() => bgWakeLock = null);
             
+            // Release Navigation Locks
+            document.querySelectorAll('.bottom-nav a, .desktop-nav a').forEach(el => {
+                el.removeEventListener('click', interceptNavForVoice);
+            });
+
             document.getElementById('audioContainer').innerHTML = '';
             document.getElementById('connectedPeersList').innerHTML = '';
             document.getElementById('voiceChatModal').classList.remove('active');
             
-            // Reset UI
             let btn = document.getElementById('btnMuteMic');
             btn.innerHTML = '<i class="fa-solid fa-microphone"></i>';
             btn.style.color = "white"; btn.style.borderColor = "#888";
