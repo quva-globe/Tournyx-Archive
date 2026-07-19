@@ -1218,14 +1218,21 @@
         }
 
         // 🔥 UPGRADE: Skeleton Loader for Find Tab
+       // 🔥 UPGRADE: Bulletproof Loader for Find Tab
         async function fetchAllClans() {
             const container = document.getElementById('globalClansList');
-            container.innerHTML = `
-                <div class="skeleton-wrapper active" style="padding:0; gap:12px;">
-                    <div class="skeleton" style="height: 120px; width: 100%;"></div>
-                    <div class="skeleton" style="height: 120px; width: 100%;"></div>
-                    <div class="skeleton" style="height: 120px; width: 100%;"></div>
-                </div>`;
+            
+            // 1. Force the loader to show visibly using inline flex
+            if (globalClans.length === 0) {
+                container.innerHTML = `
+                    <div class="skeleton-wrapper active" style="display: flex; flex-direction: column; padding:0; gap:15px; width: 100%;">
+                        <div class="skeleton" style="height: 130px; width: 100%; border-radius: 15px;"></div>
+                        <div class="skeleton" style="height: 130px; width: 100%; border-radius: 15px;"></div>
+                        <div class="skeleton" style="height: 130px; width: 100%; border-radius: 15px;"></div>
+                    </div>`;
+            } else {
+                searchGlobalClans(); // Instant load from cache if already loaded
+            }
             
             try {
                 let data = await secureFetch({ action: "get_all_clans" });
@@ -1243,15 +1250,18 @@
                         } catch(e){}
                     });
                     globalClans = allParsed;
-                    searchGlobalClans();
+                    searchGlobalClans(); // Overwrite loader with fresh data
                 } else {
-                    container.innerHTML = "<div style='text-align:center; color:var(--accent-red); padding:40px;'><i class='fa-solid fa-triangle-exclamation' style='font-size:2rem; margin-bottom:10px;'></i><br>Failed to load clans.</div>";
+                    if(globalClans.length === 0) {
+                        container.innerHTML = "<div style='text-align:center; color:var(--accent-red); padding:40px;'><i class='fa-solid fa-triangle-exclamation' style='font-size:2rem; margin-bottom:10px;'></i><br>Failed to load clans.</div>";
+                    }
                 }
             } catch(e) {
-                container.innerHTML = "<div style='text-align:center; color:var(--accent-red); padding:40px;'><i class='fa-solid fa-wifi' style='font-size:2rem; margin-bottom:10px;'></i><br>Network Connection Error.</div>";
+                if(globalClans.length === 0) {
+                    container.innerHTML = "<div style='text-align:center; color:var(--accent-red); padding:40px;'><i class='fa-solid fa-wifi' style='font-size:2rem; margin-bottom:10px;'></i><br>Network Connection Error.</div>";
+                }
             }
         }
-        
         async function fetchAllClansSilent() {
             try {
                 let data = await secureFetch({ action: "get_all_clans" });
@@ -3003,6 +3013,11 @@
             document.getElementById('voiceStatusText').innerText = "Requesting Microphone...";
             
             try {
+                // 🔥 CRASH FIX: Manually check if the browser supports the API or is blocking it (HTTP vs HTTPS)
+                if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+                    throw new Error("Microphone blocked. Are you on a secure HTTPS connection?");
+                }
+
                 // 1. Get Mic & Setup Background Audio
                 localStream = await navigator.mediaDevices.getUserMedia({ audio: true, video: false });
                 document.getElementById('voiceRipples').style.opacity = '1';
@@ -3014,30 +3029,32 @@
                 }
 
                 // 3. Connect to WebRTC
-                const myPeerId = "TX-VOICE-" + user.username.replace(/[^a-zA-Z0-9]/g, '') + "-" + activeClan.clanId;
+                let safeUsername = String(user.username || "player").replace(/[^a-zA-Z0-9]/g, '');
+                let safeClanId = String(activeClan.clanId || "clan").replace(/[^a-zA-Z0-9]/g, '');
+                const myPeerId = "TX-VOICE-" + safeUsername + "-" + safeClanId;
+                
+                // 🔥 CRASH FIX: Ensure PeerJS script loaded successfully
+                if (typeof Peer === 'undefined') throw new Error("Voice Engine failed to load. Check internet.");
                 localPeer = new Peer(myPeerId);
                 
                 localPeer.on('open', async id => {
                     document.getElementById('voiceStatusText').innerText = "Connected! Minimize App to Play.";
                     document.getElementById('voiceStatusText').style.color = "var(--accent-green)";
                     
-                    // 🔥 4. INSTANT BROADCAST TO ONLINE CLAN MEMBERS
-                    voiceChannel.send({
-                        type: 'broadcast', event: 'voice_started',
-                        payload: { clanId: activeClan.clanId, clanName: activeClan.name, user: user.username }
-                    });
+                    // INSTANT BROADCAST TO ONLINE CLAN MEMBERS
+                    if(typeof voiceChannel !== 'undefined') {
+                        voiceChannel.send({
+                            type: 'broadcast', event: 'voice_started',
+                            payload: { clanId: activeClan.clanId, clanName: activeClan.name, user: user.username }
+                        });
+                    }
 
-                    // 🔥 5. ONESIGNAL PUSH TO OFFLINE CLAN MEMBERS
+                    // ONESIGNAL PUSH TO OFFLINE CLAN MEMBERS
                     try {
-                        // Extract all clan member usernames
                         let rosterNames = activeClan.roster.map(r => r.name);
-                        
-                        // Query the Users table to securely get their exact emails for OneSignal
                         const { data: clanUsers } = await db.from('Users').select('email, username').in('username', rosterNames);
-                        
                         if (clanUsers) {
                             clanUsers.forEach(u => {
-                                // Do not send a push notification to yourself
                                 if (u.username !== user.username && u.email) {
                                     sendTournyxPush(u.email, `🎙️ ${activeClan.name} Voice Live!`, `${user.username} started a squad voice chat. Drop in!`);
                                 }
@@ -3053,10 +3070,16 @@
                     });
                 });
                 
+                localPeer.on('error', err => {
+                    throw new Error("Voice Server Connection Failed.");
+                });
+                
             } catch (err) {
-                document.getElementById('voiceStatusText').innerText = "Microphone Access Denied";
+                console.error("Voice Error:", err);
+                document.getElementById('voiceStatusText').innerText = "Access Denied / Error";
                 document.getElementById('voiceStatusText').style.color = "#ff4d4d";
-                showToast("Allow microphone permissions to talk.", true);
+                document.getElementById('voiceRipples').style.opacity = '0';
+                showToast(err.message || "Allow microphone permissions to talk.", true);
             }
         }
 
@@ -3100,17 +3123,17 @@
             }
         }
 
-        function leaveVoiceChat() {
+       function leaveVoiceChat() {
             triggerHaptic();
             
-            // Kill audio streams and WebRTC connection
-            if(localStream) localStream.getTracks().forEach(track => track.stop());
-            if(localPeer) localPeer.destroy();
-            
-            // Safely release the Background Gaming Lock
-            if(typeof bgWakeLock !== 'undefined' && bgWakeLock) {
-                bgWakeLock.release().then(() => bgWakeLock = null);
-            }
+            // 🔥 CRASH FIX: Wrapped cleanup in Try/Catch so modal ALWAYS closes even if stream failed
+            try {
+                if(localStream) localStream.getTracks().forEach(track => track.stop());
+                if(localPeer) localPeer.destroy();
+                if(typeof bgWakeLock !== 'undefined' && bgWakeLock) {
+                    bgWakeLock.release().then(() => bgWakeLock = null).catch(e=>{});
+                }
+            } catch(e) {}
             
             document.getElementById('audioContainer').innerHTML = '';
             document.getElementById('connectedPeersList').innerHTML = '';
@@ -3118,7 +3141,7 @@
             
             // Reset UI
             let btn = document.getElementById('btnMuteMic');
-            if (btn) {
+            if(btn) {
                 btn.innerHTML = '<i class="fa-solid fa-microphone"></i>';
                 btn.style.color = "white"; btn.style.borderColor = "#888";
             }
