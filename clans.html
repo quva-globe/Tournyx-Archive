@@ -1076,16 +1076,24 @@
 
             if (!isGuestMode) { 
                 let cachedClans = localStorage.getItem('tournyx_my_clans_cache');
-                if (cachedClans) {
-                    // Cache Hit: Instant Load
-                    userLiveClans = JSON.parse(cachedClans);
+                let parsedCache = [];
+                try { if(cachedClans) parsedCache = JSON.parse(cachedClans); } catch(e){}
+
+                if (parsedCache && parsedCache.length > 0) {
+                    // 🔥 INSTANT ZERO-DELAY LOAD: Kills the 1-second skeleton flash!
+                    userLiveClans = parsedCache;
                     document.getElementById('skeletonLoader').classList.remove('active');
                     document.getElementById('skeletonLoader').style.display = 'none';
                     document.getElementById('mainContent').style.display = 'block';
-                    if (userLiveClans.length > 0) renderHub(); else showNoClan();
-                    fetchLiveClanData(true); // Silent Sync
+                    
+                    renderHub(); 
+                    
+                    // Fetch live data silently in background to ensure sync
+                    fetchLiveClanData(true); 
                 } else {
-                    // First Visit: Force Loader
+                    // First Visit Only: Force Loader
+                    document.getElementById('mainContent').style.display = 'none';
+                    document.getElementById('skeletonLoader').style.display = 'flex';
                     fetchLiveClanData(false); 
                 }
             } else {
@@ -1097,7 +1105,7 @@
 
             let urlParams = new URLSearchParams(window.location.search);
             let inviteId = urlParams.get('invite');
-           if (inviteId) {
+            if (inviteId) {
                 let waitLoad = setInterval(() => {
                     if (globalClans.length > 0) {
                         clearInterval(waitLoad);
@@ -1110,7 +1118,7 @@
             // Hide emoji picker if clicked outside
             document.addEventListener('click', (e) => {
                 const picker = document.getElementById('emojiPicker');
-                if (picker.style.display === 'flex') {
+                if (picker && picker.style.display === 'flex') {
                     picker.style.display = 'none';
                 }
             });
@@ -1252,8 +1260,11 @@
 
         async function fetchLiveClanData(isSilent = false) {
             if(isGuestMode) return;
-            if(!isSilent) { document.getElementById('mainContent').style.display = 'none'; document.getElementById('skeletonLoader').classList.add('active'); } 
-            else { triggerSyncIndicator(); }
+            if(!isSilent) { 
+                document.getElementById('mainContent').style.display = 'none'; 
+                document.getElementById('skeletonLoader').classList.add('active'); 
+                document.getElementById('skeletonLoader').style.display = 'flex'; 
+            } else { triggerSyncIndicator(); }
 
             try {
                 user = JSON.parse(localStorage.getItem('tournyx_user')) || user;
@@ -1261,56 +1272,53 @@
                 
                 if (data.status === "success" && data.data && data.data.length > 0) {
                     let parsedClans = [];
-                    let needsLiveSyncUpdate = false; 
 
                     data.data.forEach(item => {
                         try {
-                            let clanObj = item;
-                            if (typeof item === 'string') clanObj = JSON.parse(item);
-                            else if (item.team_json) clanObj = typeof item.team_json === 'string' ? JSON.parse(item.team_json) : item.team_json;
+                            // Extract base JSON object safely without array depth errors
+                            let clanObj = typeof item.team_json === 'string' ? JSON.parse(item.team_json) : (item.team_json || item);
                             
-                            let myRosterIndex = clanObj.roster ? clanObj.roster.findIndex(r => String(r.name).toLowerCase() === String(user.username).toLowerCase()) : -1;
-                            
-                            if (myRosterIndex !== -1) {
-                                if(item.logo && item.logo.length > 20) clanObj.logo = item.logo;
-                                if(item.banner && item.banner.length > 20) clanObj.banner = item.banner;
-                                if (String(item.claimed_premium).toLowerCase() === 'true') { clanObj.isPremiumClan = true; }
+                            // Ensure external logo/banner and premium status map over
+                            if(item.logo && item.logo.length > 10) clanObj.logo = item.logo;
+                            if(item.banner && item.banner.length > 10) clanObj.banner = item.banner;
+                            if(String(item.claimed_premium).toLowerCase() === 'true') clanObj.isPremiumClan = true;
 
-                                // 🔥 AUTO-HEAL PLAYER PROFILE
-                                let currentRosterMe = clanObj.roster[myRosterIndex];
-                                let pPhone = user.phone || ""; 
-                                let pIgn = user.gameName || user.ign || user.username || ""; 
-                                let pUid = user.uid || user.gameUid || "";
-                                let pAvatar = user.avatar || "";
-                                
-                                if (currentRosterMe.phone !== pPhone || currentRosterMe.gameName !== pIgn || currentRosterMe.uid !== pUid || currentRosterMe.avatar !== pAvatar) {
-                                    clanObj.roster[myRosterIndex].phone = pPhone;
-                                    clanObj.roster[myRosterIndex].gameName = pIgn;
-                                    clanObj.roster[myRosterIndex].uid = pUid;
-                                    clanObj.roster[myRosterIndex].avatar = pAvatar;
-                                    needsLiveSyncUpdate = true;
-                                }
-                                parsedClans.push(clanObj);
-                            }
+                            // Ensure clan ID maps over securely
+                            if(item.clan_id) clanObj.clanId = item.clan_id;
+
+                            parsedClans.push(clanObj);
                         } catch(e) {}
                     });
 
                     userLiveClans = parsedClans;
                     
+                    // 🔥 THE CORE FIX: Update cache IMMEDIATELY so the next load is 0ms instant!
+                    localStorage.setItem('tournyx_my_clans_cache', JSON.stringify(parsedClans));
+                    
                     if(activeClan) {
                         let updatedClan = userLiveClans.find(c => c.clanId === activeClan.clanId);
-                        if(updatedClan) { activeClan = updatedClan; renderDashboard(activeClan); calculateLiveClanStats(activeClan); }
-                        else { returnToHub(); }
-                        
-                        if(needsLiveSyncUpdate) pushUpdateToLive('FULL_UPDATE', activeClan);
-                    } else { renderHub(); }
+                        if(updatedClan) { 
+                            activeClan = updatedClan; 
+                            renderDashboard(activeClan); 
+                            calculateLiveClanStats(activeClan); 
+                        } else { returnToHub(); }
+                    } else { 
+                        renderHub(); 
+                    }
                 } else {
-                    userLiveClans = []; showNoClan();
+                    userLiveClans = []; 
+                    localStorage.setItem('tournyx_my_clans_cache', '[]'); // Clear empty cache
+                    if(!activeClan) showNoClan();
                 }
-            } catch (err) { if(!isSilent) showNoClan(); } 
-            finally {
+            } catch (err) { 
+                if(!isSilent && !activeClan) showNoClan(); 
+            } finally {
                 // INSTANT HIDE LOADER
-                document.getElementById('skeletonLoader').classList.remove('active'); 
+                let loader = document.getElementById('skeletonLoader');
+                if(loader) {
+                    loader.classList.remove('active'); 
+                    loader.style.display = 'none';
+                }
                 document.getElementById('mainContent').style.display = 'block';
             }
         }
