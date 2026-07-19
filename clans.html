@@ -912,6 +912,19 @@
         let globalFindSyncInterval = null;
         let chatSyncBlockedUntil = 0; 
         let currentReactionMsgId = null; // Track message for emoji picker
+        // 🔥 INSTANT REAL-TIME VOICE BROADCAST LISTENER
+        const voiceChannel = db.channel('voice-alerts');
+        voiceChannel.on('broadcast', { event: 'voice_started' }, payload => {
+            // Security Lock: Only notify if this user is actually in the broadcasting clan
+            let isMyClan = userLiveClans.some(c => c.clanId === payload.payload.clanId);
+            
+            if (isMyClan && payload.payload.user !== user.username) {
+                showToast(`🎙️ ${payload.payload.user} started Voice Chat in ${payload.payload.clanName}!`);
+                triggerHaptic();
+            }
+        }).subscribe();
+        
+        let bgWakeLock = null; // Keeps OS from killing app while gaming
 
         // --- UNIVERSAL PUSH ENGINE ---
         async function sendTournyxPush(targetEmail, title, message) {
@@ -2992,7 +3005,7 @@
             }
         }
 
-        async function openVoiceChat() {
+       async function openVoiceChat() {
             triggerHaptic();
             if(isGuestMode) { document.getElementById('guestLoginModal').classList.add('active'); return; }
             
@@ -3011,24 +3024,37 @@
                     try { bgWakeLock = await navigator.wakeLock.request('screen'); } catch (err) {}
                 }
 
-                // 3. Lock Navigation
-                document.querySelectorAll('.bottom-nav a, .desktop-nav a').forEach(el => {
-                    el.addEventListener('click', interceptNavForVoice);
-                });
-
-                // 4. Connect to WebRTC
+                // 3. Connect to WebRTC
                 const myPeerId = "TX-VOICE-" + user.username.replace(/[^a-zA-Z0-9]/g, '') + "-" + activeClan.clanId;
                 localPeer = new Peer(myPeerId);
                 
-                localPeer.on('open', id => {
+                localPeer.on('open', async id => {
                     document.getElementById('voiceStatusText').innerText = "Connected! Minimize App to Play.";
                     document.getElementById('voiceStatusText').style.color = "var(--accent-green)";
                     
-                    // 🔥 INSTANT BROADCAST TO CLAN MEMBERS 🔥
+                    // 🔥 4. INSTANT BROADCAST TO ONLINE CLAN MEMBERS
                     voiceChannel.send({
                         type: 'broadcast', event: 'voice_started',
-                        payload: { clanId: activeClan.clanId, user: user.username }
+                        payload: { clanId: activeClan.clanId, clanName: activeClan.name, user: user.username }
                     });
+
+                    // 🔥 5. ONESIGNAL PUSH TO OFFLINE CLAN MEMBERS
+                    try {
+                        // Extract all clan member usernames
+                        let rosterNames = activeClan.roster.map(r => r.name);
+                        
+                        // Query the Users table to securely get their exact emails for OneSignal
+                        const { data: clanUsers } = await db.from('Users').select('email, username').in('username', rosterNames);
+                        
+                        if (clanUsers) {
+                            clanUsers.forEach(u => {
+                                // Do not send a push notification to yourself
+                                if (u.username !== user.username && u.email) {
+                                    sendTournyxPush(u.email, `🎙️ ${activeClan.name} Voice Live!`, `${user.username} started a squad voice chat. Drop in!`);
+                                }
+                            });
+                        }
+                    } catch(e) { console.log("Push trigger bypassed."); }
                 });
 
                 localPeer.on('call', call => {
@@ -3087,22 +3113,26 @@
 
         function leaveVoiceChat() {
             triggerHaptic();
+            
+            // Kill audio streams and WebRTC connection
             if(localStream) localStream.getTracks().forEach(track => track.stop());
             if(localPeer) localPeer.destroy();
-            if(bgWakeLock) bgWakeLock.release().then(() => bgWakeLock = null);
             
-            // Release Navigation Locks
-            document.querySelectorAll('.bottom-nav a, .desktop-nav a').forEach(el => {
-                el.removeEventListener('click', interceptNavForVoice);
-            });
-
+            // Safely release the Background Gaming Lock
+            if(typeof bgWakeLock !== 'undefined' && bgWakeLock) {
+                bgWakeLock.release().then(() => bgWakeLock = null);
+            }
+            
             document.getElementById('audioContainer').innerHTML = '';
             document.getElementById('connectedPeersList').innerHTML = '';
             document.getElementById('voiceChatModal').classList.remove('active');
             
+            // Reset UI
             let btn = document.getElementById('btnMuteMic');
-            btn.innerHTML = '<i class="fa-solid fa-microphone"></i>';
-            btn.style.color = "white"; btn.style.borderColor = "#888";
+            if (btn) {
+                btn.innerHTML = '<i class="fa-solid fa-microphone"></i>';
+                btn.style.color = "white"; btn.style.borderColor = "#888";
+            }
             isMuted = false;
         }
     </script>
