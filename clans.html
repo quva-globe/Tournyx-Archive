@@ -932,18 +932,6 @@
         db.channel('live-matches-channel').on('postgres_changes', { event: '*', schema: 'public', table: 'Matches' }, payload => {
             if(activeClan) calculateLiveClanStats(activeClan);
         }).subscribe();
-        // 🔥 UPGRADE: INSTANT VOICE CHAT BROADCAST LISTENER
-        const voiceChannel = db.channel('voice-alerts');
-        voiceChannel.on('broadcast', { event: 'voice_started' }, payload => {
-            // If the broadcast is for my clan, and it wasn't me who sent it, trigger a notification!
-            if (activeClan && payload.payload.clanId === activeClan.clanId && payload.payload.user !== user.username) {
-                showToast(`🎙️ ${payload.payload.user} started a Voice Chat! Drop in!`);
-                triggerHaptic();
-                if ("Notification" in window && Notification.permission === "granted") {
-                    new Notification("Squad Voice Live!", { body: `${payload.payload.user} is waiting in the Clan Hub.`, icon: "https://tournyx.in/favicon.png" });
-                }
-            }
-        }).subscribe();
         // --- SECURE POST FETCHER LOGIC (SUPABASE WRAPPER) ---
         async function secureFetch(payload) {
             try {
@@ -1187,13 +1175,23 @@
             }
         }
 
-        function cancelJoinRequest(cId, btnEl, event) {
+       function cancelJoinRequest(cId, btnEl, event) {
             if(event) event.stopPropagation();
             triggerHaptic();
             showToast("Cancelling request...");
 
-            let payload = { action: "handle_join_request", clan_id: cId, player_data: {name: user.username}, is_accept: false, is_auto: false, is_decline_invite: true };
-            secureFetch(payload).catch(()=>{});
+            let targetClan = globalClans.find(c => c.clanId === cId);
+            if (targetClan) {
+                if (targetClan.requests) {
+                    targetClan.requests = targetClan.requests.filter(r => {
+                        let nm = typeof r === 'string' ? r : r.name;
+                        return nm !== user.username;
+                    });
+                }
+                // DIRECT SUPABASE OVERRIDE
+                let cleanClan = JSON.parse(JSON.stringify(targetClan)); delete cleanClan.logo; delete cleanClan.banner;
+                secureFetch({ action: "update_clan", clan_id: cId, field: "FULL_UPDATE", value: JSON.stringify(cleanClan) }).catch(()=>{});
+            }
             
             localRequestedClans.delete(cId);
 
@@ -1205,6 +1203,7 @@
                     btn.outerHTML = `<button class="s-btn acc" onclick="event.stopPropagation(); triggerJoinFlow('${cId}', '${cName}', '${cGame}', false, this)">JOIN SQUAD</button>`;
                 }
             });
+        }
             
             let gIndex = globalClans.findIndex(c => c.clanId === cId);
             if(gIndex !== -1 && globalClans[gIndex].requests) {
@@ -2547,55 +2546,60 @@
             let phone = user.phone || user.mobile || "Not Set"; 
             let ign = user.gameName || user.ign || user.inGameName || user.username || "Not Set"; 
             let uid = user.uid || user.gameUid || user.playerId || "Not Set";
-            let playerObj = { name: user.username, role: "Player", phone: phone, gameName: ign, uid: uid, state: user.state || "N/A", city: user.city || "N/A" };
+            let uAvatar = user.avatar || "";
+            // Add email so admins can send Push Notifications
+            let playerObj = { name: user.username, email: user.email, role: "Player", phone: phone, gameName: ign, uid: uid, state: user.state || "N/A", city: user.city || "N/A", avatar: uAvatar };
             
             let btnSubmit = document.getElementById('btnFinalJoin');
             btnSubmit.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Processing...`; 
             btnSubmit.disabled = true;
 
-            let payload;
+            let cId = pendingJoinData.newClanId;
+            let targetClan = globalClans.find(c => c.clanId === cId);
+            if (!targetClan) { showToast("Clan not found.", true); closeJoinModal(); return; }
+
             if (pendingJoinData.isAuto) {
-                payload = { 
-                    action: "handle_join_request", clan_id: pendingJoinData.newClanId, player_data: playerObj, 
-                    is_accept: true, is_auto: true, email: user.email, target_username: user.username
-                };
+                if(!targetClan.roster) targetClan.roster = [];
+                targetClan.roster.push(playerObj);
+                if(!targetClan.notifications) targetClan.notifications = [];
+                targetClan.notifications.push({ msg: `<b style='color:var(--accent-green)'>${user.username}</b> joined the clan!`, timestamp: Date.now() });
+                
+                // DIRECT SUPABASE OVERRIDE
+                let cleanClan = JSON.parse(JSON.stringify(targetClan)); delete cleanClan.logo; delete cleanClan.banner;
+                secureFetch({ action: "update_clan", clan_id: cId, field: "FULL_UPDATE", value: JSON.stringify(cleanClan) }).catch(()=>{});
+                
+                triggerCelebration("SQUAD JOINED!", "POWER YOUR PLAY ⚡");
             } else {
-                payload = { 
-                    action: "send_request", clan_id: pendingJoinData.newClanId, player_data: playerObj, 
-                    username: user.username, email: user.email
-                };
-            }
+                if(!targetClan.requests) targetClan.requests = [];
+                targetClan.requests.push(playerObj);
+                localRequestedClans.add(cId);
 
-            secureFetch(payload).catch(()=>{});
-            
-            if (pendingJoinData.btnRef && !pendingJoinData.isAuto) {
-                localRequestedClans.add(pendingJoinData.newClanId);
-
-                document.querySelectorAll(`button[onclick*="${pendingJoinData.newClanId}"]`).forEach(btn => {
+                // DIRECT SUPABASE OVERRIDE
+                let cleanClan = JSON.parse(JSON.stringify(targetClan)); delete cleanClan.logo; delete cleanClan.banner;
+                secureFetch({ action: "update_clan", clan_id: cId, field: "FULL_UPDATE", value: JSON.stringify(cleanClan) }).catch(()=>{});
+                
+                document.querySelectorAll(`button[onclick*="${cId}"]`).forEach(btn => {
                     if (btn.innerText.includes("JOIN") || btn.innerText.includes("RE-APPLY")) {
-                        btn.outerHTML = `<button class="s-btn req" onclick="event.stopPropagation(); cancelJoinRequest('${pendingJoinData.newClanId}', this, event)">REQUESTED</button>`;
+                        btn.outerHTML = `<button class="s-btn req" onclick="event.stopPropagation(); cancelJoinRequest('${cId}', this, event)">REQUESTED</button>`;
                     }
                 });
                 
-                let gIndex = globalClans.findIndex(c => c.clanId === pendingJoinData.newClanId);
-                if (gIndex !== -1) {
-                    if (!globalClans[gIndex].requests) globalClans[gIndex].requests = [];
-                    globalClans[gIndex].requests.push(playerObj);
+                // Alert the owner via Push
+                if (targetClan.roster && targetClan.roster[0]) {
+                    secureFetch({ action: "sync_user", email: targetClan.roster[0].email || "" })
+                        .then(res => {
+                            if (res.status === 'success' && res.data && res.data.email) {
+                                sendTournyxPush(res.data.email, "📥 New Clan Request", `${user.username} wants to join ${targetClan.name}!`);
+                            }
+                        }).catch(()=>{});
                 }
+                showToast("Request Sent! Wait for Admin Approval.");
             }
             
             closeJoinModal(); 
-            
-            if(pendingJoinData.isAuto) {
-                triggerCelebration("SQUAD JOINED!", "POWER YOUR PLAY ⚡");
-            } else {
-                showToast("Request Sent! Wait for Admin Approval.");
-            }
-
             btnSubmit.innerText = "Confirm Request"; btnSubmit.disabled = false;
-            setTimeout(() => { fetchAllClansSilent(); fetchLiveClanData(true); }, 2000);
+            setTimeout(() => { fetchAllClansSilent(); fetchLiveClanData(true); }, 1500);
         }
-
         function hideMail(mailId) {
             triggerHaptic();
             hiddenMail.push(mailId);
@@ -2832,12 +2836,6 @@
                 if (!reqData.phone) reqData.phone = "Not Set";
                 if (!reqData.role) reqData.role = "Player";
 
-                let payload = { 
-                    action: "handle_join_request", clan_id: cId, player_data: reqData, 
-                    is_accept: isAccept, is_auto: false, reject_reason: reason, target_username: reqData.name
-                };
-                secureFetch(payload).catch(()=>{});
-
                 let targetClan = userLiveClans.find(c => c.clanId === cId);
                 if(targetClan) {
                     targetClan.requests = targetClan.requests.filter(r => {
@@ -2846,12 +2844,22 @@
                     });
 
                     if(isAccept) {
-                        targetClan.roster.push({ name: reqData.name, role: reqData.role, phone: reqData.phone, gameName: reqData.gameName, uid: reqData.uid, state: reqData.state || "N/A", city: reqData.city || "N/A" });
+                        targetClan.roster.push({ 
+                            name: reqData.name, email: reqData.email, role: reqData.role, phone: reqData.phone, 
+                            gameName: reqData.gameName, uid: reqData.uid, state: reqData.state || "N/A", city: reqData.city || "N/A", avatar: reqData.avatar || "" 
+                        });
                         if(!targetClan.notifications) targetClan.notifications = [];
                         targetClan.notifications.push({ msg: `<b style='color:var(--accent-green)'>${reqData.name}</b> joined the clan!`, timestamp: Date.now() });
+                        
+                        if (reqData.email) sendTournyxPush(reqData.email, "✅ Clan Application Accepted!", `You are now a member of ${targetClan.name}.`);
                     } else {
+                        if(!targetClan.rejectedList) targetClan.rejectedList = [];
+                        targetClan.rejectedList.push({ name: reqData.name, reason: reason });
+                        
                         if(!targetClan.notifications) targetClan.notifications = [];
                         targetClan.notifications.push({ msg: `Rejected join request from <b style='color:var(--accent-red)'>${reqData.name}</b>.`, timestamp: Date.now() });
+                        
+                        if (reqData.email) sendTournyxPush(reqData.email, "❌ Clan Application Rejected", `${targetClan.name} rejected your application. Reason: ${reason}`);
                     }
                     pushUpdateToLive('FULL_UPDATE', targetClan); 
                 }
@@ -2976,21 +2984,49 @@
         </div>
     </div>
 
-    <script>
-       // --- WEBRTC VOICE CHAT & BACKGROUND GAMING ENGINE ---
-        let localPeer = null;
-        let localStream = null;
-        let activeCalls = {};
-        let isMuted = false;
-        let bgWakeLock = null; // Keeps OS from killing app while gaming
+   <!-- 🔥 DISCORD-STYLE WEBRTC VOICE ENGINE -->
+    <script src="https://unpkg.com/peerjs@1.5.1/dist/peerjs.min.js"></script>
+    
+    <div class="modal-overlay" id="voiceChatModal">
+        <div class="modal-box" style="text-align: center; border-color: var(--accent-purple);">
+            <div class="modal-header">
+                <div class="modal-title"><i class="fa-solid fa-satellite-dish" style="color:var(--accent-purple);"></i> Squad Voice</div>
+                <i class="fa-solid fa-xmark modal-close" onclick="leaveVoiceChat()"></i>
+            </div>
+            
+            <div style="position: relative; width: 100px; height: 100px; margin: 0 auto 20px;">
+                <div id="voiceRipples" style="position: absolute; width: 100%; height: 100%; border-radius: 50%; border: 2px solid var(--accent-purple); animation: livePulse 1.5s infinite; opacity: 0; transition: 0.3s;"></div>
+                <img src="" id="voiceMyAvatar" style="width: 100px; height: 100px; border-radius: 50%; object-fit: cover; border: 3px solid var(--accent-purple); box-shadow: 0 0 20px rgba(189,0,255,0.5); position: relative; z-index: 2;">
+            </div>
+            
+            <h3 style="font-family: var(--font-head); font-size: 1.2rem; color: white; margin-bottom: 5px;" id="voiceStatusText">Connecting to Server...</h3>
+            <p style="font-size: 0.8rem; color: #888; margin-bottom: 20px;">Live Audio WebRTC Protocol</p>
+            
+            <div id="connectedPeersList" style="display: flex; justify-content: center; gap: 10px; margin-bottom: 20px; flex-wrap: wrap;"></div>
+            
+            <div style="display: flex; gap: 10px; justify-content: center;">
+                <button class="btn-secondary" id="btnMuteMic" style="width: auto; padding: 12px 20px; border-color: #888; color: white;" onclick="toggleMute()"><i class="fa-solid fa-microphone"></i></button>
+                <button class="btn-danger" style="width: auto; padding: 12px 20px;" onclick="leaveVoiceChat()"><i class="fa-solid fa-phone-slash"></i> Disconnect</button>
+            </div>
+            
+            <div id="audioContainer" style="display: none;"></div>
+        </div>
+    </div>
 
-        // 🛡️ Prevent accidental call drops
-        function interceptNavForVoice(e) {
-            if (localStream) {
-                e.preventDefault();
-                showToast("Cannot navigate while in a Voice Chat! Disconnect first.", true);
+    <script>
+        let localPeer = null; let localStream = null; let isMuted = false; let bgWakeLock = null;
+        
+        // Channel for realtime broadcasts
+        const voiceChannel = db.channel('voice-alerts');
+        voiceChannel.on('broadcast', { event: 'voice_started' }, payload => {
+            let isMyClan = userLiveClans.some(c => c.clanId === payload.payload.clanId);
+            if (isMyClan && payload.payload.user !== user.username) {
+                showToast(`🎙️ ${payload.payload.user} started Voice Chat in ${payload.payload.clanName}!`);
+                triggerHaptic();
             }
-        }
+        }).subscribe();
+
+        function interceptNavForVoice(e) { if (localStream) { e.preventDefault(); showToast("Cannot navigate while in a Voice Chat! Disconnect first.", true); } }
 
         async function openVoiceChat() {
             triggerHaptic();
@@ -3001,85 +3037,77 @@
             document.getElementById('voiceStatusText').innerText = "Requesting Microphone...";
             
             try {
-                // 1. Get Mic & Setup Background Audio
+                if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) throw new Error("Microphone blocked. Are you on a secure HTTPS connection?");
                 localStream = await navigator.mediaDevices.getUserMedia({ audio: true, video: false });
                 document.getElementById('voiceRipples').style.opacity = '1';
                 document.getElementById('voiceStatusText').innerText = "Joining Voice Channel...";
                 
-                // 2. Request Wake Lock so OS doesn't kill WebRTC while playing BGMI/FF
-                if ('wakeLock' in navigator) {
-                    try { bgWakeLock = await navigator.wakeLock.request('screen'); } catch (err) {}
-                }
+                if ('wakeLock' in navigator) { try { bgWakeLock = await navigator.wakeLock.request('screen'); } catch (err) {} }
+                document.querySelectorAll('.bottom-nav a, .desktop-nav a').forEach(el => el.addEventListener('click', interceptNavForVoice));
 
-                // 3. Lock Navigation
-                document.querySelectorAll('.bottom-nav a, .desktop-nav a').forEach(el => {
-                    el.addEventListener('click', interceptNavForVoice);
-                });
-
-                // 4. Connect to WebRTC
-                const myPeerId = "TX-VOICE-" + user.username.replace(/[^a-zA-Z0-9]/g, '') + "-" + activeClan.clanId;
+                let safeUsername = String(user.username || "player").replace(/[^a-zA-Z0-9]/g, '');
+                let safeClanId = String(activeClan.clanId || "clan").replace(/[^a-zA-Z0-9]/g, '');
+                const myPeerId = "TX-VOICE-" + safeUsername + "-" + safeClanId;
+                
+                if (typeof Peer === 'undefined') throw new Error("Voice Engine failed to load. Check internet.");
                 localPeer = new Peer(myPeerId);
                 
-                localPeer.on('open', id => {
+                localPeer.on('open', async id => {
                     document.getElementById('voiceStatusText').innerText = "Connected! Minimize App to Play.";
                     document.getElementById('voiceStatusText').style.color = "var(--accent-green)";
                     
-                    // 🔥 INSTANT BROADCAST TO CLAN MEMBERS 🔥
-                    voiceChannel.send({
-                        type: 'broadcast', event: 'voice_started',
-                        payload: { clanId: activeClan.clanId, user: user.username }
-                    });
+                    voiceChannel.send({ type: 'broadcast', event: 'voice_started', payload: { clanId: activeClan.clanId, clanName: activeClan.name, user: user.username } });
+
+                    try {
+                        let rosterNames = activeClan.roster.map(r => r.name);
+                        const { data: clanUsers } = await db.from('Users').select('email, username').in('username', rosterNames);
+                        if (clanUsers) {
+                            clanUsers.forEach(u => {
+                                if (u.username !== user.username && u.email) {
+                                    sendTournyxPush(u.email, `🎙️ ${activeClan.name} Voice Live!`, `${user.username} started a squad voice chat. Drop in!`);
+                                }
+                            });
+                        }
+                    } catch(e) {}
                 });
 
                 localPeer.on('call', call => {
                     call.answer(localStream); 
-                    call.on('stream', remoteStream => {
-                        addRemoteAudio(call.peer, remoteStream);
-                    });
+                    call.on('stream', remoteStream => addRemoteAudio(call.peer, remoteStream));
                 });
+                localPeer.on('error', err => { throw new Error("Voice Server Connection Failed."); });
                 
             } catch (err) {
-                document.getElementById('voiceStatusText').innerText = "Microphone Access Denied";
+                document.getElementById('voiceStatusText').innerText = "Access Denied / Error";
                 document.getElementById('voiceStatusText').style.color = "#ff4d4d";
-                showToast("Allow microphone permissions to talk.", true);
+                document.getElementById('voiceRipples').style.opacity = '0';
+                showToast(err.message || "Allow microphone permissions to talk.", true);
             }
         }
 
         function addRemoteAudio(peerId, stream) {
             if(!document.getElementById(`audio-${peerId}`)) {
-                const audioEl = document.createElement('audio');
-                audioEl.id = `audio-${peerId}`;
-                audioEl.srcObject = stream;
-                audioEl.autoplay = true;
-                
-                // Required to keep audio alive in iOS background Safari/PWA
-                audioEl.playsInline = true; 
-                
+                const audioEl = document.createElement('audio'); audioEl.id = `audio-${peerId}`; audioEl.srcObject = stream; audioEl.autoplay = true; audioEl.playsInline = true; 
                 document.getElementById('audioContainer').appendChild(audioEl);
-                
                 const cleanName = peerId.split('-')[2] || "Player";
                 document.getElementById('connectedPeersList').innerHTML += `
                     <div id="ui-${peerId}" style="display:flex; flex-direction:column; align-items:center; gap:5px; animation: popIn 0.3s;">
                         <div style="width:30px; height:30px; border-radius:50%; background:var(--accent-green); border:2px solid var(--primary-bg); display:flex; align-items:center; justify-content:center; color:black; font-size:0.8rem; box-shadow: 0 0 10px var(--accent-green);"><i class="fa-solid fa-volume-high"></i></div>
                         <span style="font-size:0.6rem; color:#ccc; font-family:var(--font-head); font-weight:bold;">${cleanName}</span>
-                    </div>
-                `;
+                    </div>`;
             }
         }
 
         function toggleMute() {
             triggerHaptic();
             if(localStream) {
-                isMuted = !isMuted;
-                localStream.getAudioTracks()[0].enabled = !isMuted;
+                isMuted = !isMuted; localStream.getAudioTracks()[0].enabled = !isMuted;
                 let btn = document.getElementById('btnMuteMic');
                 if(isMuted) {
-                    btn.innerHTML = '<i class="fa-solid fa-microphone-slash"></i>';
-                    btn.style.color = "#ff4d4d"; btn.style.borderColor = "#ff4d4d";
+                    btn.innerHTML = '<i class="fa-solid fa-microphone-slash"></i>'; btn.style.color = "#ff4d4d"; btn.style.borderColor = "#ff4d4d";
                     document.getElementById('voiceRipples').style.opacity = '0';
                 } else {
-                    btn.innerHTML = '<i class="fa-solid fa-microphone"></i>';
-                    btn.style.color = "white"; btn.style.borderColor = "#888";
+                    btn.innerHTML = '<i class="fa-solid fa-microphone"></i>'; btn.style.color = "white"; btn.style.borderColor = "#888";
                     document.getElementById('voiceRipples').style.opacity = '1';
                 }
             }
@@ -3087,22 +3115,14 @@
 
         function leaveVoiceChat() {
             triggerHaptic();
-            if(localStream) localStream.getTracks().forEach(track => track.stop());
-            if(localPeer) localPeer.destroy();
-            if(bgWakeLock) bgWakeLock.release().then(() => bgWakeLock = null);
-            
-            // Release Navigation Locks
-            document.querySelectorAll('.bottom-nav a, .desktop-nav a').forEach(el => {
-                el.removeEventListener('click', interceptNavForVoice);
-            });
-
-            document.getElementById('audioContainer').innerHTML = '';
-            document.getElementById('connectedPeersList').innerHTML = '';
-            document.getElementById('voiceChatModal').classList.remove('active');
-            
-            let btn = document.getElementById('btnMuteMic');
-            btn.innerHTML = '<i class="fa-solid fa-microphone"></i>';
-            btn.style.color = "white"; btn.style.borderColor = "#888";
+            try {
+                if(localStream) localStream.getTracks().forEach(track => track.stop());
+                if(localPeer) localPeer.destroy();
+                if(typeof bgWakeLock !== 'undefined' && bgWakeLock) bgWakeLock.release().then(() => bgWakeLock = null).catch(e=>{});
+            } catch(e) {}
+            document.querySelectorAll('.bottom-nav a, .desktop-nav a').forEach(el => el.removeEventListener('click', interceptNavForVoice));
+            document.getElementById('audioContainer').innerHTML = ''; document.getElementById('connectedPeersList').innerHTML = ''; document.getElementById('voiceChatModal').classList.remove('active');
+            let btn = document.getElementById('btnMuteMic'); if(btn) { btn.innerHTML = '<i class="fa-solid fa-microphone"></i>'; btn.style.color = "white"; btn.style.borderColor = "#888"; }
             isMuted = false;
         }
     </script>
