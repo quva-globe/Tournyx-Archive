@@ -945,15 +945,23 @@
 
                 // 2. FAST READS/WRITES -> Fetch from Supabase directly in milliseconds
                 
-                if (payload.action === 'get_my_clans') {
-                    // 🔥 BUG FIX: Bulletproof Roster JSON Parsing!
-                    // Fetches all clans and filters safely so it never fails on structural changes.
+               if (payload.action === 'get_my_clans') {
+                    // 🔥 LIVE FIX: Programmatic deep-array mapping for Owners, Admins, and Players
                     const { data, error } = await db.from('Clans').select('*');
                     if (error) throw error; 
+                    
                     let myUsername = String(payload.username).toLowerCase().trim();
-                    let myClans = data.filter(c => {
-                        let cString = JSON.stringify(c).toLowerCase();
-                        return cString.includes(`"name":"${myUsername}"`) || cString.includes(`"username":"${myUsername}"`);
+                    let myClans = data.filter(item => {
+                        try {
+                            let clanObj = typeof item.team_json === 'string' ? JSON.parse(item.team_json) : item.team_json;
+                            if (!clanObj) return false;
+                            
+                            // Safe fallbacks to check both 'roster' and legacy 'players' arrays
+                            let currentRoster = clanObj.roster || clanObj.players || [];
+                            return currentRoster.some(member => String(member.name || member.username).toLowerCase().trim() === myUsername);
+                        } catch(e) {
+                            return false;
+                        }
                     });
                     return { status: 'success', data: myClans };
                 }
