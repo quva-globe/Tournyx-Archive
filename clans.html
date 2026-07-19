@@ -945,18 +945,7 @@
         db.channel('live-matches-channel').on('postgres_changes', { event: '*', schema: 'public', table: 'Matches' }, payload => {
             if(activeClan) calculateLiveClanStats(activeClan);
         }).subscribe();
-        // 🔥 UPGRADE: INSTANT VOICE CHAT BROADCAST LISTENER
-        const voiceChannel = db.channel('voice-alerts');
-        voiceChannel.on('broadcast', { event: 'voice_started' }, payload => {
-            // If the broadcast is for my clan, and it wasn't me who sent it, trigger a notification!
-            if (activeClan && payload.payload.clanId === activeClan.clanId && payload.payload.user !== user.username) {
-                showToast(`🎙️ ${payload.payload.user} started a Voice Chat! Drop in!`);
-                triggerHaptic();
-                if ("Notification" in window && Notification.permission === "granted") {
-                    new Notification("Squad Voice Live!", { body: `${payload.payload.user} is waiting in the Clan Hub.`, icon: "https://tournyx.in/favicon.png" });
-                }
-            }
-        }).subscribe();
+       
         // --- SECURE POST FETCHER LOGIC (SUPABASE WRAPPER) ---
         async function secureFetch(payload) {
             try {
