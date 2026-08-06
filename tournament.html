@@ -715,7 +715,6 @@
                     const newId = "T-" + Math.floor(Math.random() * 1000000);
                     
                     const { error } = await db.from('Tournaments').insert([{
-                        id: newId,
                         match_id: newId,
                         organizer_email: payload.organizer_email,
                         organizer_username: payload.organizer_username,
@@ -726,16 +725,15 @@
                         date: payload.date,
                         match_period: payload.match_period,
                         fee: payload.fee,
-                        fee_pts: payload.fee_pts,
                         fee_json: payload.fee_json,
-                        is_vip_early_access: payload.is_vip_early_access,
-                        vip_early_access_date: payload.vip_early_access_date,
+                        vip_access: payload.vip_access,
+                        vip_time: payload.vip_time,
                         prize: payload.prize,
                         rules: payload.rules,
                         banner: payload.banner,
                         prize_json: payload.prize_json,
                         bracket_json: payload.bracket_json,
-                        rooms_json: payload.rooms_json,
+                        room_json: payload.room_json,
                         status: payload.status,
                         stream_url: payload.stream_url,
                         filled_slots: 0,
@@ -1331,32 +1329,36 @@
                 title: rawData.tournament_name,
                 game: document.getElementById('finalGamePayload').value, 
                 format: rawData.format,
-                slots: rawData.slots,
+                slots: parseInt(rawData.slots) || 0, // Converted to Integer
                 date: rawData.date, 
                 match_period: rawData.match_period, 
                 
                 fee: (!rawData.entry_fee || rawData.entry_fee == "0") ? "0" : rawData.entry_fee,
-                fee_pts: (!rawData.entry_fee_pts || rawData.entry_fee_pts == "0") ? "0" : rawData.entry_fee_pts,
                 
-                fee_json: JSON.stringify({ 
+                // Converted JSON.stringify to Object for native jsonb parsing
+                fee_json: { 
                     rupees: (!rawData.entry_fee || rawData.entry_fee == "0") ? "0" : rawData.entry_fee, 
                     points: (!rawData.entry_fee_pts || rawData.entry_fee_pts == "0") ? "0" : rawData.entry_fee_pts 
-                }),
+                },
                 
-                is_vip_early_access: document.getElementById('vipEarlyAccessToggle').checked ? "true" : "false",
-                vip_early_access_date: document.getElementById('vipEarlyAccessToggle').checked ? document.getElementById('inpVipRegDate').value : "",
+                // Matched exactly to 'vip_access' (Boolean)
+                vip_access: document.getElementById('vipEarlyAccessToggle').checked,
+                
+                // Matched exactly to 'vip_time'
+                vip_time: document.getElementById('vipEarlyAccessToggle').checked ? document.getElementById('inpVipRegDate').value : null,
 
-                prize: rawData.prize_pool,
+                prize: parseInt(rawData.prize_pool) || 0, // Converted to Integer
                 rules: rawData.rules, 
                 banner: rawData.banner_base64 || 'https://via.placeholder.com/1200x380/15062e/00f2ff?text=Tournament+Banner',
                 
-                prize_json: rawData.prize_distribution_image || "",
-                bracket_json: rawData.bracket_image || "",
+                prize_json: rawData.prize_distribution_image || null,
+                bracket_json: rawData.bracket_image || null,
                 
-                rooms_json: "{}", 
+                // Matched exactly to 'room_json'
+                room_json: "{}", 
 
                 status: "Upcoming",
-                stream_url: rawData.stream_url || ""
+                stream_url: rawData.stream_url || null
             };
 
             secureFetch(payload)
