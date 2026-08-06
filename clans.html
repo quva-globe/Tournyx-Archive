@@ -601,14 +601,13 @@
                         <div style="color: var(--accent-green); background: rgba(0,255,127,0.1); box-shadow: 0 0 15px rgba(0,255,127,0.3); width: 35px; height: 35px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1rem;"><i class="fa-solid fa-message"></i></div>
                     </div>
 
-                    <div onclick="openVoiceChat();" style="flex: 1; background: linear-gradient(135deg, rgba(189,0,255,0.05), rgba(0,0,0,0)); border: 1px solid rgba(189,0,255,0.2); border-radius: 12px; padding: 12px; display: flex; align-items: center; justify-content: space-between; cursor: pointer; transition: 0.3s; box-shadow: 0 4px 10px rgba(0,0,0,0.3);">
-                        <div>
-                            <h4 style="font-family: var(--font-head); font-size: 0.95rem; color: white; margin-bottom: 2px;">Voice Comms</h4>
-                            <p style="font-size: 0.65rem; color: #888; margin:0;"><i class="fa-solid fa-circle-dot" style="color:#ff4d4d; animation: pulseReq 2s infinite;"></i> Live Audio</p>
-                        </div>
-                        <div style="color: var(--accent-purple); background: rgba(189,0,255,0.1); box-shadow: 0 0 15px rgba(189,0,255,0.3); width: 35px; height: 35px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1rem;"><i class="fa-solid fa-headset"></i></div>
-                    </div>
-                </div>
+                <div id="voiceCommsCard" onclick="openVoiceChat();" style="flex: 1; background: linear-gradient(135deg, rgba(189,0,255,0.05), rgba(0,0,0,0)); border: 1px solid rgba(189,0,255,0.2); border-radius: 12px; padding: 12px; display: flex; align-items: center; justify-content: space-between; cursor: pointer; transition: 0.3s; box-shadow: 0 4px 10px rgba(0,0,0,0.3);">
+    <div>
+        <h4 id="voiceCommsTitle" style="font-family: var(--font-head); font-size: 0.95rem; color: white; margin-bottom: 2px;">Voice Comms</h4>
+        <p id="voiceCommsStatus" style="font-size: 0.65rem; color: #888; margin:0;"><i class="fa-solid fa-circle-dot" style="color:#ff4d4d;"></i> Offline</p>
+    </div>
+    <div id="voiceCommsIcon" style="color: var(--accent-purple); background: rgba(189,0,255,0.1); box-shadow: 0 0 15px rgba(189,0,255,0.3); width: 35px; height: 35px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1rem;"><i class="fa-solid fa-headset"></i></div>
+</div>
 
                 <div class="info-row">
                     <div>
@@ -927,16 +926,25 @@
 
         // --- WEBRTC VOICE & BROADCAST VARIABLES ---
         let localPeer = null; let localStream = null; let isMuted = false; let bgWakeLock = null;
-        
+  // --- WEBRTC VOICE & BROADCAST VARIABLES ---
+        let localPeer = null; let localStream = null; let isMuted = false; let bgWakeLock = null;
+        window.liveVoiceTracker = {}; // Tracks active users per clan
+
         const voiceChannel = db.channel('voice-alerts');
         voiceChannel.on('broadcast', { event: 'voice_started' }, payload => {
-            let isMyClan = userLiveClans.some(c => c.clanId === payload.payload.clanId);
-            if (isMyClan && payload.payload.user !== user.username) {
-                showToast(`🎙️ ${payload.payload.user} started Voice Chat in ${payload.payload.clanName}!`);
-                triggerHaptic();
-            }
+            let p = payload.payload;
+            // Add user to the active room list
+            if(!window.liveVoiceTracker[p.clanId]) window.liveVoiceTracker[p.clanId] = new Set();
+            window.liveVoiceTracker[p.clanId].add(p.user);
+            
+            if (typeof updateVoiceUI === "function") updateVoiceUI(p.clanId); // Change UI to "JOIN NOW"
+        }).on('broadcast', { event: 'voice_ended' }, payload => {
+            let p = payload.payload;
+            // Remove user from the active room list
+            if(window.liveVoiceTracker[p.clanId]) window.liveVoiceTracker[p.clanId].delete(p.user);
+            
+            if (typeof updateVoiceUI === "function") updateVoiceUI(p.clanId); // Revert UI if empty
         }).subscribe();
-
         // 🔥 INSTANT REAL-TIME DATABASE SYNC
         db.channel('live-clans-channel').on('postgres_changes', { event: '*', schema: 'public', table: 'Clans' }, payload => {
             if(!isGuestMode) fetchLiveClanData(true);
@@ -1329,8 +1337,13 @@
         }
         function hideCreateForm() { triggerHaptic(); if(userLiveClans.length > 0) renderHub(); else showNoClan(); }
 
-        function openClanDashboard(index) { triggerHaptic(); activeClan = userLiveClans[index]; renderDashboard(activeClan); calculateLiveClanStats(activeClan); }
-
+        function openClanDashboard(index) { 
+            triggerHaptic(); 
+            activeClan = userLiveClans[index]; 
+            renderDashboard(activeClan); 
+            calculateLiveClanStats(activeClan); 
+            if (typeof updateVoiceUI === "function") updateVoiceUI(activeClan.clanId);
+        }
         function formatMessageTime(timestamp) {
             let d = new Date(parseInt(timestamp));
             let now = new Date();
@@ -2809,7 +2822,50 @@
                 console.error("Error processing request", e);
             }
         }
-        
+        function updateVoiceUI(clanId) {
+            if(activeClan && activeClan.clanId === clanId) {
+                let activeUsers = window.liveVoiceTracker[clanId];
+                let count = activeUsers ? activeUsers.size : 0;
+                
+                let card = document.getElementById('voiceCommsCard');
+                let title = document.getElementById('voiceCommsTitle');
+                let status = document.getElementById('voiceCommsStatus');
+                let icon = document.getElementById('voiceCommsIcon');
+                if(!card) return;
+                
+                if(count > 0) {
+                    // SOMEONE IS INSIDE: Change to glowing "JOIN NOW"
+                    let firstUser = Array.from(activeUsers)[0];
+                    
+                    card.style.borderColor = "var(--accent-green)";
+                    card.style.background = "linear-gradient(135deg, rgba(0,255,127,0.1), rgba(0,0,0,0))";
+                    card.style.boxShadow = "0 4px 15px rgba(0,255,127,0.15)";
+                    
+                    title.innerText = "JOIN NOW";
+                    title.style.color = "var(--accent-green)";
+                    status.innerHTML = `<i class="fa-solid fa-satellite-dish" style="color:var(--accent-green); animation: pulseReq 2s infinite;"></i> <b>${firstUser} is Live</b>`;
+                    status.style.color = "white";
+                    
+                    icon.style.color = "black";
+                    icon.style.background = "var(--accent-green)";
+                    icon.style.boxShadow = "0 0 15px rgba(0,255,127,0.4)";
+                } else {
+                    // ROOM IS EMPTY: Revert to default offline style
+                    card.style.borderColor = "rgba(189,0,255,0.2)";
+                    card.style.background = "linear-gradient(135deg, rgba(189,0,255,0.05), rgba(0,0,0,0))";
+                    card.style.boxShadow = "0 4px 10px rgba(0,0,0,0.3)";
+                    
+                    title.innerText = "Voice Comms";
+                    title.style.color = "white";
+                    status.innerHTML = `<i class="fa-solid fa-circle-dot" style="color:#ff4d4d;"></i> Offline`;
+                    status.style.color = "#888";
+                    
+                    icon.style.color = "var(--accent-purple)";
+                    icon.style.background = "rgba(189,0,255,0.1)";
+                    icon.style.boxShadow = "0 0 15px rgba(189,0,255,0.3)";
+                }
+            }
+        }
         async function openVoiceChat() {
             triggerHaptic();
             if(isGuestMode) { document.getElementById('guestLoginModal').classList.add('active'); return; }
@@ -2834,27 +2890,34 @@
                 if (typeof Peer === 'undefined') throw new Error("Voice Engine failed to load. Check internet.");
                 localPeer = new Peer(myPeerId);
                 
-                localPeer.on('open', async id => {
-                    document.getElementById('voiceStatusText').innerText = "Connected! Minimize App to Play.";
-                    document.getElementById('voiceStatusText').style.color = "var(--accent-green)";
-                    
-                    if(typeof voiceChannel !== 'undefined') {
-                        voiceChannel.send({ type: 'broadcast', event: 'voice_started', payload: { clanId: activeClan.clanId, clanName: activeClan.name, user: user.username } });
-                    }
+      localPeer.on('open', async id => {
+            document.getElementById('voiceStatusText').innerText = "Connected! Minimize App to Play.";
+            document.getElementById('voiceStatusText').style.color = "var(--accent-green)";
+            
+            if(typeof voiceChannel !== 'undefined') {
+                // 1. Tell Supabase we joined
+                voiceChannel.send({ type: 'broadcast', event: 'voice_started', payload: { clanId: activeClan.clanId, clanName: activeClan.name, user: user.username } });
+                
+                // Add ourselves to our own tracker instantly
+                if(!window.liveVoiceTracker) window.liveVoiceTracker = {};
+                if(!window.liveVoiceTracker[activeClan.clanId]) window.liveVoiceTracker[activeClan.clanId] = new Set();
+                window.liveVoiceTracker[activeClan.clanId].add(user.username);
+                if (typeof updateVoiceUI === "function") updateVoiceUI(activeClan.clanId);
+            }
 
-                    try {
-                        let rosterNames = activeClan.roster.map(r => r.name);
-                        const { data: clanUsers } = await db.from('Users').select('email, username').in('username', rosterNames);
-                        if (clanUsers) {
-                            clanUsers.forEach(u => {
-                                if (u.username !== user.username && u.email) {
-                                    sendTournyxPush(u.email, `🎙️ ${activeClan.name} Voice Live!`, `${user.username} started a squad voice chat. Drop in!`);
-                                }
-                            });
+            // 2. TARGETED NOTIFICATIONS: Send ONLY to specific clan members
+            try {
+                let rosterNames = activeClan.roster.map(r => r.name);
+                const { data: clanUsers } = await db.from('Users').select('email, username').in('username', rosterNames);
+                if (clanUsers) {
+                    clanUsers.forEach(u => {
+                        if (u.username !== user.username && u.email) {
+                            sendTournyxPush(u.email, `🎙️ ${user.username} is Live!`, `${user.username} joined the ${activeClan.name} Voice Channel. Tap to join the squad!`);
                         }
-                    } catch(e) {}
-                });
-
+                    });
+                }
+            } catch(e) { console.error("Notification targeting failed", e); }
+        });
                 localPeer.on('call', call => {
                     call.answer(localStream); 
                     call.on('stream', remoteStream => addRemoteAudio(call.peer, remoteStream));
@@ -2900,8 +2963,18 @@
             }
         }
 
-        function leaveVoiceChat() {
+     function leaveVoiceChat() {
             triggerHaptic();
+            
+            // Broadcast 'leave' signal to turn off the green glow
+            if(typeof voiceChannel !== 'undefined' && activeClan) {
+                voiceChannel.send({ type: 'broadcast', event: 'voice_ended', payload: { clanId: activeClan.clanId, user: user.username } });
+                if(window.liveVoiceTracker && window.liveVoiceTracker[activeClan.clanId]) {
+                    window.liveVoiceTracker[activeClan.clanId].delete(user.username);
+                }
+                if (typeof updateVoiceUI === "function") updateVoiceUI(activeClan.clanId);
+            }
+            
             try {
                 if(localStream) localStream.getTracks().forEach(track => track.stop());
                 if(localPeer) localPeer.destroy();
