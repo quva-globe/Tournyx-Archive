@@ -2890,7 +2890,20 @@
       localPeer.on('open', async id => {
             document.getElementById('voiceStatusText').innerText = "Connected! Minimize App to Play.";
             document.getElementById('voiceStatusText').style.color = "var(--accent-green)";
-            
+            // AUTO-DIAL MEMBERS ALREADY IN THE ROOM
+            if(window.liveVoiceTracker && window.liveVoiceTracker[activeClan.clanId]) {
+                window.liveVoiceTracker[activeClan.clanId].forEach(activeUser => {
+                    if(activeUser !== user.username) {
+                        let safeUser = String(activeUser).replace(/[^a-zA-Z0-9]/g, '');
+                        let safeClan = String(activeClan.clanId).replace(/[^a-zA-Z0-9]/g, '');
+                        let targetPeerId = "TX-VOICE-" + safeUser + "-" + safeClan;
+                        let call = localPeer.call(targetPeerId, localStream);
+                        if(call) {
+                            call.on('stream', remoteStream => addRemoteAudio(targetPeerId, remoteStream));
+                        }
+                    }
+                });
+            }
             if(typeof voiceChannel !== 'undefined') {
                 // 1. Tell Supabase we joined
                 voiceChannel.send({ type: 'broadcast', event: 'voice_started', payload: { clanId: activeClan.clanId, clanName: activeClan.name, user: user.username } });
