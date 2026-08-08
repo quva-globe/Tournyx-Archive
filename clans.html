@@ -2876,7 +2876,7 @@
                 }
             }
         }
-async function openVoiceChat() {
+        async function openVoiceChat() {
             triggerHaptic();
             if(isGuestMode) { document.getElementById('guestLoginModal').classList.add('active'); return; }
             
@@ -2900,60 +2900,23 @@ async function openVoiceChat() {
                 if (typeof Peer === 'undefined') throw new Error("Voice Engine failed to load. Check internet.");
                 localPeer = new Peer(myPeerId);
                 
-                localPeer.on('open', async id => {
-                    document.getElementById('voiceStatusText').innerText = "Connected! Minimize App to Play.";
-                    document.getElementById('voiceStatusText').style.color = "var(--accent-green)";
-                    
-                    if(typeof voiceChannel !== 'undefined') {
-                        // 1. Tell Supabase we joined (Triggers UI for you and laptop)
-                        voiceChannel.send({ type: 'broadcast', event: 'voice_started', payload: { clanId: activeClan.clanId, clanName: activeClan.name, user: user.username } });
-                        
-                        // Add ourselves to our own tracker instantly
-                        if(!window.liveVoiceTracker) window.liveVoiceTracker = {};
-                        if(!window.liveVoiceTracker[activeClan.clanId]) window.liveVoiceTracker[activeClan.clanId] = new Set();
-                        window.liveVoiceTracker[activeClan.clanId].add(user.username);
-                        if (typeof updateVoiceUI === "function") updateVoiceUI(activeClan.clanId);
-                    }
-
-                    // 2. AUTO-DIAL OTHERS (Fixes the Audio Issue so Chennai friend can hear you)
-                    if(window.liveVoiceTracker && window.liveVoiceTracker[activeClan.clanId]) {
-                        window.liveVoiceTracker[activeClan.clanId].forEach(activeUser => {
-                            if(activeUser !== user.username) {
-                                let targetPeerId = "TX-VOICE-" + String(activeUser).replace(/[^a-zA-Z0-9]/g, '') + "-" + safeClanId;
-                                let call = localPeer.call(targetPeerId, localStream);
-                                if(call) { call.on('stream', remoteStream => addRemoteAudio(targetPeerId, remoteStream)); }
-                            }
-                        });
-                    }
-
-                    // 3. TARGETED NOTIFICATIONS (Sends ONLY to Clan Members)
-                    try {
-                        let rosterNames = activeClan.roster.map(r => r.name);
-                        const { data: clanUsers } = await db.from('Users').select('email, username').in('username', rosterNames);
-                        if (clanUsers) {
-                            clanUsers.forEach(u => {
-                                if (u.username !== user.username && u.email) {
-                                    sendTournyxPush(u.email, `🎙️ ${user.username} is Live!`, `${user.username} joined the ${activeClan.name} Voice Channel. Tap to join the squad!`);
-                                }
-                            });
+      localPeer.on('open', async id => {
+            document.getElementById('voiceStatusText').innerText = "Connected! Minimize App to Play.";
+            document.getElementById('voiceStatusText').style.color = "var(--accent-green)";
+            // AUTO-DIAL MEMBERS ALREADY IN THE ROOM
+            if(window.liveVoiceTracker && window.liveVoiceTracker[activeClan.clanId]) {
+                window.liveVoiceTracker[activeClan.clanId].forEach(activeUser => {
+                    if(activeUser !== user.username) {
+                        let safeUser = String(activeUser).replace(/[^a-zA-Z0-9]/g, '');
+                        let safeClan = String(activeClan.clanId).replace(/[^a-zA-Z0-9]/g, '');
+                        let targetPeerId = "TX-VOICE-" + safeUser + "-" + safeClan;
+                        let call = localPeer.call(targetPeerId, localStream);
+                        if(call) {
+                            call.on('stream', remoteStream => addRemoteAudio(targetPeerId, remoteStream));
                         }
-                    } catch(e) { console.error("Notification targeting failed", e); }
+                    }
                 });
-
-                localPeer.on('call', call => {
-                    call.answer(localStream); 
-                    call.on('stream', remoteStream => addRemoteAudio(call.peer, remoteStream));
-                });
-                localPeer.on('error', err => { throw new Error("Voice Server Connection Failed."); });
-                
-            } catch (err) {
-                console.error("Voice Error:", err);
-                document.getElementById('voiceStatusText').innerText = "Access Denied / Error";
-                document.getElementById('voiceStatusText').style.color = "#ff4d4d";
-                document.getElementById('voiceRipples').style.opacity = '0';
-                showToast(err.message || "Allow microphone permissions to talk.", true);
             }
-        }
             if(typeof voiceChannel !== 'undefined') {
                 // 1. Tell Supabase we joined
                 voiceChannel.send({ type: 'broadcast', event: 'voice_started', payload: { clanId: activeClan.clanId, clanName: activeClan.name, user: user.username } });
