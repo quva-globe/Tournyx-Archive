@@ -2926,7 +2926,11 @@ async function openVoiceChat() {
                     
                     // 1. SYNC UI
                     if(typeof voiceChannel !== 'undefined') {
-                        voiceChannel.send({ type: 'broadcast', event: 'voice_started', payload: { clanId: activeClan.clanId, clanName: activeClan.name, user: user.username } });
+                        voiceChannel.send({ type: 'broadcast', event: 'voice_started', payload: { clanId: activeClan.clanId, clanName: activeClan.name, user: user.username } })
+                        
+                    if (activeVoiceRoom) {
+                        await activeVoiceRoom.track({ user: user.username, clanId: activeClan.clanId });
+                    }
                         if(!window.liveVoiceTracker) window.liveVoiceTracker = {};
                         if(!window.liveVoiceTracker[activeClan.clanId]) window.liveVoiceTracker[activeClan.clanId] = new Set();
                         window.liveVoiceTracker[activeClan.clanId].add(user.username);
@@ -2988,7 +2992,9 @@ async function openVoiceChat() {
 
      function leaveVoiceChat() {
             triggerHaptic();
-            
+            if (activeVoiceRoom) {
+                activeVoiceRoom.untrack();
+            }
             // Broadcast 'leave' signal to turn off the green glow
             if(typeof voiceChannel !== 'undefined' && activeClan) {
                 voiceChannel.send({ type: 'broadcast', event: 'voice_ended', payload: { clanId: activeClan.clanId, user: user.username } });
