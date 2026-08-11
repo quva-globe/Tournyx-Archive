@@ -2926,16 +2926,17 @@ async function openVoiceChat() {
                     
                     // 1. SYNC UI
                     if(typeof voiceChannel !== 'undefined') {
-                        voiceChannel.send({ type: 'broadcast', event: 'voice_started', payload: { clanId: activeClan.clanId, clanName: activeClan.name, user: user.username } })
-                        
+                        voiceChannel.send({ type: 'broadcast', event: 'voice_started', payload: { clanId: activeClan.clanId, clanName: activeClan.name, user: user.username } });
+                    } // ---> FIXED: This bracket was missing!
+
                     if (activeVoiceRoom) {
                         await activeVoiceRoom.track({ user: user.username, clanId: activeClan.clanId });
                     }
-                        if(!window.liveVoiceTracker) window.liveVoiceTracker = {};
-                        if(!window.liveVoiceTracker[activeClan.clanId]) window.liveVoiceTracker[activeClan.clanId] = new Set();
-                        window.liveVoiceTracker[activeClan.clanId].add(user.username);
-                        if (typeof updateVoiceUI === "function") updateVoiceUI(activeClan.clanId);
-                    }
+                    
+                    if(!window.liveVoiceTracker) window.liveVoiceTracker = {};
+                    if(!window.liveVoiceTracker[activeClan.clanId]) window.liveVoiceTracker[activeClan.clanId] = new Set();
+                    window.liveVoiceTracker[activeClan.clanId].add(user.username);
+                    if (typeof updateVoiceUI === "function") updateVoiceUI(activeClan.clanId);
 
                     // 2. AUDIO FIX (Auto-dials)
                     if(activeClan && activeClan.roster) {
@@ -2975,6 +2976,7 @@ async function openVoiceChat() {
                 showToast(err.message || "Allow microphone permissions to talk.", true);
             }
         }
+
         function toggleMute() {
             triggerHaptic();
             if(localStream) {
@@ -2990,25 +2992,28 @@ async function openVoiceChat() {
             }
         }
 
-     function leaveVoiceChat() {
+        function leaveVoiceChat() {
             triggerHaptic();
             if (activeVoiceRoom) {
                 activeVoiceRoom.untrack();
             }
-            // Broadcast 'leave' signal to turn off the green glow
+            
+            // Broadcast 'leave' signal
             if(typeof voiceChannel !== 'undefined' && activeClan) {
                 voiceChannel.send({ type: 'broadcast', event: 'voice_ended', payload: { clanId: activeClan.clanId, user: user.username } });
-                if(window.liveVoiceTracker && window.liveVoiceTracker[activeClan.clanId]) {
-                    window.liveVoiceTracker[activeClan.clanId].delete(user.username);
-                }
-                if (typeof updateVoiceUI === "function") updateVoiceUI(activeClan.clanId);
+            } // ---> FIXED: This bracket was missing too!
+            
+            if(window.liveVoiceTracker && activeClan && window.liveVoiceTracker[activeClan.clanId]) {
+                window.liveVoiceTracker[activeClan.clanId].delete(user.username);
             }
+            if (activeClan && typeof updateVoiceUI === "function") updateVoiceUI(activeClan.clanId);
             
             try {
                 if(localStream) localStream.getTracks().forEach(track => track.stop());
                 if(localPeer) localPeer.destroy();
                 if(typeof bgWakeLock !== 'undefined' && bgWakeLock) bgWakeLock.release().then(() => bgWakeLock = null).catch(e=>{});
             } catch(e) {}
+            
             document.querySelectorAll('.bottom-nav a, .desktop-nav a').forEach(el => el.removeEventListener('click', interceptNavForVoice));
             document.getElementById('audioContainer').innerHTML = ''; document.getElementById('connectedPeersList').innerHTML = ''; document.getElementById('voiceChatModal').classList.remove('active');
             let btn = document.getElementById('btnMuteMic'); if(btn) { btn.innerHTML = '<i class="fa-solid fa-microphone"></i>'; btn.style.color = "white"; btn.style.borderColor = "#888"; }
