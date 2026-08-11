@@ -2876,7 +2876,22 @@
                 }
             }
         }
-       async function openVoiceChat() {
+    
+        function interceptNavForVoice(e) { if (localStream) { e.preventDefault(); showToast("Cannot navigate while in a Voice Chat! Disconnect first.", true); } }
+
+        function addRemoteAudio(peerId, stream) {
+            if(!document.getElementById(`audio-${peerId}`)) {
+                const audioEl = document.createElement('audio'); audioEl.id = `audio-${peerId}`; audioEl.srcObject = stream; audioEl.autoplay = true; audioEl.playsInline = true; 
+                document.getElementById('audioContainer').appendChild(audioEl);
+                const cleanName = peerId.split('-')[2] || "Player";
+                document.getElementById('connectedPeersList').innerHTML += `
+                    <div id="ui-${peerId}" style="display:flex; flex-direction:column; align-items:center; gap:5px; animation: popIn 0.3s;">
+                        <div style="width:30px; height:30px; border-radius:50%; background:var(--accent-green); border:2px solid var(--primary-bg); display:flex; align-items:center; justify-content:center; color:black; font-size:0.8rem; box-shadow: 0 0 10px var(--accent-green);"><i class="fa-solid fa-volume-high"></i></div>
+                        <span style="font-size:0.6rem; color:#ccc; font-family:var(--font-head); font-weight:bold;">${cleanName}</span>
+                    </div>`;
+            }
+        }
+async function openVoiceChat() {
             triggerHaptic();
             if(isGuestMode) { document.getElementById('guestLoginModal').classList.add('active'); return; }
             
@@ -2904,7 +2919,7 @@
                     document.getElementById('voiceStatusText').innerText = "Connected! Minimize App to Play.";
                     document.getElementById('voiceStatusText').style.color = "var(--accent-green)";
                     
-                    // 1. SYNC UI (Shows 'Suryaprakash is live' on laptop)
+                    // 1. SYNC UI
                     if(typeof voiceChannel !== 'undefined') {
                         voiceChannel.send({ type: 'broadcast', event: 'voice_started', payload: { clanId: activeClan.clanId, clanName: activeClan.name, user: user.username } });
                         if(!window.liveVoiceTracker) window.liveVoiceTracker = {};
@@ -2913,18 +2928,18 @@
                         if (typeof updateVoiceUI === "function") updateVoiceUI(activeClan.clanId);
                     }
 
-                    // 2. AUDIO FIX (Auto-dials so you and your friend can hear each other)
-                    if(window.liveVoiceTracker && window.liveVoiceTracker[activeClan.clanId]) {
-                        window.liveVoiceTracker[activeClan.clanId].forEach(activeUser => {
-                            if(activeUser !== user.username) {
-                                let targetPeerId = "TX-VOICE-" + String(activeUser).replace(/[^a-zA-Z0-9]/g, '') + "-" + safeClanId;
+                    // 2. AUDIO FIX (Auto-dials)
+                    if(activeClan && activeClan.roster) {
+                        activeClan.roster.forEach(member => {
+                            if(member.name !== user.username) {
+                                let targetPeerId = "TX-VOICE-" + String(member.name).replace(/[^a-zA-Z0-9]/g, '') + "-" + safeClanId;
                                 let call = localPeer.call(targetPeerId, localStream);
                                 if(call) { call.on('stream', remoteStream => addRemoteAudio(targetPeerId, remoteStream)); }
                             }
                         });
                     }
 
-                    // 3. SECURE NOTIFICATIONS (Strictly Clan Members Only)
+                    // 3. SECURE NOTIFICATIONS
                     try {
                         let rosterNames = activeClan.roster.map(r => r.name);
                         const { data: clanUsers } = await db.from('Users').select('email, username').in('username', rosterNames);
@@ -2951,21 +2966,6 @@
                 showToast(err.message || "Allow microphone permissions to talk.", true);
             }
         }
-        function interceptNavForVoice(e) { if (localStream) { e.preventDefault(); showToast("Cannot navigate while in a Voice Chat! Disconnect first.", true); } }
-
-        function addRemoteAudio(peerId, stream) {
-            if(!document.getElementById(`audio-${peerId}`)) {
-                const audioEl = document.createElement('audio'); audioEl.id = `audio-${peerId}`; audioEl.srcObject = stream; audioEl.autoplay = true; audioEl.playsInline = true; 
-                document.getElementById('audioContainer').appendChild(audioEl);
-                const cleanName = peerId.split('-')[2] || "Player";
-                document.getElementById('connectedPeersList').innerHTML += `
-                    <div id="ui-${peerId}" style="display:flex; flex-direction:column; align-items:center; gap:5px; animation: popIn 0.3s;">
-                        <div style="width:30px; height:30px; border-radius:50%; background:var(--accent-green); border:2px solid var(--primary-bg); display:flex; align-items:center; justify-content:center; color:black; font-size:0.8rem; box-shadow: 0 0 10px var(--accent-green);"><i class="fa-solid fa-volume-high"></i></div>
-                        <span style="font-size:0.6rem; color:#ccc; font-family:var(--font-head); font-weight:bold;">${cleanName}</span>
-                    </div>`;
-            }
-        }
-
         function toggleMute() {
             triggerHaptic();
             if(localStream) {
