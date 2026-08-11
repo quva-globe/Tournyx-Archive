@@ -922,33 +922,38 @@
         let chatSyncBlockedUntil = 0; 
         let currentReactionMsgId = null; 
 
-        // --- WEBRTC VOICE & BROADCAST VARIABLES ---
+     // --- WEBRTC VOICE & BROADCAST VARIABLES ---
         let localPeer = null; let localStream = null; let isMuted = false; let bgWakeLock = null;
-  // --- WEBRTC VOICE & BROADCAST VARIABLES ---
         window.liveVoiceTracker = {}; // Tracks active users per clan
+        let activeVoiceRoom = null;
 
-        let activeVoiceRoom = db.channel('room-presence', {
-            config: { presence: { key: user.username } }
-        });
+        // Initialize Supabase Presence after DOM is ready to prevent undefined db error
+        document.addEventListener("DOMContentLoaded", () => {
+            if (db) {
+                activeVoiceRoom = db.channel('room-presence', {
+                    config: { presence: { key: user.username } }
+                });
 
-        activeVoiceRoom.on('presence', { event: 'sync' }, () => {
-            const state = activeVoiceRoom.presenceState();
-            window.liveVoiceTracker = {};
-            
-            Object.keys(state).forEach(clanIdKey => {
-                // Track active users per clan from presence state
-                state[clanIdKey].forEach(presenceObj => {
-                    let cId = presenceObj.clanId;
-                    if(cId) {
-                        if(!window.liveVoiceTracker[cId]) window.liveVoiceTracker[cId] = new Set();
-                        window.liveVoiceTracker[cId].add(presenceObj.user);
-                        if (typeof updateVoiceUI === "function") updateVoiceUI(cId);
+                activeVoiceRoom.on('presence', { event: 'sync' }, () => {
+                    const state = activeVoiceRoom.presenceState();
+                    window.liveVoiceTracker = {};
+                    
+                    Object.keys(state).forEach(clanIdKey => {
+                        // Track active users per clan from presence state
+                        state[clanIdKey].forEach(presenceObj => {
+                            let cId = presenceObj.clanId;
+                            if(cId) {
+                                if(!window.liveVoiceTracker[cId]) window.liveVoiceTracker[cId] = new Set();
+                                window.liveVoiceTracker[cId].add(presenceObj.user);
+                                if (typeof updateVoiceUI === "function") updateVoiceUI(cId);
+                            }
+                        });
+                    });
+                }).subscribe(async (status) => {
+                    if (status === 'SUBSCRIBED' && activeClan) {
+                        await activeVoiceRoom.track({ user: user.username, clanId: activeClan.clanId });
                     }
                 });
-            });
-        }).subscribe(async (status) => {
-            if (status === 'SUBSCRIBED' && activeClan) {
-                await activeVoiceRoom.track({ user: user.username, clanId: activeClan.clanId });
             }
         });
 
