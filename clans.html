@@ -2908,27 +2908,30 @@ async function openVoiceChat() {
                 if ('wakeLock' in navigator) { try { bgWakeLock = await navigator.wakeLock.request('screen'); } catch (err) {} }
                 document.querySelectorAll('.bottom-nav a, .desktop-nav a').forEach(el => el.addEventListener('click', interceptNavForVoice));
 
+                // 🔥 1. INSTANT UI SYNC: Update the laptop screen immediately!
+                if(typeof voiceChannel !== 'undefined') {
+                    voiceChannel.send({ type: 'broadcast', event: 'voice_started', payload: { clanId: activeClan.clanId, clanName: activeClan.name, user: user.username } });
+                    if(!window.liveVoiceTracker) window.liveVoiceTracker = {};
+                    if(!window.liveVoiceTracker[activeClan.clanId]) window.liveVoiceTracker[activeClan.clanId] = new Set();
+                    window.liveVoiceTracker[activeClan.clanId].add(user.username);
+                    if (typeof updateVoiceUI === "function") updateVoiceUI(activeClan.clanId);
+                }
+
                 let safeUsername = String(user.username || "player").replace(/[^a-zA-Z0-9]/g, '');
                 let safeClanId = String(activeClan.clanId || "clan").replace(/[^a-zA-Z0-9]/g, '');
                 const myPeerId = "TX-VOICE-" + safeUsername + "-" + safeClanId;
                 
                 if (typeof Peer === 'undefined') throw new Error("Voice Engine failed to load. Check internet.");
+                
+                // Clear any stuck audio connections
+                if (localPeer) { localPeer.destroy(); }
                 localPeer = new Peer(myPeerId);
                 
                 localPeer.on('open', async id => {
                     document.getElementById('voiceStatusText').innerText = "Connected! Minimize App to Play.";
                     document.getElementById('voiceStatusText').style.color = "var(--accent-green)";
                     
-                    // 1. SYNC UI
-                    if(typeof voiceChannel !== 'undefined') {
-                        voiceChannel.send({ type: 'broadcast', event: 'voice_started', payload: { clanId: activeClan.clanId, clanName: activeClan.name, user: user.username } });
-                        if(!window.liveVoiceTracker) window.liveVoiceTracker = {};
-                        if(!window.liveVoiceTracker[activeClan.clanId]) window.liveVoiceTracker[activeClan.clanId] = new Set();
-                        window.liveVoiceTracker[activeClan.clanId].add(user.username);
-                        if (typeof updateVoiceUI === "function") updateVoiceUI(activeClan.clanId);
-                    }
-
-                    // 2. AUDIO FIX (Auto-dials)
+                    // 🔥 2. AUDIO FIX: Aggressively auto-dial everyone in the clan
                     if(activeClan && activeClan.roster) {
                         activeClan.roster.forEach(member => {
                             if(member.name !== user.username) {
@@ -2952,6 +2955,25 @@ async function openVoiceChat() {
                         }
                     } catch(e) { console.error("Notification failed", e); }
                 });
+
+                localPeer.on('call', call => {
+                    call.answer(localStream); 
+                    call.on('stream', remoteStream => addRemoteAudio(call.peer, remoteStream));
+                });
+                
+                localPeer.on('error', err => { 
+                    console.error("Voice Error:", err);
+                    document.getElementById('voiceStatusText').innerText = "Audio Reconnecting..."; 
+                    document.getElementById('voiceStatusText').style.color = "var(--accent-orange)";
+                });
+                
+            } catch (err) {
+                document.getElementById('voiceStatusText').innerText = "Access Denied / Error";
+                document.getElementById('voiceStatusText').style.color = "#ff4d4d";
+                document.getElementById('voiceRipples').style.opacity = '0';
+                showToast(err.message || "Allow microphone permissions to talk.", true);
+            }
+        }
 
                 localPeer.on('call', call => {
                     call.answer(localStream); 
