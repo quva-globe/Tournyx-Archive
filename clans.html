@@ -2894,18 +2894,23 @@ function addRemoteAudio(peerId, stream) {
         // opened the voice modal. This is exactly why your mic works (you're SENDING
         // fine) but the other person hears nothing (their browser refuses to PLAY it).
         const playPromise = audioEl.play();
-        if (playPromise !== undefined) {
-            playPromise.catch(err => {
-                console.warn("Autoplay blocked, will retry on next tap:", err);
-                const resumeAudio = () => {
-                    audioEl.play().catch(()=>{});
-                    document.removeEventListener('click', resumeAudio);
-                    document.removeEventListener('touchstart', resumeAudio);
-                };
-                document.addEventListener('click', resumeAudio, { once: true });
-                document.addEventListener('touchstart', resumeAudio, { once: true });
-            });
-        }
+if (playPromise !== undefined) {
+    playPromise.catch(err => {
+        console.warn("Autoplay blocked, will retry on next tap:", err);
+
+        const resumeAudio = () => {
+            audioEl.play().catch(()=>{});
+            document.removeEventListener('click', resumeAudio);
+            document.removeEventListener('touchstart', resumeAudio);
+        };
+
+        document.addEventListener('click', resumeAudio, { once: true });
+        document.addEventListener('touchstart', resumeAudio, { once: true });
+    });
+}
+
+    }   // close audio element IF
+}       // close addRemoteAudio()
 
 async function openVoiceChat() {
             triggerHaptic();
@@ -2949,17 +2954,86 @@ async function openVoiceChat() {
                     window.liveVoiceTracker[activeClan.clanId].add(user.username);
                     if (typeof updateVoiceUI === "function") updateVoiceUI(activeClan.clanId);
 
-                    // 2. AUDIO FIX (Auto-dials)
-                    if(activeClan && activeClan.roster) {
-                        activeClan.roster.forEach(member => {
-                            if(member.name !== user.username) {
-                                let targetPeerId = "TX-VOICE-" + String(member.name).replace(/[^a-zA-Z0-9]/g, '') + "-" + safeClanId;
-                                let call = localPeer.call(targetPeerId, localStream);
-                                if(call) { call.on('stream', remoteStream => addRemoteAudio(targetPeerId, remoteStream)); }
-                            }
-                        });
-                    }
+                  // 2. CONNECT ONLY TO MEMBERS CURRENTLY ACTIVE IN VOICE CHAT
 
+const activeUsers =
+    window.liveVoiceTracker &&
+    window.liveVoiceTracker[activeClan.clanId]
+        ? window.liveVoiceTracker[activeClan.clanId]
+        : new Set();
+
+console.log("Active voice users:", Array.from(activeUsers));
+
+activeUsers.forEach(memberName => {
+
+    // Do not call yourself
+    if(memberName === user.username) return;
+
+    const targetPeerId =
+        "TX-VOICE-" +
+        String(memberName).replace(/[^a-zA-Z0-9]/g, '') +
+        "-" +
+        safeClanId;
+
+    console.log("Calling voice peer:", targetPeerId);
+
+    const call = localPeer.call(
+        targetPeerId,
+        localStream,
+        {
+            metadata: {
+                clanId: activeClan.clanId,
+                username: user.username
+            }
+        }
+    );
+
+    if(!call) {
+        console.warn("Could not create voice call:", targetPeerId);
+        return;
+    }
+
+    call.on('stream', remoteStream => {
+
+        console.log(
+            "Remote audio received from:",
+            targetPeerId
+        );
+
+        addRemoteAudio(
+            targetPeerId,
+            remoteStream
+        );
+    });
+
+    call.on('error', err => {
+
+        console.error(
+            "Voice call error:",
+            targetPeerId,
+            err
+        );
+    });
+
+    call.on('close', () => {
+
+        console.log(
+            "Voice connection closed:",
+            targetPeerId
+        );
+
+        const audioEl =
+            document.getElementById(
+                `audio-${targetPeerId}`
+            );
+
+        if(audioEl) {
+            audioEl.srcObject = null;
+            audioEl.remove();
+        }
+    });
+
+});
                     // 3. SECURE NOTIFICATIONS
                     try {
                         let rosterNames = activeClan.roster.map(r => r.name);
@@ -2974,11 +3048,82 @@ async function openVoiceChat() {
                     } catch(e) { console.error("Notification failed", e); }
                 });
 
-                localPeer.on('call', call => {
-                    call.answer(localStream); 
-                    call.on('stream', remoteStream => addRemoteAudio(call.peer, remoteStream));
-                });
-                localPeer.on('error', err => { throw new Error("Voice Server Connection Failed."); });
+              localPeer.on('call', call => {
+
+    console.log("Incoming voice call from:", call.peer);
+
+    // Reject calls coming from another clan
+    if (
+        call.metadata &&
+        call.metadata.clanId &&
+        String(call.metadata.clanId) !== String(activeClan.clanId)
+    ) {
+        console.warn("Rejected cross-clan voice connection.");
+        call.close();
+        return;
+    }
+
+    // Send my microphone audio to the caller
+    call.answer(localStream);
+
+    // Receive caller's microphone audio
+    call.on('stream', remoteStream => {
+
+        console.log(
+            "Incoming remote audio received from:",
+            call.peer
+        );
+
+        addRemoteAudio(
+            call.peer,
+            remoteStream
+        );
+    });
+
+    call.on('error', err => {
+        console.error(
+            "Incoming voice call error:",
+            call.peer,
+            err
+        );
+    });
+
+    call.on('close', () => {
+
+        const audioEl =
+            document.getElementById(
+                `audio-${call.peer}`
+            );
+
+        if(audioEl) {
+            audioEl.srcObject = null;
+            audioEl.remove();
+        }
+    });
+});localPeer.on('error', err => {
+
+    console.error(
+        "PEERJS ERROR:",
+        err.type,
+        err
+    );
+
+    // This normally means the other member is not connected yet
+    if(err.type === "peer-unavailable") {
+        console.warn(
+            "Target clan member is not currently available."
+        );
+        return;
+    }
+
+    document.getElementById(
+        'voiceStatusText'
+    ).innerText = "Voice Connection Error";
+
+    document.getElementById(
+        'voiceStatusText'
+    ).style.color = "#ff4d4d";
+});
                 
             } catch (err) {
                 document.getElementById('voiceStatusText').innerText = "Access Denied / Error";
