@@ -2883,19 +2883,30 @@
         }
     
         function interceptNavForVoice(e) { if (localStream) { e.preventDefault(); showToast("Cannot navigate while in a Voice Chat! Disconnect first.", true); } }
+function addRemoteAudio(peerId, stream) {
+    if(!document.getElementById(`audio-${peerId}`)) {
+        const audioEl = document.createElement('audio'); audioEl.id = `audio-${peerId}`; audioEl.srcObject = stream; audioEl.autoplay = true; audioEl.playsInline = true; audioEl.muted = false;
+        document.getElementById('audioContainer').appendChild(audioEl);
 
-        function addRemoteAudio(peerId, stream) {
-            if(!document.getElementById(`audio-${peerId}`)) {
-                const audioEl = document.createElement('audio'); audioEl.id = `audio-${peerId}`; audioEl.srcObject = stream; audioEl.autoplay = true; audioEl.playsInline = true; 
-                document.getElementById('audioContainer').appendChild(audioEl);
-                const cleanName = peerId.split('-')[2] || "Player";
-                document.getElementById('connectedPeersList').innerHTML += `
-                    <div id="ui-${peerId}" style="display:flex; flex-direction:column; align-items:center; gap:5px; animation: popIn 0.3s;">
-                        <div style="width:30px; height:30px; border-radius:50%; background:var(--accent-green); border:2px solid var(--primary-bg); display:flex; align-items:center; justify-content:center; color:black; font-size:0.8rem; box-shadow: 0 0 10px var(--accent-green);"><i class="fa-solid fa-volume-high"></i></div>
-                        <span style="font-size:0.6rem; color:#ccc; font-family:var(--font-head); font-weight:bold;">${cleanName}</span>
-                    </div>`;
-            }
+        // Explicitly call play() — the `autoplay` attribute alone silently fails on
+        // many browsers when the element is created inside an async WebRTC 'stream'
+        // callback, since by then it's no longer tied to the original tap/click that
+        // opened the voice modal. This is exactly why your mic works (you're SENDING
+        // fine) but the other person hears nothing (their browser refuses to PLAY it).
+        const playPromise = audioEl.play();
+        if (playPromise !== undefined) {
+            playPromise.catch(err => {
+                console.warn("Autoplay blocked, will retry on next tap:", err);
+                const resumeAudio = () => {
+                    audioEl.play().catch(()=>{});
+                    document.removeEventListener('click', resumeAudio);
+                    document.removeEventListener('touchstart', resumeAudio);
+                };
+                document.addEventListener('click', resumeAudio, { once: true });
+                document.addEventListener('touchstart', resumeAudio, { once: true });
+            });
         }
+
 async function openVoiceChat() {
             triggerHaptic();
             if(isGuestMode) { document.getElementById('guestLoginModal').classList.add('active'); return; }
