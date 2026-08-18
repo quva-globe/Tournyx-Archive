@@ -928,62 +928,74 @@
         let activeVoiceRoom = null;
 
         // Initialize Supabase Presence after DOM is ready to prevent undefined db error
-        document.addEventListener("DOMContentLoaded", () => {
-            if (db) {
-                activeVoiceRoom = db.channel('room-presence', {
-                    config: { presence: { key: user.username } }
+document.addEventListener("DOMContentLoaded", () => {
+
+    if (db) {
+
+        activeVoiceRoom = db.channel('room-presence', {
+            config: {
+                presence: {
+                    key: user.username
+                }
+            }
+        });
+
+        activeVoiceRoom.on(
+            'presence',
+            { event: 'sync' },
+            () => {
+
+                const state = activeVoiceRoom.presenceState();
+
+                window.liveVoiceTracker = {};
+
+                Object.keys(state).forEach(clanIdKey => {
+
+                    state[clanIdKey].forEach(presenceObj => {
+
+                        const cId = presenceObj.clanId;
+
+                        if (cId) {
+
+                            if (!window.liveVoiceTracker[cId]) {
+                                window.liveVoiceTracker[cId] = new Set();
+                            }
+
+                            window.liveVoiceTracker[cId].add(
+                                presenceObj.user
+                            );
+                        }
+
+                    });
+
                 });
 
-                activeVoiceRoom.on('presence', { event: 'sync' }, () => {
-
-    const state = activeVoiceRoom.presenceState();
-
-    // Rebuild current live voice users
-    window.liveVoiceTracker = {};
-
-    Object.keys(state).forEach(clanIdKey => {
-
-        state[clanIdKey].forEach(presenceObj => {
-
-            const cId = presenceObj.clanId;
-
-            if (cId) {
-
-                if (!window.liveVoiceTracker[cId]) {
-                    window.liveVoiceTracker[cId] = new Set();
+                // Refresh current clan UI
+                // even when nobody is live
+                if (
+                    activeClan &&
+                    typeof updateVoiceUI === "function"
+                ) {
+                    updateVoiceUI(activeClan.clanId);
                 }
 
-                window.liveVoiceTracker[cId].add(
-                    presenceObj.user
-                );
             }
+        ).subscribe((status) => {
+
+            console.log(
+                "Voice presence status:",
+                status
+            );
+
+            // Do NOT mark the user live here.
+            // User becomes live only
+            // after opening Voice Comms.
 
         });
 
-    });
-
-    // Refresh the currently opened clan even when room becomes empty
-    if (
-        activeClan &&
-        typeof updateVoiceUI === "function"
-    ) {
-        updateVoiceUI(activeClan.clanId);
     }
 
-}).subscribe((status) => {
-
-    console.log(
-        "Voice presence status:",
-        status
-    );
-
-    // IMPORTANT:
-    // Do NOT mark the user live here.
-    // User becomes live only after opening Voice Comms.
-
-});
-
-        // 🔥 INSTANT REAL-TIME DATABASE SYNC
+}); // 🔥 INSTANT REAL-TIME DATABASE SYNC
         db.channel('live-clans-channel').on('postgres_changes', { event: '*', schema: 'public', table: 'Clans' }, payload => {
             if(!isGuestMode) fetchLiveClanData(true);
             fetchAllClansSilent();
