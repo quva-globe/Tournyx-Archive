@@ -2875,34 +2875,92 @@ document.addEventListener("DOMContentLoaded", () => {
                 console.error("Error processing request", e);
             }
         }
-        function updateVoiceUI(clanId) {
-            if(activeClan && activeClan.clanId === clanId) {
-                let activeUsers = window.liveVoiceTracker[clanId];
-                let count = activeUsers ? activeUsers.size : 0;
-                
-                let card = document.getElementById('voiceCommsCard');
-                let title = document.getElementById('voiceCommsTitle');
-                let status = document.getElementById('voiceCommsStatus');
-                let icon = document.getElementById('voiceCommsIcon');
-                if(!card) return;
-                
-               if (count === 1) {
+      function updateVoiceUI(clanId) {
 
-    status.innerHTML =
-        `<i class="fa-solid fa-satellite-dish"
-        style="color:var(--accent-green);
-        animation:pulseReq 2s infinite;"></i>
-        <b>${liveUsers[0]} is Live</b>`;
+    if (activeClan && activeClan.clanId === clanId) {
 
-} else {
+        const activeUsers = window.liveVoiceTracker[clanId];
+        const count = activeUsers ? activeUsers.size : 0;
 
-    status.innerHTML =
-        `<i class="fa-solid fa-satellite-dish"
-        style="color:var(--accent-green);
-        animation:pulseReq 2s infinite;"></i>
-        <b>${liveUsers.join(", ")} are Live</b>`;
+        const card = document.getElementById('voiceCommsCard');
+        const title = document.getElementById('voiceCommsTitle');
+        const status = document.getElementById('voiceCommsStatus');
+        const icon = document.getElementById('voiceCommsIcon');
+
+        if (!card || !title || !status || !icon) return;
+
+        // SOMEONE IS LIVE
+        if (count > 0) {
+
+            const liveUsers = Array.from(activeUsers);
+
+            card.style.borderColor = "var(--accent-green)";
+            card.style.background =
+                "linear-gradient(135deg, rgba(0,255,127,0.1), rgba(0,0,0,0))";
+            card.style.boxShadow =
+                "0 4px 15px rgba(0,255,127,0.15)";
+
+            title.innerText = "JOIN NOW";
+            title.style.color = "var(--accent-green)";
+
+            if (count === 1) {
+
+                status.innerHTML =
+                    `<i class="fa-solid fa-satellite-dish"
+                    style="color:var(--accent-green);
+                    animation:pulseReq 2s infinite;"></i>
+                    <b>${liveUsers[0]} is Live</b>`;
+
+            } else {
+
+                status.innerHTML =
+                    `<i class="fa-solid fa-satellite-dish"
+                    style="color:var(--accent-green);
+                    animation:pulseReq 2s infinite;"></i>
+                    <b>${liveUsers.join(", ")} are Live</b>`;
+            }
+
+            status.style.color = "white";
+
+            icon.style.color = "black";
+            icon.style.background = "var(--accent-green)";
+            icon.style.boxShadow =
+                "0 0 15px rgba(0,255,127,0.4)";
+        }
+
+        // NOBODY IS LIVE
+        else {
+
+            card.style.borderColor =
+                "rgba(189,0,255,0.2)";
+
+            card.style.background =
+                "linear-gradient(135deg, rgba(189,0,255,0.05), rgba(0,0,0,0))";
+
+            card.style.boxShadow =
+                "0 4px 10px rgba(0,0,0,0.3)";
+
+            title.innerText = "Voice Comms";
+            title.style.color = "white";
+
+            status.innerHTML =
+                `<i class="fa-solid fa-circle-dot"
+                style="color:#ff4d4d;"></i>
+                Offline`;
+
+            status.style.color = "#888";
+
+            icon.style.color =
+                "var(--accent-purple)";
+
+            icon.style.background =
+                "rgba(189,0,255,0.1)";
+
+            icon.style.boxShadow =
+                "0 0 15px rgba(189,0,255,0.3)";
+        }
+    }
 }
-    
         function interceptNavForVoice(e) { if (localStream) { e.preventDefault(); showToast("Cannot navigate while in a Voice Chat! Disconnect first.", true); } }
 function addRemoteAudio(peerId, stream) {
     if(!document.getElementById(`audio-${peerId}`)) {
