@@ -1,0 +1,1304 @@
+<!DOCTYPE html>
+<!-- saved from url=(0064)file:///C:/Users/Jai%20Ganesh/Desktop/tournyx/tournyx-store.html -->
+<html lang="en"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Vault-X — Buyer Discovery Feed</title>
+<style>
+/* Self-contained build: no external JS/CSS dependencies (fonts fall back gracefully if offline) */
+:root{
+  --void:#05070c;
+  --void-2:#090d16;
+  --panel: rgba(16,22,36,.52);
+  --panel-solid:#0e1420;
+  --stroke: rgba(140,170,200,.14);
+  --cyan:#4cf3ff;
+  --cyan-dim: rgba(76,243,255,.35);
+  --magenta:#ff3ea5;
+  --gold:#ffc857;
+  --text:#e9f2f6;
+  --muted:#8ea0b6;
+  --muted-2:#5c6c80;
+  --danger:#ff5470;
+  --radius: 18px;
+  --dial: "JetBrains Mono", monospace;
+}
+*{box-sizing:border-box;}
+html,body{margin:0;padding:0;}
+body{
+  background:
+    radial-gradient(1200px 600px at 15% -10%, rgba(76,243,255,.10), transparent 60%),
+    radial-gradient(900px 500px at 100% 10%, rgba(255,62,165,.08), transparent 55%),
+    linear-gradient(180deg, var(--void) 0%, var(--void-2) 100%);
+  color:var(--text);
+  font-family:"Inter", sans-serif;
+  min-height:100vh;
+  -webkit-font-smoothing:antialiased;
+  overflow-x:hidden;
+}
+::selection{background:var(--cyan-dim); color:#04141a;}
+::-webkit-scrollbar{width:8px;height:8px;}
+::-webkit-scrollbar-thumb{background:rgba(140,170,200,.25); border-radius:8px;}
+h1,h2,h3,.display{font-family:"Rajdhani", sans-serif; letter-spacing:.02em;}
+.mono{font-family:var(--dial);}
+a{color:inherit;}
+button{font-family:inherit;}
+
+/* ---------- layout shell ---------- */
+.app{max-width:1440px; margin:0 auto; padding:0 28px 80px;}
+@media (max-width:720px){ .app{padding:0 14px 100px;} }
+
+/* ---------- topbar ---------- */
+.topbar{
+  display:flex; align-items:center; justify-content:space-between;
+  padding:22px 0 16px; gap:20px;
+}
+.brand{display:flex; align-items:center; gap:10px;}
+.brand .dial-mark{width:34px;height:34px;flex:none;}
+.brand-name{font-family:"Rajdhani",sans-serif; font-weight:700; font-size:22px; letter-spacing:.06em;}
+.brand-name span{color:var(--cyan);}
+.brand-sub{font-size:10.5px; color:var(--muted-2); letter-spacing:.18em; text-transform:uppercase; margin-top:-2px;}
+
+.search-wrap{
+  flex:1; max-width:520px; position:relative; display:flex; align-items:center;
+}
+.search-wrap input{
+  width:100%; padding:12px 16px 12px 42px; border-radius:14px;
+  background:var(--panel); border:1px solid var(--stroke); color:var(--text);
+  backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
+  font-size:14px; outline:none; transition:border-color .2s, box-shadow .2s;
+}
+.search-wrap input:focus{border-color:var(--cyan-dim); box-shadow:0 0 0 3px rgba(76,243,255,.12);}
+.search-wrap svg{position:absolute; left:14px; width:17px; height:17px; color:var(--muted);}
+.search-wrap input::placeholder{color:var(--muted-2);}
+
+.top-actions{display:flex; align-items:center; gap:12px;}
+.icon-btn{
+  width:40px; height:40px; border-radius:12px; background:var(--panel);
+  border:1px solid var(--stroke); display:flex; align-items:center; justify-content:center;
+  color:var(--muted); cursor:pointer; position:relative; backdrop-filter:blur(16px);
+  transition:border-color .2s, color .2s;
+}
+.icon-btn:hover{border-color:var(--cyan-dim); color:var(--cyan);}
+.icon-btn svg{width:18px;height:18px;}
+.avatar{
+  width:40px;height:40px;border-radius:12px; background:linear-gradient(135deg, var(--cyan), var(--magenta));
+  display:flex; align-items:center; justify-content:center; font-weight:700; color:#04141a; font-family:"Rajdhani";
+}
+@media (max-width:820px){ .search-wrap{display:none;} }
+
+/* ---------- chip bar ---------- */
+.chipbar{
+  display:flex; gap:10px; overflow-x:auto; padding:6px 2px 18px;
+  scrollbar-width:none;
+}
+.chipbar::-webkit-scrollbar{display:none;}
+.chip{
+  flex:none; padding:9px 16px; border-radius:999px; font-size:13px; font-weight:600;
+  background:var(--panel); border:1px solid var(--stroke); color:var(--muted);
+  cursor:pointer; white-space:nowrap; backdrop-filter:blur(16px);
+  transition:all .18s ease; display:flex; align-items:center; gap:6px;
+}
+.chip svg{width:14px;height:14px;}
+.chip:hover{border-color:var(--cyan-dim); color:var(--text);}
+.chip.active{
+  background:linear-gradient(135deg, rgba(76,243,255,.16), rgba(76,243,255,.04));
+  border-color:var(--cyan); color:var(--cyan); box-shadow:0 0 16px rgba(76,243,255,.15);
+}
+
+/* ---------- main layout ---------- */
+.layout{display:grid; grid-template-columns:270px 1fr; gap:26px; align-items:start;}
+@media (max-width:960px){ .layout{grid-template-columns:1fr;} }
+
+/* ---------- filters sidebar ---------- */
+.filters{
+  background:var(--panel); border:1px solid var(--stroke); border-radius:var(--radius);
+  padding:20px; backdrop-filter:blur(16px); -webkit-backdrop-filter:blur(16px);
+  position:sticky; top:18px;
+}
+.filters-head{display:flex; align-items:center; justify-content:space-between; margin-bottom:16px;}
+.filters-head h3{margin:0; font-size:17px; font-weight:700; display:flex; align-items:center; gap:8px;}
+.filters-head h3 svg{width:16px;height:16px; color:var(--cyan);}
+.clear-btn{font-size:11.5px; color:var(--muted); background:none; border:none; cursor:pointer; text-decoration:underline; text-underline-offset:2px;}
+.clear-btn:hover{color:var(--cyan);}
+.f-group{margin-bottom:22px;}
+.f-group:last-child{margin-bottom:0;}
+.f-label{
+  font-size:11px; text-transform:uppercase; letter-spacing:.12em; color:var(--muted-2);
+  margin-bottom:10px; display:flex; align-items:center; gap:6px; font-weight:600;
+}
+.f-check{display:flex; align-items:center; gap:9px; padding:7px 0; font-size:13.5px; color:var(--muted); cursor:pointer;}
+.f-check:hover{color:var(--text);}
+.f-check input{display:none;}
+.f-check .box{
+  width:16px; height:16px; border-radius:5px; border:1.5px solid var(--stroke); flex:none;
+  display:flex; align-items:center; justify-content:center; transition:all .15s;
+}
+.f-check input:checked + .box{background:var(--cyan); border-color:var(--cyan); box-shadow:0 0 10px rgba(76,243,255,.5);}
+.f-check input:checked + .box::after{content:""; width:5px; height:8px; border:solid #04141a; border-width:0 2px 2px 0; transform:rotate(45deg) translate(-1px,-1px);}
+.f-check .cnt{margin-left:auto; font-size:11px; color:var(--muted-2); font-family:var(--dial);}
+
+.price-vals{display:flex; justify-content:space-between; font-family:var(--dial); font-size:13px; color:var(--cyan); margin-bottom:10px;}
+.range-wrap{position:relative; height:32px;}
+.range-wrap input[type=range]{
+  position:absolute; width:100%; top:12px; height:4px; -webkit-appearance:none; background:none; pointer-events:none; margin:0;
+}
+.range-wrap input[type=range]::-webkit-slider-thumb{
+  -webkit-appearance:none; pointer-events:auto; width:16px; height:16px; border-radius:50%;
+  background:var(--cyan); box-shadow:0 0 10px rgba(76,243,255,.7); cursor:pointer; border:2px solid #04141a;
+}
+.range-track{position:absolute; top:12px; height:4px; width:100%; border-radius:4px; background:rgba(140,170,200,.2);}
+.range-fill{position:absolute; top:12px; height:4px; border-radius:4px; background:linear-gradient(90deg, var(--cyan), var(--magenta));}
+
+.tag-input-wrap{
+  display:flex; flex-wrap:wrap; gap:6px; padding:8px; border-radius:10px; background:rgba(255,255,255,.03);
+  border:1px solid var(--stroke); margin-bottom:8px;
+}
+.tag-pill{
+  font-size:11.5px; padding:5px 9px; border-radius:999px; background:rgba(76,243,255,.1); color:var(--cyan);
+  border:1px solid var(--cyan-dim); font-weight:600; cursor:pointer; display:flex; align-items:center; gap:4px;
+}
+.tag-pill.off{background:transparent; color:var(--muted); border-color:var(--stroke);}
+.tag-pill:hover{border-color:var(--cyan);}
+
+.sort-select{
+  width:100%; padding:10px 12px; border-radius:10px; background:rgba(255,255,255,.03);
+  border:1px solid var(--stroke); color:var(--text); font-size:13px; outline:none;
+}
+
+.filters-apply{display:none;}
+@media (max-width:960px){
+  .filters{
+    position:fixed; inset:auto 0 0 0; z-index:60; border-radius:22px 22px 0 0; max-height:82vh; overflow:auto;
+    transform:translateY(110%); transition:transform .28s ease; box-shadow:0 -20px 60px rgba(0,0,0,.5);
+  }
+  .filters.open{transform:translateY(0);}
+  .filters-apply{
+    display:block; width:100%; margin-top:18px; padding:13px; border-radius:12px; border:none;
+    background:linear-gradient(135deg, var(--cyan), #2fd4e6); color:#04141a; font-weight:700; cursor:pointer;
+  }
+}
+
+/* ---------- feed ---------- */
+.feed-header{display:flex; align-items:center; justify-content:space-between; margin-bottom:16px; flex-wrap:wrap; gap:10px;}
+.feed-count{font-size:13.5px; color:var(--muted);}
+.feed-count b{color:var(--text); font-family:var(--dial);}
+.mobile-filter-btn{
+  display:none; align-items:center; gap:8px; padding:10px 16px; border-radius:12px;
+  background:var(--panel); border:1px solid var(--cyan-dim); color:var(--cyan); font-weight:600; font-size:13px; cursor:pointer;
+}
+@media (max-width:960px){ .mobile-filter-btn{display:flex;} }
+
+.grid{
+  display:grid; grid-template-columns:repeat(auto-fill, minmax(280px,1fr)); gap:20px;
+}
+
+/* ---------- card ---------- */
+.card{
+  position:relative; border-radius:var(--radius); background:var(--panel); border:1px solid var(--stroke);
+  backdrop-filter:blur(16px); -webkit-backdrop-filter:blur(16px); overflow:hidden;
+  transition:transform .25s ease, border-color .25s ease, box-shadow .25s ease;
+  will-change:transform; contain:content;
+}
+.card:hover{transform:translateY(-4px); border-color:var(--cyan); box-shadow:0 12px 40px rgba(76,243,255,.12), 0 0 0 1px rgba(76,243,255,.25) inset;}
+.card::before, .card::after{content:""; position:absolute; width:16px; height:16px; border:2px solid var(--cyan); opacity:0; transition:opacity .25s;}
+.card::before{top:8px; left:8px; border-right:none; border-bottom:none;}
+.card::after{bottom:8px; right:8px; border-left:none; border-top:none;}
+.card:hover::before,.card:hover::after{opacity:.85;}
+
+.media{position:relative; height:170px; overflow:hidden;}
+.car-track{display:flex; width:100%; height:100%; transition:transform .55s cubic-bezier(.4,0,.2,1);}
+.car-slide{flex:0 0 100%; height:100%; display:flex; align-items:center; justify-content:center;}
+.car-slide svg{width:52px;height:52px; color:rgba(255,255,255,.85); filter:drop-shadow(0 0 14px rgba(0,0,0,.4));}
+.car-dots{position:absolute; bottom:9px; left:50%; transform:translateX(-50%); display:flex; gap:5px; z-index:6;}
+.car-dot{width:5px; height:5px; border-radius:50%; background:rgba(255,255,255,.35); transition:all .2s;}
+.car-dot.active{background:var(--cyan); box-shadow:0 0 6px var(--cyan); width:14px; border-radius:3px;}
+.game-badge{
+  position:absolute; top:10px; left:10px; z-index:5; font-size:10.5px; font-weight:700; padding:5px 10px;
+  border-radius:999px; backdrop-filter:blur(8px); letter-spacing:.03em;
+}
+.game-badge.ff{background:rgba(255,140,50,.22); color:#ffb066; border:1px solid rgba(255,140,50,.4);}
+.game-badge.bgmi{background:rgba(120,200,255,.2); color:#8fd3ff; border:1px solid rgba(120,200,255,.4);}
+.verified-tag{
+  position:absolute; top:10px; right:10px; z-index:5; display:flex; align-items:center; gap:4px;
+  font-size:10px; font-weight:700; padding:5px 9px; border-radius:999px; background:rgba(6,10,16,.6);
+  color:var(--gold); border:1px solid rgba(255,200,87,.4); backdrop-filter:blur(8px);
+}
+.verified-tag svg{width:11px;height:11px;}
+.media-fade{position:absolute; inset:0; background:linear-gradient(180deg, rgba(0,0,0,0) 55%, rgba(6,10,16,.55) 100%); pointer-events:none;}
+
+.card-body{padding:14px 16px 16px;}
+.seller-row{display:flex; align-items:center; gap:9px; margin-bottom:11px;}
+.seller-avatar{
+  width:30px; height:30px; border-radius:9px; flex:none; display:flex; align-items:center; justify-content:center;
+  font-family:"Rajdhani"; font-weight:700; font-size:13px; color:#04141a;
+}
+.seller-meta{min-width:0;}
+.seller-name{font-size:13.5px; font-weight:600; display:flex; align-items:center; gap:5px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;}
+.seller-name svg{width:12px;height:12px; color:var(--cyan); flex:none;}
+.seller-region{font-size:11px; color:var(--muted-2);}
+
+.pills{display:flex; flex-wrap:wrap; gap:6px; margin-bottom:13px;}
+.pill{
+  font-size:10.5px; font-weight:700; padding:5px 10px; border-radius:999px; letter-spacing:.01em;
+  background:rgba(255,255,255,.05); border:1px solid var(--stroke); color:var(--text);
+}
+.pill.skin{background:rgba(76,243,255,.1); color:var(--cyan); border-color:var(--cyan-dim);}
+.pill.outfit{background:rgba(255,62,165,.1); color:var(--magenta); border-color:rgba(255,62,165,.35);}
+.pill.badge{background:rgba(255,200,87,.1); color:var(--gold); border-color:rgba(255,200,87,.35);}
+.pill.more{color:var(--muted-2); background:transparent;}
+
+.card-foot{display:flex; align-items:center; justify-content:space-between; gap:10px;}
+.price{font-family:var(--dial); font-weight:600; font-size:17px; color:var(--text);}
+.price small{color:var(--muted-2); font-size:11px; font-weight:400;}
+.card-btns{display:flex; gap:8px;}
+.btn-ghost, .btn-solid{
+  border:none; border-radius:10px; padding:9px 13px; font-size:12.5px; font-weight:700; cursor:pointer;
+  display:flex; align-items:center; gap:6px; transition:all .18s;
+}
+.btn-ghost{background:rgba(255,255,255,.06); color:var(--text); border:1px solid var(--stroke);}
+.btn-ghost:hover{border-color:var(--cyan-dim); color:var(--cyan);}
+.btn-solid{background:linear-gradient(135deg, var(--cyan), #2fd4e6); color:#04141a;}
+.btn-solid:hover{box-shadow:0 0 18px rgba(76,243,255,.5);}
+.btn-ghost svg,.btn-solid svg{width:14px;height:14px;}
+
+/* ---------- skeleton ---------- */
+.skeleton{border-radius:var(--radius); background:var(--panel); border:1px solid var(--stroke); overflow:hidden; height:334px; position:relative;}
+.sk-media{height:170px; position:relative; overflow:hidden; background:rgba(255,255,255,.03);}
+.sk-dial{
+  position:absolute; top:50%; left:50%; width:44px; height:44px; margin:-22px 0 0 -22px;
+  border-radius:50%; border:2px solid rgba(140,170,200,.2); border-top-color:var(--cyan);
+  animation:spin 1s linear infinite;
+}
+@keyframes spin{to{transform:rotate(360deg);}}
+.sk-body{padding:16px;}
+.sk-line{height:11px; border-radius:6px; background:linear-gradient(90deg, rgba(255,255,255,.04), rgba(255,255,255,.09), rgba(255,255,255,.04)); background-size:200% 100%; animation:shimmer 1.4s infinite; margin-bottom:10px;}
+@keyframes shimmer{0%{background-position:200% 0;}100%{background-position:-200% 0;}}
+.sk-line.w60{width:60%;} .sk-line.w40{width:40%;} .sk-line.w90{width:90%;} .sk-line.w30{width:30%;}
+
+/* ---------- empty state ---------- */
+.empty{
+  grid-column:1/-1; text-align:center; padding:70px 20px; display:flex; flex-direction:column; align-items:center; gap:14px;
+}
+.empty .dial-mark{width:64px; height:64px; opacity:.7;}
+.empty h3{margin:0; font-size:20px;}
+.empty p{margin:0; color:var(--muted); font-size:13.5px; max-width:340px;}
+.empty button{
+  margin-top:6px; padding:11px 20px; border-radius:12px; border:1px solid var(--cyan-dim); background:rgba(76,243,255,.08);
+  color:var(--cyan); font-weight:700; cursor:pointer; font-size:13px;
+}
+.empty button:hover{background:rgba(76,243,255,.16);}
+
+/* ---------- modal ---------- */
+.modal-overlay{
+  position:fixed; inset:0; background:rgba(3,5,9,.72); backdrop-filter:blur(6px); z-index:100;
+  display:none; align-items:center; justify-content:center; padding:20px;
+}
+.modal-overlay.show{display:flex;}
+.modal{
+  width:100%; max-width:480px; max-height:88vh; overflow:auto; border-radius:22px; background:var(--panel-solid);
+  border:1px solid var(--stroke); box-shadow:0 30px 90px rgba(0,0,0,.6);
+  animation:pop .22s ease;
+}
+@keyframes pop{from{opacity:0; transform:translateY(14px) scale(.98);} to{opacity:1; transform:translateY(0) scale(1);}}
+.modal-head{padding:20px 20px 0; display:flex; justify-content:space-between; align-items:flex-start;}
+.modal-close{width:32px; height:32px; border-radius:10px; border:1px solid var(--stroke); background:rgba(255,255,255,.04); color:var(--muted); cursor:pointer; display:flex; align-items:center; justify-content:center;}
+.modal-close:hover{color:var(--cyan); border-color:var(--cyan-dim);}
+.modal-close svg{width:16px;height:16px;}
+
+/* seller modal */
+.seller-hero{padding:6px 24px 20px; text-align:center;}
+.seller-hero .big-avatar{
+  width:74px; height:74px; border-radius:20px; margin:0 auto 12px; display:flex; align-items:center; justify-content:center;
+  font-family:"Rajdhani"; font-weight:700; font-size:26px; color:#04141a;
+}
+.seller-hero h2{margin:0 0 4px; font-size:20px;}
+.seller-hero .region{color:var(--muted); font-size:13px; display:flex; align-items:center; justify-content:center; gap:5px;}
+.seller-hero .region svg{width:13px;height:13px;}
+.badges-row{display:flex; justify-content:center; gap:8px; flex-wrap:wrap; margin-top:14px;}
+.badge-chip{display:flex; align-items:center; gap:5px; font-size:11px; font-weight:700; padding:6px 11px; border-radius:999px; background:rgba(255,200,87,.1); color:var(--gold); border:1px solid rgba(255,200,87,.35);}
+.badge-chip svg{width:12px;height:12px;}
+.stats-grid{display:grid; grid-template-columns:repeat(3,1fr); gap:1px; background:var(--stroke); margin:0 20px; border-radius:14px; overflow:hidden;}
+.stat{background:var(--panel-solid); padding:16px 10px; text-align:center;}
+.stat b{display:block; font-family:var(--dial); font-size:19px; color:var(--cyan);}
+.stat span{font-size:10.5px; color:var(--muted-2); text-transform:uppercase; letter-spacing:.06em;}
+.modal-section{padding:18px 24px 0;}
+.modal-section h4{margin:0 0 10px; font-size:12px; text-transform:uppercase; letter-spacing:.1em; color:var(--muted-2);}
+.trust-list{list-style:none; margin:0; padding:0; display:flex; flex-direction:column; gap:9px;}
+.trust-list li{display:flex; align-items:center; gap:9px; font-size:13.5px; color:var(--text);}
+.trust-list svg{width:16px;height:16px; color:var(--cyan); flex:none;}
+.modal-cta{padding:22px 24px 24px; display:flex; gap:10px;}
+.modal-cta .btn-solid, .modal-cta .btn-ghost{flex:1; justify-content:center; padding:13px;}
+
+/* checkout modal */
+.checkout-item{display:flex; gap:12px; padding:20px 24px 0;}
+.checkout-thumb{width:64px; height:64px; border-radius:12px; flex:none; display:flex; align-items:center; justify-content:center;}
+.checkout-thumb svg{width:28px;height:28px; color:#fff;}
+.checkout-info h4{margin:0 0 4px; font-size:14.5px;}
+.checkout-info .sub{font-size:12px; color:var(--muted-2);}
+.line-items{margin:18px 24px 0; border-top:1px dashed var(--stroke); padding-top:14px;}
+.line{display:flex; justify-content:space-between; font-size:13px; color:var(--muted); padding:6px 0;}
+.line b{color:var(--text); font-family:var(--dial); font-weight:600;}
+.line.total{border-top:1px solid var(--stroke); margin-top:6px; padding-top:12px; font-size:15px;}
+.line.total b{color:var(--cyan); font-size:18px;}
+.pay-methods{display:flex; gap:8px; margin:16px 24px 0;}
+.pay-method{flex:1; padding:11px 8px; border-radius:12px; border:1px solid var(--stroke); background:rgba(255,255,255,.03); text-align:center; font-size:12px; font-weight:600; color:var(--muted); cursor:pointer;}
+.pay-method.active{border-color:var(--cyan); color:var(--cyan); background:rgba(76,243,255,.08); box-shadow:0 0 12px rgba(76,243,255,.15);}
+.escrow-note{margin:16px 24px 0; font-size:11.5px; color:var(--muted-2); display:flex; gap:7px; align-items:flex-start; line-height:1.5;}
+.escrow-note svg{width:15px; height:15px; color:var(--gold); flex:none; margin-top:1px;}
+.confirm-btn{margin:20px 24px 24px; width:calc(100% - 48px); padding:14px; border-radius:14px; border:none; background:linear-gradient(135deg, var(--cyan), #2fd4e6); color:#04141a; font-weight:700; font-size:14.5px; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:8px;}
+.confirm-btn:hover{box-shadow:0 0 22px rgba(76,243,255,.5);}
+.confirm-btn svg{width:17px;height:17px;}
+.success-state{padding:50px 24px; text-align:center; display:flex; flex-direction:column; align-items:center; gap:14px;}
+.success-state .check-ring{width:70px;height:70px; border-radius:50%; background:rgba(76,243,255,.1); border:2px solid var(--cyan); display:flex; align-items:center; justify-content:center; box-shadow:0 0 30px rgba(76,243,255,.35);}
+.success-state .check-ring svg{width:32px;height:32px; color:var(--cyan);}
+.success-state h3{margin:0;}
+.success-state p{margin:0; color:var(--muted); font-size:13px;}
+.success-state .mono{color:var(--muted-2); font-size:11.5px;}
+
+@media (max-width:520px){
+  .modal{max-width:100%; align-self:flex-end; border-radius:22px 22px 0 0; max-height:92vh;}
+  .modal-overlay{align-items:flex-end; padding:0;}
+}
+</style>
+</head>
+<body>
+
+<div class="app">
+
+  <!-- TOPBAR -->
+  <div class="topbar">
+    <div class="brand">
+      <svg class="dial-mark" viewBox="0 0 60 60" fill="none"><circle cx="30" cy="30" r="27" stroke="#4cf3ff" stroke-width="2" opacity=".5"></circle><circle cx="30" cy="30" r="19" stroke="#ff3ea5" stroke-width="1.5" opacity=".45"></circle><path d="M30 3 V11 M30 49 V57 M3 30 H11 M49 30 H57" stroke="#4cf3ff" stroke-width="2" stroke-linecap="round"></path><circle cx="30" cy="30" r="5.5" fill="#4cf3ff"></circle></svg>
+      <div>
+        <div class="brand-name">VAULT<span>-X</span></div>
+        <div class="brand-sub">Buyer Discovery Feed</div>
+      </div>
+    </div>
+    <div class="search-wrap">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"></circle><path d="m21 21-4.3-4.3"></path></svg>
+      <input type="text" id="searchInput" placeholder="Search skins, outfits, sellers, listing ID…">
+    </div>
+    <div class="top-actions">
+      <button class="icon-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"></path><path d="M13.7 21a2 2 0 0 1-3.4 0"></path></svg></button>
+      <button class="icon-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="21" r="1"></circle><circle cx="20" cy="21" r="1"></circle><path d="M1 1h4l2.7 13.4a2 2 0 0 0 2 1.6h9.7a2 2 0 0 0 2-1.6L23 6H6"></path></svg></button>
+      <div class="avatar">AK</div>
+    </div>
+  </div>
+
+  <!-- CHIP BAR -->
+  <div class="chipbar" id="chipBar"><button class="chip " data-key="all">All</button><button class="chip " data-key="game:freefire">Free Fire</button><button class="chip " data-key="game:bgmi">BGMI</button><button class="chip " data-key="price:5000">Under ₹5,000</button><button class="chip " data-key="has:outfits">Rare Outfits</button><button class="chip " data-key="has:skins">Gun Skins</button><button class="chip " data-key="has:badges">Badges</button></div>
+
+  <!-- LAYOUT -->
+  <div class="layout">
+
+    <!-- FILTERS -->
+    <aside class="filters" id="filtersPanel">
+      <div class="filters-head">
+        <h3><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 3H2l8 9.46V19l4 2v-8.54L22 3z"></path></svg> Filters</h3>
+        <button class="clear-btn" id="clearFilters">Reset all</button>
+      </div>
+
+      <div class="f-group">
+        <div class="f-label">Game</div>
+        <div id="gameFilters"><label class="f-check"><input type="checkbox" data-game="freefire"><span class="box"></span>Free Fire<span class="cnt">6</span></label><label class="f-check"><input type="checkbox" data-game="bgmi"><span class="box"></span>BGMI<span class="cnt">6</span></label></div>
+      </div>
+
+      <div class="f-group">
+        <div class="f-label">Price budget (₹)</div>
+        <div class="price-vals"><span id="priceMinLabel">₹0</span><span id="priceMaxLabel">₹15,000</span></div>
+        <div class="range-wrap">
+          <div class="range-track"></div>
+          <div class="range-fill" id="rangeFill" style="left: 0%; width: 100%;"></div>
+          <input type="range" id="priceMin" min="0" max="15000" step="250" value="0">
+          <input type="range" id="priceMax" min="0" max="15000" step="250" value="15000">
+        </div>
+      </div>
+
+      <div class="f-group">
+        <div class="f-label">Gun skins</div>
+        <div class="tag-input-wrap" id="skinFilters"><span class="tag-pill off" data-tag="Cobra MP40">Cobra MP40</span><span class="tag-pill off" data-tag="Glacier M416">Glacier M416</span><span class="tag-pill off" data-tag="Phoenix AKM">Phoenix AKM</span><span class="tag-pill off" data-tag="Venom Vector">Venom Vector</span><span class="tag-pill off" data-tag="Toxic Scar">Toxic Scar</span><span class="tag-pill off" data-tag="Dragon UMP">Dragon UMP</span><span class="tag-pill off" data-tag="Shadow AWM">Shadow AWM</span><span class="tag-pill off" data-tag="Crimson Groza">Crimson Groza</span></div>
+      </div>
+
+      <div class="f-group">
+        <div class="f-label">Rare outfits</div>
+        <div class="tag-input-wrap" id="outfitFilters"><span class="tag-pill off" data-tag="Booyah Day">Booyah Day</span><span class="tag-pill off" data-tag="Elite Pass S10">Elite Pass S10</span><span class="tag-pill off" data-tag="Winterlands">Winterlands</span><span class="tag-pill off" data-tag="Cyber Ronin">Cyber Ronin</span><span class="tag-pill off" data-tag="Phantom Assassin">Phantom Assassin</span><span class="tag-pill off" data-tag="Neon Samurai">Neon Samurai</span></div>
+      </div>
+
+      <div class="f-group">
+        <div class="f-label">Badges</div>
+        <div id="badgeFilters"><label class="f-check"><input type="checkbox" data-badge="Grandmaster"><span class="box"></span>Grandmaster</label><label class="f-check"><input type="checkbox" data-badge="Diamond Rank"><span class="box"></span>Diamond Rank</label><label class="f-check"><input type="checkbox" data-badge="OG Player (2019)"><span class="box"></span>OG Player (2019)</label><label class="f-check"><input type="checkbox" data-badge="Season Ace"><span class="box"></span>Season Ace</label><label class="f-check"><input type="checkbox" data-badge="Conqueror"><span class="box"></span>Conqueror</label><label class="f-check"><input type="checkbox" data-badge="Heroic"><span class="box"></span>Heroic</label></div>
+      </div>
+
+      <div class="f-group">
+        <div class="f-label">Sort by</div>
+        <select class="sort-select" id="sortSelect">
+          <option value="relevance">Relevance</option>
+          <option value="price_low">Price: Low to High</option>
+          <option value="price_high">Price: High to Low</option>
+          <option value="trust">Seller trust score</option>
+        </select>
+      </div>
+
+      <button class="filters-apply" id="applyFiltersMobile">Show results</button>
+    </aside>
+
+    <!-- FEED -->
+    <main>
+      <div class="feed-header">
+        <div class="feed-count"><b id="resultCount">12</b> listings found</div>
+      </div>
+      <div class="grid" id="feedGrid">
+  <div class="card" data-id="VX-1000">
+    <div class="media" data-carousel="VX-1000">
+      <div class="car-track" style="transform: translateX(-200%);">
+        <div class="car-slide" style="background:linear-gradient(135deg,#1c2b4a,#0a4d5c)"><svg class="" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="9"></circle><path d="M12 3v3M12 18v3M3 12h3M18 12h3"></path><circle cx="12" cy="12" r="2.4" fill="currentColor" stroke="none"></circle></svg></div><div class="car-slide" style="background:linear-gradient(135deg,#4a1c2a,#5c0a1c)"><svg class="" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="9"></circle><circle cx="12" cy="12" r="5"></circle><circle cx="12" cy="12" r="1.4" fill="currentColor" stroke="none"></circle></svg></div><div class="car-slide" style="background:linear-gradient(135deg,#3a1c4a,#5c0a3a)"><svg class="" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 2 4 14h6l-1 8 9-13h-6l1-7z" stroke-linejoin="round"></path></svg></div>
+      </div>
+      <div class="car-dots"><span class="car-dot"></span><span class="car-dot"></span><span class="car-dot active"></span></div>
+      <div class="media-fade"></div>
+      <span class="game-badge ff">Free Fire</span>
+      
+    </div>
+    <div class="card-body">
+      <div class="seller-row">
+        <div class="seller-avatar" style="background:linear-gradient(135deg,var(--cyan),var(--magenta))">SH</div>
+        <div class="seller-meta">
+          <div class="seller-name">ShadowStrike </div>
+          <div class="seller-region">Mumbai, IN · 99% trust</div>
+        </div>
+      </div>
+      <div class="pills"><span class="pill skin">Venom Vector</span><span class="pill badge">Season Ace</span></div>
+      <div class="card-foot">
+        <div class="price">₹2,250<br><small>VX-1000</small></div>
+        <div class="card-btns">
+          <button class="btn-ghost" data-seller="VX-1000"><svg class="" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="8" r="3.5"></circle><path d="M5 20c0-3.5 3-6 7-6s7 2.5 7 6"></path></svg>Seller</button>
+          <button class="btn-solid" data-buy="VX-1000"><svg class="" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="9" cy="20" r="1"></circle><circle cx="18" cy="20" r="1"></circle><path d="M2 3h2l2.4 12.4a2 2 0 0 0 2 1.6h7.2a2 2 0 0 0 2-1.6L20 7H6"></path></svg>Buy</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="card" data-id="VX-1001">
+    <div class="media" data-carousel="VX-1001">
+      <div class="car-track" style="transform: translateX(-100%);">
+        <div class="car-slide" style="background:linear-gradient(135deg,#4a1c2a,#5c0a1c)"><svg class="" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="9"></circle><circle cx="12" cy="12" r="5"></circle><circle cx="12" cy="12" r="1.4" fill="currentColor" stroke="none"></circle></svg></div><div class="car-slide" style="background:linear-gradient(135deg,#4a2a1c,#5c3a0a)"><svg class="" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 2 4 14h6l-1 8 9-13h-6l1-7z" stroke-linejoin="round"></path></svg></div><div class="car-slide" style="background:linear-gradient(135deg,#1c1c4a,#3a0a5c)"><svg class="" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 2c1 4-4 5-4 10a4 4 0 0 0 8 0c1.5 1 2 3 2 4.5A6.5 6.5 0 0 1 5 16.5C5 10 12 8 12 2z"></path></svg></div>
+      </div>
+      <div class="car-dots"><span class="car-dot"></span><span class="car-dot active"></span><span class="car-dot"></span></div>
+      <div class="media-fade"></div>
+      <span class="game-badge bgmi">BGMI</span>
+      <span class="verified-tag"><svg class="" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 2l2.2 1.3 2.5-.4 1.2 2.2 2.2 1.2-.4 2.5L21 11l-1.3 2.2.4 2.5-2.2 1.2-1.2 2.2-2.5-.4L12 20l-2.2-1.3-2.5.4-1.2-2.2-2.2-1.2.4-2.5L3 11l1.3-2.2-.4-2.5 2.2-1.2 1.2-2.2 2.5.4z"></path><path d="M9 12l2 2 4-4"></path></svg>Verified</span>
+    </div>
+    <div class="card-body">
+      <div class="seller-row">
+        <div class="seller-avatar" style="background:linear-gradient(135deg,var(--cyan),var(--magenta))">AP</div>
+        <div class="seller-meta">
+          <div class="seller-name">ApexNova <svg class="" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 3l7 3v6c0 4.5-3 7.5-7 9-4-1.5-7-4.5-7-9V6z"></path><path d="M9 12l2 2 4-4"></path></svg></div>
+          <div class="seller-region">Chennai, IN · 78% trust</div>
+        </div>
+      </div>
+      <div class="pills"><span class="pill skin">Phoenix AKM</span><span class="pill skin">Venom Vector</span><span class="pill skin">Toxic Scar</span><span class="pill more">+2 more</span></div>
+      <div class="card-foot">
+        <div class="price">₹4,000<br><small>VX-1001</small></div>
+        <div class="card-btns">
+          <button class="btn-ghost" data-seller="VX-1001"><svg class="" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="8" r="3.5"></circle><path d="M5 20c0-3.5 3-6 7-6s7 2.5 7 6"></path></svg>Seller</button>
+          <button class="btn-solid" data-buy="VX-1001"><svg class="" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="9" cy="20" r="1"></circle><circle cx="18" cy="20" r="1"></circle><path d="M2 3h2l2.4 12.4a2 2 0 0 0 2 1.6h7.2a2 2 0 0 0 2-1.6L20 7H6"></path></svg>Buy</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="card" data-id="VX-1002">
+    <div class="media" data-carousel="VX-1002">
+      <div class="car-track" style="transform: translateX(-100%);">
+        <div class="car-slide" style="background:linear-gradient(135deg,#1c1c4a,#3a0a5c)"><svg class="" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 2 4 14h6l-1 8 9-13h-6l1-7z" stroke-linejoin="round"></path></svg></div><div class="car-slide" style="background:linear-gradient(135deg,#1c2b4a,#0a4d5c)"><svg class="" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 2c1 4-4 5-4 10a4 4 0 0 0 8 0c1.5 1 2 3 2 4.5A6.5 6.5 0 0 1 5 16.5C5 10 12 8 12 2z"></path></svg></div><div class="car-slide" style="background:linear-gradient(135deg,#4a1c2a,#5c0a1c)"><svg class="" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 3l7 3v6c0 4.5-3 7.5-7 9-4-1.5-7-4.5-7-9V6z"></path></svg></div>
+      </div>
+      <div class="car-dots"><span class="car-dot"></span><span class="car-dot active"></span><span class="car-dot"></span></div>
+      <div class="media-fade"></div>
+      <span class="game-badge ff">Free Fire</span>
+      
+    </div>
+    <div class="card-body">
+      <div class="seller-row">
+        <div class="seller-avatar" style="background:linear-gradient(135deg,var(--cyan),var(--magenta))">VI</div>
+        <div class="seller-meta">
+          <div class="seller-name">ViperKing_IN </div>
+          <div class="seller-region">Delhi, IN · 75% trust</div>
+        </div>
+      </div>
+      <div class="pills"><span class="pill skin">Shadow AWM</span><span class="pill outfit">Booyah Day</span><span class="pill outfit">Phantom Assassin</span><span class="pill more">+1 more</span></div>
+      <div class="card-foot">
+        <div class="price">₹5,000<br><small>VX-1002</small></div>
+        <div class="card-btns">
+          <button class="btn-ghost" data-seller="VX-1002"><svg class="" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="8" r="3.5"></circle><path d="M5 20c0-3.5 3-6 7-6s7 2.5 7 6"></path></svg>Seller</button>
+          <button class="btn-solid" data-buy="VX-1002"><svg class="" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="9" cy="20" r="1"></circle><circle cx="18" cy="20" r="1"></circle><path d="M2 3h2l2.4 12.4a2 2 0 0 0 2 1.6h7.2a2 2 0 0 0 2-1.6L20 7H6"></path></svg>Buy</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="card" data-id="VX-1003">
+    <div class="media" data-carousel="VX-1003">
+      <div class="car-track" style="transform: translateX(-200%);">
+        <div class="car-slide" style="background:linear-gradient(135deg,#3a1c4a,#5c0a3a)"><svg class="" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 2c1 4-4 5-4 10a4 4 0 0 0 8 0c1.5 1 2 3 2 4.5A6.5 6.5 0 0 1 5 16.5C5 10 12 8 12 2z"></path></svg></div><div class="car-slide" style="background:linear-gradient(135deg,#1c1c4a,#3a0a5c)"><svg class="" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 3l7 3v6c0 4.5-3 7.5-7 9-4-1.5-7-4.5-7-9V6z"></path></svg></div><div class="car-slide" style="background:linear-gradient(135deg,#1c2b4a,#0a4d5c)"><svg class="" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 3l9 9M18 3L9 12M4 19l3-3M17 19l3-3M6 3v3M18 3v3M9 12l-3 7M15 12l3 7"></path></svg></div>
+      </div>
+      <div class="car-dots"><span class="car-dot"></span><span class="car-dot"></span><span class="car-dot active"></span></div>
+      <div class="media-fade"></div>
+      <span class="game-badge bgmi">BGMI</span>
+      
+    </div>
+    <div class="card-body">
+      <div class="seller-row">
+        <div class="seller-avatar" style="background:linear-gradient(135deg,var(--cyan),var(--magenta))">FR</div>
+        <div class="seller-meta">
+          <div class="seller-name">FrostByte99 </div>
+          <div class="seller-region">Kolkata, IN · 98% trust</div>
+        </div>
+      </div>
+      <div class="pills"><span class="pill skin">Phoenix AKM</span><span class="pill skin">Toxic Scar</span><span class="pill outfit">Neon Samurai</span><span class="pill more">+2 more</span></div>
+      <div class="card-foot">
+        <div class="price">₹2,250<br><small>VX-1003</small></div>
+        <div class="card-btns">
+          <button class="btn-ghost" data-seller="VX-1003"><svg class="" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="8" r="3.5"></circle><path d="M5 20c0-3.5 3-6 7-6s7 2.5 7 6"></path></svg>Seller</button>
+          <button class="btn-solid" data-buy="VX-1003"><svg class="" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="9" cy="20" r="1"></circle><circle cx="18" cy="20" r="1"></circle><path d="M2 3h2l2.4 12.4a2 2 0 0 0 2 1.6h7.2a2 2 0 0 0 2-1.6L20 7H6"></path></svg>Buy</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="card" data-id="VX-1004">
+    <div class="media" data-carousel="VX-1004">
+      <div class="car-track" style="transform: translateX(0%);">
+        <div class="car-slide" style="background:linear-gradient(135deg,#4a1c2a,#5c0a1c)"><svg class="" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 3l7 3v6c0 4.5-3 7.5-7 9-4-1.5-7-4.5-7-9V6z"></path></svg></div><div class="car-slide" style="background:linear-gradient(135deg,#4a2a1c,#5c3a0a)"><svg class="" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 3l9 9M18 3L9 12M4 19l3-3M17 19l3-3M6 3v3M18 3v3M9 12l-3 7M15 12l3 7"></path></svg></div><div class="car-slide" style="background:linear-gradient(135deg,#1c2b4a,#0a4d5c)"><svg class="" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="9"></circle><path d="M12 3v3M12 18v3M3 12h3M18 12h3"></path><circle cx="12" cy="12" r="2.4" fill="currentColor" stroke="none"></circle></svg></div>
+      </div>
+      <div class="car-dots"><span class="car-dot active"></span><span class="car-dot"></span><span class="car-dot"></span></div>
+      <div class="media-fade"></div>
+      <span class="game-badge ff">Free Fire</span>
+      
+    </div>
+    <div class="card-body">
+      <div class="seller-row">
+        <div class="seller-avatar" style="background:linear-gradient(135deg,var(--cyan),var(--magenta))">RO</div>
+        <div class="seller-meta">
+          <div class="seller-name">RogueSniperX </div>
+          <div class="seller-region">Bengaluru, IN · 80% trust</div>
+        </div>
+      </div>
+      <div class="pills"><span class="pill skin">Phoenix AKM</span><span class="pill skin">Glacier M416</span><span class="pill skin">Crimson Groza</span><span class="pill more">+4 more</span></div>
+      <div class="card-foot">
+        <div class="price">₹1,500<br><small>VX-1004</small></div>
+        <div class="card-btns">
+          <button class="btn-ghost" data-seller="VX-1004"><svg class="" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="8" r="3.5"></circle><path d="M5 20c0-3.5 3-6 7-6s7 2.5 7 6"></path></svg>Seller</button>
+          <button class="btn-solid" data-buy="VX-1004"><svg class="" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="9" cy="20" r="1"></circle><circle cx="18" cy="20" r="1"></circle><path d="M2 3h2l2.4 12.4a2 2 0 0 0 2 1.6h7.2a2 2 0 0 0 2-1.6L20 7H6"></path></svg>Buy</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="card" data-id="VX-1005">
+    <div class="media" data-carousel="VX-1005">
+      <div class="car-track" style="transform: translateX(-100%);">
+        <div class="car-slide" style="background:linear-gradient(135deg,#1c2b4a,#0a4d5c)"><svg class="" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 3l9 9M18 3L9 12M4 19l3-3M17 19l3-3M6 3v3M18 3v3M9 12l-3 7M15 12l3 7"></path></svg></div><div class="car-slide" style="background:linear-gradient(135deg,#4a1c2a,#5c0a1c)"><svg class="" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="9"></circle><path d="M12 3v3M12 18v3M3 12h3M18 12h3"></path><circle cx="12" cy="12" r="2.4" fill="currentColor" stroke="none"></circle></svg></div><div class="car-slide" style="background:linear-gradient(135deg,#1c1c4a,#3a0a5c)"><svg class="" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="9"></circle><circle cx="12" cy="12" r="5"></circle><circle cx="12" cy="12" r="1.4" fill="currentColor" stroke="none"></circle></svg></div>
+      </div>
+      <div class="car-dots"><span class="car-dot"></span><span class="car-dot active"></span><span class="car-dot"></span></div>
+      <div class="media-fade"></div>
+      <span class="game-badge bgmi">BGMI</span>
+      <span class="verified-tag"><svg class="" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 2l2.2 1.3 2.5-.4 1.2 2.2 2.2 1.2-.4 2.5L21 11l-1.3 2.2.4 2.5-2.2 1.2-1.2 2.2-2.5-.4L12 20l-2.2-1.3-2.5.4-1.2-2.2-2.2-1.2.4-2.5L3 11l1.3-2.2-.4-2.5 2.2-1.2 1.2-2.2 2.5.4z"></path><path d="M9 12l2 2 4-4"></path></svg>Verified</span>
+    </div>
+    <div class="card-body">
+      <div class="seller-row">
+        <div class="seller-avatar" style="background:linear-gradient(135deg,var(--cyan),var(--magenta))">NI</div>
+        <div class="seller-meta">
+          <div class="seller-name">NightHawk <svg class="" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 3l7 3v6c0 4.5-3 7.5-7 9-4-1.5-7-4.5-7-9V6z"></path><path d="M9 12l2 2 4-4"></path></svg></div>
+          <div class="seller-region">Hyderabad, IN · 89% trust</div>
+        </div>
+      </div>
+      <div class="pills"><span class="pill skin">Phoenix AKM</span><span class="pill skin">Shadow AWM</span><span class="pill badge">Conqueror</span><span class="pill more">+1 more</span></div>
+      <div class="card-foot">
+        <div class="price">₹4,500<br><small>VX-1005</small></div>
+        <div class="card-btns">
+          <button class="btn-ghost" data-seller="VX-1005"><svg class="" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="8" r="3.5"></circle><path d="M5 20c0-3.5 3-6 7-6s7 2.5 7 6"></path></svg>Seller</button>
+          <button class="btn-solid" data-buy="VX-1005"><svg class="" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="9" cy="20" r="1"></circle><circle cx="18" cy="20" r="1"></circle><path d="M2 3h2l2.4 12.4a2 2 0 0 0 2 1.6h7.2a2 2 0 0 0 2-1.6L20 7H6"></path></svg>Buy</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="card" data-id="VX-1006">
+    <div class="media" data-carousel="VX-1006">
+      <div class="car-track" style="transform: translateX(0%);">
+        <div class="car-slide" style="background:linear-gradient(135deg,#1c1c4a,#3a0a5c)"><svg class="" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="9"></circle><path d="M12 3v3M12 18v3M3 12h3M18 12h3"></path><circle cx="12" cy="12" r="2.4" fill="currentColor" stroke="none"></circle></svg></div><div class="car-slide" style="background:linear-gradient(135deg,#4a1c2a,#5c0a1c)"><svg class="" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="9"></circle><circle cx="12" cy="12" r="5"></circle><circle cx="12" cy="12" r="1.4" fill="currentColor" stroke="none"></circle></svg></div><div class="car-slide" style="background:linear-gradient(135deg,#4a2a1c,#5c3a0a)"><svg class="" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 2 4 14h6l-1 8 9-13h-6l1-7z" stroke-linejoin="round"></path></svg></div>
+      </div>
+      <div class="car-dots"><span class="car-dot active"></span><span class="car-dot"></span><span class="car-dot"></span></div>
+      <div class="media-fade"></div>
+      <span class="game-badge ff">Free Fire</span>
+      
+    </div>
+    <div class="card-body">
+      <div class="seller-row">
+        <div class="seller-avatar" style="background:linear-gradient(135deg,var(--cyan),var(--magenta))">CO</div>
+        <div class="seller-meta">
+          <div class="seller-name">CobraCartel </div>
+          <div class="seller-region">Mumbai, IN · 88% trust</div>
+        </div>
+      </div>
+      <div class="pills"><span class="pill skin">Cobra MP40</span><span class="pill badge">OG Player (2019)</span></div>
+      <div class="card-foot">
+        <div class="price">₹7,500<br><small>VX-1006</small></div>
+        <div class="card-btns">
+          <button class="btn-ghost" data-seller="VX-1006"><svg class="" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="8" r="3.5"></circle><path d="M5 20c0-3.5 3-6 7-6s7 2.5 7 6"></path></svg>Seller</button>
+          <button class="btn-solid" data-buy="VX-1006"><svg class="" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="9" cy="20" r="1"></circle><circle cx="18" cy="20" r="1"></circle><path d="M2 3h2l2.4 12.4a2 2 0 0 0 2 1.6h7.2a2 2 0 0 0 2-1.6L20 7H6"></path></svg>Buy</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="card" data-id="VX-1007">
+    <div class="media" data-carousel="VX-1007">
+      <div class="car-track" style="transform: translateX(0%);">
+        <div class="car-slide" style="background:linear-gradient(135deg,#4a1c2a,#5c0a1c)"><svg class="" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="9"></circle><circle cx="12" cy="12" r="5"></circle><circle cx="12" cy="12" r="1.4" fill="currentColor" stroke="none"></circle></svg></div><div class="car-slide" style="background:linear-gradient(135deg,#1c2b4a,#0a4d5c)"><svg class="" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 2 4 14h6l-1 8 9-13h-6l1-7z" stroke-linejoin="round"></path></svg></div><div class="car-slide" style="background:linear-gradient(135deg,#1c1c4a,#3a0a5c)"><svg class="" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 2c1 4-4 5-4 10a4 4 0 0 0 8 0c1.5 1 2 3 2 4.5A6.5 6.5 0 0 1 5 16.5C5 10 12 8 12 2z"></path></svg></div>
+      </div>
+      <div class="car-dots"><span class="car-dot active"></span><span class="car-dot"></span><span class="car-dot"></span></div>
+      <div class="media-fade"></div>
+      <span class="game-badge bgmi">BGMI</span>
+      <span class="verified-tag"><svg class="" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 2l2.2 1.3 2.5-.4 1.2 2.2 2.2 1.2-.4 2.5L21 11l-1.3 2.2.4 2.5-2.2 1.2-1.2 2.2-2.5-.4L12 20l-2.2-1.3-2.5.4-1.2-2.2-2.2-1.2.4-2.5L3 11l1.3-2.2-.4-2.5 2.2-1.2 1.2-2.2 2.5.4z"></path><path d="M9 12l2 2 4-4"></path></svg>Verified</span>
+    </div>
+    <div class="card-body">
+      <div class="seller-row">
+        <div class="seller-avatar" style="background:linear-gradient(135deg,var(--cyan),var(--magenta))">GH</div>
+        <div class="seller-meta">
+          <div class="seller-name">GhostReconIN <svg class="" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 3l7 3v6c0 4.5-3 7.5-7 9-4-1.5-7-4.5-7-9V6z"></path><path d="M9 12l2 2 4-4"></path></svg></div>
+          <div class="seller-region">Chennai, IN · 72% trust</div>
+        </div>
+      </div>
+      <div class="pills"><span class="pill skin">Glacier M416</span><span class="pill skin">Phoenix AKM</span><span class="pill skin">Toxic Scar</span><span class="pill more">+4 more</span></div>
+      <div class="card-foot">
+        <div class="price">₹5,250<br><small>VX-1007</small></div>
+        <div class="card-btns">
+          <button class="btn-ghost" data-seller="VX-1007"><svg class="" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="8" r="3.5"></circle><path d="M5 20c0-3.5 3-6 7-6s7 2.5 7 6"></path></svg>Seller</button>
+          <button class="btn-solid" data-buy="VX-1007"><svg class="" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="9" cy="20" r="1"></circle><circle cx="18" cy="20" r="1"></circle><path d="M2 3h2l2.4 12.4a2 2 0 0 0 2 1.6h7.2a2 2 0 0 0 2-1.6L20 7H6"></path></svg>Buy</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="card" data-id="VX-1008">
+    <div class="media" data-carousel="VX-1008">
+      <div class="car-track" style="transform: translateX(-200%);">
+        <div class="car-slide" style="background:linear-gradient(135deg,#1c1c4a,#3a0a5c)"><svg class="" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 2 4 14h6l-1 8 9-13h-6l1-7z" stroke-linejoin="round"></path></svg></div><div class="car-slide" style="background:linear-gradient(135deg,#4a2a1c,#5c3a0a)"><svg class="" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 2c1 4-4 5-4 10a4 4 0 0 0 8 0c1.5 1 2 3 2 4.5A6.5 6.5 0 0 1 5 16.5C5 10 12 8 12 2z"></path></svg></div><div class="car-slide" style="background:linear-gradient(135deg,#3a1c4a,#5c0a3a)"><svg class="" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 3l7 3v6c0 4.5-3 7.5-7 9-4-1.5-7-4.5-7-9V6z"></path></svg></div>
+      </div>
+      <div class="car-dots"><span class="car-dot"></span><span class="car-dot"></span><span class="car-dot active"></span></div>
+      <div class="media-fade"></div>
+      <span class="game-badge ff">Free Fire</span>
+      <span class="verified-tag"><svg class="" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 2l2.2 1.3 2.5-.4 1.2 2.2 2.2 1.2-.4 2.5L21 11l-1.3 2.2.4 2.5-2.2 1.2-1.2 2.2-2.5-.4L12 20l-2.2-1.3-2.5.4-1.2-2.2-2.2-1.2.4-2.5L3 11l1.3-2.2-.4-2.5 2.2-1.2 1.2-2.2 2.5.4z"></path><path d="M9 12l2 2 4-4"></path></svg>Verified</span>
+    </div>
+    <div class="card-body">
+      <div class="seller-row">
+        <div class="seller-avatar" style="background:linear-gradient(135deg,var(--cyan),var(--magenta))">BL</div>
+        <div class="seller-meta">
+          <div class="seller-name">BlazeRunner <svg class="" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 3l7 3v6c0 4.5-3 7.5-7 9-4-1.5-7-4.5-7-9V6z"></path><path d="M9 12l2 2 4-4"></path></svg></div>
+          <div class="seller-region">Delhi, IN · 98% trust</div>
+        </div>
+      </div>
+      <div class="pills"><span class="pill skin">Cobra MP40</span><span class="pill skin">Crimson Groza</span><span class="pill outfit">Cyber Ronin</span><span class="pill more">+2 more</span></div>
+      <div class="card-foot">
+        <div class="price">₹8,000<br><small>VX-1008</small></div>
+        <div class="card-btns">
+          <button class="btn-ghost" data-seller="VX-1008"><svg class="" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="8" r="3.5"></circle><path d="M5 20c0-3.5 3-6 7-6s7 2.5 7 6"></path></svg>Seller</button>
+          <button class="btn-solid" data-buy="VX-1008"><svg class="" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="9" cy="20" r="1"></circle><circle cx="18" cy="20" r="1"></circle><path d="M2 3h2l2.4 12.4a2 2 0 0 0 2 1.6h7.2a2 2 0 0 0 2-1.6L20 7H6"></path></svg>Buy</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="card" data-id="VX-1009">
+    <div class="media" data-carousel="VX-1009">
+      <div class="car-track" style="transform: translateX(-200%);">
+        <div class="car-slide" style="background:linear-gradient(135deg,#3a1c4a,#5c0a3a)"><svg class="" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 2c1 4-4 5-4 10a4 4 0 0 0 8 0c1.5 1 2 3 2 4.5A6.5 6.5 0 0 1 5 16.5C5 10 12 8 12 2z"></path></svg></div><div class="car-slide" style="background:linear-gradient(135deg,#1c1c4a,#3a0a5c)"><svg class="" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 3l7 3v6c0 4.5-3 7.5-7 9-4-1.5-7-4.5-7-9V6z"></path></svg></div><div class="car-slide" style="background:linear-gradient(135deg,#4a1c2a,#5c0a1c)"><svg class="" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 3l9 9M18 3L9 12M4 19l3-3M17 19l3-3M6 3v3M18 3v3M9 12l-3 7M15 12l3 7"></path></svg></div>
+      </div>
+      <div class="car-dots"><span class="car-dot"></span><span class="car-dot"></span><span class="car-dot active"></span></div>
+      <div class="media-fade"></div>
+      <span class="game-badge bgmi">BGMI</span>
+      <span class="verified-tag"><svg class="" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 2l2.2 1.3 2.5-.4 1.2 2.2 2.2 1.2-.4 2.5L21 11l-1.3 2.2.4 2.5-2.2 1.2-1.2 2.2-2.5-.4L12 20l-2.2-1.3-2.5.4-1.2-2.2-2.2-1.2.4-2.5L3 11l1.3-2.2-.4-2.5 2.2-1.2 1.2-2.2 2.5.4z"></path><path d="M9 12l2 2 4-4"></path></svg>Verified</span>
+    </div>
+    <div class="card-body">
+      <div class="seller-row">
+        <div class="seller-avatar" style="background:linear-gradient(135deg,var(--cyan),var(--magenta))">TI</div>
+        <div class="seller-meta">
+          <div class="seller-name">TitanVaultOG <svg class="" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 3l7 3v6c0 4.5-3 7.5-7 9-4-1.5-7-4.5-7-9V6z"></path><path d="M9 12l2 2 4-4"></path></svg></div>
+          <div class="seller-region">Kolkata, IN · 94% trust</div>
+        </div>
+      </div>
+      <div class="pills"><span class="pill skin">Dragon UMP</span><span class="pill skin">Crimson Groza</span><span class="pill badge">Heroic</span></div>
+      <div class="card-foot">
+        <div class="price">₹2,000<br><small>VX-1009</small></div>
+        <div class="card-btns">
+          <button class="btn-ghost" data-seller="VX-1009"><svg class="" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="8" r="3.5"></circle><path d="M5 20c0-3.5 3-6 7-6s7 2.5 7 6"></path></svg>Seller</button>
+          <button class="btn-solid" data-buy="VX-1009"><svg class="" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="9" cy="20" r="1"></circle><circle cx="18" cy="20" r="1"></circle><path d="M2 3h2l2.4 12.4a2 2 0 0 0 2 1.6h7.2a2 2 0 0 0 2-1.6L20 7H6"></path></svg>Buy</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="card" data-id="VX-1010">
+    <div class="media" data-carousel="VX-1010">
+      <div class="car-track" style="transform: translateX(0%);">
+        <div class="car-slide" style="background:linear-gradient(135deg,#3a1c4a,#5c0a3a)"><svg class="" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 3l7 3v6c0 4.5-3 7.5-7 9-4-1.5-7-4.5-7-9V6z"></path></svg></div><div class="car-slide" style="background:linear-gradient(135deg,#4a1c2a,#5c0a1c)"><svg class="" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 3l9 9M18 3L9 12M4 19l3-3M17 19l3-3M6 3v3M18 3v3M9 12l-3 7M15 12l3 7"></path></svg></div><div class="car-slide" style="background:linear-gradient(135deg,#4a2a1c,#5c3a0a)"><svg class="" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="9"></circle><path d="M12 3v3M12 18v3M3 12h3M18 12h3"></path><circle cx="12" cy="12" r="2.4" fill="currentColor" stroke="none"></circle></svg></div>
+      </div>
+      <div class="car-dots"><span class="car-dot active"></span><span class="car-dot"></span><span class="car-dot"></span></div>
+      <div class="media-fade"></div>
+      <span class="game-badge ff">Free Fire</span>
+      <span class="verified-tag"><svg class="" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 2l2.2 1.3 2.5-.4 1.2 2.2 2.2 1.2-.4 2.5L21 11l-1.3 2.2.4 2.5-2.2 1.2-1.2 2.2-2.5-.4L12 20l-2.2-1.3-2.5.4-1.2-2.2-2.2-1.2.4-2.5L3 11l1.3-2.2-.4-2.5 2.2-1.2 1.2-2.2 2.5.4z"></path><path d="M9 12l2 2 4-4"></path></svg>Verified</span>
+    </div>
+    <div class="card-body">
+      <div class="seller-row">
+        <div class="seller-avatar" style="background:linear-gradient(135deg,var(--cyan),var(--magenta))">SH</div>
+        <div class="seller-meta">
+          <div class="seller-name">ShadowStrike9 <svg class="" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 3l7 3v6c0 4.5-3 7.5-7 9-4-1.5-7-4.5-7-9V6z"></path><path d="M9 12l2 2 4-4"></path></svg></div>
+          <div class="seller-region">Bengaluru, IN · 84% trust</div>
+        </div>
+      </div>
+      <div class="pills"><span class="pill skin">Glacier M416</span><span class="pill outfit">Neon Samurai</span><span class="pill badge">Season Ace</span><span class="pill more">+1 more</span></div>
+      <div class="card-foot">
+        <div class="price">₹5,250<br><small>VX-1010</small></div>
+        <div class="card-btns">
+          <button class="btn-ghost" data-seller="VX-1010"><svg class="" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="8" r="3.5"></circle><path d="M5 20c0-3.5 3-6 7-6s7 2.5 7 6"></path></svg>Seller</button>
+          <button class="btn-solid" data-buy="VX-1010"><svg class="" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="9" cy="20" r="1"></circle><circle cx="18" cy="20" r="1"></circle><path d="M2 3h2l2.4 12.4a2 2 0 0 0 2 1.6h7.2a2 2 0 0 0 2-1.6L20 7H6"></path></svg>Buy</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="card" data-id="VX-1011">
+    <div class="media" data-carousel="VX-1011">
+      <div class="car-track" style="transform: translateX(0%);">
+        <div class="car-slide" style="background:linear-gradient(135deg,#4a2a1c,#5c3a0a)"><svg class="" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 3l9 9M18 3L9 12M4 19l3-3M17 19l3-3M6 3v3M18 3v3M9 12l-3 7M15 12l3 7"></path></svg></div><div class="car-slide" style="background:linear-gradient(135deg,#1c1c4a,#3a0a5c)"><svg class="" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="9"></circle><path d="M12 3v3M12 18v3M3 12h3M18 12h3"></path><circle cx="12" cy="12" r="2.4" fill="currentColor" stroke="none"></circle></svg></div><div class="car-slide" style="background:linear-gradient(135deg,#3a1c4a,#5c0a3a)"><svg class="" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="9"></circle><circle cx="12" cy="12" r="5"></circle><circle cx="12" cy="12" r="1.4" fill="currentColor" stroke="none"></circle></svg></div>
+      </div>
+      <div class="car-dots"><span class="car-dot active"></span><span class="car-dot"></span><span class="car-dot"></span></div>
+      <div class="media-fade"></div>
+      <span class="game-badge bgmi">BGMI</span>
+      <span class="verified-tag"><svg class="" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 2l2.2 1.3 2.5-.4 1.2 2.2 2.2 1.2-.4 2.5L21 11l-1.3 2.2.4 2.5-2.2 1.2-1.2 2.2-2.5-.4L12 20l-2.2-1.3-2.5.4-1.2-2.2-2.2-1.2.4-2.5L3 11l1.3-2.2-.4-2.5 2.2-1.2 1.2-2.2 2.5.4z"></path><path d="M9 12l2 2 4-4"></path></svg>Verified</span>
+    </div>
+    <div class="card-body">
+      <div class="seller-row">
+        <div class="seller-avatar" style="background:linear-gradient(135deg,var(--cyan),var(--magenta))">AP</div>
+        <div class="seller-meta">
+          <div class="seller-name">ApexNova9 <svg class="" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 3l7 3v6c0 4.5-3 7.5-7 9-4-1.5-7-4.5-7-9V6z"></path><path d="M9 12l2 2 4-4"></path></svg></div>
+          <div class="seller-region">Hyderabad, IN · 73% trust</div>
+        </div>
+      </div>
+      <div class="pills"><span class="pill skin">Crimson Groza</span><span class="pill badge">Season Ace</span></div>
+      <div class="card-foot">
+        <div class="price">₹9,250<br><small>VX-1011</small></div>
+        <div class="card-btns">
+          <button class="btn-ghost" data-seller="VX-1011"><svg class="" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="8" r="3.5"></circle><path d="M5 20c0-3.5 3-6 7-6s7 2.5 7 6"></path></svg>Seller</button>
+          <button class="btn-solid" data-buy="VX-1011"><svg class="" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="9" cy="20" r="1"></circle><circle cx="18" cy="20" r="1"></circle><path d="M2 3h2l2.4 12.4a2 2 0 0 0 2 1.6h7.2a2 2 0 0 0 2-1.6L20 7H6"></path></svg>Buy</button>
+        </div>
+      </div>
+    </div>
+  </div></div>
+    </main>
+
+  </div>
+</div>
+
+<button class="mobile-filter-btn" id="mobileFilterBtn" style="position:fixed; bottom:18px; left:50%; transform:translateX(-50%); z-index:55;">
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="15" height="15"><path d="M22 3H2l8 9.46V19l4 2v-8.54L22 3z"></path></svg> Filters
+</button>
+
+<!-- SELLER MODAL -->
+<div class="modal-overlay" id="sellerModal">
+  <div class="modal" id="sellerModalContent"></div>
+</div>
+
+<!-- CHECKOUT MODAL -->
+<div class="modal-overlay" id="checkoutModal">
+  <div class="modal" id="checkoutModalContent"></div>
+</div>
+
+<script>
+/* ============ ICONS (inline SVG, no external deps) ============ */
+const ICONS = {
+  'crosshair':'<circle cx="12" cy="12" r="9"/><path d="M12 3v3M12 18v3M3 12h3M18 12h3"/><circle cx="12" cy="12" r="2.4" fill="currentColor" stroke="none"/>',
+  'target':'<circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1.4" fill="currentColor" stroke="none"/>',
+  'zap':'<path d="M12 2 4 14h6l-1 8 9-13h-6l1-7z" stroke-linejoin="round"/>',
+  'flame':'<path d="M12 2c1 4-4 5-4 10a4 4 0 0 0 8 0c1.5 1 2 3 2 4.5A6.5 6.5 0 0 1 5 16.5C5 10 12 8 12 2z"/>',
+  'shield':'<path d="M12 3l7 3v6c0 4.5-3 7.5-7 9-4-1.5-7-4.5-7-9V6z"/>',
+  'swords':'<path d="M6 3l9 9M18 3L9 12M4 19l3-3M17 19l3-3M6 3v3M18 3v3M9 12l-3 7M15 12l3 7"/>',
+  'badge-check':'<path d="M12 2l2.2 1.3 2.5-.4 1.2 2.2 2.2 1.2-.4 2.5L21 11l-1.3 2.2.4 2.5-2.2 1.2-1.2 2.2-2.5-.4L12 20l-2.2-1.3-2.5.4-1.2-2.2-2.2-1.2.4-2.5L3 11l1.3-2.2-.4-2.5 2.2-1.2 1.2-2.2 2.5.4z"/><path d="M9 12l2 2 4-4"/>',
+  'shield-check':'<path d="M12 3l7 3v6c0 4.5-3 7.5-7 9-4-1.5-7-4.5-7-9V6z"/><path d="M9 12l2 2 4-4"/>',
+  'user':'<circle cx="12" cy="8" r="3.5"/><path d="M5 20c0-3.5 3-6 7-6s7 2.5 7 6"/>',
+  'shopping-cart':'<circle cx="9" cy="20" r="1"/><circle cx="18" cy="20" r="1"/><path d="M2 3h2l2.4 12.4a2 2 0 0 0 2 1.6h7.2a2 2 0 0 0 2-1.6L20 7H6"/>',
+  'x':'<path d="M6 6l12 12M18 6L6 18"/>',
+  'map-pin':'<path d="M12 21s7-5.5 7-11a7 7 0 1 0-14 0c0 5.5 7 11 7 11z"/><circle cx="12" cy="10" r="2.5"/>',
+  'award':'<circle cx="12" cy="8" r="5.5"/><path d="M8.5 13 7 21l5-2.5L17 21l-1.5-8"/>',
+  'check-circle-2':'<circle cx="12" cy="12" r="9"/><path d="M8.5 12.5l2.3 2.3 4.7-5.1"/>',
+  'lock':'<rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/>',
+  'check':'<path d="M5 12.5l4.5 4.5L19 7"/>'
+};
+function icon(name, cls){
+  const body = ICONS[name] || ICONS['crosshair'];
+  return `<svg class="${cls||''}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">${body}</svg>`;
+}
+
+/* ============ DATA ============ */
+const GAMES = [
+  {id:'freefire', label:'Free Fire', class:'ff'},
+  {id:'bgmi', label:'BGMI', class:'bgmi'}
+];
+const SKIN_ICONS = ['crosshair','target','zap','flame','shield','swords'];
+const ALL_SKINS = ['Cobra MP40','Glacier M416','Phoenix AKM','Venom Vector','Toxic Scar','Dragon UMP','Shadow AWM','Crimson Groza'];
+const ALL_OUTFITS = ['Booyah Day','Elite Pass S10','Winterlands','Cyber Ronin','Phantom Assassin','Neon Samurai'];
+const ALL_BADGES = ['Grandmaster','Diamond Rank','OG Player (2019)','Season Ace','Conqueror','Heroic'];
+const REGIONS = ['Mumbai, IN','Chennai, IN','Delhi, IN','Kolkata, IN','Bengaluru, IN','Hyderabad, IN'];
+const GRADIENTS = [
+  'linear-gradient(135deg,#1c2b4a,#0a4d5c)','linear-gradient(135deg,#3a1c4a,#5c0a3a)',
+  'linear-gradient(135deg,#0a3d2e,#1c4a3a)','linear-gradient(135deg,#4a2a1c,#5c3a0a)',
+  'linear-gradient(135deg,#1c1c4a,#3a0a5c)','linear-gradient(135deg,#4a1c2a,#5c0a1c)'
+];
+
+function rand(arr,n){ const c=[...arr]; const out=[]; n=Math.min(n,c.length); for(let i=0;i<n;i++){ const idx=Math.floor(Math.random()*c.length); out.push(c.splice(idx,1)[0]); } return out; }
+function randInt(a,b){ return Math.floor(Math.random()*(b-a+1))+a; }
+
+const SELLER_NAMES = ['ShadowStrike','ApexNova','ViperKing_IN','FrostByte99','RogueSniperX','NightHawk','CobraCartel','GhostReconIN','BlazeRunner','TitanVaultOG'];
+
+const listings = Array.from({length:12}).map((_,i)=>{
+  const game = GAMES[i%2];
+  const skins = rand(ALL_SKINS, randInt(1,3));
+  const outfits = rand(ALL_OUTFITS, randInt(0,2));
+  const badges = rand(ALL_BADGES, randInt(1,2));
+  const price = randInt(6,58)*250;
+  const verified = Math.random() > 0.28;
+  const trust = randInt(72,99);
+  const trades = randInt(8,340);
+  return {
+    id:'VX-'+(1000+i),
+    game: game.id, gameLabel: game.label, gameClass: game.class,
+    seller: SELLER_NAMES[i%SELLER_NAMES.length] + (i>9?randInt(2,9):''),
+    region: REGIONS[i%REGIONS.length],
+    verified, trust, trades,
+    memberSince: 2019+ (i%6),
+    responseTime: randInt(1,45)+' min',
+    price, skins, outfits, badges,
+    media: rand(GRADIENTS,3).map((g,idx)=>({grad:g, icon: SKIN_ICONS[(i+idx)%SKIN_ICONS.length]}))
+  };
+});
+
+/* ============ STATE ============ */
+const state = {
+  q:'', games:new Set(), skins:new Set(), outfits:new Set(), badges:new Set(),
+  priceMin:0, priceMax:15000, sort:'relevance'
+};
+
+/* ============ FILTER CHIP BAR ============ */
+const chipDefs = [
+  {label:'All', key:'all'},
+  {label:'Free Fire', key:'game:freefire'},
+  {label:'BGMI', key:'game:bgmi'},
+  {label:'Under ₹5,000', key:'price:5000'},
+  {label:'Rare Outfits', key:'has:outfits'},
+  {label:'Gun Skins', key:'has:skins'},
+  {label:'Badges', key:'has:badges'},
+];
+let activeChip = 'all';
+function renderChips(){
+  const bar = document.getElementById('chipBar');
+  bar.innerHTML = chipDefs.map(c=>`<button class="chip ${activeChip===c.key?'active':''}" data-key="${c.key}">${c.label}</button>`).join('');
+  bar.querySelectorAll('.chip').forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      activeChip = btn.dataset.key;
+      applyChip(activeChip);
+      renderChips();
+    });
+  });
+}
+function applyChip(key){
+  state.games.clear(); state.priceMin=0; state.priceMax=15000; state.skins.clear(); state.outfits.clear(); state.badges.clear();
+  if(key.startsWith('game:')) state.games.add(key.split(':')[1]);
+  if(key==='price:5000'){ state.priceMax = 5000; }
+  syncFilterUI();
+  render();
+}
+
+/* ============ FILTER SIDEBAR RENDER ============ */
+function renderGameFilters(){
+  document.getElementById('gameFilters').innerHTML = GAMES.map(g=>{
+    const count = listings.filter(l=>l.game===g.id).length;
+    return `<label class="f-check"><input type="checkbox" data-game="${g.id}"><span class="box"></span>${g.label}<span class="cnt">${count}</span></label>`;
+  }).join('');
+  document.querySelectorAll('[data-game]').forEach(inp=>{
+    inp.addEventListener('change', ()=>{
+      inp.checked ? state.games.add(inp.dataset.game) : state.games.delete(inp.dataset.game);
+      activeChip='custom'; renderChips();
+      render();
+    });
+  });
+}
+function renderTagFilters(containerId, source, set, cls){
+  const el = document.getElementById(containerId);
+  el.innerHTML = source.map(t=>`<span class="tag-pill off" data-tag="${t}">${t}</span>`).join('');
+  el.querySelectorAll('.tag-pill').forEach(p=>{
+    p.addEventListener('click', ()=>{
+      const t = p.dataset.tag;
+      if(set.has(t)){ set.delete(t); p.classList.add('off'); }
+      else { set.add(t); p.classList.remove('off'); }
+      activeChip='custom'; renderChips();
+      render();
+    });
+  });
+}
+function renderBadgeFilters(){
+  document.getElementById('badgeFilters').innerHTML = ALL_BADGES.map(b=>
+    `<label class="f-check"><input type="checkbox" data-badge="${b}"><span class="box"></span>${b}</label>`).join('');
+  document.querySelectorAll('[data-badge]').forEach(inp=>{
+    inp.addEventListener('change', ()=>{
+      inp.checked ? state.badges.add(inp.dataset.badge) : state.badges.delete(inp.dataset.badge);
+      activeChip='custom'; renderChips();
+      render();
+    });
+  });
+}
+function syncFilterUI(){
+  document.querySelectorAll('[data-game]').forEach(i=> i.checked = state.games.has(i.dataset.game));
+  document.querySelectorAll('#skinFilters .tag-pill').forEach(p=> p.classList.toggle('off', !state.skins.has(p.dataset.tag)));
+  document.querySelectorAll('#outfitFilters .tag-pill').forEach(p=> p.classList.toggle('off', !state.outfits.has(p.dataset.tag)));
+  document.querySelectorAll('[data-badge]').forEach(i=> i.checked = state.badges.has(i.dataset.badge));
+  priceMinEl.value = state.priceMin; priceMaxEl.value = state.priceMax;
+  updatePriceUI();
+}
+
+/* ============ PRICE RANGE ============ */
+const priceMinEl = document.getElementById('priceMin');
+const priceMaxEl = document.getElementById('priceMax');
+function updatePriceUI(){
+  let a = parseInt(priceMinEl.value), b = parseInt(priceMaxEl.value);
+  if(a>b){ [a,b]=[b,a]; }
+  state.priceMin=a; state.priceMax=b;
+  document.getElementById('priceMinLabel').textContent = '₹'+a.toLocaleString('en-IN');
+  document.getElementById('priceMaxLabel').textContent = '₹'+b.toLocaleString('en-IN');
+  const pctA = (a/15000)*100, pctB = (b/15000)*100;
+  document.getElementById('rangeFill').style.left = pctA+'%';
+  document.getElementById('rangeFill').style.width = (pctB-pctA)+'%';
+}
+[priceMinEl, priceMaxEl].forEach(el=> el.addEventListener('input', ()=>{ activeChip='custom'; renderChips(); updatePriceUI(); render(); }));
+
+/* ============ SORT / SEARCH ============ */
+document.getElementById('sortSelect').addEventListener('change', e=>{ state.sort = e.target.value; render(); });
+document.getElementById('searchInput').addEventListener('input', e=>{ state.q = e.target.value.toLowerCase(); render(); });
+document.getElementById('clearFilters').addEventListener('click', ()=>{
+  state.games.clear(); state.skins.clear(); state.outfits.clear(); state.badges.clear();
+  state.priceMin=0; state.priceMax=15000; state.q=''; state.sort='relevance';
+  document.getElementById('searchInput').value=''; document.getElementById('sortSelect').value='relevance';
+  activeChip='all'; renderChips(); syncFilterUI(); render();
+});
+
+/* ============ MOBILE FILTER SHEET ============ */
+const filtersPanel = document.getElementById('filtersPanel');
+document.getElementById('mobileFilterBtn').addEventListener('click', ()=> filtersPanel.classList.add('open'));
+document.getElementById('applyFiltersMobile').addEventListener('click', ()=> filtersPanel.classList.remove('open'));
+
+/* ============ CARD / GRID RENDER ============ */
+function matches(l){
+  if(state.games.size && !state.games.has(l.game)) return false;
+  if(l.price < state.priceMin || l.price > state.priceMax) return false;
+  if(state.skins.size && ![...state.skins].some(s=>l.skins.includes(s))) return false;
+  if(state.outfits.size && ![...state.outfits].some(o=>l.outfits.includes(o))) return false;
+  if(state.badges.size && ![...state.badges].some(b=>l.badges.includes(b))) return false;
+  if(state.q){
+    const hay = (l.seller+' '+l.gameLabel+' '+l.id+' '+[...l.skins,...l.outfits,...l.badges].join(' ')).toLowerCase();
+    if(!hay.includes(state.q)) return false;
+  }
+  return true;
+}
+function sortList(list){
+  const arr = [...list];
+  if(state.sort==='price_low') arr.sort((a,b)=>a.price-b.price);
+  else if(state.sort==='price_high') arr.sort((a,b)=>b.price-a.price);
+  else if(state.sort==='trust') arr.sort((a,b)=>b.trust-a.trust);
+  return arr;
+}
+
+function cardHTML(l){
+  const pills = [
+    ...l.skins.map(s=>`<span class="pill skin">${s}</span>`),
+    ...l.outfits.map(o=>`<span class="pill outfit">${o}</span>`),
+    ...l.badges.map(b=>`<span class="pill badge">${b}</span>`)
+  ];
+  const shown = pills.slice(0,3).join('');
+  const extra = pills.length>3 ? `<span class="pill more">+${pills.length-3} more</span>`: '';
+  const initials = l.seller.slice(0,2).toUpperCase();
+  return `
+  <div class="card" data-id="${l.id}">
+    <div class="media" data-carousel="${l.id}">
+      <div class="car-track">
+        ${l.media.map(m=>`<div class="car-slide" style="background:${m.grad}">${icon(m.icon)}</div>`).join('')}
+      </div>
+      <div class="car-dots">${l.media.map((_,i)=>`<span class="car-dot ${i===0?'active':''}"></span>`).join('')}</div>
+      <div class="media-fade"></div>
+      <span class="game-badge ${l.gameClass}">${l.gameLabel}</span>
+      ${l.verified ? `<span class="verified-tag">${icon('badge-check')}Verified</span>` : ''}
+    </div>
+    <div class="card-body">
+      <div class="seller-row">
+        <div class="seller-avatar" style="background:linear-gradient(135deg,var(--cyan),var(--magenta))">${initials}</div>
+        <div class="seller-meta">
+          <div class="seller-name">${l.seller} ${l.verified?icon('shield-check'):''}</div>
+          <div class="seller-region">${l.region} · ${l.trust}% trust</div>
+        </div>
+      </div>
+      <div class="pills">${shown}${extra}</div>
+      <div class="card-foot">
+        <div class="price">₹${l.price.toLocaleString('en-IN')}<br><small>${l.id}</small></div>
+        <div class="card-btns">
+          <button class="btn-ghost" data-seller="${l.id}">${icon('user')}Seller</button>
+          <button class="btn-solid" data-buy="${l.id}">${icon('shopping-cart')}Buy</button>
+        </div>
+      </div>
+    </div>
+  </div>`;
+}
+
+function skeletonHTML(){
+  return Array.from({length:8}).map(()=>`
+    <div class="skeleton">
+      <div class="sk-media"><div class="sk-dial"></div></div>
+      <div class="sk-body">
+        <div class="sk-line w60"></div>
+        <div class="sk-line w40"></div>
+        <div class="sk-line w90"></div>
+        <div class="sk-line w30"></div>
+      </div>
+    </div>`).join('');
+}
+
+function emptyHTML(){
+  return `<div class="empty">
+    <svg class="dial-mark" viewBox="0 0 60 60" fill="none"><circle cx="30" cy="30" r="27" stroke="#4cf3ff" stroke-width="2" opacity=".4"/><path d="M30 3 V11 M30 49 V57 M3 30 H11 M49 30 H57" stroke="#4cf3ff" stroke-width="2" stroke-linecap="round"/><circle cx="30" cy="30" r="4" fill="#4cf3ff"/></svg>
+    <h3>Vault's empty on this combination</h3>
+    <p>No listings match your current filters. Try widening the price range or clearing a tag.</p>
+    <button id="emptyReset">Reset filters</button>
+  </div>`;
+}
+
+const grid = document.getElementById('feedGrid');
+let firstLoad = true;
+let carouselTimers = [];
+
+function render(){
+  const filtered = sortList(listings.filter(matches));
+  document.getElementById('resultCount').textContent = filtered.length;
+
+  if(firstLoad){
+    grid.innerHTML = skeletonHTML();
+    setTimeout(()=>{ firstLoad=false; paint(filtered); }, 900);
+    return;
+  }
+  paint(filtered);
+}
+
+function clearCarousels(){
+  carouselTimers.forEach(t=> clearInterval(t));
+  carouselTimers = [];
+}
+
+function initCarousels(){
+  grid.querySelectorAll('[data-carousel]').forEach(el=>{
+    const track = el.querySelector('.car-track');
+    const dots = [...el.querySelectorAll('.car-dot')];
+    const slideCount = dots.length;
+    if(slideCount <= 1) return;
+    let idx = 0;
+    const advance = ()=>{
+      idx = (idx+1) % slideCount;
+      track.style.transform = `translateX(-${idx*100}%)`;
+      dots.forEach((d,i)=> d.classList.toggle('active', i===idx));
+    };
+    const timer = setInterval(advance, 2600 + Math.random()*1200);
+    carouselTimers.push(timer);
+  });
+}
+
+function paint(filtered){
+  clearCarousels();
+  if(!filtered.length){
+    grid.innerHTML = emptyHTML();
+    document.getElementById('emptyReset').addEventListener('click', ()=> document.getElementById('clearFilters').click());
+    return;
+  }
+  grid.innerHTML = filtered.map(cardHTML).join('');
+  initCarousels();
+
+  grid.querySelectorAll('[data-seller]').forEach(btn=>{
+    btn.addEventListener('click', ()=> openSeller(btn.dataset.seller));
+  });
+  grid.querySelectorAll('[data-buy]').forEach(btn=>{
+    btn.addEventListener('click', ()=> openCheckout(btn.dataset.buy));
+  });
+}
+
+/* ============ SELLER MODAL ============ */
+const sellerModal = document.getElementById('sellerModal');
+function openSeller(id){
+  const l = listings.find(x=>x.id===id);
+  const initials = l.seller.slice(0,2).toUpperCase();
+  document.getElementById('sellerModalContent').innerHTML = `
+    <div class="modal-head"><span></span><button class="modal-close" id="closeSeller">${icon('x')}</button></div>
+    <div class="seller-hero">
+      <div class="big-avatar" style="background:linear-gradient(135deg,var(--cyan),var(--magenta))">${initials}</div>
+      <h2>${l.seller}</h2>
+      <div class="region">${icon('map-pin')}${l.region}</div>
+      <div class="badges-row">
+        ${l.verified?`<span class="badge-chip">${icon('badge-check')}ID Verified</span>`:''}
+        <span class="badge-chip">${icon('shield')}Escrow Protected</span>
+        ${l.badges.map(b=>`<span class="badge-chip">${icon('award')}${b}</span>`).join('')}
+      </div>
+    </div>
+    <div class="stats-grid">
+      <div class="stat"><b>${l.trades}</b><span>Trades Done</span></div>
+      <div class="stat"><b>${l.trust}%</b><span>Trust Score</span></div>
+      <div class="stat"><b>${l.responseTime}</b><span>Avg Response</span></div>
+    </div>
+    <div class="modal-section">
+      <h4>Seller since ${l.memberSince}</h4>
+      <ul class="trust-list">
+        <li>${icon('check-circle-2')}Government ID verified</li>
+        <li>${icon('check-circle-2')}Linked payment history checked</li>
+        <li>${icon('check-circle-2')}No disputed trades in last 90 days</li>
+      </ul>
+    </div>
+    <div class="modal-cta">
+      <button class="btn-ghost" id="closeSeller2">Close</button>
+      <button class="btn-solid" id="sellerToCheckout">${icon('shopping-cart')}Buy this account</button>
+    </div>
+  `;
+  sellerModal.classList.add('show');
+  document.getElementById('closeSeller').onclick = ()=> sellerModal.classList.remove('show');
+  document.getElementById('closeSeller2').onclick = ()=> sellerModal.classList.remove('show');
+  document.getElementById('sellerToCheckout').onclick = ()=>{ sellerModal.classList.remove('show'); openCheckout(id); };
+}
+sellerModal.addEventListener('click', e=>{ if(e.target===sellerModal) sellerModal.classList.remove('show'); });
+
+/* ============ CHECKOUT MODAL ============ */
+const checkoutModal = document.getElementById('checkoutModal');
+let activePayMethod = 'upi';
+function openCheckout(id){
+  const l = listings.find(x=>x.id===id);
+  const escrow = Math.round(l.price*0.03);
+  const total = l.price + escrow;
+  renderCheckoutForm(l, escrow, total);
+  checkoutModal.classList.add('show');
+}
+function renderCheckoutForm(l, escrow, total){
+  document.getElementById('checkoutModalContent').innerHTML = `
+    <div class="modal-head"><span></span><button class="modal-close" id="closeCheckout">${icon('x')}</button></div>
+    <div class="checkout-item">
+      <div class="checkout-thumb" style="background:${l.media[0].grad}">${icon(l.media[0].icon)}</div>
+      <div class="checkout-info">
+        <h4>${l.gameLabel} Account · ${l.id}</h4>
+        <div class="sub">Sold by ${l.seller} · ${l.region}</div>
+      </div>
+    </div>
+    <div class="line-items">
+      <div class="line"><span>Account price</span><b>₹${l.price.toLocaleString('en-IN')}</b></div>
+      <div class="line"><span>Escrow protection fee (3%)</span><b>₹${escrow.toLocaleString('en-IN')}</b></div>
+      <div class="line total"><span>Total</span><b>₹${total.toLocaleString('en-IN')}</b></div>
+    </div>
+    <div class="pay-methods">
+      <div class="pay-method active" data-pay="upi">UPI</div>
+      <div class="pay-method" data-pay="card">Card</div>
+      <div class="pay-method" data-pay="wallet">Vault Wallet</div>
+    </div>
+    <div class="escrow-note">${icon('lock')}Funds are held in Vault-X escrow and only released to the seller after you confirm the account handover.</div>
+    <button class="confirm-btn" id="confirmPay">${icon('shield-check')}Confirm & Pay ₹${total.toLocaleString('en-IN')}</button>
+  `;
+  document.getElementById('closeCheckout').onclick = ()=> checkoutModal.classList.remove('show');
+  document.querySelectorAll('.pay-method').forEach(p=>{
+    p.addEventListener('click', ()=>{
+      document.querySelectorAll('.pay-method').forEach(x=>x.classList.remove('active'));
+      p.classList.add('active');
+    });
+  });
+  document.getElementById('confirmPay').onclick = async () => {
+    try {
+        const response = await fetch("http://localhost:3000/api/payment/create", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                amount: total
+            })
+        });
+
+        const data = await response.json();
+
+        if (!data.success) {
+            alert("Unable to create payment.");
+            return;
+        }
+
+        const options = {
+            key: data.key,
+            amount: data.amount,
+            currency: data.currency,
+            name: "Vault-X",
+            description: "Vault-X Account Purchase",
+            order_id: data.orderId,
+
+            handler: async function (payment) {
+                const verifyResponse = await fetch(
+                    "http://localhost:3000/api/payment/verify",
+                    {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/json"
+                        },
+                        body: JSON.stringify({
+                            razorpay_payment_id:
+                                payment.razorpay_payment_id,
+                            razorpay_order_id:
+                                payment.razorpay_order_id,
+                            razorpay_signature:
+                                payment.razorpay_signature
+                        })
+                    }
+                );
+
+                const verifyData = await verifyResponse.json();
+
+                if (verifyData.success) {
+                    showSuccess(l);
+                } else {
+                    alert("Payment verification failed.");
+                }
+            },
+
+            theme: {
+                color: "#4cf3ff"
+            }
+        };
+
+        const razorpay = new Razorpay(options);
+        razorpay.open();
+
+    } catch (error) {
+        console.error(error);
+        alert("Payment could not be started.");
+    }
+};
+}
+function showSuccess(l){
+  document.getElementById('checkoutModalContent').innerHTML = `
+    <div class="modal-head"><span></span><button class="modal-close" id="closeCheckout2">${icon('x')}</button></div>
+    <div class="success-state">
+      <div class="check-ring">${icon('check')}</div>
+      <h3>Payment secured in escrow</h3>
+      <p>${l.seller} has been notified. You'll get handover instructions within ${l.responseTime}.</p>
+      <span class="mono">TXN-${Math.random().toString(36).slice(2,10).toUpperCase()}</span>
+    </div>
+  `;
+  document.getElementById('closeCheckout2').onclick = ()=> checkoutModal.classList.remove('show');
+}
+checkoutModal.addEventListener('click', e=>{ if(e.target===checkoutModal) checkoutModal.classList.remove('show'); });
+
+/* ============ INIT ============ */
+renderChips();
+renderGameFilters();
+renderTagFilters('skinFilters', ALL_SKINS, state.skins);
+renderTagFilters('outfitFilters', ALL_OUTFITS, state.outfits);
+renderBadgeFilters();
+updatePriceUI();
+render();
+</script>
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+
+</body>
+</html>
